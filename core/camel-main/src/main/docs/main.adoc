@@ -200,15 +200,15 @@ The camel.rest supports 28 options, which are listed below.
 | *camel.rest.xmlDataFormat* | Sets a custom xml data format to be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance. |  | String
 |===
 
-=== Camel Vault configurations
-The camel.vault supports 3 options, which are listed below.
+=== Camel AWS Vault configurations
+The camel.vault.aws supports 3 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.vault.awsAccessKey* | The AWS access key |  | String
-| *camel.vault.awsRegion* | The AWS region |  | String
-| *camel.vault.awsSecretKey* | The AWS secret key |  | String
+| *camel.vault.aws.accessKey* | The AWS access key |  | String
+| *camel.vault.aws.region* | The AWS region |  | String
+| *camel.vault.aws.secretKey* | The AWS secret key |  | String
 |===
 
 === Fault Tolerance EIP Circuit Breaker configurations

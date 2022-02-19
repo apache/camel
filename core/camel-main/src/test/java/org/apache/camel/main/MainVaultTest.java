@@ -17,7 +17,7 @@
 package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.VaultConfiguration;
+import org.apache.camel.vault.AwsVaultConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -29,21 +29,21 @@ public class MainVaultTest {
     public void testMain() throws Exception {
         Main main = new Main();
 
-        main.addInitialProperty("camel.vault.awsAccessKey", "myKey");
-        main.addInitialProperty("camel.vault.awsSecretKey", "mySecret");
-        main.addInitialProperty("camel.vault.awsRegion", "myRegion");
+        main.addInitialProperty("camel.vault.aws.accessKey", "myKey");
+        main.addInitialProperty("camel.vault.aws.secretKey", "mySecret");
+        main.addInitialProperty("camel.vault.aws.region", "myRegion");
 
         main.start();
 
         CamelContext context = main.getCamelContext();
         assertNotNull(context);
 
-        VaultConfiguration cfg = context.getVaultConfiguration();
+        AwsVaultConfiguration cfg = context.getVaultConfiguration().aws();
         assertNotNull(cfg);
 
-        Assertions.assertEquals("myKey", cfg.getAwsAccessKey());
-        Assertions.assertEquals("mySecret", cfg.getAwsSecretKey());
-        Assertions.assertEquals("myRegion", cfg.getAwsRegion());
+        Assertions.assertEquals("myKey", cfg.getAccessKey());
+        Assertions.assertEquals("mySecret", cfg.getSecretKey());
+        Assertions.assertEquals("myRegion", cfg.getRegion());
 
         main.stop();
     }
@@ -51,10 +51,10 @@ public class MainVaultTest {
     @Test
     public void testMainFluent() throws Exception {
         Main main = new Main();
-        main.configure().vault()
-                .withAwsAccessKey("myKey")
-                .withAwsSecretKey("mySecret")
-                .withAwsRegion("myRegion")
+        main.configure().vault().aws()
+                .withAccessKey("myKey")
+                .withSecretKey("mySecret")
+                .withRegion("myRegion")
                 .end();
 
         main.start();
@@ -62,12 +62,12 @@ public class MainVaultTest {
         CamelContext context = main.getCamelContext();
         assertNotNull(context);
 
-        VaultConfiguration cfg = context.getVaultConfiguration();
+        AwsVaultConfiguration cfg = context.getVaultConfiguration().aws();
         assertNotNull(cfg);
 
-        Assertions.assertEquals("myKey", cfg.getAwsAccessKey());
-        Assertions.assertEquals("mySecret", cfg.getAwsSecretKey());
-        Assertions.assertEquals("myRegion", cfg.getAwsRegion());
+        Assertions.assertEquals("myKey", cfg.getAccessKey());
+        Assertions.assertEquals("mySecret", cfg.getSecretKey());
+        Assertions.assertEquals("myRegion", cfg.getRegion());
 
         main.stop();
     }

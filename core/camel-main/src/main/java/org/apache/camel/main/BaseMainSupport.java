@@ -67,6 +67,7 @@ import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -876,11 +877,9 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         if (!vaultProperties.isEmpty() || mainConfigurationProperties.hasVaultConfiguration()) {
-            VaultConfigurationProperties vault = mainConfigurationProperties.vault();
             LOG.debug("Auto-configuring Vault from loaded properties: {}", vaultProperties.size());
-            setPropertiesOnTarget(camelContext, vault, vaultProperties, "camel.vault.",
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
-            camelContext.setVaultConfiguration(vault);
+            setVaultProperties(camelContext, vaultProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
         }
 
         if (!threadPoolProperties.isEmpty() || mainConfigurationProperties.hasThreadPoolConfiguration()) {
@@ -1100,6 +1099,32 @@ public abstract class BaseMainSupport extends BaseService {
             // configure all the properties on the console at once (to ensure they are configured in right order)
             Map<String, Object> config = PropertiesHelper.extractProperties(properties, name + ".");
             setPropertiesOnTarget(camelContext, console, config, "camel.dev-console." + name + ".", failIfNotSet, true,
+                    autoConfiguredProperties);
+        }
+    }
+
+    private void setVaultProperties(
+            CamelContext camelContext, Map<String, Object> properties,
+            boolean failIfNotSet, Map<String, String> autoConfiguredProperties)
+            throws Exception {
+
+        if (mainConfigurationProperties.hasVaultConfiguration()) {
+            camelContext.setVaultConfiguration(mainConfigurationProperties.vault());
+        }
+        VaultConfiguration target = camelContext.getVaultConfiguration();
+
+        // make defensive copy as we mutate the map
+        Set<String> keys = new LinkedHashSet<>(properties.keySet());
+        // set properties per different vault component
+        for (String key : keys) {
+            String name = StringHelper.before(key, ".");
+            if ("aws".equalsIgnoreCase(name)) {
+                // TODO: add more vault providers here
+                target = target.aws();
+            }
+            // configure all the properties on the vault at once (to ensure they are configured in right order)
+            Map<String, Object> config = PropertiesHelper.extractProperties(properties, name + ".");
+            setPropertiesOnTarget(camelContext, target, config, "camel.vault." + name + ".", failIfNotSet, true,
                     autoConfiguredProperties);
         }
     }

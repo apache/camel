@@ -195,8 +195,9 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.faulttolerance.";
                 } else if (file.getName().contains("Rest")) {
                     prefix = "camel.rest.";
-                } else if (file.getName().contains("Vault")) {
-                    prefix = "camel.vault.";
+                } else if (file.getName().contains("AwsVault")) {
+                    prefix = "camel.vault.aws.";
+                    // TODO: add more vault providers here
                 } else if (file.getName().contains("Health")) {
                     prefix = "camel.health.";
                 } else if (file.getName().contains("Lra")) {
@@ -228,10 +229,11 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             throw new MojoFailureException("Error parsing file " + restConfig + " due " + e.getMessage(), e);
         }
         // include additional vault configuration from camel-api
-        File vaultConfig = new File(camelApiDir, "src/main/java/org/apache/camel/spi/VaultConfiguration.java");
+        // TODO: add more vault providers here
+        File vaultConfig = new File(camelApiDir, "src/main/java/org/apache/camel/vault/AwsVaultConfiguration.java");
         try {
             List<MainModel.MainOptionModel> model = parseConfigurationSource(vaultConfig);
-            model.forEach(m -> m.setName("camel.vault." + m.getName()));
+            model.forEach(m -> m.setName("camel.vault.aws." + m.getName()));
             data.addAll(model);
         } catch (Exception e) {
             throw new MojoFailureException("Error parsing file " + restConfig + " due " + e.getMessage(), e);
@@ -265,7 +267,9 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                             "camel.rest", "Camel Rest-DSL configurations", "org.apache.camel.spi.RestConfiguration"));
             model.getGroups().add(
                     new MainGroupModel(
-                            "camel.vault", "Camel Vault configurations", "org.apache.camel.spi.VaultConfiguration"));
+                            "camel.vault.aws", "Camel AWS Vault configurations",
+                            "org.apache.camel.vault.AwsVaultConfiguration"));
+            // TODO: add more vault providers here
             model.getGroups()
                     .add(new MainGroupModel(
                             "camel.faulttolerance", "Fault Tolerance EIP Circuit Breaker configurations",

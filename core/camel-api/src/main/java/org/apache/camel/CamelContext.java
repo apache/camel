@@ -52,8 +52,8 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
-import org.apache.camel.spi.VaultConfiguration;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.vault.VaultConfiguration;
 
 /**
  * Interface used to represent the CamelContext used to configure routes and the policies to use during message
@@ -674,7 +674,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     RestConfiguration getRestConfiguration();
 
     /**
-     * Sets a custom {@link org.apache.camel.spi.VaultConfiguration}
+     * Sets a custom {@link VaultConfiguration}
      *
      * @param vaultConfiguration the vault configuration
      */

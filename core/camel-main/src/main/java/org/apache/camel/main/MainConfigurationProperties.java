@@ -226,7 +226,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * To configure access to vaults
+     * To configure access to AWS vaults
      */
     public VaultConfigurationProperties vault() {
         if (vaultConfigurationProperties == null) {
@@ -236,7 +236,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Whether there has been any rest configuration specified
+     * Whether there has been any vault configuration specified
      */
     public boolean hasVaultConfiguration() {
         return vaultConfigurationProperties != null;
