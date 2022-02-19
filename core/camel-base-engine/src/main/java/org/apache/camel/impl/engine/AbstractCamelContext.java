@@ -169,6 +169,7 @@ import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
+import org.apache.camel.spi.VaultConfiguration;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
@@ -245,6 +246,7 @@ public abstract class AbstractCamelContext extends BaseService
     private ClassLoader applicationContextClassLoader;
     private boolean autoCreateComponents = true;
     private volatile RestConfiguration restConfiguration;
+    private volatile VaultConfiguration vaultConfiguration = new VaultConfiguration();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
     // special flags to control the first startup which can are special
@@ -2155,6 +2157,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setRestConfiguration(RestConfiguration restConfiguration) {
         this.restConfiguration = restConfiguration;
+    }
+
+    @Override
+    public VaultConfiguration getVaultConfiguration() {
+        return vaultConfiguration;
+    }
+
+    @Override
+    public void setVaultConfiguration(VaultConfiguration vaultConfiguration) {
+        this.vaultConfiguration = vaultConfiguration;
     }
 
     @Override

@@ -211,6 +211,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "UseMDCLogging": target.setUseMDCLogging(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "uuidgenerator":
         case "UuidGenerator": target.setUuidGenerator(property(camelContext, org.apache.camel.spi.UuidGenerator.class, value)); return true;
+        case "vaultconfiguration":
+        case "VaultConfiguration": target.setVaultConfiguration(property(camelContext, org.apache.camel.spi.VaultConfiguration.class, value)); return true;
         case "xmlroutesdefinitionloader":
         case "XMLRoutesDefinitionLoader": target.setXMLRoutesDefinitionLoader(property(camelContext, org.apache.camel.spi.XMLRoutesDefinitionLoader.class, value)); return true;
         default: return false;
@@ -410,6 +412,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "UseMDCLogging": return java.lang.Boolean.class;
         case "uuidgenerator":
         case "UuidGenerator": return org.apache.camel.spi.UuidGenerator.class;
+        case "vaultconfiguration":
+        case "VaultConfiguration": return org.apache.camel.spi.VaultConfiguration.class;
         case "xmlroutesdefinitionloader":
         case "XMLRoutesDefinitionLoader": return org.apache.camel.spi.XMLRoutesDefinitionLoader.class;
         default: return null;
@@ -610,6 +614,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "UseMDCLogging": return target.isUseMDCLogging();
         case "uuidgenerator":
         case "UuidGenerator": return target.getUuidGenerator();
+        case "vaultconfiguration":
+        case "VaultConfiguration": return target.getVaultConfiguration();
         case "xmlroutesdefinitionloader":
         case "XMLRoutesDefinitionLoader": return target.getXMLRoutesDefinitionLoader();
         default: return null;

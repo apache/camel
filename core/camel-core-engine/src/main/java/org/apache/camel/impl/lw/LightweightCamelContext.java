@@ -149,6 +149,7 @@ import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
+import org.apache.camel.spi.VaultConfiguration;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -586,6 +587,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public RestConfiguration getRestConfiguration() {
         return delegate.getRestConfiguration();
+    }
+
+    @Override
+    public void setVaultConfiguration(VaultConfiguration vaultConfiguration) {
+        delegate.setVaultConfiguration(vaultConfiguration);
+    }
+
+    @Override
+    public VaultConfiguration getVaultConfiguration() {
+        return delegate.getVaultConfiguration();
     }
 
     @Override
