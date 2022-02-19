@@ -204,7 +204,6 @@
         <module>camel-jmx</module>
         <module>camel-johnzon</module>
         <module>camel-jolt</module>
-        <module>camel-jooq</module>
         <module>camel-joor</module>
         <module>camel-jpa</module>
         <module>camel-jsch</module>
@@ -357,6 +356,8 @@
         <module>camel-zipkin</module>
         <module>camel-zookeeper-master</module>
         <module>camel-zookeeper</module>
+        <!-- build jooq last as it cause component builds to be slower afterwards -->
+        <module>camel-jooq</module>
   </modules>
 
     <properties>
