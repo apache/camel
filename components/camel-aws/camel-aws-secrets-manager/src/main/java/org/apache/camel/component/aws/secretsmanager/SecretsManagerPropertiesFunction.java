@@ -74,10 +74,9 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         String region = System.getenv(CAMEL_AWS_VAULT_REGION_ENV);
         if (ObjectHelper.isEmpty(accessKey) && ObjectHelper.isEmpty(secretKey) && ObjectHelper.isEmpty(region)) {
             PropertiesComponent pc = getCamelContext().getPropertiesComponent();
-            Properties p = pc.loadProperties();
-            accessKey = p.getProperty(CAMEL_AWS_VAULT_ACCESS_KEY_PROP);
-            secretKey = p.getProperty(CAMEL_AWS_VAULT_SECRET_KEY_PROP);
-            region = p.getProperty(CAMEL_AWS_VAULT_REGION_PROP);
+            accessKey = String.valueOf(pc.resolveProperty(CAMEL_AWS_VAULT_ACCESS_KEY_PROP));
+            secretKey = String.valueOf(pc.resolveProperty(CAMEL_AWS_VAULT_SECRET_KEY_PROP));
+            region = String.valueOf(pc.resolveProperty(CAMEL_AWS_VAULT_REGION_PROP));
         }
         SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
         AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
