@@ -13,7 +13,7 @@ services at the payload level
 * _Endpoint Security_ - Security offered by components that can be
 utilized by endpointUri associated with the component
 * _Configuration Security_ - Security offered by encrypting sensitive
-information from configuration files
+information from configuration files or external Secured Vault systems.
 
 Camel offers the xref:camel-configuration-utilities.adoc[JSSE Utility]
 for configuring SSL/TLS related aspects of a number of Camel components.
@@ -56,4 +56,71 @@ contain sensitive information such as usernames and passwords.
 Those values can be encrypted and automatic decrypted by Camel using:
 
 * xref:components:others:jasypt.adoc[Jasypt]
+
+Camel also support accessing the secured configuration from an external vault systems.
+
+=== Configuration Security using Vaults
+
+The following _Vaults_ are supported by Camel:
+
+* xref:components::aws-secrets-manager-component.adoc[AWS Secrets Manager]
+
+==== Using AWS Vault
+
+To use AWS Secrets Manager you need to provide _accessKey_, _secretKey_ and the _region_.
+This can be done using environmental variables before starting the application:
+
+[source,bash]
+----
+export $CAMEL_VAULT_AWS_ACCESS_KEY=accessKey
+export $CAMEL_VAULT_AWS_SECRET_KEY=secretKey
+export $CAMEL_VAULT_AWS_REGION=region
+----
+
+At this point you'll be able to reference a property in the following way:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{aws:route}}"/>
+    </route>
+</camelContext>
+----
+
+Where route will be the name of the secret stored in the AWS Secrets Manager Service.
+
+Also you are able to get particular field of the secret, if you have for example a secret named database of this form:
+
+[source,bash]
+----
+{
+  "username": "admin",
+  "password": "password123",
+  "engine": "postgres",
+  "host": "127.0.0.1",
+  "port": "3128",
+  "dbname": "db"
+}
+----
+
+You're able to do get single secret value in your route, like for example:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Username is {{aws:database:username}}"/>
+    </route>
+</camelContext>
+----
+
+Or re-use the property as part of an endpoint.
+
+For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
+
+The only requirement is adding the camel-aws-secrets-manager jar to your Camel application.
+
 
