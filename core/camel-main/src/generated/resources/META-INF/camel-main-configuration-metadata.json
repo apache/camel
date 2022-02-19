@@ -4,6 +4,7 @@
     { "name": "camel.threadpool", "description": "Camel Thread Pool configurations", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties" },
     { "name": "camel.health", "description": "Camel Health Check configurations", "sourceType": "org.apache.camel.main.HealthConfigurationProperties" },
     { "name": "camel.rest", "description": "Camel Rest-DSL configurations", "sourceType": "org.apache.camel.spi.RestConfiguration" },
+    { "name": "camel.vault", "description": "Camel Vault configurations", "sourceType": "org.apache.camel.spi.VaultConfiguration" },
     { "name": "camel.faulttolerance", "description": "Fault Tolerance EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.FaultToleranceConfigurationProperties" },
     { "name": "camel.resilience4j", "description": "Resilience4j EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.Resilience4jConfigurationProperties" },
     { "name": "camel.hystrix", "description": "Hystrix (deprecated) EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.HystrixConfigurationProperties" },
@@ -227,6 +228,9 @@
     { "name": "camel.threadpool.maxQueueSize", "description": "Sets the default maximum number of tasks in the work queue. Use -1 or an unbounded queue", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties", "type": "integer", "javaType": "java.lang.Integer" },
     { "name": "camel.threadpool.poolSize", "description": "Sets the default core pool size (threads to keep minimum in pool)", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties", "type": "integer", "javaType": "java.lang.Integer" },
     { "name": "camel.threadpool.rejectedPolicy", "description": "Sets the default handler for tasks which cannot be executed by the thread pool.", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties", "type": "object", "javaType": "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy", "enum": [ "Abort", "CallerRuns", "DiscardOldest", "Discard" ] },
-    { "name": "camel.threadpool.timeUnit", "description": "Sets the default time unit used for keep alive time", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties", "type": "object", "javaType": "java.util.concurrent.TimeUnit" }
+    { "name": "camel.threadpool.timeUnit", "description": "Sets the default time unit used for keep alive time", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties", "type": "object", "javaType": "java.util.concurrent.TimeUnit" },
+    { "name": "camel.vault.awsAccessKey", "description": "The AWS access key", "sourceType": "org.apache.camel.spi.VaultConfiguration", "type": "string", "javaType": "java.lang.String" },
+    { "name": "camel.vault.awsRegion", "description": "The AWS region", "sourceType": "org.apache.camel.spi.VaultConfiguration", "type": "string", "javaType": "java.lang.String" },
+    { "name": "camel.vault.awsSecretKey", "description": "The AWS secret key", "sourceType": "org.apache.camel.spi.VaultConfiguration", "type": "string", "javaType": "java.lang.String" }
   ]
 }
