@@ -760,6 +760,7 @@ public abstract class BaseMainSupport extends BaseService {
         Map<String, Object> resilience4jProperties = new LinkedHashMap<>();
         Map<String, Object> faultToleranceProperties = new LinkedHashMap<>();
         Map<String, Object> restProperties = new LinkedHashMap<>();
+        Map<String, Object> vaultProperties = new LinkedHashMap<>();
         Map<String, Object> threadPoolProperties = new LinkedHashMap<>();
         Map<String, Object> healthProperties = new LinkedHashMap<>();
         Map<String, Object> lraProperties = new LinkedHashMap<>();
@@ -798,6 +799,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(11);
                 validateOptionAndValue(key, option, value);
                 restProperties.put(optionKey(option), value);
+            } else if (key.startsWith("camel.vault.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(12);
+                validateOptionAndValue(key, option, value);
+                vaultProperties.put(optionKey(option), value);
             } else if (key.startsWith("camel.threadpool.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -868,6 +875,14 @@ public abstract class BaseMainSupport extends BaseService {
             camelContext.setRestConfiguration(rest);
         }
 
+        if (!vaultProperties.isEmpty() || mainConfigurationProperties.hasVaultConfiguration()) {
+            VaultConfigurationProperties vault = mainConfigurationProperties.vault();
+            LOG.debug("Auto-configuring Vault from loaded properties: {}", vaultProperties.size());
+            setPropertiesOnTarget(camelContext, vault, vaultProperties, "camel.vault.",
+                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+            camelContext.setVaultConfiguration(vault);
+        }
+
         if (!threadPoolProperties.isEmpty() || mainConfigurationProperties.hasThreadPoolConfiguration()) {
             LOG.debug("Auto-configuring Thread Pool from loaded properties: {}", threadPoolProperties.size());
             MainSupportModelConfigurer.setThreadPoolProperties(camelContext, mainConfigurationProperties, threadPoolProperties,
@@ -930,6 +945,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (!restProperties.isEmpty()) {
             restProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.rest.{}={}", k, v);
+            });
+        }
+        if (!vaultProperties.isEmpty()) {
+            vaultProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.vault.{}={}", k, v);
             });
         }
         if (!threadPoolProperties.isEmpty()) {

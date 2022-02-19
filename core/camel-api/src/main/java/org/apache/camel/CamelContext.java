@@ -52,6 +52,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
+import org.apache.camel.spi.VaultConfiguration;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 /**
@@ -671,6 +672,20 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return the configuration, or <tt>null</tt> if none has been configured.
      */
     RestConfiguration getRestConfiguration();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.VaultConfiguration}
+     *
+     * @param vaultConfiguration the vault configuration
+     */
+    void setVaultConfiguration(VaultConfiguration vaultConfiguration);
+
+    /**
+     * Gets the vault configuration
+     *
+     * @return the configuration, or <tt>null</tt> if none has been configured.
+     */
+    VaultConfiguration getVaultConfiguration();
 
     /**
      * Gets the {@link org.apache.camel.spi.RestRegistry} to use

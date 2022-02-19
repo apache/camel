@@ -56,6 +56,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private Resilience4jConfigurationProperties resilience4jConfigurationProperties;
     private FaultToleranceConfigurationProperties faultToleranceConfigurationProperties;
     private RestConfigurationProperties restConfigurationProperties;
+    private VaultConfigurationProperties vaultConfigurationProperties;
 
     @Override
     public void close() {
@@ -86,6 +87,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (restConfigurationProperties != null) {
             restConfigurationProperties.close();
             restConfigurationProperties = null;
+        }
+        if (vaultConfigurationProperties != null) {
+            vaultConfigurationProperties.close();
+            vaultConfigurationProperties = null;
         }
         if (routesBuilders != null) {
             routesBuilders.clear();
@@ -218,6 +223,23 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasRestConfiguration() {
         return restConfigurationProperties != null;
+    }
+
+    /**
+     * To configure access to vaults
+     */
+    public VaultConfigurationProperties vault() {
+        if (vaultConfigurationProperties == null) {
+            vaultConfigurationProperties = new VaultConfigurationProperties(this);
+        }
+        return vaultConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any rest configuration specified
+     */
+    public boolean hasVaultConfiguration() {
+        return vaultConfigurationProperties != null;
     }
 
     // getter and setters

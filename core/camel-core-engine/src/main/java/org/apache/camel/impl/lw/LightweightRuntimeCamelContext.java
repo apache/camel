@@ -144,6 +144,7 @@ import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
+import org.apache.camel.spi.VaultConfiguration;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.NormalizedUri;
@@ -894,6 +895,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setRestConfiguration(RestConfiguration restConfiguration) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setVaultConfiguration(VaultConfiguration vaultConfiguration) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public VaultConfiguration getVaultConfiguration() {
         throw new UnsupportedOperationException();
     }
 
