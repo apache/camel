@@ -26,11 +26,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.vault.AwsVaultConfiguration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -61,9 +61,6 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     private static final String CAMEL_AWS_VAULT_ACCESS_KEY_ENV = "CAMEL_VAULT_AWS_ACCESS_KEY";
     private static final String CAMEL_AWS_VAULT_SECRET_KEY_ENV = "CAMEL_VAULT_AWS_SECRET_KEY";
     private static final String CAMEL_AWS_VAULT_REGION_ENV = "CAMEL_VAULT_AWS_REGION";
-    private static final String CAMEL_AWS_VAULT_ACCESS_KEY_PROP = "camel.aws.vault.access.key";
-    private static final String CAMEL_AWS_VAULT_SECRET_KEY_PROP = "camel.aws.vault.secret.key";
-    private static final String CAMEL_AWS_VAULT_REGION_PROP = "camel.aws.vault.region";
     private CamelContext camelContext;
     private SecretsManagerClient client;
 
@@ -74,18 +71,11 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         String secretKey = System.getenv(CAMEL_AWS_VAULT_SECRET_KEY_ENV);
         String region = System.getenv(CAMEL_AWS_VAULT_REGION_ENV);
         if (ObjectHelper.isEmpty(accessKey) && ObjectHelper.isEmpty(secretKey) && ObjectHelper.isEmpty(region)) {
-            PropertiesComponent pc = getCamelContext().getPropertiesComponent();
-            Optional<String> tmpAccessKey = pc.resolveProperty(CAMEL_AWS_VAULT_ACCESS_KEY_PROP);
-            if (tmpAccessKey.isPresent()) {
-                accessKey = tmpAccessKey.get();
-            }
-            Optional<String> tmpSecretKey = pc.resolveProperty(CAMEL_AWS_VAULT_SECRET_KEY_PROP);
-            if (tmpSecretKey.isPresent()) {
-                secretKey = tmpSecretKey.get();
-            }
-            Optional<String> tmpRegion = pc.resolveProperty(CAMEL_AWS_VAULT_REGION_PROP);
-            if (tmpRegion.isPresent()) {
-                region = tmpRegion.get();
+            AwsVaultConfiguration awsVaultConfiguration = getCamelContext().getVaultConfiguration().aws();
+            if (ObjectHelper.isNotEmpty(awsVaultConfiguration)) {
+                accessKey = awsVaultConfiguration.getAccessKey();
+                secretKey = awsVaultConfiguration.getSecretKey();
+                region = awsVaultConfiguration.getRegion();
             }
         }
         SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();

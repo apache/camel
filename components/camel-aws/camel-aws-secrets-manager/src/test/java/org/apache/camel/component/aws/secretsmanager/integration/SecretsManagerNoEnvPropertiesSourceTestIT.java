@@ -23,25 +23,23 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.apache.camel.util.CollectionHelper.propertiesOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-// Must be manually tested. Provide your own accessKey and secretKey using -Dcamel.aws.vault.access.key, -Dcamel.aws.vault.secret.key and -Dcamel.aws.vault.region
+// Must be manually tested. Provide your own accessKey and secretKey using -Dcamel.vault.aws.accessKey, -Dcamel.vault.aws.secretKey and -Dcamel.vault.aws.region
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.aws.vault.access.key", matches = ".*",
+        @EnabledIfSystemProperty(named = "camel.vault.aws.accessKey", matches = ".*",
                                  disabledReason = "Access key not provided"),
-        @EnabledIfSystemProperty(named = "camel.aws.vault.secret.key", matches = ".*",
+        @EnabledIfSystemProperty(named = "camel.vault.aws.secretKey", matches = ".*",
                                  disabledReason = "Secret key not provided"),
-        @EnabledIfSystemProperty(named = "camel.aws.vault.region", matches = ".*", disabledReason = "Region not provided"),
+        @EnabledIfSystemProperty(named = "camel.vault.aws.region", matches = ".*", disabledReason = "Region not provided"),
 })
 public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport {
 
     @Test
     public void testFunction() throws Exception {
-        context.getPropertiesComponent().setOverrideProperties(
-                propertiesOf("camel.aws.vault.access.key", System.getProperty("camel.aws.vault.access.key"),
-                        "camel.aws.vault.secret.key", System.getProperty("camel.aws.vault.secret.key"),
-                        "camel.aws.vault.region", System.getProperty("camel.aws.vault.region")));
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -59,10 +57,9 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
 
     @Test
     public void testComplexPropertiesFunction() throws Exception {
-        context.getPropertiesComponent().setOverrideProperties(
-                propertiesOf("camel.aws.vault.access.key", System.getProperty("camel.aws.vault.access.key"),
-                        "camel.aws.vault.secret.key", System.getProperty("camel.aws.vault.secret.key"),
-                        "camel.aws.vault.region", System.getProperty("camel.aws.vault.region")));
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -81,10 +78,9 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
 
     @Test
     public void testComplexCustomPropertiesFunction() throws Exception {
-        context.getPropertiesComponent().setOverrideProperties(
-                propertiesOf("camel.aws.vault.access.key", System.getProperty("camel.aws.vault.access.key"),
-                        "camel.aws.vault.secret.key", System.getProperty("camel.aws.vault.secret.key"),
-                        "camel.aws.vault.region", System.getProperty("camel.aws.vault.region")));
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -103,10 +99,9 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
 
     @Test
     public void testSecretNotFoundFunction() throws Exception {
-        context.getPropertiesComponent().setOverrideProperties(
-                propertiesOf("camel.aws.vault.access.key", System.getProperty("camel.aws.vault.access.key"),
-                        "camel.aws.vault.secret.key", System.getProperty("camel.aws.vault.secret.key"),
-                        "camel.aws.vault.region", System.getProperty("camel.aws.vault.region")));
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -126,10 +121,9 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
 
     @Test
     public void testComplexNoSubkeyPropertiesFunction() throws Exception {
-        context.getPropertiesComponent().setOverrideProperties(
-                propertiesOf("camel.aws.vault.access.key", System.getProperty("camel.aws.vault.access.key"),
-                        "camel.aws.vault.secret.key", System.getProperty("camel.aws.vault.secret.key"),
-                        "camel.aws.vault.region", System.getProperty("camel.aws.vault.region")));
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
