@@ -20,7 +20,7 @@
 <rests xmlns="http://camel.apache.org/schema/spring">
 
   <rest path="/users">
-    <get uri="/view/{id}">
+    <get path="/view/{id}">
       <to uri="direct:getUser"/>
     </get>
   </rest>
