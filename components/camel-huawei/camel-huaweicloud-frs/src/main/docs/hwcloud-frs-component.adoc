@@ -1,4 +1,4 @@
-= Huawei Cloud Face Recognition Service Component
+= Huawei Cloud Face Recognition Service (FRS) Component
 :doctitle: Huawei Cloud Face Recognition Service (FRS)
 :shortname: hwcloud-frs
 :artifactid: camel-huaweicloud-frs

@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "hwcloud-frs",
-    "title": "Huawei Cloud Face Recognition Service",
+    "title": "Huawei Cloud Face Recognition Service (FRS)",
     "description": "Face Recognition Service (FRS) is an intelligent service that uses computers to process, analyze, and understand facial images based on human facial features.",
     "deprecated": false,
     "firstVersion": "3.15.0",
