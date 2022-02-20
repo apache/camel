@@ -37,7 +37,7 @@
         </camel:restConfiguration>
 
         <camel:rest path="/simpleService">
-            <camel:get uri="/getMsg">
+            <camel:get path="/getMsg">
                 <camel:to uri="direct:hello2"/>
             </camel:get>
         </camel:rest>

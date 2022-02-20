@@ -40,7 +40,7 @@
 		</camel:restConfiguration>
 
 		<camel:rest path="/say">
-			<camel:get uri="/hello">
+			<camel:get path="/hello">
 				<camel:to uri="direct:hello" />
 			</camel:get>
 		</camel:rest>

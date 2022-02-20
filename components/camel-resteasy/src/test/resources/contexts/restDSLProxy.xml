@@ -39,7 +39,7 @@
         </camel:restConfiguration>
 
         <camel:rest path="/proxy">
-            <camel:get uri="/get">
+            <camel:get path="/get">
                 <camel:to uri="direct:start"/>
             </camel:get>
         </camel:rest>
