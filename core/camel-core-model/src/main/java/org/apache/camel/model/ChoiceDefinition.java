@@ -44,8 +44,10 @@ import org.apache.camel.util.ObjectHelper;
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> implements OutputNode {
     @XmlElementRef(name = "when")
     @AsPredicate
+    @Metadata(description = "Sets the when nodes")
     private List<WhenDefinition> whenClauses = new ArrayList<>();
     @XmlElement
+    @Metadata(description = "Sets the otherwise node")
     private OtherwiseDefinition otherwise;
 
     private transient boolean onlyWhenOrOtherwise = true;

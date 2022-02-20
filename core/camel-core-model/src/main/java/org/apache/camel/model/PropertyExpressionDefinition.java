@@ -63,6 +63,9 @@ public class PropertyExpressionDefinition {
         return expression;
     }
 
+    /**
+     * Property values as an expression
+     */
     public void setExpression(ExpressionDefinition expression) {
         this.expression = expression;
     }
