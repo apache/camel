@@ -277,6 +277,18 @@ public class FaceRecognitionInvalidParamsTest extends CamelTestSupport {
     }
 
     /**
+     * only one image source is set when operation is faceVerification
+     */
+    @Test
+    public void testFaceVerificationOnlyOneImageSet() {
+        Exception exception = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:face_verification_only_one_image_set", ""));
+        assertTrue(exception.getCause() instanceof IllegalArgumentException);
+        String expectedMessage = "any one of image base64, url and filePath needs to be set";
+        assertTrue(exception.getCause().getMessage().contains(expectedMessage));
+    }
+
+
+    /**
      * sources of two images do not match when operation is faceVerification
      * If imageBase64 is configured, then anotherImageBase64 needs to be configured
      * If imageUrl is configured, then anotherImageUrl needs to be configured

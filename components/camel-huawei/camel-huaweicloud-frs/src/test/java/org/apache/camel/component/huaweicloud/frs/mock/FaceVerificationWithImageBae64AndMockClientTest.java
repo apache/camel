@@ -24,7 +24,6 @@ import org.apache.camel.component.huaweicloud.frs.TestConfiguration;
 import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,6 +56,11 @@ public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSu
         };
     }
 
+    /**
+     * use imageBase64 to perform faceVerification
+     *
+     * @throws Exception
+     */
     @Test
     public void testFaceVerification() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:perform_face_verification_result");
@@ -67,7 +71,7 @@ public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSu
 
         assertTrue(responseExchange.getIn().getBody() instanceof CompareFaceByBase64Response);
         CompareFaceByBase64Response response = (CompareFaceByBase64Response) responseExchange.getIn().getBody();
-        Assertions.assertEquals(response.getImage1Face(), MockResult.getCompareFaceResult());
+        assertEquals(response.getImage1Face(), MockResult.getCompareFaceResult());
         assertEquals(response.getImage2Face(), MockResult.getCompareFaceResult());
         assertEquals(response.getSimilarity(), 1.0);
     }

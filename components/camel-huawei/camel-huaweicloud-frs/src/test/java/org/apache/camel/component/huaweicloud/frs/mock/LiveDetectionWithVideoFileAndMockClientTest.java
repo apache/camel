@@ -24,7 +24,6 @@ import org.apache.camel.component.huaweicloud.frs.TestConfiguration;
 import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,6 +55,11 @@ public class LiveDetectionWithVideoFileAndMockClientTest extends CamelTestSuppor
         };
     }
 
+    /**
+     * use videoFilePath to perform faceLiveDetection
+     *
+     * @throws Exception
+     */
     @Test
     public void testFaceDetection() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:perform_live_detection_result");
@@ -67,7 +71,7 @@ public class LiveDetectionWithVideoFileAndMockClientTest extends CamelTestSuppor
 
         assertTrue(responseExchange.getIn().getBody() instanceof DetectLiveByFileResponse);
         DetectLiveByFileResponse response = (DetectLiveByFileResponse) responseExchange.getIn().getBody();
-        Assertions.assertEquals(response.getVideoResult(), MockResult.getLiveDetectResult());
+        assertEquals(response.getVideoResult(), MockResult.getLiveDetectResult());
         assertEquals(response.getWarningList().size(), 0);
     }
 }

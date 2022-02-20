@@ -54,6 +54,11 @@ public class FaceDetectionWithImageUrlAndMockClientTest extends CamelTestSupport
         };
     }
 
+    /**
+     * use imageUrl to perform faceDetection
+     *
+     * @throws Exception
+     */
     @Test
     public void testFaceDetection() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:perform_face_detection_result");
