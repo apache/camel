@@ -6493,9 +6493,6 @@
           "route" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
           },
-          "routeId" : {
-            "type" : "string"
-          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -6572,9 +6569,6 @@
           },
           "route" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
-          },
-          "routeId" : {
-            "type" : "string"
           },
           "security" : {
             "type" : "array",
@@ -6653,9 +6647,6 @@
           "route" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
           },
-          "routeId" : {
-            "type" : "string"
-          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -6732,9 +6723,6 @@
           },
           "route" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
-          },
-          "routeId" : {
-            "type" : "string"
           },
           "security" : {
             "type" : "array",
@@ -6813,9 +6801,6 @@
           "route" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
           },
-          "routeId" : {
-            "type" : "string"
-          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -6892,9 +6877,6 @@
           },
           "route" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
-          },
-          "routeId" : {
-            "type" : "string"
           },
           "security" : {
             "type" : "array",
