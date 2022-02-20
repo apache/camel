@@ -6908,7 +6908,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.DMSEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Huawei Cloud Face Recognition Service (camel-huaweicloud-frs)
+     * Huawei Cloud Face Recognition Service (FRS) (camel-huaweicloud-frs)
      * Face Recognition Service (FRS) is an intelligent service that uses
      * computers to process, analyze, and understand facial images based on
      * human facial features.
@@ -6931,7 +6931,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.FaceRecognitionEndpointBuilderFactory.endpointBuilder("hwcloud-frs", path);
     }
     /**
-     * Huawei Cloud Face Recognition Service (camel-huaweicloud-frs)
+     * Huawei Cloud Face Recognition Service (FRS) (camel-huaweicloud-frs)
      * Face Recognition Service (FRS) is an intelligent service that uses
      * computers to process, analyze, and understand facial images based on
      * human facial features.

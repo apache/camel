@@ -37,7 +37,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the Huawei Cloud Face Recognition Service
+     * Builder for endpoint for the Huawei Cloud Face Recognition Service (FRS)
      * component.
      */
     public interface FaceRecognitionEndpointBuilder
@@ -537,7 +537,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
 
     public interface FaceRecognitionBuilders {
         /**
-         * Huawei Cloud Face Recognition Service (camel-huaweicloud-frs)
+         * Huawei Cloud Face Recognition Service (FRS) (camel-huaweicloud-frs)
          * Face Recognition Service (FRS) is an intelligent service that uses
          * computers to process, analyze, and understand facial images based on
          * human facial features.
@@ -559,7 +559,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
             return FaceRecognitionEndpointBuilderFactory.endpointBuilder("hwcloud-frs", path);
         }
         /**
-         * Huawei Cloud Face Recognition Service (camel-huaweicloud-frs)
+         * Huawei Cloud Face Recognition Service (FRS) (camel-huaweicloud-frs)
          * Face Recognition Service (FRS) is an intelligent service that uses
          * computers to process, analyze, and understand facial images based on
          * human facial features.
