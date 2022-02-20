@@ -140,8 +140,10 @@ public class PrepareExampleMojo extends AbstractMojo {
 
             if (updated) {
                 getLog().info("Updated readme.adoc file: " + file);
-            } else if (exists && getLog().isDebugEnabled()) {
-                getLog().debug("No changes to readme.adoc file: " + file);
+            } else if (exists) {
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("No changes to readme.adoc file: " + file);
+                }
             } else {
                 getLog().warn("No readme.adoc file: " + file);
             }

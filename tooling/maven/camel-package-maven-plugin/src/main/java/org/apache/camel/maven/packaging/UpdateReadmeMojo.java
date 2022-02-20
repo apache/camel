@@ -191,8 +191,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
-                    } else if (exists && getLog().isDebugEnabled()) {
-                        getLog().debug("No changes to doc file: " + file);
+                    } else if (exists) {
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("No changes to doc file: " + file);
+                        }
                     } else {
                         getLog().warn("No component doc file: " + file);
                         if (isFailFast()) {
@@ -237,8 +239,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
-                    } else if (exists && getLog().isDebugEnabled()) {
-                        getLog().debug("No changes to doc file: " + file);
+                    } else if (exists) {
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("No changes to doc file: " + file);
+                        }
                     } else {
                         getLog().warn("No component doc file: " + file);
                         if (isFailFast()) {
@@ -299,8 +303,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
-                    } else if (exists && getLog().isDebugEnabled()) {
-                        getLog().debug("No changes to doc file: " + file);
+                    } else if (exists) {
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("No changes to doc file: " + file);
+                        }
                     } else {
                         getLog().warn("No dataformat doc file: " + file);
                         if (isFailFast()) {
@@ -356,8 +362,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
-                    } else if (exists && getLog().isDebugEnabled()) {
-                        getLog().debug("No changes to doc file: " + file);
+                    } else if (exists) {
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("No changes to doc file: " + file);
+                        }
                     } else {
                         getLog().warn("No language doc file: " + file);
                         if (isFailFast()) {
@@ -415,8 +423,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
-                    } else if (exists && getLog().isDebugEnabled()) {
-                        getLog().debug("No changes to doc file: " + file);
+                    } else if (exists) {
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("No changes to doc file: " + file);
+                        }
                     } else {
                         getLog().warn("No eip doc file: " + file);
                         if (isFailFast()) {
