@@ -32,7 +32,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Face Recognition Service (FRS) is an intelligent service that uses computers to process, analyze, and understand
  * facial images based on human facial features.
  */
-@UriEndpoint(firstVersion = "3.15.0", scheme = "hwcloud-frs", title = "Huawei Cloud Face Recognition Service",
+@UriEndpoint(firstVersion = "3.15.0", scheme = "hwcloud-frs", title = "Huawei Cloud Face Recognition Service (FRS)",
              syntax = "hwcloud-frs:operation",
              category = { Category.CLOUD, Category.MESSAGING }, producerOnly = true)
 public class FaceRecognitionEndpoint extends DefaultEndpoint {

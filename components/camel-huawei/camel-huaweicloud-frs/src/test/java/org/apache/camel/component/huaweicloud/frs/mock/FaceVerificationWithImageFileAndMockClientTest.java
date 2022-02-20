@@ -14,21 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.huaweicloud.frs;
+package org.apache.camel.component.huaweicloud.frs.mock;
 
-import com.huaweicloud.sdk.frs.v2.model.CompareFaceByBase64Response;
+import com.huaweicloud.sdk.frs.v2.model.CompareFaceByFileResponse;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.huaweicloud.frs.TestConfiguration;
 import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSupport {
+public class FaceVerificationWithImageFileAndMockClientTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
     @BindToRegistry("frsClient")
@@ -38,10 +40,10 @@ public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSu
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64,
-                                constant(testConfiguration.getProperty("imageBase64")))
-                        .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64,
-                                constant(testConfiguration.getProperty("anotherImageBase64")))
+                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_FILE_PATH,
+                                constant(testConfiguration.getProperty("imageFilePath")))
+                        .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_FILE_PATH,
+                                constant(testConfiguration.getProperty("anotherImageFilePath")))
                         .to("hwcloud-frs:faceVerification?"
                             + "accessKey=" + testConfiguration.getProperty("accessKey")
                             + "&secretKey=" + testConfiguration.getProperty("secretKey")
@@ -63,9 +65,9 @@ public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSu
         Exchange responseExchange = mock.getExchanges().get(0);
         mock.assertIsSatisfied();
 
-        assertTrue(responseExchange.getIn().getBody() instanceof CompareFaceByBase64Response);
-        CompareFaceByBase64Response response = (CompareFaceByBase64Response) responseExchange.getIn().getBody();
-        assertEquals(response.getImage1Face(), MockResult.getCompareFaceResult());
+        assertTrue(responseExchange.getIn().getBody() instanceof CompareFaceByFileResponse);
+        CompareFaceByFileResponse response = (CompareFaceByFileResponse) responseExchange.getIn().getBody();
+        Assertions.assertEquals(response.getImage1Face(), MockResult.getCompareFaceResult());
         assertEquals(response.getImage2Face(), MockResult.getCompareFaceResult());
         assertEquals(response.getSimilarity(), 1.0);
     }
