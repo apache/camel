@@ -77,7 +77,16 @@ export $CAMEL_VAULT_AWS_SECRET_KEY=secretKey
 export $CAMEL_VAULT_AWS_REGION=region
 ----
 
-At this point you'll be able to reference a property in the following way:
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.aws.accessKey = accessKey
+camel.vault.aws.secretKey = secretKey
+camel.vault.aws.region = region
+----
+
+At this point you'll be able to reference a property in the following way by using `aws:` as prefix in the `{{ }}` syntax:
 
 [source,xml]
 ----
@@ -89,11 +98,11 @@ At this point you'll be able to reference a property in the following way:
 </camelContext>
 ----
 
-Where route will be the name of the secret stored in the AWS Secrets Manager Service.
+Where `route` will be the name of the secret stored in the AWS Secrets Manager Service.
 
-Also you are able to get particular field of the secret, if you have for example a secret named database of this form:
+Also, you are able to get particular field of the secret, if you have for example a secret named database of this form:
 
-[source,bash]
+[source,json]
 ----
 {
   "username": "admin",
@@ -119,8 +128,7 @@ You're able to do get single secret value in your route, like for example:
 
 Or re-use the property as part of an endpoint.
 
-For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
+NOTE: For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
 
-The only requirement is adding the camel-aws-secrets-manager jar to your Camel application.
-
+The only requirement is adding `camel-aws-secrets-manager` JAR to your Camel application.
 
