@@ -151,7 +151,7 @@
 ** xref:hdfs-component.adoc[HDFS]
 ** xref:http-component.adoc[HTTP]
 ** xref:hwcloud-summary.adoc[Huawei Cloud]
-*** xref:hwcloud-frs-component.adoc[Huawei Cloud Face Recognition Service]
+*** xref:hwcloud-frs-component.adoc[Huawei Cloud Face Recognition Service (FRS)]
 *** xref:hwcloud-imagerecognition-component.adoc[Huawei Cloud Image Recognition]
 *** xref:hwcloud-dms-component.adoc[Huawei Distributed Message Service (DMS)]
 *** xref:hwcloud-functiongraph-component.adoc[Huawei FunctionGraph]

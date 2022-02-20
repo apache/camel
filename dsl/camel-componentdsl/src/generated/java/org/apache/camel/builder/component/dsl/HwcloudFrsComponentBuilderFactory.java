@@ -33,7 +33,7 @@ import org.apache.camel.component.huaweicloud.frs.FaceRecognitionComponent;
 public interface HwcloudFrsComponentBuilderFactory {
 
     /**
-     * Huawei Cloud Face Recognition Service (camel-huaweicloud-frs)
+     * Huawei Cloud Face Recognition Service (FRS) (camel-huaweicloud-frs)
      * Face Recognition Service (FRS) is an intelligent service that uses
      * computers to process, analyze, and understand facial images based on
      * human facial features.
@@ -49,7 +49,7 @@ public interface HwcloudFrsComponentBuilderFactory {
     }
 
     /**
-     * Builder for the Huawei Cloud Face Recognition Service component.
+     * Builder for the Huawei Cloud Face Recognition Service (FRS) component.
      */
     interface HwcloudFrsComponentBuilder
             extends
