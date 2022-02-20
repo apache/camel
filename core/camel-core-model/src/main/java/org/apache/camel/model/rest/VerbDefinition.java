@@ -103,8 +103,6 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     private RouteDefinition route;
     @XmlTransient
     private RestDefinition rest;
-    @XmlTransient
-    private Boolean usedForGeneratingNodeId = Boolean.FALSE;
 
     @Override
     public String getShortName() {
@@ -462,11 +460,4 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
 
     public abstract String asVerb();
 
-    public Boolean getUsedForGeneratingNodeId() {
-        return usedForGeneratingNodeId;
-    }
-
-    public void setUsedForGeneratingNodeId(Boolean usedForGeneratingNodeId) {
-        this.usedForGeneratingNodeId = usedForGeneratingNodeId;
-    }
 }

@@ -15,6 +15,8 @@ Previously when Camel detected a duplicate type converter during startup, Camel 
 override the existing converter and log a WARN. A more correct behaviour would be
 to keep the existing and ignore the duplicate.
 
+Removed the deprecated class `org.apache.camel.impl.RouteIdFactory`.
+
 ==== Rest DSL
 
 The generic verb-based definition, where the HTTP verb can be specified as a string value
