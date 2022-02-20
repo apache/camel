@@ -11842,8 +11842,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "security-definitions", type = "object:org.apache.camel.model.rest.RestSecuritiesDefinition"),
                     @YamlProperty(name = "security-requirements", type = "object:org.apache.camel.model.rest.RestSecuritiesRequirement"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
-                    @YamlProperty(name = "tag", type = "string"),
-                    @YamlProperty(name = "verbs", type = "array:org.apache.camel.model.rest.VerbDefinition")
+                    @YamlProperty(name = "tag", type = "string")
             }
     )
     public static class RestDefinitionDeserializer extends YamlDeserializerBase<RestDefinition> {
@@ -11973,11 +11972,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     java.util.List val = asFlatList(node, org.apache.camel.model.rest.PutDefinition.class);
                     existing.addAll(val);
                     target.setVerbs(existing);
-                    break;
-                }
-                case "verbs": {
-                    java.util.List<org.apache.camel.model.rest.VerbDefinition> val = asFlatList(node, org.apache.camel.model.rest.VerbDefinition.class);
-                    target.setVerbs(val);
                     break;
                 }
                 case "id": {

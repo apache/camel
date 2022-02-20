@@ -820,6 +820,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                 false)
                         );
                     });
+                    return true;
                 }
             }
         }

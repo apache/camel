@@ -7146,12 +7146,6 @@
           },
           "tag" : {
             "type" : "string"
-          },
-          "verbs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.VerbDefinition"
-            }
           }
         }
       },
