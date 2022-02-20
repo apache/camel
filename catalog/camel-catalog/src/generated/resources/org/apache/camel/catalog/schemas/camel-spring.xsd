@@ -13915,13 +13915,6 @@ value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="routeId" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The route id this rest-dsl is using (read-only).
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="apiDocs" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
