@@ -1003,16 +1003,24 @@ public abstract class BaseMainSupport extends BaseService {
             boolean failIfNotSet, Map<String, String> autoConfiguredProperties)
             throws Exception {
 
-        HealthCheckRegistry hcr = camelContext.getExtension(HealthCheckRegistry.class);
-        if (hcr == null) {
-            LOG.warn("Cannot find HealthCheckRegistry from classpath. Add camel-health to classpath.");
-            return;
-        }
-
         HealthConfigurationProperties health = mainConfigurationProperties.health();
 
         setPropertiesOnTarget(camelContext, health, healthCheckProperties, "camel.health.",
                 mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+
+        if (health.getEnabled() != null && !health.getEnabled()) {
+            // health-check is disabled
+            return;
+        }
+
+        // auto-detect camel-health on classpath
+        HealthCheckRegistry hcr = camelContext.getExtension(HealthCheckRegistry.class);
+        if (hcr == null) {
+            if (health.getEnabled() != null && health.getEnabled()) {
+                LOG.warn("Cannot find HealthCheckRegistry from classpath. Add camel-health to classpath.");
+            }
+            return;
+        }
 
         if (health.getEnabled() != null) {
             hcr.setEnabled(health.getEnabled());
