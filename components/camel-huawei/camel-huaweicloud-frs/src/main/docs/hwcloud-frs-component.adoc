@@ -1,5 +1,5 @@
 = Huawei Cloud Face Recognition Service Component
-:doctitle: Huawei Cloud Face Recognition Service
+:doctitle: Huawei Cloud Face Recognition Service (FRS)
 :shortname: hwcloud-frs
 :artifactid: camel-huaweicloud-frs
 :description: Face Recognition Service (FRS) is an intelligent service that uses computers to process, analyze, and understand facial images based on human facial features.
@@ -125,8 +125,8 @@ Java DSL
 [source,java]
 ----
 from("direct:triggerRoute")
-  .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64, RAW("/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk..."))
-  .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64, RAW("/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgFBgcGBQgHBgcJCAgJDBMMDAsLDBgREg4THBgdHRsYGxofIywlHyEqIRobJjQnKi4vMTIxHiU2Os..."))
+  .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64, constant("/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk..."))
+  .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64, constant("/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgFBgcGBQgHBgcJCAgJDBMMDAsLDBgREg4THBgdHRsYGxofIywlHyEqIRobJjQnKi4vMTIxHiU2Os..."))
   .to("hwcloud-frs:faceVerification?accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
 ----
 

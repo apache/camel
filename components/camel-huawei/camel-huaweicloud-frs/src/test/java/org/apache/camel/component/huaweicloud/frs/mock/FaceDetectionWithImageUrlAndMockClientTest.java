@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.huaweicloud.frs;
+package org.apache.camel.component.huaweicloud.frs.mock;
 
-import com.huaweicloud.sdk.frs.v2.model.DetectFaceByBase64Response;
+import com.huaweicloud.sdk.frs.v2.model.DetectFaceByUrlResponse;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.huaweicloud.frs.TestConfiguration;
 import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -28,7 +29,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FaceDetectionWithImageBae64AndMockClientTest extends CamelTestSupport {
+public class FaceDetectionWithImageUrlAndMockClientTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
     @BindToRegistry("frsClient")
@@ -38,8 +39,8 @@ public class FaceDetectionWithImageBae64AndMockClientTest extends CamelTestSuppo
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64,
-                                constant(testConfiguration.getProperty("imageBase64")))
+                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_URL,
+                                constant(testConfiguration.getProperty("imageUrl")))
                         .to("hwcloud-frs:faceDetection?"
                             + "accessKey=" + testConfiguration.getProperty("accessKey")
                             + "&secretKey=" + testConfiguration.getProperty("secretKey")
@@ -53,6 +54,11 @@ public class FaceDetectionWithImageBae64AndMockClientTest extends CamelTestSuppo
         };
     }
 
+    /**
+     * use imageUrl to perform faceDetection
+     *
+     * @throws Exception
+     */
     @Test
     public void testFaceDetection() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:perform_face_detection_result");
@@ -62,8 +68,8 @@ public class FaceDetectionWithImageBae64AndMockClientTest extends CamelTestSuppo
 
         mock.assertIsSatisfied();
 
-        assertTrue(responseExchange.getIn().getBody() instanceof DetectFaceByBase64Response);
-        DetectFaceByBase64Response response = (DetectFaceByBase64Response) responseExchange.getIn().getBody();
+        assertTrue(responseExchange.getIn().getBody() instanceof DetectFaceByUrlResponse);
+        DetectFaceByUrlResponse response = (DetectFaceByUrlResponse) responseExchange.getIn().getBody();
         assertEquals(response.getFaces(), MockResult.getFaceDetectionResult());
     }
 

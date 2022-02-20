@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.huaweicloud.frs;
+package org.apache.camel.component.huaweicloud.frs.real;
 
-import com.huaweicloud.sdk.frs.v2.model.CompareFaceByUrlResponse;
+import com.huaweicloud.sdk.frs.v2.model.DetectFaceByFileResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.huaweicloud.frs.TestConfiguration;
 import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -27,25 +28,23 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FaceVerificationWithImageUrlTest extends CamelTestSupport {
+public class FaceDetectionWithImageFileTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_URL,
-                                constant(testConfiguration.getProperty("imageUrl")))
-                        .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_URL,
-                                constant(testConfiguration.getProperty("anotherImageUrl")))
-                        .to("hwcloud-frs:faceVerification?"
+                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_FILE_PATH,
+                                constant(testConfiguration.getProperty("imageFilePath")))
+                        .to("hwcloud-frs:faceDetection?"
                             + "accessKey=" + testConfiguration.getProperty("accessKey")
                             + "&secretKey=" + testConfiguration.getProperty("secretKey")
                             + "&projectId=" + testConfiguration.getProperty("projectId")
                             + "&region=" + testConfiguration.getProperty("region")
                             + "&ignoreSslVerification=true")
-                        .log("perform faceVerification successfully")
-                        .to("mock:perform_face_verification_result");
+                        .log("perform faceDetection successful")
+                        .to("mock:perform_face_detection_result");
             }
         };
     }
@@ -60,14 +59,14 @@ public class FaceVerificationWithImageUrlTest extends CamelTestSupport {
     @Test
     @Disabled("Manually comment out this line once you configure service parameters in placeholders above")
     public void testCelebrityRecognition() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:perform_face_verification_result");
+        MockEndpoint mock = getMockEndpoint("mock:perform_face_detection_result");
         mock.expectedMinimumMessageCount(1);
         template.sendBody("direct:trigger_route", "");
         Exchange responseExchange = mock.getExchanges().get(0);
 
         mock.assertIsSatisfied();
 
-        assertTrue(responseExchange.getIn().getBody() instanceof CompareFaceByUrlResponse);
+        assertTrue(responseExchange.getIn().getBody() instanceof DetectFaceByFileResponse);
     }
 
 }

@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.huaweicloud.frs;
+package org.apache.camel.component.huaweicloud.frs.mock;
 
-import com.huaweicloud.sdk.frs.v2.model.DetectLiveByFileResponse;
+import com.huaweicloud.sdk.frs.v2.model.DetectLiveByBase64Response;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.huaweicloud.frs.TestConfiguration;
 import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -28,7 +29,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LiveDetectionWithVideoFileAndMockClientTest extends CamelTestSupport {
+public class LiveDetectionWithVideoBae64AndMockClientTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
     @BindToRegistry("frsClient")
@@ -38,8 +39,8 @@ public class LiveDetectionWithVideoFileAndMockClientTest extends CamelTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(FaceRecognitionProperties.FACE_VIDEO_FILE_PATH,
-                                constant(testConfiguration.getProperty("videoFilePath")))
+                        .setProperty(FaceRecognitionProperties.FACE_VIDEO_BASE64,
+                                constant(testConfiguration.getProperty("videoBase64")))
                         .to("hwcloud-frs:faceLiveDetection?"
                             + "accessKey=" + testConfiguration.getProperty("accessKey")
                             + "&secretKey=" + testConfiguration.getProperty("secretKey")
@@ -54,6 +55,11 @@ public class LiveDetectionWithVideoFileAndMockClientTest extends CamelTestSuppor
         };
     }
 
+    /**
+     * use videoBase64 to perform faceLiveDetection
+     *
+     * @throws Exception
+     */
     @Test
     public void testFaceDetection() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:perform_live_detection_result");
@@ -63,9 +69,10 @@ public class LiveDetectionWithVideoFileAndMockClientTest extends CamelTestSuppor
 
         mock.assertIsSatisfied();
 
-        assertTrue(responseExchange.getIn().getBody() instanceof DetectLiveByFileResponse);
-        DetectLiveByFileResponse response = (DetectLiveByFileResponse) responseExchange.getIn().getBody();
+        assertTrue(responseExchange.getIn().getBody() instanceof DetectLiveByBase64Response);
+        DetectLiveByBase64Response response = (DetectLiveByBase64Response) responseExchange.getIn().getBody();
         assertEquals(response.getVideoResult(), MockResult.getLiveDetectResult());
         assertEquals(response.getWarningList().size(), 0);
     }
+
 }

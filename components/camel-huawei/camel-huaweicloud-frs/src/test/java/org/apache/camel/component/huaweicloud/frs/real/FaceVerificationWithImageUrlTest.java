@@ -14,57 +14,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.huaweicloud.frs;
+package org.apache.camel.component.huaweicloud.frs.real;
 
-import com.huaweicloud.sdk.frs.v2.model.DetectFaceByFileResponse;
-import org.apache.camel.BindToRegistry;
+import com.huaweicloud.sdk.frs.v2.model.CompareFaceByUrlResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.huaweicloud.frs.TestConfiguration;
 import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FaceDetectionWithImageFileAndMockClientTest extends CamelTestSupport {
+public class FaceVerificationWithImageUrlTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
-
-    @BindToRegistry("frsClient")
-    FrsClientMock frsClient = new FrsClientMock(null);
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_FILE_PATH,
-                                constant(testConfiguration.getProperty("imageFilePath")))
-                        .to("hwcloud-frs:faceDetection?"
+                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_URL,
+                                constant(testConfiguration.getProperty("imageUrl")))
+                        .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_URL,
+                                constant(testConfiguration.getProperty("anotherImageUrl")))
+                        .to("hwcloud-frs:faceVerification?"
                             + "accessKey=" + testConfiguration.getProperty("accessKey")
                             + "&secretKey=" + testConfiguration.getProperty("secretKey")
                             + "&projectId=" + testConfiguration.getProperty("projectId")
                             + "&region=" + testConfiguration.getProperty("region")
-                            + "&ignoreSslVerification=true"
-                            + "&frsClient=#frsClient")
-                        .log("perform faceDetection successful")
-                        .to("mock:perform_face_detection_result");
+                            + "&ignoreSslVerification=true")
+                        .log("perform faceVerification successfully")
+                        .to("mock:perform_face_verification_result");
             }
         };
     }
 
+    /**
+     * Following test cases should be manually enabled to perform test against the actual Huawei Cloud Face Recognition
+     * service with real user credentials. To perform this test, manually comment out the @Disabled annotation and enter
+     * relevant service parameters in the placeholders above (static variables of this test class)
+     *
+     * @throws Exception Exception
+     */
     @Test
-    public void testFaceDetection() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:perform_face_detection_result");
+    @Disabled("Manually comment out this line once you configure service parameters in placeholders above")
+    public void testCelebrityRecognition() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:perform_face_verification_result");
         mock.expectedMinimumMessageCount(1);
         template.sendBody("direct:trigger_route", "");
         Exchange responseExchange = mock.getExchanges().get(0);
 
         mock.assertIsSatisfied();
 
-        assertTrue(responseExchange.getIn().getBody() instanceof DetectFaceByFileResponse);
-        DetectFaceByFileResponse response = (DetectFaceByFileResponse) responseExchange.getIn().getBody();
-        assertEquals(response.getFaces(), MockResult.getFaceDetectionResult());
+        assertTrue(responseExchange.getIn().getBody() instanceof CompareFaceByUrlResponse);
     }
 
 }

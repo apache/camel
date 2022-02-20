@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.huaweicloud.frs;
+package org.apache.camel.component.huaweicloud.frs.real;
 
-import com.huaweicloud.sdk.frs.v2.model.DetectFaceByFileResponse;
+import com.huaweicloud.sdk.frs.v2.model.DetectFaceByBase64Response;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.huaweicloud.frs.TestConfiguration;
 import org.apache.camel.component.huaweicloud.frs.constants.FaceRecognitionProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -27,15 +28,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FaceDetectionWithImageFileTest extends CamelTestSupport {
+public class FaceDetectionWithImageBae64Test extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_FILE_PATH,
-                                constant(testConfiguration.getProperty("imageFilePath")))
+                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64,
+                                constant(testConfiguration.getProperty("imageBase64")))
                         .to("hwcloud-frs:faceDetection?"
                             + "accessKey=" + testConfiguration.getProperty("accessKey")
                             + "&secretKey=" + testConfiguration.getProperty("secretKey")
@@ -65,7 +66,7 @@ public class FaceDetectionWithImageFileTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertTrue(responseExchange.getIn().getBody() instanceof DetectFaceByFileResponse);
+        assertTrue(responseExchange.getIn().getBody() instanceof DetectFaceByBase64Response);
     }
 
 }
