@@ -60,6 +60,8 @@ import io.swagger.models.properties.LongProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestOperationParamDefinition;
 import org.apache.camel.model.rest.RestOperationResponseHeaderDefinition;
@@ -89,6 +91,7 @@ public class RestSwaggerReader {
     /**
      * Read the REST-DSL definition's and parse that as a Swagger model representation
      *
+     * @param  camelContext           the camel context
      * @param  rests                  the rest-dsl
      * @param  config                 the swagger configuration
      * @param  classResolver          class resolver to use
@@ -96,12 +99,13 @@ public class RestSwaggerReader {
      * @throws ClassNotFoundException
      */
     public Swagger read(
+            CamelContext camelContext,
             List<RestDefinition> rests, BeanConfig config, String camelContextId, ClassResolver classResolver)
             throws ClassNotFoundException {
         Swagger swagger = new Swagger();
 
         for (RestDefinition rest : rests) {
-            parse(swagger, rest, camelContextId, classResolver);
+            parse(camelContext, swagger, rest, camelContextId, classResolver);
         }
 
         // configure before returning
@@ -109,7 +113,8 @@ public class RestSwaggerReader {
         return swagger;
     }
 
-    private void parse(Swagger swagger, RestDefinition rest, String camelContextId, ClassResolver classResolver)
+    private void parse(
+            CamelContext camelContext, Swagger swagger, RestDefinition rest, String camelContextId, ClassResolver classResolver)
             throws ClassNotFoundException {
         List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
         // must sort the verbs by uri so we group them together when an uri has multiple operations
@@ -219,10 +224,11 @@ public class RestSwaggerReader {
             appendModels(clazz, swagger);
         }
 
-        doParseVerbs(swagger, rest, camelContextId, verbs, pathAsTag);
+        doParseVerbs(camelContext, swagger, rest, camelContextId, verbs, pathAsTag);
     }
 
     private void doParseVerbs(
+            CamelContext camelContext,
             Swagger swagger, RestDefinition rest, String camelContextId, List<VerbDefinition> verbs, String pathAsTag) {
         String basePath = rest.getPath();
 
@@ -249,7 +255,6 @@ public class RestSwaggerReader {
                 op.addTag(pathAsTag);
             }
 
-            final String routeId = verb.getRouteId();
             // favour ids from verb, rest, route
             final String operationId;
             if (verb.getId() != null) {
@@ -257,13 +262,13 @@ public class RestSwaggerReader {
             } else if (rest.getId() != null) {
                 operationId = rest.getId();
             } else {
-                operationId = routeId;
+                verb.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+                operationId = verb.getId();
             }
             op.operationId(operationId);
 
             // add id as vendor extensions
             op.getVendorExtensions().put("x-camelContextId", camelContextId);
-            op.getVendorExtensions().put("x-routeId", routeId);
 
             Path path = swagger.getPath(opPath);
             if (path == null) {

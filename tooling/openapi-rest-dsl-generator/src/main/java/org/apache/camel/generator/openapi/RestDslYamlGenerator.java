@@ -54,7 +54,7 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
 
     private static final String[] VERBS = new String[] { "delete", "get", "head", "patch", "post", "put" };
     private static final String[] FIELD_ORDER
-            = new String[] { "id", "uri", "description", "consumes", "produces", "type", "outType", "param" };
+            = new String[] { "id", "path", "description", "consumes", "produces", "type", "outType", "param" };
 
     RestDslYamlGenerator(final OasDocument document) {
         super(document);

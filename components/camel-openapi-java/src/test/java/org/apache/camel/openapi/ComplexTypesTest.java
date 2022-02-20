@@ -163,7 +163,7 @@ public class ComplexTypesTest extends CamelTestSupport {
         input = input.replaceAll("\"openapi\" : \"3\\..*\",", "\"openapi\" : \"3.x\",");
         input = input.replaceAll("\"swagger\" : \"2\\..*\",", "\"swagger\" : \"2.x\",");
         input = input.replaceAll("\"operationId\" : \"verb.*\",", "\"operationId\" : \"verb\",");
-        input = input.replaceAll("\"x-camelContextId\" : \"camel.*\",", "\"x-camelContextId\" : \"camel\",");
+        input = input.replaceAll("\"x-camelContextId\" : \"camel.*\"", "\"x-camelContextId\" : \"camel\"");
         return input;
     }
 }

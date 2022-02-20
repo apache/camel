@@ -69,8 +69,6 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     @Metadata(javaType = "java.lang.Boolean")
     private String enableCORS;
     @XmlAttribute
-    private String routeId;
-    @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String apiDocs;
     @XmlAttribute
@@ -315,17 +313,6 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
      */
     public void setOutTypeClass(Class<?> outTypeClass) {
         this.outTypeClass = outTypeClass;
-    }
-
-    public String getRouteId() {
-        return routeId;
-    }
-
-    /**
-     * The route id this rest-dsl is using (read-only)
-     */
-    public void setRouteId(String routeId) {
-        this.routeId = routeId;
     }
 
     public String getApiDocs() {

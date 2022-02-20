@@ -84,7 +84,7 @@ public class RestSwaggerReaderEnableVendorExtensionTest extends CamelTestSupport
         RestSwaggerReader reader = new RestSwaggerReader();
 
         Swagger swagger
-                = reader.read(context.getRestDefinitions(), config, context.getName(), new DefaultClassResolver());
+                = reader.read(context, context.getRestDefinitions(), config, context.getName(), new DefaultClassResolver());
         assertNotNull(swagger);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -95,14 +95,12 @@ public class RestSwaggerReaderEnableVendorExtensionTest extends CamelTestSupport
         LOG.info(json);
 
         String camelId = context.getName();
-        String routeId = context.getRouteDefinitions().get(0).getId();
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
         assertTrue(json.contains("\"description\" : \"The user returned\""));
         assertTrue(json.contains("\"$ref\" : \"#/definitions/User\""));
         assertFalse(json.contains("\"enum\""));
         assertTrue(json.contains("\"x-camelContextId\" : \"" + camelId + "\""));
-        assertTrue(json.contains("\"x-routeId\" : \"" + routeId + "\""));
         context.stop();
     }
 

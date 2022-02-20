@@ -31,8 +31,7 @@
         },
         "operationId" : "verb",
         "summary" : "Demo complex response type",
-        "x-camelContextId" : "camel",
-        "x-routeId" : "complex response type"
+        "x-camelContextId" : "camel"
       }
     }
   },

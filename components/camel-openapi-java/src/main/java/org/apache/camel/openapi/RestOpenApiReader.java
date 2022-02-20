@@ -81,6 +81,7 @@ import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
 import io.swagger.v3.oas.models.media.PasswordSchema;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestOperationParamDefinition;
 import org.apache.camel.model.rest.RestOperationResponseHeaderDefinition;
@@ -522,7 +523,6 @@ public class RestOpenApiReader {
                 op.tags.add(pathAsTag);
             }
 
-            final String routeId = getValue(camelContext, verb.getRouteId());
             // favour ids from verb, rest, route
             final String operationId;
             if (verb.getId() != null) {
@@ -530,7 +530,8 @@ public class RestOpenApiReader {
             } else if (rest.getId() != null) {
                 operationId = getValue(camelContext, rest.getId());
             } else {
-                operationId = routeId;
+                verb.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+                operationId = verb.getId();
             }
             op.operationId = operationId;
 
@@ -540,8 +541,6 @@ public class RestOpenApiReader {
             extension.value = camelContextId;
             op.addExtension(extension.name, extension);
             extension = op.createExtension();
-            extension.name = "x-routeId";
-            extension.value = routeId;
             op.addExtension(extension.name, extension);
             path = setPathOperation(path, op, method);
 

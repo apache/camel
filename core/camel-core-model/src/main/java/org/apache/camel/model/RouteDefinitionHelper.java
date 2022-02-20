@@ -196,12 +196,6 @@ public final class RouteDefinitionHelper {
             }
             RestDefinition rest = route.getRestDefinition();
             if (rest != null && route.isRest()) {
-                VerbDefinition verb = findVerbDefinition(rest, route.getInput().getEndpointUri());
-                if (verb != null && verb.getRouteId() == null) {
-                    String id = verb.idOrCreate(ecc.getNodeIdFactory());
-                    verb.setRouteId(id);
-                }
-
                 // if its the rest/rest-api endpoints then they should include
                 // the route id as well
                 if (ObjectHelper.isNotEmpty(route.getInput())) {

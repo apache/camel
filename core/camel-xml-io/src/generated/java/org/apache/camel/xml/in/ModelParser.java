@@ -2818,7 +2818,6 @@ public class ModelParser extends BaseParser {
                 case "outType": def.setOutType(val); break;
                 case "path": def.setPath(val); break;
                 case "produces": def.setProduces(val); break;
-                case "routeId": def.setRouteId(val); break;
                 case "skipBindingOnErrorCode": def.setSkipBindingOnErrorCode(val); break;
                 case "type": def.setType(val); break;
                 default: return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);

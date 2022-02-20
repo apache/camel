@@ -92,11 +92,6 @@ public interface RestRegistry extends Service {
         String getOutType();
 
         /**
-         * Gets the id of the route this rest service will be using.
-         */
-        String getRouteId();
-
-        /**
          * Optional description about this rest service.
          */
         String getDescription();
