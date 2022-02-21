@@ -55,7 +55,7 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
         }
     }
 
-    @DisplayName("Tests whether we can resume from an offset")
+    @DisplayName("Tests whether it can resume from an offset")
     @Test
     public void testResumeFromOffset() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -63,12 +63,23 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.FILE_NAME, "resume-from-offset.txt");
-        headers.put("CamelOffset", Resumables.of("resume-from-offset.txt", 3L));
+        headers.put(Exchange.OFFSET, Resumables.of("resume-from-offset.txt", 3L));
 
         template.sendBodyAndHeaders(fileUri("resumeOff"), "01234567890", headers);
 
         // only expect 4 of the 6 sent
         assertMockEndpointsSatisfied();
+    }
+
+    @DisplayName("Tests whether it a missing offset causes a failure")
+    @Test
+    public void testMissingOffset() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceivedInAnyOrder("34567890");
+
+        template.sendBodyAndHeader(fileUri("resumeMissingOffset"), "01234567890", Exchange.FILE_NAME, "resume-from-offset.txt");
+
+        mock.assertIsNotSatisfied();
     }
 
     @DisplayName("Tests whether we can start from the beginning (i.e.: no resume strategy)")
@@ -92,7 +103,14 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
                 bindToRegistry("resumeStrategy", new TestResumeStrategy());
 
                 from(fileUri("resumeOff?noop=true&recursive=true"))
-                        .resumable().header("CamelOffset").resumableStrategyRef("resumeStrategy")
+                        .setHeader(Exchange.OFFSET,
+                                constant(Resumables.of("resume-none.txt", 3)))
+                        .resumable().resumableStrategyRef("resumeStrategy")
+                        .log("${body}")
+                        .convertBodyTo(String.class).to("mock:result");
+
+                from(fileUri("resumeMissingOffset?noop=true&recursive=true"))
+                        .resumable().resumableStrategyRef("resumeStrategy")
                         .log("${body}")
                         .convertBodyTo(String.class).to("mock:result");
 
