@@ -35,6 +35,8 @@ public class GoogleCloudIT extends CamelTestSupport {
 
     @EndpointInject("mock:createSecret")
     private MockEndpoint mockSecret;
+    @EndpointInject("mock:getSecret")
+    private MockEndpoint mockGetSecret;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -53,6 +55,16 @@ public class GoogleCloudIT extends CamelTestSupport {
                             + serviceAccountKeyFile + "&operation=createSecret")
                         .to("mock:createSecret");
 
+                from("direct:getSecretVersion").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getMessage().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test123");
+                        exchange.getMessage().setHeader(GoogleSecretManagerConstants.VERSION_ID, "1");
+                    }
+                }).to("google-secret-manager://" + project + "?serviceAccountKey="
+                      + serviceAccountKeyFile + "&operation=getSecretVersion").log("${body}")
+                        .to("mock:getSecret");
+
             }
         };
     }
@@ -61,6 +73,9 @@ public class GoogleCloudIT extends CamelTestSupport {
     public void sendIn() throws Exception {
 
         mockSecret.expectedMessageCount(1);
+        mockGetSecret.expectedMessageCount(1);
+        Thread.sleep(10000);
+        template.requestBody("direct:getSecretVersion", "Hello");
         Thread.sleep(10000);
     }
 

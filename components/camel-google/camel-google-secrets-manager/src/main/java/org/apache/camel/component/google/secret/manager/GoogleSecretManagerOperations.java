@@ -19,5 +19,6 @@ package org.apache.camel.component.google.secret.manager;
 public enum GoogleSecretManagerOperations {
 
     createSecret,
+    getSecretVersion,
     deleteSecret;
 }

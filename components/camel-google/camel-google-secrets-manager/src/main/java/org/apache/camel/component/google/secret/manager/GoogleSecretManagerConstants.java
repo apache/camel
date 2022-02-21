@@ -19,5 +19,6 @@ package org.apache.camel.component.google.secret.manager;
 public interface GoogleSecretManagerConstants {
     String OPERATION = "GoogleSecretManagerOperation";
     String SECRET_ID = "CamelGoogleSecretManagerSecretId";
+    String VERSION_ID = "CamelGoogleSecretManagerVersionId";
     String REPLICATION = "CamelGoogleSecretManagerReplication";
 }

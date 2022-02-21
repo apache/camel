@@ -16,13 +16,7 @@
  */
 package org.apache.camel.component.google.secret.manager;
 
-import com.google.cloud.secretmanager.v1.AddSecretVersionRequest;
-import com.google.cloud.secretmanager.v1.ProjectName;
-import com.google.cloud.secretmanager.v1.Replication;
-import com.google.cloud.secretmanager.v1.Secret;
-import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
-import com.google.cloud.secretmanager.v1.SecretPayload;
-import com.google.cloud.secretmanager.v1.SecretVersion;
+import com.google.cloud.secretmanager.v1.*;
 import com.google.protobuf.ByteString;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -50,7 +44,9 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
             case createSecret:
                 createSecret(endpoint.getClient(), exchange);
                 break;
-
+            case getSecretVersion:
+                getSecretVersion(endpoint.getClient(), exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -78,6 +74,22 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(response);
+    }
+
+    private void getSecretVersion(SecretManagerServiceClient client, Exchange exchange) throws InvalidPayloadException {
+        AccessSecretVersionResponse response;
+        if (getConfiguration().isPojoRequest()) {
+            AccessSecretVersionRequest request = exchange.getIn().getMandatoryBody(AccessSecretVersionRequest.class);
+            response = client.accessSecretVersion(request);
+        } else {
+            String secretId = exchange.getMessage().getHeader(GoogleSecretManagerConstants.SECRET_ID, String.class);
+            String versionId = exchange.getMessage().getHeader(GoogleSecretManagerConstants.VERSION_ID, String.class);
+            String projectId = getConfiguration().getProject();
+            SecretVersionName secretVersionName = SecretVersionName.of(projectId, secretId, versionId);
+            response = client.accessSecretVersion(secretVersionName);
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(response.getPayload().getData().toStringUtf8());
     }
 
     private GoogleSecretManagerOperations determineOperation(Exchange exchange) {
