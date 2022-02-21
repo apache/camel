@@ -6233,7 +6233,7 @@ public abstract class AbstractJavadocMojo
             }
             catch ( ProjectBuildingException e )
             {
-                logError( "ProjectBuildingException for " + artifact.toString() + ": " + e.getMessage(), e );
+                logError( "ProjectBuildingException for " + artifact + ": " + e.getMessage(), e );
             }
         }
 
