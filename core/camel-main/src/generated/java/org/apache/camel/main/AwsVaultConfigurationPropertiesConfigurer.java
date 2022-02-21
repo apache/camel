@@ -23,6 +23,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "AccessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "awsvaultconfiguration":
+        case "AwsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
         case "region":
         case "Region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
@@ -36,6 +38,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "AccessKey": return java.lang.String.class;
+        case "awsvaultconfiguration":
+        case "AwsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
         case "region":
         case "Region": return java.lang.String.class;
         case "secretkey":
@@ -50,6 +54,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "AccessKey": return target.getAccessKey();
+        case "awsvaultconfiguration":
+        case "AwsVaultConfiguration": return target.getAwsVaultConfiguration();
         case "region":
         case "Region": return target.getRegion();
         case "secretkey":

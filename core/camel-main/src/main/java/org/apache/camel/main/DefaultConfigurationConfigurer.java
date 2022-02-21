@@ -83,6 +83,8 @@ import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.vault.AwsVaultConfiguration;
+import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -538,6 +540,13 @@ public final class DefaultConfigurationConfigurer {
             for (DevConsole console : consoles) {
                 devConsoleRegistry.register(console);
             }
+        }
+        // vaults
+        // TODO: add more vault providers here
+        AwsVaultConfiguration aws = getSingleBeanOfType(registry, AwsVaultConfiguration.class);
+        if (aws != null) {
+            VaultConfiguration vault = camelContext.getVaultConfiguration();
+            vault.setAwsVaultConfiguration(aws);
         }
 
         // set the default thread pool profile if defined

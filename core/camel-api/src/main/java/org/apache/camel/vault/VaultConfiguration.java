@@ -33,4 +33,11 @@ public class VaultConfiguration {
         return aws;
     }
 
+    public AwsVaultConfiguration getAwsVaultConfiguration() {
+        return aws;
+    }
+
+    public void setAwsVaultConfiguration(AwsVaultConfiguration aws) {
+        this.aws = aws;
+    }
 }
