@@ -17,7 +17,6 @@
 
 package org.apache.camel.reifier;
 
-import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.ResumeStrategy;
 import org.apache.camel.Route;
@@ -41,9 +40,7 @@ public class ResumableReifier extends ExpressionReifier<ResumableDefinition> {
         resumeStrategy.start();
         route.setResumeStrategy(resumeStrategy);
 
-        Expression expression = createExpression(definition.getExpression());
-
-        return new ResumableProcessor(expression, resumeStrategy, childProcessor);
+        return new ResumableProcessor(resumeStrategy, childProcessor);
     }
 
     protected ResumeStrategy resolveResumeStrategy() {

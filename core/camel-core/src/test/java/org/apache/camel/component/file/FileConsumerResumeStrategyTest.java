@@ -59,14 +59,13 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
     private static Map<String, Object> headerFor(int num) {
         String name = num + ".txt";
 
-        return Map.of(Exchange.FILE_NAME, name, "id", Resumables.of(name, num));
+        return Map.of(Exchange.FILE_NAME, name);
     }
 
     @Test
     public void testResume() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("3", "4", "5", "6");
-
 
         template.sendBodyAndHeaders(fileUri("resume"), "0", headerFor(0));
         template.sendBodyAndHeaders(fileUri("resume"), "1", headerFor(1));
@@ -80,6 +79,15 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    private void setOffset(Exchange exchange) {
+        String body = exchange.getMessage().getBody(String.class);
+
+        if (body != null) {
+            Integer num = Integer.valueOf(body);
+            exchange.getMessage().setHeader(Exchange.OFFSET, Resumables.of(body + ".txt", num));
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -89,7 +97,8 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
                 bindToRegistry("testResumeStrategy", new TestResumeStrategy());
 
                 from(fileUri("resume?noop=true&recursive=true"))
-                        .resumable().header("id").resumableStrategyRef("testResumeStrategy")
+                        .process(e -> setOffset(e))
+                        .resumable().resumableStrategyRef("testResumeStrategy")
                         .convertBodyTo(String.class)
                         .to("mock:result");
             }

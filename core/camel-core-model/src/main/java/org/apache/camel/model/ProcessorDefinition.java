@@ -3780,11 +3780,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * 
      * @return The expression to create the Resumable
      */
-    public ExpressionClause<ResumableDefinition> resumable() {
+    public ResumableDefinition resumable() {
         ResumableDefinition answer = new ResumableDefinition();
 
         addOutput(answer);
-        return createAndSetExpression(answer);
+        return answer;
     }
 
     // Properties

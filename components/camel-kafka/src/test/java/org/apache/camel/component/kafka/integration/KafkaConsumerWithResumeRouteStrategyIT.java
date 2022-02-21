@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.Offset;
 import org.apache.camel.Resumable;
 import org.apache.camel.Service;
@@ -228,9 +229,9 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
                 from("kafka:" + TOPIC + "?groupId=" + TOPIC + "_GROUP&autoCommitIntervalMs=1000"
                      + "&autoOffsetReset=earliest&consumersCount=1")
                              .routeId("resume-strategy-route")
-                             .setHeader("CamelOffset",
+                             .setHeader(Exchange.OFFSET,
                                      constant(Resumables.of("key", RANDOM_VALUE)))
-                             .resumable().header("CamelOffset").resumableStrategyRef("resumeStrategy")
+                             .resumable().resumableStrategyRef("resumeStrategy")
                              .to("mock:result");
             }
         };

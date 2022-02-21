@@ -26,7 +26,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Resumable;
@@ -45,7 +44,6 @@ public class ResumableProcessor extends AsyncProcessorSupport
     private CamelContext camelContext;
     private ResumeStrategy resumeStrategy;
     private AsyncProcessor processor;
-    private final Expression offsetExpression;
     private String id;
     private String routeId;
 
@@ -75,17 +73,16 @@ public class ResumableProcessor extends AsyncProcessorSupport
         }
     }
 
-    public ResumableProcessor(Expression offsetExpression, ResumeStrategy resumeStrategy, Processor processor) {
+    public ResumableProcessor(ResumeStrategy resumeStrategy, Processor processor) {
         this.resumeStrategy = Objects.requireNonNull(resumeStrategy);
         this.processor = AsyncProcessorConverterHelper.convert(processor);
-        this.offsetExpression = offsetExpression;
 
         LOG.info("Enabling the resumable strategy of type: {}", resumeStrategy.getClass().getSimpleName());
     }
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        Object offset = exchange.getMessage().getHeader("CamelOffset");
+        Object offset = exchange.getMessage().getHeader(Exchange.OFFSET);
 
         if (offset instanceof Resumable) {
             Resumable<?, ?> resumable = (Resumable<?, ?>) offset;
@@ -98,10 +95,10 @@ public class ResumableProcessor extends AsyncProcessorSupport
             return processor.process(exchange, target);
 
         } else {
+            exchange.setException(new NoOffsetException(exchange));
             LOG.warn("Cannot update the last offset because it's not available");
+            return true;
         }
-
-        return processor.process(exchange, callback);
     }
 
     @Override
