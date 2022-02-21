@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class GoogleCloudIT extends CamelTestSupport {
 
     final String serviceAccountKeyFile = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
-    final String project = "andrea-342012";
+    final String project = "myProject";
 
     @EndpointInject("mock:createSecret")
     private MockEndpoint mockSecret;
