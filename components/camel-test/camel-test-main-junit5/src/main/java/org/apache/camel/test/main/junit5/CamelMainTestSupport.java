@@ -94,31 +94,53 @@ public abstract class CamelMainTestSupport extends CamelTestSupport {
      * @return the location of the property placeholders to use for the test.
      */
     protected String getPropertyPlaceholderLocations() {
-        final String location = getPropertyPlaceholderLocation();
-        if (location == null) {
+        final String locations = getPropertyPlaceholderLocationsFromFileName();
+        if (locations == null) {
+            LOG.debug("Use the default property placeholder location");
             return BaseMainSupport.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;
         }
-        return location;
+        LOG.debug("Use the following property placeholder locations: {}", locations);
+        return locations;
     }
 
     /**
-     * Gives the file name of the property placeholder to use for the test. This method assumes that the property
-     * placeholder is located in the same package as the test class. In other words, if the test class is
+     * Gives the file name of the property placeholder to use for the test. This method assumes that the file is located
+     * either in the package of the test class or directly in the default package. In other words, if the test class is
      * {@code com.company.SomeTest} and this method has been overridden to return {@code some-app.properties}, then it
-     * assumes that the actual location of the property placeholder is
-     * {@code classpath:com/company/some-app.properties}.
-     *
-     * @return the file name of the property placeholder located in the same package as the test class. {@code null} by
-     *         default.
+     * assumes that the actual possible locations of the property placeholder are
+     * {@code classpath:com/company/some-app.properties;optional=true,classpath:some-app.properties;optional=true} which
+     * means that for each property to find, it tries to get it first from the properties file of the same package if it
+     * exists and if it cannot be found, it tries to get it from the properties file with the same name but in the
+     * default package if it exists.
+     * <p>
+     * <b>Note:</b> Since the properties files are declared as optional, no exception is raised if they are both absent.
+     * 
+     * @return the file name of the property placeholder located in the same package as the test class or directly in
+     *         the default package. {@code null} by default.
      */
     protected String getPropertyPlaceholderFileName() {
+        return null;
+    }
+
+    /**
+     * Allows to specify the main class of the application to test if needed in order to simulate the same behavior as
+     * with {@link org.apache.camel.main.Main#Main(Class)}.
+     *
+     * @return the main class of the application to test if any. {@code null} by default indicating that there is no
+     *         specific main class.
+     */
+    protected Class<?> getMainClass() {
         return null;
     }
 
     @Override
     protected void postProcessTest() throws Exception {
         LOG.debug("Initialize the camel context as a Camel Main application");
-        MainForTest main = new MainForTest();
+        final MainForTest main = new MainForTest();
+        final Class<?> mainClass = getMainClass();
+        if (mainClass != null) {
+            main.configure().withBasePackageScan(mainClass.getPackageName());
+        }
         configure(main.configure());
         main.setPropertyPlaceholderLocations(getPropertyPlaceholderLocations());
         main.setOverrideProperties(useOverridePropertiesWithPropertiesComponent());
@@ -133,15 +155,17 @@ public abstract class CamelMainTestSupport extends CamelTestSupport {
     }
 
     /**
-     * @return {@code null} if {@link #getPropertyPlaceholderFileName()} returns {@code null}, otherwise it will append
-     *         the package of the test class to the file name of the property placeholder.
+     * @return {@code null} if {@link #getPropertyPlaceholderFileName()} returns {@code null}, otherwise it generates a
+     *         list of locations assuming that the file is either in the package of the test class or directly in the
+     *         default package.
      */
-    private String getPropertyPlaceholderLocation() {
+    private String getPropertyPlaceholderLocationsFromFileName() {
         final String location = getPropertyPlaceholderFileName();
         if (location == null) {
             return null;
         }
-        return String.format("classpath:%s/%s", this.getClass().getPackageName().replace('.', '/'), location);
+        return String.format("classpath:%s/%s;optional=true,classpath:%s;optional=true",
+                this.getClass().getPackageName().replace('.', '/'), location, location);
     }
 
     /**

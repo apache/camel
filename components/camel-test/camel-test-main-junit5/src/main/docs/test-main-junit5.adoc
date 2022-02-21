@@ -26,11 +26,30 @@ their `pom.xml` for this component:
 </dependency>
 ----
 
+== Specify a main class
+
+Most of the time, a Camel Main application has a main class from which all the Camel related classes are found. In practice, this is done simply by providing the main class of the application in the constructor of Camel Main like for example `new Main(SomeApplication.class)` where `SomeApplication.class` is the main class of the application. The same behavior can be simulated with `CamelMainTestSupport` by overriding the method `getMainClass()` to provide the main class of the application to test.
+
+In the next example, the test class `SomeTest` indicates that the class `SomeMainClass` is the main class of the application to test.
+
+[source,java]
+----
+class SomeTest extends CamelMainTestSupport {
+
+    @Override
+    protected Class<?> getMainClass() {
+        return SomeMainClass.class;
+    }
+
+    // Rest of the test class
+}
+----
+
 == Configure Camel as a Camel Main application
 
 A Camel Main application has access to many specific configuration properties that are not available from the base class `CamelTestSupport`. The base class `CamelMainTestSupport` provides the method `configure(MainConfigurationProperties configuration)` that can be overridden in order to configure Camel for the test like a Camel Main application.
 
-In the next example, the test class `SomeTest` add a configuration class and specify the xml routes to include.
+In the next example, the test class `SomeTest` adds a configuration class and specifies the xml routes to include.
 
 [source,java]
 ----
@@ -76,9 +95,11 @@ class SomeTest extends CamelMainTestSupport {
 
 === The file name of the property placeholder
 
-For the sake of simplicity, in case you need only one property placeholder location, you can specify the file name of the property placeholder by overriding the method `getPropertyPlaceholderFileName()`. It can infer the location of the property placeholder as it assumes that it is located in the same package as test class.
+For the sake of simplicity, in case you need only one property placeholder location, you can specify the file name of the property placeholder by overriding the method `getPropertyPlaceholderFileName()`. It can then infer the locations of the property placeholder as it assumes that it is located either in the same package as the test class or directly in the default package.
 
-In the next example, the method `getPropertyPlaceholderFileName()` has been overridden in the test class `com.somecompany.SomeTest` to return `custom-application.properties` indicating that the actual location of the property placeholder is `classpath:com/somecompany/custom-application.properties`.
+In the next example, the method `getPropertyPlaceholderFileName()` has been overridden in the test class `com.somecompany.SomeTest` to return `custom-application.properties` indicating that the actual possible locations of the property placeholder are `classpath:com/somecompany/custom-application.properties;optional=true,classpath:custom-application.properties;optional=true` which means that for each property to find, it tries to get it first from the properties file of the same package if it exists and if it cannot be found, it tries to get it from the properties file with the same name but in the default package if it exists.
+
+NOTE: Since the properties files are declared as optional, no exception is raised if they are both absent.
 
 [source,java]
 ----

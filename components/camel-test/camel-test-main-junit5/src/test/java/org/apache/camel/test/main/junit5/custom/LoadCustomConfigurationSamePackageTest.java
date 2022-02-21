@@ -28,11 +28,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * The test class ensuring that a custom property placeholder can be specified with the name of the file located in the
  * same package.
  */
-class LoadCustomConfigurationTest extends CamelMainTestSupport {
+class LoadCustomConfigurationSamePackageTest extends CamelMainTestSupport {
 
     @Override
     protected String getPropertyPlaceholderFileName() {
-        return "custom-application.properties";
+        return "custom-same-package-application.properties";
     }
 
     @Override
