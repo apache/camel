@@ -5865,6 +5865,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GooglePubsubEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Google Secret Manager (camel-google-secrets-manager)
+     * Manage Google Secret Manager Secrets
+     * 
+     * Category: cloud
+     * Since: 3.16
+     * Maven coordinates: org.apache.camel:camel-google-secrets-manager
+     * 
+     * Syntax: <code>google-secret-manager:project</code>
+     * 
+     * Path parameter: project (required)
+     * The Google Cloud Project Id name related to the Secret Manager
+     * 
+     * @param path project
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.GoogleSecretManagerEndpointBuilderFactory.GoogleSecretManagerEndpointBuilder googleSecretManager(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.GoogleSecretManagerEndpointBuilderFactory.endpointBuilder("google-secret-manager", path);
+    }
+    /**
+     * Google Secret Manager (camel-google-secrets-manager)
+     * Manage Google Secret Manager Secrets
+     * 
+     * Category: cloud
+     * Since: 3.16
+     * Maven coordinates: org.apache.camel:camel-google-secrets-manager
+     * 
+     * Syntax: <code>google-secret-manager:project</code>
+     * 
+     * Path parameter: project (required)
+     * The Google Cloud Project Id name related to the Secret Manager
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path project
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.GoogleSecretManagerEndpointBuilderFactory.GoogleSecretManagerEndpointBuilder googleSecretManager(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.GoogleSecretManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Google Sheets (camel-google-sheets)
      * Manage spreadsheets in Google Sheets.
      * 

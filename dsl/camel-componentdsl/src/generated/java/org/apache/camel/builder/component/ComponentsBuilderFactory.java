@@ -1729,6 +1729,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.GooglePubsubComponentBuilderFactory.googlePubsub();
     }
     /**
+     * Google Secret Manager (camel-google-secrets-manager)
+     * Manage Google Secret Manager Secrets
+     * 
+     * Category: cloud
+     * Since: 3.16
+     * Maven coordinates: org.apache.camel:camel-google-secrets-manager
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.GoogleSecretManagerComponentBuilderFactory.GoogleSecretManagerComponentBuilder googleSecretManager() {
+        return org.apache.camel.builder.component.dsl.GoogleSecretManagerComponentBuilderFactory.googleSecretManager();
+    }
+    /**
      * Google Sheets (camel-google-sheets)
      * Manage spreadsheets in Google Sheets.
      * 

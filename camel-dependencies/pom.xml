@@ -233,6 +233,7 @@
     <google-cloud-functions-bom-version>1.0.8</google-cloud-functions-bom-version>
     <google-cloud-functions-gax-grpc-version>1.62.0</google-cloud-functions-gax-grpc-version>
     <google-cloud-guava-version>30.0-jre</google-cloud-guava-version>
+    <google-cloud-secretmanager-bom-version>2.1.1</google-cloud-secretmanager-bom-version>
     <google-guava-version>20.0</google-guava-version>
     <google-maps-services-version>0.10.1</google-maps-services-version>
     <graaljs-version>21.3.0</graaljs-version>

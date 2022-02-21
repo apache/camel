@@ -2796,6 +2796,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "GoogleSecretManagerComponentBuilderFactory": {
+    "kind": "component",
+    "name": "google-secret-manager",
+    "title": "Google Secret Manager",
+    "description": "Manage Google Secret Manager Secrets",
+    "deprecated": false,
+    "firstVersion": "3.16.0",
+    "label": "cloud",
+    "javaType": "org.apache.camel.component.google.secret.manager.GoogleSecretManagerComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-google-secrets-manager",
+    "version": "3.16.0-SNAPSHOT",
+    "scheme": "google-secret-manager",
+    "extendsScheme": "",
+    "syntax": "google-secret-manager:project",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "GoogleSheetsComponentBuilderFactory": {
     "kind": "component",
     "name": "google-sheets",

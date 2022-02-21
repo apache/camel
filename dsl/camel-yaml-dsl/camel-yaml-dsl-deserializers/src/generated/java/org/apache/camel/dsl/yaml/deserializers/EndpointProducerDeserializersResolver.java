@@ -130,6 +130,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "google-functions":
             case "google-mail":
             case "google-pubsub":
+            case "google-secret-manager":
             case "google-sheets":
             case "google-storage":
             case "gora":

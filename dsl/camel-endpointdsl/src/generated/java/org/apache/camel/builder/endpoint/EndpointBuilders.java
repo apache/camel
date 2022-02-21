@@ -138,6 +138,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.GoogleMailEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleMailStreamEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GooglePubsubEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.GoogleSecretManagerEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleSheetsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleSheetsStreamEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoraEndpointBuilderFactory,
