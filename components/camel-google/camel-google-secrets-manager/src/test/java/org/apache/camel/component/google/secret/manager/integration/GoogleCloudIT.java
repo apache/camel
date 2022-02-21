@@ -26,12 +26,14 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @EnabledIfEnvironmentVariable(named = "GOOGLE_APPLICATION_CREDENTIALS", matches = ".*",
                               disabledReason = "Application credentials were not provided")
 public class GoogleCloudIT extends CamelTestSupport {
 
     final String serviceAccountKeyFile = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
-    final String project = "myProject";
+    final String project = "andrea-342012";
 
     @EndpointInject("mock:createSecret")
     private MockEndpoint mockSecret;
@@ -44,25 +46,13 @@ public class GoogleCloudIT extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("timer:timer1?repeatCount=1").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getMessage().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test123");
-                        exchange.getMessage().setBody("Hello");
-                    }
-                })
+                from("direct:createSecret")
                         .to("google-secret-manager://" + project + "?serviceAccountKey="
-                            + serviceAccountKeyFile + "&operation=createSecret")
+                         + serviceAccountKeyFile + "&operation=createSecret")
                         .to("mock:createSecret");
 
-                from("direct:getSecretVersion").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getMessage().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test123");
-                        exchange.getMessage().setHeader(GoogleSecretManagerConstants.VERSION_ID, "1");
-                    }
-                }).to("google-secret-manager://" + project + "?serviceAccountKey="
-                      + serviceAccountKeyFile + "&operation=getSecretVersion").log("${body}")
+                from("direct:getSecretVersion").to("google-secret-manager://" + project + "?serviceAccountKey="
+                         + serviceAccountKeyFile + "&operation=getSecretVersion")
                         .to("mock:getSecret");
 
             }
@@ -74,9 +64,24 @@ public class GoogleCloudIT extends CamelTestSupport {
 
         mockSecret.expectedMessageCount(1);
         mockGetSecret.expectedMessageCount(1);
-        Thread.sleep(10000);
-        template.requestBody("direct:getSecretVersion", "Hello");
-        Thread.sleep(10000);
+
+        template.send("direct:createSecret", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getMessage().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test123");
+                exchange.getMessage().setBody("Hello");
+            }
+        });
+        Exchange ex = template.request("direct:getSecretVersion", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getMessage().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test123");
+                exchange.getMessage().setHeader(GoogleSecretManagerConstants.VERSION_ID, "1");
+            }
+        });
+
+        assertEquals("Hello", ex.getMessage().getBody());
     }
 
 }
