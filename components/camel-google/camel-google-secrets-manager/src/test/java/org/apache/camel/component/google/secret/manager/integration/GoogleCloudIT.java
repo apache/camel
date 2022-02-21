@@ -48,11 +48,11 @@ public class GoogleCloudIT extends CamelTestSupport {
 
                 from("direct:createSecret")
                         .to("google-secret-manager://" + project + "?serviceAccountKey="
-                         + serviceAccountKeyFile + "&operation=createSecret")
+                            + serviceAccountKeyFile + "&operation=createSecret")
                         .to("mock:createSecret");
 
                 from("direct:getSecretVersion").to("google-secret-manager://" + project + "?serviceAccountKey="
-                         + serviceAccountKeyFile + "&operation=getSecretVersion")
+                                                   + serviceAccountKeyFile + "&operation=getSecretVersion")
                         .to("mock:getSecret");
 
             }
