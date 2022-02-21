@@ -32,6 +32,7 @@ import java.net.URLDecoder;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -397,11 +398,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             for (String part : parts) {
                 String[] kvPair = part.split(":");
                 if (kvPair.length == 2) {
-                    try {
-                        auths.put(URLDecoder.decode(kvPair[0], "UTF-8"), URLDecoder.decode(kvPair[1], "UTF-8"));
-                    } catch (UnsupportedEncodingException e) {
-                        getLog().warn(e.getMessage());
-                    }
+                    auths.put(URLDecoder.decode(kvPair[0], StandardCharsets.UTF_8), URLDecoder.decode(kvPair[1], StandardCharsets.UTF_8));
                 }
             }
         }
