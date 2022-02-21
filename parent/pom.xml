@@ -215,6 +215,7 @@
         <google-cloud-functions-bom-version>1.0.8</google-cloud-functions-bom-version>
         <google-cloud-functions-gax-grpc-version>1.62.0</google-cloud-functions-gax-grpc-version>
         <google-cloud-guava-version>30.0-jre</google-cloud-guava-version>
+        <google-cloud-secretmanager-bom-version>2.1.1</google-cloud-secretmanager-bom-version>
         <graaljs-version>21.3.0</graaljs-version>
         <graphql-java-version>14.0</graphql-java-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
@@ -1489,6 +1490,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-google-pubsub</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-google-secrets-manager</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
