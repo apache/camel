@@ -41,15 +41,14 @@ public final class CamelOpenMBeanTypes {
                 "rests", "Rest Services",
                 new String[] {
                         "url", "baseUrl", "basePath", "uriTemplate", "method", "consumes", "produces", "inType", "outType",
-                        "state", "routeId", "description" },
+                        "state", "description" },
                 new String[] {
                         "Url", "Base Url", "Base Path", "Uri Template", "Method", "Consumes", "Produces", "Input Type",
-                        "Output Type", "State", "Route Id", "Description" },
+                        "Output Type", "State", "Description" },
                 new OpenType[] {
                         SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
                         SimpleType.STRING,
-                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
-                        SimpleType.STRING });
+                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING });
     }
 
     public static TabularType listEndpointsTabularType() throws OpenDataException {
