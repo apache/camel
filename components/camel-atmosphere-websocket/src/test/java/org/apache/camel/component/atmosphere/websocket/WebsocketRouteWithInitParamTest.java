@@ -180,13 +180,13 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
                         .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONCLOSE_EVENT_TYPE))
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
-                                removeExternalConnectionRegister(exchange);
+                                removeExternalConnectionRegister();
                             }
                         })
                         .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONERROR_EVENT_TYPE))
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
-                                removeExternalConnectionRegister(exchange);
+                                removeExternalConnectionRegister();
                             }
                         })
                         .otherwise()
@@ -208,13 +208,13 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
                         .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONCLOSE_EVENT_TYPE))
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
-                                removeExternalConnectionRegister(exchange);
+                                removeExternalConnectionRegister();
                             }
                         })
                         .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONERROR_EVENT_TYPE))
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
-                                removeExternalConnectionRegister(exchange);
+                                removeExternalConnectionRegister();
                             }
                         })
                         .when(header(WebsocketConstants.ERROR_TYPE).isEqualTo(WebsocketConstants.MESSAGE_NOT_SENT_ERROR_TYPE))
@@ -251,7 +251,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         connectionKeyUserMap.put(userName, (String) connectionKey);
     }
 
-    private static void removeExternalConnectionRegister(Exchange exchange) {
+    private static void removeExternalConnectionRegister() {
         // remove connectionKey from external store
     }
 

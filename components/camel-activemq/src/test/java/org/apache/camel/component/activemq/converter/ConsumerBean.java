@@ -94,20 +94,8 @@ public class ConsumerBean implements MessageListener {
         }
     }
 
-    public boolean isVerbose() {
-        return this.verbose;
-    }
-
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
-    }
-
     public List<Message> getMessages() {
         return this.messages;
-    }
-
-    protected boolean hasReceivedMessage() {
-        return this.messages.isEmpty();
     }
 
     protected boolean hasReceivedMessages(int messageCount) {

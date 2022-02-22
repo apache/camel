@@ -29,12 +29,9 @@ import com.azure.storage.file.datalake.models.ListPathsOptions;
 import com.azure.storage.file.datalake.models.PathItem;
 import com.azure.storage.file.datalake.models.PublicAccessType;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DataLakeFileSystemClientWrapper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DataLakeFileSystemClientWrapper.class);
     private final DataLakeFileSystemClient client;
 
     public DataLakeFileSystemClientWrapper(final DataLakeFileSystemClient client) {

@@ -127,7 +127,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
     }
 
     private void doSendMessages(
-            final String queueName, int messages, int poolSize,
+            final String queueName, int messages,
             final DefaultTaskExecutorType defaultTaskExecutorType, CountDownLatch latch, ExecutorService executor) {
 
         for (int i = 0; i < messages; i++) {
@@ -151,7 +151,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         final CountDownLatch latch = new CountDownLatch(messages);
 
         try {
-            doSendMessages(queueName, messages, poolSize, defaultTaskExecutorType, latch, executor);
+            doSendMessages(queueName, messages, defaultTaskExecutorType, latch, executor);
             executor.shutdown();
             executor.awaitTermination(5, TimeUnit.SECONDS);
         } finally {

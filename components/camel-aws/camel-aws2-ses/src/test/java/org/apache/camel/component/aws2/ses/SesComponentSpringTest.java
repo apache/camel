@@ -133,8 +133,4 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
     private List<String> getTo(SendEmailRequest sendEmailRequest) {
         return sendEmailRequest.destination().toAddresses();
     }
-
-    private List<String> getTo(SendRawEmailRequest sendEmailRequest) {
-        return sendEmailRequest.destinations();
-    }
 }

@@ -29,8 +29,6 @@ public abstract class HdfsTestSupport extends CamelTestSupport {
 
     public static final File CWD = new File(".");
 
-    private static Boolean skipTests;
-
     public void checkTest() {
         isJavaFromIbm();
         missingLocalHadoopConfiguration();

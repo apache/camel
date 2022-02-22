@@ -99,7 +99,6 @@ public class RabbitMQComponentTest extends CamelTestSupport {
 
     private RabbitMQEndpoint createEndpoint(Map<String, Object> params) throws Exception {
         String uri = "rabbitmq:special.host:14/queuey";
-        String remaining = "special.host:14/queuey";
 
         RabbitMQComponent comp = context.getComponent("rabbitmq", RabbitMQComponent.class);
         comp.setAutoDetectConnectionFactory(false);

@@ -41,7 +41,6 @@ public class ZooKeeperServiceCallRouteIT extends CamelTestSupport {
     @RegisterExtension
     static ZooKeeperService service = ZooKeeperServiceFactory.createService();
 
-    private static final int SERVER_PORT = AvailablePortFinder.getNextAvailable();
     private static final String SERVICE_NAME = "http-service";
     private static final int SERVICE_COUNT = 5;
     private static final String SERVICE_PATH = "/camel";

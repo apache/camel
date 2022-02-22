@@ -170,7 +170,7 @@ public class ZooKeeperITSupport extends CamelTestSupport {
         }
     }
 
-    protected void verifyAccessControlList(String node, List<ACL> expected) throws Exception {
+    protected void verifyAccessControlList(String node) throws Exception {
         getConnection().getACL(node, new Stat());
     }
 

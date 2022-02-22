@@ -195,7 +195,7 @@ public class TimerProducerTest {
     @Test
     public void testHandleStop() throws Exception {
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(context);
-        producer.handleStop(exchange, registry, METRICS_NAME);
+        producer.handleStop(exchange, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
         inOrder.verify(context, times(1)).stop();
         inOrder.verify(exchange, times(1)).removeProperty(PROPERTY_NAME);
@@ -205,7 +205,7 @@ public class TimerProducerTest {
     @Test
     public void testHandleStopContextNotFound() throws Exception {
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(null);
-        producer.handleStop(exchange, registry, METRICS_NAME);
+        producer.handleStop(exchange, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
         inOrder.verifyNoMoreInteractions();
     }

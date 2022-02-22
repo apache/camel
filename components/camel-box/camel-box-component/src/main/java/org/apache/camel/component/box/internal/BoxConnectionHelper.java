@@ -43,8 +43,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.FormElement;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * BoxConnectionHelper
@@ -53,8 +51,6 @@ import org.slf4j.LoggerFactory;
  * Utility class for creating Box API Connections
  */
 public final class BoxConnectionHelper {
-
-    private static final Logger LOG = LoggerFactory.getLogger(BoxConnectionHelper.class);
 
     private static final Pattern QUERY_PARAM_PATTERN = Pattern.compile("&?([^=]+)=([^&]+)");
 

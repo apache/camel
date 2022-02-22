@@ -324,15 +324,15 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
         int len = 0;
         while (bbuf.hasRemaining()) {
             final CoderResult result = this.decoder.decode(bbuf, this.cbuf, true);
-            len += handleDecodingResult(result, charbuffer, bbuf);
+            len += handleDecodingResult(result, charbuffer);
         }
         final CoderResult result = this.decoder.flush(this.cbuf);
-        len += handleDecodingResult(result, charbuffer, bbuf);
+        len += handleDecodingResult(result, charbuffer);
         cast(this.cbuf).clear();
         return len;
     }
 
-    private int handleDecodingResult(final CoderResult result, final CharArrayBuffer charbuffer, final ByteBuffer bbuf)
+    private int handleDecodingResult(final CoderResult result, final CharArrayBuffer charbuffer)
             throws IOException {
         if (result.isError()) {
             result.throwException();

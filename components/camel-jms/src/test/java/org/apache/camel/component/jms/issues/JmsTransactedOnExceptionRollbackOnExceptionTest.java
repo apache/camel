@@ -34,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JmsTransactedOnExceptionRollbackOnExceptionTest extends CamelTestSupport {
 
     public static class BadErrorHandler {
+
+        @SuppressWarnings("unused")
         @Handler
         public void onException(Exchange exchange, Exception exception) throws Exception {
             throw new RuntimeCamelException("error in errorhandler");

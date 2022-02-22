@@ -31,19 +31,14 @@ import org.apache.camel.component.azure.storage.datalake.operations.DataLakeOper
 import org.apache.camel.component.azure.storage.datalake.operations.DataLakeServiceOperations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DataLakeProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DataLakeProducer.class);
     private final DataLakeConfiguration configuration;
     private final DataLakeConfigurationOptionsProxy configurationProxy;
     private final DataLakeServiceClientWrapper dataLakeServiceClientWrapper;
 
     public DataLakeProducer(final Endpoint endpoint) {
         super(endpoint);
-        //        this.configuration = getEndpoint().getConfiguration();
         configuration = getEndpoint().getConfiguration();
         configurationProxy = new DataLakeConfigurationOptionsProxy(configuration);
         dataLakeServiceClientWrapper = new DataLakeServiceClientWrapper(getEndpoint().getDataLakeServiceClient());
@@ -59,7 +54,7 @@ public class DataLakeProducer extends DefaultProducer {
         DataLakeOperationsDefinition operation = determineOperation(exchange);
         switch (operation) {
             case listFileSystem:
-                setResponse(exchange, getServiceOperations(exchange).listFileSystems(exchange));
+                setResponse(exchange, getServiceOperations().listFileSystems(exchange));
                 break;
             case createFileSystem:
                 setResponse(exchange, getFileSystemOperations(exchange).createFileSystem(exchange));
@@ -117,7 +112,7 @@ public class DataLakeProducer extends DefaultProducer {
         return configurationProxy.getOperation(exchange);
     }
 
-    private DataLakeServiceOperations getServiceOperations(final Exchange exchange) {
+    private DataLakeServiceOperations getServiceOperations() {
         return new DataLakeServiceOperations(configuration, dataLakeServiceClientWrapper);
     }
 

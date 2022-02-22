@@ -26,8 +26,6 @@ import org.apache.camel.component.azure.storage.datalake.client.DataLakeClientFa
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,8 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DataLakeComponentTest extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DataLakeComponentTest.class);
 
     @Test
     public void testWithServiceClient() {

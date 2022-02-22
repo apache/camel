@@ -54,10 +54,6 @@ public final class QueueOperationResponse {
         return new QueueOperationResponse(true, headers);
     }
 
-    public static QueueOperationResponse createWithEmptyBody() {
-        return new QueueOperationResponse(true);
-    }
-
     @SuppressWarnings("rawtypes")
     public static QueueOperationResponse createWithEmptyBody(final Response response) {
         return buildResponse(response, true);
@@ -90,9 +86,5 @@ public final class QueueOperationResponse {
 
     public Map<String, Object> getHeaders() {
         return headers;
-    }
-
-    private void setHeaders(final Map<String, Object> headers) {
-        this.headers = headers;
     }
 }

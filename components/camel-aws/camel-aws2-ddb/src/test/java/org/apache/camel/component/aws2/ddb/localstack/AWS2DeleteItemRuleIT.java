@@ -43,8 +43,6 @@ public class AWS2DeleteItemRuleIT extends Aws2DDBBase {
     private final String attributeName = "clave";
     private final String tableName = "TestTable";
 
-    private final String randomId = String.valueOf(System.currentTimeMillis());
-
     @Test
     public void putItem() {
         final Map<String, AttributeValue> attributeMap = new HashMap<>();

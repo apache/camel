@@ -34,7 +34,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
-import org.apache.camel.spi.OptimisticLockingAggregationRepository.OptimisticLockingException;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -277,7 +276,7 @@ public class JdbcAggregationRepository extends ServiceSupport
     protected int insertHelper(
             final CamelContext camelContext, final String key, final Exchange exchange, String sql, final Long version)
             throws Exception {
-        final byte[] data = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
+        final byte[] data = codec.marshallExchange(exchange, allowSerializedHeaders);
         Integer insertCount = jdbcTemplate.execute(sql,
                 new AbstractLobCreatingPreparedStatementCallback(getLobHandler()) {
                     @Override
@@ -303,7 +302,7 @@ public class JdbcAggregationRepository extends ServiceSupport
     protected int updateHelper(
             final CamelContext camelContext, final String key, final Exchange exchange, String sql, final Long version)
             throws Exception {
-        final byte[] data = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
+        final byte[] data = codec.marshallExchange(exchange, allowSerializedHeaders);
         Integer updateCount = jdbcTemplate.execute(sql,
                 new AbstractLobCreatingPreparedStatementCallback(getLobHandler()) {
                     @Override

@@ -100,8 +100,4 @@ public final class BlobOperationResponse {
     public Map<String, Object> getHeaders() {
         return headers;
     }
-
-    private void setHeaders(final Map<String, Object> headers) {
-        this.headers = headers;
-    }
 }

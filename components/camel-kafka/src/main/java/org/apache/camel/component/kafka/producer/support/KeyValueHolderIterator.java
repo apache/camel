@@ -98,14 +98,6 @@ public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, P
         return null;
     }
 
-    private boolean hasValidTimestampHeader(Object timeStamp) {
-        if (timeStamp != null) {
-            return timeStamp instanceof Long;
-        }
-
-        return false;
-    }
-
     private Long getOverrideTimestamp(Message innerMessage) {
         Long timeStamp = null;
         Object overrideTimeStamp = innerMessage.removeHeader(KafkaConstants.OVERRIDE_TIMESTAMP);

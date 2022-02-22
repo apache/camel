@@ -31,14 +31,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BarcodeUnmarshalTest extends BarcodeTestBase {
-
-    private static final Logger LOG = LoggerFactory.getLogger(BarcodeUnmarshalTest.class);
 
     @Test
     void testOrientation() throws Exception {

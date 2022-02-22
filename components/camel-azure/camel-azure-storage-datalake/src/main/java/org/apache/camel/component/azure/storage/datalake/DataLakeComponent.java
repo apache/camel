@@ -27,13 +27,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component("azure-storage-datalake")
 public class DataLakeComponent extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DataLakeComponent.class);
 
     @Metadata(description = "configuration object for datalake")
     private DataLakeConfiguration configuration = new DataLakeConfiguration();

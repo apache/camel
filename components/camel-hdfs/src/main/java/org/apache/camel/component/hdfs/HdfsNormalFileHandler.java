@@ -102,13 +102,13 @@ class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
     @Override
     public long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
         if (hdfsInputStream.isStreamDownload()) {
-            return nextAsWrappedStream(hdfsInputStream, key, value);
+            return nextAsWrappedStream(hdfsInputStream, value);
         } else {
-            return nextAsOutputStream(hdfsInputStream, key, value);
+            return nextAsOutputStream(hdfsInputStream, value);
         }
     }
 
-    private long nextAsWrappedStream(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
+    private long nextAsWrappedStream(HdfsInputStream hdfsInputStream, Holder<Object> value) {
         InputStream inputStream = (InputStream) hdfsInputStream.getIn();
         value.setValue(inputStream);
 
@@ -120,7 +120,7 @@ class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
         }
     }
 
-    private long nextAsOutputStream(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
+    private long nextAsOutputStream(HdfsInputStream hdfsInputStream, Holder<Object> value) {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream(hdfsInputStream.getChunkSize());
             byte[] buf = new byte[hdfsInputStream.getChunkSize()];
