@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.OptionalIdentifiedDefinition;
-import org.apache.camel.model.OutputNode;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -36,7 +35,7 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "rest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition> implements OutputNode {
+public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition> {
 
     @XmlTransient
     private RestDefinition rest;

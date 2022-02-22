@@ -3993,7 +3993,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
-                    @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "type", type = "string")
             }
@@ -4095,10 +4094,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "description": {
                     org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
                     target.setDescription(val);
-                    break;
-                }
-                case "steps": {
-                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -5341,7 +5336,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
-                    @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "type", type = "string")
             }
@@ -5443,10 +5437,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "description": {
                     org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
                     target.setDescription(val);
-                    break;
-                }
-                case "steps": {
-                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -5755,7 +5745,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
-                    @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "type", type = "string")
             }
@@ -5857,10 +5846,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "description": {
                     org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
                     target.setDescription(val);
-                    break;
-                }
-                case "steps": {
-                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -9510,7 +9495,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
-                    @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "type", type = "string")
             }
@@ -9612,10 +9596,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "description": {
                     org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
                     target.setDescription(val);
-                    break;
-                }
-                case "steps": {
-                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -9864,7 +9844,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
-                    @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "type", type = "string")
             }
@@ -9966,10 +9945,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "description": {
                     org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
                     target.setDescription(val);
-                    break;
-                }
-                case "steps": {
-                    setSteps(target, node);
                     break;
                 }
                 default: {
@@ -10344,7 +10319,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
-                    @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
                     @YamlProperty(name = "type", type = "string")
             }
@@ -10446,10 +10420,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "description": {
                     org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
                     target.setDescription(val);
-                    break;
-                }
-                case "steps": {
-                    setSteps(target, node);
                     break;
                 }
                 default: {

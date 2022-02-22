@@ -89,8 +89,7 @@ class RestTest extends YamlTestSupport {
                      -  path: "/foo"
                         type: ${MyFooBar.name}
                         out-type: ${MyBean.name}
-                        steps:
-                          - to: "direct:bar"
+                        to: "direct:bar"
                 - from:
                     uri: 'direct:bar'
                     steps:
@@ -106,8 +105,7 @@ class RestTest extends YamlTestSupport {
                     path == '/foo'
                     type == MyFooBar.name
                     outType == MyBean.name
-
-                    with (route.outputs[0], ToDefinition) {
+                    with (to, ToDefinition) {
                         endpointUri  == 'direct:bar'
                     }
                 }
