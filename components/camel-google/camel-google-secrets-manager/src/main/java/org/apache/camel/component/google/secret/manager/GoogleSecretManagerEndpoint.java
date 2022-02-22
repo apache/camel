@@ -28,8 +28,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Manage Google Secret Manager Secrets
  * 
- * Google Functions Endpoint definition represents a function within the GCP and contains configuration to customize the
- * behavior of Producer.
+ * Google Secret Manager Endpoint.
  */
 @UriEndpoint(firstVersion = "3.16.0", scheme = "google-secret-manager", title = "Google Secret Manager",
              syntax = "google-secret-manager:project", category = {
