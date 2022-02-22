@@ -33,7 +33,7 @@ Dashes need for instances to be encoded for JMS property keys.
 |=======================================================================
 
 
-=== Explicit
+=== Configuration
 
 Include the `camel-opentelemetry` component in your POM, along with any specific dependencies associated with the
 chosen OpenTelemetry compliant Tracer.
