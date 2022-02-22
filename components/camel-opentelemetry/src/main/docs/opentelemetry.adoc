@@ -51,6 +51,35 @@ otelTracer.setTracer(...);
 otelTracer.init(camelContext);
 --------------------------------------------------------------------------------------------------
 
+== Spring Boot
+
+If you are using Spring Boot then you can add
+the `camel-opentelemetry-starter` dependency, and turn on OpenTracing by annotating
+the main class with `@CamelOpenTelemetry`.
+
+The `OpenTelemetryTracer` will be implicitly obtained from the camel context's `Registry`, unless
+a `OpenTelemetryTracer` bean has been defined by the application.
+
+== Java Agent
+Download the https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/[latest version].
+
+This package includes the instrumentation agent as well as instrumentations for all supported libraries and all available data exporters.
+The package provides a completely automatic, out-of-the-box experience.
+
+Enable the instrumentation agent using the `-javaagent` flag to the JVM.
+```
+java -javaagent:path/to/opentelemetry-javaagent.jar \
+     -jar myapp.jar
+```
+By default, the OpenTelemetry Java agent uses https://github.com/open-telemetry/opentelemetry-java/tree/main/exporters/otlp[OTLP exporter] configured to send data to https://github.com/open-telemetry/opentelemetry-collector/blob/main/receiver/otlpreceiver/README.md[OpenTelemetry collector] at `http://localhost:4317`.
+
+Configuration parameters are passed as Java system properties (`-D` flags) or as environment variables. See https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/agent-config.md[the configuration documentation] for the full list of configuration items. For example:
+```
+java -javaagent:path/to/opentelemetry-javaagent.jar \
+     -Dotel.service.name=your-service-name \
+     -Dotel.traces.exporter=jaeger \
+     -jar myapp.jar
+```
 
 include::spring-boot:partial$starter.adoc[]
 
