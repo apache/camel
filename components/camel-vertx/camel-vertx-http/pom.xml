@@ -70,15 +70,5 @@
             <artifactId>camel-undertow</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-rest-openapi</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-openapi-java</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>

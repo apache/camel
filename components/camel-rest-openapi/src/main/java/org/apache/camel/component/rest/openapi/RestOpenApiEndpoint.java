@@ -358,7 +358,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
         // if there is a host then we should use this hardcoded host instead of any Header that may have an existing
         // Host header from some other HTTP input, and if so then lets remove it
-        return new RestOpenApiProducer(endpoint.createAsyncProducer(), hasHost);
+        return new RestOpenApiProducer(endpoint.createProducer(), hasHost);
     }
 
     String determineBasePath(final Document openapi) {
