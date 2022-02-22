@@ -52,7 +52,7 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
                         .to("mock:createSecret");
 
                 from("direct:getSecretVersion").to("google-secret-manager://" + project + "?serviceAccountKey="
-                                + serviceAccountKeyFile + "&operation=getSecretVersion")
+                                                   + serviceAccountKeyFile + "&operation=getSecretVersion")
                         .to("mock:getSecret");
 
             }
