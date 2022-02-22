@@ -109,26 +109,22 @@ public class VertxWebsocketProducer extends DefaultAsyncProducer {
         VertxWebsocketEndpoint endpoint = getEndpoint();
         Message message = exchange.getMessage();
 
-        String connectionKey = message.getHeader(VertxWebsocketConstants.CONNECTION_KEY, String.class);
-        if (connectionKey != null) {
-            if (endpoint.isManagedPort()) {
-                Stream.of(connectionKey.split(","))
-                        .forEach(key -> connectedPeers.put(key, endpoint.findPeerForConnectionKey(key)));
-            } else {
-                // The producer is invoking an external server not managed by camel
-                connectedPeers.put(UUID.randomUUID().toString(), endpoint.getWebSocket(exchange));
-            }
-        } else {
-            connectedPeers.put(UUID.randomUUID().toString(), endpoint.getWebSocket(exchange));
-        }
-
         boolean isSendToAll = message.getHeader(VertxWebsocketConstants.SEND_TO_ALL,
-                getEndpoint().getConfiguration().isSendToAll(), boolean.class);
+                endpoint.getConfiguration().isSendToAll(), boolean.class);
         if (isSendToAll) {
             // Try to find all peers connected to an existing vertx-websocket consumer
             Map<String, ServerWebSocket> peers = endpoint.findPeersForHostPort();
             if (ObjectHelper.isNotEmpty(peers)) {
                 connectedPeers.putAll(peers);
+            }
+        } else {
+            String connectionKey = message.getHeader(VertxWebsocketConstants.CONNECTION_KEY, String.class);
+            if (connectionKey != null && endpoint.isManagedPort()) {
+                Stream.of(connectionKey.split(","))
+                        .forEach(key -> connectedPeers.put(key, endpoint.findPeerForConnectionKey(key)));
+            } else {
+                // The producer is invoking an external server not managed by camel
+                connectedPeers.put(UUID.randomUUID().toString(), endpoint.getWebSocket(exchange));
             }
         }
 
