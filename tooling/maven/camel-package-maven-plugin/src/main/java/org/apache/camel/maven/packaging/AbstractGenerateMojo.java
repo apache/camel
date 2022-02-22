@@ -157,10 +157,6 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
         }
     }
 
-    private String getIncrementalData() {
-        return "";
-    }
-
     private Path getIncrementalDataPath(MavenProject project) {
         return Paths.get(project.getBuild().getDirectory(), "camel-package-maven-plugin",
                 "org.apache.camel_camel-package-maven-plugin_info_xx");
