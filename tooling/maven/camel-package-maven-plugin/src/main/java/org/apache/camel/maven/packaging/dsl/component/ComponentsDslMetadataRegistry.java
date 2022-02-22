@@ -99,7 +99,7 @@ public class ComponentsDslMetadataRegistry {
             }
         });
 
-        componentsNamesToRemoveFromCache.forEach(componentFactoryName -> componentsCache.remove(componentFactoryName));
+        componentsNamesToRemoveFromCache.forEach(componentsCache::remove);
     }
 
     private boolean writeCacheIntoMetadataFile() {

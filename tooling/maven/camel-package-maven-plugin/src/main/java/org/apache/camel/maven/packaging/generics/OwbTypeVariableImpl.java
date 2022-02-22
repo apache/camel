@@ -65,18 +65,19 @@ public class OwbTypeVariableImpl {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             String methodName = method.getName();
-            if ("equals".equals(methodName)) {
-                return typeVariableEquals(args[0]);
-            } else if ("hashCode".equals(methodName)) {
-                return typeVariableHashCode();
-            } else if ("toString".equals(methodName)) {
-                return typeVariableToString();
-            } else if ("getName".equals(methodName)) {
-                return getName();
-            } else if ("getGenericDeclaration".equals(methodName)) {
-                return getGenericDeclaration();
-            } else if ("getBounds".equals(methodName)) {
-                return getBounds();
+            switch (methodName) {
+                case "equals":
+                    return typeVariableEquals(args[0]);
+                case "hashCode":
+                    return typeVariableHashCode();
+                case "toString":
+                    return typeVariableToString();
+                case "getName":
+                    return getName();
+                case "getGenericDeclaration":
+                    return getGenericDeclaration();
+                case "getBounds":
+                    return getBounds();
             }
 
             // new method from java8...

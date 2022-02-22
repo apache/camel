@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging.generics;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Custom parametrized type implementation.
@@ -89,8 +90,8 @@ public class OwbParametrizedTypeImpl implements ParameterizedType {
             ParameterizedType that = (ParameterizedType) obj;
             Type thatOwnerType = that.getOwnerType();
             Type thatRawType = that.getRawType();
-            return (owner == null ? thatOwnerType == null : owner.equals(thatOwnerType))
-                    && (rawType == null ? thatRawType == null : rawType.equals(thatRawType))
+            return (Objects.equals(owner, thatOwnerType))
+                    && (Objects.equals(rawType, thatRawType))
                     && Arrays.equals(types, that.getActualTypeArguments());
         } else {
             return false;
