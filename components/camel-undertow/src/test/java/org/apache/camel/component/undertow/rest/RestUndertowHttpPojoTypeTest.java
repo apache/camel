@@ -264,8 +264,8 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
 
                 // use the rest DSL to define the rest services
                 rest()
-                        .get("/users").outType(UserPojo[].class).to("direct:users")
-                        .get("/users/list").outType(UserPojo[].class).to("direct:list")
+                        .get("/users").id("getUsers").outType(UserPojo[].class).to("direct:users")
+                        .get("/users/list").id("getUsersList").outType(UserPojo[].class).to("direct:list")
                         .get("/users/{id}").id("getUser").outType(UserPojo.class).to("direct:id")
                         .put("/users/{id}").id("putUser").type(UserPojo.class).to("mock:putUser")
                         .put("/users").id("putUsers").type(UserPojo[].class).to("mock:putUsers")

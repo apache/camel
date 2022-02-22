@@ -93,7 +93,7 @@ public class RestProducerOutTypeBindingTest extends BaseNettyTest {
                 from("direct:r1")
                         .log("Got req1")
                         .setBody(constant(new Resp1("1")));
-                from("direct:r1")
+                from("direct:r2")
                         .log("Got req2")
                         .setBody(constant(new Resp2(null, "2")))
                     .end();
