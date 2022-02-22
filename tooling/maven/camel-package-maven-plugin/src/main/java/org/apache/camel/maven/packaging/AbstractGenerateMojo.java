@@ -127,9 +127,9 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
                 if (!stale.isEmpty()) {
                     getLog().info("Stale files detected, re-generating.");
                     if (showStaleFiles) {
-                        getLog().info("Stale files: " + stale.stream().collect(Collectors.joining(", ")));
+                        getLog().info("Stale files: " + String.join(", ", stale));
                     } else if (getLog().isDebugEnabled()) {
-                        getLog().debug("Stale files: " + stale.stream().collect(Collectors.joining(", ")));
+                        getLog().debug("Stale files: " + String.join(", ", stale));
                     }
                 } else {
                     // everything is in order, skip
