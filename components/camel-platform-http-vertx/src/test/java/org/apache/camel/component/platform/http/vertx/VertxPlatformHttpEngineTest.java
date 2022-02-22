@@ -467,9 +467,9 @@ public class VertxPlatformHttpEngineTest {
                             .post("/validate/body")
                             .clientRequestValidation(true)
                             .param().name("body").type(RestParamType.body).required(true).endParam()
-                            .route()
-                            .setBody(simple("Hello ${body}"))
-                            .endRest();
+                            .to("direct:rest");
+                    from("direct:rest")
+                            .setBody(simple("Hello ${body}"));
                 }
             });
 

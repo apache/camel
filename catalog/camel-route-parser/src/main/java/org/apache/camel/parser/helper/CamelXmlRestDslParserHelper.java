@@ -201,13 +201,6 @@ public final class CamelXmlRestDslParserHelper {
                 if (verb != null) {
                     verb.setTo(uri);
                 }
-            } else if ("toD".equals(xmlNode.getNodeName())) {
-                NamedNodeMap map = xmlNode.getAttributes();
-                String uri = extractAttribute(map, "uri");
-                RestVerbDetails verb = getLastVerb(detail);
-                if (verb != null) {
-                    verb.setToD(uri);
-                }
             }
         }
 
@@ -236,7 +229,7 @@ public final class CamelXmlRestDslParserHelper {
 
     private static void extractAttributes(Node xmlNode, RestVerbDetails detail) {
         NamedNodeMap map = xmlNode.getAttributes();
-        detail.setUri(extractAttribute(map, "uri"));
+        detail.setPath(extractAttribute(map, "path"));
         detail.setConsumes(extractAttribute(map, "consumes"));
         detail.setProduces(extractAttribute(map, "produces"));
         detail.setApiDocs(extractAttribute(map, "apiDocs"));

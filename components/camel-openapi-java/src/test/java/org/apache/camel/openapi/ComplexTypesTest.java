@@ -71,9 +71,10 @@ public class ComplexTypesTest extends CamelTestSupport {
                     .message("Receives a complex object as parameter")
                     .endResponseMessage()
                     .outType(SampleComplexResponseType.InnerClass.class)
-                    .route()
-                    .routeId("complex request type")
-                    .log("/complex request invoked");
+                    .to("direct:request");
+                from("direct:request")
+                        .routeId("complex request type")
+                        .log("/complex request invoked");
 
                 rest().get("/complexResponse")
                     .description("Demo complex response type")
@@ -86,10 +87,12 @@ public class ComplexTypesTest extends CamelTestSupport {
                     .code(200)
                     .message("Returns a complex object")
                     .endResponseMessage()
-                    .route()
-                    .routeId("complex response type")
-                    .log("/complex invoked")
-                    .setBody(constant(new SampleComplexResponseType()));
+                    .to("direct:response");
+
+                from("direct:response")
+                        .routeId("complex response type")
+                        .log("/complex invoked")
+                        .setBody(constant(new SampleComplexResponseType()));
             }
         };
     }

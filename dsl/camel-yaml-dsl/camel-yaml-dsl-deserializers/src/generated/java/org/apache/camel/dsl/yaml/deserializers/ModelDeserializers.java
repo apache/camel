@@ -3991,12 +3991,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
-                    @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
-                    @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
                     @YamlProperty(name = "type", type = "string")
             }
     )
@@ -4079,24 +4077,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setSkipBindingOnErrorCode(val);
                     break;
                 }
-                case "to-or-route": {
-                    MappingNode val = asMappingNode(node);
-                    setProperties(target, val);
-                    break;
-                }
                 case "to": {
                     org.apache.camel.model.ToDefinition val = asType(node, org.apache.camel.model.ToDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "to-d": {
-                    org.apache.camel.model.ToDynamicDefinition val = asType(node, org.apache.camel.model.ToDynamicDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "route": {
-                    org.apache.camel.model.RouteDefinition val = asType(node, org.apache.camel.model.RouteDefinition.class);
-                    target.setToOrRoute(val);
+                    target.setTo(val);
                     break;
                 }
                 case "type": {
@@ -5356,12 +5339,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
-                    @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
-                    @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
                     @YamlProperty(name = "type", type = "string")
             }
     )
@@ -5444,24 +5425,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setSkipBindingOnErrorCode(val);
                     break;
                 }
-                case "to-or-route": {
-                    MappingNode val = asMappingNode(node);
-                    setProperties(target, val);
-                    break;
-                }
                 case "to": {
                     org.apache.camel.model.ToDefinition val = asType(node, org.apache.camel.model.ToDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "to-d": {
-                    org.apache.camel.model.ToDynamicDefinition val = asType(node, org.apache.camel.model.ToDynamicDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "route": {
-                    org.apache.camel.model.RouteDefinition val = asType(node, org.apache.camel.model.RouteDefinition.class);
-                    target.setToOrRoute(val);
+                    target.setTo(val);
                     break;
                 }
                 case "type": {
@@ -5787,12 +5753,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
-                    @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
-                    @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
                     @YamlProperty(name = "type", type = "string")
             }
     )
@@ -5875,24 +5839,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setSkipBindingOnErrorCode(val);
                     break;
                 }
-                case "to-or-route": {
-                    MappingNode val = asMappingNode(node);
-                    setProperties(target, val);
-                    break;
-                }
                 case "to": {
                     org.apache.camel.model.ToDefinition val = asType(node, org.apache.camel.model.ToDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "to-d": {
-                    org.apache.camel.model.ToDynamicDefinition val = asType(node, org.apache.camel.model.ToDynamicDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "route": {
-                    org.apache.camel.model.RouteDefinition val = asType(node, org.apache.camel.model.RouteDefinition.class);
-                    target.setToOrRoute(val);
+                    target.setTo(val);
                     break;
                 }
                 case "type": {
@@ -9559,12 +9508,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
-                    @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
-                    @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
                     @YamlProperty(name = "type", type = "string")
             }
     )
@@ -9647,24 +9594,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setSkipBindingOnErrorCode(val);
                     break;
                 }
-                case "to-or-route": {
-                    MappingNode val = asMappingNode(node);
-                    setProperties(target, val);
-                    break;
-                }
                 case "to": {
                     org.apache.camel.model.ToDefinition val = asType(node, org.apache.camel.model.ToDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "to-d": {
-                    org.apache.camel.model.ToDynamicDefinition val = asType(node, org.apache.camel.model.ToDynamicDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "route": {
-                    org.apache.camel.model.RouteDefinition val = asType(node, org.apache.camel.model.RouteDefinition.class);
-                    target.setToOrRoute(val);
+                    target.setTo(val);
                     break;
                 }
                 case "type": {
@@ -9930,12 +9862,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
-                    @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
-                    @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
                     @YamlProperty(name = "type", type = "string")
             }
     )
@@ -10018,24 +9948,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setSkipBindingOnErrorCode(val);
                     break;
                 }
-                case "to-or-route": {
-                    MappingNode val = asMappingNode(node);
-                    setProperties(target, val);
-                    break;
-                }
                 case "to": {
                     org.apache.camel.model.ToDefinition val = asType(node, org.apache.camel.model.ToDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "to-d": {
-                    org.apache.camel.model.ToDynamicDefinition val = asType(node, org.apache.camel.model.ToDynamicDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "route": {
-                    org.apache.camel.model.RouteDefinition val = asType(node, org.apache.camel.model.RouteDefinition.class);
-                    target.setToOrRoute(val);
+                    target.setTo(val);
                     break;
                 }
                 case "type": {
@@ -10427,12 +10342,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.RestOperationResponseMsgDefinition"),
-                    @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
-                    @YamlProperty(name = "to-d", type = "object:org.apache.camel.model.ToDynamicDefinition"),
                     @YamlProperty(name = "type", type = "string")
             }
     )
@@ -10515,24 +10428,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setSkipBindingOnErrorCode(val);
                     break;
                 }
-                case "to-or-route": {
-                    MappingNode val = asMappingNode(node);
-                    setProperties(target, val);
-                    break;
-                }
                 case "to": {
                     org.apache.camel.model.ToDefinition val = asType(node, org.apache.camel.model.ToDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "to-d": {
-                    org.apache.camel.model.ToDynamicDefinition val = asType(node, org.apache.camel.model.ToDynamicDefinition.class);
-                    target.setToOrRoute(val);
-                    break;
-                }
-                case "route": {
-                    org.apache.camel.model.RouteDefinition val = asType(node, org.apache.camel.model.RouteDefinition.class);
-                    target.setToOrRoute(val);
+                    target.setTo(val);
                     break;
                 }
                 case "type": {

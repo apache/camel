@@ -42,21 +42,18 @@ public class RestPlatformHttpContextPathConfigurationTest extends AbstractPlatfo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
                 restConfiguration()
                         .component("platform-http")
                         .contextPath("/rest");
 
                 rest()
-                        .get("/get")
-                        .route()
-                        .setBody(constant("GET: /get"))
-                        .endRest()
-                        .post("/post")
-                        .consumes("text/plain").produces("text/plain")
-                        .route()
-                        .setBody(constant("POST: /post"))
-                        .endRest();
+                        .get("/get").to("direct:get")
+                        .post("/post").consumes("text/plain").produces("text/plain").to("direct:post");
+
+                from("direct:get")
+                        .setBody(constant("GET: /get"));
+                from("direct:post")
+                        .setBody(constant("POST: /post"));
 
             }
         };
