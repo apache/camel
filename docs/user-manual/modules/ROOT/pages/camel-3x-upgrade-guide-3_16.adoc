@@ -17,20 +17,69 @@ to keep the existing and ignore the duplicate.
 
 Removed the deprecated class `org.apache.camel.impl.RouteIdFactory`.
 
-==== Rest DSL
+=== Rest DSL
 
-The generic verb-based definition, where the HTTP verb can be specified as a string value
-is no longer supported for defining a REST service.
-Only the built-in verbs (get, post, put etc.) must be used.
+The Rest DSL have some changes.
 
-Renamed the following classes in package `org.apache.camel.model.rest`:
+==== Removed support for embedded routes
 
-- `DeleteVerbDefinition` to `DeleteDefinition`
-- `GetVerbDefinition` to `GetDefinition`
-- `HeadVerbDefinition` to `HeadDefinition`
-- `PatchVerbDefinition` to `PatchDefinition`
-- `PostVerbDefinition` to `PostDefinition`
-- `PutVerbDefinition` to `PutDefinition`
+The Rest DSL no longer allows embedding routes directly into each REST service.
+Instead, you must use `to` to route to a Camel endpoint. If you have an embedded
+route you can them make this into an individual route using `direct` as the input endpoint,
+and then link to this route from the REST service.
+
+For example
+
+[source,java]
+----
+rest("/users")
+  .get("/{id}")
+  .route().
+    // embedded route here
+----
+
+Should now be:
+
+[source,java]
+----
+rest("/users")
+  .get("/{id}")
+  .to("direct:users-by-id");
+
+from("direct:users-by-id")
+    // embedded route here
+----
+
+And in XML:
+
+[source,xml]
+----
+<rest path="/users">
+  <get path="/{id}">
+    <route>
+      ...
+   </route>
+  </get>
+</rest>
+----
+
+Should now be:
+
+[source,xml]
+----
+<rest path="/users">
+  <get path="/{id}">
+    <to uri="direct:users-by-id"/>
+  </get>
+</rest>
+
+<route>
+  <from uri="direct:users-by-id"/>
+  ...
+</route>
+----
+
+==== Renamed uri to path
 
 Rename `uri` to `path` on the verb classes listed above.
 When using XML or YAML DSL then migration is needed such as:
@@ -74,6 +123,21 @@ rest:
     - path: "/hello/{name}"
       to: "direct:hello"
 ----
+
+==== Renamed classes
+
+The generic verb-based definition, where the HTTP verb can be specified as a string value
+is no longer supported for defining a REST service.
+Only the built-in verbs (get, post, put etc.) must be used.
+
+Renamed the following classes in package `org.apache.camel.model.rest`:
+
+- `DeleteVerbDefinition` to `DeleteDefinition`
+- `GetVerbDefinition` to `GetDefinition`
+- `HeadVerbDefinition` to `HeadDefinition`
+- `PatchVerbDefinition` to `PatchDefinition`
+- `PostVerbDefinition` to `PostDefinition`
+- `PutVerbDefinition` to `PutDefinition`
 
 ==== Saga EIP
 
