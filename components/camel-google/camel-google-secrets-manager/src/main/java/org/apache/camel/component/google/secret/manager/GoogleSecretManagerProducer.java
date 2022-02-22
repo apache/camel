@@ -93,7 +93,8 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
             response = client.accessSecretVersion(request);
         } else {
             String secretId = exchange.getMessage().getHeader(GoogleSecretManagerConstants.SECRET_ID, String.class);
-            String versionId = exchange.getMessage().getHeader(GoogleSecretManagerConstants.VERSION_ID, defaultVersion, String.class);
+            String versionId
+                    = exchange.getMessage().getHeader(GoogleSecretManagerConstants.VERSION_ID, defaultVersion, String.class);
             String projectId = getConfiguration().getProject();
             SecretVersionName secretVersionName = SecretVersionName.of(projectId, secretId, versionId);
             response = client.accessSecretVersion(secretVersionName);

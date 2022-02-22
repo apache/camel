@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnabledIfEnvironmentVariable(named = "GOOGLE_APPLICATION_CREDENTIALS", matches = ".*",
                               disabledReason = "Application credentials were not provided")
-public class GoogleCloudIT extends CamelTestSupport {
+public class GoogleSecretManagerIT extends CamelTestSupport {
 
     final String serviceAccountKeyFile = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
     final String project = "myProject";
@@ -78,6 +78,15 @@ public class GoogleCloudIT extends CamelTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getMessage().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test123");
                 exchange.getMessage().setHeader(GoogleSecretManagerConstants.VERSION_ID, "1");
+            }
+        });
+
+        assertEquals("Hello", ex.getMessage().getBody());
+
+        ex = template.request("direct:getSecretVersion", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getMessage().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test123");
             }
         });
 
