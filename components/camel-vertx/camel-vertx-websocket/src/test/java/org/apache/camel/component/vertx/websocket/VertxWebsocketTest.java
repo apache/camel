@@ -163,6 +163,9 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
 
     @Test
     public void testSendToAll() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(0);
+
         int expectedResultCount = 5;
         CountDownLatch latch = new CountDownLatch(expectedResultCount);
         List<String> results = new ArrayList<>();
@@ -193,10 +196,15 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         for (int i = 1; i <= expectedResultCount; i++) {
             assertTrue(results.contains("Hello World " + i));
         }
+
+        mockEndpoint.assertIsSatisfied(TimeUnit.SECONDS.toMillis(1));
     }
 
     @Test
     public void testSendToAllWithHeader() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(0);
+
         int expectedResultCount = 5;
         CountDownLatch latch = new CountDownLatch(expectedResultCount);
         List<String> results = new ArrayList<>();
@@ -228,6 +236,8 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         for (int i = 1; i <= expectedResultCount; i++) {
             assertTrue(results.contains("Hello World " + i));
         }
+
+        mockEndpoint.assertIsSatisfied(TimeUnit.SECONDS.toMillis(1));
     }
 
     @Test
