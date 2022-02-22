@@ -43,7 +43,9 @@ public class JettyRestProducerGetUriParameterTest extends BaseJettyTest {
                 from("direct:start").to("rest:get:users/basic?id={id}");
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("basic/?id={id}").route().to("mock:input").process(new Processor() {
+                rest("/users/").get("basic/?id={id}").to("direct:basic");
+
+                from("direct:basic").to("mock:input").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
                         exchange.getMessage().setBody(id + ";Donald Duck");

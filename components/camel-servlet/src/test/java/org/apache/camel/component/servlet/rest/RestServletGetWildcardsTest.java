@@ -58,13 +58,20 @@ public class RestServletGetWildcardsTest extends ServletCamelRouterTestSupport {
                 restConfiguration().component("servlet").host("localhost").endpointProperty("httpBinding", "#myBinding");
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("{id}/basic").route().to("mock:input").process(exchange -> {
-                    String id = exchange.getIn().getHeader("id", String.class);
-                    exchange.getMessage().setBody(id + ";Donald Duck");
-                }).endRest().get("{id}/{query}").route().to("mock:query").process(exchange -> {
+                rest("/users/")
+                        .get("{id}/basic").to("direct:basic")
+                        .get("{id}/{query}").to("direct:query");
+
+                from("direct:basic")
+                        .to("mock:input").process(exchange -> {
+                            String id = exchange.getIn().getHeader("id", String.class);
+                            exchange.getMessage().setBody(id + ";Donald Duck");
+                        });
+
+                from("direct:query").to("mock:query").process(exchange -> {
                     String id = exchange.getIn().getHeader("id", String.class);
                     exchange.getMessage().setBody(id + ";Goofy");
-                }).endRest();
+                });
             }
         };
     }

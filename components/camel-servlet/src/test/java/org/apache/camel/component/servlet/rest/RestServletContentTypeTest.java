@@ -83,16 +83,19 @@ public class RestServletContentTypeTest extends ServletCamelRouterTestSupport {
                         .clientRequestValidation(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users").post("/{id}/update").consumes("application/json").produces("application/json").route()
+                rest("/users").post("/{id}/update").consumes("application/json").produces("application/json").to("direct:update");
+                from("direct:update")
                         .setBody(constant("{ \"status\": \"ok\" }"));
 
-                rest("/users").get().produces("application/json,application/csv").route()
-                    .choice()
+                rest("/users").get().produces("application/json,application/csv").to("direct:users");
+                from("direct:users")
+                        .choice()
                         .when(simple("${header.Accept} == 'application/csv'"))
-                            .setBody(constant("Email,FirstName,LastName\ndonald.duck@disney.com,Donald,Duck"))
-                            .setHeader(Exchange.CONTENT_TYPE, constant("application/csv"))
+                        .setBody(constant("Email,FirstName,LastName\ndonald.duck@disney.com,Donald,Duck"))
+                        .setHeader(Exchange.CONTENT_TYPE, constant("application/csv"))
                         .otherwise()
-                             .setBody(constant("{\"email\": \"donald.duck@disney.com\", \"firstname\": \"Donald\", \"lastname\": \"Duck\"}"));
+                        .setBody(constant(
+                                "{\"email\": \"donald.duck@disney.com\", \"firstname\": \"Donald\", \"lastname\": \"Duck\"}"));
 
             }
         };

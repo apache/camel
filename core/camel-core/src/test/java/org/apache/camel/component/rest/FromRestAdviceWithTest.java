@@ -21,11 +21,19 @@ import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FromRestAdviceWithTest extends ContextTestSupport {
+
+    @Override
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
+        jndi.bind("dummy-rest", new DummyRestConsumerFactory());
+        return jndi;
+    }
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -37,9 +45,11 @@ public class FromRestAdviceWithTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest("/say/hello").get().route().routeId("myRoute").transform().constant("Bye World").to("direct:hello");
+                rest("/say/hello").get().to("direct:hello");
 
-                from("direct:hello").to("mock:hello");
+                from("direct:hello").routeId("myRoute")
+                        .transform().constant("Bye World")
+                        .to("mock:hello");
             }
         });
 

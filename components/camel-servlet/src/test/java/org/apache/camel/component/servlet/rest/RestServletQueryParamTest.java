@@ -66,8 +66,11 @@ public class RestServletQueryParamTest extends ServletCamelRouterTestSupport {
                             .type(RestParamType.query)
                             .required(true)
                         .endParam()
-                    .route().to("mock:input").process(exchange -> {
-                        String auth = exchange.getIn().getHeader("auth", String.class);
+                        .to("direct:users");
+
+                from("direct:users")
+                        .to("mock:input").process(exchange -> {
+                            String auth = exchange.getIn().getHeader("auth", String.class);
                             exchange.getMessage().setBody(auth + ";Donald Duck");
                         });
             }

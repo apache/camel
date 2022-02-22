@@ -6490,9 +6490,6 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
             }
           },
-          "route" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
-          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -6502,17 +6499,8 @@
           "skipBindingOnErrorCode" : {
             "type" : "boolean"
           },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
-          },
           "to" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ToDefinition"
-          },
-          "toD" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
           },
           "type" : {
             "type" : "string"
@@ -6567,9 +6555,6 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
             }
           },
-          "route" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
-          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -6579,17 +6564,8 @@
           "skipBindingOnErrorCode" : {
             "type" : "boolean"
           },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
-          },
           "to" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ToDefinition"
-          },
-          "toD" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
           },
           "type" : {
             "type" : "string"
@@ -6644,9 +6620,6 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
             }
           },
-          "route" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
-          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -6656,17 +6629,8 @@
           "skipBindingOnErrorCode" : {
             "type" : "boolean"
           },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
-          },
           "to" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ToDefinition"
-          },
-          "toD" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
           },
           "type" : {
             "type" : "string"
@@ -6721,9 +6685,6 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
             }
           },
-          "route" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
-          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -6733,17 +6694,8 @@
           "skipBindingOnErrorCode" : {
             "type" : "boolean"
           },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
-          },
           "to" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ToDefinition"
-          },
-          "toD" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
           },
           "type" : {
             "type" : "string"
@@ -6798,9 +6750,6 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
             }
           },
-          "route" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
-          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -6810,17 +6759,8 @@
           "skipBindingOnErrorCode" : {
             "type" : "boolean"
           },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
-          },
           "to" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ToDefinition"
-          },
-          "toD" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
           },
           "type" : {
             "type" : "string"
@@ -6875,9 +6815,6 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
             }
           },
-          "route" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
-          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -6887,17 +6824,8 @@
           "skipBindingOnErrorCode" : {
             "type" : "boolean"
           },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
-          },
           "to" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ToDefinition"
-          },
-          "toD" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
           },
           "type" : {
             "type" : "string"

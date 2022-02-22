@@ -79,9 +79,9 @@ public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
                 transformer().fromType(UserPojoEx.class).toType("json").withDataFormat(jsondf);
                 rest("/users/")
                         // REST binding does nothing
-                        .post("new").route()
-                        // contract advice converts betweeen JSON and UserPojoEx
-                        // directly
+                        .post("new").to("direct:new");
+                from("direct:new")
+                        // contract advice converts between JSON and UserPojoEx directly
                         .inputType(UserPojoEx.class).outputType("json").process(ex -> {
                             ex.getIn().getBody(UserPojoEx.class).setActive(true);
                         }).to("mock:input");

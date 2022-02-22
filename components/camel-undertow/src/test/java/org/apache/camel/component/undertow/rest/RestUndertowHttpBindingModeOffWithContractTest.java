@@ -77,8 +77,10 @@ public class RestUndertowHttpBindingModeOffWithContractTest extends BaseUndertow
                 rest("/users/")
                         // REST binding does nothing
                         .post("new")
-                        .route()
-                        // contract advice converts betweeen JSON and UserPojoEx directly
+                        .to("direct:new");
+
+                from("direct:new")
+                        // contract advice converts between JSON and UserPojoEx directly
                         .inputType(UserPojoEx.class)
                         .outputType("json")
                         .process(ex -> {

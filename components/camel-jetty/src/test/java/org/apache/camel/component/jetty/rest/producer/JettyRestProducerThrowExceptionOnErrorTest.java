@@ -54,7 +54,9 @@ public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
                 from("direct:start").to("rest:get:users/{id}/basic");
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
+                rest("/users/").get("{id}/basic").to("direct:basic");
+
+                from("direct:basic").to("mock:input").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
                         if ("666".equals(id)) {

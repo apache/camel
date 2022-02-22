@@ -52,20 +52,22 @@ public class RestNettyHttpGetWildcardsTest extends BaseNettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("{id}/{query}")
-                        .route()
+                        .get("{id}/{query}").to("direct:query")
+                        .get("{id}/basic").to("direct:basic");
+
+                from("direct:query")
                         .to("log:query")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);
                             exchange.getMessage().setBody(id + ";Goofy");
-                        }).endRest()
-                        .get("{id}/basic")
-                        .route()
+                        });
+
+                from("direct:basic")
                         .to("log:input")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);
                             exchange.getMessage().setBody(id + ";Donald Duck");
-                        }).endRest();
+                        });
             }
         };
     }

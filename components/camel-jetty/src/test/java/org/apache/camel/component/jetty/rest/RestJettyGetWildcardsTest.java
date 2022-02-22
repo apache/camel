@@ -53,17 +53,22 @@ public class RestJettyGetWildcardsTest extends BaseJettyTest {
                         "#mybinding");
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
+                rest("/users/")
+                        .get("{id}/basic").to("direct:basic")
+                        .get("{id}/{query}").to("direct:query");
+
+                from("direct:basic").to("mock:input").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
                         exchange.getMessage().setBody(id + ";Donald Duck");
                     }
-                }).endRest().get("{id}/{query}").route().to("mock:query").process(new Processor() {
+                });
+                from("direct:query").to("mock:query").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
                         exchange.getMessage().setBody(id + ";Goofy");
                     }
-                }).endRest();
+                });
             }
         };
     }

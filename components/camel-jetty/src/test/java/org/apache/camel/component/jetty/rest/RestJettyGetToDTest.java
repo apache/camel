@@ -47,8 +47,8 @@ public class RestJettyGetToDTest extends BaseJettyTest {
                         "#mybinding");
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("{id}/basic").toD("seda:${header.id}");
-
+                rest("/users/").get("{id}/basic").to("direct:basic");
+                from("direct:basic").toD("seda:${header.id}");
                 from("seda:123").to("mock:input").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);

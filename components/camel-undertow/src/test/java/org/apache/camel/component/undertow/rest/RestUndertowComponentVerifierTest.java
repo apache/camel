@@ -122,7 +122,9 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
 
                 rest("/")
                         .get("/verify")
-                        .route()
+                        .to("direct:verify");
+
+                from("direct:verify")
                         .process(e -> e.getMessage().setBody("ok"));
             }
         };

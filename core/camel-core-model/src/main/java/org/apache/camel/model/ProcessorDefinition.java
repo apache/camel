@@ -57,7 +57,6 @@ import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.AsPredicate;
@@ -1113,22 +1112,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         } else {
             return (ChoiceDefinition) def;
         }
-    }
-
-    /**
-     * Ends the current block and returns back to the {@link org.apache.camel.model.rest.RestDefinition rest()} DSL.
-     *
-     * @return the builder
-     */
-    public RestDefinition endRest() {
-        ProcessorDefinition<?> def = this;
-
-        RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
-        if (route != null) {
-            return route.getRestDefinition();
-        }
-
-        throw new IllegalArgumentException("Cannot find RouteDefinition to allow endRest");
     }
 
     /**

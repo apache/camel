@@ -36,13 +36,13 @@
 
     <rest path="/foo" consumes="xml" produces="json">
       <description>my foo service</description>
-      <get uri="{id}" apiDocs="false">
+      <get path="{id}" apiDocs="false">
         <description>get by id</description>
         <to uri="log:id"/>
       </get>
       <post bindingMode="xml">
         <description>post something</description>
-        <toD uri="log:post"/>
+        <to uri="log:post"/>
       </post>
     </rest>
 

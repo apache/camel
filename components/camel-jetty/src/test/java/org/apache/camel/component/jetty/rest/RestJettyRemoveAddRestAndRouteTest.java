@@ -56,10 +56,11 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
         new RouteBuilder(context) {
             @Override
             public void configure() throws Exception {
-                rest("/").get("/issues/{isin}/{sedol}").route().id("issues")
+                rest("/").get("/issues/{isin}/{sedol}").to("direct:issues");
+
+                from("direct:issues").routeId("issues")
                         .process(e -> e.getMessage().setBody(
-                                "Here's your issue " + e.getIn().getHeader("isin") + ":" + e.getIn().getHeader("sedol")))
-                        .endRest();
+                                "Here's your issue " + e.getIn().getHeader("isin") + ":" + e.getIn().getHeader("sedol")));
             }
         }.addRoutesToCamelContext(context);
         // exception here since we have 2 rest configurations
@@ -79,10 +80,13 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
             public void configure() throws Exception {
                 restConfiguration().host("localhost").port(getPort());
 
-                rest("/").get("/issues/{isin}").route().id("issues")
-                        .process(e -> e.getMessage().setBody("Here's your issue " + e.getIn().getHeader("isin"))).endRest()
-                        .get("/listings")
-                        .route().id("listings").process(e -> e.getMessage().setBody("some listings"));
+                rest("/")
+                        .get("/issues/{isin}").to("direct:issues")
+                        .get("/listings").to("direct:listings");
+
+                from("direct:listings").routeId("listings").process(e -> e.getMessage().setBody("some listings"));
+                from("direct:issues").routeId("issues")
+                        .process(e -> e.getMessage().setBody("Here's your issue " + e.getIn().getHeader("isin")));
             }
         };
     }

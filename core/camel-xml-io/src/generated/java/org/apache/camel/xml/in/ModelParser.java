@@ -2831,9 +2831,7 @@ public class ModelParser extends BaseParser {
                 case "param": doAdd(doParseRestOperationParamDefinition(), def.getParams(), def::setParams); break;
                 case "responseMessage": doAdd(doParseRestOperationResponseMsgDefinition(), def.getResponseMsgs(), def::setResponseMsgs); break;
                 case "security": doAdd(doParseSecurityDefinition(), def.getSecurity(), def::setSecurity); break;
-                case "to": def.setToOrRoute(doParseToDefinition()); break;
-                case "toD": def.setToOrRoute(doParseToDynamicDefinition()); break;
-                case "route": def.setToOrRoute(doParseRouteDefinition()); break;
+                case "to": def.setTo(doParseToDefinition()); break;
                 default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }
             return true;

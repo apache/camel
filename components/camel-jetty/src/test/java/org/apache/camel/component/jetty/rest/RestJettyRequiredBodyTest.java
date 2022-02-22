@@ -82,7 +82,8 @@ public class RestJettyRequiredBodyTest extends BaseJettyTest {
                 // use the rest DSL to define the rest services
                 rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").param()
                         .name("body").required(true).type(RestParamType.body)
-                        .endParam().route().setBody(constant("{ \"status\": \"ok\" }"));
+                        .endParam().to("direct:update");
+                from("direct:update").setBody(constant("{ \"status\": \"ok\" }"));
             }
         };
     }

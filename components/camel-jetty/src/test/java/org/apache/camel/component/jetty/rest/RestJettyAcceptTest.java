@@ -75,7 +75,8 @@ public class RestJettyAcceptTest extends BaseJettyTest {
                         .clientRequestValidation(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").route()
+                rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").to("direct:update");
+                from("direct:update")
                         .setBody(constant("{ \"status\": \"ok\" }"));
             }
         };

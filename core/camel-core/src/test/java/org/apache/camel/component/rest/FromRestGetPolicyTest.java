@@ -38,7 +38,7 @@ public class FromRestGetPolicyTest extends ContextTestSupport {
 
     @Test
     public void testFromRestModel() throws Exception {
-        assertEquals(1, context.getRoutes().size());
+        assertEquals(2, context.getRoutes().size());
 
         assertEquals(1, context.getRestDefinitions().size());
 
@@ -54,7 +54,10 @@ public class FromRestGetPolicyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
 
-                rest("/say/hello").get().route().policy(new MyDummyPolicy()).to("mock:hello");
+                rest("/say/hello").get().to("direct:hello");
+
+                from("direct:hello")
+                        .policy(new MyDummyPolicy()).to("mock:hello");
             }
         };
     }

@@ -46,8 +46,9 @@ public class RestNettyProducerVerbUpperCaseTest extends BaseNettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("{id}/basic")
-                        .route()
+                        .get("{id}/basic").to("direct:basic");
+
+                from("direct:basic")
                         .to("mock:input")
                         .process(exchange -> {
                             String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);

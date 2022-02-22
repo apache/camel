@@ -24,16 +24,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.model.Block;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
-import org.apache.camel.model.OutputNode;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -41,7 +35,10 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "rest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition> implements Block, OutputNode {
+public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition> {
+
+    @XmlTransient
+    private RestDefinition rest;
 
     @XmlElementRef
     private List<RestOperationParamDefinition> params = new ArrayList<>();
@@ -82,25 +79,8 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     private String outType;
     @XmlTransient
     private Class<?> outTypeClass;
-    // used by XML DSL to either select a <to>, <toD>, or <route>
-    // so we need to use the common type OptionalIdentifiedDefinition
-    // must select one of them, and hence why they are all set to required =
-    // true, but the XSD is set to only allow one of the element
-    @XmlElements({
-            @XmlElement(required = true, name = "to", type = ToDefinition.class),
-            @XmlElement(required = true, name = "toD", type = ToDynamicDefinition.class),
-            @XmlElement(required = true, name = "route", type = RouteDefinition.class) })
-    private OptionalIdentifiedDefinition<?> toOrRoute;
-
-    // the Java DSL uses the to or route definition directory
-    @XmlTransient
+    @XmlElement(required = true)
     private ToDefinition to;
-    @XmlTransient
-    private ToDynamicDefinition toD;
-    @XmlTransient
-    private RouteDefinition route;
-    @XmlTransient
-    private RestDefinition rest;
 
     @Override
     public String getShortName() {
@@ -110,15 +90,6 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     @Override
     public String getLabel() {
         return "verb";
-    }
-
-    @Override
-    public void addOutput(ProcessorDefinition<?> processorDefinition) {
-        if (route == null) {
-            route = new RouteDefinition();
-        }
-
-        route.addOutput(processorDefinition);
     }
 
     public String getDeprecated() {
@@ -328,70 +299,24 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
         this.apiDocs = apiDocs;
     }
 
+    public ToDefinition getTo() {
+        return to;
+    }
+
+    /**
+     * The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that
+     * handles this REST call.
+     */
+    public void setTo(ToDefinition to) {
+        this.to = to;
+    }
+
     public RestDefinition getRest() {
         return rest;
     }
 
     public void setRest(RestDefinition rest) {
         this.rest = rest;
-    }
-
-    public RouteDefinition getRoute() {
-        if (route != null) {
-            return route;
-        } else if (toOrRoute instanceof RouteDefinition) {
-            return (RouteDefinition) toOrRoute;
-        } else {
-            return null;
-        }
-    }
-
-    public void setRoute(RouteDefinition route) {
-        this.route = route;
-        this.toOrRoute = route;
-    }
-
-    public ToDefinition getTo() {
-        if (to != null) {
-            return to;
-        } else if (toOrRoute instanceof ToDefinition) {
-            return (ToDefinition) toOrRoute;
-        } else {
-            return null;
-        }
-    }
-
-    public ToDynamicDefinition getToD() {
-        if (toD != null) {
-            return toD;
-        } else if (toOrRoute instanceof ToDynamicDefinition) {
-            return (ToDynamicDefinition) toOrRoute;
-        } else {
-            return null;
-        }
-    }
-
-    public void setTo(ToDefinition to) {
-        this.to = to;
-        this.toD = null;
-        this.toOrRoute = to;
-    }
-
-    public void setToD(ToDynamicDefinition to) {
-        this.to = null;
-        this.toD = to;
-        this.toOrRoute = to;
-    }
-
-    public OptionalIdentifiedDefinition<?> getToOrRoute() {
-        return toOrRoute;
-    }
-
-    /**
-     * To route from this REST service to a Camel endpoint, or an inlined route
-     */
-    public void setToOrRoute(OptionalIdentifiedDefinition<?> toOrRoute) {
-        this.toOrRoute = toOrRoute;
     }
 
     // Fluent API

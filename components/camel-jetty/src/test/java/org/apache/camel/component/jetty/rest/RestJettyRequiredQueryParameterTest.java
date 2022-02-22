@@ -68,7 +68,9 @@ public class RestJettyRequiredQueryParameterTest extends BaseJettyTest {
                 // use the rest DSL to define the rest services
                 rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").param()
                         .name("country").required(true).type(RestParamType.query)
-                        .endParam().route().setBody(constant("{ \"status\": \"ok\" }"));
+                        .endParam().to("direct:update");
+
+                from("direct:update").setBody(constant("{ \"status\": \"ok\" }"));
             }
         };
     }

@@ -67,13 +67,16 @@
 
     <rest>
       <get path="/ping">
-        <route>
-          <setBody>
-            <constant>pong</constant>
-          </setBody>
-        </route>
+        <to uri="direct:ping"/>
       </get>
     </rest>
+
+    <route>
+      <from uri="direct:ping"/>
+      <setBody>
+        <constant>pong</constant>
+      </setBody>
+    </route>
 
   </camelContext>
 </beans>

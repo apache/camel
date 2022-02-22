@@ -380,8 +380,6 @@ public final class CamelJavaRestDslParserHelper {
             verb.setApiDocs(extractValueFromFirstArgument(clazz, block, mi));
         } else if ("to".equals(name)) {
             verb.setTo(extractValueFromFirstArgument(clazz, block, mi));
-        } else if ("toD".equals(name)) {
-            verb.setToD(extractValueFromFirstArgument(clazz, block, mi));
         } else if ("tag".equals(name)) {
             // tag is only available on the node
             node.setTag(extractValueFromFirstArgument(clazz, block, mi));
@@ -390,32 +388,32 @@ public final class CamelJavaRestDslParserHelper {
         if ("delete".equals(name)) {
             node.addVerb(verb);
             verb.setMethod("delete");
-            verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+            verb.setPath(extractValueFromFirstArgument(clazz, block, mi));
             verb = null; // reset as this verb is not complete
         } else if ("get".equals(name)) {
             node.addVerb(verb);
             verb.setMethod("get");
-            verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+            verb.setPath(extractValueFromFirstArgument(clazz, block, mi));
             verb = null; // reset as this verb is not complete
         } else if ("head".equals(name)) {
             node.addVerb(verb);
             verb.setMethod("head");
-            verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+            verb.setPath(extractValueFromFirstArgument(clazz, block, mi));
             verb = null; // reset as this verb is not complete
         } else if ("patch".equals(name)) {
             node.addVerb(verb);
             verb.setMethod("patch");
-            verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+            verb.setPath(extractValueFromFirstArgument(clazz, block, mi));
             verb = null; // reset as this verb is not complete
         } else if ("post".equals(name)) {
             node.addVerb(verb);
             verb.setMethod("post");
-            verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+            verb.setPath(extractValueFromFirstArgument(clazz, block, mi));
             verb = null; // reset as this verb is not complete
         } else if ("put".equals(name)) {
             node.addVerb(verb);
             verb.setMethod("put");
-            verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+            verb.setPath(extractValueFromFirstArgument(clazz, block, mi));
             verb = null; // reset as this verb is not complete
         }
 

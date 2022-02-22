@@ -13844,11 +13844,7 @@ configuration, so these custom functions can be used in xquery expressions.
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:param"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:responseMessage"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:security"/>
-          <xs:choice>
-            <xs:element ref="tns:to"/>
-            <xs:element ref="tns:toD"/>
-            <xs:element ref="tns:route"/>
-          </xs:choice>
+          <xs:element ref="tns:to"/>
         </xs:sequence>
         <xs:attribute name="path" type="xs:string">
           <xs:annotation>

@@ -39,8 +39,8 @@ public class RestOpenApiProcessorTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest().get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
+                rest().get("/foo").description("Foo endpoint").to("mock:foo")
+                        .post("/bar").description("Bar endpoint").to("mock:foo");
             }
         });
 
@@ -62,8 +62,8 @@ public class RestOpenApiProcessorTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest().get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
+                rest().get("/foo").description("Foo endpoint").to("mock:foo")
+                        .post("/bar").description("Bar endpoint").to("mock:foo");
             }
         });
 
@@ -87,8 +87,8 @@ public class RestOpenApiProcessorTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest().get("/foo").description("Foo endpoint").deprecated().route().log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
+                rest().get("/foo").description("Foo endpoint").deprecated().to("mock:foo")
+                        .post("/bar").description("Bar endpoint").to("mock:foo");
             }
         });
 
@@ -116,8 +116,8 @@ public class RestOpenApiProcessorTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest().get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
+                rest().get("/foo").description("Foo endpoint").to("mock:foo")
+                        .post("/bar").description("Bar endpoint").to("mock:foo");
             }
         });
 
@@ -141,8 +141,8 @@ public class RestOpenApiProcessorTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest().get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
+                rest().get("/foo").description("Foo endpoint").to("mock:foo")
+                        .post("/bar").description("Bar endpoint").to("mock:foo");
             }
         });
 
@@ -167,8 +167,8 @@ public class RestOpenApiProcessorTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest().get("/foo").description("Foo endpoint").route().log("Hello /foo").endRest()
-                        .post("/bar").description("Bar endpoint").route().log("Hello /foo").endRest();
+                rest().get("/foo").description("Foo endpoint").to("mock:foo")
+                        .post("/bar").description("Bar endpoint").to("mock:foo");
             }
         });
 

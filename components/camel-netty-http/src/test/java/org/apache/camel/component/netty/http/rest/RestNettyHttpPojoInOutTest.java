@@ -57,7 +57,9 @@ public class RestNettyHttpPojoInOutTest extends BaseNettyTest {
                         // just return the default country here
                         .get("lives").to("direct:start")
                         .post("lives").type(UserPojo.class).outType(CountryPojo.class)
-                        .route()
+                        .to("direct:lives");
+
+                from("direct:lives")
                         .bean(new UserService(), "livesWhere");
 
                 CountryPojo country = new CountryPojo();

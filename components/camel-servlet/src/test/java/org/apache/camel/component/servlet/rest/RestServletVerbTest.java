@@ -111,13 +111,16 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
                         .endpointProperty("eagerCheckContentAvailable", "true");
 
                 rest()
-                        .get("/users").route().transform()
-                        .constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]").endRest()
-                        .get("/users/{id}").route().transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }")
-                        .endRest()
-                        .post("/users").to("mock:create")
+                        .get("/users").to("direct:users")
+                        .get("/users/{id}").to("direct:id")
                         .put("/users/{id}").to("mock:update")
                         .delete("/users/{id}").to("mock:delete");
+
+                from("direct:users")
+                        .transform()
+                        .constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]");
+                from("direct:id")
+                        .transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }");
             }
         };
     }

@@ -47,7 +47,9 @@ public class RestUndertowProducerEncodingTest extends BaseUndertowTest {
                 // use the rest DSL to define the rest services
                 rest("/bw-web-api/v1/objects")
                         .get("{action}")
-                        .route()
+                        .to("direct:action");
+
+                from("direct:action")
                         .process(exchange -> {
                             String action = exchange.getIn().getHeader("action", String.class);
                             assertEquals("timesheets", action);

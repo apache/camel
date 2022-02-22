@@ -45,7 +45,9 @@ public class RestUndertowProducerVerbUpperCaseTest extends BaseUndertowTest {
                 // use the rest DSL to define the rest services
                 rest("/users/")
                         .get("{id}/basic")
-                        .route()
+                        .to("direct:basic");
+
+                from("direct:basic")
                         .to("mock:input")
                         .process(exchange -> {
                             String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);

@@ -49,11 +49,11 @@ public class RestNettyCircuitBreakerLeakTest extends BaseNettyTest {
                 restConfiguration().component("netty-http").host("localhost").port(getPort())
                         .endpointProperty("nettyHttpBinding", "#mybinding");
 
-                rest().get("/demo").produces("text/plain")
-                    .route()
-                        .transform().constant("demo page");
+                rest().get("/demo").produces("text/plain").to("direct:demo");
+                from("direct:demo").transform().constant("demo page");
 
-                rest().get("/demo/get").route()
+                rest().get("/demo/get").to("direct:get");
+                from("direct:get")
                     .circuitBreaker()
                         .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(10000).end()
                             .log("incoming request")

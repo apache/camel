@@ -39,8 +39,8 @@ public class LRASagaRoutes extends RouteBuilder {
     public void configure() throws Exception {
 
         rest(sagaService.getLocalParticipantContextPath())
-                .put(PARTICIPANT_PATH_COMPENSATE)
-                .route().id("lra-compensation")
+                .put(PARTICIPANT_PATH_COMPENSATE).to("direct:lra-compensation");
+        from("direct:lra-compensation").routeId("lra-compensation")
                 .process(this::verifyRequest)
                 .choice()
                 .when(header(URL_COMPENSATION_KEY).isNotNull())
@@ -48,14 +48,13 @@ public class LRASagaRoutes extends RouteBuilder {
                 .end();
 
         rest(sagaService.getLocalParticipantContextPath())
-                .put(PARTICIPANT_PATH_COMPLETE)
-                .route().id("lra-completion")
+                .put(PARTICIPANT_PATH_COMPLETE).to("direct:lra-completion");
+        from("direct:lra-completion").routeId("lra-completion")
                 .process(this::verifyRequest)
                 .choice()
                 .when(header(URL_COMPLETION_KEY).isNotNull())
                 .toD("${header." + URL_COMPLETION_KEY + "}")
                 .end();
-
     }
 
     /**

@@ -64,7 +64,9 @@ public class RestNettyHttpBindingModeJsonWithContractTest extends BaseNettyTest 
                 rest("/users/")
                         // REST binding converts from JSON to UserPojo
                         .post("new").type(UserPojo.class)
-                        .route()
+                        .to("direct:new");
+
+                from("direct:new")
                         // then contract advice converts from UserPojo to UserPojoEx
                         .inputType(UserPojoEx.class)
                         .to("mock:input");

@@ -72,7 +72,9 @@ public class RestJettyBindingModeJsonWithContractTest extends BaseJettyTest {
 
                 rest("/users/")
                         // REST binding converts from JSON to UserPojo
-                        .post("new").type(UserPojo.class).route()
+                        .post("new").type(UserPojo.class).to("direct:new");
+
+                from("direct:new")
                         // then contract advice converts from UserPojo to UserPojoEx
                         .inputType(UserPojoEx.class).to("mock:input");
             }

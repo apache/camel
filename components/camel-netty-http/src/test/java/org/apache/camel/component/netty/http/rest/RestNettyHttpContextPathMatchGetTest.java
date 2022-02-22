@@ -43,16 +43,17 @@ public class RestNettyHttpContextPathMatchGetTest extends BaseNettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("{id}")
-                        .route()
+                        .get("{id}").to("direct:id")
+                        .get("list").to("direct:list");
+
+                from("direct:id")
                         .to("mock:input")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);
                             exchange.getMessage().setBody(id + ";Donald Duck");
-                        })
-                        .endRest()
-                        .get("list")
-                        .route()
+                        });
+
+                from("direct:list")
                         .to("mock:input")
                         .process(exchange -> exchange.getMessage().setBody("123;Donald Duck\n456;John Doe"));
             }
