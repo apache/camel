@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @EnabledIfEnvironmentVariable(named = "GOOGLE_APPLICATION_CREDENTIALS", matches = ".*",
                               disabledReason = "Application credentials were not provided")
@@ -39,6 +40,8 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
     private MockEndpoint mockSecret;
     @EndpointInject("mock:getSecret")
     private MockEndpoint mockGetSecret;
+    @EndpointInject("mock:deleteSecret")
+    private MockEndpoint mockDeleteSecret;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -55,6 +58,10 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
                                                    + serviceAccountKeyFile + "&operation=getSecretVersion")
                         .to("mock:getSecret");
 
+                from("direct:deleteSecret").to("google-secret-manager://" + project + "?serviceAccountKey="
+                                + serviceAccountKeyFile + "&operation=deleteSecret")
+                        .to("mock:deleteSecret");
+
             }
         };
     }
@@ -64,6 +71,7 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
 
         mockSecret.expectedMessageCount(1);
         mockGetSecret.expectedMessageCount(1);
+        mockDeleteSecret.expectedMessageCount(1);
 
         template.send("direct:createSecret", new Processor() {
 
@@ -91,6 +99,15 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
         });
 
         assertEquals("Hello", ex.getMessage().getBody());
+
+        ex = template.request("direct:deleteSecret", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getMessage().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test123");
+            }
+        });
+
+        assertNotNull(ex.getMessage());
     }
 
 }

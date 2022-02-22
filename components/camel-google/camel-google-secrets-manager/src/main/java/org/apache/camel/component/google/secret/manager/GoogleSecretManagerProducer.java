@@ -16,16 +16,7 @@
  */
 package org.apache.camel.component.google.secret.manager;
 
-import com.google.cloud.secretmanager.v1.AccessSecretVersionRequest;
-import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
-import com.google.cloud.secretmanager.v1.AddSecretVersionRequest;
-import com.google.cloud.secretmanager.v1.ProjectName;
-import com.google.cloud.secretmanager.v1.Replication;
-import com.google.cloud.secretmanager.v1.Secret;
-import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
-import com.google.cloud.secretmanager.v1.SecretPayload;
-import com.google.cloud.secretmanager.v1.SecretVersion;
-import com.google.cloud.secretmanager.v1.SecretVersionName;
+import com.google.cloud.secretmanager.v1.*;
 import com.google.protobuf.ByteString;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -55,6 +46,9 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
                 break;
             case getSecretVersion:
                 getSecretVersion(endpoint.getClient(), exchange);
+                break;
+            case deleteSecret:
+                deleteSecret(endpoint.getClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -101,6 +95,16 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(response.getPayload().getData().toStringUtf8());
+    }
+
+    private void deleteSecret(SecretManagerServiceClient client, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            DeleteSecretRequest request = exchange.getIn().getMandatoryBody(DeleteSecretRequest.class);
+            client.deleteSecret(request);
+        } else {
+            String secretId = exchange.getMessage().getHeader(GoogleSecretManagerConstants.SECRET_ID, String.class);
+            client.deleteSecret(SecretName.of(getConfiguration().getProject(), secretId));
+        }
     }
 
     private GoogleSecretManagerOperations determineOperation(Exchange exchange) {
