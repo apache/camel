@@ -38,10 +38,6 @@ public abstract class AbstractClusteredJdbcAggregationTestSupport extends CamelS
     void configureJdbcAggregationRepository() {
     }
 
-    long getCompletionInterval() {
-        return 5000;
-    }
-
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return newAppContext(

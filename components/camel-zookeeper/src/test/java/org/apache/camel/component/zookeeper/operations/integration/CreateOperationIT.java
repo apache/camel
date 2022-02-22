@@ -109,6 +109,6 @@ public class CreateOperationIT extends ZooKeeperITSupport {
         OperationResult<String> result = create.get();
         assertEquals("/four", result.getResult());
 
-        verifyAccessControlList("/four", perms);
+        verifyAccessControlList("/four");
     }
 }

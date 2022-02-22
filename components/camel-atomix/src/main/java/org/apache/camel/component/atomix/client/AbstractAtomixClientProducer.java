@@ -24,15 +24,11 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Message;
 import org.apache.camel.support.HeaderSelectorProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.*;
 
 public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClientEndpoint, R extends Resource>
         extends HeaderSelectorProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractAtomixClientProducer.class);
 
     private ConcurrentMap<String, R> resources;
 

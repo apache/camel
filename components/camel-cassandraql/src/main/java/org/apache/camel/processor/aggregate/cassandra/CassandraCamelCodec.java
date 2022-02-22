@@ -36,7 +36,7 @@ import org.apache.camel.support.DefaultExchangeHolder;
  */
 public class CassandraCamelCodec {
 
-    public ByteBuffer marshallExchange(CamelContext camelContext, Exchange exchange, boolean allowSerializedHeaders)
+    public ByteBuffer marshallExchange(Exchange exchange, boolean allowSerializedHeaders)
             throws IOException {
         // use DefaultExchangeHolder to marshal to a serialized object
         DefaultExchangeHolder pe = DefaultExchangeHolder.marshal(exchange, false, allowSerializedHeaders);

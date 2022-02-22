@@ -141,7 +141,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             // Return a failed Message Disposition Notification Receipt in response body
             String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response,
                     DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.FAILED, null, null, null, null, null, AS2Charset.US_ASCII, mdnMessageTemplate);
+                    AS2DispositionType.FAILED, null, null, null, null, null, mdnMessageTemplate);
             multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                     httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
                     AS2DispositionType.FAILED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true,
@@ -149,7 +149,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
         } else {
             String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response,
                     DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII,
+                    AS2DispositionType.PROCESSED, null, null, null, null, null,
                     mdnMessageTemplate);
             multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                     httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
@@ -255,7 +255,6 @@ public class ResponseMDN implements HttpResponseInterceptor {
             String[] errorFields,
             String[] warningFields,
             Map<String, String> extensionFields,
-            String charset,
             String mdnMessageTemplate)
             throws HttpException {
 

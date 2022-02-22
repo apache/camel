@@ -16,19 +16,12 @@
  */
 package org.apache.camel.component.file.remote.sftp.integration;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.IOHelper;
-import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -60,18 +53,6 @@ public class SftpKeyPairRSAConsumeIT extends SftpServerTestSupport {
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
-    }
-
-    private byte[] getBytesFromFile(String filename) throws IOException {
-        InputStream input;
-        input = new FileInputStream(new File(filename));
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        IOHelper.copyAndCloseInput(input, output);
-        return output.toByteArray();
-    }
-
-    protected PublickeyAuthenticator getPublickeyAuthenticator() {
-        return (username, key, session) -> key.equals(keyPair.getPublic());
     }
 
     @Override

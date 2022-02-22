@@ -38,15 +38,15 @@ import org.apache.camel.util.IOHelper;
  */
 public class JdbcCamelCodec {
 
-    public byte[] marshallExchange(CamelContext camelContext, Exchange exchange, boolean allowSerializedHeaders)
+    public byte[] marshallExchange(Exchange exchange, boolean allowSerializedHeaders)
             throws IOException {
         ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-        marshallExchange(camelContext, exchange, allowSerializedHeaders, bytesOut);
+        marshallExchange(exchange, allowSerializedHeaders, bytesOut);
         return bytesOut.toByteArray();
     }
 
     public void marshallExchange(
-            CamelContext camelContext, Exchange exchange, boolean allowSerializedHeaders, OutputStream outputStream)
+            Exchange exchange, boolean allowSerializedHeaders, OutputStream outputStream)
             throws IOException {
         // use DefaultExchangeHolder to marshal to a serialized object
         DefaultExchangeHolder pe = DefaultExchangeHolder.marshal(exchange, false, allowSerializedHeaders);

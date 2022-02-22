@@ -263,7 +263,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
         replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
         try {
-            basicPublish(exchange, exchangeName, key);
+            basicPublish(exchange, key);
         } catch (Exception e) {
             replyManager.cancelCorrelationId(correlationId);
             exchange.setException(e);
@@ -295,7 +295,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException("ExchangeName and RoutingKey is not provided in the endpoint: " + getEndpoint());
         }
 
-        basicPublish(exchange, exchangeName, key);
+        basicPublish(exchange, key);
         callback.done(true);
         return true;
     }
@@ -303,7 +303,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
     /**
      * Send a message borrowing a channel from the pool.
      */
-    private void basicPublish(final Exchange camelExchange, final String rabbitExchange, final String routingKey)
+    private void basicPublish(final Exchange camelExchange, final String routingKey)
             throws Exception {
         if (channelPool == null) {
             // Open connection and channel lazily if another thread hasn't

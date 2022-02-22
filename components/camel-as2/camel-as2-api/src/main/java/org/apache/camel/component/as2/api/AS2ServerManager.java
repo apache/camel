@@ -20,8 +20,6 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Receives EDI Messages over HTTP
@@ -46,8 +44,6 @@ public class AS2ServerManager {
      * The HTTP Context Attribute containing the internet e-mail address of responding system
      */
     public static final String FROM = CAMEL_AS2_SERVER_PREFIX + "from";
-
-    private static final Logger LOG = LoggerFactory.getLogger(AS2ServerManager.class);
 
     private AS2ServerConnection as2ServerConnection;
 

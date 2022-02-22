@@ -331,7 +331,6 @@ class BlobOperationsIT extends Base {
 
         byte[] dataBytes = new byte[1024]; // we set range for the page from 0-511
         new SecureRandom().nextBytes(dataBytes);
-        final String data = new String(dataBytes, StandardCharsets.UTF_8);
         final InputStream dataStream = new ByteArrayInputStream(dataBytes);
 
         final PageRange pageRange = new PageRange().setStart(0).setEnd(1023);
@@ -367,7 +366,6 @@ class BlobOperationsIT extends Base {
 
         byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
         new SecureRandom().nextBytes(dataBytes);
-        final String data = new String(dataBytes, StandardCharsets.UTF_8);
         final InputStream dataStream = new ByteArrayInputStream(dataBytes);
 
         final PageRange pageRange = new PageRange().setStart(0).setEnd(511);
@@ -396,7 +394,6 @@ class BlobOperationsIT extends Base {
 
         byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
         new SecureRandom().nextBytes(dataBytes);
-        final String data = new String(dataBytes, StandardCharsets.UTF_8);
         final InputStream dataStream = new ByteArrayInputStream(dataBytes);
 
         final PageRange pageRange = new PageRange().setStart(0).setEnd(511);

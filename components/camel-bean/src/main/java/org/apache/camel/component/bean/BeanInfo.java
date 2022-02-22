@@ -427,7 +427,7 @@ public class BeanInfo {
             Class<?> parameterType = parameterTypes[i];
             Annotation[] parameterAnnotations
                     = parametersAnnotations[i].toArray(new Annotation[parametersAnnotations[i].size()]);
-            Expression expression = createParameterUnmarshalExpression(clazz, method, parameterType, parameterAnnotations);
+            Expression expression = createParameterUnmarshalExpression(method, parameterType, parameterAnnotations);
             hasCustomAnnotation |= expression != null;
 
             ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, parameterAnnotations, expression);
@@ -969,12 +969,12 @@ public class BeanInfo {
      * parameter cannot be mapped due to insufficient annotations or not fitting with the default type conventions.
      */
     private Expression createParameterUnmarshalExpression(
-            Class<?> clazz, Method method,
+            Method method,
             Class<?> parameterType, Annotation[] parameterAnnotation) {
 
         // look for a parameter annotation that converts into an expression
         for (Annotation annotation : parameterAnnotation) {
-            Expression answer = createParameterUnmarshalExpressionForAnnotation(clazz, method, parameterType, annotation);
+            Expression answer = createParameterUnmarshalExpressionForAnnotation(method, parameterType, annotation);
             if (answer != null) {
                 return answer;
             }
@@ -984,7 +984,7 @@ public class BeanInfo {
     }
 
     private Expression createParameterUnmarshalExpressionForAnnotation(
-            Class<?> clazz, Method method,
+            Method method,
             Class<?> parameterType, Annotation annotation) {
         if (annotation instanceof ExchangeProperty) {
             ExchangeProperty propertyAnnotation = (ExchangeProperty) annotation;

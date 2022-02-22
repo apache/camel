@@ -18,12 +18,8 @@
 package org.apache.camel.component.rabbitmq.test.infra.services;
 
 import org.apache.camel.test.infra.rabbitmq.services.RabbitMQService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class RabbitMQServiceFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(RabbitMQServiceFactory.class);
-
     private RabbitMQServiceFactory() {
 
     }

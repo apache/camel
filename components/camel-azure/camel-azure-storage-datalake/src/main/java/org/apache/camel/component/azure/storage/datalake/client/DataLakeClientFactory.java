@@ -25,12 +25,8 @@ import com.azure.storage.file.datalake.DataLakeServiceClient;
 import com.azure.storage.file.datalake.DataLakeServiceClientBuilder;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class DataLakeClientFactory {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DataLakeClientFactory.class);
     private static final String SERVICE_URI_SEGMENT = ".dfs.core.windows.net";
 
     private DataLakeClientFactory() {

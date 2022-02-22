@@ -155,7 +155,6 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         try {
             final Response response = asyncHttpClient.executeRequest(request).get();
             int code = response.getStatusCode();
-            String status = response.getStatusText();
             if (code >= 200 && code < 300) {
                 try {
                     final String responseBody = response.getResponseBody();

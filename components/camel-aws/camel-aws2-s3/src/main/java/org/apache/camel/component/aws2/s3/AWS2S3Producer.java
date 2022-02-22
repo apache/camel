@@ -118,7 +118,7 @@ public class AWS2S3Producer extends DefaultProducer {
                     getObjectRange(getEndpoint().getS3Client(), exchange);
                     break;
                 case createDownloadLink:
-                    createDownloadLink(getEndpoint().getS3Client(), exchange);
+                    createDownloadLink(exchange);
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
@@ -544,7 +544,7 @@ public class AWS2S3Producer extends DefaultProducer {
         }
     }
 
-    private void createDownloadLink(S3Client s3Client, Exchange exchange) {
+    private void createDownloadLink(Exchange exchange) {
         final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         final String key = AWS2S3Utils.determineKey(exchange, getConfiguration());
 

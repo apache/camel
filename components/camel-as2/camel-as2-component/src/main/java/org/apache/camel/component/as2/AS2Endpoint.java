@@ -252,12 +252,12 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     @Override
     public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
         if (apiProxy == null) {
-            createApiProxy(method, args);
+            createApiProxy();
         }
         return apiProxy;
     }
 
-    private void createApiProxy(ApiMethod method, Map<String, Object> args) {
+    private void createApiProxy() {
         switch (apiName) {
             case CLIENT:
                 apiProxy = new AS2ClientManager(getAS2ClientConnection());

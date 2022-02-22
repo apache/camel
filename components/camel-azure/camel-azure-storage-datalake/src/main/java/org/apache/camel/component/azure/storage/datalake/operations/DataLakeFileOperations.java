@@ -50,11 +50,8 @@ import org.apache.camel.component.azure.storage.datalake.FileCommonRequestOption
 import org.apache.camel.component.azure.storage.datalake.FileStreamAndLength;
 import org.apache.camel.component.azure.storage.datalake.client.DataLakeFileClientWrapper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DataLakeFileOperations {
-    private static final Logger LOG = LoggerFactory.getLogger(DataLakeFileOperations.class);
     private final DataLakeFileClientWrapper client;
     private final DataLakeConfigurationOptionsProxy configurationProxy;
 

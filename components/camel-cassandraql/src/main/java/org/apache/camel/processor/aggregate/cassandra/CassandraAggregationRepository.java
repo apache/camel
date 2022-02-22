@@ -181,7 +181,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         final Object[] idValues = getPKValues(key);
         LOGGER.debug("Inserting key {} exchange {}", idValues, exchange);
         try {
-            ByteBuffer marshalledExchange = exchangeCodec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
+            ByteBuffer marshalledExchange = exchangeCodec.marshallExchange(exchange, allowSerializedHeaders);
             Object[] cqlParams = concat(idValues, new Object[] { exchange.getExchangeId(), marshalledExchange });
             getSession().execute(insertStatement.bind(cqlParams));
             return exchange;
