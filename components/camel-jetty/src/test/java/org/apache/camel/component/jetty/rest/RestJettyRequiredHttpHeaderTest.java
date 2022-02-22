@@ -67,8 +67,10 @@ public class RestJettyRequiredHttpHeaderTest extends BaseJettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").param()
-                        .name("country").required(true).type(RestParamType.header)
-                        .endParam().route().setBody(constant("{ \"status\": \"ok\" }"));
+                        .name("country").required(true).type(RestParamType.header).endParam().to("direct:update");
+
+                from("direct:update")
+                        .setBody(constant("{ \"status\": \"ok\" }"));
             }
         };
     }

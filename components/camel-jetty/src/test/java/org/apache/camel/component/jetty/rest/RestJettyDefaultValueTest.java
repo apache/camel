@@ -54,7 +54,9 @@ public class RestJettyDefaultValueTest extends BaseJettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/").get("{id}/basic").param().name("verbose").type(RestParamType.query).defaultValue("false")
-                        .endParam().route().process(new Processor() {
+                        .endParam().to("direct:basic");
+                from("direct:basic")
+                        .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String id = exchange.getIn().getHeader("id", String.class);
 

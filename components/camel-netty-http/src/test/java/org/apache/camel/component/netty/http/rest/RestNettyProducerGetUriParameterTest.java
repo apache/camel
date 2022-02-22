@@ -45,8 +45,9 @@ public class RestNettyProducerGetUriParameterTest extends BaseNettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("basic/?id={id}")
-                        .route()
+                        .get("basic/?id={id}").to("direct:basic");
+
+                from("direct:basic")
                         .to("mock:input")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);

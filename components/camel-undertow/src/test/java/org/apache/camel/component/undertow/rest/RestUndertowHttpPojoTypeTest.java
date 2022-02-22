@@ -264,8 +264,15 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
 
                 // use the rest DSL to define the rest services
                 rest()
-                        .get("/users").id("getUsers").outType(UserPojo[].class)
-                        .route().process(exchange -> {
+                        .get("/users").outType(UserPojo[].class).to("direct:users")
+                        .get("/users/list").outType(UserPojo[].class).to("direct:list")
+                        .get("/users/{id}").id("getUser").outType(UserPojo.class).to("direct:id")
+                        .put("/users/{id}").id("putUser").type(UserPojo.class).to("mock:putUser")
+                        .put("/users").id("putUsers").type(UserPojo[].class).to("mock:putUsers")
+                        .put("/users/list").id("putUsersList").type(UserPojo[].class).to("mock:putUsersList");
+
+                from("direct:users")
+                        .process(exchange -> {
                             UserPojo user1 = new UserPojo();
                             user1.setId(1);
                             user1.setName("Scott");
@@ -275,9 +282,10 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
                             user2.setName("Claus");
 
                             exchange.getOut().setBody(new UserPojo[] { user1, user2 });
-                        }).endRest()
-                        .get("/users/list").id("getUsersList").outType(UserPojo[].class)
-                        .route().process(exchange -> {
+                        });
+
+                from("direct:list")
+                        .process(exchange -> {
                             UserPojo user1 = new UserPojo();
                             user1.setId(1);
                             user1.setName("Scott");
@@ -287,20 +295,16 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
                             user2.setName("Claus");
 
                             exchange.getMessage().setBody(new UserPojo[] { user1, user2 });
-                        }).endRest()
-                        .get("/users/{id}").id("getUser").outType(UserPojo.class)
-                        .route().process(exchange -> {
+                        });
+
+                from("direct:id")
+                        .process(exchange -> {
                             UserPojo user1 = new UserPojo();
                             user1.setId(exchange.getIn().getHeader("id", int.class));
                             user1.setName("Scott");
                             exchange.getMessage().setBody(user1);
-                        }).endRest()
-                        .put("/users/{id}").id("putUser").type(UserPojo.class)
-                        .to("mock:putUser")
-                        .put("/users").id("putUsers").type(UserPojo[].class)
-                        .to("mock:putUsers")
-                        .put("/users/list").id("putUsersList").type(UserPojo[].class)
-                        .to("mock:putUsersList");
+                        });
+
             }
         };
     }

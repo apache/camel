@@ -58,7 +58,8 @@ public class RestJettyInvalidJSonClientRequestValidationTest extends BaseJettyTe
                 // use the rest DSL to define the rest services
                 rest("/users/").post("{id}/update")
                         .consumes("application/json").produces("application/json")
-                        .route().setBody(constant("{ \"status\": \"ok\" }"));
+                        .to("direct:update");
+                from("direct:update").setBody(constant("{ \"status\": \"ok\" }"));
             }
         };
     }

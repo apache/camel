@@ -42,7 +42,8 @@ public class JettyRestProducerApiDocTest extends BaseJettyTest {
                 from("direct:start").to("rest:get:api:hello/hi/{name}");
 
                 // use the rest DSL to define the rest services
-                rest("/api/").get("hello/hi/{name}").route().transform().simple("Hello ${header.name}");
+                rest("/api/").get("hello/hi/{name}").to("direct:hi");
+                from("direct:hi").transform().simple("Hello ${header.name}");
             }
         };
     }

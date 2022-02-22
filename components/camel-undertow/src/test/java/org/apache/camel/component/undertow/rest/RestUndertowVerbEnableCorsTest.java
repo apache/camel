@@ -85,13 +85,15 @@ public class RestUndertowVerbEnableCorsTest extends BaseUndertowTest {
                 restConfiguration().component("undertow").host("localhost").port(getPort()).enableCORS(true);
 
                 rest()
-                        .get("/users").route().transform()
-                        .constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]").endRest()
-                        .get("/users/{id}").route().transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }")
-                        .endRest()
+                        .get("/users").to("direct:users")
+                        .get("/users/{id}").to("direct:id")
                         .post("/users").to("mock:create")
                         .put("/users/{id}").to("mock:update")
                         .delete("/users/{id}").to("mock:delete");
+
+                from("direct:users").transform()
+                        .constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]");
+                from("direct:id").transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }");
             }
         };
     }

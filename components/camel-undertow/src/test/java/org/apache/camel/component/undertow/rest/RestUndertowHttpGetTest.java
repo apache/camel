@@ -40,8 +40,9 @@ public class RestUndertowHttpGetTest extends BaseUndertowTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("{id}/basic")
-                        .route()
+                        .get("{id}/basic").to("direct:basic");
+
+                from("direct:basic")
                         .to("mock:input")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);

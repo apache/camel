@@ -98,15 +98,17 @@ public class RestUndertowHttpGetCorsTest extends BaseUndertowTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("{id}/basic")
-                        .route()
+                        .get("{id}/basic").to("direct:get-basic")
+                        .put("{id}/basic").to("direct:put-basic");
+
+                from("direct:get-basic")
                         .to("mock:inputGet")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);
                             exchange.getMessage().setBody(id + ";Donald Duck");
-                        }).endRest()
-                        .put("{id}/basic")
-                        .route()
+                        });
+
+                from("direct:put-basic")
                         .to("mock:inputPut")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);
