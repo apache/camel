@@ -20,5 +20,6 @@ public enum GoogleSecretManagerOperations {
 
     createSecret,
     getSecretVersion,
-    deleteSecret;
+    deleteSecret,
+    listSecrets;
 }

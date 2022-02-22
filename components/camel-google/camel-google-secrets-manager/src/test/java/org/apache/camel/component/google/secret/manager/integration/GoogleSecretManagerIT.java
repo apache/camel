@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.google.secret.manager.integration;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -42,6 +45,8 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
     private MockEndpoint mockGetSecret;
     @EndpointInject("mock:deleteSecret")
     private MockEndpoint mockDeleteSecret;
+    @EndpointInject("mock:listSecrets")
+    private MockEndpoint listSecrets;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -57,6 +62,10 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
                 from("direct:getSecretVersion").to("google-secret-manager://" + project + "?serviceAccountKey="
                                                    + serviceAccountKeyFile + "&operation=getSecretVersion")
                         .to("mock:getSecret");
+
+                from("direct:listSecrets").to("google-secret-manager://" + project + "?serviceAccountKey="
+                                              + serviceAccountKeyFile + "&operation=listSecrets")
+                        .to("mock:listSecrets");
 
                 from("direct:deleteSecret").to("google-secret-manager://" + project + "?serviceAccountKey="
                                                + serviceAccountKeyFile + "&operation=deleteSecret")
@@ -100,6 +109,23 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
 
         assertEquals("Hello", ex.getMessage().getBody());
 
+        ex = template.request("direct:listSecrets", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+            }
+        });
+
+        SecretManagerServiceClient.ListSecretsPagedResponse response
+                = ex.getMessage().getBody(SecretManagerServiceClient.ListSecretsPagedResponse.class);
+        AtomicInteger totalSecret = new AtomicInteger();
+        response
+                .iterateAll()
+                .forEach(
+                        secret -> {
+                            totalSecret.getAndIncrement();
+                        });
+
+        assertEquals(1, totalSecret.get());
         ex = template.request("direct:deleteSecret", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {

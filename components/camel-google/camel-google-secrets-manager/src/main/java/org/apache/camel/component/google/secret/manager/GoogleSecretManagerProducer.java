@@ -50,6 +50,9 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
             case deleteSecret:
                 deleteSecret(endpoint.getClient(), exchange);
                 break;
+            case listSecrets:
+                listSecrets(endpoint.getClient(), exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -105,6 +108,19 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
             String secretId = exchange.getMessage().getHeader(GoogleSecretManagerConstants.SECRET_ID, String.class);
             client.deleteSecret(SecretName.of(getConfiguration().getProject(), secretId));
         }
+    }
+
+    private void listSecrets(SecretManagerServiceClient client, Exchange exchange) throws InvalidPayloadException {
+        SecretManagerServiceClient.ListSecretsPagedResponse response;
+        if (getConfiguration().isPojoRequest()) {
+            ListSecretsRequest request = exchange.getIn().getMandatoryBody(ListSecretsRequest.class);
+            response = client.listSecrets(request);
+        } else {
+            String projectId = getConfiguration().getProject();
+            response = client.listSecrets(ProjectName.of(projectId));
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(response);
     }
 
     private GoogleSecretManagerOperations determineOperation(Exchange exchange) {
