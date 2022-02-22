@@ -38,7 +38,7 @@ public class FromRestGetPolicyTest extends ContextTestSupport {
 
     @Test
     public void testFromRestModel() throws Exception {
-        assertEquals(1, context.getRoutes().size());
+        assertEquals(2, context.getRoutes().size());
 
         assertEquals(1, context.getRestDefinitions().size());
 
