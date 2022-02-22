@@ -86,13 +86,14 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
     }
 
     private void getSecretVersion(SecretManagerServiceClient client, Exchange exchange) throws InvalidPayloadException {
+        final String defaultVersion = "latest";
         AccessSecretVersionResponse response;
         if (getConfiguration().isPojoRequest()) {
             AccessSecretVersionRequest request = exchange.getIn().getMandatoryBody(AccessSecretVersionRequest.class);
             response = client.accessSecretVersion(request);
         } else {
             String secretId = exchange.getMessage().getHeader(GoogleSecretManagerConstants.SECRET_ID, String.class);
-            String versionId = exchange.getMessage().getHeader(GoogleSecretManagerConstants.VERSION_ID, String.class);
+            String versionId = exchange.getMessage().getHeader(GoogleSecretManagerConstants.VERSION_ID, defaultVersion, String.class);
             String projectId = getConfiguration().getProject();
             SecretVersionName secretVersionName = SecretVersionName.of(projectId, secretId, versionId);
             response = client.accessSecretVersion(secretVersionName);
