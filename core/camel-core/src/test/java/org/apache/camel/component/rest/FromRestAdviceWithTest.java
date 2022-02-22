@@ -37,9 +37,11 @@ public class FromRestAdviceWithTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest("/say/hello").get().route().routeId("myRoute").transform().constant("Bye World").to("direct:hello");
+                rest("/say/hello").get("direct:hello");
 
-                from("direct:hello").to("mock:hello");
+                from("direct:hello").routeId("myRoute")
+                        .transform().constant("Bye World")
+                        .to("mock:hello");
             }
         });
 

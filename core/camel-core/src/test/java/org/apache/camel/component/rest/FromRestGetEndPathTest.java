@@ -44,7 +44,7 @@ public class FromRestGetEndPathTest extends FromRestGetTest {
         assertEquals("/say/bye", rest.getPath());
         assertEquals(2, rest.getVerbs().size());
         assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
-        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(0));
+        to = rest.getVerbs().get(0).getTo();
         assertEquals("direct:bye", to.getUri());
 
         // the rest becomes routes and the input is a seda endpoint created by
@@ -67,7 +67,9 @@ public class FromRestGetEndPathTest extends FromRestGetTest {
                 restConfiguration().host("localhost");
                 rest("/say/hello").get().to("direct:hello");
 
-                rest("/say/bye").get().consumes("application/json").route().to("direct:bye").endRest().post().to("mock:update");
+                rest("/say/bye")
+                    .get().consumes("application/json").to("direct:bye")
+                    .post().to("mock:update");
 
                 from("direct:hello").transform().constant("Hello World");
 

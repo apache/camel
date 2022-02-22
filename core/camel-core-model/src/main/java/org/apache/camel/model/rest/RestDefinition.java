@@ -36,10 +36,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.FileUtil;
@@ -606,9 +604,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     /**
-     * Routes directly to the given static endpoint.
-     * <p/>
-     * If you need additional routing capabilities, then use {@link #route()} instead.
+     * The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that
+     * handles this REST call.
      *
      * @param  uri the uri of the endpoint
      * @return     this builder
@@ -624,41 +621,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.setTo(to);
         return this;
-    }
-
-    /**
-     * Routes directly to the given dynamic endpoint.
-     * <p/>
-     * If you need additional routing capabilities, then use {@link #route()} instead.
-     *
-     * @param  uri the uri of the endpoint
-     * @return     this builder
-     */
-    public RestDefinition toD(String uri) {
-        // add to last verb
-        if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
-        }
-
-        ToDynamicDefinition to = new ToDynamicDefinition(uri);
-
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setToD(to);
-        return this;
-    }
-
-    public RouteDefinition route() {
-        // add to last verb
-        if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
-        }
-
-        // link them together so we can navigate using Java DSL
-        RouteDefinition route = new RouteDefinition();
-        route.setRestDefinition(this);
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setRoute(route);
-        return route;
     }
 
     /**
@@ -804,15 +766,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     private void addRouteDefinition(
             CamelContext camelContext, List<RouteDefinition> answer, String component, String producerComponent) {
         for (VerbDefinition verb : getVerbs()) {
-            // either the verb has a singular to or a embedded route
-            RouteDefinition route = verb.getRoute();
-            if (route == null) {
-                // it was a singular to, so add a new route and add the singular
-                // to as output to this route
-                route = new RouteDefinition();
-                ProcessorDefinition def = verb.getTo() != null ? verb.getTo() : verb.getToD();
-                route.getOutputs().add(def);
+            // use a route as facade for this REST service
+            RouteDefinition route = new RouteDefinition();
+            if (verb.getTo() == null) {
+                throw new IllegalArgumentException("Rest service: " + verb + " must have to endpoint configured.");
             }
+            route.getOutputs().add(verb.getTo());
 
             // add the binding
             RestBindingDefinition binding = new RestBindingDefinition();

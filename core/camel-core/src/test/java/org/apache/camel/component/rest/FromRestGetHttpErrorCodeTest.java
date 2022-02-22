@@ -57,7 +57,10 @@ public class FromRestGetHttpErrorCodeTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
-                rest("/say/bye").get().route().choice().when(body().contains("Kaboom"))
+                rest("/say/bye").get().to("direct:bye");
+
+                from("direct:bye")
+                        .choice().when(body().contains("Kaboom"))
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(404))
                         .setHeader(Exchange.CONTENT_TYPE, constant("text/plain")).setBody(constant("The data is invalid"))
                         .otherwise().transform().constant("Bye World");
