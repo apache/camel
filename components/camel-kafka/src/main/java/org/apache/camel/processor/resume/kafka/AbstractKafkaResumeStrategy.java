@@ -23,14 +23,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.camel.Resumable;
+import org.apache.camel.ResumeCache;
 import org.apache.camel.Service;
 import org.apache.camel.UpdatableConsumerResumeStrategy;
 import org.apache.camel.util.StringHelper;
@@ -62,24 +61,30 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
     private Producer<K, V> producer;
     private long errorCount;
 
-    private Map<K, List<V>> processedItems = new TreeMap<>();
-    private List<Future<RecordMetadata>> sentItems = new ArrayList<>();
+    private final List<Future<RecordMetadata>> sentItems = new ArrayList<>();
+    private final ResumeCache<K, V> resumeCache;
     private boolean subscribed;
     private Properties producerConfig;
     private Properties consumerConfig;
 
-    public AbstractKafkaResumeStrategy(String bootstrapServers, String topic) {
+    public AbstractKafkaResumeStrategy(String bootstrapServers, String topic, ResumeCache<K, V> resumeCache) {
         this.topic = topic;
 
         this.producerConfig = createProducer(bootstrapServers);
         this.consumerConfig = createConsumer(bootstrapServers);
+        this.resumeCache = resumeCache;
+
+        init();
     }
 
-    public AbstractKafkaResumeStrategy(String topic, Properties producerConfig,
+    public AbstractKafkaResumeStrategy(String topic, ResumeCache<K, V> resumeCache, Properties producerConfig,
                                        Properties consumerConfig) {
         this.topic = topic;
+        this.resumeCache = resumeCache;
         this.producerConfig = producerConfig;
         this.consumerConfig = consumerConfig;
+
+        init();
     }
 
     private Properties createProducer(String bootstrapServers) {
@@ -148,22 +153,15 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
 
         produce(topic, key, offsetValue);
 
-        // TODO: this leaks. It must be fixed for merge
-        var entries = processedItems.computeIfAbsent(key, k -> new ArrayList<>());
-        entries.add(offsetValue);
+        resumeCache.add(key, offsetValue);
     }
 
-    protected void loadProcessedItems(Map<K, List<V>> processed) throws Exception {
-        loadProcessedItems(processed, UNLIMITED);
-    }
-
-    protected void loadProcessedItems(Map<K, List<V>> processed, int limit) throws Exception {
+    protected void loadCache() throws Exception {
         subscribe();
 
         LOG.debug("Loading records from topic {}", topic);
 
         ConsumerRecords<K, V> records;
-
         do {
             records = consume();
 
@@ -175,16 +173,14 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
                 V value = record.value();
 
                 LOG.trace("Read from Kafka: {}", value);
-                var entries = processed.computeIfAbsent(record.key(), k -> new ArrayList<>());
-                entries.add(record.value());
+                resumeCache.add(record.key(), record.value());
 
-                if (limit != UNLIMITED && processed.size() >= limit) {
+                if (resumeCache.isFull()) {
                     break;
                 }
             }
         } while (true);
 
-        LOG.debug("Loaded {} records", processed.size());
         unsubscribe();
     }
 
@@ -263,10 +259,6 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
         return ConsumerRecords.empty();
     }
 
-    protected Map<K, List<V>> getProcessedItems() {
-        return processedItems;
-    }
-
     public long getErrorCount() {
         return errorCount;
     }
@@ -309,7 +301,7 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
         LOG.info("Starting the kafka resume strategy");
 
         try {
-            loadProcessedItems(processedItems);
+            loadCache();
         } catch (Exception e) {
             LOG.error("Failed to load already processed items: {}", e.getMessage(), e);
         }
