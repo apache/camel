@@ -73,4 +73,12 @@ public class AwsVaultConfigurationProperties extends AwsVaultConfiguration imple
         return this;
     }
 
+    /**
+     * Define if we want to use the AWS Default Credentials Provider or not
+     */
+    public AwsVaultConfigurationProperties withDefaultCredentialsProvider(boolean defaultCredentialsProvider) {
+        setDefaultCredentialsProvider(defaultCredentialsProvider);
+        return this;
+    }
+
 }

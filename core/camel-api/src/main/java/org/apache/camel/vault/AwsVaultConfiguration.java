@@ -29,6 +29,8 @@ public class AwsVaultConfiguration extends VaultConfiguration {
     private String secretKey;
     @Metadata
     private String region;
+    @Metadata
+    private boolean defaultCredentialsProvider;
 
     public String getAccessKey() {
         return accessKey;
@@ -61,6 +63,17 @@ public class AwsVaultConfiguration extends VaultConfiguration {
      */
     public void setRegion(String region) {
         this.region = region;
+    }
+
+    public boolean isDefaultCredentialsProvider() {
+        return defaultCredentialsProvider;
+    }
+
+    /**
+     * Define if we want to use the AWS Default Credentials Provider or not
+     */
+    public void setDefaultCredentialsProvider(boolean defaultCredentialsProvider) {
+        this.defaultCredentialsProvider = defaultCredentialsProvider;
     }
 
 }

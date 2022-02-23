@@ -199,12 +199,13 @@ The camel.rest supports 26 options, which are listed below.
 |===
 
 === Camel AWS Vault configurations
-The camel.vault.aws supports 3 options, which are listed below.
+The camel.vault.aws supports 4 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.vault.aws.accessKey* | The AWS access key |  | String
+| *camel.vault.aws.default{zwsp}CredentialsProvider* | Define if we want to use the AWS Default Credentials Provider or not | false | boolean
 | *camel.vault.aws.region* | The AWS region |  | String
 | *camel.vault.aws.secretKey* | The AWS secret key |  | String
 |===

@@ -32,6 +32,7 @@ public class MainVaultTest {
         main.addInitialProperty("camel.vault.aws.accessKey", "myKey");
         main.addInitialProperty("camel.vault.aws.secretKey", "mySecret");
         main.addInitialProperty("camel.vault.aws.region", "myRegion");
+        main.addInitialProperty("camel.vault.aws.defaultCredentialsProvider", "false");
 
         main.start();
 
@@ -44,6 +45,7 @@ public class MainVaultTest {
         Assertions.assertEquals("myKey", cfg.getAccessKey());
         Assertions.assertEquals("mySecret", cfg.getSecretKey());
         Assertions.assertEquals("myRegion", cfg.getRegion());
+        Assertions.assertEquals(false, cfg.isDefaultCredentialsProvider());
 
         main.stop();
     }
@@ -55,6 +57,7 @@ public class MainVaultTest {
                 .withAccessKey("myKey")
                 .withSecretKey("mySecret")
                 .withRegion("myRegion")
+                .withDefaultCredentialsProvider(false)
                 .end();
 
         main.start();
@@ -68,6 +71,7 @@ public class MainVaultTest {
         Assertions.assertEquals("myKey", cfg.getAccessKey());
         Assertions.assertEquals("mySecret", cfg.getSecretKey());
         Assertions.assertEquals("myRegion", cfg.getRegion());
+        Assertions.assertEquals(false, cfg.isDefaultCredentialsProvider());
 
         main.stop();
     }
