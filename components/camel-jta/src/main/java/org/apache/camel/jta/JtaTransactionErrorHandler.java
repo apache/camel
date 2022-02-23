@@ -72,13 +72,15 @@ public class JtaTransactionErrorHandler extends RedeliveryErrorHandler {
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         if (!exchange.isTransacted()) {
-            LOG.debug("mark " + exchange + " transacted");
-            exchange.getUnitOfWork().beginTransactedBy("jta");
-            super.process(exchange, callback);
-            exchange.getUnitOfWork().endTransactedBy("jta");
-        } else {
-            super.process(exchange, callback);
+            try {
+                LOG.debug("Mark {} as transacted", exchange);
+                exchange.getUnitOfWork().beginTransactedBy("camel-jta");
+                return super.process(exchange, callback);
+            } finally {
+                exchange.getUnitOfWork().endTransactedBy("camel-jta");
+            }
         }
-        return false;
+
+        return super.process(exchange, callback);
     }
 }
