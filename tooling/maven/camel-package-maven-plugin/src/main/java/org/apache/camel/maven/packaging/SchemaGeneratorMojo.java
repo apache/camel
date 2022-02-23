@@ -1310,15 +1310,24 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     private static final class EipOptionComparator implements Comparator<EipOptionModel> {
 
         private final EipModel model;
+        private final boolean restVerb;
 
         private EipOptionComparator(EipModel model) {
             this.model = model;
+            this.restVerb = isRestVerb(model);
         }
 
         @Override
         public int compare(EipOptionModel o1, EipOptionModel o2) {
-            int weight = weight(o1);
-            int weight2 = weight(o2);
+            int weight;
+            int weight2;
+            if (restVerb) {
+                weight = weightRestVerb(o1);
+                weight2 = weightRestVerb(o2);
+            } else {
+                weight = weight(o1);
+                weight2 = weight(o2);
+            }
 
             if (weight == weight2) {
                 // keep the current order
@@ -1327,6 +1336,30 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 // sort according to weight
                 return weight2 - weight;
             }
+        }
+
+        private boolean isRestVerb(EipModel model) {
+            if ("rest".equals(model.getLabel())) {
+                String name = model.getName();
+                return "delete".equals(name) || "get".equals(name) || "head".equals(name) || "patch".equals(name)
+                        || "post".equals(name) || "put".equals(name);
+            }
+            return false;
+        }
+
+        private int weightRestVerb(EipOptionModel o) {
+            String name = o.getName();
+
+            // path is in top
+            if ("path".equals(name)) {
+                return 20;
+            }
+            // to is after path
+            if ("to".equals(name)) {
+                return 19;
+            }
+
+            return weight(o);
         }
 
         private int weight(EipOptionModel o) {
