@@ -210,4 +210,24 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
             assertMockEndpointsSatisfied();
         });
     }
+
+    @Test
+    public void testComplexCustomPropertiesNoDefaultValueFunction() throws Exception {
+        Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:username").setBody(simple("{{aws:postgresql/additional1}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{aws:postgresql/additional2}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("admin", "secret");
+
+        template.sendBody("direct:username", "Hello World");
+        template.sendBody("direct:password", "Hello World");
+        assertMockEndpointsSatisfied();
+        });
+    }
 }
