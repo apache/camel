@@ -297,8 +297,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "aggregate",
             properties = {
-                    @YamlProperty(name = "aggregate-controller-ref", type = "string"),
-                    @YamlProperty(name = "aggregation-repository-ref", type = "string"),
+                    @YamlProperty(name = "aggregate-controller", type = "string"),
+                    @YamlProperty(name = "aggregation-repository", type = "string"),
+                    @YamlProperty(name = "aggregation-strategy", type = "string", required = true),
+                    @YamlProperty(name = "aggregation-strategy-method-allow-null", type = "boolean"),
+                    @YamlProperty(name = "aggregation-strategy-method-name", type = "string"),
                     @YamlProperty(name = "close-correlation-key-on-completion", type = "number"),
                     @YamlProperty(name = "complete-all-on-stop", type = "boolean"),
                     @YamlProperty(name = "completion-from-batch-consumer", type = "boolean"),
@@ -324,9 +327,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "optimistic-locking", type = "boolean"),
                     @YamlProperty(name = "parallel-processing", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
-                    @YamlProperty(name = "strategy-method-allow-null", type = "boolean"),
-                    @YamlProperty(name = "strategy-method-name", type = "string"),
-                    @YamlProperty(name = "strategy-ref", type = "string"),
                     @YamlProperty(name = "timeout-checker-executor-service-ref", type = "string")
             }
     )
@@ -344,14 +344,29 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(AggregateDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "aggregate-controller-ref": {
+                case "aggregate-controller": {
                     String val = asText(node);
-                    target.setAggregateControllerRef(val);
+                    target.setAggregateController(val);
                     break;
                 }
-                case "aggregation-repository-ref": {
+                case "aggregation-repository": {
                     String val = asText(node);
-                    target.setAggregationRepositoryRef(val);
+                    target.setAggregationRepository(val);
+                    break;
+                }
+                case "aggregation-strategy": {
+                    String val = asText(node);
+                    target.setAggregationStrategy(val);
+                    break;
+                }
+                case "aggregation-strategy-method-allow-null": {
+                    String val = asText(node);
+                    target.setAggregationStrategyMethodAllowNull(val);
+                    break;
+                }
+                case "aggregation-strategy-method-name": {
+                    String val = asText(node);
+                    target.setAggregationStrategyMethodName(val);
                     break;
                 }
                 case "close-correlation-key-on-completion": {
@@ -462,21 +477,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "parallel-processing": {
                     String val = asText(node);
                     target.setParallelProcessing(val);
-                    break;
-                }
-                case "strategy-method-allow-null": {
-                    String val = asText(node);
-                    target.setStrategyMethodAllowNull(val);
-                    break;
-                }
-                case "strategy-method-name": {
-                    String val = asText(node);
-                    target.setStrategyMethodName(val);
-                    break;
-                }
-                case "strategy-ref": {
-                    String val = asText(node);
-                    target.setStrategyRef(val);
                     break;
                 }
                 case "timeout-checker-executor-service-ref": {

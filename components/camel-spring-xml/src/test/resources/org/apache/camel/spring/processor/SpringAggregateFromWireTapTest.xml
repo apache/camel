@@ -33,7 +33,7 @@
 
         <route>
             <from uri="direct:tap"/>
-            <aggregate completionSize="2" completionTimeout="5000" strategyRef="myStrategy">
+            <aggregate completionSize="2" completionTimeout="5000" aggregationStrategy="myStrategy">
                 <correlationExpression><constant>true</constant></correlationExpression>
                 <to uri="direct:aggregated"/>
             </aggregate>

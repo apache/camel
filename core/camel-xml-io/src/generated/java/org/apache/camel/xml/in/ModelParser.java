@@ -79,8 +79,10 @@ public class ModelParser extends BaseParser {
     protected AggregateDefinition doParseAggregateDefinition() throws IOException, XmlPullParserException {
         return doParse(new AggregateDefinition(), (def, key, val) -> {
             switch (key) {
-                case "aggregateControllerRef": def.setAggregateControllerRef(val); break;
-                case "aggregationRepositoryRef": def.setAggregationRepositoryRef(val); break;
+                case "aggregationRepository": def.setAggregationRepository(val); break;
+                case "aggregationStrategy": def.setAggregationStrategy(val); break;
+                case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); break;
+                case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); break;
                 case "closeCorrelationKeyOnCompletion": def.setCloseCorrelationKeyOnCompletion(val); break;
                 case "completeAllOnStop": def.setCompleteAllOnStop(val); break;
                 case "completionFromBatchConsumer": def.setCompletionFromBatchConsumer(val); break;
@@ -97,15 +99,13 @@ public class ModelParser extends BaseParser {
                 case "ignoreInvalidCorrelationKeys": def.setIgnoreInvalidCorrelationKeys(val); break;
                 case "optimisticLocking": def.setOptimisticLocking(val); break;
                 case "parallelProcessing": def.setParallelProcessing(val); break;
-                case "strategyMethodAllowNull": def.setStrategyMethodAllowNull(val); break;
-                case "strategyMethodName": def.setStrategyMethodName(val); break;
-                case "strategyRef": def.setStrategyRef(val); break;
                 case "timeoutCheckerExecutorServiceRef": def.setTimeoutCheckerExecutorServiceRef(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
         }, (def, key) -> {
             switch (key) {
+                case "aggregateController": def.setAggregateController(doParseText()); break;
                 case "completionPredicate": def.setCompletionPredicate(doParseExpressionSubElementDefinition()); break;
                 case "completionSizeExpression": def.setCompletionSizeExpression(doParseExpressionSubElementDefinition()); break;
                 case "completionTimeoutExpression": def.setCompletionTimeoutExpression(doParseExpressionSubElementDefinition()); break;

@@ -41,7 +41,7 @@
     <route>
       <from uri="direct:start"/>
       <!-- we must declare the name of the method, as the inlined groovy script has additional methods -->
-      <aggregate strategyRef="myAggregate" strategyMethodName="someNameHere" completionSize="2">
+      <aggregate aggregationStrategy="myAggregate" aggregationStrategyMethodName="someNameHere" completionSize="2">
         <correlationExpression>
           <header>foo</header>
         </correlationExpression>

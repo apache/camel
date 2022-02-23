@@ -369,7 +369,7 @@ context.addRoutes(new RouteBuilder() {
                 .aggregate(header("MessageID"))
                 .completionSize(3)
                 .aggregationRepository(repo) // <3>
-                .aggregationStrategyRef("myStrategy")
+                .aggregationStrategy("myStrategy")
                 .to("mock:result");
     }
 });
@@ -393,9 +393,9 @@ context.addRoutes(new RouteBuilder() {
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:start" />
-        <aggregate strategyRef="myStrategy"
+        <aggregate aggregationStrategy="myStrategy"
                    completionSize="3"
-                   aggregationRepositoryRef="infinispanRepo"> <3>
+                   aggregationRepository="infinispanRepo"> <3>
             <correlationExpression>
                 <header>MessageID</header>
             </correlationExpression>

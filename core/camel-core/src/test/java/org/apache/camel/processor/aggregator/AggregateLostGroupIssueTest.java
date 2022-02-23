@@ -91,7 +91,7 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
                         oldExchange.getIn().setBody(oldBody + "," + newBody);
                         return oldExchange;
                     }
-                }).aggregationRepository(AggregateLostGroupIssueTest.this::getAggregationRepository)
+                }).aggregationRepository(getAggregationRepository())
                         .completionSize(10).completionTimeout(200).completionTimeoutCheckerInterval(10).to("log:aggregated")
                         .to("mock:result");
             }

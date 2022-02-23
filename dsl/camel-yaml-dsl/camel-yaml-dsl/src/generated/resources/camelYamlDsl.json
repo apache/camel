@@ -356,10 +356,19 @@
       "org.apache.camel.model.AggregateDefinition" : {
         "type" : "object",
         "properties" : {
-          "aggregateControllerRef" : {
+          "aggregateController" : {
             "type" : "string"
           },
-          "aggregationRepositoryRef" : {
+          "aggregationRepository" : {
+            "type" : "string"
+          },
+          "aggregationStrategy" : {
+            "type" : "string"
+          },
+          "aggregationStrategyMethodAllowNull" : {
+            "type" : "boolean"
+          },
+          "aggregationStrategyMethodName" : {
             "type" : "string"
           },
           "closeCorrelationKeyOnCompletion" : {
@@ -440,19 +449,11 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
             }
           },
-          "strategyMethodAllowNull" : {
-            "type" : "boolean"
-          },
-          "strategyMethodName" : {
-            "type" : "string"
-          },
-          "strategyRef" : {
-            "type" : "string"
-          },
           "timeoutCheckerExecutorServiceRef" : {
             "type" : "string"
           }
-        }
+        },
+        "required" : [ "aggregationStrategy" ]
       },
       "org.apache.camel.model.BeanDefinition" : {
         "oneOf" : [ {

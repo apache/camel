@@ -82,10 +82,9 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         if (repository != null) {
             answer.setAggregationRepository(repository);
         }
-
-        if (definition.getAggregateController() == null && definition.getAggregateControllerRef() != null) {
-            definition
-                    .setAggregateController(mandatoryLookup(definition.getAggregateControllerRef(), AggregateController.class));
+        AggregateController controller = createAggregateController();
+        if (controller != null) {
+            answer.setAggregateController(controller);
         }
 
         // this EIP supports using a shared timeout checker thread pool or
@@ -197,9 +196,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         } else {
             answer.setOptimisticLockRetryPolicy(definition.getOptimisticLockRetryPolicy());
         }
-        if (definition.getAggregateController() != null) {
-            answer.setAggregateController(definition.getAggregateController());
-        }
+
         Long completionTimeoutCheckerInterval = parseDuration(definition.getCompletionTimeoutCheckerInterval());
         if (completionTimeoutCheckerInterval != null) {
             answer.setCompletionTimeoutCheckerInterval(completionTimeoutCheckerInterval);
@@ -231,35 +228,35 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
     }
 
     private AggregationStrategy createAggregationStrategy() {
-        AggregationStrategy strategy = definition.getAggregationStrategy();
-        if (strategy == null && definition.getStrategyRef() != null) {
-            Object aggStrategy = lookup(definition.getStrategyRef(), Object.class);
+        AggregationStrategy strategy = definition.getAggregationStrategyBean();
+        if (strategy == null && definition.getAggregationStrategy() != null) {
+            Object aggStrategy = lookup(definition.getAggregationStrategy(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
             } else if (aggStrategy instanceof BiFunction) {
                 AggregationStrategyBiFunctionAdapter adapter
                         = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
-                if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                if (definition.getAggregationStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter
                         = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
-                if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                if (definition.getAggregationStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
                 throw new IllegalArgumentException(
-                        "Cannot find AggregationStrategy in Registry with name: " + definition.getStrategyRef());
+                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategy());
             }
         }
 
         if (strategy == null) {
-            throw new IllegalArgumentException("AggregationStrategy or AggregationStrategyRef must be set on " + this);
+            throw new IllegalArgumentException("AggregationStrategy must be set on " + this);
         }
         CamelContextAware.trySetCamelContext(strategy, camelContext);
 
@@ -267,11 +264,19 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
     }
 
     private AggregationRepository createAggregationRepository() {
-        AggregationRepository repository = definition.getAggregationRepository();
-        if (repository == null && definition.getAggregationRepositoryRef() != null) {
-            repository = mandatoryLookup(definition.getAggregationRepositoryRef(), AggregationRepository.class);
+        AggregationRepository repository = definition.getAggregationRepositoryBean();
+        if (repository == null && definition.getAggregationRepository() != null) {
+            repository = mandatoryLookup(definition.getAggregationRepository(), AggregationRepository.class);
         }
         return repository;
+    }
+
+    private AggregateController createAggregateController() {
+        AggregateController controller = definition.getAggregateControllerBean();
+        if (controller == null && definition.getAggregateController() != null) {
+            controller = mandatoryLookup(definition.getAggregateController(), AggregateController.class);
+        }
+        return controller;
     }
 
 }

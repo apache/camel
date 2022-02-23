@@ -54,7 +54,7 @@ public class TransactedSplitAggregateThreadStuckTwoTest extends TransactionClien
 
                 from("direct:aggregate")
                     .aggregate(constant("true"))
-                    .completionSize(2).aggregationStrategy(StringAggregationStrategy::new)
+                    .completionSize(2).aggregationStrategy(new StringAggregationStrategy())
                         .log("Aggregated ${threadName}")
                         .setBody(simple("Aggregated ${body}"))
                         .to("mock:result", "mock:aggregated")

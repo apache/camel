@@ -28,7 +28,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <aggregate strategyRef="aggregatorStrategy" completionTimeout="1000">
+      <aggregate aggregationStrategy="aggregatorStrategy" completionTimeout="1000">
         <correlationExpression>
           <simple>header.cheese</simple>
         </correlationExpression>

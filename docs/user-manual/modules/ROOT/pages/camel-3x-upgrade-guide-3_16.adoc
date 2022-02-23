@@ -139,7 +139,16 @@ Renamed the following classes in package `org.apache.camel.model.rest`:
 - `PostVerbDefinition` to `PostDefinition`
 - `PutVerbDefinition` to `PutDefinition`
 
-==== Saga EIP
+=== Aggregate EIP
+
+Renamed `strategyRef` to `aggregationStrategy`, and marked this option as required.
+Renamed `strategyMethodName` to `aggregationStrategyMethodName`.
+Renamed `strategyMethodAllowNull` to `aggregationStrategyMethodAllowNull`.
+Renamed `aggregationRepositoryRef` to `aggregationRepository`.
+Renamed `aggregateControllerRef` to `aggregateController`.
+Removed some deprecated methods, and some unnecessary methods in Java DSL.
+
+=== Saga EIP
 
 Removed the deprecated `timeoutInMilliseconds` option, use `timeout` instead.
 
@@ -175,7 +184,7 @@ To:
 </saga>
 ----
 
-==== WireTap EIP
+=== WireTap EIP
 
 Removed the _new message_ mode as this functionality is better done by using onPrepare processor in copy mode.
 

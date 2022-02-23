@@ -54,7 +54,7 @@ public class TransactedSplitAggregateThreadStuckParallelTest extends Transaction
 
                 from("direct:aggregate")
                     .aggregate(constant("true"))
-                    .completionSize(1).aggregationStrategy(StringAggregationStrategy::new).parallelProcessing()
+                    .completionSize(1).aggregationStrategy(new StringAggregationStrategy()).parallelProcessing()
                         .log("Aggregated ${threadName}")
                         .setBody(simple("Aggregated ${body}"))
                         .to("mock:result", "mock:aggregated")

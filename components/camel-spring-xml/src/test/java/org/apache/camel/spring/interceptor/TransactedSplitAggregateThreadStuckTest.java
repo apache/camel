@@ -53,7 +53,7 @@ public class TransactedSplitAggregateThreadStuckTest extends TransactionClientDa
 
                 from("direct:aggregate")
                     .aggregate(constant("true"))
-                    .completionSize(1).aggregationStrategy(StringAggregationStrategy::new)
+                    .completionSize(1).aggregationStrategy(new StringAggregationStrategy())
                         .log("Aggregated ${threadName}")
                         .setBody(simple("Aggregated ${body}"))
                         .to("mock:result", "mock:aggregated")

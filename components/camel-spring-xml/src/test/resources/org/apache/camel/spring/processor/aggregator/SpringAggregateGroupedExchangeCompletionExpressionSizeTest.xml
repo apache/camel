@@ -27,7 +27,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <aggregate strategyRef="aggregatorStrategy" eagerCheckCompletion="true">
+            <aggregate aggregationStrategy="aggregatorStrategy" eagerCheckCompletion="true">
                 <correlationExpression>
                     <constant>true</constant>
                 </correlationExpression>

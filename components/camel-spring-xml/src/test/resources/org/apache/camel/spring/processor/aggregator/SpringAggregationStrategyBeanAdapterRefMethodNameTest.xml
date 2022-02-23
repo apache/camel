@@ -28,7 +28,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <aggregate strategyRef="myAppender" strategyMethodName="append" completionSize="3">
+            <aggregate aggregationStrategy="myAppender" aggregationStrategyMethodName="append" completionSize="3">
                 <correlationExpression>
                     <constant>true</constant>
                 </correlationExpression>

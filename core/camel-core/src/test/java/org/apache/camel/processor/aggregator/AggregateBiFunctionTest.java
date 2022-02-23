@@ -47,7 +47,7 @@ public class AggregateBiFunctionTest extends ContextTestSupport {
                 context.getRegistry().bind("myAgg", myAgg);
 
                 from("direct:start")
-                        .aggregate(header("id")).aggregationStrategyRef("myAgg").completionSize(3).to("mock:aggregated");
+                        .aggregate(header("id")).aggregationStrategy("myAgg").completionSize(3).to("mock:aggregated");
             }
         };
     }

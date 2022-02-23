@@ -65,13 +65,15 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     @XmlTransient
     private ExpressionDefinition expression;
     @XmlTransient
-    private AggregationStrategy aggregationStrategy;
+    private AggregationStrategy aggregationStrategyBean;
+    @XmlTransient
+    private AggregationRepository aggregationRepositoryBean;
+    @XmlTransient
+    private AggregateController aggregateControllerBean;
     @XmlTransient
     private ExecutorService executorService;
     @XmlTransient
     private ScheduledExecutorService timeoutCheckerExecutorService;
-    @XmlTransient
-    private AggregationRepository aggregationRepository;
     @XmlTransient
     private OptimisticLockRetryPolicy optimisticLockRetryPolicy;
     @XmlAttribute
@@ -85,14 +87,19 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     @XmlAttribute
     private String timeoutCheckerExecutorServiceRef;
     @XmlAttribute
-    private String aggregationRepositoryRef;
+    @Metadata(label = "advanced", javaType = "org.apache.camel.processor.aggregate.AggregateController")
+    private String aggregateController;
     @XmlAttribute
-    private String strategyRef;
+    @Metadata(javaType = "org.apache.camel.spi.AggregationRepository")
+    private String aggregationRepository;
+    @XmlAttribute(required = true)
+    @Metadata(javaType = "org.apache.camel.AggregationStrategy")
+    private String aggregationStrategy;
     @XmlAttribute
-    private String strategyMethodName;
+    private String aggregationStrategyMethodName;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
-    private String strategyMethodAllowNull;
+    private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String completionSize;
@@ -132,10 +139,6 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String completeAllOnStop;
-    @XmlTransient
-    private AggregateController aggregateController;
-    @XmlAttribute
-    private String aggregateControllerRef;
 
     public AggregateDefinition() {
     }
@@ -158,7 +161,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
 
     public AggregateDefinition(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
         this(correlationExpression);
-        this.aggregationStrategy = aggregationStrategy;
+        this.aggregationStrategyBean = aggregationStrategy;
     }
 
     @Override
@@ -207,114 +210,79 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         }
     }
 
-    public AggregationStrategy getAggregationStrategy() {
-        return aggregationStrategy;
+    public AggregationStrategy getAggregationStrategyBean() {
+        return aggregationStrategyBean;
+    }
+
+    public AggregationRepository getAggregationRepositoryBean() {
+        return aggregationRepositoryBean;
+    }
+
+    public AggregateController getAggregateControllerBean() {
+        return aggregateControllerBean;
+    }
+
+    public String getAggregationRepository() {
+        return aggregationRepository;
+    }
+
+    public void setAggregationRepository(AggregationRepository aggregationRepository) {
+        this.aggregationRepositoryBean = aggregationRepository;
+    }
+
+    /**
+     * The AggregationRepository to use.
+     * <p/>
+     * Sets the custom aggregate repository to use. Will by default use
+     * org.apache.camel.processor.aggregate.MemoryAggregationRepository
+     */
+    public void setAggregationRepository(String aggregationRepository) {
+        this.aggregationRepository = aggregationRepository;
     }
 
     /**
      * The AggregationStrategy to use.
      * <p/>
-     * For example to lookup a bean with the name foo, the value is simply just foo. However its also possible to create
-     * a new class: Values can refer to creating new beans by their class name by prefixing with #class, eg
-     * #class:com.foo.MyClassType. The class is created using a default no-arg constructor, however if you need to
-     * create the instance via a factory method then you specify the method as shown:
-     * #class:com.foo.MyClassType#myFactoryMethod. And if the factory method requires parameters they can be specified
-     * as follows: #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you need to create the
-     * instance via constructor parameters then you can specify the parameters as shown: #class:com.foo.MyClass('Hello
-     * World', 5, true).
+     * For example to lookup a bean with the name foo, the value is simply just #bean:foo.
      * <p/>
      * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing
      * already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the
      * oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
      */
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategyBean = aggregationStrategy;
+    }
+
+    public String getAggregationStrategy() {
+        return aggregationStrategy;
+    }
+
+    /**
+     * The AggregationStrategy to use.
+     * <p/>
+     * For example to lookup a bean with the name foo, the value is simply just #bean:foo.
+     * <p/>
+     * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing
+     * already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the
+     * oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
+     */
+    public void setAggregationStrategy(String aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    public String getAggregationStrategyRef() {
-        return strategyRef;
-    }
-
-    /**
-     * A reference to lookup the AggregationStrategy in the Registry.
-     * <p/>
-     * The value can either refer to a bean to lookup, or to lookup a singleton bean by its type, or to create a new
-     * bean:
-     * <ul>
-     * <li>Lookup bean - This is the default behavior to lookup an existing bean by the bean id (value)</li>
-     * <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with
-     * #type: syntax, eg #type:com.foo.MyClassType</li>
-     * <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg
-     * #class:com.foo.MyClassType. The class is created using a default no-arg constructor, however if you need to
-     * create the instance via a factory method then you specify the method as shown:
-     * #class:com.foo.MyClassType#myFactoryMethod. And if the factory method requires parameters they can be specified
-     * as follows: #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you need to create the
-     * instance via constructor parameters then you can specify the parameters as shown: #class:com.foo.MyClass('Hello
-     * World', 5, true)</li>.
-     * </ul>
-     * <p/>
-     * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing
-     * already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the
-     * oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
-     */
-    public void setAggregationStrategyRef(String aggregationStrategyRef) {
-        this.strategyRef = aggregationStrategyRef;
-    }
-
-    public String getStrategyRef() {
-        return strategyRef;
-    }
-
-    /**
-     * A reference to lookup the AggregationStrategy in the Registry.
-     * <p/>
-     * The value can either refer to a bean to lookup, or to lookup a singleton bean by its type, or to create a new
-     * bean:
-     * <ul>
-     * <li>Lookup bean - This is the default behavior to lookup an existing bean by the bean id (value)</li>
-     * <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with
-     * #type: syntax, eg #type:com.foo.MyClassType</li>
-     * <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg
-     * #class:com.foo.MyClassType. The class is created using a default no-arg constructor, however if you need to
-     * create the instance via a factory method then you specify the method as shown:
-     * #class:com.foo.MyClassType#myFactoryMethod. And if the factory method requires parameters they can be specified
-     * as follows: #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you need to create the
-     * instance via constructor parameters then you can specify the parameters as shown: #class:com.foo.MyClass('Hello
-     * World', 5, true)</li>.
-     * </ul>
-     * <p/>
-     * Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing
-     * already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the
-     * oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
-     */
-    public void setStrategyRef(String strategyRef) {
-        this.strategyRef = strategyRef;
-    }
-
     public String getAggregationStrategyMethodName() {
-        return strategyMethodName;
+        return aggregationStrategyMethodName;
     }
 
     /**
      * This option can be used to explicit declare the method name to use, when using beans as the AggregationStrategy.
      */
     public void setAggregationStrategyMethodName(String strategyMethodName) {
-        this.strategyMethodName = strategyMethodName;
+        this.aggregationStrategyMethodName = strategyMethodName;
     }
 
-    public String getStrategyMethodAllowNull() {
-        return strategyMethodAllowNull;
-    }
-
-    public String getStrategyMethodName() {
-        return strategyMethodName;
-    }
-
-    /**
-     * This option can be used to explicit declare the method name to use, when using beans as the AggregationStrategy.
-     */
-    public void setStrategyMethodName(String strategyMethodName) {
-        this.strategyMethodName = strategyMethodName;
+    public String getAggregationStrategyMethodAllowNull() {
+        return aggregationStrategyMethodAllowNull;
     }
 
     /**
@@ -322,8 +290,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * true then null values is used as the oldExchange (at the very first aggregation), when using beans as the
      * AggregationStrategy.
      */
-    public void setStrategyMethodAllowNull(String strategyMethodAllowNull) {
-        this.strategyMethodAllowNull = strategyMethodAllowNull;
+    public void setAggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
+        this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
 
     /**
@@ -509,22 +477,6 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         this.closeCorrelationKeyOnCompletion = closeCorrelationKeyOnCompletion;
     }
 
-    public AggregationRepository getAggregationRepository() {
-        return aggregationRepository;
-    }
-
-    public void setAggregationRepository(AggregationRepository aggregationRepository) {
-        this.aggregationRepository = aggregationRepository;
-    }
-
-    public String getAggregationRepositoryRef() {
-        return aggregationRepositoryRef;
-    }
-
-    public void setAggregationRepositoryRef(String aggregationRepositoryRef) {
-        this.aggregationRepositoryRef = aggregationRepositoryRef;
-    }
-
     public String getDiscardOnCompletionTimeout() {
         return discardOnCompletionTimeout;
     }
@@ -573,24 +525,20 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         this.completeAllOnStop = completeAllOnStop;
     }
 
-    public AggregateController getAggregateController() {
+    public String getAggregateController() {
         return aggregateController;
-    }
-
-    public void setAggregateController(AggregateController aggregateController) {
-        this.aggregateController = aggregateController;
-    }
-
-    public String getAggregateControllerRef() {
-        return aggregateControllerRef;
     }
 
     /**
      * To use a {@link org.apache.camel.processor.aggregate.AggregateController} to allow external sources to control
      * this aggregator.
      */
-    public void setAggregateControllerRef(String aggregateControllerRef) {
-        this.aggregateControllerRef = aggregateControllerRef;
+    public void setAggregateController(String aggregateController) {
+        this.aggregateController = aggregateController;
+    }
+
+    public void setAggregateController(AggregateController aggregateController) {
+        this.aggregateControllerBean = aggregateController;
     }
 
     // Fluent API
@@ -828,30 +776,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      */
     public AggregationStrategyClause<AggregateDefinition> aggregationStrategy() {
         AggregationStrategyClause<AggregateDefinition> clause = new AggregationStrategyClause<>(this);
-        setAggregationStrategy(clause);
+        this.aggregationStrategyBean = clause;
         return clause;
-    }
-
-    /**
-     * Sets the AggregationStrategy to use with a fluent builder.
-     *
-     * @deprecated use {@link #aggregationStrategy()}
-     */
-    @Deprecated
-    public AggregationStrategyClause<AggregateDefinition> strategy() {
-        return aggregationStrategy();
-    }
-
-    /**
-     * Sets the aggregate strategy to use
-     *
-     * @param      aggregationStrategy the aggregate strategy to use
-     * @return                         the builder
-     * @deprecated                     use {@link #aggregationStrategy(AggregationStrategy)}
-     */
-    @Deprecated
-    public AggregateDefinition strategy(AggregationStrategy aggregationStrategy) {
-        return aggregationStrategy(aggregationStrategy);
     }
 
     /**
@@ -861,18 +787,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * @return                     the builder
      */
     public AggregateDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
-        setAggregationStrategy(aggregationStrategy);
-        return this;
-    }
-
-    /**
-     * Sets the aggregate strategy to use
-     *
-     * @param  aggregationStrategy the aggregate strategy to use
-     * @return                     the builder
-     */
-    public AggregateDefinition aggregationStrategy(Supplier<AggregationStrategy> aggregationStrategy) {
-        setAggregationStrategy(aggregationStrategy.get());
+        this.aggregationStrategyBean = aggregationStrategy;
         return this;
     }
 
@@ -882,8 +797,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * @param  aggregationStrategyRef reference to the strategy to lookup in the registry
      * @return                        the builder
      */
-    public AggregateDefinition aggregationStrategyRef(String aggregationStrategyRef) {
-        setAggregationStrategyRef(aggregationStrategyRef);
+    public AggregateDefinition aggregationStrategy(String aggregationStrategyRef) {
+        setAggregationStrategy(aggregationStrategyRef);
         return this;
     }
 
@@ -904,7 +819,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * @return the builder
      */
     public AggregateDefinition aggregationStrategyMethodAllowNull() {
-        setStrategyMethodAllowNull(Boolean.toString(true));
+        setAggregationStrategyMethodAllowNull(Boolean.toString(true));
         return this;
     }
 
@@ -917,20 +832,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * @return                       the builder
      */
     public AggregateDefinition aggregationRepository(AggregationRepository aggregationRepository) {
-        setAggregationRepository(aggregationRepository);
-        return this;
-    }
-
-    /**
-     * Sets the custom aggregate repository to use.
-     * <p/>
-     * Will by default use {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
-     *
-     * @param  aggregationRepository the aggregate repository to use
-     * @return                       the builder
-     */
-    public AggregateDefinition aggregationRepository(Supplier<AggregationRepository> aggregationRepository) {
-        setAggregationRepository(aggregationRepository.get());
+        this.aggregationRepositoryBean = aggregationRepository;
         return this;
     }
 
@@ -942,8 +844,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * @param  aggregationRepositoryRef reference to the repository to lookup in the registry
      * @return                          the builder
      */
-    public AggregateDefinition aggregationRepositoryRef(String aggregationRepositoryRef) {
-        setAggregationRepositoryRef(aggregationRepositoryRef);
+    public AggregateDefinition aggregationRepository(String aggregationRepositoryRef) {
+        this.aggregationRepository = aggregationRepositoryRef;
         return this;
     }
 
@@ -1104,7 +1006,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * this aggregator.
      */
     public AggregateDefinition aggregateController(AggregateController aggregateController) {
-        setAggregateController(aggregateController);
+        this.aggregateControllerBean = aggregateController;
         return this;
     }
 
@@ -1112,8 +1014,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * To use a {@link org.apache.camel.processor.aggregate.AggregateController} to allow external sources to control
      * this aggregator.
      */
-    public AggregateDefinition aggregateController(Supplier<AggregateController> aggregateController) {
-        setAggregateController(aggregateController.get());
+    public AggregateDefinition aggregateController(String aggregateController) {
+        setAggregateController(aggregateController);
         return this;
     }
 

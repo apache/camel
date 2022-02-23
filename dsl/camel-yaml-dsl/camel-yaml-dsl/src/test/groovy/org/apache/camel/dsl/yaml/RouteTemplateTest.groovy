@@ -343,7 +343,7 @@ class RouteTemplateTest extends YamlTestSupport {
                           uri: "direct:route"
                           steps:
                             - aggregate:
-                                strategy-ref: "{{myAgg}}"
+                                aggregation-strategy: "{{myAgg}}"
                                 completion-size: 2
                                 correlation-expression:
                                   header: "StockSymbol"
@@ -388,7 +388,7 @@ class RouteTemplateTest extends YamlTestSupport {
                           uri: "direct:route"
                           steps:
                             - aggregate:
-                                strategy-ref: "{{myAgg}}"
+                                aggregation-strategy: "{{myAgg}}"
                                 completion-size: 2
                                 correlation-expression:
                                   header: "StockSymbol"

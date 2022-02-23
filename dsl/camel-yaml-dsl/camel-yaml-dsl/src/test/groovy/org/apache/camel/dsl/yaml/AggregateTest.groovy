@@ -37,9 +37,9 @@ class AggregateTest extends YamlTestSupport {
                     uri: "direct:route"
                     steps:
                       - aggregate:
-                          strategy-ref: "myAggregatorStrategy"
-                          completion-size: 2
-                          correlation-expression:
+                          aggregation-strategy: "myAggregatorStrategy"
+                          completionSize: 2
+                          correlationExpression:
                             simple: "${header.StockSymbol}"
                           steps:  
                             - to: "mock:route"
@@ -70,7 +70,7 @@ class AggregateTest extends YamlTestSupport {
                     uri: "direct:route"
                     steps:
                       - aggregate:
-                          strategyRef: "myAggregatorStrategy"
+                          aggregation-strategy: "myAggregatorStrategy"
                           completionSize: 2
                           correlationExpression:
                             simple: "${header.StockSymbol}"
@@ -103,7 +103,7 @@ class AggregateTest extends YamlTestSupport {
                     uri: "direct:route"
                     steps:
                       - aggregate:
-                          strategy-ref: "myAggregatorStrategy"
+                          aggregation-strategy: "myAggregatorStrategy"
                           completion-size: 2
                           correlation-expression:
                             simple: "${header.StockSymbol}"
@@ -137,7 +137,7 @@ class AggregateTest extends YamlTestSupport {
                     uri: "direct:route"
                     steps:
                       - aggregate:
-                          strategy-ref: "myAggregatorStrategy"
+                          aggregation-strategy: "myAggregatorStrategy"
                           completion-size: 2
                           correlation-expression:
                             simple: "${header.StockSymbol}"
@@ -155,7 +155,7 @@ class AggregateTest extends YamlTestSupport {
                     uri: "direct:route"
                     steps:
                       - aggregate:
-                          strategy-ref: "#class:org.apache.camel.processor.aggregate.UseLatestAggregationStrategy"
+                          aggregation-strategy: "#class:org.apache.camel.processor.aggregate.UseLatestAggregationStrategy"
                           completion-size: 2
                           correlation-expression:
                             simple: "${header.StockSymbol}"

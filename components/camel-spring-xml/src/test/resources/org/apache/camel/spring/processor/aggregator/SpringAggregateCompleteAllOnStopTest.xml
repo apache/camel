@@ -28,7 +28,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route id="foo">
             <from uri="seda:start"/>
-            <aggregate strategyRef="aggregatorStrategy" completionSize="2" completionTimeout="2000" completeAllOnStop="true">
+            <aggregate aggregationStrategy="aggregatorStrategy" completionSize="2" completionTimeout="2000" completeAllOnStop="true">
                 <correlationExpression>
                     <simple>header.id</simple>
                 </correlationExpression>

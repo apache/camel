@@ -48,7 +48,7 @@ public class AggregateStrategyRefTest extends ContextTestSupport {
                 context.getRegistry().bind("myStrategy", new BodyInAggregatingStrategy());
 
                 // START SNIPPET: e1
-                from("direct:start").aggregate(body()).aggregationStrategyRef("myStrategy").completionFromBatchConsumer()
+                from("direct:start").aggregate(body()).aggregationStrategy("myStrategy").completionFromBatchConsumer()
                         .to("mock:result");
                 // END SNIPPET: e1
             }

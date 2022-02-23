@@ -419,7 +419,7 @@ There is also a method to complete all groups:
 int groups = controller.forceCompletionOfAllGroups();
 ----
 
-The controller can also be used in XML DSL using the `aggregateControllerRef` to
+The controller can also be used in XML DSL using the `aggregateController` to
 refer to a bean with the controller implementation, which is looked up in the registry.
 
 When using Spring XML you can create the bean with `<bean>` as shown:
@@ -431,8 +431,8 @@ When using Spring XML you can create the bean with `<bean>` as shown:
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:start"/>
-        <aggregate strategyRef="myAppender" completionSize="10"
-                   aggregateControllerRef="myController">
+        <aggregate aggregationStrategy="myAppender" completionSize="10"
+                   aggregateController="myController">
             <correlationExpression>
                 <header>id</header>
             </correlationExpression>
@@ -575,7 +575,7 @@ If you are using XML DSL then we need to declare a `<bean>` with the bean:
 <bean id="myAppender" class="com.foo.MyBodyAppender"/>
 ----
 
-And in the Camel route we use `strategyRef` to refer to the bean by its
+And in the Camel route we use `aggregationStrategy` to refer to the bean by its
 id, and the `strategyMethodName` can be used to define the method name
 to call:
 
@@ -584,7 +584,7 @@ to call:
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:start"/>
-        <aggregate strategyRef="myAppender" strategyMethodName="append" completionSize="3">
+        <aggregate aggregationStrategy="myAppender" aggregationStrategyMethodName="append" completionSize="3">
             <correlationExpression>
                 <constant>true</constant>
             </correlationExpression>
@@ -594,14 +594,14 @@ to call:
 </camelContext>
 ----
 
-When using XML DSL you can also specify the bean class directly in `strategyRef`
+When using XML DSL you can also specify the bean class directly in `aggregationStrategy`
 using the `#class:` syntax as shown:
 
 [source,xml]
 ----
 <route>
     <from uri="direct:start"/>
-    <aggregate strategyRef="#class:com.foo.MyBodyAppender" strategyMethodName="append" completionSize="3">
+    <aggregate aggregationStrategy="#class:com.foo.MyBodyAppender" aggregationStrategyMethodName="append" completionSize="3">
         <correlationExpression>
             <constant>true</constant>
         </correlationExpression>
@@ -668,9 +668,9 @@ set it to `true` as shown below:
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:start"/>
-        <aggregate strategyRef="myAppender"
-                   strategyMethodName="append"
-                   strategyMethodAllowNull="true"
+        <aggregate aggregationStrategy="myAppender"
+                   aggregationStrategyMethodName="append"
+                   aggregationStrategyMethodAllowNull="true"
                    completionSize="3">
             <correlationExpression>
                 <constant>true</constant>
