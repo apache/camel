@@ -11419,10 +11419,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             },
             properties = {
                     @YamlProperty(name = "api-component", type = "string"),
-                    @YamlProperty(name = "api-context-id-pattern", type = "string", deprecated = true),
-                    @YamlProperty(name = "api-context-listing", type = "boolean", deprecated = true),
                     @YamlProperty(name = "api-context-path", type = "string"),
-                    @YamlProperty(name = "api-context-route-id", type = "string"),
+                    @YamlProperty(name = "api-context-route-id", type = "string", deprecated = true),
                     @YamlProperty(name = "api-host", type = "string"),
                     @YamlProperty(name = "api-property", type = "array:org.apache.camel.model.rest.RestPropertyDefinition"),
                     @YamlProperty(name = "api-vendor-extension", type = "boolean"),
@@ -11465,16 +11463,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "api-component": {
                     String val = asText(node);
                     target.setApiComponent(val);
-                    break;
-                }
-                case "api-context-id-pattern": {
-                    String val = asText(node);
-                    target.setApiContextIdPattern(val);
-                    break;
-                }
-                case "api-context-listing": {
-                    String val = asText(node);
-                    target.setApiContextListing(java.lang.Boolean.valueOf(val));
                     break;
                 }
                 case "api-context-path": {

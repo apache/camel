@@ -56,8 +56,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @XmlAttribute
     private String path;
     @XmlAttribute
-    private String tag;
-    @XmlAttribute
     private String consumes;
     @XmlAttribute
     private String produces;
@@ -65,20 +63,25 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String skipBindingOnErrorCode;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientRequestValidation;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String apiDocs;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String tag;
     @XmlElement(name = "securityDefinitions") // use the name Swagger/OpenAPI uses
+    @Metadata(label = "security")
     private RestSecuritiesDefinition securityDefinitions;
     @XmlElement(name = "securityRequirements") // use the name Swagger/OpenAPI uses
+    @Metadata(label = "security")
     private RestSecuritiesRequirement securityRequirements;
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<>();
@@ -736,14 +739,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
         // append options
         Map<String, Object> options = new HashMap<>();
-
         if (configuration.getComponent() != null && !configuration.getComponent().isEmpty()) {
             options.put("consumerComponentName", configuration.getComponent());
         }
-        if (configuration.getApiContextIdPattern() != null) {
-            options.put("contextIdPattern", configuration.getApiContextIdPattern());
-        }
-
         if (!options.isEmpty()) {
             try {
                 from = URISupport.appendParametersToURI(from, options);

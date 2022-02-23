@@ -53,32 +53,34 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     private String consumes;
     @XmlAttribute
     private String produces;
-    @XmlAttribute
-    @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
-    private String bindingMode;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
-    private String skipBindingOnErrorCode;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
-    private String clientRequestValidation;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
-    private String enableCORS;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
-    private String apiDocs;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
-    private String deprecated;
-    @XmlAttribute
+    @XmlAttribute()
+    @Metadata(label = "advanced")
     private String type;
     @XmlTransient
     private Class<?> typeClass;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String outType;
     @XmlTransient
     private Class<?> outTypeClass;
+    @XmlAttribute
+    @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
+    private String bindingMode;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String skipBindingOnErrorCode;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String clientRequestValidation;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String enableCORS;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    private String apiDocs;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String deprecated;
     @XmlElement(required = true)
     private ToDefinition to;
 

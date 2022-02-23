@@ -6876,12 +6876,6 @@
           "apiComponent" : {
             "type" : "string"
           },
-          "apiContextIdPattern" : {
-            "type" : "string"
-          },
-          "apiContextListing" : {
-            "type" : "boolean"
-          },
           "apiContextPath" : {
             "type" : "string"
           },

@@ -55,23 +55,26 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String type;
     @XmlTransient
     private Class<?> typeClass;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String outType;
     @XmlTransient
     private Class<?> outTypeClass;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String skipBindingOnErrorCode;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientRequestValidation;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String component;
 
     public RestBindingDefinition() {

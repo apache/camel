@@ -21,7 +21,6 @@ import java.util.HashMap;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.support.PatternHelper;
 
 /**
  * Global configuration for Rest DSL.
@@ -179,29 +178,6 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
      */
     public RestConfigurationProperties withApiContextRouteId(String apiContextRouteId) {
         setApiContextRouteId(apiContextRouteId);
-        return this;
-    }
-
-    /**
-     * Sets an CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name
-     * matches the pattern.
-     * <p/>
-     * The pattern <tt>#name#</tt> refers to the CamelContext name, to match on the current CamelContext only. For any
-     * other value, the pattern uses the rules from {@link PatternHelper#matchPattern(String, String)}
-     */
-    @Deprecated
-    public RestConfigurationProperties withApiContextIdPattern(String apiContextIdPattern) {
-        setApiContextIdPattern(apiContextIdPattern);
-        return this;
-    }
-
-    /**
-     * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it
-     * allows to discover these contexts, if <tt>false</tt> then only the current CamelContext is in use.
-     */
-    @Deprecated
-    public RestConfigurationProperties withApiContextListing(boolean apiContextListing) {
-        setApiContextListing(apiContextListing);
         return this;
     }
 

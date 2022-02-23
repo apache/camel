@@ -6978,12 +6978,6 @@
           "api-component" : {
             "type" : "string"
           },
-          "api-context-id-pattern" : {
-            "type" : "string"
-          },
-          "api-context-listing" : {
-            "type" : "boolean"
-          },
           "api-context-path" : {
             "type" : "string"
           },

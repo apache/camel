@@ -13871,6 +13871,26 @@ be configured on a parent level.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="type" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the class name to use for binding from input to POJO for the incoming data
+This option will override what may be configured on a parent level. The name of
+the class of the input data. Append a to the end of the name if you want the
+input to be an array type.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="outType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the class name to use for binding from POJO to output for the outgoing data
+This option will override what may be configured on a parent level The name of
+the class of the input data. Append a to the end of the name if you want the
+input to be an array type.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="bindingMode" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -13915,7 +13935,7 @@ value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether to include or exclude this rest operation in API documentation. The
-default value is true. Default value: false
+default value is true. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13924,26 +13944,6 @@ default value is true. Default value: false
             <xs:documentation xml:lang="en"><![CDATA[
 Marks this rest operation as deprecated in OpenApi documentation. Default value:
 false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="type" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the class name to use for binding from input to POJO for the incoming data
-This option will override what may be configured on a parent level. The name of
-the class of the input data. Append a to the end of the name if you want the
-input to be an array type.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="outType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the class name to use for binding from POJO to output for the outgoing data
-This option will override what may be configured on a parent level The name of
-the class of the input data. Append a to the end of the name if you want the
-input to be an array type.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -14406,6 +14406,20 @@ The hostname to use for exposing the REST service.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="port" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+The port number to use for exposing the REST service. Notice if you use servlet
+component then the port number configured here does not apply, as the port
+number in use is the actual port number the servlet component is using. eg if
+using Apache Tomcat its the tomcat http port, if using Apache Karaf its the HTTP
+service in Karaf that uses port 8181 by default etc. Though in those situations
+setting the port number here, allows tooling and JMX to know the port number, so
+its recommended to set the port number to the number that the servlet engine
+uses.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="apiHost" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
@@ -14420,20 +14434,6 @@ hostname.
         <xs:documentation xml:lang="en"><![CDATA[
 Whether to use X-Forward headers for Host and related setting. The default value
 is true. Default value: true
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="port" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-The port number to use for exposing the REST service. Notice if you use servlet
-component then the port number configured here does not apply, as the port
-number in use is the actual port number the servlet component is using. eg if
-using Apache Tomcat its the tomcat http port, if using Apache Karaf its the HTTP
-service in Karaf that uses port 8181 by default etc. Though in those situations
-setting the port number here, allows tooling and JMX to know the port number, so
-its recommended to set the port number to the number that the servlet engine
-uses.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -14469,28 +14469,8 @@ application is deployed using a context-path.
     <xs:attribute name="apiContextRouteId" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en"><![CDATA[
-Sets the route id to use for the route that services the REST API. The route
-will by default use an auto assigned route id.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="apiContextIdPattern" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: Sets an CamelContext id pattern to only allow Rest APIs from rest
-services within CamelContext's which name matches the pattern. The pattern
-#name# refers to the CamelContext name, to match on the current CamelContext
-only. For any other value, the pattern uses the rules from
-PatternHelper#matchPattern(String,String).
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="apiContextListing" type="xs:boolean">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: Sets whether listing of all available CamelContext's with REST
-services in the JVM is enabled. If enabled it allows to discover these contexts,
-if false then only the current CamelContext is in use. Default value: false
+Deprecated: Sets the route id to use for the route that services the REST API.
+The route will by default use an auto assigned route id.
         ]]></xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -14591,13 +14571,6 @@ Path of the rest service, such as /foo.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="tag" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To configure a special tag for the operations within this rest definition.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="consumes" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -14661,7 +14634,14 @@ value: false
             <xs:documentation xml:lang="en"><![CDATA[
 Whether to include or exclude this rest operation in API documentation. This
 option will override what may be configured on a parent level. The default value
-is true. Default value: false
+is true. Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="tag" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To configure a special tag for the operations within this rest definition.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

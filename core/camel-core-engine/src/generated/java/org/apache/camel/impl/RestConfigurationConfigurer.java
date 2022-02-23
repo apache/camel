@@ -23,10 +23,6 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apicomponent":
         case "ApiComponent": target.setApiComponent(property(camelContext, java.lang.String.class, value)); return true;
-        case "apicontextidpattern":
-        case "ApiContextIdPattern": target.setApiContextIdPattern(property(camelContext, java.lang.String.class, value)); return true;
-        case "apicontextlisting":
-        case "ApiContextListing": target.setApiContextListing(property(camelContext, boolean.class, value)); return true;
         case "apicontextpath":
         case "ApiContextPath": target.setApiContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "apicontextrouteid":
@@ -86,10 +82,6 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apicomponent":
         case "ApiComponent": return java.lang.String.class;
-        case "apicontextidpattern":
-        case "ApiContextIdPattern": return java.lang.String.class;
-        case "apicontextlisting":
-        case "ApiContextListing": return boolean.class;
         case "apicontextpath":
         case "ApiContextPath": return java.lang.String.class;
         case "apicontextrouteid":
@@ -150,10 +142,6 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apicomponent":
         case "ApiComponent": return target.getApiComponent();
-        case "apicontextidpattern":
-        case "ApiContextIdPattern": return target.getApiContextIdPattern();
-        case "apicontextlisting":
-        case "ApiContextListing": return target.isApiContextListing();
         case "apicontextpath":
         case "ApiContextPath": return target.getApiContextPath();
         case "apicontextrouteid":
