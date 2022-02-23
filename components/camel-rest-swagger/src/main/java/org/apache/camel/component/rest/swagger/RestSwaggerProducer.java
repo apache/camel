@@ -22,14 +22,15 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Producer;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 public class RestSwaggerProducer extends DelegateAsyncProcessor implements AsyncProducer {
 
-    private final AsyncProducer delegate;
+    private final Producer delegate;
     private final boolean removeHostHeader;
 
-    public RestSwaggerProducer(AsyncProducer delegate, boolean removeHostHeader) {
+    public RestSwaggerProducer(Producer delegate, boolean removeHostHeader) {
         super(delegate);
         this.delegate = delegate;
         this.removeHostHeader = removeHostHeader;

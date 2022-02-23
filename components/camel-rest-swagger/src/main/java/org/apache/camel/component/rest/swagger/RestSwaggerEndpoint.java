@@ -331,7 +331,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
         // if there is a host then we should use this hardcoded host instead of any Header that may have an existing
         // Host header from some other HTTP input, and if so then lets remove it
-        return new RestSwaggerProducer(endpoint.createAsyncProducer(), hasHost);
+        return new RestSwaggerProducer(endpoint.createProducer(), hasHost);
     }
 
     String determineBasePath(final Swagger swagger) {

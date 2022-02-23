@@ -278,7 +278,6 @@
         <module>camel-resilience4j</module>
         <module>camel-resourceresolver-github</module>
         <module>camel-resteasy</module>
-        <module>camel-rest-swagger</module>
         <module>camel-robotframework</module>
         <module>camel-rss</module>
         <module>camel-rxjava</module>
@@ -355,8 +354,9 @@
         <module>camel-zipkin</module>
         <module>camel-zookeeper-master</module>
         <module>camel-zookeeper</module>
-        <!-- build rest-openapi at end as it uses all the http based components -->
+        <!-- build rest-openapi/rest-swagger at end as it uses all the http based components -->
         <module>camel-rest-openapi</module>
+        <module>camel-rest-swagger</module>
         <!-- build jooq last as it cause component builds to be slower afterwards -->
         <module>camel-jooq</module>
   </modules>
