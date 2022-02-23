@@ -218,12 +218,12 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
 
     public interface GoogleSecretManagerBuilders {
         /**
-         * Google Secret Manager (camel-google-secrets-manager)
+         * Google Secret Manager (camel-google-secret-manager)
          * Manage Google Secret Manager Secrets
          * 
          * Category: cloud
          * Since: 3.16
-         * Maven coordinates: org.apache.camel:camel-google-secrets-manager
+         * Maven coordinates: org.apache.camel:camel-google-secret-manager
          * 
          * Syntax: <code>google-secret-manager:project</code>
          * 
@@ -238,12 +238,12 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
             return GoogleSecretManagerEndpointBuilderFactory.endpointBuilder("google-secret-manager", path);
         }
         /**
-         * Google Secret Manager (camel-google-secrets-manager)
+         * Google Secret Manager (camel-google-secret-manager)
          * Manage Google Secret Manager Secrets
          * 
          * Category: cloud
          * Since: 3.16
-         * Maven coordinates: org.apache.camel:camel-google-secrets-manager
+         * Maven coordinates: org.apache.camel:camel-google-secret-manager
          * 
          * Syntax: <code>google-secret-manager:project</code>
          * 

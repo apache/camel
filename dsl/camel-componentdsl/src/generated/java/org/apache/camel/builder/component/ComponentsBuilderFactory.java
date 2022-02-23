@@ -1729,12 +1729,12 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.GooglePubsubComponentBuilderFactory.googlePubsub();
     }
     /**
-     * Google Secret Manager (camel-google-secrets-manager)
+     * Google Secret Manager (camel-google-secret-manager)
      * Manage Google Secret Manager Secrets
      * 
      * Category: cloud
      * Since: 3.16
-     * Maven coordinates: org.apache.camel:camel-google-secrets-manager
+     * Maven coordinates: org.apache.camel:camel-google-secret-manager
      * 
      * @return the dsl builder
      */

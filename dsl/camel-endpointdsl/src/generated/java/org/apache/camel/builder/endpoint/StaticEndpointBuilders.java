@@ -5865,12 +5865,12 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GooglePubsubEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Google Secret Manager (camel-google-secrets-manager)
+     * Google Secret Manager (camel-google-secret-manager)
      * Manage Google Secret Manager Secrets
      * 
      * Category: cloud
      * Since: 3.16
-     * Maven coordinates: org.apache.camel:camel-google-secrets-manager
+     * Maven coordinates: org.apache.camel:camel-google-secret-manager
      * 
      * Syntax: <code>google-secret-manager:project</code>
      * 
@@ -5885,12 +5885,12 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GoogleSecretManagerEndpointBuilderFactory.endpointBuilder("google-secret-manager", path);
     }
     /**
-     * Google Secret Manager (camel-google-secrets-manager)
+     * Google Secret Manager (camel-google-secret-manager)
      * Manage Google Secret Manager Secrets
      * 
      * Category: cloud
      * Since: 3.16
-     * Maven coordinates: org.apache.camel:camel-google-secrets-manager
+     * Maven coordinates: org.apache.camel:camel-google-secret-manager
      * 
      * Syntax: <code>google-secret-manager:project</code>
      * 
