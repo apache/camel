@@ -139,4 +139,111 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
             assertMockEndpointsSatisfied();
         });
     }
+
+    @Test
+    public void testComplexCustomPropertiesDefaultValueFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:username").setBody(simple("{{aws:postgresql/additional1:admin}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{aws:postgresql/additional2:secret}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("admin", "secret");
+
+        template.sendBody("direct:username", "Hello World");
+        template.sendBody("direct:password", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testComplexCustomPropertiesDefaultValueExceptionFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:username").setBody(simple("{{aws:test-3/additional1:admin}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{aws:test-3/additional2:secret}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("admin", "secret");
+
+        template.sendBody("direct:username", "Hello World");
+        template.sendBody("direct:password", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testComplexCustomPropertiesExceptionFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:username").setBody(simple("{{aws:test-3/additional1}}")).to("mock:bar");
+                    from("direct:password").setBody(simple("{{aws:test-3/additional2}}")).to("mock:bar");
+                }
+            });
+            context.start();
+
+            getMockEndpoint("mock:bar").expectedBodiesReceived("admin", "secret");
+
+            template.sendBody("direct:username", "Hello World");
+            template.sendBody("direct:password", "Hello World");
+            assertMockEndpointsSatisfied();
+        });
+    }
+
+    @Test
+    public void testComplexSimpleDefaultValueExceptionFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:username").setBody(simple("{{aws:test-3:admin}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{aws:test-1:secret}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("admin", "secret");
+
+        template.sendBody("direct:username", "Hello World");
+        template.sendBody("direct:password", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testComplexSimpleNoDefaultValueExceptionFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:username").setBody(simple("{{aws:secretsuper}}")).to("mock:bar");
+                }
+            });
+            context.start();
+
+            getMockEndpoint("mock:bar").expectedBodiesReceived("admin");
+
+            template.sendBody("direct:username", "Hello World");
+            assertMockEndpointsSatisfied();
+        });
+    }
 }
