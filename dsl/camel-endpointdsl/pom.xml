@@ -163,6 +163,9 @@
                         <phase>none</phase>
                     </execution>
                 </executions>
+                <configuration>
+                    <maxmem>1024M</maxmem>
+                </configuration>
             </plugin>
         </plugins>
     </build>
