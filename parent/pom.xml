@@ -1494,7 +1494,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-google-secrets-manager</artifactId>
+				<artifactId>camel-google-secret-manager</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

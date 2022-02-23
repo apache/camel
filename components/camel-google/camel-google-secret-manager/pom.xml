@@ -28,9 +28,9 @@
         <version>3.16.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-google-secrets-manager</artifactId>
+    <artifactId>camel-google-secret-manager</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Google :: Secrets Manager</name>
+    <name>Camel :: Google :: Secret Manager</name>
     <description>Camel Component for Google Cloud Platform Secrets Manager</description>
 
     <properties>
