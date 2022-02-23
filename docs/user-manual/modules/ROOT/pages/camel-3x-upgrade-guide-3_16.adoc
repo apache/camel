@@ -148,6 +148,12 @@ Renamed `aggregationRepositoryRef` to `aggregationRepository`.
 Renamed `aggregateControllerRef` to `aggregateController`.
 Removed some deprecated methods, and some unnecessary methods in Java DSL.
 
+=== Claim Check EIP
+
+Renamed `strategyRef` to `aggregationStrategy`, and marked this option as required.
+Renamed `strategyMethodName` to `aggregationStrategyMethodName`.
+Removed some unnecessary methods in Java DSL.
+
 === Saga EIP
 
 Removed the deprecated `timeoutInMilliseconds` option, use `timeout` instead.

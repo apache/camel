@@ -584,6 +584,9 @@
       "org.apache.camel.model.ClaimCheckDefinition" : {
         "type" : "object",
         "properties" : {
+          "aggregationStrategyMethodName" : {
+            "type" : "string"
+          },
           "description" : {
             "type" : "string"
           },
@@ -600,12 +603,6 @@
             "type" : "string"
           },
           "operation" : {
-            "type" : "string"
-          },
-          "strategyMethodName" : {
-            "type" : "string"
-          },
-          "strategyRef" : {
             "type" : "string"
           }
         },

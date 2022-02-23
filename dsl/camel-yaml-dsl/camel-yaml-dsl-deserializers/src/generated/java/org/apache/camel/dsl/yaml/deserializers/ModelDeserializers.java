@@ -1667,14 +1667,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "claimCheck"
             },
             properties = {
+                    @YamlProperty(name = "aggregation-strategy-method-name", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "filter", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "key", type = "string"),
-                    @YamlProperty(name = "operation", type = "string", required = true),
-                    @YamlProperty(name = "strategy-method-name", type = "string"),
-                    @YamlProperty(name = "strategy-ref", type = "string")
+                    @YamlProperty(name = "operation", type = "string", required = true)
             }
     )
     public static class ClaimCheckDefinitionDeserializer extends YamlDeserializerBase<ClaimCheckDefinition> {
@@ -1691,14 +1690,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(ClaimCheckDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "strategy-method-name": {
+                case "aggregation-strategy-method-name": {
                     String val = asText(node);
                     target.setAggregationStrategyMethodName(val);
-                    break;
-                }
-                case "strategy-ref": {
-                    String val = asText(node);
-                    target.setAggregationStrategyRef(val);
                     break;
                 }
                 case "filter": {

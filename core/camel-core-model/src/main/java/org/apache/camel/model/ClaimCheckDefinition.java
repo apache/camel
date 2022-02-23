@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.function.Supplier;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -36,6 +34,9 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinition> {
 
+    @XmlTransient
+    private AggregationStrategy aggregationStrategyBean;
+
     @XmlAttribute(required = true)
     @Metadata(enums = "Get,GetAndRemove,Set,Push,Pop", javaType = "org.apache.camel.model.ClaimCheckOperation")
     private String operation;
@@ -43,14 +44,11 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
     private String key;
     @XmlAttribute
     private String filter;
-    @XmlAttribute(name = "strategyRef")
-    @Metadata(label = "advanced")
-    private String aggregationStrategyRef;
-    @XmlAttribute(name = "strategyMethodName")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.AggregationStrategy")
+    private String aggregationStrategy;
+    @XmlAttribute
     @Metadata(label = "advanced")
     private String aggregationStrategyMethodName;
-    @XmlTransient
-    private AggregationStrategy aggregationStrategy;
 
     public ClaimCheckDefinition() {
     }
@@ -153,40 +151,16 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
      * custom aggregation strategy and configure data at the same time.
      */
     public ClaimCheckDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategyBean = aggregationStrategy;
+        return this;
+    }
+
+    /**
+     * To use a custom {@link AggregationStrategy} instead of the default implementation. Notice you cannot use both
+     * custom aggregation strategy and configure data at the same time.
+     */
+    public ClaimCheckDefinition aggregationStrategy(String aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
-        return this;
-    }
-
-    /**
-     * To use a custom {@link AggregationStrategy} instead of the default implementation. Notice you cannot use both
-     * custom aggregation strategy and configure data at the same time.
-     */
-    public ClaimCheckDefinition aggregationStrategy(Supplier<AggregationStrategy> aggregationStrategy) {
-        setAggregationStrategy(aggregationStrategy.get());
-        return this;
-    }
-
-    /**
-     * To use a custom {@link AggregationStrategy} instead of the default implementation. Notice you cannot use both
-     * custom aggregation strategy and configure data at the same time.
-     * <p/>
-     * The value can either refer to a bean to lookup, or to lookup a singleton bean by its type, or to create a new
-     * bean:
-     * <ul>
-     * <li>Lookup bean - This is the default behavior to lookup an existing bean by the bean id (value)</li>
-     * <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with
-     * #type: syntax, eg #type:com.foo.MyClassType</li>
-     * <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg
-     * #class:com.foo.MyClassType. The class is created using a default no-arg constructor, however if you need to
-     * create the instance via a factory method then you specify the method as shown:
-     * #class:com.foo.MyClassType#myFactoryMethod. And if the factory method requires parameters they can be specified
-     * as follows: #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you need to create the
-     * instance via constructor parameters then you can specify the parameters as shown: #class:com.foo.MyClass('Hello
-     * World', 5, true)</li>.
-     * </ul>
-     */
-    public ClaimCheckDefinition aggregationStrategyRef(String aggregationStrategyRef) {
-        setAggregationStrategyRef(aggregationStrategyRef);
         return this;
     }
 
@@ -200,6 +174,10 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
 
     // Properties
     // -------------------------------------------------------------------------
+
+    public AggregationStrategy getAggregationStrategyBean() {
+        return aggregationStrategyBean;
+    }
 
     public String getKey() {
         return key;
@@ -225,12 +203,12 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
         this.filter = filter;
     }
 
-    public String getAggregationStrategyRef() {
-        return aggregationStrategyRef;
+    public String getAggregationStrategy() {
+        return aggregationStrategy;
     }
 
-    public void setAggregationStrategyRef(String aggregationStrategyRef) {
-        this.aggregationStrategyRef = aggregationStrategyRef;
+    public void setAggregationStrategy(String aggregationStrategy) {
+        this.aggregationStrategy = aggregationStrategy;
     }
 
     public String getAggregationStrategyMethodName() {
@@ -241,11 +219,4 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
         this.aggregationStrategyMethodName = aggregationStrategyMethodName;
     }
 
-    public AggregationStrategy getAggregationStrategy() {
-        return aggregationStrategy;
-    }
-
-    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
-        this.aggregationStrategy = aggregationStrategy;
-    }
 }

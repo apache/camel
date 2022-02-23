@@ -79,6 +79,7 @@ public class ModelParser extends BaseParser {
     protected AggregateDefinition doParseAggregateDefinition() throws IOException, XmlPullParserException {
         return doParse(new AggregateDefinition(), (def, key, val) -> {
             switch (key) {
+                case "aggregateController": def.setAggregateController(val); break;
                 case "aggregationRepository": def.setAggregationRepository(val); break;
                 case "aggregationStrategy": def.setAggregationStrategy(val); break;
                 case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); break;
@@ -105,7 +106,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, (def, key) -> {
             switch (key) {
-                case "aggregateController": def.setAggregateController(doParseText()); break;
                 case "completionPredicate": def.setCompletionPredicate(doParseExpressionSubElementDefinition()); break;
                 case "completionSizeExpression": def.setCompletionSizeExpression(doParseExpressionSubElementDefinition()); break;
                 case "completionTimeoutExpression": def.setCompletionTimeoutExpression(doParseExpressionSubElementDefinition()); break;
@@ -270,15 +270,20 @@ public class ModelParser extends BaseParser {
     protected ClaimCheckDefinition doParseClaimCheckDefinition() throws IOException, XmlPullParserException {
         return doParse(new ClaimCheckDefinition(), (def, key, val) -> {
             switch (key) {
+                case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); break;
                 case "filter": def.setFilter(val); break;
                 case "key": def.setKey(val); break;
                 case "operation": def.setOperation(val); break;
-                case "strategyMethodName": def.setAggregationStrategyMethodName(val); break;
-                case "strategyRef": def.setAggregationStrategyRef(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
-        }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+        }, (def, key) -> {
+            if ("aggregationStrategy".equals(key)) {
+                def.setAggregationStrategy(doParseText());
+                return true;
+            }
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        }, noValueHandler());
     }
     protected ContextScanDefinition doParseContextScanDefinition() throws IOException, XmlPullParserException {
         return doParse(new ContextScanDefinition(), (def, key, val) -> {
