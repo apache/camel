@@ -246,4 +246,46 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
             assertMockEndpointsSatisfied();
         });
     }
+
+    @Test
+    public void testComplexCustomPropertiesNoDefaultValueFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:username").setBody(simple("{{aws:postgresql/additional1}}")).to("mock:bar");
+                    from("direct:password").setBody(simple("{{aws:postgresql/additional2}}")).to("mock:bar");
+                }
+            });
+            context.start();
+
+            getMockEndpoint("mock:bar").expectedBodiesReceived("admin", "secret");
+
+            template.sendBody("direct:username", "Hello World");
+            template.sendBody("direct:password", "Hello World");
+            assertMockEndpointsSatisfied();
+        });
+    }
+
+    @Test
+    public void testComplexCustomPropertiesNotExistentDefaultValueFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:username").setBody(simple("{{aws:newsecret/additional1:admin}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("admin");
+
+        template.sendBody("direct:username", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
 }
