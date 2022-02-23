@@ -37,6 +37,7 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClientBuilder;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
+import software.amazon.awssdk.services.secretsmanager.model.ResourceNotFoundException;
 
 /**
  * A {@link PropertiesFunction} that lookup the property value from AWS Secrets Manager service.
@@ -87,11 +88,16 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
                 region = awsVaultConfiguration.getRegion();
             }
         }
-        SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
-        AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
-        clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
-        clientBuilder.region(Region.of(region));
-        client = clientBuilder.build();
+        if (ObjectHelper.isNotEmpty(accessKey) && ObjectHelper.isNotEmpty(secretKey) && ObjectHelper.isNotEmpty(region)) {
+            SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
+            AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
+            clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
+            clientBuilder.region(Region.of(region));
+            client = clientBuilder.build();
+        } else {
+            throw new RuntimeCamelException(
+                    "Using the AWS Secrets Manager Properties Function requires setting AWS credentials as application properties or environment variables");
+        }
     }
 
     @Override
@@ -112,15 +118,19 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         String key = remainder;
         String subkey = null;
         String returnValue = null;
-
-        if (remainder.contains(":")) {
+        String defaultValue = null;
+        if (remainder.contains("/")) {
+            key = StringHelper.before(remainder, "/");
+            subkey = StringHelper.after(remainder, "/");
+            defaultValue = StringHelper.after(subkey, ":");
+        } else if (remainder.contains(":")) {
             key = StringHelper.before(remainder, ":");
-            subkey = StringHelper.after(remainder, ":");
+            defaultValue = StringHelper.after(remainder, ":");
         }
 
         if (key != null) {
             try {
-                returnValue = getSecretFromSource(key, subkey);
+                returnValue = getSecretFromSource(key, subkey, defaultValue);
             } catch (JsonProcessingException e) {
                 throw new RuntimeCamelException("Something went wrong while recovering " + key + " from vault");
             }
@@ -130,28 +140,38 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     }
 
     private String getSecretFromSource(
-            String key, String subkey)
+            String key, String subkey, String defaultValue)
             throws JsonProcessingException {
         String returnValue;
         GetSecretValueRequest request;
         GetSecretValueRequest.Builder builder = GetSecretValueRequest.builder();
         builder.secretId(key);
         request = builder.build();
-        GetSecretValueResponse secret = client.getSecretValue(request);
-        returnValue = secret.secretString();
-        if (secret.secretString() != null) {
-            returnValue = secret.secretString();
-        } else {
-            returnValue = new String(Base64.getDecoder().decode(secret.secretBinary().asByteBuffer()).array());
-        }
-        if (subkey != null) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode actualObj = mapper.readTree(returnValue);
-            JsonNode field = actualObj.get(subkey);
-            if (ObjectHelper.isNotEmpty(field)) {
-                returnValue = field.textValue();
+        try {
+            GetSecretValueResponse secret = client.getSecretValue(request);
+            if (ObjectHelper.isNotEmpty(secret.secretString())) {
+                returnValue = secret.secretString();
             } else {
-                returnValue = null;
+                returnValue = new String(Base64.getDecoder().decode(secret.secretBinary().asByteBuffer()).array());
+            }
+            if (ObjectHelper.isNotEmpty(subkey)) {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode actualObj = mapper.readTree(returnValue);
+                JsonNode field = actualObj.get(subkey);
+                if (ObjectHelper.isNotEmpty(field)) {
+                    returnValue = field.textValue();
+                } else {
+                    returnValue = null;
+                }
+            }
+            if (ObjectHelper.isEmpty(returnValue)) {
+                returnValue = defaultValue;
+            }
+        } catch (ResourceNotFoundException ex) {
+            if (ObjectHelper.isNotEmpty(defaultValue)) {
+                returnValue = defaultValue;
+            } else {
+                throw ex;
             }
         }
         return returnValue;
