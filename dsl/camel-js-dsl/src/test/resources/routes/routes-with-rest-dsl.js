@@ -2,6 +2,8 @@
 rest('/')
     .produces("text/plain")
     .get('/say/hello')
-    .route()
+    .to('direct:hello');
+
+from('direct:hello')
         .transform().constant("Hello World");
 

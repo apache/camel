@@ -114,6 +114,7 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
                         .get("/users").to("direct:users")
                         .get("/users/{id}").to("direct:id")
                         .put("/users/{id}").to("mock:update")
+                        .post("/users").to("mock:create")
                         .delete("/users/{id}").to("mock:delete");
 
                 from("direct:users")
