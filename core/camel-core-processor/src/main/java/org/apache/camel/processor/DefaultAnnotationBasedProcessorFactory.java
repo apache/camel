@@ -55,9 +55,9 @@ public final class DefaultAnnotationBasedProcessorFactory implements AnnotationB
         recipientList.setCacheSize(annotation.cacheSize());
         recipientList.setShareUnitOfWork(annotation.shareUnitOfWork());
 
-        if (ObjectHelper.isNotEmpty(annotation.executorServiceRef())) {
+        if (ObjectHelper.isNotEmpty(annotation.executorService())) {
             ExecutorService executor = camelContext.getExecutorServiceManager().newThreadPool(this, "@RecipientList",
-                    annotation.executorServiceRef());
+                    annotation.executorService());
             recipientList.setExecutorService(executor);
         }
 

@@ -50,7 +50,7 @@ public class ThrottlerAsyncDelayedCallerRunsTest extends ContextTestSupport {
                 builder.maxQueueSize(2);
                 context.getExecutorServiceManager().registerThreadPoolProfile(builder.build());
 
-                from("seda:start").throttle(1).timePeriodMillis(100).asyncDelayed().executorServiceRef("myThrottler")
+                from("seda:start").throttle(1).timePeriodMillis(100).asyncDelayed().executorService("myThrottler")
                         .callerRunsWhenRejected(true).to("mock:result");
             }
         };

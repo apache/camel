@@ -90,7 +90,7 @@ public class ManagedThreadPoolProfileTest extends ManagementTestSupport {
 
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
-                from("direct:start").threads().id("mythreads").executorServiceRef("custom").to("mock:result");
+                from("direct:start").threads().id("mythreads").executorService("custom").to("mock:result");
             }
         };
     }

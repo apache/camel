@@ -128,7 +128,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
      * Refers to a custom Thread Pool if asyncDelay has been enabled.
      */
     @Override
-    public DelayDefinition executorServiceRef(String executorServiceRef) {
+    public DelayDefinition executorService(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
     }

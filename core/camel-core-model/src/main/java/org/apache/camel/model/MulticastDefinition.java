@@ -267,7 +267,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
      * processing is automatically implied, and you do not have to enable that option as well.
      */
     @Override
-    public MulticastDefinition executorServiceRef(String executorServiceRef) {
+    public MulticastDefinition executorService(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
     }

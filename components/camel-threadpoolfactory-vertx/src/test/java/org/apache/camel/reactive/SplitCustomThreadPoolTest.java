@@ -63,7 +63,7 @@ public class SplitCustomThreadPoolTest extends CamelTestSupport {
 
                 from("direct:start")
                         .to("log:foo")
-                        .split(body()).executorServiceRef("myLowPool")
+                        .split(body()).executorService("myLowPool")
                         .to("log:bar")
                         .process(e -> {
                             String name = Thread.currentThread().getName();

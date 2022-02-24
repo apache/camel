@@ -97,7 +97,7 @@ public @interface RecipientList {
      * Refers to a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel
      * processing is automatically implied, and you do not have to enable that option as well.
      */
-    String executorServiceRef() default "";
+    String executorService() default "";
 
     /**
      * Sets a total timeout specified in millis, when using parallel processing. If the Recipient List hasn't been able

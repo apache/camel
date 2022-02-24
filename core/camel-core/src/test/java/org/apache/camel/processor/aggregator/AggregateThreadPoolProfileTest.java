@@ -50,7 +50,7 @@ public class AggregateThreadPoolProfileTest extends ContextTestSupport {
 
                 from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
                         // use our custom thread pool profile
-                        .completionSize(3).executorServiceRef("myProfile").to("log:foo").to("mock:aggregated");
+                        .completionSize(3).executorService("myProfile").to("log:foo").to("mock:aggregated");
             }
         };
     }

@@ -383,7 +383,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * processing is automatically implied, and you do not have to enable that option as well.
      */
     @Override
-    public SplitDefinition executorServiceRef(String executorServiceRef) {
+    public SplitDefinition executorService(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
     }

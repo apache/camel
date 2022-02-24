@@ -971,7 +971,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * parallelProcessing this custom thread pool is used to send out aggregated exchanges as well.
      */
     @Override
-    public AggregateDefinition executorServiceRef(String executorServiceRef) {
+    public AggregateDefinition executorService(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
     }

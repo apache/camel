@@ -91,9 +91,9 @@ public class DualManagedThreadPoolProfileTest extends ManagementTestSupport {
 
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
-                from("direct:start").threads().id("threads1").executorServiceRef("custom").to("mock:result");
+                from("direct:start").threads().id("threads1").executorService("custom").to("mock:result");
 
-                from("direct:foo").threads().id("threads2").executorServiceRef("custom").to("mock:foo");
+                from("direct:foo").threads().id("threads2").executorService("custom").to("mock:foo");
             }
         };
     }

@@ -67,7 +67,7 @@ public class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
                 onException().maximumRedeliveries(5).redeliveryDelay(1000);
 
                 from(fileUri()).noAutoStartup().routeId("foo")
-                    .split(body().tokenize("\n")).executorServiceRef("ftp-pool")
+                    .split(body().tokenize("\n")).executorService("ftp-pool")
                         .to(getFtpUrl())
                         .to("log:line?groupSize=100")
                     .end()

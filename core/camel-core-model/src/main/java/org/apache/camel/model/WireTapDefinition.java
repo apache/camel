@@ -115,7 +115,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * @return                    the builder
      */
     @Override
-    public WireTapDefinition<Type> executorServiceRef(String executorServiceRef) {
+    public WireTapDefinition<Type> executorService(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
     }

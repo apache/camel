@@ -35,7 +35,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).to("mock:test");
+                from("direct:start").threads().executorService(threadPoolProfile.getId()).to("mock:test");
             }
         });
     }
@@ -47,7 +47,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).threadName("foo")
+                    from("direct:start").threads().executorService(threadPoolProfile.getId()).threadName("foo")
                             .to("mock:test");
                 }
             });
@@ -78,7 +78,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).poolSize(1).to("mock:test");
+                    from("direct:start").threads().executorService(threadPoolProfile.getId()).poolSize(1).to("mock:test");
                 }
             });
         } catch (Exception e) {
@@ -97,7 +97,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).maxPoolSize(1).to("mock:test");
+                    from("direct:start").threads().executorService(threadPoolProfile.getId()).maxPoolSize(1).to("mock:test");
                 }
             });
         } catch (Exception e) {
@@ -116,7 +116,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).keepAliveTime(1)
+                    from("direct:start").threads().executorService(threadPoolProfile.getId()).keepAliveTime(1)
                             .to("mock:test");
                 }
             });
@@ -136,7 +136,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).maxQueueSize(1)
+                    from("direct:start").threads().executorService(threadPoolProfile.getId()).maxQueueSize(1)
                             .to("mock:test");
                 }
             });
@@ -156,7 +156,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorServiceRef(threadPoolProfile.getId()).rejectedPolicy(Abort)
+                    from("direct:start").threads().executorService(threadPoolProfile.getId()).rejectedPolicy(Abort)
                             .to("mock:test");
                 }
             });

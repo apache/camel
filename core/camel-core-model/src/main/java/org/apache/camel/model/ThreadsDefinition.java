@@ -105,7 +105,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
      * To refer to a custom thread pool or use a thread pool profile (as overlay)
      */
     @Override
-    public ThreadsDefinition executorServiceRef(String executorServiceRef) {
+    public ThreadsDefinition executorService(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
     }

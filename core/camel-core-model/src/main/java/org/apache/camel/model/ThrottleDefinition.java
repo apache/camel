@@ -271,7 +271,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @return                    the builder
      */
     @Override
-    public ThrottleDefinition executorServiceRef(String executorServiceRef) {
+    public ThrottleDefinition executorService(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
     }

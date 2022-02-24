@@ -40,6 +40,6 @@ public interface ExecutorServiceAwareDefinition<Type extends ProcessorDefinition
      *                            {@link org.apache.camel.spi.Registry}
      * @return                    the builder
      */
-    Type executorServiceRef(String executorServiceRef);
+    Type executorService(String executorServiceRef);
 
 }

@@ -42,7 +42,7 @@ context.getExecutorServiceManager().registerThreadPoolProfile(
 
 from("direct:start")
     .to("log:foo")
-    .split(body()).executorServiceRef("myLowPool")
+    .split(body()).executorService("myLowPool")
         .to("mock:split")
     .end()
     .to("mock:result");

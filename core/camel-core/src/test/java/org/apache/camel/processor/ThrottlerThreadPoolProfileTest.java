@@ -53,7 +53,7 @@ public class ThrottlerThreadPoolProfileTest extends ContextTestSupport {
                         = new ThreadPoolProfileBuilder("myPool").poolSize(2).maxPoolSize(5).maxQueueSize(10).build();
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
-                from("direct:start").throttle(constant(2)).executorServiceRef("myPool").to("mock:result");
+                from("direct:start").throttle(constant(2)).executorService("myPool").to("mock:result");
             }
         };
     }
