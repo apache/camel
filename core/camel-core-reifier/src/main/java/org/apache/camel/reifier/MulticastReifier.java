@@ -70,20 +70,20 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
         if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
-        if (definition.getOnPrepareRef() != null) {
-            definition.setOnPrepare(mandatoryLookup(definition.getOnPrepareRef(), Processor.class));
+        Processor prepare = definition.getOnPrepareProcessor();
+        if (prepare == null && definition.getOnPrepare() != null) {
+            prepare = mandatoryLookup(definition.getOnPrepare(), Processor.class);
         }
 
         MulticastProcessor answer = new MulticastProcessor(
                 camelContext, route, list, strategy, isParallelProcessing, threadPool, shutdownThreadPool, isStreaming,
-                isStopOnException, timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate);
-
+                isStopOnException, timeout, prepare, isShareUnitOfWork, isParallelAggregate);
         return answer;
     }
 
     private AggregationStrategy createAggregationStrategy() {
-        AggregationStrategy strategy = definition.getAggregationStrategy();
-        String ref = parseString(definition.getStrategyRef());
+        AggregationStrategy strategy = definition.getAggregationStrategyBean();
+        String ref = parseString(definition.getAggregationStrategy());
         if (strategy == null && ref != null) {
             Object aggStrategy = lookup(ref, Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
@@ -91,22 +91,23 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
             } else if (aggStrategy instanceof BiFunction) {
                 AggregationStrategyBiFunctionAdapter adapter
                         = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
-                if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                if (definition.getAggregationStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter
-                        = new AggregationStrategyBeanAdapter(aggStrategy, parseString(definition.getStrategyMethodName()));
-                if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                        = new AggregationStrategyBeanAdapter(
+                                aggStrategy, parseString(definition.getAggregationStrategyMethodName()));
+                if (definition.getAggregationStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
                 throw new IllegalArgumentException(
-                        "Cannot find AggregationStrategy in Registry with name: " + definition.getStrategyRef());
+                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategy());
             }
         }
 

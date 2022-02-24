@@ -154,7 +154,7 @@ And in XML we can refer to the FQN class name with `#class:` syntax as shown bel
 <route>
     <from uri="direct:a"/>
     <multicast parallelProcessing="true" timeout="5000"
-               strategyRef="#class:com.foo.MyAggregationStrategy">
+               aggreationStrategy="#class:com.foo.MyAggregationStrategy">
         <to uri="direct:b"/>
         <to uri="direct:c"/>
         <to uri="direct:d"/>

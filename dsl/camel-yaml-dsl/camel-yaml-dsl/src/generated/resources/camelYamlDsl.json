@@ -1558,6 +1558,15 @@
       "org.apache.camel.model.MulticastDefinition" : {
         "type" : "object",
         "properties" : {
+          "aggregationStrategy" : {
+            "type" : "string"
+          },
+          "aggregationStrategyMethodAllowNull" : {
+            "type" : "boolean"
+          },
+          "aggregationStrategyMethodName" : {
+            "type" : "string"
+          },
           "description" : {
             "type" : "string"
           },
@@ -1570,7 +1579,7 @@
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
-          "onPrepareRef" : {
+          "onPrepare" : {
             "type" : "string"
           },
           "parallelAggregate" : {
@@ -1588,20 +1597,8 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
             }
           },
-          "stopOnAggregateException" : {
-            "type" : "boolean"
-          },
           "stopOnException" : {
             "type" : "boolean"
-          },
-          "strategyMethodAllowNull" : {
-            "type" : "boolean"
-          },
-          "strategyMethodName" : {
-            "type" : "string"
-          },
-          "strategyRef" : {
-            "type" : "string"
           },
           "streaming" : {
             "type" : "boolean"
@@ -1969,7 +1966,7 @@
             "type" : "string"
           },
           "aggregationStrategyMethodAllowNull" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "aggregationStrategyMethodName" : {
             "type" : "string"

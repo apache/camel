@@ -57,7 +57,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     @Metadata(label = "advanced")
     private String aggregationStrategyMethodName;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
