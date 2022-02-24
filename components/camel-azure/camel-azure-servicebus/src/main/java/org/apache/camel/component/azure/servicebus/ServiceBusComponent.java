@@ -70,11 +70,12 @@ public class ServiceBusComponent extends DefaultComponent {
     }
 
     private void setCredentials(final ServiceBusConfiguration configuration) {
-        if (!ObjectHelper.isEmpty(configuration.getFullyQualifiedNamespace()) &&
+        if (ObjectHelper.isNotEmpty(configuration.getFullyQualifiedNamespace()) &&
                 ObjectHelper.isEmpty(configuration.getTokenCredential())) {
             final Set<TokenCredential> tokenCredentialFromRegistry
                     = getCamelContext().getRegistry().findByType(TokenCredential.class);
 
+            // Find exactly one from the registry or create one
             if (tokenCredentialFromRegistry.size() == 1) {
                 configuration.setTokenCredential(tokenCredentialFromRegistry.stream().findFirst().get());
             } else {

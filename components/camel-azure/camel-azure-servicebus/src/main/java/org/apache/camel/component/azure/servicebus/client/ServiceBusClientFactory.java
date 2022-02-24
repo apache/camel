@@ -22,6 +22,7 @@ import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
 import org.apache.camel.component.azure.servicebus.ServiceBusConfiguration;
 import org.apache.camel.component.azure.servicebus.ServiceBusType;
+import org.apache.camel.util.ObjectHelper;
 
 public final class ServiceBusClientFactory {
 
@@ -53,7 +54,9 @@ public final class ServiceBusClientFactory {
 
         String fullyQualifiedNamespace = configuration.getFullyQualifiedNamespace();
         TokenCredential credential = configuration.getTokenCredential();
-        if (fullyQualifiedNamespace != null && credential != null) {
+
+        // If the FQNS and credential are available, use those to connect
+        if (ObjectHelper.isNotEmpty(fullyQualifiedNamespace) &&  ObjectHelper.isNotEmpty(credential)) {
             builder.credential(fullyQualifiedNamespace, credential);
         } else {
             builder.connectionString(configuration.getConnectionString());

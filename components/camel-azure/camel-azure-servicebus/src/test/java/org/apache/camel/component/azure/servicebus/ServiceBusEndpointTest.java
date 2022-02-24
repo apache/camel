@@ -39,6 +39,7 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         assertThrows(ResolveEndpointFailedException.class,
                 () -> context.getEndpoint("azure-servicebus://?connectionString=test"));
 
+        // provided credential but no fully qualified namespace
         assertThrows(ResolveEndpointFailedException.class,
                 () -> context.getEndpoint("azure-servicebus:test?tokenCredential=credential"));
     }
