@@ -240,8 +240,8 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
-        if (definition.getConfigurationRef() != null) {
-            final String ref = parseString(definition.getConfigurationRef());
+        if (definition.getConfiguration() != null) {
+            final String ref = parseString(definition.getConfiguration());
 
             loadProperties(properties, Suppliers.firstNotNull(
                     () -> camelContext.getExtension(Model.class).getHystrixConfiguration(ref),
