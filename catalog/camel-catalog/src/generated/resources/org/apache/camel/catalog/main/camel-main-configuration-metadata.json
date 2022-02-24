@@ -228,6 +228,7 @@
     { "name": "camel.threadpool.rejectedPolicy", "description": "Sets the default handler for tasks which cannot be executed by the thread pool.", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties", "type": "object", "javaType": "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy", "enum": [ "Abort", "CallerRuns", "DiscardOldest", "Discard" ] },
     { "name": "camel.threadpool.timeUnit", "description": "Sets the default time unit used for keep alive time", "sourceType": "org.apache.camel.main.ThreadPoolConfigurationProperties", "type": "object", "javaType": "java.util.concurrent.TimeUnit" },
     { "name": "camel.vault.aws.accessKey", "description": "The AWS access key", "sourceType": "org.apache.camel.vault.AwsVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
+    { "name": "camel.vault.aws.defaultCredentialsProvider", "description": "Define if we want to use the AWS Default Credentials Provider or not", "sourceType": "org.apache.camel.vault.AwsVaultConfiguration", "type": "boolean", "javaType": "boolean", "defaultValue": "false" },
     { "name": "camel.vault.aws.region", "description": "The AWS region", "sourceType": "org.apache.camel.vault.AwsVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
     { "name": "camel.vault.aws.secretKey", "description": "The AWS secret key", "sourceType": "org.apache.camel.vault.AwsVaultConfiguration", "type": "string", "javaType": "java.lang.String" }
   ]
