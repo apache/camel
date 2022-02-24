@@ -30,7 +30,7 @@
         <route>
             <from uri="direct:inbound"/>
             <log message="Received [${body}] from [${threadName}]"/>
-            <threads executorServiceRef="thread-pool-profile"/>
+            <threads executorService="thread-pool-profile"/>
             <log message="Processing [${body}] with [${threadName}]"/>
             <transform>
                 <simple>Processed [${body}] with [${threadName}]</simple>
