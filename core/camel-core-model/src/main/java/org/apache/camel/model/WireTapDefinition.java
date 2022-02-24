@@ -39,18 +39,21 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
         implements ExecutorServiceAwareDefinition<WireTapDefinition<Type>> {
     @XmlTransient
     private ExecutorService executorService;
+    @XmlTransient
+    private Processor onPrepareProcessor;
+
     @XmlAttribute
-    private String executorServiceRef;
-    @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String copy;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String dynamicUri;
     @XmlAttribute
-    private String onPrepareRef;
-    @XmlTransient
-    private Processor onPrepare;
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    private String onPrepare;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String executorServiceRef;
 
     public WireTapDefinition() {
     }
@@ -78,7 +81,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     @Override
     @SuppressWarnings("unchecked")
     public Type end() {
-        // allow end() to return to previous type so you can continue in the DSL
+        // allow end() to return to previous type, so you can continue in the DSL
         return (Type) super.end();
     }
 
@@ -174,26 +177,26 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     }
 
     /**
-     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send. This can be used to
-     * deep-clone messages that should be send, or any custom logic needed before the exchange is send.
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be sent. This can be used to
+     * deep-clone messages that should be sent, or any custom logic needed before the exchange is sent.
      *
      * @param  onPrepare the processor
      * @return           the builder
      */
     public WireTapDefinition<Type> onPrepare(Processor onPrepare) {
-        setOnPrepare(onPrepare);
+        this.onPrepareProcessor = onPrepare;
         return this;
     }
 
     /**
-     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send. This can be used to
-     * deep-clone messages that should be send, or any custom logic needed before the exchange is send.
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be sent. This can be used to
+     * deep-clone messages that should be sent, or any custom logic needed before the exchange is sent.
      *
      * @param  onPrepareRef reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
      * @return              the builder
      */
-    public WireTapDefinition<Type> onPrepareRef(String onPrepareRef) {
-        setOnPrepareRef(onPrepareRef);
+    public WireTapDefinition<Type> onPrepare(String onPrepareRef) {
+        setOnPrepare(onPrepareRef);
         return this;
     }
 
@@ -202,7 +205,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * producers, when uris are reused.
      *
      * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
-     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * endpoint is unique then it's best to turn of caching by setting this to -1, which allows Camel to not cache both
      * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      *
@@ -211,7 +214,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * the default size (1000).
      *
      * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
-     * reduce memory usage to avoid storing too many non frequent used producers.
+     * reduce memory usage to avoid storing too many non-frequent used producers.
      *
      * @param  cacheSize the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
      * @return           the builder
@@ -226,7 +229,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * producers, when uris are reused.
      *
      * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic
-     * endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both
+     * endpoint is unique then it's best to turn of caching by setting this to -1, which allows Camel to not cache both
      * the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use.
      * This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches.
      *
@@ -235,7 +238,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * the default size (1000).
      *
      * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
-     * reduce memory usage to avoid storing too many non frequent used producers.
+     * reduce memory usage to avoid storing too many non-frequent used producers.
      *
      * @param  cacheSize the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
      * @return           the builder
@@ -247,7 +250,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     }
 
     /**
-     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     * Ignore the invalid endpoint exception when try to create a producer with that endpoint
      *
      * @return the builder
      */
@@ -259,14 +262,17 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     // Properties
     // -------------------------------------------------------------------------
 
+    public Processor getOnPrepareProcessor() {
+        return onPrepareProcessor;
+    }
+
     @Override
     public String getUri() {
         return super.getUri();
     }
 
     /**
-     * The uri of the endpoint to wiretap to. The uri can be dynamic computed using the
-     * {@link org.apache.camel.language.simple.SimpleLanguage} expression.
+     * The uri of the endpoint to wiretap to. The uri can be dynamic computed using the simple language.
      */
     @Override
     public void setUri(String uri) {
@@ -309,19 +315,11 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
         this.dynamicUri = dynamicUri;
     }
 
-    public String getOnPrepareRef() {
-        return onPrepareRef;
-    }
-
-    public void setOnPrepareRef(String onPrepareRef) {
-        this.onPrepareRef = onPrepareRef;
-    }
-
-    public Processor getOnPrepare() {
+    public String getOnPrepare() {
         return onPrepare;
     }
 
-    public void setOnPrepare(Processor onPrepare) {
+    public void setOnPrepare(String onPrepare) {
         this.onPrepare = onPrepare;
     }
 

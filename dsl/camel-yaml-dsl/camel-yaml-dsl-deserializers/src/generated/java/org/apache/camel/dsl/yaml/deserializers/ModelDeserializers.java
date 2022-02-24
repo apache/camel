@@ -17454,7 +17454,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "ignore-invalid-endpoint", type = "boolean"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "on-prepare-ref", type = "string"),
+                    @YamlProperty(name = "on-prepare", type = "string"),
                     @YamlProperty(name = "parameters", type = "object"),
                     @YamlProperty(name = "pattern", type = "string"),
                     @YamlProperty(name = "uri", type = "string", required = true)
@@ -17520,9 +17520,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
-                case "on-prepare-ref": {
+                case "on-prepare": {
                     String val = asText(node);
-                    target.setOnPrepareRef(val);
+                    target.setOnPrepare(val);
                     break;
                 }
                 case "pattern": {

@@ -213,6 +213,7 @@ To:
 
 === WireTap EIP
 
+Renamed `onPrepareRef` to `onPrepare`.
 Removed the _new message_ mode as this functionality is better done by using onPrepare processor in copy mode.
 
 === camel-health

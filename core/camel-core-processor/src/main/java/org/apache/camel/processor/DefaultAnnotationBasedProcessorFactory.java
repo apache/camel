@@ -69,7 +69,8 @@ public final class DefaultAnnotationBasedProcessorFactory implements AnnotationB
 
         if (ObjectHelper.isNotEmpty(annotation.aggregationStrategy())) {
             AggregationStrategy strategy
-                    = CamelContextHelper.mandatoryLookup(camelContext, annotation.aggregationStrategy(), AggregationStrategy.class);
+                    = CamelContextHelper.mandatoryLookup(camelContext, annotation.aggregationStrategy(),
+                            AggregationStrategy.class);
             recipientList.setAggregationStrategy(strategy);
         }
 

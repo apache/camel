@@ -46,12 +46,12 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
 
     @Override
     public Processor createProcessor() throws Exception {
+        // must use InOnly for WireTap
+        definition.setPattern(ExchangePattern.InOnly.name());
+
         // executor service is mandatory for wire tap
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
         ExecutorService threadPool = getConfiguredExecutorService("WireTap", definition, true);
-
-        // must use InOnly for WireTap
-        definition.setPattern(ExchangePattern.InOnly.name());
 
         // optimize to only use dynamic processor if really needed
         String uri;
@@ -96,14 +96,12 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
                 dynamicSendProcessor, target, uri,
                 parse(ExchangePattern.class, definition.getPattern()), isCopy,
                 threadPool, shutdownThreadPool, dynamic);
-        Processor onPrepare = definition.getOnPrepare();
-        String ref = parseString(definition.getOnPrepareRef());
-        if (ref != null) {
-            onPrepare = mandatoryLookup(ref, Processor.class);
+
+        Processor prepare = definition.getOnPrepareProcessor();
+        if (prepare == null && definition.getOnPrepare() != null) {
+            prepare = mandatoryLookup(definition.getOnPrepare(), Processor.class);
         }
-        if (onPrepare != null) {
-            answer.setOnPrepare(onPrepare);
-        }
+        answer.setOnPrepare(prepare);
 
         return answer;
     }

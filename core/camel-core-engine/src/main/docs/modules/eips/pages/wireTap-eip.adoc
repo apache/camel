@@ -27,7 +27,7 @@ the tapped xref:manual::exchange.adoc[Exchange] to be sent in a fire and forget
 style. The tapped xref:manual::exchange.adoc[Exchange] is then sent in a
 separate thread, so it can run in parallel with the original. Beware that
 only the `Exchange` is copied - Wire Tap won't do a deep clone (unless you
-specify a custom processor via *`onPrepareRef`* which does that). So all
+specify a custom processor via *`onPrepare`* which does that). So all
 copies could share objects from the original `Exchange`.
 
 === Using Wire Tap

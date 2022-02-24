@@ -3447,7 +3447,7 @@
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
-          "onPrepareRef" : {
+          "onPrepare" : {
             "type" : "string"
           },
           "parameters" : {

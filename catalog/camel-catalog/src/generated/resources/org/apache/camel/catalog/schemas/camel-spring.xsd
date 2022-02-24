@@ -12312,13 +12312,6 @@ exception to throw instead.
     <xs:complexContent>
       <xs:extension base="tns:toDynamicDefinition">
         <xs:sequence/>
-        <xs:attribute name="executorServiceRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Uses a custom thread pool.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="copy" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -12337,12 +12330,19 @@ true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="onPrepareRef" type="xs:string">
+        <xs:attribute name="onPrepare" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Uses the Processor when preparing the org.apache.camel.Exchange to be send. This
-can be used to deep-clone messages that should be send, or any custom logic
-needed before the exchange is send.
+Uses the Processor when preparing the org.apache.camel.Exchange to be sent. This
+can be used to deep-clone messages that should be sent, or any custom logic
+needed before the exchange is sent.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="executorServiceRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Uses a custom thread pool.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

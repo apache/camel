@@ -3546,7 +3546,7 @@
           "inherit-error-handler" : {
             "type" : "boolean"
           },
-          "on-prepare-ref" : {
+          "on-prepare" : {
             "type" : "string"
           },
           "parameters" : {

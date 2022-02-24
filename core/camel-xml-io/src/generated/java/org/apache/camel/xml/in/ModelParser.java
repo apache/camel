@@ -1336,6 +1336,7 @@ public class ModelParser extends BaseParser {
                 case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); break;
                 case "delimiter": def.setDelimiter(val); break;
                 case "executorServiceRef": def.setExecutorServiceRef(val); break;
+                case "onPrepare": def.setOnPrepare(val); break;
                 case "parallelAggregate": def.setParallelAggregate(val); break;
                 case "parallelProcessing": def.setParallelProcessing(val); break;
                 case "shareUnitOfWork": def.setShareUnitOfWork(val); break;
@@ -1345,13 +1346,7 @@ public class ModelParser extends BaseParser {
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
-        }, (def, key) -> {
-            if ("onPrepare".equals(key)) {
-                def.setOnPrepare(doParseText());
-                return true;
-            }
-            return outputExpressionNodeElementHandler().accept(def, key);
-        }, noValueHandler());
+        }, outputExpressionNodeElementHandler(), noValueHandler());
     }
     protected StepDefinition doParseStepDefinition() throws IOException, XmlPullParserException {
         return doParse(new StepDefinition(),
@@ -1562,7 +1557,7 @@ public class ModelParser extends BaseParser {
                 case "copy": def.setCopy(val); break;
                 case "dynamicUri": def.setDynamicUri(val); break;
                 case "executorServiceRef": def.setExecutorServiceRef(val); break;
-                case "onPrepareRef": def.setOnPrepareRef(val); break;
+                case "onPrepare": def.setOnPrepare(val); break;
                 default: return toDynamicDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
