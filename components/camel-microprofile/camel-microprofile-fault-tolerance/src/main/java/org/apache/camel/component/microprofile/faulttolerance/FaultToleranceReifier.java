@@ -64,8 +64,8 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
 
         FaultToleranceProcessor answer = new FaultToleranceProcessor(configuration, processor, fallback);
         // using any existing circuit breakers?
-        if (config.getCircuitBreakerRef() != null) {
-            CircuitBreaker cb = mandatoryLookup(parseString(config.getCircuitBreakerRef()), CircuitBreaker.class);
+        if (config.getCircuitBreaker() != null) {
+            CircuitBreaker cb = mandatoryLookup(parseString(config.getCircuitBreaker()), CircuitBreaker.class);
             answer.setCircuitBreaker(cb);
         }
         configureBulkheadExecutorService(answer, config);
@@ -113,8 +113,8 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
             return;
         }
 
-        if (config.getBulkheadExecutorServiceRef() != null) {
-            String ref = config.getBulkheadExecutorServiceRef();
+        if (config.getBulkheadExecutorService() != null) {
+            String ref = config.getBulkheadExecutorService();
             boolean shutdownThreadPool = false;
             ExecutorService executorService = lookup(ref, ExecutorService.class);
             if (executorService == null) {

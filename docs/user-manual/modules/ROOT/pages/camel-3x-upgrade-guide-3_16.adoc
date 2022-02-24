@@ -150,6 +150,13 @@ Renamed `executorServiceRef` to `executorService`.
 Renamed `timeoutCheckerExecutorServiceRef` to `timeoutCheckerExecutorService`.
 Removed some deprecated methods, and some unnecessary methods in Java DSL.
 
+=== Circuit Breaker EIP
+
+Renamed `circuitBreakerRef` to `circuitBreaker`.
+Renamed `configRef` to `config`.
+Renamed `bulkheadExecutorServiceRef` to `bulkheadExecutorService`.
+Renamed `timeoutScheduledExecutorServiceRef` to `timeoutScheduledExecutorService`.
+
 === Delay EIP
 
 Renamed `executorServiceRef` to `executorService`.

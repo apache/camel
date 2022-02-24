@@ -26,8 +26,8 @@ import org.apache.camel.spi.Metadata;
 public class FaultToleranceConfigurationCommon extends IdentifiedType {
 
     @XmlAttribute
-    @Metadata(label = "circuitbreaker")
-    private String circuitBreakerRef;
+    @Metadata(label = "circuitbreaker", javaType = "io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker")
+    private String circuitBreaker;
     @XmlAttribute
     @Metadata(label = "circuitbreaker", defaultValue = "5000", javaType = "java.time.Duration")
     private String delay;
@@ -50,8 +50,8 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     @Metadata(label = "timeout", defaultValue = "10", javaType = "java.lang.Integer")
     private String timeoutPoolSize;
     @XmlAttribute
-    @Metadata(label = "timeout")
-    private String timeoutScheduledExecutorServiceRef;
+    @Metadata(label = "timeout", javaType = "java.util.concurrent.ScheduledExecutorService")
+    private String timeoutScheduledExecutorService;
     @XmlAttribute
     @Metadata(label = "bulkhead", defaultValue = "false", javaType = "java.lang.Boolean")
     private String bulkheadEnabled;
@@ -62,22 +62,22 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     @Metadata(label = "bulkhead", defaultValue = "10", javaType = "java.lang.Integer")
     private String bulkheadWaitingTaskQueue;
     @XmlAttribute
-    @Metadata(label = "bulkhead")
-    private String bulkheadExecutorServiceRef;
+    @Metadata(label = "bulkhead", javaType = "java.util.concurrent.ExecutorService")
+    private String bulkheadExecutorService;
 
     // Getter/Setter
     // -------------------------------------------------------------------------
 
-    public String getCircuitBreakerRef() {
-        return circuitBreakerRef;
+    public String getCircuitBreaker() {
+        return circuitBreaker;
     }
 
     /**
      * Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use
      * from the registry. When using this, then any other circuit breaker options are not in use.
      */
-    public void setCircuitBreakerRef(String circuitBreakerRef) {
-        this.circuitBreakerRef = circuitBreakerRef;
+    public void setCircuitBreaker(String circuitBreaker) {
+        this.circuitBreaker = circuitBreaker;
     }
 
     public String getDelay() {
@@ -160,15 +160,15 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         this.timeoutPoolSize = timeoutPoolSize;
     }
 
-    public String getTimeoutScheduledExecutorServiceRef() {
-        return timeoutScheduledExecutorServiceRef;
+    public String getTimeoutScheduledExecutorService() {
+        return timeoutScheduledExecutorService;
     }
 
     /**
      * References to a custom thread pool to use when timeout is enabled
      */
-    public void setTimeoutScheduledExecutorServiceRef(String timeoutScheduledExecutorServiceRef) {
-        this.timeoutScheduledExecutorServiceRef = timeoutScheduledExecutorServiceRef;
+    public void setTimeoutScheduledExecutorService(String timeoutScheduledExecutorService) {
+        this.timeoutScheduledExecutorService = timeoutScheduledExecutorService;
     }
 
     public String getBulkheadEnabled() {
@@ -204,14 +204,14 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         this.bulkheadWaitingTaskQueue = bulkheadWaitingTaskQueue;
     }
 
-    public String getBulkheadExecutorServiceRef() {
-        return bulkheadExecutorServiceRef;
+    public String getBulkheadExecutorService() {
+        return bulkheadExecutorService;
     }
 
     /**
      * References to a custom thread pool to use when bulkhead is enabled.
      */
-    public void setBulkheadExecutorServiceRef(String bulkheadExecutorServiceRef) {
-        this.bulkheadExecutorServiceRef = bulkheadExecutorServiceRef;
+    public void setBulkheadExecutorService(String bulkheadExecutorService) {
+        this.bulkheadExecutorService = bulkheadExecutorService;
     }
 }

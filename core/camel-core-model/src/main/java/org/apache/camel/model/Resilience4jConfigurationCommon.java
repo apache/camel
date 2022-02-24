@@ -28,11 +28,11 @@ import org.apache.camel.spi.Metadata;
 public class Resilience4jConfigurationCommon extends IdentifiedType {
 
     @XmlAttribute
-    @Metadata(label = "circuitbreaker")
-    private String circuitBreakerRef;
+    @Metadata(label = "circuitbreaker", javaType = "io.github.resilience4j.circuitbreaker.CircuitBreaker")
+    private String circuitBreaker;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker")
-    private String configRef;
+    @Metadata(label = "circuitbreaker", javaType = "io.github.resilience4j.circuitbreaker.CircuitBreakerConfig")
+    private String config;
     @XmlAttribute
     @Metadata(label = "circuitbreaker", defaultValue = "50", javaType = "java.lang.Float")
     private String failureRateThreshold;
@@ -71,8 +71,8 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     private String bulkheadMaxWaitDuration;
     @Metadata(label = "timeout", defaultValue = "false", javaType = "java.lang.Boolean")
     private String timeoutEnabled;
-    @Metadata(label = "timeout")
-    private String timeoutExecutorServiceRef;
+    @Metadata(label = "timeout", javaType = "java.util.concurrent.ExecutorService")
+    private String timeoutExecutorService;
     @Metadata(label = "timeout", defaultValue = "1000", javaType = "java.lang.Integer")
     private String timeoutDuration;
     @Metadata(label = "timeout", defaultValue = "true", javaType = "java.lang.Boolean")
@@ -81,28 +81,28 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     // Getter/Setter
     // -------------------------------------------------------------------------
 
-    public String getCircuitBreakerRef() {
-        return circuitBreakerRef;
+    public String getCircuitBreaker() {
+        return circuitBreaker;
     }
 
     /**
      * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance to lookup and use from the
      * registry. When using this, then any other circuit breaker options are not in use.
      */
-    public void setCircuitBreakerRef(String circuitBreakerRef) {
-        this.circuitBreakerRef = circuitBreakerRef;
+    public void setCircuitBreaker(String circuitBreaker) {
+        this.circuitBreaker = circuitBreaker;
     }
 
-    public String getConfigRef() {
-        return configRef;
+    public String getConfig() {
+        return config;
     }
 
     /**
      * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreakerConfig instance to lookup and use from
      * the registry.
      */
-    public void setConfigRef(String configRef) {
-        this.configRef = configRef;
+    public void setConfig(String config) {
+        this.config = config;
     }
 
     public String getFailureRateThreshold() {
@@ -303,16 +303,16 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
         this.timeoutEnabled = timeoutEnabled;
     }
 
-    public String getTimeoutExecutorServiceRef() {
-        return timeoutExecutorServiceRef;
+    public String getTimeoutExecutorService() {
+        return timeoutExecutorService;
     }
 
     /**
      * References to a custom thread pool to use when timeout is enabled (uses {@link ForkJoinPool#commonPool()} by
      * default)
      */
-    public void setTimeoutExecutorServiceRef(String timeoutExecutorServiceRef) {
-        this.timeoutExecutorServiceRef = timeoutExecutorServiceRef;
+    public void setTimeoutExecutorService(String timeoutExecutorService) {
+        this.timeoutExecutorService = timeoutExecutorService;
     }
 
     public String getTimeoutDuration() {

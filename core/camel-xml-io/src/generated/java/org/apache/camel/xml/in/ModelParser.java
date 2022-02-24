@@ -385,10 +385,10 @@ public class ModelParser extends BaseParser {
         return (def, key, val) -> {
             switch (key) {
                 case "bulkheadEnabled": def.setBulkheadEnabled(val); break;
-                case "bulkheadExecutorServiceRef": def.setBulkheadExecutorServiceRef(val); break;
+                case "bulkheadExecutorService": def.setBulkheadExecutorService(val); break;
                 case "bulkheadMaxConcurrentCalls": def.setBulkheadMaxConcurrentCalls(val); break;
                 case "bulkheadWaitingTaskQueue": def.setBulkheadWaitingTaskQueue(val); break;
-                case "circuitBreakerRef": def.setCircuitBreakerRef(val); break;
+                case "circuitBreaker": def.setCircuitBreaker(val); break;
                 case "delay": def.setDelay(val); break;
                 case "failureRatio": def.setFailureRatio(val); break;
                 case "requestVolumeThreshold": def.setRequestVolumeThreshold(val); break;
@@ -396,7 +396,7 @@ public class ModelParser extends BaseParser {
                 case "timeoutDuration": def.setTimeoutDuration(val); break;
                 case "timeoutEnabled": def.setTimeoutEnabled(val); break;
                 case "timeoutPoolSize": def.setTimeoutPoolSize(val); break;
-                case "timeoutScheduledExecutorServiceRef": def.setTimeoutScheduledExecutorServiceRef(val); break;
+                case "timeoutScheduledExecutorService": def.setTimeoutScheduledExecutorService(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -907,8 +907,8 @@ public class ModelParser extends BaseParser {
         return (def, key, val) -> {
             switch (key) {
                 case "automaticTransitionFromOpenToHalfOpenEnabled": def.setAutomaticTransitionFromOpenToHalfOpenEnabled(val); break;
-                case "circuitBreakerRef": def.setCircuitBreakerRef(val); break;
-                case "configRef": def.setConfigRef(val); break;
+                case "circuitBreaker": def.setCircuitBreaker(val); break;
+                case "config": def.setConfig(val); break;
                 case "failureRateThreshold": def.setFailureRateThreshold(val); break;
                 case "minimumNumberOfCalls": def.setMinimumNumberOfCalls(val); break;
                 case "permittedNumberOfCallsInHalfOpenState": def.setPermittedNumberOfCallsInHalfOpenState(val); break;
@@ -932,7 +932,7 @@ public class ModelParser extends BaseParser {
                 case "timeoutCancelRunningFuture": def.setTimeoutCancelRunningFuture(doParseText()); break;
                 case "timeoutDuration": def.setTimeoutDuration(doParseText()); break;
                 case "timeoutEnabled": def.setTimeoutEnabled(doParseText()); break;
-                case "timeoutExecutorServiceRef": def.setTimeoutExecutorServiceRef(doParseText()); break;
+                case "timeoutExecutorService": def.setTimeoutExecutorService(doParseText()); break;
                 default: return false;
             }
             return true;

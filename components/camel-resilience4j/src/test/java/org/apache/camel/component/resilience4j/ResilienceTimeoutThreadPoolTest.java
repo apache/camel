@@ -105,7 +105,7 @@ public class ResilienceTimeoutThreadPoolTest extends CamelTestSupport {
                 from("direct:start").circuitBreaker()
                         // enable and use 2 second timeout
                         .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000)
-                        .timeoutExecutorServiceRef("myThreadPool").end()
+                        .timeoutExecutorService("myThreadPool").end()
                         .log("Resilience processing start: ${threadName}").toD("direct:${body}")
                         .log("Resilience processing end: ${threadName}").end().log("After Resilience ${body}");
 

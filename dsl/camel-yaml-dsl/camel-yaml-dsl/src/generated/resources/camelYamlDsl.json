@@ -855,7 +855,7 @@
           "bulkheadEnabled" : {
             "type" : "boolean"
           },
-          "bulkheadExecutorServiceRef" : {
+          "bulkheadExecutorService" : {
             "type" : "string"
           },
           "bulkheadMaxConcurrentCalls" : {
@@ -864,7 +864,7 @@
           "bulkheadWaitingTaskQueue" : {
             "type" : "number"
           },
-          "circuitBreakerRef" : {
+          "circuitBreaker" : {
             "type" : "string"
           },
           "delay" : {
@@ -891,7 +891,7 @@
           "timeoutPoolSize" : {
             "type" : "number"
           },
-          "timeoutScheduledExecutorServiceRef" : {
+          "timeoutScheduledExecutorService" : {
             "type" : "string"
           }
         }
@@ -2227,10 +2227,10 @@
           "automaticTransitionFromOpenToHalfOpenEnabled" : {
             "type" : "boolean"
           },
-          "circuitBreakerRef" : {
+          "circuitBreaker" : {
             "type" : "string"
           },
-          "configRef" : {
+          "config" : {
             "type" : "string"
           },
           "failureRateThreshold" : {

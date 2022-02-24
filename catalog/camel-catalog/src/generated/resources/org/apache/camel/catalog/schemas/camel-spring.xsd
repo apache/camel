@@ -4173,11 +4173,11 @@ equal to, or higher, than coreSize. Default value: false
           <xs:element minOccurs="0" name="bulkheadMaxConcurrentCalls" type="xs:string"/>
           <xs:element minOccurs="0" name="bulkheadMaxWaitDuration" type="xs:string"/>
           <xs:element minOccurs="0" name="timeoutEnabled" type="xs:string"/>
-          <xs:element minOccurs="0" name="timeoutExecutorServiceRef" type="xs:string"/>
+          <xs:element minOccurs="0" name="timeoutExecutorService" type="xs:string"/>
           <xs:element minOccurs="0" name="timeoutDuration" type="xs:string"/>
           <xs:element minOccurs="0" name="timeoutCancelRunningFuture" type="xs:string"/>
         </xs:sequence>
-        <xs:attribute name="circuitBreakerRef" type="xs:string">
+        <xs:attribute name="circuitBreaker" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker
@@ -4186,7 +4186,7 @@ circuit breaker options are not in use.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="configRef" type="xs:string">
+        <xs:attribute name="config" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreakerConfig
@@ -4318,7 +4318,7 @@ Default value: 60
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
         <xs:sequence/>
-        <xs:attribute name="circuitBreakerRef" type="xs:string">
+        <xs:attribute name="circuitBreaker" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to an existing
@@ -4386,7 +4386,7 @@ value is 10. Default value: 10
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="timeoutScheduledExecutorServiceRef" type="xs:string">
+        <xs:attribute name="timeoutScheduledExecutorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 References to a custom thread pool to use when timeout is enabled.
@@ -4417,7 +4417,7 @@ bulkhead. Default value: 10
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="bulkheadExecutorServiceRef" type="xs:string">
+        <xs:attribute name="bulkheadExecutorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 References to a custom thread pool to use when bulkhead is enabled.

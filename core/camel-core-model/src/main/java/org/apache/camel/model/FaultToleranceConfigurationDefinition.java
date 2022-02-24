@@ -50,8 +50,8 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
      * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance to lookup and use from the
      * registry. When using this, then any other circuit breaker options are not in use.
      */
-    public FaultToleranceConfigurationDefinition circuitBreakerRef(String circuitBreakerRef) {
-        setCircuitBreakerRef(circuitBreakerRef);
+    public FaultToleranceConfigurationDefinition circuitBreaker(String circuitBreaker) {
+        setCircuitBreaker(circuitBreaker);
         return this;
     }
 
@@ -133,8 +133,8 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     /**
      * References to a custom thread pool to use when timeout is enabled
      */
-    public FaultToleranceConfigurationDefinition timeoutScheduledExecutorServiceRef(String executorServiceRef) {
-        setTimeoutScheduledExecutorServiceRef(executorServiceRef);
+    public FaultToleranceConfigurationDefinition timeoutScheduledExecutorService(String executorService) {
+        setTimeoutScheduledExecutorService(executorService);
         return this;
     }
 
@@ -165,8 +165,8 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     /**
      * References to a custom thread pool to use when bulkhead is enabled
      */
-    public FaultToleranceConfigurationDefinition bulkheadExecutorServiceRef(String executorServiceRef) {
-        setBulkheadExecutorServiceRef(executorServiceRef);
+    public FaultToleranceConfigurationDefinition bulkheadExecutorService(String executorService) {
+        setBulkheadExecutorService(executorService);
         return this;
     }
 

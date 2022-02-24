@@ -104,7 +104,7 @@ public class FaultToleranceTimeoutThreadPoolTest extends CamelTestSupport {
                 from("direct:start").circuitBreaker()
                         // enable and use 2 second timeout
                         .faultToleranceConfiguration().timeoutEnabled(true).timeoutDuration(2000)
-                        .timeoutScheduledExecutorServiceRef("myThreadPool").end()
+                        .timeoutScheduledExecutorService("myThreadPool").end()
                         .log("FaultTolerance processing start: ${threadName}").toD("direct:${body}")
                         .log("FaultTolerance processing end: ${threadName}").end().log("After Fault Tolerance ${body}");
 

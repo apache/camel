@@ -65,12 +65,12 @@ public class ResilienceExistingCircuitBreakerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to("log:start").circuitBreaker().resilience4jConfiguration()
-                        .circuitBreakerRef("myCircuitBreaker").end()
+                        .circuitBreaker("myCircuitBreaker").end()
                         .throwException(new IllegalArgumentException("Forced")).onFallback().transform()
                         .constant("Fallback message").end().to("log:result").to("mock:result");
 
                 from("direct:start.with.timeout.enabled").to("log:direct:start.with.timeout.enabled").circuitBreaker().resilience4jConfiguration()
-                        .circuitBreakerRef("myCircuitBreaker").timeoutEnabled(true).timeoutDuration(2000).end()
+                        .circuitBreaker("myCircuitBreaker").timeoutEnabled(true).timeoutDuration(2000).end()
                         .throwException(new IllegalArgumentException("Forced")).onFallback().transform()
                         .constant("Fallback message").end().to("log:result").to("mock:result");
             }

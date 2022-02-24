@@ -954,7 +954,7 @@
           "bulkhead-enabled" : {
             "type" : "boolean"
           },
-          "bulkhead-executor-service-ref" : {
+          "bulkhead-executor-service" : {
             "type" : "string"
           },
           "bulkhead-max-concurrent-calls" : {
@@ -963,7 +963,7 @@
           "bulkhead-waiting-task-queue" : {
             "type" : "number"
           },
-          "circuit-breaker-ref" : {
+          "circuit-breaker" : {
             "type" : "string"
           },
           "delay" : {
@@ -990,7 +990,7 @@
           "timeout-pool-size" : {
             "type" : "number"
           },
-          "timeout-scheduled-executor-service-ref" : {
+          "timeout-scheduled-executor-service" : {
             "type" : "string"
           }
         }
@@ -2326,10 +2326,10 @@
           "automatic-transition-from-open-to-half-open-enabled" : {
             "type" : "boolean"
           },
-          "circuit-breaker-ref" : {
+          "circuit-breaker" : {
             "type" : "string"
           },
-          "config-ref" : {
+          "config" : {
             "type" : "string"
           },
           "failure-rate-threshold" : {

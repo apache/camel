@@ -67,8 +67,8 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         ResilienceProcessor answer = new ResilienceProcessor(cbConfig, bhConfig, tlConfig, processor, fallback);
         configureTimeoutExecutorService(answer, config);
         // using any existing circuit breakers?
-        if (config.getCircuitBreakerRef() != null) {
-            CircuitBreaker cb = mandatoryLookup(parseString(config.getCircuitBreakerRef()), CircuitBreaker.class);
+        if (config.getCircuitBreaker() != null) {
+            CircuitBreaker cb = mandatoryLookup(parseString(config.getCircuitBreaker()), CircuitBreaker.class);
             answer.setCircuitBreaker(cb);
         }
         return answer;
@@ -150,8 +150,8 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             return;
         }
 
-        if (config.getTimeoutExecutorServiceRef() != null) {
-            String ref = config.getTimeoutExecutorServiceRef();
+        if (config.getTimeoutExecutorService() != null) {
+            String ref = config.getTimeoutExecutorService();
             boolean shutdownThreadPool = false;
             ExecutorService executorService = lookup(ref, ExecutorService.class);
             if (executorService == null) {

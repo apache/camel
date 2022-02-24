@@ -4765,10 +4765,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             },
             properties = {
                     @YamlProperty(name = "bulkhead-enabled", type = "boolean"),
-                    @YamlProperty(name = "bulkhead-executor-service-ref", type = "string"),
+                    @YamlProperty(name = "bulkhead-executor-service", type = "string"),
                     @YamlProperty(name = "bulkhead-max-concurrent-calls", type = "number"),
                     @YamlProperty(name = "bulkhead-waiting-task-queue", type = "number"),
-                    @YamlProperty(name = "circuit-breaker-ref", type = "string"),
+                    @YamlProperty(name = "circuit-breaker", type = "string"),
                     @YamlProperty(name = "delay", type = "string"),
                     @YamlProperty(name = "failure-ratio", type = "number"),
                     @YamlProperty(name = "id", type = "string"),
@@ -4777,7 +4777,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "timeout-duration", type = "string"),
                     @YamlProperty(name = "timeout-enabled", type = "boolean"),
                     @YamlProperty(name = "timeout-pool-size", type = "number"),
-                    @YamlProperty(name = "timeout-scheduled-executor-service-ref", type = "string")
+                    @YamlProperty(name = "timeout-scheduled-executor-service", type = "string")
             }
     )
     public static class FaultToleranceConfigurationDefinitionDeserializer extends YamlDeserializerBase<FaultToleranceConfigurationDefinition> {
@@ -4799,9 +4799,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setBulkheadEnabled(val);
                     break;
                 }
-                case "bulkhead-executor-service-ref": {
+                case "bulkhead-executor-service": {
                     String val = asText(node);
-                    target.setBulkheadExecutorServiceRef(val);
+                    target.setBulkheadExecutorService(val);
                     break;
                 }
                 case "bulkhead-max-concurrent-calls": {
@@ -4814,9 +4814,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setBulkheadWaitingTaskQueue(val);
                     break;
                 }
-                case "circuit-breaker-ref": {
+                case "circuit-breaker": {
                     String val = asText(node);
-                    target.setCircuitBreakerRef(val);
+                    target.setCircuitBreaker(val);
                     break;
                 }
                 case "delay": {
@@ -4859,9 +4859,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTimeoutPoolSize(val);
                     break;
                 }
-                case "timeout-scheduled-executor-service-ref": {
+                case "timeout-scheduled-executor-service": {
                     String val = asText(node);
-                    target.setTimeoutScheduledExecutorServiceRef(val);
+                    target.setTimeoutScheduledExecutorService(val);
                     break;
                 }
                 default: {
@@ -11199,8 +11199,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             },
             properties = {
                     @YamlProperty(name = "automatic-transition-from-open-to-half-open-enabled", type = "boolean"),
-                    @YamlProperty(name = "circuit-breaker-ref", type = "string"),
-                    @YamlProperty(name = "config-ref", type = "string"),
+                    @YamlProperty(name = "circuit-breaker", type = "string"),
+                    @YamlProperty(name = "config", type = "string"),
                     @YamlProperty(name = "failure-rate-threshold", type = "number"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "minimum-number-of-calls", type = "number"),
@@ -11232,14 +11232,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setAutomaticTransitionFromOpenToHalfOpenEnabled(val);
                     break;
                 }
-                case "circuit-breaker-ref": {
+                case "circuit-breaker": {
                     String val = asText(node);
-                    target.setCircuitBreakerRef(val);
+                    target.setCircuitBreaker(val);
                     break;
                 }
-                case "config-ref": {
+                case "config": {
                     String val = asText(node);
-                    target.setConfigRef(val);
+                    target.setConfig(val);
                     break;
                 }
                 case "failure-rate-threshold": {
