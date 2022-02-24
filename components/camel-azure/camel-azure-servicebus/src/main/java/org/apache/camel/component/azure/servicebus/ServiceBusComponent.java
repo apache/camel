@@ -61,9 +61,9 @@ public class ServiceBusComponent extends DefaultComponent {
         // set account or topic name
         configuration.setTopicOrQueueName(remaining);
 
-        setCredentials(configuration);
         final ServiceBusEndpoint endpoint = new ServiceBusEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
+        setCredentials(configuration);
         validateConfigurations(configuration);
 
         return endpoint;

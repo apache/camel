@@ -105,4 +105,27 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         assertEquals(fullyQualifiedNamespace, endpoint.getConfiguration().getFullyQualifiedNamespace());
         assertEquals(credential, endpoint.getConfiguration().getTokenCredential());
     }
+
+    @Test
+    void testCreateEndpointWithFqnsAndCredentialFromRegistry() throws Exception {
+        final String uri = "azure-servicebus://testTopicOrQueue";
+        final String remaining = "testTopicOrQueue";
+        final String fullyQualifiedNamespace = "namespace.servicebus.windows.net";
+        final TokenCredential credential = new DefaultAzureCredentialBuilder().build();
+        final Map<String, Object> params = new HashMap<>();
+        context().getRegistry().bind("tokenCredential", credential);
+        params.put("serviceBusType", ServiceBusType.topic);
+        params.put("prefetchCount", 10);
+        params.put("fullyQualifiedNamespace", fullyQualifiedNamespace);
+
+        final ServiceBusEndpoint endpoint
+                = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
+                .createEndpoint(uri, remaining, params);
+
+        assertEquals(ServiceBusType.topic, endpoint.getConfiguration().getServiceBusType());
+        assertEquals("testTopicOrQueue", endpoint.getConfiguration().getTopicOrQueueName());
+        assertEquals(10, endpoint.getConfiguration().getPrefetchCount());
+        assertEquals(fullyQualifiedNamespace, endpoint.getConfiguration().getFullyQualifiedNamespace());
+        assertEquals(credential, endpoint.getConfiguration().getTokenCredential());
+    }
 }
