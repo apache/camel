@@ -53,7 +53,6 @@
                        bindingMode="json"
                        port="9444"
                        apiContextPath="api-docs"
-                       apiContextListing="true"
                        enableCORS="true">
 
       <endpointProperty key="handlers" value="securityHandler"/>
@@ -63,7 +62,6 @@
       <apiProperty key="api.description" value="MyDescription"/>
       <apiProperty key="cors" value="true"/>
     </restConfiguration>
-
 
     <rest>
       <get path="/ping">
