@@ -28,7 +28,7 @@ class PollEnrichTest extends YamlTestSupport {
             context.routesLoader.loadRoutes(resource)
         then:
             with(context.routeDefinitions[0].outputs[0], PollEnrichDefinition) {
-                aggregationStrategyRef == 'myStrategy'
+                aggregationStrategy == 'myStrategy'
 
                 with(expression, ExpressionDefinition) {
                     language == 'simple'
@@ -43,7 +43,7 @@ class PollEnrichTest extends YamlTestSupport {
                         steps:    
                           - poll-enrich:  
                               simple: "${body}"
-                              strategy-ref: "myStrategy"
+                              aggregation-strategy: "myStrategy"
                           - to: "mock:result"
                     '''),
                 asResource('expression-block', '''
@@ -53,7 +53,7 @@ class PollEnrichTest extends YamlTestSupport {
                           - poll-enrich: 
                               expression: 
                                 simple: "${body}"
-                              strategy-ref: "myStrategy"
+                              aggregation-strategy: "myStrategy"
                           - to: "mock:result"
                     ''')
            ]

@@ -1882,6 +1882,15 @@
           "aggregateOnException" : {
             "type" : "boolean"
           },
+          "aggregationStrategy" : {
+            "type" : "string"
+          },
+          "aggregationStrategyMethodAllowNull" : {
+            "type" : "string"
+          },
+          "aggregationStrategyMethodName" : {
+            "type" : "string"
+          },
           "cacheSize" : {
             "type" : "number"
           },
@@ -1895,19 +1904,10 @@
             "type" : "string"
           },
           "ignoreInvalidEndpoint" : {
-            "type" : "number"
+            "type" : "boolean"
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
-          },
-          "strategyMethodAllowNull" : {
-            "type" : "boolean"
-          },
-          "strategyMethodName" : {
-            "type" : "string"
-          },
-          "strategyRef" : {
-            "type" : "string"
           },
           "timeout" : {
             "type" : "string"

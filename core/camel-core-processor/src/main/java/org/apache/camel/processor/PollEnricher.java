@@ -171,13 +171,6 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         this.aggregateOnException = aggregateOnException;
     }
 
-    /**
-     * Sets the default aggregation strategy for this poll enricher.
-     */
-    public void setDefaultAggregationStrategy() {
-        this.aggregationStrategy = defaultAggregationStrategy();
-    }
-
     public int getCacheSize() {
         return cacheSize;
     }
@@ -418,10 +411,6 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         }
     }
 
-    private static AggregationStrategy defaultAggregationStrategy() {
-        return new CopyAggregationStrategy();
-    }
-
     @Override
     public String toString() {
         return id;
@@ -433,6 +422,9 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
             // create consumer cache if we use dynamic expressions for computing the endpoints to poll
             consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
             LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
+        }
+        if (aggregationStrategy == null) {
+            aggregationStrategy = new CopyAggregationStrategy();
         }
         CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
         ServiceHelper.buildService(consumerCache, aggregationStrategy);

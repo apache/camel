@@ -9720,15 +9720,15 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "aggregate-on-exception", type = "boolean"),
+                    @YamlProperty(name = "aggregation-strategy", type = "string"),
+                    @YamlProperty(name = "aggregation-strategy-method-allow-null", type = "string"),
+                    @YamlProperty(name = "aggregation-strategy-method-name", type = "string"),
                     @YamlProperty(name = "cache-size", type = "number"),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "ignore-invalid-endpoint", type = "number"),
+                    @YamlProperty(name = "ignore-invalid-endpoint", type = "boolean"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "strategy-method-allow-null", type = "boolean"),
-                    @YamlProperty(name = "strategy-method-name", type = "string"),
-                    @YamlProperty(name = "strategy-ref", type = "string"),
                     @YamlProperty(name = "timeout", type = "string")
             }
     )
@@ -9751,19 +9751,19 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setAggregateOnException(val);
                     break;
                 }
-                case "strategy-method-allow-null": {
+                case "aggregation-strategy": {
+                    String val = asText(node);
+                    target.setAggregationStrategy(val);
+                    break;
+                }
+                case "aggregation-strategy-method-allow-null": {
                     String val = asText(node);
                     target.setAggregationStrategyMethodAllowNull(val);
                     break;
                 }
-                case "strategy-method-name": {
+                case "aggregation-strategy-method-name": {
                     String val = asText(node);
                     target.setAggregationStrategyMethodName(val);
-                    break;
-                }
-                case "strategy-ref": {
-                    String val = asText(node);
-                    target.setAggregationStrategyRef(val);
                     break;
                 }
                 case "cache-size": {

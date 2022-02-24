@@ -3551,7 +3551,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
         pollEnrich.setExpression(expression);
         pollEnrich.setTimeout(Long.toString(timeout));
-        pollEnrich.setAggregationStrategyRef(aggregationStrategyRef);
+        pollEnrich.setAggregationStrategy(aggregationStrategyRef);
         pollEnrich.setAggregateOnException(Boolean.toString(aggregateOnException));
         addOutput(pollEnrich);
         return asType();

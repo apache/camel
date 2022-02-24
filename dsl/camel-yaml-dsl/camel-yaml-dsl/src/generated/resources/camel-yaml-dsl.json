@@ -1981,6 +1981,15 @@
           "aggregate-on-exception" : {
             "type" : "boolean"
           },
+          "aggregation-strategy" : {
+            "type" : "string"
+          },
+          "aggregation-strategy-method-allow-null" : {
+            "type" : "string"
+          },
+          "aggregation-strategy-method-name" : {
+            "type" : "string"
+          },
           "cache-size" : {
             "type" : "number"
           },
@@ -1994,19 +2003,10 @@
             "type" : "string"
           },
           "ignore-invalid-endpoint" : {
-            "type" : "number"
+            "type" : "boolean"
           },
           "inherit-error-handler" : {
             "type" : "boolean"
-          },
-          "strategy-method-allow-null" : {
-            "type" : "boolean"
-          },
-          "strategy-method-name" : {
-            "type" : "string"
-          },
-          "strategy-ref" : {
-            "type" : "string"
           },
           "timeout" : {
             "type" : "string"

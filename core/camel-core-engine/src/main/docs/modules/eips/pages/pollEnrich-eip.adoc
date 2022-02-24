@@ -117,7 +117,7 @@ In XML DSL you use `pollEnrich` as follows:
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
   <route>
     <from uri="direct:start"/>
-    <pollEnrich timeout="10000" strategyRef="myStrategy">
+    <pollEnrich timeout="10000" aggregationStrategy="myStrategy">
       <constant>"file:inbox?fileName=data.txt"</constant>
     </pollEnrich>
     <to uri="mock:result"/>

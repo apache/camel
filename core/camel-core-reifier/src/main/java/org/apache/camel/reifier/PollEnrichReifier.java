@@ -44,6 +44,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         // if no timeout then we should block, and there use a negative timeout
         long time = parseDuration(definition.getTimeout(), -1);
         boolean isIgnoreInvalidEndpoint = parseBoolean(definition.getIgnoreInvalidEndpoint(), false);
+        boolean isAggregateOnException = parseBoolean(definition.getAggregateOnException(), false);
 
         PollEnricher enricher;
         if (definition.getExpression() instanceof ConstantExpression) {
@@ -57,26 +58,23 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         }
 
         AggregationStrategy strategy = createAggregationStrategy();
-        if (strategy == null) {
-            enricher.setDefaultAggregationStrategy();
-        } else {
+        if (strategy != null) {
             enricher.setAggregationStrategy(strategy);
-        }
-        if (definition.getAggregateOnException() != null) {
-            enricher.setAggregateOnException(parseBoolean(definition.getAggregateOnException(), false));
         }
         Integer num = parseInt(definition.getCacheSize());
         if (num != null) {
             enricher.setCacheSize(num);
         }
         enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
+        enricher.setAggregateOnException(isAggregateOnException);
 
         return enricher;
     }
 
+    // TODO: Make this general on base reifier so all EIPs with agg strategy can use this
     private AggregationStrategy createAggregationStrategy() {
-        AggregationStrategy strategy = definition.getAggregationStrategy();
-        String ref = parseString(definition.getAggregationStrategyRef());
+        AggregationStrategy strategy = definition.getAggregationStrategyBean();
+        String ref = parseString(definition.getAggregationStrategy());
         if (strategy == null && ref != null) {
             Object aggStrategy = lookup(ref, Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
@@ -99,7 +97,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
                 strategy = adapter;
             } else {
                 throw new IllegalArgumentException(
-                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategyRef());
+                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategy());
             }
         }
 

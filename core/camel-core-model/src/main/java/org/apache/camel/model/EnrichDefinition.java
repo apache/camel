@@ -40,11 +40,13 @@ public class EnrichDefinition extends ExpressionNode {
     @XmlAttribute
     private String aggregationStrategy;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String aggregationStrategyMethodName;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String aggregateOnException;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
