@@ -64,7 +64,13 @@ import software.amazon.awssdk.services.secretsmanager.model.ResourceNotFoundExce
  *
  * This implementation is to return the secret value associated with a key. The properties related to this kind of
  * Properties Function are all prefixed with <tt>aws:</tt>. For example asking for <tt>aws:token</tt>, will return the
- * secret value associated the secret named token on AWS Secrets Manager.
+ * secret value associated to the secret named token on AWS Secrets Manager.
+ *
+ * Another way of retrieving a secret value is using the following notation <tt>aws:database/username</tt>: in this case
+ * the field username of the secret database will be returned. As a fallback, the user could provide a default value, which
+ * will be returned in case the secret doesn't exist, the secret has been marked for deletion or, for example, if a particular
+ * field of the secret doesn't exist. For using this feature, the user could use the following notation <tt>aws:database/username:admin</tt>.
+ * The admin value will be returned as default value, if the conditions above were all met.
  */
 
 @org.apache.camel.spi.annotations.PropertiesFunction("aws")
