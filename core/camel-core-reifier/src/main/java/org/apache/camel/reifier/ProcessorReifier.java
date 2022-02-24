@@ -25,7 +25,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
@@ -33,6 +35,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StartupStep;
 import org.apache.camel.model.AggregateDefinition;
+import org.apache.camel.model.AggregationStrategyAwareDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ChoiceDefinition;
@@ -107,6 +110,8 @@ import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
 import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.IdAware;
@@ -876,6 +881,54 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     protected String getId(OptionalIdentifiedDefinition<?> def) {
         return def.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+    }
+
+    /**
+     * Will lookup and get the configured {@link AggregationStrategy} from the given definition.
+     * <p/>
+     * This method will lookup for configured aggregation strategy in the following order
+     * <ul>
+     * <li>from the definition if any explicit configured aggregation strategy.</li>
+     * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
+     * <li>if none found, then <tt>null</tt> is returned.</li>
+     * </ul>
+     * The various {@link AggregationStrategyAwareDefinition} should use this helper method to ensure they support
+     * configured executor services in the same coherent way.
+     *
+     * @param  definition               the node definition which may leverage aggregation strategy
+     * @throws IllegalArgumentException is thrown if lookup of aggregation strategy in {@link org.apache.camel.spi.Registry}
+     *                                  was not found
+     */
+    public AggregationStrategy getConfiguredAggregationStrategy(AggregationStrategyAwareDefinition definition) {
+        AggregationStrategy strategy = definition.getAggregationStrategyBean();
+        if (strategy == null && definition.getAggregationStrategyRef() != null) {
+            Object aggStrategy = lookup(definition.getAggregationStrategyRef(), Object.class);
+            if (aggStrategy instanceof AggregationStrategy) {
+                strategy = (AggregationStrategy) aggStrategy;
+            } else if (aggStrategy instanceof BiFunction) {
+                AggregationStrategyBiFunctionAdapter adapter
+                        = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
+                if (definition.getAggregationStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                }
+                strategy = adapter;
+            } else if (aggStrategy != null) {
+                AggregationStrategyBeanAdapter adapter
+                        = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
+                if (definition.getAggregationStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                }
+                strategy = adapter;
+            } else {
+                throw new IllegalArgumentException(
+                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategyRef());
+            }
+        }
+
+        CamelContextAware.trySetCamelContext(strategy, camelContext);
+        return strategy;
     }
 
 }

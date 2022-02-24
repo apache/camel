@@ -34,7 +34,8 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "pollEnrich")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PollEnrichDefinition extends ExpressionNode {
+public class PollEnrichDefinition extends ExpressionNode implements AggregationStrategyAwareDefinition<PollEnrichDefinition> {
+
     @XmlTransient
     private AggregationStrategy aggregationStrategyBean;
 
@@ -110,6 +111,7 @@ public class PollEnrichDefinition extends ExpressionNode {
      * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing
      * message. By default Camel will use the reply from the external service as outgoing message.
      */
+    @Override
     public PollEnrichDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategyBean = aggregationStrategy;
         return this;
@@ -119,6 +121,7 @@ public class PollEnrichDefinition extends ExpressionNode {
      * Refers to an AggregationStrategy to be used to merge the reply from the external service, into a single outgoing
      * message. By default Camel will use the reply from the external service as outgoing message.
      */
+    @Override
     public PollEnrichDefinition aggregationStrategy(String aggregationStrategyRef) {
         setAggregationStrategy(aggregationStrategyRef);
         return this;
@@ -223,8 +226,14 @@ public class PollEnrichDefinition extends ExpressionNode {
         super.setExpression(expression);
     }
 
+    @Override
     public AggregationStrategy getAggregationStrategyBean() {
         return aggregationStrategyBean;
+    }
+
+    @Override
+    public String getAggregationStrategyRef() {
+        return aggregationStrategy;
     }
 
     public String getTimeout() {

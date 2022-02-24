@@ -49,7 +49,8 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
-        implements ExecutorServiceAwareDefinition<AggregateDefinition> {
+        implements ExecutorServiceAwareDefinition<AggregateDefinition>,
+        AggregationStrategyAwareDefinition<AggregateDefinition> {
 
     @XmlTransient
     private ExpressionDefinition expression;
@@ -214,6 +215,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         }
     }
 
+    @Override
     public AggregationStrategy getAggregationStrategyBean() {
         return aggregationStrategyBean;
     }
@@ -222,10 +224,16 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         return aggregationRepositoryBean;
     }
 
+    @Override
+    public String getAggregationStrategyRef() {
+        return aggregationStrategy;
+    }
+
     public AggregateController getAggregateControllerBean() {
         return aggregateControllerBean;
     }
 
+    @Override
     public ExecutorService getExecutorServiceBean() {
         return executorServiceBean;
     }
@@ -783,6 +791,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * @param  aggregationStrategy the aggregate strategy to use
      * @return                     the builder
      */
+    @Override
     public AggregateDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategyBean = aggregationStrategy;
         return this;

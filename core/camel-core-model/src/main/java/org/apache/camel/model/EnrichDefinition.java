@@ -34,7 +34,8 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EnrichDefinition extends ExpressionNode {
+public class EnrichDefinition extends ExpressionNode implements AggregationStrategyAwareDefinition<EnrichDefinition> {
+
     @XmlTransient
     private AggregationStrategy aggregationStrategyBean;
 
@@ -93,6 +94,7 @@ public class EnrichDefinition extends ExpressionNode {
      * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing
      * message. By default Camel will use the reply from the external service as outgoing message.
      */
+    @Override
     public EnrichDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
         return this;
@@ -102,6 +104,7 @@ public class EnrichDefinition extends ExpressionNode {
      * Refers to an AggregationStrategy to be used to merge the reply from the external service, into a single outgoing
      * message. By default Camel will use the reply from the external service as outgoing message.
      */
+    @Override
     public EnrichDefinition aggregationStrategy(String aggregationStrategyRef) {
         setAggregationStrategy(aggregationStrategyRef);
         return this;
@@ -228,6 +231,11 @@ public class EnrichDefinition extends ExpressionNode {
 
     public AggregationStrategy getAggregationStrategyBean() {
         return aggregationStrategyBean;
+    }
+
+    @Override
+    public String getAggregationStrategyRef() {
+        return aggregationStrategy;
     }
 
     /**

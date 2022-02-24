@@ -18,11 +18,9 @@ package org.apache.camel.reifier;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.BiFunction;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncProcessor;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Predicate;
@@ -33,8 +31,6 @@ import org.apache.camel.model.OptimisticLockRetryPolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
-import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
-import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -62,7 +58,11 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
                 .addUnitOfWorkProcessorAdvice(camelContext, childProcessor, route);
 
         Expression correlation = createExpression(definition.getExpression());
-        AggregationStrategy strategy = createAggregationStrategy();
+        AggregationStrategy strategy = getConfiguredAggregationStrategy(definition);
+        // strategy is required
+        if (strategy == null) {
+            throw new IllegalArgumentException("AggregationStrategy must be set on " + definition);
+        }
 
         boolean parallel = parseBoolean(definition.getParallelProcessing(), false);
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, parallel);
@@ -225,43 +225,6 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             policy.setRandomBackOff(parseBoolean(definition.getRandomBackOff(), false));
         }
         return policy;
-    }
-
-    // TODO: Make this general on base reifier so all EIPs with agg strategy can use this
-    private AggregationStrategy createAggregationStrategy() {
-        AggregationStrategy strategy = definition.getAggregationStrategyBean();
-        if (strategy == null && definition.getAggregationStrategy() != null) {
-            Object aggStrategy = lookup(definition.getAggregationStrategy(), Object.class);
-            if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
-            } else if (aggStrategy instanceof BiFunction) {
-                AggregationStrategyBiFunctionAdapter adapter
-                        = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
-                if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
-                }
-                strategy = adapter;
-            } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter
-                        = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
-                if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
-                }
-                strategy = adapter;
-            } else {
-                throw new IllegalArgumentException(
-                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategy());
-            }
-        }
-
-        if (strategy == null) {
-            throw new IllegalArgumentException("AggregationStrategy must be set on " + this);
-        }
-        CamelContextAware.trySetCamelContext(strategy, camelContext);
-
-        return strategy;
     }
 
     private AggregationRepository createAggregationRepository() {

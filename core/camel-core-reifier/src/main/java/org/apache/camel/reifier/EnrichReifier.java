@@ -16,18 +16,13 @@
  */
 package org.apache.camel.reifier;
 
-import java.util.function.BiFunction;
-
 import org.apache.camel.AggregationStrategy;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Enricher;
-import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
-import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
 
 public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
 
@@ -50,7 +45,7 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         if (num != null) {
             enricher.setCacheSize(num);
         }
-        AggregationStrategy strategy = createAggregationStrategy();
+        AggregationStrategy strategy = getConfiguredAggregationStrategy(definition);
         if (strategy != null) {
             enricher.setAggregationStrategy(strategy);
         }
@@ -62,39 +57,6 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         }
 
         return enricher;
-    }
-
-    // TODO: Make this general on base reifier so all EIPs with agg strategy can use this
-    private AggregationStrategy createAggregationStrategy() {
-        AggregationStrategy strategy = definition.getAggregationStrategyBean();
-        if (strategy == null && definition.getAggregationStrategy() != null) {
-            Object aggStrategy = lookup(definition.getAggregationStrategy(), Object.class);
-            if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
-            } else if (aggStrategy instanceof BiFunction) {
-                AggregationStrategyBiFunctionAdapter adapter
-                        = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
-                if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
-                }
-                strategy = adapter;
-            } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter
-                        = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
-                if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
-                }
-                strategy = adapter;
-            } else {
-                throw new IllegalArgumentException(
-                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategy());
-            }
-        }
-
-        CamelContextAware.trySetCamelContext(strategy, camelContext);
-        return strategy;
     }
 
 }
