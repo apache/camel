@@ -62,9 +62,7 @@ This defines a REST service with the following url mappings:
 
 Notice that in the REST service we route directly to a Camel endpoint
 using `to()`. This is because the Rest DSL has a short-hand for
-routing directly to an endpoint using `to()`. An alternative is to embed a
-Camel route directly using `route()`; there is such an example further
-below.
+routing directly to an endpoint using `to()`.
 
 == Rest DSL with XML DSL
 
@@ -190,65 +188,6 @@ And in XML DSL
 </rest>
 ----
 
-== Embedding Camel routes
-
-Each of the rest services becomes a Camel route, so in the first example
-we have 2 x get and 1 x post REST service, which each become a Camel
-route. We have 2 regular Camel routes, meaning we have 3 + 2 = 5
-routes in total. 
-
-There are two route modes with the Rest DSL:
-
-* mini using a singular to
-* embedding a Camel route using route 
-
-The first example is using the former with a singular to; then we
-end up with 3 + 2 = 5 total routes.
-
-The same example could use embedded Camel routes, which is shown below:
-
-[source,java]
-----
-@Override
-public void configure() throws Exception {
-    rest("/say/hello")
-        .get().route().transform().constant("Hello World");
-    rest("/say/bye")
-        .get().consumes("application/json").route().transform().constant("Bye World").endRest()
-        .post().to("mock:update");
-}
-----
-
-In the example above, we are embedding routes directly in the rest
-service using `.route()`. Notice we need to use `.endRest()` to tell Camel
-where the route ends, so we can _go back_ to the Rest DSL and continue
-defining REST services.
-
-== Configuring route options
-
-In the embedded route you can configure the route settings such as
-routeId, autoStartup and various other options you can set on routes
-today.
-
-[source,java]
-----
-.get()
-  .route().routeId("myRestRoute").autoStartup(false)
-  .transform().constant("Hello World");
-----
-
-And in XML:
-
-[source,xml]
-----
-<rest uri="/say">
-  <get>
-    <route id="myRestRoute" autoStartup="false">
-      <transform><constant>Hello World</constant></transform>
-    </route>
-  </get>
-</rest>
-----
 
 == Managing Rest services
 
@@ -493,9 +432,7 @@ The Rest DSL supports the following options:
 | Name | Description | Default | Type
 | *apiComponent* | Sets the name of the Camel component to use as the REST API (such as swagger or openapi) |  | String
 | *apiContextIdPattern* | Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern. The pattern #name# refers to the CamelContext name, to match on the current CamelContext only. For any other value, the pattern uses the rules from org.apache.camel.support.EndpointHelper#matchPattern(String,String) |  | String
-| *apiContextListing* | Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it allows to discover these contexts, if false then only the current CamelContext is in use. | false | boolean
 | *apiContextPath* | Sets a leading API context-path the REST API services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path. |  | String
-| *apiContextRouteId* | Sets the route id to use for the route that services the REST API. The route will by default use an auto assigned route id. |  | String
 | *apiHost* | To use a specific hostname for the API documentation (such as swagger or openapi) This can be used to override the generated host with this configured hostname |  | String
 | *apiProperties* | Sets additional options on api level |  | Map
 | *apiVendorExtension* | Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information as vendor extension (eg keys starting with x-) such as route ids, class names etc. Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs. | false | boolean
