@@ -59,7 +59,7 @@ public class KameletEipAggregateJoorTest extends CamelTestSupport {
                         .aggregate(constant(true))
                         .completionSize("{{count}}")
                         // use the groovy script bean for aggregation
-                        .aggregationStrategyRef("{{myAgg}}")
+                        .aggregationStrategy("{{myAgg}}")
                         .to("log:aggregate")
                         .to("kamelet:sink")
                         .end();
