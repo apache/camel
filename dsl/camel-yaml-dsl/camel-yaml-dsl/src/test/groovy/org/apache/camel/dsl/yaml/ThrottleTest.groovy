@@ -32,7 +32,7 @@ class ThrottleTest extends YamlTestSupport {
                     language == 'constant'
                     expression == '5'
                 }
-                executorServiceRef == 'myExecutor'
+                executorService == 'myExecutor'
             }
         where:
             resource << [
@@ -42,7 +42,7 @@ class ThrottleTest extends YamlTestSupport {
                         steps:    
                           - throttle:  
                               constant: "5"
-                              executor-service-ref: "myExecutor"
+                              executor-service: "myExecutor"
                           - to: "mock:result"
                     '''),
                 asResource('expression-block', '''
@@ -52,7 +52,7 @@ class ThrottleTest extends YamlTestSupport {
                           - throttle: 
                               expression: 
                                 constant: "5"
-                              executor-service-ref: "myExecutor"
+                              executor-service: "myExecutor"
                           - to: "mock:result"
                     ''')
             ]

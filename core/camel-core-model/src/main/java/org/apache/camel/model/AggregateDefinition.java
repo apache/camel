@@ -19,7 +19,6 @@ package org.apache.camel.model;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.Supplier;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -61,9 +60,9 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     @XmlTransient
     private AggregateController aggregateControllerBean;
     @XmlTransient
-    private ExecutorService executorService;
+    private ExecutorService executorServiceBean;
     @XmlTransient
-    private ScheduledExecutorService timeoutCheckerExecutorService;
+    private ScheduledExecutorService timeoutCheckerExecutorServiceBean;
     @XmlTransient
     private OptimisticLockRetryPolicy optimisticLockRetryPolicy;
 
@@ -87,10 +86,10 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     private String optimisticLocking;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
-    private String executorServiceRef;
+    private String executorService;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
-    private String timeoutCheckerExecutorServiceRef;
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ScheduledExecutorService")
+    private String timeoutCheckerExecutorService;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.processor.aggregate.AggregateController")
     private String aggregateController;
@@ -225,6 +224,19 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
 
     public AggregateController getAggregateControllerBean() {
         return aggregateControllerBean;
+    }
+
+    public ExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
+    }
+
+    @Override
+    public String getExecutorServiceRef() {
+        return executorService;
+    }
+
+    public ScheduledExecutorService getTimeoutCheckerExecutorServiceBean() {
+        return timeoutCheckerExecutorServiceBean;
     }
 
     public String getAggregationRepository() {
@@ -422,16 +434,6 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         this.completionOnNewCorrelationGroup = completionOnNewCorrelationGroup;
     }
 
-    @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
     public String getOptimisticLocking() {
         return optimisticLocking;
     }
@@ -448,14 +450,12 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         this.parallelProcessing = parallelProcessing;
     }
 
-    @Override
-    public String getExecutorServiceRef() {
-        return executorServiceRef;
+    public String getExecutorService() {
+        return executorService;
     }
 
-    @Override
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
+    public void setExecutorService(String executorService) {
+        this.executorService = executorService;
     }
 
     public String getEagerCheckCompletion() {
@@ -498,20 +498,12 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         this.discardOnAggregationFailure = discardOnAggregationFailure;
     }
 
-    public void setTimeoutCheckerExecutorService(ScheduledExecutorService timeoutCheckerExecutorService) {
-        this.timeoutCheckerExecutorService = timeoutCheckerExecutorService;
-    }
-
-    public ScheduledExecutorService getTimeoutCheckerExecutorService() {
+    public String getTimeoutCheckerExecutorService() {
         return timeoutCheckerExecutorService;
     }
 
-    public void setTimeoutCheckerExecutorServiceRef(String timeoutCheckerExecutorServiceRef) {
-        this.timeoutCheckerExecutorServiceRef = timeoutCheckerExecutorServiceRef;
-    }
-
-    public String getTimeoutCheckerExecutorServiceRef() {
-        return timeoutCheckerExecutorServiceRef;
+    public void setTimeoutCheckerExecutorService(String timeoutCheckerExecutorService) {
+        this.timeoutCheckerExecutorService = timeoutCheckerExecutorService;
     }
 
     public String getForceCompletionOnStop() {
@@ -962,7 +954,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      */
     @Override
     public AggregateDefinition executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
+        this.executorServiceBean = executorService;
         return this;
     }
 
@@ -971,8 +963,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * parallelProcessing this custom thread pool is used to send out aggregated exchanges as well.
      */
     @Override
-    public AggregateDefinition executorService(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
+    public AggregateDefinition executorService(String executorService) {
+        setExecutorService(executorService);
         return this;
     }
 
@@ -982,7 +974,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * pool to be used rather than creating a new thread for every aggregator.
      */
     public AggregateDefinition timeoutCheckerExecutorService(ScheduledExecutorService executorService) {
-        setTimeoutCheckerExecutorService(executorService);
+        this.timeoutCheckerExecutorServiceBean = executorService;
         return this;
     }
 
@@ -991,18 +983,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * thread is created to check for the completion for every aggregator. Set this option to provide a custom thread
      * pool to be used rather than creating a new thread for every aggregator.
      */
-    public AggregateDefinition timeoutCheckerExecutorService(Supplier<ScheduledExecutorService> executorService) {
-        setTimeoutCheckerExecutorService(executorService.get());
-        return this;
-    }
-
-    /**
-     * If using either of the completionTimeout, completionTimeoutExpression, or completionInterval options a background
-     * thread is created to check for the completion for every aggregator. Set this option to provide a custom thread
-     * pool to be used rather than creating a new thread for every aggregator.
-     */
-    public AggregateDefinition timeoutCheckerExecutorServiceRef(String executorServiceRef) {
-        setTimeoutCheckerExecutorServiceRef(executorServiceRef);
+    public AggregateDefinition timeoutCheckerExecutorService(String executorServiceRef) {
+        setTimeoutCheckerExecutorService(executorServiceRef);
         return this;
     }
 

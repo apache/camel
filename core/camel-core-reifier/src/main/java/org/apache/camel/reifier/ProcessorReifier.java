@@ -328,7 +328,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
         ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
 
-        if (definition.getExecutorService() != null) {
+        if (definition.getExecutorServiceBean() != null) {
             // no there is a custom thread pool configured
             return false;
         } else if (definition.getExecutorServiceRef() != null) {
@@ -372,8 +372,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
         // prefer to use explicit configured executor on the definition
         String ref = parseString(definition.getExecutorServiceRef());
-        if (definition.getExecutorService() != null) {
-            return definition.getExecutorService();
+        if (definition.getExecutorServiceBean() != null) {
+            return definition.getExecutorServiceBean();
         } else if (ref != null) {
             // lookup in registry first and use existing thread pool if exists
             ExecutorService answer = lookupExecutorServiceRef(name, definition, ref);
@@ -421,8 +421,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
 
         // prefer to use explicit configured executor on the definition
-        if (definition.getExecutorService() != null) {
-            ExecutorService executorService = definition.getExecutorService();
+        if (definition.getExecutorServiceBean() != null) {
+            ExecutorService executorService = definition.getExecutorServiceBean();
             if (executorService instanceof ScheduledExecutorService) {
                 return (ScheduledExecutorService) executorService;
             }
@@ -463,7 +463,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * @return                    the executor service, or <tt>null</tt> if none was found.
      */
     public ScheduledExecutorService lookupScheduledExecutorServiceRef(String name, Object source, String executorServiceRef) {
-
         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
         ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
         ObjectHelper.notNull(executorServiceRef, "executorServiceRef");
@@ -496,7 +495,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * @return                    the executor service, or <tt>null</tt> if none was found.
      */
     public ExecutorService lookupExecutorServiceRef(String name, Object source, String executorServiceRef) {
-
         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
         ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
         ObjectHelper.notNull(executorServiceRef, "executorServiceRef");

@@ -38,11 +38,11 @@ import org.apache.camel.spi.Metadata;
 public class DelayDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<DelayDefinition> {
 
     @XmlTransient
-    private ExecutorService executorService;
+    private ExecutorService executorServiceBean;
 
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
-    private String executorServiceRef;
+    private String executorService;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String asyncDelayed;
@@ -120,7 +120,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
      */
     @Override
     public DelayDefinition executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
+        this.executorServiceBean = executorService;
         return this;
     }
 
@@ -129,12 +129,21 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
      */
     @Override
     public DelayDefinition executorService(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
+        setExecutorService(executorServiceRef);
         return this;
     }
 
     // Properties
     // -------------------------------------------------------------------------
+
+    public ExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
+    }
+
+    @Override
+    public String getExecutorServiceRef() {
+        return executorService;
+    }
 
     /**
      * Expression to define how long time to wait (in millis)
@@ -161,23 +170,11 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
         this.callerRunsWhenRejected = callerRunsWhenRejected;
     }
 
-    @Override
-    public ExecutorService getExecutorService() {
+    public String getExecutorService() {
         return executorService;
     }
 
-    @Override
-    public void setExecutorService(ExecutorService executorService) {
+    public void setExecutorService(String executorService) {
         this.executorService = executorService;
-    }
-
-    @Override
-    public String getExecutorServiceRef() {
-        return executorServiceRef;
-    }
-
-    @Override
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
     }
 }

@@ -39,7 +39,7 @@ import org.apache.camel.spi.Metadata;
 public class SplitDefinition extends OutputExpressionNode implements ExecutorServiceAwareDefinition<SplitDefinition> {
 
     @XmlTransient
-    private ExecutorService executorService;
+    private ExecutorService executorServiceBean;
     @XmlTransient
     private AggregationStrategy aggregationStrategyBean;
     @XmlTransient
@@ -75,7 +75,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     private String timeout;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
-    private String executorServiceRef;
+    private String executorService;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
     private String onPrepare;
@@ -374,7 +374,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      */
     @Override
     public SplitDefinition executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
+        this.executorServiceBean = executorService;
         return this;
     }
 
@@ -384,7 +384,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      */
     @Override
     public SplitDefinition executorService(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
+        setExecutorService(executorServiceRef);
         return this;
     }
 
@@ -488,6 +488,16 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return onPrepareProcessor;
     }
 
+    @Override
+    public ExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
+    }
+
+    @Override
+    public String getExecutorServiceRef() {
+        return executorService;
+    }
+
     /**
      * Expression of how to split the message body, such as as-is, using a tokenizer, or using a xpath.
      */
@@ -537,16 +547,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.stopOnException = stopOnException;
     }
 
-    @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
     public String getAggregationStrategy() {
         return aggregationStrategy;
     }
@@ -593,16 +593,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
 
-    @Override
-    public String getExecutorServiceRef() {
-        return executorServiceRef;
-    }
-
-    @Override
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
-    }
-
     public String getTimeout() {
         return timeout;
     }
@@ -627,4 +617,11 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.shareUnitOfWork = shareUnitOfWork;
     }
 
+    public String getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(String executorService) {
+        this.executorService = executorService;
+    }
 }

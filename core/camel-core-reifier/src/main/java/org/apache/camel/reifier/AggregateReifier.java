@@ -90,19 +90,19 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         // this EIP supports using a shared timeout checker thread pool or
         // fallback to create a new thread pool
         boolean shutdownTimeoutThreadPool = false;
-        ScheduledExecutorService timeoutThreadPool = definition.getTimeoutCheckerExecutorService();
-        if (timeoutThreadPool == null && definition.getTimeoutCheckerExecutorServiceRef() != null) {
+        ScheduledExecutorService timeoutThreadPool = definition.getTimeoutCheckerExecutorServiceBean();
+        if (timeoutThreadPool == null && definition.getTimeoutCheckerExecutorService() != null) {
             // lookup existing thread pool
-            timeoutThreadPool = lookup(definition.getTimeoutCheckerExecutorServiceRef(), ScheduledExecutorService.class);
+            timeoutThreadPool = lookup(definition.getTimeoutCheckerExecutorService(), ScheduledExecutorService.class);
             if (timeoutThreadPool == null) {
                 // then create a thread pool assuming the ref is a thread pool
                 // profile id
                 timeoutThreadPool = camelContext.getExecutorServiceManager().newScheduledThreadPool(this,
                         AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER,
-                        definition.getTimeoutCheckerExecutorServiceRef());
+                        definition.getTimeoutCheckerExecutorService());
                 if (timeoutThreadPool == null) {
                     throw new IllegalArgumentException(
-                            "ExecutorServiceRef " + definition.getTimeoutCheckerExecutorServiceRef()
+                            "ExecutorServiceRef " + definition.getTimeoutCheckerExecutorService()
                                                        + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
                 }
                 shutdownTimeoutThreadPool = true;

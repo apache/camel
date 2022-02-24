@@ -419,7 +419,7 @@
           "eagerCheckCompletion" : {
             "type" : "boolean"
           },
-          "executorServiceRef" : {
+          "executorService" : {
             "type" : "string"
           },
           "forceCompletionOnStop" : {
@@ -449,7 +449,7 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
             }
           },
-          "timeoutCheckerExecutorServiceRef" : {
+          "timeoutCheckerExecutorService" : {
             "type" : "string"
           }
         },
@@ -682,7 +682,7 @@
           "description" : {
             "type" : "string"
           },
-          "executorServiceRef" : {
+          "executorService" : {
             "type" : "string"
           },
           "expression" : {
@@ -1570,7 +1570,7 @@
           "description" : {
             "type" : "string"
           },
-          "executorServiceRef" : {
+          "executorService" : {
             "type" : "string"
           },
           "id" : {
@@ -1614,7 +1614,7 @@
           "description" : {
             "type" : "string"
           },
-          "executorServiceRef" : {
+          "executorService" : {
             "type" : "string"
           },
           "id" : {
@@ -1980,7 +1980,7 @@
           "description" : {
             "type" : "string"
           },
-          "executorServiceRef" : {
+          "executorService" : {
             "type" : "string"
           },
           "expression" : {
@@ -2758,7 +2758,7 @@
           "description" : {
             "type" : "string"
           },
-          "executorServiceRef" : {
+          "executorService" : {
             "type" : "string"
           },
           "expression" : {
@@ -2972,7 +2972,7 @@
           "description" : {
             "type" : "string"
           },
-          "executorServiceRef" : {
+          "executorService" : {
             "type" : "string"
           },
           "id" : {
@@ -3022,7 +3022,7 @@
           "description" : {
             "type" : "string"
           },
-          "executorServiceRef" : {
+          "executorService" : {
             "type" : "string"
           },
           "expression" : {
@@ -3435,7 +3435,7 @@
           "dynamicUri" : {
             "type" : "boolean"
           },
-          "executorServiceRef" : {
+          "executorService" : {
             "type" : "string"
           },
           "id" : {

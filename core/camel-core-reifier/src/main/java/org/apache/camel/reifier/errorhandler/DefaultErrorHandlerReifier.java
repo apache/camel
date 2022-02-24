@@ -67,7 +67,7 @@ public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerProperties>
                     executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
                 }
                 if (executorService == null) {
-                    throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
+                    throw new IllegalArgumentException("ExecutorService " + executorServiceRef + " not found in registry.");
                 }
             } else {
                 // no explicit configured thread pool, so leave it up to the

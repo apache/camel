@@ -35,13 +35,13 @@
 
         <route>
             <from uri="direct:start"/>
-            <threads executorServiceRef="myPool"/>
+            <threads executorService="myPool"/>
             <to uri="mock:result"/>
         </route>
 
         <route>
             <from uri="direct:foo"/>
-            <threads executorServiceRef="myOtherPool"/>
+            <threads executorService="myOtherPool"/>
             <to uri="mock:foo"/>
         </route>
 

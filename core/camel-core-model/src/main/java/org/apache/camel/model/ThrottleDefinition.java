@@ -41,14 +41,14 @@ import org.apache.camel.spi.Metadata;
 public class ThrottleDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
 
     @XmlTransient
-    private ExecutorService executorService;
+    private ExecutorService executorServiceBean;
 
     @XmlElement(name = "correlationExpression")
     private ExpressionSubElementDefinition correlationExpression;
 
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
-    private String executorServiceRef;
+    private String executorService;
     @XmlAttribute
     @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String timePeriodMillis;
@@ -260,7 +260,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      */
     @Override
     public ThrottleDefinition executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
+        this.executorServiceBean = executorService;
         return this;
     }
 
@@ -272,12 +272,22 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      */
     @Override
     public ThrottleDefinition executorService(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
+        setExecutorService(executorServiceRef);
         return this;
     }
 
     // Properties
     // -------------------------------------------------------------------------
+
+    @Override
+    public ExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
+    }
+
+    @Override
+    public String getExecutorServiceRef() {
+        return executorService;
+    }
 
     /**
      * Expression to configure the maximum number of messages to throttle per request
@@ -312,26 +322,6 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         this.callerRunsWhenRejected = callerRunsWhenRejected;
     }
 
-    @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
-    @Override
-    public String getExecutorServiceRef() {
-        return executorServiceRef;
-    }
-
-    @Override
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
-    }
-
     public String getRejectExecution() {
         return rejectExecution;
     }
@@ -350,5 +340,13 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     public ExpressionSubElementDefinition getCorrelationExpression() {
         return correlationExpression;
+    }
+
+    public String getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(String executorService) {
+        this.executorService = executorService;
     }
 }

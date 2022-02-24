@@ -95,12 +95,12 @@ public class ModelParser extends BaseParser {
                 case "discardOnAggregationFailure": def.setDiscardOnAggregationFailure(val); break;
                 case "discardOnCompletionTimeout": def.setDiscardOnCompletionTimeout(val); break;
                 case "eagerCheckCompletion": def.setEagerCheckCompletion(val); break;
-                case "executorServiceRef": def.setExecutorServiceRef(val); break;
+                case "executorService": def.setExecutorService(val); break;
                 case "forceCompletionOnStop": def.setForceCompletionOnStop(val); break;
                 case "ignoreInvalidCorrelationKeys": def.setIgnoreInvalidCorrelationKeys(val); break;
                 case "optimisticLocking": def.setOptimisticLocking(val); break;
                 case "parallelProcessing": def.setParallelProcessing(val); break;
-                case "timeoutCheckerExecutorServiceRef": def.setTimeoutCheckerExecutorServiceRef(val); break;
+                case "timeoutCheckerExecutorService": def.setTimeoutCheckerExecutorService(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -325,7 +325,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "asyncDelayed": def.setAsyncDelayed(val); break;
                 case "callerRunsWhenRejected": def.setCallerRunsWhenRejected(val); break;
-                case "executorServiceRef": def.setExecutorServiceRef(val); break;
+                case "executorService": def.setExecutorService(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -633,7 +633,7 @@ public class ModelParser extends BaseParser {
                 case "aggregationStrategy": def.setAggregationStrategy(val); break;
                 case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); break;
                 case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); break;
-                case "executorServiceRef": def.setExecutorServiceRef(val); break;
+                case "executorService": def.setExecutorService(val); break;
                 case "onPrepare": def.setOnPrepare(val); break;
                 case "parallelAggregate": def.setParallelAggregate(val); break;
                 case "parallelProcessing": def.setParallelProcessing(val); break;
@@ -649,7 +649,7 @@ public class ModelParser extends BaseParser {
     protected OnCompletionDefinition doParseOnCompletionDefinition() throws IOException, XmlPullParserException {
         return doParse(new OnCompletionDefinition(), (def, key, val) -> {
             switch (key) {
-                case "executorServiceRef": def.setExecutorServiceRef(val); break;
+                case "executorService": def.setExecutorService(val); break;
                 case "mode": def.setMode(val); break;
                 case "onCompleteOnly": def.setOnCompleteOnly(val); break;
                 case "onFailureOnly": def.setOnFailureOnly(val); break;
@@ -834,7 +834,7 @@ public class ModelParser extends BaseParser {
                 case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); break;
                 case "cacheSize": def.setCacheSize(val); break;
                 case "delimiter": def.setDelimiter(val); break;
-                case "executorServiceRef": def.setExecutorServiceRef(val); break;
+                case "executorService": def.setExecutorService(val); break;
                 case "ignoreInvalidEndpoints": def.setIgnoreInvalidEndpoints(val); break;
                 case "onPrepare": def.setOnPrepare(val); break;
                 case "parallelAggregate": def.setParallelAggregate(val); break;
@@ -1335,7 +1335,7 @@ public class ModelParser extends BaseParser {
                 case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); break;
                 case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); break;
                 case "delimiter": def.setDelimiter(val); break;
-                case "executorServiceRef": def.setExecutorServiceRef(val); break;
+                case "executorService": def.setExecutorService(val); break;
                 case "onPrepare": def.setOnPrepare(val); break;
                 case "parallelAggregate": def.setParallelAggregate(val); break;
                 case "parallelProcessing": def.setParallelProcessing(val); break;
@@ -1445,7 +1445,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "allowCoreThreadTimeOut": def.setAllowCoreThreadTimeOut(val); break;
                 case "callerRunsWhenRejected": def.setCallerRunsWhenRejected(val); break;
-                case "executorServiceRef": def.setExecutorServiceRef(val); break;
+                case "executorService": def.setExecutorService(val); break;
                 case "keepAliveTime": def.setKeepAliveTime(val); break;
                 case "maxPoolSize": def.setMaxPoolSize(val); break;
                 case "maxQueueSize": def.setMaxQueueSize(val); break;
@@ -1463,7 +1463,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "asyncDelayed": def.setAsyncDelayed(val); break;
                 case "callerRunsWhenRejected": def.setCallerRunsWhenRejected(val); break;
-                case "executorServiceRef": def.setExecutorServiceRef(val); break;
+                case "executorService": def.setExecutorService(val); break;
                 case "rejectExecution": def.setRejectExecution(val); break;
                 case "timePeriodMillis": def.setTimePeriodMillis(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
@@ -1556,7 +1556,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "copy": def.setCopy(val); break;
                 case "dynamicUri": def.setDynamicUri(val); break;
-                case "executorServiceRef": def.setExecutorServiceRef(val); break;
+                case "executorService": def.setExecutorService(val); break;
                 case "onPrepare": def.setOnPrepare(val); break;
                 default: return toDynamicDefinitionAttributeHandler().accept(def, key, val);
             }

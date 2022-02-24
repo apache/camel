@@ -43,7 +43,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
         implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
 
     @XmlTransient
-    private ExecutorService executorService;
+    private ExecutorService executorServiceBean;
     @XmlTransient
     private boolean routeScoped = true;
 
@@ -65,7 +65,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     private String parallelProcessing;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
-    private String executorServiceRef;
+    private String executorService;
     @XmlAttribute(name = "useOriginalMessage")
     @Metadata(javaType = "java.lang.Boolean")
     private String useOriginalMessage;
@@ -229,7 +229,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      */
     @Override
     public OnCompletionDefinition executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
+        this.executorServiceBean = executorService;
         return this;
     }
 
@@ -239,7 +239,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      */
     @Override
     public OnCompletionDefinition executorService(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
+        setExecutorService(executorServiceRef);
         return this;
     }
 
@@ -276,6 +276,16 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         super.setOutputs(outputs);
+    }
+
+    @Override
+    public ExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
+    }
+
+    @Override
+    public String getExecutorServiceRef() {
+        return executorService;
     }
 
     public String getMode() {
@@ -315,26 +325,6 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
         this.onWhen = onWhen;
     }
 
-    @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
-    @Override
-    public String getExecutorServiceRef() {
-        return executorServiceRef;
-    }
-
-    @Override
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
-    }
-
     public String getUseOriginalMessage() {
         return useOriginalMessage;
     }
@@ -356,4 +346,11 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
         this.parallelProcessing = parallelProcessing;
     }
 
+    public String getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(String executorService) {
+        this.executorService = executorService;
+    }
 }

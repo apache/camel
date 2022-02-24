@@ -30,7 +30,7 @@
 
     <route>
       <from uri="direct:start"/>
-      <throttle executorServiceRef="myPool">
+      <throttle executorService="myPool">
         <constant>2</constant>
       </throttle>
       <to uri="mock:result"/>

@@ -39,7 +39,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
         implements ExecutorServiceAwareDefinition<WireTapDefinition<Type>> {
 
     @XmlTransient
-    private ExecutorService executorService;
+    private ExecutorService executorServiceBean;
     @XmlTransient
     private Processor onPrepareProcessor;
 
@@ -54,7 +54,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     private String onPrepare;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
-    private String executorServiceRef;
+    private String executorService;
 
     public WireTapDefinition() {
     }
@@ -103,7 +103,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      */
     @Override
     public WireTapDefinition<Type> executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
+        this.executorServiceBean = executorService;
         return this;
     }
 
@@ -116,7 +116,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      */
     @Override
     public WireTapDefinition<Type> executorService(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
+        setExecutorService(executorServiceRef);
         return this;
     }
 
@@ -268,6 +268,16 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     }
 
     @Override
+    public ExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
+    }
+
+    @Override
+    public String getExecutorServiceRef() {
+        return executorService;
+    }
+
+    @Override
     public String getUri() {
         return super.getUri();
     }
@@ -278,26 +288,6 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     @Override
     public void setUri(String uri) {
         super.setUri(uri);
-    }
-
-    @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
-    @Override
-    public String getExecutorServiceRef() {
-        return executorServiceRef;
-    }
-
-    @Override
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
     }
 
     public String getCopy() {
@@ -324,4 +314,11 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
         this.onPrepare = onPrepare;
     }
 
+    public String getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(String executorService) {
+        this.executorService = executorService;
+    }
 }

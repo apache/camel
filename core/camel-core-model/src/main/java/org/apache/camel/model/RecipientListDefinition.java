@@ -41,7 +41,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         implements ExecutorServiceAwareDefinition<RecipientListDefinition<Type>> {
 
     @XmlTransient
-    private ExecutorService executorService;
+    private ExecutorService executorServiceBean;
     @XmlTransient
     private AggregationStrategy aggregationStrategyBean;
     @XmlTransient
@@ -70,7 +70,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     private String timeout;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
-    private String executorServiceRef;
+    private String executorService;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String stopOnException;
@@ -263,7 +263,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      */
     @Override
     public RecipientListDefinition<Type> executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
+        this.executorServiceBean = executorService;
         return this;
     }
 
@@ -273,7 +273,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      */
     @Override
     public RecipientListDefinition<Type> executorService(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
+        setExecutorService(executorServiceRef);
         return this;
     }
 
@@ -394,6 +394,16 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         return aggregationStrategyBean;
     }
 
+    @Override
+    public ExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
+    }
+
+    @Override
+    public String getExecutorServiceRef() {
+        return executorService;
+    }
+
     /**
      * Expression that returns which endpoints (url) to send the message to (the recipients). If the expression return
      * an empty value then the message is not sent to any recipients.
@@ -418,16 +428,6 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
 
     public void setParallelProcessing(String parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
-    }
-
-    @Override
-    public String getExecutorServiceRef() {
-        return executorServiceRef;
-    }
-
-    @Override
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
     }
 
     public String getIgnoreInvalidEndpoints() {
@@ -472,16 +472,6 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
 
     public void setAggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
-    }
-
-    @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
     }
 
     public String getStreaming() {
@@ -540,4 +530,11 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         this.parallelAggregate = parallelAggregate;
     }
 
+    public String getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(String executorService) {
+        this.executorService = executorService;
+    }
 }

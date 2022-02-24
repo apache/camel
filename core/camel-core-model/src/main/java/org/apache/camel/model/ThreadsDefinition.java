@@ -38,11 +38,11 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
         implements ExecutorServiceAwareDefinition<ThreadsDefinition> {
 
     @XmlTransient
-    private ExecutorService executorService;
+    private ExecutorService executorServiceBean;
 
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
-    private String executorServiceRef;
+    private String executorService;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String poolSize;
@@ -97,7 +97,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
      */
     @Override
     public ThreadsDefinition executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
+        this.executorServiceBean = executorService;
         return this;
     }
 
@@ -106,7 +106,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
      */
     @Override
     public ThreadsDefinition executorService(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
+        setExecutorService(executorServiceRef);
         return this;
     }
 
@@ -306,23 +306,13 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
     }
 
     @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
+    public ExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
     }
 
     @Override
     public String getExecutorServiceRef() {
-        return executorServiceRef;
-    }
-
-    @Override
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
+        return executorService;
     }
 
     public String getPoolSize() {
@@ -395,5 +385,13 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
 
     public void setAllowCoreThreadTimeOut(String allowCoreThreadTimeOut) {
         this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
+    }
+
+    public String getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(String executorService) {
+        this.executorService = executorService;
     }
 }

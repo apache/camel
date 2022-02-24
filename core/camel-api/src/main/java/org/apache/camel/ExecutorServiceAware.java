@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 /**
  * Is used for easy configuration of {@link ExecutorService}.
  */
+@Deprecated
 public interface ExecutorServiceAware {
 
     /**
@@ -36,19 +37,5 @@ public interface ExecutorServiceAware {
      * @param executorService the executor
      */
     void setExecutorService(ExecutorService executorService);
-
-    /**
-     * Gets the reference to lookup in the {@link org.apache.camel.spi.Registry} for the executor service to be used.
-     *
-     * @return the reference, or <tt>null</tt> if the executor was set directly
-     */
-    String getExecutorServiceRef();
-
-    /**
-     * Sets a reference to lookup in the {@link org.apache.camel.spi.Registry} for the executor service to be used.
-     *
-     * @param executorServiceRef reference for the executor
-     */
-    void setExecutorServiceRef(String executorServiceRef);
 
 }

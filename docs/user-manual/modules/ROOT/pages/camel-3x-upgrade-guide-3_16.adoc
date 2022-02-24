@@ -146,7 +146,13 @@ Renamed `strategyMethodName` to `aggregationStrategyMethodName`.
 Renamed `strategyMethodAllowNull` to `aggregationStrategyMethodAllowNull`.
 Renamed `aggregationRepositoryRef` to `aggregationRepository`.
 Renamed `aggregateControllerRef` to `aggregateController`.
+Renamed `executorServiceRef` to `executorService`.
+Renamed `timeoutCheckerExecutorServiceRef` to `timeoutCheckerExecutorService`.
 Removed some deprecated methods, and some unnecessary methods in Java DSL.
+
+=== Delay EIP
+
+Renamed `executorServiceRef` to `executorService`.
 
 === Claim Check EIP
 
@@ -172,7 +178,20 @@ Renamed `strategyRef` to `aggregationStrategy`.
 Renamed `strategyMethodName` to `aggregationStrategyMethodName`.
 Renamed `strategyMethodAllowNull` to `aggregationStrategyMethodAllowNull`.
 Renamed `onPrepareRef` to `onPrepare`.
+Renamed `executorServiceRef` to `executorService`.
 Removed some deprecated methods, and some unnecessary methods in Java DSL.
+
+=== OnCompletion EIP
+
+Renamed `executorServiceRef` to `executorService`.
+
+=== Threads EIP
+
+Renamed `executorServiceRef` to `executorService`.
+
+=== Throttle EIP
+
+Renamed `executorServiceRef` to `executorService`.
 
 === Saga EIP
 
@@ -214,6 +233,7 @@ To:
 === WireTap EIP
 
 Renamed `onPrepareRef` to `onPrepare`.
+Renamed `executorServiceRef` to `executorService`.
 Removed the _new message_ mode as this functionality is better done by using onPrepare processor in copy mode.
 
 === camel-health

@@ -42,7 +42,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
         implements ExecutorServiceAwareDefinition<MulticastDefinition> {
 
     @XmlTransient
-    private ExecutorService executorService;
+    private ExecutorService executorServiceBean;
     @XmlTransient
     private AggregationStrategy aggregationStrategyBean;
     @XmlTransient
@@ -74,7 +74,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
     private String timeout;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
-    private String executorServiceRef;
+    private String executorService;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
     private String onPrepare;
@@ -258,7 +258,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
      */
     @Override
     public MulticastDefinition executorService(ExecutorService executorService) {
-        setExecutorService(executorService);
+        this.executorServiceBean = executorService;
         return this;
     }
 
@@ -268,7 +268,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
      */
     @Override
     public MulticastDefinition executorService(String executorServiceRef) {
-        setExecutorServiceRef(executorServiceRef);
+        setExecutorService(executorServiceRef);
         return this;
     }
 
@@ -355,6 +355,16 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
         return onPrepareProcessor;
     }
 
+    @Override
+    public ExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
+    }
+
+    @Override
+    public String getExecutorServiceRef() {
+        return executorService;
+    }
+
     public String getParallelProcessing() {
         return parallelProcessing;
     }
@@ -377,16 +387,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
 
     public void setStopOnException(String stopOnException) {
         this.stopOnException = stopOnException;
-    }
-
-    @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
     }
 
     public String getAggregationStrategy() {
@@ -435,18 +435,16 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
 
-    @Override
-    public String getExecutorServiceRef() {
-        return executorServiceRef;
+    public String getExecutorService() {
+        return executorService;
     }
 
     /**
      * Refers to a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel
      * processing is automatic implied, and you do not have to enable that option as well.
      */
-    @Override
-    public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
+    public void setExecutorService(String executorService) {
+        this.executorService = executorService;
     }
 
     public String getTimeout() {

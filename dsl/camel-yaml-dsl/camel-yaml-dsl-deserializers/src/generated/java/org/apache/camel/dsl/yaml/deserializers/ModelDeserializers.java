@@ -318,7 +318,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "discard-on-aggregation-failure", type = "boolean"),
                     @YamlProperty(name = "discard-on-completion-timeout", type = "boolean"),
                     @YamlProperty(name = "eager-check-completion", type = "boolean"),
-                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "force-completion-on-stop", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "ignore-invalid-correlation-keys", type = "boolean"),
@@ -327,7 +327,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "optimistic-locking", type = "boolean"),
                     @YamlProperty(name = "parallel-processing", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
-                    @YamlProperty(name = "timeout-checker-executor-service-ref", type = "string")
+                    @YamlProperty(name = "timeout-checker-executor-service", type = "string")
             }
     )
     public static class AggregateDefinitionDeserializer extends YamlDeserializerBase<AggregateDefinition> {
@@ -444,9 +444,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setEagerCheckCompletion(val);
                     break;
                 }
-                case "executor-service-ref": {
+                case "executor-service": {
                     String val = asText(node);
-                    target.setExecutorServiceRef(val);
+                    target.setExecutorService(val);
                     break;
                 }
                 case "force-completion-on-stop": {
@@ -479,9 +479,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setParallelProcessing(val);
                     break;
                 }
-                case "timeout-checker-executor-service-ref": {
+                case "timeout-checker-executor-service": {
                     String val = asText(node);
-                    target.setTimeoutCheckerExecutorServiceRef(val);
+                    target.setTimeoutCheckerExecutorService(val);
                     break;
                 }
                 case "id": {
@@ -3901,7 +3901,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "async-delayed", type = "boolean"),
                     @YamlProperty(name = "caller-runs-when-rejected", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean")
@@ -3931,9 +3931,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setCallerRunsWhenRejected(val);
                     break;
                 }
-                case "executor-service-ref": {
+                case "executor-service": {
                     String val = asText(node);
-                    target.setExecutorServiceRef(val);
+                    target.setExecutorService(val);
                     break;
                 }
                 case "expression": {
@@ -8497,7 +8497,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "aggregation-strategy-method-allow-null", type = "boolean"),
                     @YamlProperty(name = "aggregation-strategy-method-name", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "on-prepare", type = "string"),
@@ -8539,9 +8539,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setAggregationStrategyMethodName(val);
                     break;
                 }
-                case "executor-service-ref": {
+                case "executor-service": {
                     String val = asText(node);
-                    target.setExecutorServiceRef(val);
+                    target.setExecutorService(val);
                     break;
                 }
                 case "inherit-error-handler": {
@@ -8764,7 +8764,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             },
             properties = {
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "mode", type = "string"),
@@ -8790,9 +8790,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(OnCompletionDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "executor-service-ref": {
+                case "executor-service": {
                     String val = asText(node);
-                    target.setExecutorServiceRef(val);
+                    target.setExecutorService(val);
                     break;
                 }
                 case "inherit-error-handler": {
@@ -10472,7 +10472,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "cache-size", type = "number"),
                     @YamlProperty(name = "delimiter", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "ignore-invalid-endpoints", type = "boolean"),
@@ -10525,9 +10525,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDelimiter(val);
                     break;
                 }
-                case "executor-service-ref": {
+                case "executor-service": {
                     String val = asText(node);
-                    target.setExecutorServiceRef(val);
+                    target.setExecutorService(val);
                     break;
                 }
                 case "expression": {
@@ -14698,7 +14698,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "aggregation-strategy-method-name", type = "string"),
                     @YamlProperty(name = "delimiter", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -14746,9 +14746,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDelimiter(val);
                     break;
                 }
-                case "executor-service-ref": {
+                case "executor-service": {
                     String val = asText(node);
-                    target.setExecutorServiceRef(val);
+                    target.setExecutorService(val);
                     break;
                 }
                 case "expression": {
@@ -15388,7 +15388,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "allow-core-thread-time-out", type = "boolean"),
                     @YamlProperty(name = "caller-runs-when-rejected", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "keep-alive-time", type = "number"),
@@ -15424,9 +15424,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setCallerRunsWhenRejected(val);
                     break;
                 }
-                case "executor-service-ref": {
+                case "executor-service": {
                     String val = asText(node);
-                    target.setExecutorServiceRef(val);
+                    target.setExecutorService(val);
                     break;
                 }
                 case "inherit-error-handler": {
@@ -15556,7 +15556,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "caller-runs-when-rejected", type = "boolean"),
                     @YamlProperty(name = "correlation-expression", type = "object:org.apache.camel.model.ExpressionSubElementDefinition"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -15593,9 +15593,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setCorrelationExpression(val);
                     break;
                 }
-                case "executor-service-ref": {
+                case "executor-service": {
                     String val = asText(node);
-                    target.setExecutorServiceRef(val);
+                    target.setExecutorService(val);
                     break;
                 }
                 case "expression": {
@@ -17450,7 +17450,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "copy", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "dynamic-uri", type = "boolean"),
-                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "ignore-invalid-endpoint", type = "boolean"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -17505,9 +17505,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDynamicUri(val);
                     break;
                 }
-                case "executor-service-ref": {
+                case "executor-service": {
                     String val = asText(node);
-                    target.setExecutorServiceRef(val);
+                    target.setExecutorService(val);
                     break;
                 }
                 case "ignore-invalid-endpoint": {
