@@ -152,6 +152,21 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
+         * Fully Qualified Namespace of the service bus.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param fullyQualifiedNamespace the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder fullyQualifiedNamespace(
+                String fullyQualifiedNamespace) {
+            doSetProperty("fullyQualifiedNamespace", fullyQualifiedNamespace);
+            return this;
+        }
+        /**
          * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
          * When a proxy is configured, AmqpTransportType#AMQP_WEB_SOCKETS must
          * be used for the transport type.
@@ -223,6 +238,42 @@ public interface ServiceBusEndpointBuilderFactory {
         default ServiceBusEndpointConsumerBuilder serviceBusType(
                 String serviceBusType) {
             doSetProperty("serviceBusType", serviceBusType);
+            return this;
+        }
+        /**
+         * A TokenCredential for Azure AD authentication, implemented in
+         * com.azure.identity.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param tokenCredential the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder tokenCredential(
+                com.azure.core.credential.TokenCredential tokenCredential) {
+            doSetProperty("tokenCredential", tokenCredential);
+            return this;
+        }
+        /**
+         * A TokenCredential for Azure AD authentication, implemented in
+         * com.azure.identity.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param tokenCredential the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder tokenCredential(
+                String tokenCredential) {
+            doSetProperty("tokenCredential", tokenCredential);
             return this;
         }
         /**
@@ -803,6 +854,21 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
+         * Fully Qualified Namespace of the service bus.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param fullyQualifiedNamespace the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder fullyQualifiedNamespace(
+                String fullyQualifiedNamespace) {
+            doSetProperty("fullyQualifiedNamespace", fullyQualifiedNamespace);
+            return this;
+        }
+        /**
          * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
          * When a proxy is configured, AmqpTransportType#AMQP_WEB_SOCKETS must
          * be used for the transport type.
@@ -874,6 +940,42 @@ public interface ServiceBusEndpointBuilderFactory {
         default ServiceBusEndpointProducerBuilder serviceBusType(
                 String serviceBusType) {
             doSetProperty("serviceBusType", serviceBusType);
+            return this;
+        }
+        /**
+         * A TokenCredential for Azure AD authentication, implemented in
+         * com.azure.identity.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param tokenCredential the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder tokenCredential(
+                com.azure.core.credential.TokenCredential tokenCredential) {
+            doSetProperty("tokenCredential", tokenCredential);
+            return this;
+        }
+        /**
+         * A TokenCredential for Azure AD authentication, implemented in
+         * com.azure.identity.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param tokenCredential the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder tokenCredential(
+                String tokenCredential) {
+            doSetProperty("tokenCredential", tokenCredential);
             return this;
         }
         /**
@@ -1208,6 +1310,21 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
+         * Fully Qualified Namespace of the service bus.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param fullyQualifiedNamespace the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder fullyQualifiedNamespace(
+                String fullyQualifiedNamespace) {
+            doSetProperty("fullyQualifiedNamespace", fullyQualifiedNamespace);
+            return this;
+        }
+        /**
          * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
          * When a proxy is configured, AmqpTransportType#AMQP_WEB_SOCKETS must
          * be used for the transport type.
@@ -1277,6 +1394,41 @@ public interface ServiceBusEndpointBuilderFactory {
          */
         default ServiceBusEndpointBuilder serviceBusType(String serviceBusType) {
             doSetProperty("serviceBusType", serviceBusType);
+            return this;
+        }
+        /**
+         * A TokenCredential for Azure AD authentication, implemented in
+         * com.azure.identity.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param tokenCredential the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder tokenCredential(
+                com.azure.core.credential.TokenCredential tokenCredential) {
+            doSetProperty("tokenCredential", tokenCredential);
+            return this;
+        }
+        /**
+         * A TokenCredential for Azure AD authentication, implemented in
+         * com.azure.identity.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param tokenCredential the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder tokenCredential(String tokenCredential) {
+            doSetProperty("tokenCredential", tokenCredential);
             return this;
         }
         /**

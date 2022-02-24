@@ -39,6 +39,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "fullyqualifiednamespace":
+        case "fullyQualifiedNamespace": target.getConfiguration().setFullyQualifiedNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxautolockrenewduration":
@@ -67,6 +69,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "subQueue": target.getConfiguration().setSubQueue(property(camelContext, com.azure.messaging.servicebus.models.SubQueue.class, value)); return true;
         case "subscriptionname":
         case "subscriptionName": target.getConfiguration().setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
+        case "tokencredential":
+        case "tokenCredential": target.getConfiguration().setTokenCredential(property(camelContext, com.azure.core.credential.TokenCredential.class, value)); return true;
         default: return false;
         }
     }
@@ -97,6 +101,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fullyqualifiednamespace":
+        case "fullyQualifiedNamespace": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxautolockrenewduration":
@@ -125,6 +131,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "subQueue": return com.azure.messaging.servicebus.models.SubQueue.class;
         case "subscriptionname":
         case "subscriptionName": return java.lang.String.class;
+        case "tokencredential":
+        case "tokenCredential": return com.azure.core.credential.TokenCredential.class;
         default: return null;
         }
     }
@@ -151,6 +159,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "fullyqualifiednamespace":
+        case "fullyQualifiedNamespace": return target.getConfiguration().getFullyQualifiedNamespace();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxautolockrenewduration":
@@ -179,6 +189,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "subQueue": return target.getConfiguration().getSubQueue();
         case "subscriptionname":
         case "subscriptionName": return target.getConfiguration().getSubscriptionName();
+        case "tokencredential":
+        case "tokenCredential": return target.getConfiguration().getTokenCredential();
         default: return null;
         }
     }
