@@ -28,7 +28,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <recipientList strategyRef="agg">
+            <recipientList aggregationStrategy="agg">
                 <header>foo</header>
             </recipientList>
             <to uri="mock:result"/>

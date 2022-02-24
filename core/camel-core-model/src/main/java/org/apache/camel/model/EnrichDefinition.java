@@ -37,7 +37,9 @@ import org.apache.camel.spi.Metadata;
 public class EnrichDefinition extends ExpressionNode {
     @XmlTransient
     private AggregationStrategy aggregationStrategyBean;
+
     @XmlAttribute
+    @Metadata(javaType = "org.apache.camel.AggregationStrategy")
     private String aggregationStrategy;
     @XmlAttribute
     @Metadata(label = "advanced")

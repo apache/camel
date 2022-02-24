@@ -84,7 +84,7 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
      * Sets the reference name of the message id repository
      *
      * @param  ref the reference name of message id repository
-     * @return                        builder
+     * @return     builder
      */
     public IdempotentConsumerDefinition idempotentRepository(String ref) {
         setIdempotentRepository(ref);

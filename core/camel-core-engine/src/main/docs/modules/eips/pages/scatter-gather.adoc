@@ -44,7 +44,7 @@ as the response:
 
   <route>
     <from uri="servlet:cheese"/>
-    <recipientList strategyRef="cheeseAggregator">
+    <recipientList aggregationStrategy="cheeseAggregator">
       <constant>http:server1,http:server2</header>
     </recipientList>
     <to uri="log:response"/>
@@ -78,7 +78,7 @@ The routes for this are defined as:
 
   <route>
     <from uri="seda:quoteAggregator"/>
-    <aggregate strategyRef="beerAggregator" completionTimeout="1000">
+    <aggregate aggregationStrategy="beerAggregator" completionTimeout="1000">
       <correlationExpression>
         <header>quoteRequestId</header>
       </correlationExpression>

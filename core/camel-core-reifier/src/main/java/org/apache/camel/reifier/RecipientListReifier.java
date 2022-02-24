@@ -70,12 +70,11 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         if (num != null) {
             answer.setCacheSize(num);
         }
-        if (definition.getOnPrepareRef() != null) {
-            definition.setOnPrepare(mandatoryLookup(definition.getOnPrepareRef(), Processor.class));
+        Processor prepare = definition.getOnPrepareProcessor();
+        if (prepare == null && definition.getOnPrepare() != null) {
+            prepare = mandatoryLookup(definition.getOnPrepare(), Processor.class);
         }
-        if (definition.getOnPrepare() != null) {
-            answer.setOnPrepare(definition.getOnPrepare());
-        }
+        answer.setOnPrepare(prepare);
         Long dur = parseDuration(definition.getTimeout());
         if (dur != null) {
             answer.setTimeout(dur);
@@ -112,8 +111,8 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
     }
 
     private AggregationStrategy createAggregationStrategy() {
-        AggregationStrategy strategy = definition.getAggregationStrategy();
-        String ref = parseString(definition.getStrategyRef());
+        AggregationStrategy strategy = definition.getAggregationStrategyBean();
+        String ref = parseString(definition.getAggregationStrategy());
         if (strategy == null && ref != null) {
             Object aggStrategy = lookup(ref, Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
@@ -121,22 +120,23 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
             } else if (aggStrategy instanceof BiFunction) {
                 AggregationStrategyBiFunctionAdapter adapter
                         = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
-                if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                if (definition.getAggregationStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter
-                        = new AggregationStrategyBeanAdapter(aggStrategy, parseString(definition.getStrategyMethodName()));
-                if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                        = new AggregationStrategyBeanAdapter(
+                                aggStrategy, parseString(definition.getAggregationStrategyMethodName()));
+                if (definition.getAggregationStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
                 throw new IllegalArgumentException(
-                        "Cannot find AggregationStrategy in Registry with name: " + definition.getStrategyRef());
+                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategy());
             }
         }
 

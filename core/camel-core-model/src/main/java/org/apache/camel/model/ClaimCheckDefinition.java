@@ -44,6 +44,7 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
     private String key;
     @XmlAttribute
     private String filter;
+    @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.AggregationStrategy")
     private String aggregationStrategy;
     @XmlAttribute

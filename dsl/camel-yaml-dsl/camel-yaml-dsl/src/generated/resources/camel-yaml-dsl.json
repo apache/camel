@@ -680,6 +680,9 @@
       "org.apache.camel.model.ClaimCheckDefinition" : {
         "type" : "object",
         "properties" : {
+          "aggregation-strategy" : {
+            "type" : "string"
+          },
           "aggregation-strategy-method-name" : {
             "type" : "string"
           },
@@ -2061,6 +2064,15 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
         } ],
         "properties" : {
+          "aggregation-strategy" : {
+            "type" : "string"
+          },
+          "aggregation-strategy-method-allow-null" : {
+            "type" : "string"
+          },
+          "aggregation-strategy-method-name" : {
+            "type" : "string"
+          },
           "cache-size" : {
             "type" : "number"
           },
@@ -2085,7 +2097,7 @@
           "inherit-error-handler" : {
             "type" : "boolean"
           },
-          "on-prepare-ref" : {
+          "on-prepare" : {
             "type" : "string"
           },
           "parallel-aggregate" : {
@@ -2097,20 +2109,8 @@
           "share-unit-of-work" : {
             "type" : "boolean"
           },
-          "stop-on-aggregate-exception" : {
-            "type" : "boolean"
-          },
           "stop-on-exception" : {
             "type" : "boolean"
-          },
-          "strategy-method-allow-null" : {
-            "type" : "boolean"
-          },
-          "strategy-method-name" : {
-            "type" : "string"
-          },
-          "strategy-ref" : {
-            "type" : "string"
           },
           "streaming" : {
             "type" : "boolean"
