@@ -1469,7 +1469,7 @@
             "log-name" : {
               "type" : "string"
             },
-            "logger-ref" : {
+            "logger" : {
               "type" : "string"
             },
             "logging-level" : {

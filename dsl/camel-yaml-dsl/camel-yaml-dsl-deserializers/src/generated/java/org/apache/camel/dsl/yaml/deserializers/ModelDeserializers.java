@@ -7883,7 +7883,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "log-name", type = "string"),
-                    @YamlProperty(name = "logger-ref", type = "string"),
+                    @YamlProperty(name = "logger", type = "string"),
                     @YamlProperty(name = "logging-level", type = "string"),
                     @YamlProperty(name = "marker", type = "string"),
                     @YamlProperty(name = "message", type = "string", required = true)
@@ -7918,9 +7918,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setLogName(val);
                     break;
                 }
-                case "logger-ref": {
+                case "logger": {
                     String val = asText(node);
-                    target.setLoggerRef(val);
+                    target.setLogger(val);
                     break;
                 }
                 case "logging-level": {

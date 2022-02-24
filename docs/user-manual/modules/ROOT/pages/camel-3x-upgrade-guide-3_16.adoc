@@ -172,6 +172,10 @@ Removed some deprecated methods, and some unnecessary methods in Java DSL.
 Renamed `messageIdRepositoryRef` to `idempotentRepository`.
 Removed some unnecessary methods in Java DSL.
 
+=== Log EIP
+
+Renamed `loggerRef` to `logger`.
+
 === Multicast, Recipient List & Split EIP
 
 Renamed `strategyRef` to `aggregationStrategy`.

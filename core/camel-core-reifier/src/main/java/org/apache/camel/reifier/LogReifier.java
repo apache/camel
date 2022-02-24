@@ -58,11 +58,11 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
         }
 
         // get logger explicitly set in the definition
-        Logger logger = definition.getLogger();
+        Logger logger = definition.getLoggerBean();
 
         // get logger which may be set in XML definition
-        if (logger == null && ObjectHelper.isNotEmpty(definition.getLoggerRef())) {
-            logger = mandatoryLookup(definition.getLoggerRef(), Logger.class);
+        if (logger == null && ObjectHelper.isNotEmpty(definition.getLogger())) {
+            logger = mandatoryLookup(definition.getLogger(), Logger.class);
         }
 
         if (logger == null) {

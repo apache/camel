@@ -596,7 +596,7 @@ public class ModelParser extends BaseParser {
         return doParse(new LogDefinition(), (def, key, val) -> {
             switch (key) {
                 case "logName": def.setLogName(val); break;
-                case "loggerRef": def.setLoggerRef(val); break;
+                case "logger": def.setLogger(val); break;
                 case "loggingLevel": def.setLoggingLevel(val); break;
                 case "marker": def.setMarker(val); break;
                 case "message": def.setMessage(val); break;

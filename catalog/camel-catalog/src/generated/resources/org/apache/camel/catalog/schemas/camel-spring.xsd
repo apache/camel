@@ -5769,7 +5769,7 @@ To use slf4j marker.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="loggerRef" type="xs:string">
+        <xs:attribute name="logger" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 To refer to a custom logger instance to lookup from the registry.

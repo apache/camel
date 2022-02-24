@@ -33,6 +33,9 @@ import org.slf4j.Logger;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogDefinition extends NoOutputDefinition<LogDefinition> {
 
+    @XmlTransient
+    private Logger loggerBean;
+
     @XmlAttribute(required = true)
     private String message;
     @XmlAttribute
@@ -41,11 +44,11 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     @XmlAttribute
     private String logName;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String marker;
     @XmlAttribute
-    private String loggerRef;
-    @XmlTransient
-    private Logger logger;
+    @Metadata(label = "advanced", javaType = "org.slf4j.Logger")
+    private String logger;
 
     public LogDefinition() {
     }
@@ -68,6 +71,10 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     @Override
     public String getLabel() {
         return "log";
+    }
+
+    public Logger getLoggerBean() {
+        return loggerBean;
     }
 
     public String getLoggingLevel() {
@@ -116,26 +123,21 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         this.marker = marker;
     }
 
-    public String getLoggerRef() {
-        return loggerRef;
-    }
-
     /**
      * To refer to a custom logger instance to lookup from the registry.
      */
-    public void setLoggerRef(String loggerRef) {
-        this.loggerRef = loggerRef;
-    }
-
-    public Logger getLogger() {
-        return logger;
+    public void setLogger(String logger) {
+        this.logger = logger;
     }
 
     /**
      * To use a custom logger instance
      */
     public void setLogger(Logger logger) {
-        this.logger = logger;
+        this.loggerBean = logger;
     }
 
+    public String getLogger() {
+        return logger;
+    }
 }
