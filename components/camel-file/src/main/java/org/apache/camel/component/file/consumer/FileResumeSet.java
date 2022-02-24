@@ -59,6 +59,12 @@ public final class FileResumeSet implements ResumableSet<File> {
      * @return true if there are resumable files or false otherwise
      */
     public boolean hasResumables() {
-        return outputFiles != null && outputFiles.length != inputFiles.length;
+        if (outputFiles != null && outputFiles.length > 0) {
+            if (outputFiles.length != inputFiles.length) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
