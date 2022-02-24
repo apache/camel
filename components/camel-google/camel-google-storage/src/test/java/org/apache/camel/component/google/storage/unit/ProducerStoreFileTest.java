@@ -17,11 +17,6 @@
 package org.apache.camel.component.google.storage.unit;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 
 import com.google.cloud.storage.Blob;
@@ -29,8 +24,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileConsumer;
-import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.google.storage.GoogleCloudStorageConstants;
 import org.junit.jupiter.api.Test;
 
@@ -54,47 +47,6 @@ public class ProducerStoreFileTest extends GoogleCloudStorageBaseTest {
                 from("direct:fromFile").to(endpoint);
             }
         };
-    }
-
-    @Test
-    public void testStoreFromFileWithContentLength() throws InterruptedException, IOException {
-        Path filePath = Path.of(FILE_ENDPOINT, FILE_NAME);
-        Exchange storeFileExchange = template.request("direct:fromFile", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, FILE_NAME);
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.CONTENT_ENCODING, "text/plain");
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.CONTENT_LENGTH, Files.size(filePath));
-            GenericFile<File> genericFile = FileConsumer.asGenericFile(FILE_ENDPOINT,
-                    filePath.toFile(), StandardCharsets.UTF_8.name(), false);
-            exchange.getIn().setBody(genericFile);
-        });
-        assertNotNull(storeFileExchange);
-        Blob fileBlob = storeFileExchange.getMessage().getBody(Blob.class);
-        assertNotNull(fileBlob);
-        assertEquals(FILE_NAME, fileBlob.getName());
-        assertEquals(Files.size(filePath), Long.valueOf(fileBlob.getMetadata().get("Content-Length")));
-        byte[] blobContents = fileBlob.getContent();
-        assertNotNull(blobContents);
-        assertEquals(Files.readString(filePath), new String(blobContents));
-    }
-
-    @Test
-    public void testStoreFromFileWithNoContentLength() throws InterruptedException, IOException {
-        Path filePath = Path.of(FILE_ENDPOINT, FILE_NAME);
-        Exchange storeFileExchange = template.request("direct:fromFile", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, FILE_NAME);
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.CONTENT_ENCODING, "text/plain");
-            GenericFile<File> genericFile = FileConsumer.asGenericFile(FILE_ENDPOINT,
-                    filePath.toFile(), StandardCharsets.UTF_8.name(), false);
-            exchange.getIn().setBody(genericFile);
-        });
-        assertNotNull(storeFileExchange);
-        Blob fileBlob = storeFileExchange.getMessage().getBody(Blob.class);
-        assertNotNull(fileBlob);
-        assertEquals(FILE_NAME, fileBlob.getName());
-        assertEquals(Files.size(filePath), Long.valueOf(fileBlob.getMetadata().get("Content-Length")));
-        byte[] blobContents = fileBlob.getContent();
-        assertNotNull(blobContents);
-        assertEquals(Files.readString(filePath), new String(blobContents));
     }
 
     @Test
