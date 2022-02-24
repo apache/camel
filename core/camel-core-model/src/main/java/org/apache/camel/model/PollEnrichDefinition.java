@@ -122,8 +122,8 @@ public class PollEnrichDefinition extends ExpressionNode implements AggregationS
      * message. By default Camel will use the reply from the external service as outgoing message.
      */
     @Override
-    public PollEnrichDefinition aggregationStrategy(String aggregationStrategyRef) {
-        setAggregationStrategy(aggregationStrategyRef);
+    public PollEnrichDefinition aggregationStrategy(String aggregationStrategy) {
+        setAggregationStrategy(aggregationStrategy);
         return this;
     }
 

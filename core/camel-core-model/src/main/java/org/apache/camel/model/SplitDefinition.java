@@ -140,8 +140,8 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * single outgoing message from the Splitter. By default Camel will use the original incoming message to the
      * splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy
      */
-    public SplitDefinition aggregationStrategy(String aggregationStrategyRef) {
-        setAggregationStrategy(aggregationStrategyRef);
+    public SplitDefinition aggregationStrategy(String aggregationStrategy) {
+        setAggregationStrategy(aggregationStrategy);
         return this;
     }
 

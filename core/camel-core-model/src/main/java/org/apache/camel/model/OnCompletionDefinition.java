@@ -238,8 +238,8 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * processing is automatic implied, and you do not have to enable that option as well.
      */
     @Override
-    public OnCompletionDefinition executorService(String executorServiceRef) {
-        setExecutorService(executorServiceRef);
+    public OnCompletionDefinition executorService(String executorService) {
+        setExecutorService(executorService);
         return this;
     }
 

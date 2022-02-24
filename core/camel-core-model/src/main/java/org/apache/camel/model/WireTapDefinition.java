@@ -110,13 +110,13 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     /**
      * Uses a custom thread pool
      *
-     * @param  executorServiceRef reference to lookup a custom {@link ExecutorService} to use as thread pool for sending
+     * @param  executorService reference to lookup a custom {@link ExecutorService} to use as thread pool for sending
      *                            tapped exchanges
      * @return                    the builder
      */
     @Override
-    public WireTapDefinition<Type> executorService(String executorServiceRef) {
-        setExecutorService(executorServiceRef);
+    public WireTapDefinition<Type> executorService(String executorService) {
+        setExecutorService(executorService);
         return this;
     }
 
@@ -193,11 +193,11 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be sent. This can be used to
      * deep-clone messages that should be sent, or any custom logic needed before the exchange is sent.
      *
-     * @param  onPrepareRef reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
+     * @param  onPrepare reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
      * @return              the builder
      */
-    public WireTapDefinition<Type> onPrepare(String onPrepareRef) {
-        setOnPrepare(onPrepareRef);
+    public WireTapDefinition<Type> onPrepare(String onPrepare) {
+        setOnPrepare(onPrepare);
         return this;
     }
 

@@ -143,8 +143,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
      * AggregationStrategy, then by default, that exception is not handled by the error handler. The error handler can
      * be enabled to react if enabling the shareUnitOfWork option.
      */
-    public MulticastDefinition aggregationStrategy(String aggregationStrategyRef) {
-        setAggregationStrategy(aggregationStrategyRef);
+    public MulticastDefinition aggregationStrategy(String aggregationStrategy) {
+        setAggregationStrategy(aggregationStrategy);
         return this;
     }
 
@@ -267,8 +267,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
      * processing is automatically implied, and you do not have to enable that option as well.
      */
     @Override
-    public MulticastDefinition executorService(String executorServiceRef) {
-        setExecutorService(executorServiceRef);
+    public MulticastDefinition executorService(String executorService) {
+        setExecutorService(executorService);
         return this;
     }
 
@@ -298,11 +298,11 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
      * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send. This can be used to
      * deep-clone messages that should be send, or any custom logic needed before the exchange is send.
      *
-     * @param  onPrepareRef reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
+     * @param  onPrepare reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
      * @return              the builder
      */
-    public MulticastDefinition onPrepare(String onPrepareRef) {
-        setOnPrepare(onPrepareRef);
+    public MulticastDefinition onPrepare(String onPrepare) {
+        setOnPrepare(onPrepare);
         return this;
     }
 

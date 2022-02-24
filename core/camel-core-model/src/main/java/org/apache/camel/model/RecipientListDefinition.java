@@ -272,8 +272,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * processing is automatic implied, and you do not have to enable that option as well.
      */
     @Override
-    public RecipientListDefinition<Type> executorService(String executorServiceRef) {
-        setExecutorService(executorServiceRef);
+    public RecipientListDefinition<Type> executorService(String executorService) {
+        setExecutorService(executorService);
         return this;
     }
 
