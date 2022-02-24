@@ -645,7 +645,7 @@
       "org.apache.camel.model.CircuitBreakerDefinition" : {
         "type" : "object",
         "properties" : {
-          "configuration-ref" : {
+          "configuration" : {
             "type" : "string"
           },
           "description" : {

@@ -238,8 +238,8 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         return this;
     }
 
-    public SagaDefinition sagaService(String sagaServiceRef) {
-        setSagaService(sagaServiceRef);
+    public SagaDefinition sagaService(String sagaService) {
+        setSagaService(sagaService);
         return this;
     }
 

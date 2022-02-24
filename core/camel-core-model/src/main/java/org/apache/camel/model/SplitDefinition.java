@@ -383,8 +383,8 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * processing is automatically implied, and you do not have to enable that option as well.
      */
     @Override
-    public SplitDefinition executorService(String executorServiceRef) {
-        setExecutorService(executorServiceRef);
+    public SplitDefinition executorService(String executorService) {
+        setExecutorService(executorService);
         return this;
     }
 
@@ -404,11 +404,11 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be sent. This can be used to
      * deep-clone messages that should be sent, or any custom logic needed before the exchange is sent.
      *
-     * @param  onPrepareRef reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
-     * @return              the builder
+     * @param  onPrepare reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
+     * @return           the builder
      */
-    public SplitDefinition onPrepareRef(String onPrepareRef) {
-        setOnPrepare(onPrepareRef);
+    public SplitDefinition onPrepare(String onPrepare) {
+        setOnPrepare(onPrepare);
         return this;
     }
 

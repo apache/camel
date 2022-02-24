@@ -33,7 +33,7 @@ class CircuitBreakerTest extends YamlTestSupport {
                       - circuit-breaker:   
                          steps:
                            - log: "test"                           
-                         configuration-ref: "my-config"
+                         configuration: "my-config"
                          resilience4j-configuration:
                            failure-rate-threshold: 10
                          on-fallback:
@@ -44,7 +44,7 @@ class CircuitBreakerTest extends YamlTestSupport {
                 input.endpointUri == 'direct:start'
 
                 with(outputs[0], CircuitBreakerDefinition) {
-                    configurationRef == 'my-config'
+                    configuration == 'my-config'
 
                     resilience4jConfiguration != null
                     resilience4jConfiguration.failureRateThreshold == '10'
@@ -67,7 +67,7 @@ class CircuitBreakerTest extends YamlTestSupport {
                       - circuitBreaker:   
                          steps:
                            - log: "test"                           
-                         configurationRef: "my-config"
+                         configuration: "my-config"
                          resilience4jConfiguration:
                            failureRateThreshold: 10
                          onFallback:
@@ -78,7 +78,7 @@ class CircuitBreakerTest extends YamlTestSupport {
                 input.endpointUri == 'direct:start'
 
                 with(outputs[0], CircuitBreakerDefinition) {
-                    configurationRef == 'my-config'
+                    configuration == 'my-config'
 
                     resilience4jConfiguration != null
                     resilience4jConfiguration.failureRateThreshold == '10'

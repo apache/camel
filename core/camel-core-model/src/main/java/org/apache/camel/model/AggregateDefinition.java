@@ -847,11 +847,11 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * <p/>
      * Will by default use {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
      *
-     * @param  aggregationRepositoryRef reference to the repository to lookup in the registry
-     * @return                          the builder
+     * @param  aggregationRepository reference to the repository to lookup in the registry
+     * @return                       the builder
      */
-    public AggregateDefinition aggregationRepository(String aggregationRepositoryRef) {
-        this.aggregationRepository = aggregationRepositoryRef;
+    public AggregateDefinition aggregationRepository(String aggregationRepository) {
+        this.aggregationRepository = aggregationRepository;
         return this;
     }
 

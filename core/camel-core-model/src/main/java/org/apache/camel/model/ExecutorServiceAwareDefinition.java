@@ -34,11 +34,11 @@ public interface ExecutorServiceAwareDefinition<Type extends ProcessorDefinition
     /**
      * Setting the executor service for executing
      *
-     * @param  executorServiceRef reference for a {@link java.util.concurrent.ExecutorService} to lookup in the
-     *                            {@link org.apache.camel.spi.Registry}
-     * @return                    the builder
+     * @param  executorService reference for a {@link java.util.concurrent.ExecutorService} to lookup in the
+     *                         {@link org.apache.camel.spi.Registry}
+     * @return                 the builder
      */
-    Type executorService(String executorServiceRef);
+    Type executorService(String executorService);
 
     /**
      * Gets the executor service for executing

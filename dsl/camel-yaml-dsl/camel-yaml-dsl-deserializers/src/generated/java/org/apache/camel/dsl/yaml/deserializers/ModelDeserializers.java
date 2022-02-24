@@ -1582,7 +1582,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "circuitBreaker"
             },
             properties = {
-                    @YamlProperty(name = "configuration-ref", type = "string"),
+                    @YamlProperty(name = "configuration", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "fault-tolerance-configuration", type = "object:org.apache.camel.model.FaultToleranceConfigurationDefinition"),
                     @YamlProperty(name = "hystrix-configuration", type = "object:org.apache.camel.model.HystrixConfigurationDefinition"),
@@ -1607,9 +1607,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(CircuitBreakerDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "configuration-ref": {
+                case "configuration": {
                     String val = asText(node);
-                    target.setConfigurationRef(val);
+                    target.setConfiguration(val);
                     break;
                 }
                 case "fault-tolerance-configuration": {

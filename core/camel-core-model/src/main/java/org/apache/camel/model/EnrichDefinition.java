@@ -105,8 +105,8 @@ public class EnrichDefinition extends ExpressionNode implements AggregationStrat
      * message. By default Camel will use the reply from the external service as outgoing message.
      */
     @Override
-    public EnrichDefinition aggregationStrategy(String aggregationStrategyRef) {
-        setAggregationStrategy(aggregationStrategyRef);
+    public EnrichDefinition aggregationStrategy(String aggregationStrategy) {
+        setAggregationStrategy(aggregationStrategy);
         return this;
     }
 

@@ -267,12 +267,12 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     /**
      * To use a custom thread pool (ScheduledExecutorService) by the throttler.
      *
-     * @param  executorServiceRef the reference id of the thread pool (must be scheduled)
-     * @return                    the builder
+     * @param  executorService the reference id of the thread pool (must be scheduled)
+     * @return                 the builder
      */
     @Override
-    public ThrottleDefinition executorService(String executorServiceRef) {
-        setExecutorService(executorServiceRef);
+    public ThrottleDefinition executorService(String executorService) {
+        setExecutorService(executorService);
         return this;
     }
 

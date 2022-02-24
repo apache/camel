@@ -3846,7 +3846,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
-        <xs:attribute name="configurationRef" type="xs:string">
+        <xs:attribute name="configuration" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to a circuit breaker configuration (such as hystrix, resillience4j, or

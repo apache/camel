@@ -45,7 +45,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     @XmlElement
     private FaultToleranceConfigurationDefinition faultToleranceConfiguration;
     @XmlAttribute
-    private String configurationRef;
+    private String configuration;
     @DslProperty
     @XmlTransient
     private OnFallbackDefinition onFallback;
@@ -144,16 +144,16 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         this.faultToleranceConfiguration = faultToleranceConfiguration;
     }
 
-    public String getConfigurationRef() {
-        return configurationRef;
+    public String getConfiguration() {
+        return configuration;
     }
 
     /**
      * Refers to a circuit breaker configuration (such as hystrix, resillience4j, or microprofile-fault-tolerance) to
      * use for configuring the circuit breaker EIP.
      */
-    public void setConfigurationRef(String configurationRef) {
-        this.configurationRef = configurationRef;
+    public void setConfiguration(String configuration) {
+        this.configuration = configuration;
     }
 
     public OnFallbackDefinition getOnFallback() {
@@ -229,7 +229,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
      * Refers to a configuration to use for configuring the circuit breaker.
      */
     public CircuitBreakerDefinition configuration(String ref) {
-        configurationRef = ref;
+        configuration = ref;
         return this;
     }
 

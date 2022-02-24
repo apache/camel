@@ -240,8 +240,8 @@ public class ModelParser extends BaseParser {
     }
     protected CircuitBreakerDefinition doParseCircuitBreakerDefinition() throws IOException, XmlPullParserException {
         return doParse(new CircuitBreakerDefinition(), (def, key, val) -> {
-            if ("configurationRef".equals(key)) {
-                def.setConfigurationRef(val);
+            if ("configuration".equals(key)) {
+                def.setConfiguration(val);
                 return true;
             }
             return processorDefinitionAttributeHandler().accept(def, key, val);
