@@ -118,10 +118,10 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         ObjectHelper.notNull(expression, "expression", this);
 
         ExpressionResultComparator comparator;
-        if (config.getComparatorRef() != null) {
-            comparator = mandatoryLookup(config.getComparatorRef(), ExpressionResultComparator.class);
+        if (config.getComparator() != null) {
+            comparator = mandatoryLookup(config.getComparator(), ExpressionResultComparator.class);
         } else {
-            comparator = config.getComparator();
+            comparator = config.getComparatorBean();
             if (comparator == null) {
                 comparator = new DefaultExchangeComparator();
             }

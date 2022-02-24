@@ -1884,7 +1884,7 @@ public class ModelParser extends BaseParser {
         return doParse(new StreamResequencerConfig(), (def, key, val) -> {
             switch (key) {
                 case "capacity": def.setCapacity(val); break;
-                case "comparatorRef": def.setComparatorRef(val); break;
+                case "comparator": def.setComparator(val); break;
                 case "deliveryAttemptInterval": def.setDeliveryAttemptInterval(val); break;
                 case "ignoreInvalidExchanges": def.setIgnoreInvalidExchanges(val); break;
                 case "rejectOld": def.setRejectOld(val); break;

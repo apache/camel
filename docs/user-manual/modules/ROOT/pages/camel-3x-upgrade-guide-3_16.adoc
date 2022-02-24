@@ -157,15 +157,15 @@ Renamed `configRef` to `config`.
 Renamed `bulkheadExecutorServiceRef` to `bulkheadExecutorService`.
 Renamed `timeoutScheduledExecutorServiceRef` to `timeoutScheduledExecutorService`.
 
-=== Delay EIP
-
-Renamed `executorServiceRef` to `executorService`.
-
 === Claim Check EIP
 
 Renamed `strategyRef` to `aggregationStrategy`, and marked this option as required.
 Renamed `strategyMethodName` to `aggregationStrategyMethodName`.
 Removed some unnecessary methods in Java DSL.
+
+=== Delay EIP
+
+Renamed `executorServiceRef` to `executorService`.
 
 === Enrich & Poll Enrich EIPs
 
@@ -195,6 +195,10 @@ Removed some deprecated methods, and some unnecessary methods in Java DSL.
 === OnCompletion EIP
 
 Renamed `executorServiceRef` to `executorService`.
+
+=== Resequence EIP
+
+Renamed `comparatorRef` to `comparator`.
 
 === Sort EIP
 

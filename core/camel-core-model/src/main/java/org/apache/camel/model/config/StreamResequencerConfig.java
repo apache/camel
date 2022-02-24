@@ -32,6 +32,10 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "stream-config")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StreamResequencerConfig extends ResequencerConfig {
+
+    @XmlTransient
+    private ExpressionResultComparator comparatorBean;
+
     @XmlAttribute
     @Metadata(defaultValue = "1000", javaType = "java.lang.Integer")
     private String capacity;
@@ -44,14 +48,12 @@ public class StreamResequencerConfig extends ResequencerConfig {
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String ignoreInvalidExchanges;
-    @XmlTransient
-    private ExpressionResultComparator comparator;
-    @XmlAttribute
-    @Metadata(label = "advanced")
-    private String comparatorRef;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String rejectOld;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "org.apache.camel.processor.resequencer.ExpressionResultComparator")
+    private String comparator;
 
     /**
      * Creates a new {@link StreamResequencerConfig} instance using default values for <code>capacity</code> (1000) and
@@ -110,7 +112,7 @@ public class StreamResequencerConfig extends ResequencerConfig {
         this.capacity = Integer.toString(capacity);
         this.timeout = Long.toString(timeout);
         this.rejectOld = rejectOld != null ? Boolean.toString(rejectOld) : null;
-        this.comparator = comparator;
+        this.comparatorBean = comparator;
     }
 
     /**
@@ -169,26 +171,26 @@ public class StreamResequencerConfig extends ResequencerConfig {
         this.ignoreInvalidExchanges = ignoreInvalidExchanges;
     }
 
-    public ExpressionResultComparator getComparator() {
-        return comparator;
+    public ExpressionResultComparator getComparatorBean() {
+        return comparatorBean;
     }
 
     /**
      * To use a custom comparator
      */
-    public void setComparator(ExpressionResultComparator comparator) {
-        this.comparator = comparator;
+    public void setComparatorBean(ExpressionResultComparator comparatorBean) {
+        this.comparatorBean = comparatorBean;
     }
 
-    public String getComparatorRef() {
-        return comparatorRef;
+    public String getComparator() {
+        return comparator;
     }
 
     /**
      * To use a custom comparator as a org.apache.camel.processor.resequencer.ExpressionResultComparator type.
      */
-    public void setComparatorRef(String comparatorRef) {
-        this.comparatorRef = comparatorRef;
+    public void setComparator(String comparator) {
+        this.comparator = comparator;
     }
 
     /**

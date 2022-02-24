@@ -15023,7 +15023,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "stream-config",
             properties = {
                     @YamlProperty(name = "capacity", type = "number"),
-                    @YamlProperty(name = "comparator-ref", type = "string"),
+                    @YamlProperty(name = "comparator", type = "string"),
                     @YamlProperty(name = "delivery-attempt-interval", type = "string"),
                     @YamlProperty(name = "ignore-invalid-exchanges", type = "boolean"),
                     @YamlProperty(name = "reject-old", type = "boolean"),
@@ -15049,9 +15049,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setCapacity(val);
                     break;
                 }
-                case "comparator-ref": {
+                case "comparator": {
                     String val = asText(node);
-                    target.setComparatorRef(val);
+                    target.setComparator(val);
                     break;
                 }
                 case "delivery-attempt-interval": {

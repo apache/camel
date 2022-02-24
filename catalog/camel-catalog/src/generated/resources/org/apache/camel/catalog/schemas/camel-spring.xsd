@@ -10478,19 +10478,19 @@ Whether to ignore invalid exchanges. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="comparatorRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To use a custom comparator as a
-org.apache.camel.processor.resequencer.ExpressionResultComparator type.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="rejectOld" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 If true, throws an exception when messages older than the last delivered message
 are processed. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="comparator" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use a custom comparator as a
+org.apache.camel.processor.resequencer.ExpressionResultComparator type.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

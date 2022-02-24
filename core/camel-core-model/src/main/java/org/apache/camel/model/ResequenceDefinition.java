@@ -43,14 +43,16 @@ import org.apache.camel.util.TimeUtils;
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition> implements HasExpressionType {
-    @XmlElements({
-            @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
-            @XmlElement(name = "stream-config", type = StreamResequencerConfig.class) })
-    private ResequencerConfig resequencerConfig;
+
     @XmlTransient
     private BatchResequencerConfig batchConfig;
     @XmlTransient
     private StreamResequencerConfig streamConfig;
+
+    @XmlElements({
+            @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
+            @XmlElement(name = "stream-config", type = StreamResequencerConfig.class) })
+    private ResequencerConfig resequencerConfig;
     @XmlElementRef
     @Metadata(required = true)
     private ExpressionDefinition expression;
@@ -284,7 +286,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
         if (streamConfig == null) {
             throw new IllegalStateException("comparator() only supported for stream resequencer");
         }
-        streamConfig.setComparator(comparator);
+        streamConfig.setComparatorBean(comparator);
         return this;
     }
 

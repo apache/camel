@@ -4267,7 +4267,7 @@
           "capacity" : {
             "type" : "number"
           },
-          "comparator-ref" : {
+          "comparator" : {
             "type" : "string"
           },
           "delivery-attempt-interval" : {
