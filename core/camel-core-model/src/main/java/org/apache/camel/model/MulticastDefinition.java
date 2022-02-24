@@ -299,7 +299,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
      * deep-clone messages that should be send, or any custom logic needed before the exchange is send.
      *
      * @param  onPrepare reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
-     * @return              the builder
+     * @return           the builder
      */
     public MulticastDefinition onPrepare(String onPrepare) {
         setOnPrepare(onPrepare);

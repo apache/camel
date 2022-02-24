@@ -801,7 +801,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * Sets the aggregate strategy to use
      *
      * @param  aggregationStrategy reference to the strategy to lookup in the registry
-     * @return                        the builder
+     * @return                     the builder
      */
     public AggregateDefinition aggregationStrategy(String aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
