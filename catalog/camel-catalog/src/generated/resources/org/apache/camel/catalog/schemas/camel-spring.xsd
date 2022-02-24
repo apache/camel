@@ -3087,7 +3087,7 @@ false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="executorServiceRef" type="xs:string">
+        <xs:attribute name="executorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 If using parallelProcessing you can specify a custom thread pool to be used. In
@@ -3096,7 +3096,7 @@ used to send out aggregated exchanges as well.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="timeoutCheckerExecutorServiceRef" type="xs:string">
+        <xs:attribute name="timeoutCheckerExecutorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 If using either of the completionTimeout, completionTimeoutExpression, or
@@ -4591,10 +4591,10 @@ To use a specific charset when converting.
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
         </xs:choice>
-        <xs:attribute name="executorServiceRef" type="xs:string">
+        <xs:attribute name="executorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Refers to a custom Thread Pool if asyncDelay has been enabled.
+To use a custom Thread Pool if asyncDelay has been enabled.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8989,7 +8989,7 @@ Default value: 0
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="executorServiceRef" type="xs:string">
+        <xs:attribute name="executorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to a custom Thread Pool to be used for parallel processing. Notice if you
@@ -9137,10 +9137,10 @@ Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="executorServiceRef" type="xs:string">
+        <xs:attribute name="executorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Refers to a custom Thread Pool to be used for parallel processing. Notice if you
+To use a custom Thread Pool to be used for parallel processing. Notice if you
 set this option, then parallel processing is automatic implied, and you do not
 have to enable that option as well.
             ]]></xs:documentation>
@@ -10125,10 +10125,10 @@ bit of care. Default value: 0
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="executorServiceRef" type="xs:string">
+        <xs:attribute name="executorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Refers to a custom Thread Pool to be used for parallel processing. Notice if you
+To use a custom Thread Pool to be used for parallel processing. Notice if you
 set this option, then parallel processing is automatic implied, and you do not
 have to enable that option as well.
             ]]></xs:documentation>
@@ -11493,10 +11493,10 @@ bit of care. Default value: 0
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="executorServiceRef" type="xs:string">
+        <xs:attribute name="executorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Refers to a custom Thread Pool to be used for parallel processing. Notice if you
+To use a custom Thread Pool to be used for parallel processing. Notice if you
 set this option, then parallel processing is automatically implied, and you do
 not have to enable that option as well.
             ]]></xs:documentation>
@@ -11757,10 +11757,10 @@ Sets the handler for tasks which cannot be executed by the thread pool.
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
         <xs:sequence/>
-        <xs:attribute name="executorServiceRef" type="xs:string">
+        <xs:attribute name="executorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-To refer to a custom thread pool or use a thread pool profile (as overlay).
+To use a custom thread pool.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11872,7 +11872,7 @@ grouping. The Exchange which has the same correlation key is throttled together.
             </xs:annotation>
           </xs:element>
         </xs:sequence>
-        <xs:attribute name="executorServiceRef" type="xs:string">
+        <xs:attribute name="executorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 To use a custom thread pool (ScheduledExecutorService) by the throttler.
@@ -12339,7 +12339,7 @@ needed before the exchange is sent.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="executorServiceRef" type="xs:string">
+        <xs:attribute name="executorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Uses a custom thread pool.
