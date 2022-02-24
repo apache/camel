@@ -51,17 +51,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         implements ExecutorServiceAwareDefinition<AggregateDefinition> {
-    @XmlElement(name = "correlationExpression", required = true)
-    private ExpressionSubElementDefinition correlationExpression;
-    @XmlElement(name = "completionPredicate")
-    @AsPredicate
-    private ExpressionSubElementDefinition completionPredicate;
-    @XmlElement(name = "completionTimeoutExpression")
-    private ExpressionSubElementDefinition completionTimeoutExpression;
-    @XmlElement(name = "completionSizeExpression")
-    private ExpressionSubElementDefinition completionSizeExpression;
-    @XmlElement(name = "optimisticLockRetryPolicy")
-    private OptimisticLockRetryPolicyDefinition optimisticLockRetryPolicyDefinition;
+
     @XmlTransient
     private ExpressionDefinition expression;
     @XmlTransient
@@ -76,6 +66,19 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     private ScheduledExecutorService timeoutCheckerExecutorService;
     @XmlTransient
     private OptimisticLockRetryPolicy optimisticLockRetryPolicy;
+
+    @XmlElement(name = "correlationExpression", required = true)
+    private ExpressionSubElementDefinition correlationExpression;
+    @XmlElement(name = "completionPredicate")
+    @AsPredicate
+    private ExpressionSubElementDefinition completionPredicate;
+    @XmlElement(name = "completionTimeoutExpression")
+    private ExpressionSubElementDefinition completionTimeoutExpression;
+    @XmlElement(name = "completionSizeExpression")
+    private ExpressionSubElementDefinition completionSizeExpression;
+    @XmlElement(name = "optimisticLockRetryPolicy")
+    private OptimisticLockRetryPolicyDefinition optimisticLockRetryPolicyDefinition;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String parallelProcessing;
@@ -83,8 +86,10 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     @Metadata(javaType = "java.lang.Boolean")
     private String optimisticLocking;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorServiceRef;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String timeoutCheckerExecutorServiceRef;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.processor.aggregate.AggregateController")

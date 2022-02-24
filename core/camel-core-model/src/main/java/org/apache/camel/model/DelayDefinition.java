@@ -39,7 +39,9 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
 
     @XmlTransient
     private ExecutorService executorService;
+
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorServiceRef;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")

@@ -73,7 +73,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
     @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "0")
     private String timeout;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorServiceRef;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")

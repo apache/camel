@@ -37,6 +37,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends ToDynamicDefinition
         implements ExecutorServiceAwareDefinition<WireTapDefinition<Type>> {
+
     @XmlTransient
     private ExecutorService executorService;
     @XmlTransient
@@ -52,7 +53,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
     private String onPrepare;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorServiceRef;
 
     public WireTapDefinition() {

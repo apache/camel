@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "executorServiceRef": { "kind": "attribute", "displayName": "Executor Service Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To refer to a custom thread pool or use a thread pool profile (as overlay)" },
+    "executorServiceRef": { "kind": "attribute", "displayName": "Executor Service Ref", "label": "advanced", "required": false, "type": "object", "javaType": "java.util.concurrent.ExecutorService", "deprecated": false, "autowired": false, "secret": false, "description": "To refer to a custom thread pool or use a thread pool profile (as overlay)" },
     "poolSize": { "kind": "attribute", "displayName": "Pool Size", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the core pool size" },
     "maxPoolSize": { "kind": "attribute", "displayName": "Max Pool Size", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the maximum pool size" },
     "keepAliveTime": { "kind": "attribute", "displayName": "Keep Alive Time", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the keep alive time for idle threads" },

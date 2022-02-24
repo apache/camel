@@ -69,7 +69,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     @Metadata(javaType = "java.time.Duration", defaultValue = "0")
     private String timeout;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorServiceRef;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")

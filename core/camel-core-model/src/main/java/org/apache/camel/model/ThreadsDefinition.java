@@ -39,7 +39,9 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
 
     @XmlTransient
     private ExecutorService executorService;
+
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorServiceRef;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")

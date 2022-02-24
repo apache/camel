@@ -41,6 +41,12 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinition>
         implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
+
+    @XmlTransient
+    private ExecutorService executorService;
+    @XmlTransient
+    private boolean routeScoped = true;
+
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.model.OnCompletionMode", defaultValue = "AfterConsumer",
               enums = "AfterConsumer,BeforeConsumer")
@@ -58,14 +64,11 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     @Metadata(javaType = "java.lang.Boolean")
     private String parallelProcessing;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorServiceRef;
     @XmlAttribute(name = "useOriginalMessage")
     @Metadata(javaType = "java.lang.Boolean")
     private String useOriginalMessage;
-    @XmlTransient
-    private ExecutorService executorService;
-    @XmlTransient
-    private boolean routeScoped = true;
 
     public OnCompletionDefinition() {
     }

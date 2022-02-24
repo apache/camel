@@ -40,11 +40,14 @@ import org.apache.camel.spi.Metadata;
 @XmlType(propOrder = { "expression", "correlationExpression" })
 public class ThrottleDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
 
-    @XmlElement(name = "correlationExpression")
-    private ExpressionSubElementDefinition correlationExpression;
     @XmlTransient
     private ExecutorService executorService;
+
+    @XmlElement(name = "correlationExpression")
+    private ExpressionSubElementDefinition correlationExpression;
+
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorServiceRef;
     @XmlAttribute
     @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
