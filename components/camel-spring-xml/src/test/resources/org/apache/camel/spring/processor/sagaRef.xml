@@ -31,7 +31,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <saga sagaServiceRef="mySagaService">
+            <saga sagaService="mySagaService">
                 <compensation uri="mock:compensation"/>
                 <completion uri="mock:completion"/>
                 <option key="myOptionKey">

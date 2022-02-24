@@ -24,7 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyExpressionDefinition;
 import org.apache.camel.model.SagaActionUriDefinition;
@@ -78,7 +77,7 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
         }
 
         Processor childProcessor = this.createChildProcessor(true);
-        CamelSagaService camelSagaService = findSagaService();
+        CamelSagaService camelSagaService = resolveSagaService();
 
         camelSagaService.registerStep(step);
 
@@ -87,13 +86,13 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
                 .propagation(propagation).completionMode(completionMode).build();
     }
 
-    protected CamelSagaService findSagaService() {
-        CamelSagaService sagaService = definition.getSagaService();
+    protected CamelSagaService resolveSagaService() {
+        CamelSagaService sagaService = definition.getSagaServiceBean();
         if (sagaService != null) {
             return sagaService;
         }
 
-        String ref = parseString(definition.getSagaServiceRef());
+        String ref = parseString(definition.getSagaService());
         if (ref != null) {
             return mandatoryLookup(ref, CamelSagaService.class);
         }
@@ -108,7 +107,8 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
             return sagaService;
         }
 
-        throw new RuntimeCamelException("Cannot find a CamelSagaService");
+        throw new IllegalArgumentException(
+                "Cannot find CamelSagaService in Registry");
     }
 
 }

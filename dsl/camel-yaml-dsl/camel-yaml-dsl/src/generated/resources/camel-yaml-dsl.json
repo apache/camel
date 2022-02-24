@@ -2669,7 +2669,7 @@
           "propagation" : {
             "type" : "string"
           },
-          "saga-service-ref" : {
+          "saga-service" : {
             "type" : "string"
           },
           "steps" : {

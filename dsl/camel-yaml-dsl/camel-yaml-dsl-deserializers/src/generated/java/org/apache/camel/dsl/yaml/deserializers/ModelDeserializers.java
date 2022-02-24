@@ -13233,7 +13233,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "option", type = "array:org.apache.camel.model.PropertyExpressionDefinition"),
                     @YamlProperty(name = "propagation", type = "string"),
-                    @YamlProperty(name = "saga-service-ref", type = "string"),
+                    @YamlProperty(name = "saga-service", type = "string"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "timeout", type = "string")
             }
@@ -13282,9 +13282,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setPropagation(val);
                     break;
                 }
-                case "saga-service-ref": {
+                case "saga-service": {
                     String val = asText(node);
-                    target.setSagaServiceRef(val);
+                    target.setSagaService(val);
                     break;
                 }
                 case "timeout": {

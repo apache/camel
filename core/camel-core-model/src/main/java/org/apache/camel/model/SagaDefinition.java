@@ -43,32 +43,28 @@ import org.apache.camel.util.TimeUtils;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SagaDefinition extends OutputDefinition<SagaDefinition> {
 
+    @XmlTransient
+    private CamelSagaService sagaServiceBean;
+    @XmlAttribute
+    @Metadata(javaType = "org.apache.camel.saga.CamelSagaService")
+    private String sagaService;
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.model.SagaPropagation", defaultValue = "REQUIRED",
               enums = "REQUIRED,REQUIRES_NEW,MANDATORY,SUPPORTS,NOT_SUPPORTED,NEVER")
     private String propagation;
-
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.model.SagaCompletionMode", defaultValue = "AUTO", enums = "AUTO,MANUAL")
     private String completionMode;
-
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration")
     private String timeout;
-
     @XmlElement
     private SagaActionUriDefinition compensation;
-
     @XmlElement
     private SagaActionUriDefinition completion;
-
     @XmlElement(name = "option")
+    @Metadata(label = "advanced")
     private List<PropertyExpressionDefinition> options;
-
-    @XmlAttribute
-    private String sagaServiceRef;
-    @XmlTransient
-    private CamelSagaService sagaService;
 
     public SagaDefinition() {
     }
@@ -115,6 +111,21 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     // Properties
+
+    public CamelSagaService getSagaServiceBean() {
+        return sagaServiceBean;
+    }
+
+    public String getSagaService() {
+        return sagaService;
+    }
+
+    /**
+     * Refers to the id to lookup in the registry for the specific CamelSagaService to use.
+     */
+    public void setSagaService(String sagaService) {
+        this.sagaService = sagaService;
+    }
 
     public SagaActionUriDefinition getCompensation() {
         return compensation;
@@ -164,25 +175,6 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
      */
     public void setCompletionMode(String completionMode) {
         this.completionMode = completionMode;
-    }
-
-    public CamelSagaService getSagaService() {
-        return sagaService;
-    }
-
-    public void setSagaService(CamelSagaService sagaService) {
-        this.sagaService = sagaService;
-    }
-
-    public String getSagaServiceRef() {
-        return sagaServiceRef;
-    }
-
-    /**
-     * Refers to the id to lookup in the registry for the specific CamelSagaService to use.
-     */
-    public void setSagaServiceRef(String sagaServiceRef) {
-        this.sagaServiceRef = sagaServiceRef;
     }
 
     public List<PropertyExpressionDefinition> getOptions() {
@@ -242,12 +234,12 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     public SagaDefinition sagaService(CamelSagaService sagaService) {
-        setSagaService(sagaService);
+        this.sagaServiceBean = sagaService;
         return this;
     }
 
-    public SagaDefinition sagaServiceRef(String sagaServiceRef) {
-        setSagaServiceRef(sagaServiceRef);
+    public SagaDefinition sagaService(String sagaServiceRef) {
+        setSagaService(sagaServiceRef);
         return this;
     }
 

@@ -270,6 +270,7 @@ public class ModelParser extends BaseParser {
     protected ClaimCheckDefinition doParseClaimCheckDefinition() throws IOException, XmlPullParserException {
         return doParse(new ClaimCheckDefinition(), (def, key, val) -> {
             switch (key) {
+                case "aggregationStrategy": def.setAggregationStrategy(val); break;
                 case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); break;
                 case "filter": def.setFilter(val); break;
                 case "key": def.setKey(val); break;
@@ -277,13 +278,7 @@ public class ModelParser extends BaseParser {
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
-        }, (def, key) -> {
-            if ("aggregationStrategy".equals(key)) {
-                def.setAggregationStrategy(doParseText());
-                return true;
-            }
-            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
-        }, noValueHandler());
+        }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected ContextScanDefinition doParseContextScanDefinition() throws IOException, XmlPullParserException {
         return doParse(new ContextScanDefinition(), (def, key, val) -> {
@@ -1260,7 +1255,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "completionMode": def.setCompletionMode(val); break;
                 case "propagation": def.setPropagation(val); break;
-                case "sagaServiceRef": def.setSagaServiceRef(val); break;
+                case "sagaService": def.setSagaService(val); break;
                 case "timeout": def.setTimeout(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }

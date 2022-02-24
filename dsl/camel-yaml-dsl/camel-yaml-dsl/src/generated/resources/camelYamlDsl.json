@@ -2570,7 +2570,7 @@
           "propagation" : {
             "type" : "string"
           },
-          "sagaServiceRef" : {
+          "sagaService" : {
             "type" : "string"
           },
           "steps" : {

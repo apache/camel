@@ -176,6 +176,7 @@ Removed some deprecated methods, and some unnecessary methods in Java DSL.
 
 === Saga EIP
 
+Renamed `sagaServiceRef` to `sagaService`.
 Removed the deprecated `timeoutInMilliseconds` option, use `timeout` instead.
 
 In the `<option>` the `optionName` is renamed to `key`. When using XML DSL then this is affected as follows:
