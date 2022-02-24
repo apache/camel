@@ -338,7 +338,7 @@ context.addRoutes(new RouteBuilder() {
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:start" />
-        <idempotentConsumer messageIdRepositoryRef="infinispanRepo"> <3>
+        <idempotentConsumer idempotentRepository="infinispanRepo"> <3>
             <header>MessageID</header>
             <to uri="mock:result" />
         </idempotentConsumer>

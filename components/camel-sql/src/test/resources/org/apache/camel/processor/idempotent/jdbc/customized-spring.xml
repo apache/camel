@@ -47,7 +47,7 @@
     	
     	<camel:route id="JdbcMessageIdRepositoryTest" errorHandlerRef="deadLetterChannel">
     		<camel:from uri="direct:start" />
-    		<camel:idempotentConsumer messageIdRepositoryRef="messageIdRepository">
+    		<camel:idempotentConsumer idempotentRepository="messageIdRepository">
     			<camel:header>messageId</camel:header>
     			<camel:to uri="mock:result" />
     		</camel:idempotentConsumer>

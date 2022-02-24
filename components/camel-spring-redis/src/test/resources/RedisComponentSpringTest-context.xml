@@ -30,7 +30,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route startupOrder="1">
             <from uri="spring-redis://localhost:6379?command=SUBSCRIBE&amp;channels=testChannel"/>
-            <idempotentConsumer messageIdRepositoryRef="idempotentRepository">
+            <idempotentConsumer idempotentRepository="idempotentRepository">
                 <simple>${in.body}</simple>
                 <to uri="mock:result"/>
             </idempotentConsumer>

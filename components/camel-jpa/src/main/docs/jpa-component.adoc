@@ -300,7 +300,7 @@ Index: 20, Size: 20
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route id="JpaMessageIdRepositoryTest">
         <from uri="direct:start" />
-        <idempotentConsumer messageIdRepositoryRef="jpaStore">
+        <idempotentConsumer idempotentRepository="jpaStore">
             <header>messageId</header>
             <to uri="mock:result" />
         </idempotentConsumer>

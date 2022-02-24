@@ -31,7 +31,7 @@ class IdempotentConsumerTest extends YamlTestSupport {
                     steps:
                       - idempotent-consumer:
                           simple: "${header.id}"
-                          message-id-repository-ref: "myRepo"
+                          idempotent-repository: "myRepo"
                           steps:
                             - to: "mock:idempotent"
                       - to: "mock:route"

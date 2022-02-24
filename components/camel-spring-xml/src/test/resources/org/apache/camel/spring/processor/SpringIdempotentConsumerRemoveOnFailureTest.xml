@@ -30,7 +30,7 @@
         <route>
             <from uri="direct:start"/>
             <!-- in case of a failure, we still want to regard any message as duplicates -->
-            <idempotentConsumer messageIdRepositoryRef="myRepo" removeOnFailure="false" >
+            <idempotentConsumer idempotentRepository="myRepo" removeOnFailure="false" >
                 <!-- use the messageId header as key for identifying duplicate messages -->
                 <header>messageId</header>
                 <choice>

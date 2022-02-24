@@ -68,7 +68,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
-                from("direct:start").idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false)
+                from("direct:start").idempotentConsumer(header("messageId")).idempotentRepository(repo).skipDuplicate(false)
                         .to("mock:result");
             }
         });
@@ -103,7 +103,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
                 from("direct:start")
                         // instruct idempotent consumer to not skip duplicates as we
                         // will filter then our self
-                        .idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false)
+                        .idempotentConsumer(header("messageId")).idempotentRepository(repo).skipDuplicate(false)
                         .filter(exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(true))
                         // filter out duplicate messages by sending them to
                         // someplace else and then stop

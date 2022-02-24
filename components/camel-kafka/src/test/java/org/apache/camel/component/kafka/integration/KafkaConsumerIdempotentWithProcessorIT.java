@@ -80,7 +80,7 @@ public class KafkaConsumerIdempotentWithProcessorIT extends KafkaConsumerIdempot
                             exchange.getIn().setHeader("id", String.valueOf(bi.longValue()));
                         })
                         .idempotentConsumer(header("id"))
-                        .messageIdRepositoryRef("kafkaIdempotentRepository")
+                        .idempotentRepository("kafkaIdempotentRepository")
                         .to(to);
             }
         };

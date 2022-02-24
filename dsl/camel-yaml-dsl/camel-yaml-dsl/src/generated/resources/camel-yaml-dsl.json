@@ -1190,7 +1190,7 @@
         } ],
         "properties" : {
           "completion-eager" : {
-            "type" : "string"
+            "type" : "boolean"
           },
           "description" : {
             "type" : "string"
@@ -1204,11 +1204,11 @@
           "id" : {
             "type" : "string"
           },
+          "idempotent-repository" : {
+            "type" : "string"
+          },
           "inherit-error-handler" : {
             "type" : "boolean"
-          },
-          "message-id-repository-ref" : {
-            "type" : "string"
           },
           "remove-on-failure" : {
             "type" : "boolean"
@@ -1223,7 +1223,7 @@
             }
           }
         },
-        "required" : [ "message-id-repository-ref" ]
+        "required" : [ "idempotent-repository" ]
       },
       "org.apache.camel.model.InOnlyDefinition" : {
         "oneOf" : [ {

@@ -161,6 +161,11 @@ Renamed `strategyMethodName` to `aggregationStrategyMethodName`.
 Renamed `strategyMethodAllowNull` to `aggregationStrategyMethodAllowNull`.
 Removed some deprecated methods, and some unnecessary methods in Java DSL.
 
+=== Idempotent Consumer EIP
+
+Renamed `messageIdRepositoryRef` to `idempotentRepository`.
+Removed some unnecessary methods in Java DSL.
+
 === Saga EIP
 
 Removed the deprecated `timeoutInMilliseconds` option, use `timeout` instead.

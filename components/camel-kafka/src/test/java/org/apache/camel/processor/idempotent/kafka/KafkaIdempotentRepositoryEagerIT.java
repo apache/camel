@@ -51,7 +51,7 @@ public class KafkaIdempotentRepositoryEagerIT extends BaseEmbeddedKafkaTestSuppo
             @Override
             public void configure() throws Exception {
                 from("direct:in").to("mock:before").idempotentConsumer(header("id"))
-                        .messageIdRepositoryRef("kafkaIdempotentRepository").to("mock:out").end();
+                        .idempotentRepository("kafkaIdempotentRepository").to("mock:out").end();
             }
         };
     }

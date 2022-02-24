@@ -509,7 +509,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "completionEager": def.setCompletionEager(val); break;
                 case "eager": def.setEager(val); break;
-                case "messageIdRepositoryRef": def.setMessageIdRepositoryRef(val); break;
+                case "idempotentRepository": def.setIdempotentRepository(val); break;
                 case "removeOnFailure": def.setRemoveOnFailure(val); break;
                 case "skipDuplicate": def.setSkipDuplicate(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);

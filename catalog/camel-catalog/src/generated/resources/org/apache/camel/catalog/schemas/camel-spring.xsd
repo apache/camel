@@ -5109,7 +5109,7 @@ Global option value.
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
-        <xs:attribute name="messageIdRepositoryRef" type="xs:string" use="required">
+        <xs:attribute name="idempotentRepository" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the reference name of the message id repository.
@@ -5136,7 +5136,7 @@ option is false (default) to not complete eager, then the idempotent consumer
 will complete when the exchange is done being routed. So if the exchange is
 continued routed after the block ends, then whatever happens there also affect
 the state. For example if the exchange failed due to an exception, then the
-state of the idempotent consumer will be a rollback.
+state of the idempotent consumer will be a rollback. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

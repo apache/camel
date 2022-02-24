@@ -38,7 +38,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route id="infinispan-remote">
       <from uri="direct:start" />
-      <idempotentConsumer messageIdRepositoryRef="repo" skipDuplicate="true">
+      <idempotentConsumer idempotentRepository="repo" skipDuplicate="true">
         <header>MessageId</header>
         <to uri="log:org.apache.camel.component.infinispan?level=INFO&amp;showAll=true&amp;multiline=true" />
         <to uri="mock:result"/>

@@ -37,7 +37,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <idempotentConsumer messageIdRepositoryRef="myRepo">
+            <idempotentConsumer idempotentRepository="myRepo">
                 <header>messageId</header>
                 <to uri="mock:result"/>
             </idempotentConsumer>

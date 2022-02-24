@@ -33,7 +33,7 @@
         <route>
             <from uri="direct:start"/>
             <!-- we do not want to skip any duplicate messages -->
-            <idempotentConsumer messageIdRepositoryRef="myRepo" skipDuplicate="false">
+            <idempotentConsumer idempotentRepository="myRepo" skipDuplicate="false">
                 <!-- use the messageId header as key for identifying duplicate messages -->
                 <header>messageId</header>
                 <!-- we will to handle duplicate messages using a filter -->

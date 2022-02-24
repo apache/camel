@@ -6292,13 +6292,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             },
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
-                    @YamlProperty(name = "completion-eager", type = "string"),
+                    @YamlProperty(name = "completion-eager", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "eager", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "idempotent-repository", type = "string", required = true),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "message-id-repository-ref", type = "string", required = true),
                     @YamlProperty(name = "remove-on-failure", type = "boolean"),
                     @YamlProperty(name = "skip-duplicate", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
@@ -6333,14 +6333,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setExpression(val);
                     break;
                 }
+                case "idempotent-repository": {
+                    String val = asText(node);
+                    target.setIdempotentRepository(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
-                    break;
-                }
-                case "message-id-repository-ref": {
-                    String val = asText(node);
-                    target.setMessageIdRepositoryRef(val);
                     break;
                 }
                 case "remove-on-failure": {

@@ -72,7 +72,7 @@ public class KafkaConsumerIdempotentWithCustomSerializerIT extends KafkaConsumer
             public void configure() {
                 from(from).routeId("foo")
                         .idempotentConsumer(header("id"))
-                        .messageIdRepositoryRef("kafkaIdempotentRepository")
+                        .idempotentRepository("kafkaIdempotentRepository")
                         .to(to);
             }
         };

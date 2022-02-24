@@ -50,7 +50,7 @@ public class IdempotentConsumerDslTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start").idempotentConsumer().message(m -> m.getHeader("messageId"))
-                        .messageIdRepository(() -> createRepo()).to("mock:result");
+                        .idempotentRepository(createRepo()).to("mock:result");
             }
         };
     }

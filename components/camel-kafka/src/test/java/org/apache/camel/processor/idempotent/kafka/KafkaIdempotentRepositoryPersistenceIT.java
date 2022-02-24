@@ -70,7 +70,7 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
             @Override
             public void configure() {
                 from("direct:in").to("mock:before").idempotentConsumer(header("id"))
-                        .messageIdRepositoryRef("kafkaIdempotentRepository").to("mock:out").end();
+                        .idempotentRepository("kafkaIdempotentRepository").to("mock:out").end();
             }
         };
     }

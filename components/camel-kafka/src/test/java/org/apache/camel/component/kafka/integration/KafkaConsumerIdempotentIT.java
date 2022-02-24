@@ -76,7 +76,7 @@ public class KafkaConsumerIdempotentIT extends KafkaConsumerIdempotentTestSuppor
             public void configure() throws Exception {
                 from(from).routeId("foo")
                         .idempotentConsumer(numericHeader("id"))
-                        .messageIdRepositoryRef("kafkaIdempotentRepository")
+                        .idempotentRepository("kafkaIdempotentRepository")
                         .to(to);
             }
         };
