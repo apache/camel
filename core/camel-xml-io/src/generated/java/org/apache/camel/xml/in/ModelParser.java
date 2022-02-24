@@ -1321,8 +1321,8 @@ public class ModelParser extends BaseParser {
     }
     protected SortDefinition doParseSortDefinition() throws IOException, XmlPullParserException {
         return doParse(new SortDefinition(), (def, key, val) -> {
-            if ("comparatorRef".equals(key)) {
-                def.setComparatorRef(val);
+            if ("comparator".equals(key)) {
+                def.setComparator(val);
                 return true;
             }
             return processorDefinitionAttributeHandler().accept(def, key, val);

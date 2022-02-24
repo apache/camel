@@ -189,6 +189,10 @@ Removed some deprecated methods, and some unnecessary methods in Java DSL.
 
 Renamed `executorServiceRef` to `executorService`.
 
+=== Sort EIP
+
+Renamed `comparatorRef` to `comparator`.
+
 === Threads EIP
 
 Renamed `executorServiceRef` to `executorService`.

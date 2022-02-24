@@ -69,7 +69,7 @@ And to use our own `Comparator` we do as follows:
 ----
 <route>
   <from uri="file:inbox"/>
-  <sort comparatorRef="#class:com.mycompany.MyReverseComparator">
+  <sort comparator="#class:com.mycompany.MyReverseComparator">
     <simple>${body}</simple>
   </sort>
   <beanRef ref="MyServiceBean" method="processLine"/>

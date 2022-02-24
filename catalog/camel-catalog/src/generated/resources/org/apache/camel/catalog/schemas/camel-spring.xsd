@@ -11282,10 +11282,10 @@ constant name will be used.
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
         </xs:choice>
-        <xs:attribute name="comparatorRef" type="xs:string">
+        <xs:attribute name="comparator" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to lookup for the comparator to use for sorting.
+Sets the comparator to use for sorting.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

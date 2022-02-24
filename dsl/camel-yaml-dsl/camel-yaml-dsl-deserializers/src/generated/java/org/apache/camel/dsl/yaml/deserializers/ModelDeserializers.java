@@ -14562,7 +14562,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "sort",
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
-                    @YamlProperty(name = "comparator-ref", type = "string"),
+                    @YamlProperty(name = "comparator", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
@@ -14583,9 +14583,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(SortDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "comparator-ref": {
+                case "comparator": {
                     String val = asText(node);
-                    target.setComparatorRef(val);
+                    target.setComparator(val);
                     break;
                 }
                 case "expression": {

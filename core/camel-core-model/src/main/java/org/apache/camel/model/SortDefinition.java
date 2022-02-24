@@ -36,9 +36,10 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SortDefinition<T> extends ExpressionNode {
     @XmlTransient
-    private Comparator<? super T> comparator;
+    private Comparator<? super T> comparatorBean;
     @XmlAttribute
-    private String comparatorRef;
+    @Metadata(label = "advanced", javaType = "java.util.Comparator")
+    private String comparator;
 
     public SortDefinition() {
     }
@@ -49,12 +50,12 @@ public class SortDefinition<T> extends ExpressionNode {
 
     public SortDefinition(Expression expression, Comparator<? super T> comparator) {
         this(expression);
-        this.comparator = comparator;
+        this.comparatorBean = comparator;
     }
 
     @Override
     public String toString() {
-        return "sort[" + getExpression() + " by: " + (comparatorRef != null ? "ref:" + comparatorRef : comparator) + "]";
+        return "sort[" + getExpression() + " by: " + (comparator != null ? "ref:" + comparator : comparatorBean) + "]";
     }
 
     @Override
@@ -76,22 +77,6 @@ public class SortDefinition<T> extends ExpressionNode {
         super.setExpression(expression);
     }
 
-    public Comparator<? super T> getComparator() {
-        return comparator;
-    }
-
-    public void setComparator(Comparator<T> comparator) {
-        this.comparator = comparator;
-    }
-
-    public String getComparatorRef() {
-        return comparatorRef;
-    }
-
-    public void setComparatorRef(String comparatorRef) {
-        this.comparatorRef = comparatorRef;
-    }
-
     /**
      * Sets the comparator to use for sorting
      *
@@ -99,7 +84,7 @@ public class SortDefinition<T> extends ExpressionNode {
      * @return            the builder
      */
     public SortDefinition<T> comparator(Comparator<T> comparator) {
-        setComparator(comparator);
+        this.comparatorBean = comparator;
         return this;
     }
 
@@ -109,8 +94,20 @@ public class SortDefinition<T> extends ExpressionNode {
      * @param  ref reference for the comparator
      * @return     the builder
      */
-    public SortDefinition<T> comparatorRef(String ref) {
-        setComparatorRef(ref);
+    public SortDefinition<T> comparator(String ref) {
+        setComparator(ref);
         return this;
+    }
+
+    public Comparator<? super T> getComparatorBean() {
+        return comparatorBean;
+    }
+
+    public String getComparator() {
+        return comparator;
+    }
+
+    public void setComparator(String comparator) {
+        this.comparator = comparator;
     }
 }

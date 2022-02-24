@@ -2720,7 +2720,7 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
         } ],
         "properties" : {
-          "comparatorRef" : {
+          "comparator" : {
             "type" : "string"
           },
           "description" : {

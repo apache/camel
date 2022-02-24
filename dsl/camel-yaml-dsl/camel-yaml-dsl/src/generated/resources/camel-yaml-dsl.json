@@ -2819,7 +2819,7 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
         } ],
         "properties" : {
-          "comparator-ref" : {
+          "comparator" : {
             "type" : "string"
           },
           "description" : {
