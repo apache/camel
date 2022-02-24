@@ -73,7 +73,8 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     private static final String CAMEL_AWS_VAULT_ACCESS_KEY_ENV = "CAMEL_VAULT_AWS_ACCESS_KEY";
     private static final String CAMEL_AWS_VAULT_SECRET_KEY_ENV = "CAMEL_VAULT_AWS_SECRET_KEY";
     private static final String CAMEL_AWS_VAULT_REGION_ENV = "CAMEL_VAULT_AWS_REGION";
-    private static final String CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV = "CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER";
+    private static final String CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV
+            = "CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER";
     private CamelContext camelContext;
     private SecretsManagerClient client;
 
@@ -83,7 +84,8 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         String accessKey = System.getenv(CAMEL_AWS_VAULT_ACCESS_KEY_ENV);
         String secretKey = System.getenv(CAMEL_AWS_VAULT_SECRET_KEY_ENV);
         String region = System.getenv(CAMEL_AWS_VAULT_REGION_ENV);
-        boolean useDefaultCredentialsProvider = Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV));
+        boolean useDefaultCredentialsProvider
+                = Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV));
         if (ObjectHelper.isEmpty(accessKey) && ObjectHelper.isEmpty(secretKey) && ObjectHelper.isEmpty(region)) {
             AwsVaultConfiguration awsVaultConfiguration = getCamelContext().getVaultConfiguration().aws();
             if (ObjectHelper.isNotEmpty(awsVaultConfiguration)) {
@@ -104,10 +106,10 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             clientBuilder.region(Region.of(region));
             client = clientBuilder.build();
         } else {
-                throw new RuntimeCamelException(
-                        "Using the AWS Secrets Manager Properties Function requires setting AWS credentials as application properties or environment variables");
-            }
+            throw new RuntimeCamelException(
+                    "Using the AWS Secrets Manager Properties Function requires setting AWS credentials as application properties or environment variables");
         }
+    }
 
     @Override
     protected void doStop() throws Exception {

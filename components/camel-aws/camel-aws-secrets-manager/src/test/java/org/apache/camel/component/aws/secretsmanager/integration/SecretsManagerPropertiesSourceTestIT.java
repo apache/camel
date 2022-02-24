@@ -24,11 +24,11 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
-@EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
-@EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
 public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
 
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
     public void testFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -46,6 +46,9 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
     public void testComplexPropertiesFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -64,6 +67,9 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
     public void testComplexCustomPropertiesFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -82,6 +88,9 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
     public void testSecretNotFoundFunction() throws Exception {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
@@ -101,6 +110,9 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         });
     }
 
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
     public void testComplexNoSubkeyPropertiesFunction() throws Exception {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
@@ -119,6 +131,9 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         });
     }
 
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
     public void testComplexCustomPropertiesDefaultValueFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -137,6 +152,9 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
     public void testComplexCustomPropertiesDefaultValueExceptionFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -155,6 +173,9 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
     public void testComplexCustomPropertiesExceptionFunction() throws Exception {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
@@ -175,6 +196,9 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         });
     }
 
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
     public void testComplexSimpleDefaultValueExceptionFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -193,6 +217,9 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
     public void testComplexSimpleNoDefaultValueExceptionFunction() throws Exception {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
@@ -211,6 +238,9 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         });
     }
 
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
     public void testComplexCustomPropertiesNoDefaultValueFunction() throws Exception {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
@@ -231,8 +261,29 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         });
     }
 
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
     public void testComplexCustomPropertiesNotExistentDefaultValueFunction() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:username").setBody(simple("{{aws:newsecret/additional1:admin}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("admin");
+
+        template.sendBody("direct:username", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
+    @Test
+    public void testComplexCustomPropertiesDefaultCredsDefaultValueFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
