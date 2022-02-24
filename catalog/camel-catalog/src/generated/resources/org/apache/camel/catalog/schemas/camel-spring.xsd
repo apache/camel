@@ -8902,17 +8902,7 @@ decompressed size. Default value: 1073741824
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
-        <xs:attribute name="parallelProcessing" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-If enabled then sending messages to the multicasts occurs concurrently. Note the
-caller thread will still wait until all messages has been fully processed,
-before it continues. Its only the sending and processing the replies from the
-multicasts which happens concurrently. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="strategyRef" type="xs:string">
+        <xs:attribute name="aggregationStrategy" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to an AggregationStrategy to be used to assemble the replies from the
@@ -8922,7 +8912,7 @@ AggregationStrategy.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="strategyMethodName" type="xs:string">
+        <xs:attribute name="aggregationStrategyMethodName" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 This option can be used to explicit declare the method name to use, when using
@@ -8930,7 +8920,7 @@ POJOs as the AggregationStrategy.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="strategyMethodAllowNull" type="xs:string">
+        <xs:attribute name="aggregationStrategyMethodAllowNull" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 If this option is false then the aggregate method is not used if there was no
@@ -8940,12 +8930,25 @@ AggregationStrategy. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="executorServiceRef" type="xs:string">
+        <xs:attribute name="parallelAggregate" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Refers to a custom Thread Pool to be used for parallel processing. Notice if you
-set this option, then parallel processing is automatic implied, and you do not
-have to enable that option as well.
+If enabled then the aggregate method on AggregationStrategy can be called
+concurrently. Notice that this would require the implementation of
+AggregationStrategy to be implemented as thread-safe. By default this is false
+meaning that Camel synchronizes the call to the aggregate method. Though in some
+use-cases this can be used to archive higher performance when the
+AggregationStrategy is implemented as thread-safe. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="parallelProcessing" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If enabled then sending messages to the multicasts occurs concurrently. Note the
+caller thread will still wait until all messages has been fully processed,
+before it continues. Its only the sending and processing the replies from the
+multicasts which happens concurrently. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8986,7 +8989,16 @@ Default value: 0
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="onPrepareRef" type="xs:string">
+        <xs:attribute name="executorServiceRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Refers to a custom Thread Pool to be used for parallel processing. Notice if you
+set this option, then parallel processing is automatic implied, and you do not
+have to enable that option as well.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="onPrepare" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Uses the Processor when preparing the org.apache.camel.Exchange to be send. This
@@ -9002,27 +9014,6 @@ Shares the org.apache.camel.spi.UnitOfWork with the parent and each of the sub
 messages. Multicast will by default not share unit of work between the parent
 exchange and each multicasted exchange. This means each sub exchange has its own
 individual unit of work. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="parallelAggregate" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-If enabled then the aggregate method on AggregationStrategy can be called
-concurrently. Notice that this would require the implementation of
-AggregationStrategy to be implemented as thread-safe. By default this is false
-meaning that Camel synchronizes the call to the aggregate method. Though in some
-use-cases this can be used to archive higher performance when the
-AggregationStrategy is implemented as thread-safe. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="stopOnAggregateException" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: If enabled, unwind exceptions occurring at aggregation time to the
-error handler when parallelProcessing is used. The default value is false for
-the sake of backward compatibility. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10094,7 +10085,7 @@ POJOs as the AggregationStrategy.
 If this option is false then the aggregate method is not used if there was no
 data to enrich. If this option is true then null values is used as the
 oldExchange (when no data to enrich), when using POJOs as the
-AggregationStrategy.
+AggregationStrategy. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11039,6 +11030,14 @@ compensation/completion exchange.
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
+        <xs:attribute name="sagaService" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Refers to the id to lookup in the registry for the specific CamelSagaService to
+use.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="propagation" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -11064,14 +11063,6 @@ saga:compensate endpoints. Default value: AUTO
 Set the maximum amount of time for the Saga. After the timeout is expired, the
 saga will be compensated automatically (unless a different decision has been
 taken in the meantime).
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="sagaServiceRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Refers to the id to lookup in the registry for the specific CamelSagaService to
-use.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11406,17 +11397,7 @@ The default value is ,. Default value: ,
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="parallelProcessing" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-If enabled then processing each split messages occurs concurrently. Note the
-caller thread will still wait until all messages has been fully processed,
-before it continues. Its only processing the sub messages from the splitter
-which happens concurrently. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="strategyRef" type="xs:string">
+        <xs:attribute name="aggregationStrategy" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets a reference to the AggregationStrategy to be used to assemble the replies
@@ -11426,7 +11407,7 @@ unchanged). You can also use a POJO as the AggregationStrategy.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="strategyMethodName" type="xs:string">
+        <xs:attribute name="aggregationStrategyMethodName" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 This option can be used to explicit declare the method name to use, when using
@@ -11434,7 +11415,7 @@ POJOs as the AggregationStrategy.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="strategyMethodAllowNull" type="xs:string">
+        <xs:attribute name="aggregationStrategyMethodAllowNull" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 If this option is false then the aggregate method is not used if there was no
@@ -11444,12 +11425,25 @@ AggregationStrategy. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="executorServiceRef" type="xs:string">
+        <xs:attribute name="parallelAggregate" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Refers to a custom Thread Pool to be used for parallel processing. Notice if you
-set this option, then parallel processing is automatic implied, and you do not
-have to enable that option as well.
+If enabled then the aggregate method on AggregationStrategy can be called
+concurrently. Notice that this would require the implementation of
+AggregationStrategy to be implemented as thread-safe. By default this is false
+meaning that Camel synchronizes the call to the aggregate method. Though in some
+use-cases this can be used to archive higher performance when the
+AggregationStrategy is implemented as thread-safe. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="parallelProcessing" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If enabled then processing each split messages occurs concurrently. Note the
+caller thread will still wait until all messages has been fully processed,
+before it continues. It's only processing the sub messages from the splitter
+which happens concurrently. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11465,9 +11459,9 @@ the total size, and then process each message one by one. This requires to keep
 all the split messages in memory and therefore requires more memory. The total
 size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header. The
 streaming mode also affects the aggregation behavior. If enabled then Camel will
-process replies out-of-order, eg in the order they come back. If disabled, Camel
-will process replies in the same order as the messages was split. Default value:
-false
+process replies out-of-order, e.g. in the order they come back. If disabled,
+Camel will process replies in the same order as the messages was split. Default
+value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11499,12 +11493,21 @@ bit of care. Default value: 0
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="onPrepareRef" type="xs:string">
+        <xs:attribute name="executorServiceRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Uses the Processor when preparing the org.apache.camel.Exchange to be send. This
-can be used to deep-clone messages that should be send, or any custom logic
-needed before the exchange is send.
+Refers to a custom Thread Pool to be used for parallel processing. Notice if you
+set this option, then parallel processing is automatically implied, and you do
+not have to enable that option as well.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="onPrepare" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Uses the Processor when preparing the org.apache.camel.Exchange to be sent. This
+can be used to deep-clone messages that should be sent, or any custom logic
+needed before the exchange is sent.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -11515,27 +11518,6 @@ Shares the org.apache.camel.spi.UnitOfWork with the parent and each of the sub
 messages. Splitter will by default not share unit of work between the parent
 exchange and each split exchange. This means each split exchange has its own
 individual unit of work. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="parallelAggregate" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-If enabled then the aggregate method on AggregationStrategy can be called
-concurrently. Notice that this would require the implementation of
-AggregationStrategy to be implemented as thread-safe. By default this is false
-meaning that Camel synchronizes the call to the aggregate method. Though in some
-use-cases this can be used to archive higher performance when the
-AggregationStrategy is implemented as thread-safe. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="stopOnAggregateException" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: If enabled, unwind exceptions occurring at aggregation time to the
-error handler when parallelProcessing is used. The default value is false for
-the sake of backward compatibility. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

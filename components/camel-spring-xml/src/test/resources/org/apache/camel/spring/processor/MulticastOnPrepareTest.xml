@@ -29,7 +29,7 @@
         <route>
             <from uri="direct:start"/>
             <!-- use on prepare with multicast -->
-            <multicast onPrepareRef="animalDeepClonePrepare">
+            <multicast onPrepare="animalDeepClonePrepare">
                 <to uri="direct:a"/>
                 <to uri="direct:b"/>
             </multicast>

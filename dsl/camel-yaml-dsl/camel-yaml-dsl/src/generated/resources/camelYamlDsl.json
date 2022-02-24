@@ -2743,6 +2743,15 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
         } ],
         "properties" : {
+          "aggregationStrategy" : {
+            "type" : "string"
+          },
+          "aggregationStrategyMethodAllowNull" : {
+            "type" : "boolean"
+          },
+          "aggregationStrategyMethodName" : {
+            "type" : "string"
+          },
           "delimiter" : {
             "type" : "string"
           },
@@ -2761,7 +2770,7 @@
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
-          "onPrepareRef" : {
+          "onPrepare" : {
             "type" : "string"
           },
           "parallelAggregate" : {
@@ -2779,20 +2788,8 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
             }
           },
-          "stopOnAggregateException" : {
-            "type" : "boolean"
-          },
           "stopOnException" : {
             "type" : "boolean"
-          },
-          "strategyMethodAllowNull" : {
-            "type" : "boolean"
-          },
-          "strategyMethodName" : {
-            "type" : "string"
-          },
-          "strategyRef" : {
-            "type" : "string"
           },
           "streaming" : {
             "type" : "boolean"

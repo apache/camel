@@ -14693,22 +14693,21 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "split",
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
+                    @YamlProperty(name = "aggregation-strategy", type = "string"),
+                    @YamlProperty(name = "aggregation-strategy-method-allow-null", type = "boolean"),
+                    @YamlProperty(name = "aggregation-strategy-method-name", type = "string"),
                     @YamlProperty(name = "delimiter", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "executor-service-ref", type = "string"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "on-prepare-ref", type = "string"),
+                    @YamlProperty(name = "on-prepare", type = "string"),
                     @YamlProperty(name = "parallel-aggregate", type = "boolean"),
                     @YamlProperty(name = "parallel-processing", type = "boolean"),
                     @YamlProperty(name = "share-unit-of-work", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
-                    @YamlProperty(name = "stop-on-aggregate-exception", type = "boolean", deprecated = true),
                     @YamlProperty(name = "stop-on-exception", type = "boolean"),
-                    @YamlProperty(name = "strategy-method-allow-null", type = "boolean"),
-                    @YamlProperty(name = "strategy-method-name", type = "string"),
-                    @YamlProperty(name = "strategy-ref", type = "string"),
                     @YamlProperty(name = "streaming", type = "boolean"),
                     @YamlProperty(name = "timeout", type = "string")
             }
@@ -14727,6 +14726,21 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(SplitDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "aggregation-strategy": {
+                    String val = asText(node);
+                    target.setAggregationStrategy(val);
+                    break;
+                }
+                case "aggregation-strategy-method-allow-null": {
+                    String val = asText(node);
+                    target.setAggregationStrategyMethodAllowNull(val);
+                    break;
+                }
+                case "aggregation-strategy-method-name": {
+                    String val = asText(node);
+                    target.setAggregationStrategyMethodName(val);
+                    break;
+                }
                 case "delimiter": {
                     String val = asText(node);
                     target.setDelimiter(val);
@@ -14747,9 +14761,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
-                case "on-prepare-ref": {
+                case "on-prepare": {
                     String val = asText(node);
-                    target.setOnPrepareRef(val);
+                    target.setOnPrepare(val);
                     break;
                 }
                 case "parallel-aggregate": {
@@ -14767,29 +14781,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setShareUnitOfWork(val);
                     break;
                 }
-                case "stop-on-aggregate-exception": {
-                    String val = asText(node);
-                    target.setStopOnAggregateException(val);
-                    break;
-                }
                 case "stop-on-exception": {
                     String val = asText(node);
                     target.setStopOnException(val);
-                    break;
-                }
-                case "strategy-method-allow-null": {
-                    String val = asText(node);
-                    target.setStrategyMethodAllowNull(val);
-                    break;
-                }
-                case "strategy-method-name": {
-                    String val = asText(node);
-                    target.setStrategyMethodName(val);
-                    break;
-                }
-                case "strategy-ref": {
-                    String val = asText(node);
-                    target.setStrategyRef(val);
                     break;
                 }
                 case "streaming": {

@@ -40,7 +40,8 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         Processor childProcessor = this.createChildProcessor(true);
-        definition.setAggregationStrategy(createAggregationStrategy());
+
+        final AggregationStrategy strategy = createAggregationStrategy();
 
         boolean isParallelProcessing = parseBoolean(definition.getParallelProcessing(), false);
         boolean isStreaming = parseBoolean(definition.getStreaming(), false);
@@ -54,9 +55,9 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
-        String ref = parseString(definition.getOnPrepareRef());
-        if (ref != null) {
-            definition.setOnPrepare(mandatoryLookup(ref, Processor.class));
+        Processor prepare = definition.getOnPrepareProcessor();
+        if (prepare == null && definition.getOnPrepare() != null) {
+            prepare = mandatoryLookup(definition.getOnPrepare(), Processor.class);
         }
 
         Expression exp = createExpression(definition.getExpression());
@@ -65,13 +66,13 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         Splitter answer;
         if (delimiter != null) {
             answer = new Splitter(
-                    camelContext, route, exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing,
-                    threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, definition.getOnPrepare(),
+                    camelContext, route, exp, childProcessor, strategy, isParallelProcessing,
+                    threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, prepare,
                     isShareUnitOfWork, isParallelAggregate, delimiter);
         } else {
             answer = new Splitter(
-                    camelContext, route, exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing,
-                    threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, definition.getOnPrepare(),
+                    camelContext, route, exp, childProcessor, strategy, isParallelProcessing,
+                    threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, prepare,
                     isShareUnitOfWork, isParallelAggregate);
         }
 
@@ -79,30 +80,30 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
     }
 
     private AggregationStrategy createAggregationStrategy() {
-        AggregationStrategy strategy = definition.getAggregationStrategy();
-        if (strategy == null && definition.getStrategyRef() != null) {
-            Object aggStrategy = lookup(definition.getStrategyRef(), Object.class);
+        AggregationStrategy strategy = definition.getAggregationStrategyBean();
+        if (strategy == null && definition.getAggregationStrategy() != null) {
+            Object aggStrategy = lookup(definition.getAggregationStrategy(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
             } else if (aggStrategy instanceof BiFunction) {
                 AggregationStrategyBiFunctionAdapter adapter
                         = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
-                if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                if (definition.getAggregationStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter
-                        = new AggregationStrategyBeanAdapter(aggStrategy, definition.getStrategyMethodName());
-                if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                        = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
+                if (definition.getAggregationStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
                 throw new IllegalArgumentException(
-                        "Cannot find AggregationStrategy in Registry with name: " + definition.getStrategyRef());
+                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategy());
             }
         }
 

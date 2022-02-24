@@ -27,7 +27,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <recipientList onPrepareRef="animalDeepClonePrepare">
+            <recipientList onPrepare="animalDeepClonePrepare">
                 <header>foo</header>
             </recipientList>
         </route>

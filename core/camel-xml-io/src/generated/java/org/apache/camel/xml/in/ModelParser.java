@@ -1331,23 +1331,27 @@ public class ModelParser extends BaseParser {
     protected SplitDefinition doParseSplitDefinition() throws IOException, XmlPullParserException {
         return doParse(new SplitDefinition(), (def, key, val) -> {
             switch (key) {
+                case "aggregationStrategy": def.setAggregationStrategy(val); break;
+                case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); break;
+                case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); break;
                 case "delimiter": def.setDelimiter(val); break;
                 case "executorServiceRef": def.setExecutorServiceRef(val); break;
-                case "onPrepareRef": def.setOnPrepareRef(val); break;
                 case "parallelAggregate": def.setParallelAggregate(val); break;
                 case "parallelProcessing": def.setParallelProcessing(val); break;
                 case "shareUnitOfWork": def.setShareUnitOfWork(val); break;
-                case "stopOnAggregateException": def.setStopOnAggregateException(val); break;
                 case "stopOnException": def.setStopOnException(val); break;
-                case "strategyMethodAllowNull": def.setStrategyMethodAllowNull(val); break;
-                case "strategyMethodName": def.setStrategyMethodName(val); break;
-                case "strategyRef": def.setStrategyRef(val); break;
                 case "streaming": def.setStreaming(val); break;
                 case "timeout": def.setTimeout(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
-        }, outputExpressionNodeElementHandler(), noValueHandler());
+        }, (def, key) -> {
+            if ("onPrepare".equals(key)) {
+                def.setOnPrepare(doParseText());
+                return true;
+            }
+            return outputExpressionNodeElementHandler().accept(def, key);
+        }, noValueHandler());
     }
     protected StepDefinition doParseStepDefinition() throws IOException, XmlPullParserException {
         return doParse(new StepDefinition(),

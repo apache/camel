@@ -49,7 +49,7 @@ public @interface RoutingSlip {
     String delimiter() default ",";
 
     /**
-     * Whether to ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     * Whether to ignore the invalid endpoint exception when try to create a producer with that endpoint
      */
     boolean ignoreInvalidEndpoints() default false;
 
@@ -67,7 +67,7 @@ public @interface RoutingSlip {
      * the default size (1000).
      *
      * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help
-     * reduce memory usage to avoid storing too many non frequent used producers.
+     * reduce memory usage to avoid storing too many non-frequent used producers.
      */
     int cacheSize() default 0;
 

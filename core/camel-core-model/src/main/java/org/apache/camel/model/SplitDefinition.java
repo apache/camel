@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
-import java.util.function.Supplier;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -38,48 +37,51 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "split")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SplitDefinition extends OutputExpressionNode implements ExecutorServiceAwareDefinition<SplitDefinition> {
-    @XmlTransient
-    private AggregationStrategy aggregationStrategy;
+
     @XmlTransient
     private ExecutorService executorService;
+    @XmlTransient
+    private AggregationStrategy aggregationStrategyBean;
+    @XmlTransient
+    private Processor onPrepareProcessor;
+
     @XmlAttribute
     @Metadata(defaultValue = ",")
     private String delimiter;
+
+    @XmlAttribute
+    @Metadata(javaType = "org.apache.camel.AggregationStrategy")
+    private String aggregationStrategy;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String aggregationStrategyMethodName;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String aggregationStrategyMethodAllowNull;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String parallelAggregate;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String parallelProcessing;
     @XmlAttribute
-    private String strategyRef;
-    @XmlAttribute
-    private String strategyMethodName;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
-    private String strategyMethodAllowNull;
-    @XmlAttribute
-    private String executorServiceRef;
-    @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String streaming;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String stopOnException;
     @XmlAttribute
-    @Metadata(defaultValue = "0", javaType = "java.time.Duration")
+    @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "0")
     private String timeout;
     @XmlAttribute
-    private String onPrepareRef;
-    @XmlTransient
-    private Processor onPrepare;
+    @Metadata(label = "advanced")
+    private String executorServiceRef;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    private String onPrepare;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String shareUnitOfWork;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
-    private String parallelAggregate;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", deprecationNote = "Has no effect in Camel 3.x")
-    @Deprecated
-    private String stopOnAggregateException;
 
     public SplitDefinition() {
     }
@@ -129,17 +131,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * unchanged). You can also use a POJO as the AggregationStrategy
      */
     public SplitDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
-        setAggregationStrategy(aggregationStrategy);
-        return this;
-    }
-
-    /**
-     * Sets the AggregationStrategy to be used to assemble the replies from the split messages, into a single outgoing
-     * message from the Splitter. By default Camel will use the original incoming message to the splitter (leave it
-     * unchanged). You can also use a POJO as the AggregationStrategy
-     */
-    public SplitDefinition aggregationStrategy(Supplier<AggregationStrategy> aggregationStrategy) {
-        setAggregationStrategy(aggregationStrategy.get());
+        this.aggregationStrategyBean = aggregationStrategy;
         return this;
     }
 
@@ -147,24 +139,9 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * Sets a reference to the AggregationStrategy to be used to assemble the replies from the split messages, into a
      * single outgoing message from the Splitter. By default Camel will use the original incoming message to the
      * splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy
-     * <p/>
-     * The value can either refer to a bean to lookup, or to lookup a singleton bean by its type, or to create a new
-     * bean:
-     * <ul>
-     * <li>Lookup bean - This is the default behavior to lookup an existing bean by the bean id (value)</li>
-     * <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with
-     * #type: syntax, eg #type:com.foo.MyClassType</li>
-     * <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg
-     * #class:com.foo.MyClassType. The class is created using a default no-arg constructor, however if you need to
-     * create the instance via a factory method then you specify the method as shown:
-     * #class:com.foo.MyClassType#myFactoryMethod. And if the factory method requires parameters they can be specified
-     * as follows: #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you need to create the
-     * instance via constructor parameters then you can specify the parameters as shown: #class:com.foo.MyClass('Hello
-     * World', 5, true)</li>.
-     * </ul>
      */
-    public SplitDefinition aggregationStrategyRef(String aggregationStrategyRef) {
-        setStrategyRef(aggregationStrategyRef);
+    public SplitDefinition aggregationStrategy(String aggregationStrategyRef) {
+        setAggregationStrategy(aggregationStrategyRef);
         return this;
     }
 
@@ -175,7 +152,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return            the builder
      */
     public SplitDefinition aggregationStrategyMethodName(String methodName) {
-        setStrategyMethodName(methodName);
+        setAggregationStrategyMethodName(methodName);
         return this;
     }
 
@@ -209,13 +186,13 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition aggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
-        setStrategyMethodAllowNull(aggregationStrategyMethodAllowNull);
+        setAggregationStrategyMethodAllowNull(aggregationStrategyMethodAllowNull);
         return this;
     }
 
     /**
      * If enabled then processing each split messages occurs concurrently. Note the caller thread will still wait until
-     * all messages has been fully processed, before it continues. Its only processing the sub messages from the
+     * all messages has been fully processed, before it continues. It's only processing the sub messages from the
      * splitter which happens concurrently.
      *
      * @return the builder
@@ -226,7 +203,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     /**
      * If enabled then processing each split messages occurs concurrently. Note the caller thread will still wait until
-     * all messages has been fully processed, before it continues. Its only processing the sub messages from the
+     * all messages has been fully processed, before it continues. It's only processing the sub messages from the
      * splitter which happens concurrently.
      *
      * @return the builder
@@ -237,7 +214,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     /**
      * If enabled then processing each split messages occurs concurrently. Note the caller thread will still wait until
-     * all messages has been fully processed, before it continues. Its only processing the sub messages from the
+     * all messages has been fully processed, before it continues. It's only processing the sub messages from the
      * splitter which happens concurrently.
      *
      * @return the builder
@@ -285,47 +262,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
-     * The default value is <code>false</code> for the sake of backward compatibility.
-     * 
-     * @deprecated Since Camel 3.0 exceptions from the aggregate strategy are always propagated to the error handler,
-     *             whether or not this option is enabled.
-     *
-     * @return     the builder
-     */
-    @Deprecated
-    public SplitDefinition stopOnAggregateException() {
-        return stopOnAggregateException(true);
-    }
-
-    /**
-     * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
-     * The default value is <code>false</code> for the sake of backward compatibility.
-     * 
-     * @deprecated Since Camel 3.0 exceptions from the aggregate strategy are always propagated to the error handler,
-     *             whether or not this option is enabled.
-     *
-     * @return     the builder
-     */
-    @Deprecated
-    public SplitDefinition stopOnAggregateException(boolean stopOnAggregateException) {
-        return stopOnAggregateException(Boolean.toString(stopOnAggregateException));
-    }
-
-    /**
-     * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
-     * Currently, aggregation time exceptions do not stop the route processing when parallelProcessing is used. Enabling
-     * this option allows to work around this behavior. The default value is <code>false</code> for the sake of backward
-     * compatibility.
-     *
-     * @return the builder
-     */
-    public SplitDefinition stopOnAggregateException(String stopOnAggregateException) {
-        setStopOnAggregateException(stopOnAggregateException);
-        return this;
-    }
-
-    /**
      * When in streaming mode, then the splitter splits the original message on-demand, and each split message is
      * processed one by one. This reduces memory usage as the splitter do not split all the messages first, but then we
      * do not know the total size, and therefore the {@link org.apache.camel.Exchange#SPLIT_SIZE} is empty.
@@ -335,7 +271,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * more memory. The total size is provided in the {@link org.apache.camel.Exchange#SPLIT_SIZE} header.
      * <p/>
      * The streaming mode also affects the aggregation behavior. If enabled then Camel will process replies
-     * out-of-order, eg in the order they come back. If disabled, Camel will process replies in the same order as the
+     * out-of-order, e.g. in the order they come back. If disabled, Camel will process replies in the same order as the
      * messages was split.
      *
      * @return the builder
@@ -354,7 +290,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * more memory. The total size is provided in the {@link org.apache.camel.Exchange#SPLIT_SIZE} header.
      * <p/>
      * The streaming mode also affects the aggregation behavior. If enabled then Camel will process replies
-     * out-of-order, eg in the order they come back. If disabled, Camel will process replies in the same order as the
+     * out-of-order, e.g. in the order they come back. If disabled, Camel will process replies in the same order as the
      * messages was split.
      *
      * @return the builder
@@ -373,7 +309,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * more memory. The total size is provided in the {@link org.apache.camel.Exchange#SPLIT_SIZE} header.
      * <p/>
      * The streaming mode also affects the aggregation behavior. If enabled then Camel will process replies
-     * out-of-order, eg in the order they come back. If disabled, Camel will process replies in the same order as the
+     * out-of-order, e.g. in the order they come back. If disabled, Camel will process replies in the same order as the
      * messages was split.
      *
      * @return the builder
@@ -434,7 +370,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     /**
      * To use a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel
-     * processing is automatic implied, and you do not have to enable that option as well.
+     * processing is automatically implied, and you do not have to enable that option as well.
      */
     @Override
     public SplitDefinition executorService(ExecutorService executorService) {
@@ -444,7 +380,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     /**
      * Refers to a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel
-     * processing is automatic implied, and you do not have to enable that option as well.
+     * processing is automatically implied, and you do not have to enable that option as well.
      */
     @Override
     public SplitDefinition executorServiceRef(String executorServiceRef) {
@@ -453,26 +389,26 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send. This can be used to
-     * deep-clone messages that should be send, or any custom logic needed before the exchange is send.
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be sent. This can be used to
+     * deep-clone messages that should be sent, or any custom logic needed before the exchange is sent.
      *
      * @param  onPrepare the processor
      * @return           the builder
      */
     public SplitDefinition onPrepare(Processor onPrepare) {
-        setOnPrepare(onPrepare);
+        this.onPrepareProcessor = onPrepare;
         return this;
     }
 
     /**
-     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send. This can be used to
-     * deep-clone messages that should be send, or any custom logic needed before the exchange is send.
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be sent. This can be used to
+     * deep-clone messages that should be sent, or any custom logic needed before the exchange is sent.
      *
      * @param  onPrepareRef reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
      * @return              the builder
      */
     public SplitDefinition onPrepareRef(String onPrepareRef) {
-        setOnPrepareRef(onPrepareRef);
+        setOnPrepare(onPrepareRef);
         return this;
     }
 
@@ -544,8 +480,16 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     // Properties
     // -------------------------------------------------------------------------
 
+    public AggregationStrategy getAggregationStrategyBean() {
+        return aggregationStrategyBean;
+    }
+
+    public Processor getOnPrepareProcessor() {
+        return onPrepareProcessor;
+    }
+
     /**
-     * Expression of how to split the message body, such as as-is, using a tokenizer, or using an xpath.
+     * Expression of how to split the message body, such as as-is, using a tokenizer, or using a xpath.
      */
     @Override
     public void setExpression(ExpressionDefinition expression) {
@@ -559,19 +503,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
-    }
-
-    public AggregationStrategy getAggregationStrategy() {
-        return aggregationStrategy;
-    }
-
-    /**
-     * Sets the AggregationStrategy to be used to assemble the replies from the split messages, into a single outgoing
-     * message from the Splitter. By default Camel will use the original incoming message to the splitter (leave it
-     * unchanged). You can also use a POJO as the AggregationStrategy
-     */
-    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
-        this.aggregationStrategy = aggregationStrategy;
     }
 
     public String getParallelProcessing() {
@@ -598,16 +529,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.parallelAggregate = parallelAggregate;
     }
 
-    @Deprecated
-    public String getStopOnAggregateException() {
-        return this.stopOnAggregateException;
-    }
-
-    @Deprecated
-    public void setStopOnAggregateException(String stopOnAggregateException) {
-        this.stopOnAggregateException = stopOnAggregateException;
-    }
-
     public String getStopOnException() {
         return stopOnException;
     }
@@ -626,8 +547,8 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.executorService = executorService;
     }
 
-    public String getStrategyRef() {
-        return strategyRef;
+    public String getAggregationStrategy() {
+        return aggregationStrategy;
     }
 
     /**
@@ -635,23 +556,32 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * single outgoing message from the Splitter. By default Camel will use the original incoming message to the
      * splitter (leave it unchanged). You can also use a POJO as the AggregationStrategy
      */
-    public void setStrategyRef(String strategyRef) {
-        this.strategyRef = strategyRef;
+    public void setAggregationStrategy(String aggregationStrategy) {
+        this.aggregationStrategy = aggregationStrategy;
     }
 
-    public String getStrategyMethodName() {
-        return strategyMethodName;
+    /**
+     * Sets the AggregationStrategy to be used to assemble the replies from the split messages, into a single outgoing
+     * message from the Splitter. By default Camel will use the original incoming message to the splitter (leave it
+     * unchanged). You can also use a POJO as the AggregationStrategy
+     */
+    public void setAggregationStrategy(AggregationStrategy aggregationStrategyBean) {
+        this.aggregationStrategyBean = aggregationStrategyBean;
+    }
+
+    public String getAggregationStrategyMethodName() {
+        return aggregationStrategyMethodName;
     }
 
     /**
      * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
      */
-    public void setStrategyMethodName(String strategyMethodName) {
-        this.strategyMethodName = strategyMethodName;
+    public void setAggregationStrategyMethodName(String aggregationStrategyMethodName) {
+        this.aggregationStrategyMethodName = aggregationStrategyMethodName;
     }
 
-    public String getStrategyMethodAllowNull() {
-        return strategyMethodAllowNull;
+    public String getAggregationStrategyMethodAllowNull() {
+        return aggregationStrategyMethodAllowNull;
     }
 
     /**
@@ -659,8 +589,8 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the
      * AggregationStrategy
      */
-    public void setStrategyMethodAllowNull(String strategyMethodAllowNull) {
-        this.strategyMethodAllowNull = strategyMethodAllowNull;
+    public void setAggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
+        this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
 
     @Override
@@ -681,19 +611,11 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.timeout = timeout;
     }
 
-    public String getOnPrepareRef() {
-        return onPrepareRef;
-    }
-
-    public void setOnPrepareRef(String onPrepareRef) {
-        this.onPrepareRef = onPrepareRef;
-    }
-
-    public Processor getOnPrepare() {
+    public String getOnPrepare() {
         return onPrepare;
     }
 
-    public void setOnPrepare(Processor onPrepare) {
+    public void setOnPrepare(String onPrepare) {
         this.onPrepare = onPrepare;
     }
 

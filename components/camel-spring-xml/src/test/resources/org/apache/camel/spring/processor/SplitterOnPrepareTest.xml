@@ -27,7 +27,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <split onPrepareRef="fixNamePrepare">
+            <split onPrepare="fixNamePrepare">
                 <simple>${body}</simple>
                 <to uri="direct:a"/>
             </split>

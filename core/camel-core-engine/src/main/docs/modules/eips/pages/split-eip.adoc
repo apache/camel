@@ -247,7 +247,7 @@ And in XML we can refer to the FQN class name with `#class:` syntax as shown bel
 ----
 <route>
     <from uri="direct:a"/>
-    <split strategyRef="#class:com.foo.MyAggregationStrategy">
+    <split aggregationStrategy="#class:com.foo.MyAggregationStrategy">
         <simple>${body}</simple>
         <to uri="direct:b"/>
         <to uri="direct:c"/>

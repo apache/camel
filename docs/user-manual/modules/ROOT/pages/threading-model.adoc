@@ -87,7 +87,7 @@ attribute as shown in Spring XML:
                        poolSize="20" maxPoolSize="50" maxQueueSize="-1"/>
 
     <route>
-       <multicast strategyRef="myStrategy" executorServiceRef="fooProfile">
+       <multicast aggregationStrategy="myStrategy" executorServiceRef="fooProfile">
           ...
        </multicast>
     </route>

@@ -76,16 +76,6 @@ public @interface RecipientList {
     boolean stopOnException() default false;
 
     /**
-     * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
-     * The default value is <code>false</code> for the sake of backward compatibility.
-     * 
-     * @deprecated Since Camel 3.0 exceptions from the aggregate strategy are always propagated to the error handler,
-     *             whether or not this option is enabled.
-     */
-    @Deprecated
-    boolean stopOnAggregateException() default false;
-
-    /**
      * If enabled then Camel will process replies out-of-order, eg in the order they come back. If disabled, Camel will
      * process replies in the same order as defined by the recipient list.
      */
@@ -101,11 +91,11 @@ public @interface RecipientList {
      * outgoing message from the RecipientList. By default Camel will use the last reply as the outgoing message. You
      * can also use a POJO as the AggregationStrategy
      */
-    String strategyRef() default "";
+    String aggregationStrategy() default "";
 
     /**
      * Refers to a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel
-     * processing is automatic implied, and you do not have to enable that option as well.
+     * processing is automatically implied, and you do not have to enable that option as well.
      */
     String executorServiceRef() default "";
 
@@ -138,16 +128,15 @@ public @interface RecipientList {
     int cacheSize() default 0;
 
     /**
-     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send. This can be used to
-     * deep-clone messages that should be send, or any custom logic needed before the exchange is send.
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be sent. This can be used to
+     * deep-clone messages that should be sent, or any custom logic needed before the exchange is sent.
      */
-    String onPrepareRef() default "";
+    String onPrepare() default "";
 
     /**
      * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and each of the sub messages. Recipient List
      * will by default not share unit of work between the parent exchange and each recipient exchange. This means each
      * sub exchange has its own individual unit of work.
      */
-    @Deprecated
     boolean shareUnitOfWork() default false;
 }

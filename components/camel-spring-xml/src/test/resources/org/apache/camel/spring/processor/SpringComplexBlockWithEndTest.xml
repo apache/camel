@@ -47,7 +47,7 @@
                     <to uri="mock:otherwise"/>
                     <multicast streaming="true">
                         <wireTap uri="mock:trapped"/>
-                        <split strategyRef="splitAggregate">
+                        <split aggregationStrategy="splitAggregate">
                             <tokenize token=","/>
                             <filter>
                                 <simple>${in.body} not contains 'bad'</simple>
