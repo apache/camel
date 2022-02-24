@@ -18,7 +18,9 @@ package org.apache.camel.jta;
 
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -26,6 +28,8 @@ import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ErrorHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This error handler does redelivering. If the transaction fails it can be retried if configured to do so. In the
@@ -34,6 +38,7 @@ import org.apache.camel.spi.ErrorHandler;
  */
 public class JtaTransactionErrorHandler extends RedeliveryErrorHandler {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JtaTransactionErrorHandler.class);
     private final JtaTransactionPolicy transactionPolicy;
     private final LoggingLevel rollbackLoggingLevel;
 
@@ -64,4 +69,18 @@ public class JtaTransactionErrorHandler extends RedeliveryErrorHandler {
         return answer;
     }
 
+    @Override
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        if (!exchange.isTransacted()) {
+            try {
+                LOG.debug("Mark {} as transacted", exchange);
+                exchange.getUnitOfWork().beginTransactedBy("camel-jta");
+                return super.process(exchange, callback);
+            } finally {
+                exchange.getUnitOfWork().endTransactedBy("camel-jta");
+            }
+        }
+
+        return super.process(exchange, callback);
+    }
 }
