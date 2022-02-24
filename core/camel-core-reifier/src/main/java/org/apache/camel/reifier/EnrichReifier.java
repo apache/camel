@@ -40,10 +40,12 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         Expression exp = createExpression(definition.getExpression());
         boolean isShareUnitOfWork = parseBoolean(definition.getShareUnitOfWork(), false);
         boolean isIgnoreInvalidEndpoint = parseBoolean(definition.getIgnoreInvalidEndpoint(), false);
+        boolean isAggregateOnException = parseBoolean(definition.getAggregateOnException(), false);
 
         Enricher enricher = new Enricher(exp);
         enricher.setShareUnitOfWork(isShareUnitOfWork);
         enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
+        enricher.setAggregateOnException(isAggregateOnException);
         Integer num = parseInt(definition.getCacheSize());
         if (num != null) {
             enricher.setCacheSize(num);
@@ -62,10 +64,11 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         return enricher;
     }
 
+    // TODO: Make this general on base reifier so all EIPs with agg strategy can use this
     private AggregationStrategy createAggregationStrategy() {
-        AggregationStrategy strategy = definition.getAggregationStrategy();
-        if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = lookup(definition.getAggregationStrategyRef(), Object.class);
+        AggregationStrategy strategy = definition.getAggregationStrategyBean();
+        if (strategy == null && definition.getAggregationStrategy() != null) {
+            Object aggStrategy = lookup(definition.getAggregationStrategy(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
             } else if (aggStrategy instanceof BiFunction) {
@@ -86,7 +89,7 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
                 strategy = adapter;
             } else {
                 throw new IllegalArgumentException(
-                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategyRef());
+                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategy());
             }
         }
 

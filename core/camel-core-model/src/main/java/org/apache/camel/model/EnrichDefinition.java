@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.function.Supplier;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -37,25 +35,25 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EnrichDefinition extends ExpressionNode {
-    @XmlAttribute(name = "strategyRef")
-    private String aggregationStrategyRef;
-    @XmlAttribute(name = "strategyMethodName")
+    @XmlTransient
+    private AggregationStrategy aggregationStrategyBean;
+    @XmlAttribute
+    private String aggregationStrategy;
+    @XmlAttribute
     private String aggregationStrategyMethodName;
-    @XmlAttribute(name = "strategyMethodAllowNull")
+    @XmlAttribute
     private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String aggregateOnException;
-    @XmlTransient
-    private AggregationStrategy aggregationStrategy;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String shareUnitOfWork;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String cacheSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoint;
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
@@ -66,7 +64,7 @@ public class EnrichDefinition extends ExpressionNode {
     }
 
     public EnrichDefinition(AggregationStrategy aggregationStrategy) {
-        this.aggregationStrategy = aggregationStrategy;
+        this.aggregationStrategyBean = aggregationStrategy;
     }
 
     @Override
@@ -97,35 +95,11 @@ public class EnrichDefinition extends ExpressionNode {
     }
 
     /**
-     * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing
-     * message. By default Camel will use the reply from the external service as outgoing message.
-     */
-    public EnrichDefinition aggregationStrategy(Supplier<AggregationStrategy> aggregationStrategy) {
-        setAggregationStrategy(aggregationStrategy.get());
-        return this;
-    }
-
-    /**
      * Refers to an AggregationStrategy to be used to merge the reply from the external service, into a single outgoing
      * message. By default Camel will use the reply from the external service as outgoing message.
-     * <p/>
-     * The value can either refer to a bean to lookup, or to lookup a singleton bean by its type, or to create a new
-     * bean:
-     * <ul>
-     * <li>Lookup bean - This is the default behavior to lookup an existing bean by the bean id (value)</li>
-     * <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with
-     * #type: syntax, eg #type:com.foo.MyClassType</li>
-     * <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg
-     * #class:com.foo.MyClassType. The class is created using a default no-arg constructor, however if you need to
-     * create the instance via a factory method then you specify the method as shown:
-     * #class:com.foo.MyClassType#myFactoryMethod. And if the factory method requires parameters they can be specified
-     * as follows: #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you need to create the
-     * instance via constructor parameters then you can specify the parameters as shown: #class:com.foo.MyClass('Hello
-     * World', 5, true)</li>.
-     * </ul>
      */
-    public EnrichDefinition aggregationStrategyRef(String aggregationStrategyRef) {
-        setAggregationStrategyRef(aggregationStrategyRef);
+    public EnrichDefinition aggregationStrategy(String aggregationStrategyRef) {
+        setAggregationStrategy(aggregationStrategyRef);
         return this;
     }
 
@@ -248,6 +222,10 @@ public class EnrichDefinition extends ExpressionNode {
     // Properties
     // -------------------------------------------------------------------------
 
+    public AggregationStrategy getAggregationStrategyBean() {
+        return aggregationStrategyBean;
+    }
+
     /**
      * Expression that computes the endpoint uri to use as the resource endpoint to enrich from
      */
@@ -257,12 +235,16 @@ public class EnrichDefinition extends ExpressionNode {
         super.setExpression(expression);
     }
 
-    public String getAggregationStrategyRef() {
-        return aggregationStrategyRef;
+    public String getAggregationStrategy() {
+        return aggregationStrategy;
     }
 
-    public void setAggregationStrategyRef(String aggregationStrategyRef) {
-        this.aggregationStrategyRef = aggregationStrategyRef;
+    public void setAggregationStrategy(String aggregationStrategy) {
+        this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategyBean = aggregationStrategy;
     }
 
     public String getAggregationStrategyMethodName() {
@@ -279,14 +261,6 @@ public class EnrichDefinition extends ExpressionNode {
 
     public void setAggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
-    }
-
-    public AggregationStrategy getAggregationStrategy() {
-        return aggregationStrategy;
-    }
-
-    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
-        this.aggregationStrategy = aggregationStrategy;
     }
 
     public String getAggregateOnException() {

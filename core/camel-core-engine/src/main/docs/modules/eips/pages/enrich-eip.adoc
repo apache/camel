@@ -91,7 +91,7 @@ In XML DSL you use `enrich` as follows:
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
   <route>
     <from uri="direct:start"/>
-    <enrich strategyRef="myStrategy">
+    <enrich aggregationStrategy="myStrategy">
       <constant>http:remoteserver/foo</constant>
     </enrich>
     <to uri="mock:result"/>

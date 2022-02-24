@@ -746,6 +746,15 @@
           "aggregateOnException" : {
             "type" : "boolean"
           },
+          "aggregationStrategy" : {
+            "type" : "string"
+          },
+          "aggregationStrategyMethodAllowNull" : {
+            "type" : "string"
+          },
+          "aggregationStrategyMethodName" : {
+            "type" : "string"
+          },
           "allowOptimisedComponents" : {
             "type" : "boolean"
           },
@@ -769,15 +778,6 @@
           },
           "shareUnitOfWork" : {
             "type" : "boolean"
-          },
-          "strategyMethodAllowNull" : {
-            "type" : "string"
-          },
-          "strategyMethodName" : {
-            "type" : "string"
-          },
-          "strategyRef" : {
-            "type" : "string"
           }
         }
       },

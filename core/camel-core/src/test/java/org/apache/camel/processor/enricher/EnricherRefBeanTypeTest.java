@@ -63,7 +63,7 @@ public class EnricherRefBeanTypeTest extends ContextTestSupport {
                 cool.setCamelContext(context);
 
                 from("direct:start").enrich().simple("ref:cool")
-                        .aggregationStrategyRef("#type:org.apache.camel.AggregationStrategy");
+                        .aggregationStrategy("#type:org.apache.camel.AggregationStrategy");
             }
         };
     }

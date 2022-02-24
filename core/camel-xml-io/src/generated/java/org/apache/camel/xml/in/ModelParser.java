@@ -374,13 +374,13 @@ public class ModelParser extends BaseParser {
         return doParse(new EnrichDefinition(), (def, key, val) -> {
             switch (key) {
                 case "aggregateOnException": def.setAggregateOnException(val); break;
+                case "aggregationStrategy": def.setAggregationStrategy(val); break;
+                case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); break;
+                case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); break;
                 case "allowOptimisedComponents": def.setAllowOptimisedComponents(val); break;
                 case "cacheSize": def.setCacheSize(val); break;
                 case "ignoreInvalidEndpoint": def.setIgnoreInvalidEndpoint(val); break;
                 case "shareUnitOfWork": def.setShareUnitOfWork(val); break;
-                case "strategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); break;
-                case "strategyMethodName": def.setAggregationStrategyMethodName(val); break;
-                case "strategyRef": def.setAggregationStrategyRef(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;

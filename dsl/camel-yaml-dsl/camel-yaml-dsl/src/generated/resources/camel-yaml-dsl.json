@@ -842,6 +842,15 @@
           "aggregate-on-exception" : {
             "type" : "boolean"
           },
+          "aggregation-strategy" : {
+            "type" : "string"
+          },
+          "aggregation-strategy-method-allow-null" : {
+            "type" : "string"
+          },
+          "aggregation-strategy-method-name" : {
+            "type" : "string"
+          },
           "allow-optimised-components" : {
             "type" : "boolean"
           },
@@ -865,15 +874,6 @@
           },
           "share-unit-of-work" : {
             "type" : "boolean"
-          },
-          "strategy-method-allow-null" : {
-            "type" : "string"
-          },
-          "strategy-method-name" : {
-            "type" : "string"
-          },
-          "strategy-ref" : {
-            "type" : "string"
           }
         }
       },

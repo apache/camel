@@ -227,6 +227,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         return policy;
     }
 
+    // TODO: Make this general on base reifier so all EIPs with agg strategy can use this
     private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategyBean();
         if (strategy == null && definition.getAggregationStrategy() != null) {
