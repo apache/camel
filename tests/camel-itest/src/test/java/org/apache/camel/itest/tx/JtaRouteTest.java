@@ -17,6 +17,7 @@
 package org.apache.camel.itest.tx;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.transaction.RequiresNewJtaTransactionPolicy;
@@ -28,8 +29,14 @@ public class JtaRouteTest extends CamelTestSupport {
     @EndpointInject("mock:splitted")
     private MockEndpoint splitted;
 
+    @EndpointInject("mock:test")
+    private MockEndpoint test;
+
     @EndpointInject("direct:requires_new")
     private ProducerTemplate start;
+
+    @EndpointInject("direct:route1")
+    private ProducerTemplate multicast;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -45,6 +52,22 @@ public class JtaRouteTest extends CamelTestSupport {
                         .transform().constant("requires_new");
 
                 from("direct:splitted").to("mock:splitted");
+
+                from("direct:route1").routeId("r.route1")
+                        .log(LoggingLevel.DEBUG, "Entering route: ${routeId}")
+                        .transacted()
+                        .to("direct:route2")
+                        .log("will never get here");
+
+                from("direct:route2").routeId("r.route2")
+                        .log(LoggingLevel.DEBUG, "Entering route: ${routeId}")
+                        .multicast()
+                        .to("log:r.test", "direct:route3", "mock:test")
+                        .end();
+
+                from("direct:route3").routeId("r.route3")
+                        .log(LoggingLevel.DEBUG, "Entering route: ${routeId}");
+
             }
         };
     }
@@ -56,5 +79,14 @@ public class JtaRouteTest extends CamelTestSupport {
         start.sendBody("requires_new");
 
         splitted.assertIsSatisfied();
+    }
+
+    @Test
+    public void testMultiCast() throws InterruptedException {
+        test.setExpectedMessageCount(1);
+
+        multicast.sendBody("direct:route1", "msg");
+
+        test.assertIsSatisfied();
     }
 }
