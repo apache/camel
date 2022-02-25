@@ -75,7 +75,7 @@ class ServiceBusEndpointTest extends CamelTestSupport {
 
         final ServiceBusEndpoint endpoint
                 = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
-                .createEndpoint(uri, remaining, params);
+                        .createEndpoint(uri, remaining, params);
 
         assertEquals(ServiceBusType.topic, endpoint.getConfiguration().getServiceBusType());
         assertEquals("testTopicOrQueue", endpoint.getConfiguration().getTopicOrQueueName());
@@ -98,7 +98,7 @@ class ServiceBusEndpointTest extends CamelTestSupport {
 
         final ServiceBusEndpoint endpoint
                 = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
-                .createEndpoint(uri, remaining, params);
+                        .createEndpoint(uri, remaining, params);
 
         assertEquals(ServiceBusType.topic, endpoint.getConfiguration().getServiceBusType());
         assertEquals("testTopicOrQueue", endpoint.getConfiguration().getTopicOrQueueName());
@@ -121,7 +121,7 @@ class ServiceBusEndpointTest extends CamelTestSupport {
 
         final ServiceBusEndpoint endpoint
                 = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
-                .createEndpoint(uri, remaining, params);
+                        .createEndpoint(uri, remaining, params);
 
         assertEquals(ServiceBusType.topic, endpoint.getConfiguration().getServiceBusType());
         assertEquals("testTopicOrQueue", endpoint.getConfiguration().getTopicOrQueueName());

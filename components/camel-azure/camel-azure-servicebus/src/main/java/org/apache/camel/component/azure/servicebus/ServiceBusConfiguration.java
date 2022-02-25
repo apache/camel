@@ -42,7 +42,6 @@ public class ServiceBusConfiguration implements Cloneable {
     @UriPath
     private String topicOrQueueName;
     @UriParam(label = "security", secret = true)
-    @Metadata(required = true)
     private String connectionString;
     @UriParam(label = "common", defaultValue = "queue")
     @Metadata(required = true)

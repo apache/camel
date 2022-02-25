@@ -56,7 +56,7 @@ public final class ServiceBusClientFactory {
         TokenCredential credential = configuration.getTokenCredential();
 
         // If the FQNS and credential are available, use those to connect
-        if (ObjectHelper.isNotEmpty(fullyQualifiedNamespace) &&  ObjectHelper.isNotEmpty(credential)) {
+        if (ObjectHelper.isNotEmpty(fullyQualifiedNamespace) && ObjectHelper.isNotEmpty(credential)) {
             builder.credential(fullyQualifiedNamespace, credential);
         } else {
             builder.connectionString(configuration.getConnectionString());

@@ -641,7 +641,6 @@ public interface ServiceBusEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param connectionString the value to set
@@ -1167,7 +1166,6 @@ public interface ServiceBusEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param connectionString the value to set
@@ -1437,7 +1435,6 @@ public interface ServiceBusEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param connectionString the value to set
