@@ -14,39 +14,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.main.junit5;
+package org.apache.camel.test.main.junit5.annotation.custom;
 
-import java.util.Properties;
-
+import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.main.MainConfigurationProperties;
+import org.apache.camel.test.main.junit5.CamelMainTest;
+import org.apache.camel.test.main.junit5.Configure;
+import org.apache.camel.test.main.junit5.common.MyConfiguration;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.util.PropertiesHelper.asProperties;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Test ensuring that the default properties can be overridden.
+ * The test class ensuring that a custom property placeholder can be specified with the name of the file located in the
+ * same package.
  */
-class OverridePropertiesTest extends CamelMainTestSupport {
+@CamelMainTest(propertyPlaceholderFileName = "custom-same-package-application.properties")
+class LoadCustomConfigurationSamePackageTest {
 
-    @Override
-    protected void configure(MainConfigurationProperties configuration) {
+    @EndpointInject("mock:out")
+    MockEndpoint mock;
+
+    @EndpointInject("direct:in")
+    ProducerTemplate template;
+
+    @Configure
+    void configure(MainConfigurationProperties configuration) {
         // Add the configuration class
         configuration.addConfiguration(MyConfiguration.class);
-    }
-
-    @Override
-    protected Properties useOverridePropertiesWithPropertiesComponent() {
-        return asProperties(
-                "name", "John");
+        // Add all the XML routes
+        configuration.withRoutesIncludePattern("routes/*.xml");
     }
 
     @Test
-    void shouldOverrideDefaultProperties() throws Exception {
-        MockEndpoint mock = context.getEndpoint("mock:out", MockEndpoint.class);
+    void shouldFindCustomConfiguration() throws Exception {
         mock.expectedBodiesReceived("Hello John!");
-        String result = template.requestBody("direct:in", null, String.class);
+        String result = template.requestBody((Object) null, String.class);
         mock.assertIsSatisfied();
         assertEquals("Hello John!", result);
     }

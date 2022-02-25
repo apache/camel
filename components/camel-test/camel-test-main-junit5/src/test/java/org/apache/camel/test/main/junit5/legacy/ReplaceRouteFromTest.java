@@ -14,32 +14,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.main.junit5;
+package org.apache.camel.test.main.junit5.legacy;
 
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.main.MainConfigurationProperties;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.main.junit5.CamelMainTestSupport;
+import org.apache.camel.test.main.junit5.common.MyConfiguration;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * A test class ensuring that the main class of the application to test can be specified.
+ * Test class ensuring that a from endpoint can be replaced by leveraging the method
+ * {@link CamelTestSupport#replaceRouteFromWith(String, String)}.
  */
-class WithMainClassTest extends CamelMainTestSupport {
+class ReplaceRouteFromTest extends CamelMainTestSupport {
 
     @Override
-    protected Class<?> getMainClass() {
-        return MyMainClass.class;
+    @BeforeEach
+    public void setUp() throws Exception {
+        replaceRouteFromWith("foo", "direct:foo");
+        super.setUp();
+    }
+
+    @Override
+    protected void configure(MainConfigurationProperties configuration) {
+        // Add the configuration class
+        configuration.addConfiguration(MyConfiguration.class);
     }
 
     @Test
-    void shouldFindTheRouteBuilder() throws Exception {
+    void shouldReplaceTheFromEndpoint() throws Exception {
         MockEndpoint mock = context.getEndpoint("mock:out", MockEndpoint.class);
         mock.expectedBodiesReceived("Hello Will!");
-        String result = template.requestBody("direct:in", null, String.class);
+        String result = template.requestBody("direct:foo", null, String.class);
         mock.assertIsSatisfied();
         assertEquals("Hello Will!", result);
-    }
-
-    static class MyMainClass {
     }
 }

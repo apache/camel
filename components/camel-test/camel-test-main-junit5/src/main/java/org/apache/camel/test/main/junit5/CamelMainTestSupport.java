@@ -17,10 +17,8 @@
 package org.apache.camel.test.main.junit5;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.MainConfigurationProperties;
-import org.apache.camel.main.MainSupport;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.slf4j.Logger;
@@ -91,7 +89,7 @@ public abstract class CamelMainTestSupport extends CamelTestSupport {
      * case it returns a non {@code null} value otherwise it uses the default property placeholder location
      * corresponding to the file {@code application.properties} available from the default package.
      *
-     * @return the location of the property placeholders to use for the test.
+     * @return the property placeholder locations to use for the test.
      */
     protected String getPropertyPlaceholderLocations() {
         final String locations = getPropertyPlaceholderLocationsFromFileName();
@@ -134,7 +132,8 @@ public abstract class CamelMainTestSupport extends CamelTestSupport {
     }
 
     @Override
-    protected void postProcessTest() throws Exception {
+    protected CamelContext createCamelContext() throws Exception {
+        final CamelContext context = super.createCamelContext();
         LOG.debug("Initialize the camel context as a Camel Main application");
         final MainForTest main = new MainForTest();
         final Class<?> mainClass = getMainClass();
@@ -144,8 +143,8 @@ public abstract class CamelMainTestSupport extends CamelTestSupport {
         configure(main.configure());
         main.setPropertyPlaceholderLocations(getPropertyPlaceholderLocations());
         main.setOverrideProperties(useOverridePropertiesWithPropertiesComponent());
-        main.init(context());
-        super.postProcessTest();
+        main.init(context);
+        return context;
     }
 
     @Override
@@ -166,32 +165,5 @@ public abstract class CamelMainTestSupport extends CamelTestSupport {
         }
         return String.format("classpath:%s/%s;optional=true,classpath:%s;optional=true",
                 this.getClass().getPackageName().replace('.', '/'), location, location);
-    }
-
-    /**
-     * An internal implementation of a {@link MainSupport} used to initialize the Camel context the same manner as a
-     * real Camel Main application.
-     */
-    private static class MainForTest extends MainSupport {
-
-        @Override
-        protected ProducerTemplate findOrCreateCamelTemplate() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        protected CamelContext createCamelContext() {
-            throw new UnsupportedOperationException();
-        }
-
-        /**
-         * Initialize the given Camel context like a Camel Main application.
-         *
-         * @param  camelContext the Camel context to initialize.
-         * @throws Exception    if an error occurs while initializing the Camel context.
-         */
-        void init(CamelContext camelContext) throws Exception {
-            postProcessCamelContext(camelContext);
-        }
     }
 }

@@ -14,17 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.main.junit5;
+package org.apache.camel.test.main.junit5.common;
 
-public class Greetings {
+import java.util.concurrent.atomic.AtomicInteger;
 
-    protected final String name;
+public class MyStatefulBean {
+    private final AtomicInteger counter = new AtomicInteger();
 
-    public Greetings(String name) {
-        this.name = name;
-    }
-
-    public String sayHello() {
-        return String.format("Hello %s!", name);
+    public int add() {
+        return counter.incrementAndGet();
     }
 }

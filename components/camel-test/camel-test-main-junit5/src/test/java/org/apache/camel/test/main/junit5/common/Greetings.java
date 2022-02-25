@@ -14,27 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.main.junit5;
+package org.apache.camel.test.main.junit5.common;
 
-import org.apache.camel.BindToRegistry;
-import org.apache.camel.CamelConfiguration;
-import org.apache.camel.CamelContext;
-import org.apache.camel.PropertyInject;
+public class Greetings {
 
-/**
- * Class to configure the Camel application.
- */
-public class MyConfiguration implements CamelConfiguration {
+    protected final String name;
 
-    @BindToRegistry
-    public Greetings myGreetings(@PropertyInject("name") String name) {
-        // this will create an instance of this bean and bind it using the name of the method as name (eg myGreetings)
-        return new Greetings(name);
+    public Greetings(String name) {
+        this.name = name;
     }
 
-    @Override
-    public void configure(CamelContext camelContext) {
-        // this method is optional and can be removed if no additional configuration is needed.
+    public String sayHello() {
+        return String.format("Hello %s!", name);
     }
-
 }

@@ -14,41 +14,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.main.junit5.custom;
+package org.apache.camel.test.main.junit5.legacy;
 
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.main.MainConfigurationProperties;
 import org.apache.camel.test.main.junit5.CamelMainTestSupport;
-import org.apache.camel.test.main.junit5.MyConfiguration;
+import org.apache.camel.test.main.junit5.common.MyConfiguration;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * The test class ensuring that a custom property placeholder can be specified with the name of the file located in the
- * same package.
+ * A test class ensuring that a route can be advised.
  */
-class LoadCustomConfigurationSamePackageTest extends CamelMainTestSupport {
+class AdviceRouteTest extends CamelMainTestSupport {
 
     @Override
-    protected String getPropertyPlaceholderFileName() {
-        return "custom-same-package-application.properties";
+    public boolean isUseAdviceWith() {
+        return true;
     }
 
     @Override
     protected void configure(MainConfigurationProperties configuration) {
         // Add the configuration class
         configuration.addConfiguration(MyConfiguration.class);
-        // Add all the XML routes
-        configuration.withRoutesIncludePattern("routes/*.xml");
     }
 
     @Test
-    void shouldFindCustomConfiguration() throws Exception {
+    void shouldAdviceTheRoute() throws Exception {
+        // Advice the route by replace the from endpoint
+        AdviceWith.adviceWith(context, "foo", ad -> ad.replaceFromWith("direct:foo"));
+
+        // must start Camel after we are done using advice-with
+        context.start();
         MockEndpoint mock = context.getEndpoint("mock:out", MockEndpoint.class);
-        mock.expectedBodiesReceived("Hello John!");
-        String result = template.requestBody("direct:in", null, String.class);
+        mock.expectedBodiesReceived("Hello Will!");
+        String result = template.requestBody("direct:foo", null, String.class);
         mock.assertIsSatisfied();
-        assertEquals("Hello John!", result);
+        assertEquals("Hello Will!", result);
     }
 }
