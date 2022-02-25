@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +26,8 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
@@ -53,6 +56,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -256,20 +260,29 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
      * Camel K Integration file
      */
     private Object preConfigureIntegration(Node root, YamlDeserializationContext ctx, Object target) {
+        List<Object> answer = new ArrayList<>();
+
+        // if there are dependencies then include them first
+        Node deps = nodeAt(root, "/spec/dependencies");
+        if (deps != null) {
+            var dep = preConfigureDependencies(deps);
+            answer.add(dep);
+        }
+        // if there are sources then include them before routes
+        Node sources = nodeAt(root, "/spec/sources");
+        if (sources != null) {
+            var list = preConfigureSources(sources);
+            answer.addAll(list);
+        }
+        // add routes last
         Node routes = nodeAt(root, "/spec/flows");
         if (routes == null) {
             routes = nodeAt(root, "/spec/flow");
         }
         if (routes != null) {
-            target = routes;
+            answer.add(routes);
         }
-        // if there are dependencies then include them in the target
-        Node deps = nodeAt(root, "/spec/dependencies");
-        if (deps != null) {
-            Object dep = preConfigureDependencies(deps);
-            target = List.of(dep, target);
-        }
-        return target;
+        return answer;
     }
 
     private CamelContextCustomizer preConfigureDependencies(Node node) {
@@ -289,6 +302,36 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 }
             }
         };
+    }
+
+    private List<CamelContextCustomizer> preConfigureSources(Node node) {
+        List<CamelContextCustomizer> answer = new ArrayList<>();
+
+        SequenceNode seq = asSequenceNode(node);
+        for (Node n : seq.getValue()) {
+            MappingNode content = asMappingNode(n);
+            Map<String, Object> params = asMap(content);
+            Object name = params.get("name");
+            Object code = params.get("content");
+            if (name != null && code != null) {
+                String ext = FileUtil.onlyExt(name.toString(), false);
+                final Resource res = new IntegrationSourceResource(ext, name.toString(), code.toString());
+                answer.add(new CamelContextCustomizer() {
+                    @Override
+                    public void configure(CamelContext camelContext) {
+                        try {
+                            camelContext.adapt(ExtendedCamelContext.class)
+                                    .getRoutesLoader().loadRoutes(res);
+                        } catch (Exception e) {
+                            throw new RuntimeCamelException(
+                                    "Error loading sources from resource: " + res + " due to " + e.getMessage(), e);
+                        }
+                    }
+                });
+            }
+        }
+
+        return answer;
     }
 
     /**
