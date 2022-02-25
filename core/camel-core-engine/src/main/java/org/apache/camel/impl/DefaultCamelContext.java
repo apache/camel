@@ -137,6 +137,12 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        OPTIONS.remove();
+    }
+
+    @Override
     protected void doDumpRoutes() {
         ModelToXMLDumper dumper = getModelToXMLDumper();
 
