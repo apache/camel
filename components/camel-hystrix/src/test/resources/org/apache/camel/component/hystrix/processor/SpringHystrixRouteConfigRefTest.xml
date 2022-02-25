@@ -29,7 +29,7 @@
 
     <route>
       <from uri="direct:start"/>
-      <circuitBreaker configurationRef="hysConfig">
+      <circuitBreaker configuration="hysConfig">
         <to uri="direct:foo"/>
         <onFallback>
           <transform>

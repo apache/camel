@@ -30,7 +30,7 @@
 
     <route id="hystrix-route">
       <from uri="direct:start"/>
-      <circuitBreaker configurationRef="ref-hystrix">
+      <circuitBreaker configuration="ref-hystrix">
         <hystrixConfiguration groupKey="local-conf-group-key" requestLogEnabled="false"/>
         <to uri="direct:foo"/>
         <onFallback>
