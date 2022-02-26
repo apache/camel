@@ -41,11 +41,15 @@ public class ServiceBusConfiguration implements Cloneable {
 
     @UriPath
     private String topicOrQueueName;
-    @UriParam(label = "security", secret = true)
-    private String connectionString;
     @UriParam(label = "common", defaultValue = "queue")
     @Metadata(required = true)
     private ServiceBusType serviceBusType = ServiceBusType.queue;
+    @UriParam(label = "security", secret = true)
+    private String connectionString;
+    @UriParam(label = "security")
+    private String fullyQualifiedNamespace;
+    @UriParam(label = "security", secret = true)
+    private TokenCredential tokenCredential;
     @UriParam(label = "common")
     private ClientOptions clientOptions;
     @UriParam(label = "common")
@@ -54,10 +58,6 @@ public class ServiceBusConfiguration implements Cloneable {
     private AmqpRetryOptions amqpRetryOptions;
     @UriParam(label = "common", defaultValue = "AMQP")
     private AmqpTransportType amqpTransportType = AmqpTransportType.AMQP;
-    @UriParam(label = "common")
-    private String fullyQualifiedNamespace;
-    @UriParam(label = "common")
-    private TokenCredential tokenCredential;
     @UriParam(label = "consumer", defaultValue = "receiveMessages")
     private ServiceBusConsumerOperationDefinition consumerOperation = ServiceBusConsumerOperationDefinition.receiveMessages;
     @UriParam(label = "consumer")
@@ -65,13 +65,13 @@ public class ServiceBusConfiguration implements Cloneable {
     private ServiceBusReceiverAsyncClient receiverAsyncClient;
     @UriParam(label = "consumer")
     private String subscriptionName;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     private boolean disableAutoComplete;
     @UriParam(label = "consumer", defaultValue = "PEEK_LOCK")
     private ServiceBusReceiveMode serviceBusReceiveMode = ServiceBusReceiveMode.PEEK_LOCK;
-    @UriParam(label = "consumer", defaultValue = "5min")
+    @UriParam(label = "consumer", defaultValue = "5m")
     private Duration maxAutoLockRenewDuration = Duration.ofMinutes(5);
-    @UriParam(label = "consumer", defaultValue = "0")
+    @UriParam(label = "consumer")
     private int prefetchCount;
     @UriParam(label = "consumer")
     private SubQueue subQueue;

@@ -34,8 +34,8 @@ public class ServiceBusEndpointUriFactory extends org.apache.camel.support.compo
         props.add("topicOrQueueName");
         props.add("serviceBusType");
         props.add("receiverAsyncClient");
-        props.add("fullyQualifiedNamespace");
         props.add("exchangePattern");
+        props.add("fullyQualifiedNamespace");
         props.add("producerOperation");
         props.add("amqpTransportType");
         props.add("serviceBusReceiveMode");
@@ -49,8 +49,9 @@ public class ServiceBusEndpointUriFactory extends org.apache.camel.support.compo
         props.add("exceptionHandler");
         props.add("maxAutoLockRenewDuration");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
+        Set<String> secretProps = new HashSet<>(2);
         secretProps.add("connectionString");
+        secretProps.add("tokenCredential");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
