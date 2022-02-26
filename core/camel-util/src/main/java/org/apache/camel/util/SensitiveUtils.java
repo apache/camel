@@ -90,6 +90,7 @@ public final class SensitiveUtils {
                     "subscribekey",
                     "systemid",
                     "token",
+                    "tokencredential",
                     "user",
                     "userauthenticationcredentials",
                     "username",
