@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.azure.servicebus.client;
 
+import com.azure.core.credential.TokenCredential;
 import com.azure.messaging.servicebus.ServiceBusClientBuilder;
 import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
 import org.apache.camel.component.azure.servicebus.ServiceBusConfiguration;
 import org.apache.camel.component.azure.servicebus.ServiceBusType;
+import org.apache.camel.util.ObjectHelper;
 
 public final class ServiceBusClientFactory {
 
@@ -44,12 +46,22 @@ public final class ServiceBusClientFactory {
     }
 
     private static ServiceBusClientBuilder createBaseServiceBusClient(final ServiceBusConfiguration configuration) {
-        return new ServiceBusClientBuilder()
+        ServiceBusClientBuilder builder = new ServiceBusClientBuilder()
                 .transportType(configuration.getAmqpTransportType())
                 .clientOptions(configuration.getClientOptions())
                 .retryOptions(configuration.getAmqpRetryOptions())
-                .proxyOptions(configuration.getProxyOptions())
-                .connectionString(configuration.getConnectionString());
+                .proxyOptions(configuration.getProxyOptions());
+
+        String fullyQualifiedNamespace = configuration.getFullyQualifiedNamespace();
+        TokenCredential credential = configuration.getTokenCredential();
+
+        // If the FQNS and credential are available, use those to connect
+        if (ObjectHelper.isNotEmpty(fullyQualifiedNamespace) && ObjectHelper.isNotEmpty(credential)) {
+            builder.credential(fullyQualifiedNamespace, credential);
+        } else {
+            builder.connectionString(configuration.getConnectionString());
+        }
+        return builder;
     }
 
     private static ServiceBusClientBuilder.ServiceBusSenderClientBuilder createBaseServiceBusSenderClient(

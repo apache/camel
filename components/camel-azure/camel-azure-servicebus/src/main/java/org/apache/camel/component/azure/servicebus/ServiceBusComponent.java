@@ -17,7 +17,10 @@
 package org.apache.camel.component.azure.servicebus;
 
 import java.util.Map;
+import java.util.Set;
 
+import com.azure.core.credential.TokenCredential;
+import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -60,9 +63,25 @@ public class ServiceBusComponent extends DefaultComponent {
 
         final ServiceBusEndpoint endpoint = new ServiceBusEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
+        setCredentials(configuration);
         validateConfigurations(configuration);
 
         return endpoint;
+    }
+
+    private void setCredentials(final ServiceBusConfiguration configuration) {
+        if (ObjectHelper.isNotEmpty(configuration.getFullyQualifiedNamespace()) &&
+                ObjectHelper.isEmpty(configuration.getTokenCredential())) {
+            final Set<TokenCredential> tokenCredentialFromRegistry
+                    = getCamelContext().getRegistry().findByType(TokenCredential.class);
+
+            // Find exactly one from the registry or create one
+            if (tokenCredentialFromRegistry.size() == 1) {
+                configuration.setTokenCredential(tokenCredentialFromRegistry.stream().findFirst().get());
+            } else {
+                configuration.setTokenCredential(new DefaultAzureCredentialBuilder().build());
+            }
+        }
     }
 
     /**
@@ -78,8 +97,10 @@ public class ServiceBusComponent extends DefaultComponent {
 
     private void validateConfigurations(final ServiceBusConfiguration configuration) {
         if (configuration.getReceiverAsyncClient() == null || configuration.getSenderAsyncClient() == null) {
-            if (ObjectHelper.isEmpty(configuration.getConnectionString())) {
-                throw new IllegalArgumentException("Azure ServiceBus ConnectionString must be specified.");
+            if (ObjectHelper.isEmpty(configuration.getConnectionString()) &&
+                    ObjectHelper.isEmpty(configuration.getFullyQualifiedNamespace())) {
+                throw new IllegalArgumentException(
+                        "Azure ServiceBus ConnectionString or FQNS must be specified.");
             }
         }
     }

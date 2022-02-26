@@ -22,6 +22,7 @@ import java.time.OffsetDateTime;
 import com.azure.core.amqp.AmqpRetryOptions;
 import com.azure.core.amqp.AmqpTransportType;
 import com.azure.core.amqp.ProxyOptions;
+import com.azure.core.credential.TokenCredential;
 import com.azure.core.util.ClientOptions;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
@@ -41,7 +42,6 @@ public class ServiceBusConfiguration implements Cloneable {
     @UriPath
     private String topicOrQueueName;
     @UriParam(label = "security", secret = true)
-    @Metadata(required = true)
     private String connectionString;
     @UriParam(label = "common", defaultValue = "queue")
     @Metadata(required = true)
@@ -54,6 +54,10 @@ public class ServiceBusConfiguration implements Cloneable {
     private AmqpRetryOptions amqpRetryOptions;
     @UriParam(label = "common", defaultValue = "AMQP")
     private AmqpTransportType amqpTransportType = AmqpTransportType.AMQP;
+    @UriParam(label = "common")
+    private String fullyQualifiedNamespace;
+    @UriParam(label = "common")
+    private TokenCredential tokenCredential;
     @UriParam(label = "consumer", defaultValue = "receiveMessages")
     private ServiceBusConsumerOperationDefinition consumerOperation = ServiceBusConsumerOperationDefinition.receiveMessages;
     @UriParam(label = "consumer")
@@ -262,6 +266,28 @@ public class ServiceBusConfiguration implements Cloneable {
 
     public void setSenderAsyncClient(ServiceBusSenderAsyncClient senderAsyncClient) {
         this.senderAsyncClient = senderAsyncClient;
+    }
+
+    /**
+     * Fully Qualified Namespace of the service bus
+     */
+    public String getFullyQualifiedNamespace() {
+        return fullyQualifiedNamespace;
+    }
+
+    public void setFullyQualifiedNamespace(String fullyQualifiedNamespace) {
+        this.fullyQualifiedNamespace = fullyQualifiedNamespace;
+    }
+
+    /**
+     * A {@link TokenCredential} for Azure AD authentication, implemented in {@link com.azure.identity}
+     */
+    public TokenCredential getTokenCredential() {
+        return tokenCredential;
+    }
+
+    public void setTokenCredential(TokenCredential tokenCredential) {
+        this.tokenCredential = tokenCredential;
     }
 
     /**

@@ -45,6 +45,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "consumerOperation": getOrCreateConfiguration(target).setConsumerOperation(property(camelContext, org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition.class, value)); return true;
         case "disableautocomplete":
         case "disableAutoComplete": getOrCreateConfiguration(target).setDisableAutoComplete(property(camelContext, boolean.class, value)); return true;
+        case "fullyqualifiednamespace":
+        case "fullyQualifiedNamespace": getOrCreateConfiguration(target).setFullyQualifiedNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxautolockrenewduration":
@@ -73,6 +75,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "subQueue": getOrCreateConfiguration(target).setSubQueue(property(camelContext, com.azure.messaging.servicebus.models.SubQueue.class, value)); return true;
         case "subscriptionname":
         case "subscriptionName": getOrCreateConfiguration(target).setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
+        case "tokencredential":
+        case "tokenCredential": getOrCreateConfiguration(target).setTokenCredential(property(camelContext, com.azure.core.credential.TokenCredential.class, value)); return true;
         default: return false;
         }
     }
@@ -102,6 +106,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "consumerOperation": return org.apache.camel.component.azure.servicebus.ServiceBusConsumerOperationDefinition.class;
         case "disableautocomplete":
         case "disableAutoComplete": return boolean.class;
+        case "fullyqualifiednamespace":
+        case "fullyQualifiedNamespace": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxautolockrenewduration":
@@ -130,6 +136,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "subQueue": return com.azure.messaging.servicebus.models.SubQueue.class;
         case "subscriptionname":
         case "subscriptionName": return java.lang.String.class;
+        case "tokencredential":
+        case "tokenCredential": return com.azure.core.credential.TokenCredential.class;
         default: return null;
         }
     }
@@ -155,6 +163,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "consumerOperation": return getOrCreateConfiguration(target).getConsumerOperation();
         case "disableautocomplete":
         case "disableAutoComplete": return getOrCreateConfiguration(target).isDisableAutoComplete();
+        case "fullyqualifiednamespace":
+        case "fullyQualifiedNamespace": return getOrCreateConfiguration(target).getFullyQualifiedNamespace();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxautolockrenewduration":
@@ -183,6 +193,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "subQueue": return getOrCreateConfiguration(target).getSubQueue();
         case "subscriptionname":
         case "subscriptionName": return getOrCreateConfiguration(target).getSubscriptionName();
+        case "tokencredential":
+        case "tokenCredential": return getOrCreateConfiguration(target).getTokenCredential();
         default: return null;
         }
     }

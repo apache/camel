@@ -19,11 +19,14 @@ package org.apache.camel.component.azure.servicebus;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.azure.core.credential.TokenCredential;
+import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ServiceBusEndpointTest extends CamelTestSupport {
@@ -35,6 +38,10 @@ class ServiceBusEndpointTest extends CamelTestSupport {
 
         assertThrows(ResolveEndpointFailedException.class,
                 () -> context.getEndpoint("azure-servicebus://?connectionString=test"));
+
+        // provided credential but no fully qualified namespace
+        assertThrows(ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("azure-servicebus:test?tokenCredential=credential"));
     }
 
     @Test
@@ -56,4 +63,70 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         assertEquals("testString", endpoint.getConfiguration().getConnectionString());
     }
 
+    @Test
+    void testCreateEndpointWithFqns() throws Exception {
+        final String uri = "azure-servicebus://testTopicOrQueue";
+        final String remaining = "testTopicOrQueue";
+        final String fullyQualifiedNamespace = "namespace.servicebus.windows.net";
+        final Map<String, Object> params = new HashMap<>();
+        params.put("serviceBusType", ServiceBusType.topic);
+        params.put("prefetchCount", 10);
+        params.put("fullyQualifiedNamespace", fullyQualifiedNamespace);
+
+        final ServiceBusEndpoint endpoint
+                = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
+                        .createEndpoint(uri, remaining, params);
+
+        assertEquals(ServiceBusType.topic, endpoint.getConfiguration().getServiceBusType());
+        assertEquals("testTopicOrQueue", endpoint.getConfiguration().getTopicOrQueueName());
+        assertEquals(10, endpoint.getConfiguration().getPrefetchCount());
+        assertEquals(fullyQualifiedNamespace, endpoint.getConfiguration().getFullyQualifiedNamespace());
+        assertNotNull(endpoint.getConfiguration().getTokenCredential());
+    }
+
+    @Test
+    void testCreateEndpointWithFqnsAndCredential() throws Exception {
+        final String uri = "azure-servicebus://testTopicOrQueue";
+        final String remaining = "testTopicOrQueue";
+        final String fullyQualifiedNamespace = "namespace.servicebus.windows.net";
+        final TokenCredential credential = new DefaultAzureCredentialBuilder().build();
+        final Map<String, Object> params = new HashMap<>();
+        params.put("serviceBusType", ServiceBusType.topic);
+        params.put("prefetchCount", 10);
+        params.put("fullyQualifiedNamespace", fullyQualifiedNamespace);
+        params.put("tokenCredential", credential);
+
+        final ServiceBusEndpoint endpoint
+                = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
+                        .createEndpoint(uri, remaining, params);
+
+        assertEquals(ServiceBusType.topic, endpoint.getConfiguration().getServiceBusType());
+        assertEquals("testTopicOrQueue", endpoint.getConfiguration().getTopicOrQueueName());
+        assertEquals(10, endpoint.getConfiguration().getPrefetchCount());
+        assertEquals(fullyQualifiedNamespace, endpoint.getConfiguration().getFullyQualifiedNamespace());
+        assertEquals(credential, endpoint.getConfiguration().getTokenCredential());
+    }
+
+    @Test
+    void testCreateEndpointWithFqnsAndCredentialFromRegistry() throws Exception {
+        final String uri = "azure-servicebus://testTopicOrQueue";
+        final String remaining = "testTopicOrQueue";
+        final String fullyQualifiedNamespace = "namespace.servicebus.windows.net";
+        final TokenCredential credential = new DefaultAzureCredentialBuilder().build();
+        final Map<String, Object> params = new HashMap<>();
+        context().getRegistry().bind("tokenCredential", credential);
+        params.put("serviceBusType", ServiceBusType.topic);
+        params.put("prefetchCount", 10);
+        params.put("fullyQualifiedNamespace", fullyQualifiedNamespace);
+
+        final ServiceBusEndpoint endpoint
+                = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
+                        .createEndpoint(uri, remaining, params);
+
+        assertEquals(ServiceBusType.topic, endpoint.getConfiguration().getServiceBusType());
+        assertEquals("testTopicOrQueue", endpoint.getConfiguration().getTopicOrQueueName());
+        assertEquals(10, endpoint.getConfiguration().getPrefetchCount());
+        assertEquals(fullyQualifiedNamespace, endpoint.getConfiguration().getFullyQualifiedNamespace());
+        assertEquals(credential, endpoint.getConfiguration().getTokenCredential());
+    }
 }
