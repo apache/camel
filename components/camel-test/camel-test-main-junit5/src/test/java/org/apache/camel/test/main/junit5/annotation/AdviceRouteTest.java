@@ -14,41 +14,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.main.junit5.custom;
+package org.apache.camel.test.main.junit5.annotation;
 
+import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.main.MainConfigurationProperties;
-import org.apache.camel.test.main.junit5.CamelMainTestSupport;
-import org.apache.camel.test.main.junit5.MyConfiguration;
+import org.apache.camel.test.main.junit5.AdviceRouteMapping;
+import org.apache.camel.test.main.junit5.CamelMainTest;
+import org.apache.camel.test.main.junit5.Configure;
+import org.apache.camel.test.main.junit5.common.MyConfiguration;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * The test class ensuring that a custom property placeholder can be specified with the name of the file located in the
- * default package.
+ * A test class ensuring that a route can be advised.
  */
-class LoadCustomConfigurationDefaultPackageTest extends CamelMainTestSupport {
+@CamelMainTest(advices = @AdviceRouteMapping(route = "foo", advice = AdviceRouteTest.TestBuilder.class))
+class AdviceRouteTest {
 
-    @Override
-    protected String getPropertyPlaceholderFileName() {
-        return "custom-default-package-application.properties";
-    }
+    @EndpointInject("mock:out")
+    MockEndpoint mock;
 
-    @Override
+    @EndpointInject("direct:foo")
+    ProducerTemplate template;
+
+    @Configure
     protected void configure(MainConfigurationProperties configuration) {
         // Add the configuration class
         configuration.addConfiguration(MyConfiguration.class);
-        // Add all the XML routes
-        configuration.withRoutesIncludePattern("routes/*.xml");
     }
 
     @Test
-    void shouldFindCustomConfiguration() throws Exception {
-        MockEndpoint mock = context.getEndpoint("mock:out", MockEndpoint.class);
-        mock.expectedBodiesReceived("Hello Johnny!");
-        String result = template.requestBody("direct:in", null, String.class);
+    void shouldAdviceTheRoute() throws Exception {
+        mock.expectedBodiesReceived("Hello Will!");
+        String result = template.requestBody((Object) null, String.class);
         mock.assertIsSatisfied();
-        assertEquals("Hello Johnny!", result);
+        assertEquals("Hello Will!", result);
+    }
+
+    static class TestBuilder extends AdviceWithRouteBuilder {
+
+        @Override
+        public void configure() throws Exception {
+            replaceFromWith("direct:foo");
+        }
     }
 }

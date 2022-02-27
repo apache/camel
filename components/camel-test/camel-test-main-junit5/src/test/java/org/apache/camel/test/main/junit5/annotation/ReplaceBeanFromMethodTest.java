@@ -14,40 +14,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.main.junit5;
+package org.apache.camel.test.main.junit5.annotation;
 
+import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.main.MainConfigurationProperties;
-import org.apache.camel.spi.Registry;
+import org.apache.camel.test.main.junit5.CamelMainTest;
+import org.apache.camel.test.main.junit5.Configure;
+import org.apache.camel.test.main.junit5.ReplaceInRegistry;
+import org.apache.camel.test.main.junit5.common.Greetings;
+import org.apache.camel.test.main.junit5.common.MyConfiguration;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * The test class ensuring that an existing bean can be replaced with a bean bound from the test class.
+ * The test class ensuring that an existing bean can be replaced with a bean created from a method.
  */
-class ReplaceBeanTest extends CamelMainTestSupport {
+@CamelMainTest
+class ReplaceBeanFromMethodTest {
 
     @PropertyInject("name")
     String name;
 
-    @Override
+    @EndpointInject("mock:out")
+    MockEndpoint mock;
+
+    @EndpointInject("direct:in")
+    ProducerTemplate template;
+
+    @Configure
     protected void configure(MainConfigurationProperties configuration) {
         // Add the configuration class
         configuration.addConfiguration(MyConfiguration.class);
     }
 
-    @Override
-    protected void bindToRegistryAfterInjections(Registry registry) throws Exception {
-        registry.bind("myGreetings", Greetings.class, new CustomGreetings(name));
+    /**
+     * Replace the default bean whose name is <i>myGreetings</i> and type is {@link Greetings} with this custom
+     * implementation used for the test only.
+     */
+    @ReplaceInRegistry
+    Greetings myGreetings() {
+        return new CustomGreetings(name);
     }
 
     @Test
     void shouldReplaceTheBeanWithACustomBean() throws Exception {
-        MockEndpoint mock = context.getEndpoint("mock:out", MockEndpoint.class);
         mock.expectedBodiesReceived("Hi Will!");
-        String result = template.requestBody("direct:in", null, String.class);
+        String result = template.requestBody((Object) null, String.class);
         mock.assertIsSatisfied();
         assertEquals("Hi Will!", result);
     }

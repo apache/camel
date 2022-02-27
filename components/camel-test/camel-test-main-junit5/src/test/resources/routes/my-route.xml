@@ -20,7 +20,7 @@
 <routes id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route id="foo">
         <from uri="direct:in"/>
-        <bean ref="myGreetings"/>
+        <bean ref="myGreetings" method="sayHello"/>
         <to uri="mock:out"/>
     </route>
 </routes>

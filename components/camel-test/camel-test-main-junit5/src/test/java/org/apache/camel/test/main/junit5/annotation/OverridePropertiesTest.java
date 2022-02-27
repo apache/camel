@@ -14,36 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.main.junit5;
+package org.apache.camel.test.main.junit5.annotation;
 
+import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.main.MainConfigurationProperties;
+import org.apache.camel.test.main.junit5.CamelMainTest;
+import org.apache.camel.test.main.junit5.Configure;
+import org.apache.camel.test.main.junit5.common.MyConfiguration;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * The test class ensuring that several property placeholder locations can be specified.
+ * Test ensuring that the default properties can be overridden.
  */
-class UseSeveralPropertyPlaceholderLocationsTest extends CamelMainTestSupport {
+@CamelMainTest(properties = { "name", "John" })
+class OverridePropertiesTest {
 
-    @Override
-    protected String getPropertyPlaceholderLocations() {
-        return "classpath:extra-application.properties,classpath:application.properties";
-    }
+    @EndpointInject("mock:out")
+    MockEndpoint mock;
 
-    @Override
-    protected void configure(MainConfigurationProperties configuration) {
+    @EndpointInject("direct:in")
+    ProducerTemplate template;
+
+    @Configure
+    private void configure(MainConfigurationProperties configuration) {  //NOPMD
         // Add the configuration class
         configuration.addConfiguration(MyConfiguration.class);
     }
 
     @Test
-    void shouldApplyAllPropertyPlaceholderLocations() throws Exception {
-        MockEndpoint mock = context.getEndpoint("mock:out", MockEndpoint.class);
-        mock.expectedBodiesReceived("Hello Jack!");
-        String result = template.requestBody("direct:in", null, String.class);
+    void shouldOverrideDefaultProperties() throws Exception {
+        mock.expectedBodiesReceived("Hello John!");
+        String result = template.requestBody((Object) null, String.class);
         mock.assertIsSatisfied();
-        assertEquals("Hello Jack!", result);
+        assertEquals("Hello John!", result);
     }
 }
