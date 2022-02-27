@@ -29,16 +29,16 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "rest,security,configuration")
 @XmlRootElement(name = "openIdConnect")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestSecurityOpenIdConnect extends RestSecurityDefinition {
+public class OpenIdConnectDefinition extends RestSecurityDefinition {
 
     @XmlAttribute(required = true)
     private String url;
 
     @SuppressWarnings("unused")
-    public RestSecurityOpenIdConnect() {
+    public OpenIdConnectDefinition() {
     }
 
-    public RestSecurityOpenIdConnect(RestDefinition rest) {
+    public OpenIdConnectDefinition(RestDefinition rest) {
         super(rest);
     }
 

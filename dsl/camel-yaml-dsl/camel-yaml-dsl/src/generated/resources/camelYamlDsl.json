@@ -6434,6 +6434,57 @@
         },
         "required" : [ "distributionRatio" ]
       },
+      "org.apache.camel.model.rest.ApiKeyDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "inCookie" : {
+            "type" : "boolean"
+          },
+          "inHeader" : {
+            "type" : "boolean"
+          },
+          "inQuery" : {
+            "type" : "boolean"
+          },
+          "key" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key", "name" ]
+      },
+      "org.apache.camel.model.rest.BasicAuthDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key" ]
+      },
+      "org.apache.camel.model.rest.BearerTokenDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "format" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key" ]
+      },
       "org.apache.camel.model.rest.DeleteDefinition" : {
         "type" : "object",
         "properties" : {
@@ -6467,7 +6518,7 @@
           "param" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
           },
           "path" : {
@@ -6479,7 +6530,7 @@
           "responseMessage" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
           },
           "security" : {
@@ -6532,7 +6583,7 @@
           "param" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
           },
           "path" : {
@@ -6544,7 +6595,7 @@
           "responseMessage" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
           },
           "security" : {
@@ -6597,7 +6648,7 @@
           "param" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
           },
           "path" : {
@@ -6609,7 +6660,7 @@
           "responseMessage" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
           },
           "security" : {
@@ -6628,6 +6679,110 @@
             "type" : "string"
           }
         }
+      },
+      "org.apache.camel.model.rest.MutualTLSDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key" ]
+      },
+      "org.apache.camel.model.rest.OAuth2Definition" : {
+        "type" : "object",
+        "properties" : {
+          "authorizationUrl" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "flow" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          },
+          "refreshUrl" : {
+            "type" : "string"
+          },
+          "scopes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestPropertyDefinition"
+            }
+          },
+          "tokenUrl" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key" ]
+      },
+      "org.apache.camel.model.rest.OpenIdConnectDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "key" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "key", "url" ]
+      },
+      "org.apache.camel.model.rest.ParamDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "arrayType" : {
+            "type" : "string"
+          },
+          "collectionFormat" : {
+            "type" : "string",
+            "enum" : [ "csv", "multi", "pipes", "ssv", "tsv" ]
+          },
+          "dataFormat" : {
+            "type" : "string"
+          },
+          "dataType" : {
+            "type" : "string"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "examples" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestPropertyDefinition"
+            }
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "required" : {
+            "type" : "boolean"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "body", "formData", "header", "path", "query" ]
+          },
+          "value" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "name", "type" ]
       },
       "org.apache.camel.model.rest.PatchDefinition" : {
         "type" : "object",
@@ -6662,7 +6817,7 @@
           "param" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
           },
           "path" : {
@@ -6674,7 +6829,7 @@
           "responseMessage" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
           },
           "security" : {
@@ -6727,7 +6882,7 @@
           "param" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
           },
           "path" : {
@@ -6739,7 +6894,7 @@
           "responseMessage" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
           },
           "security" : {
@@ -6792,7 +6947,7 @@
           "param" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationParamDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
           },
           "path" : {
@@ -6804,7 +6959,7 @@
           "responseMessage" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseMsgDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
           },
           "security" : {
@@ -6823,6 +6978,67 @@
             "type" : "string"
           }
         }
+      },
+      "org.apache.camel.model.rest.ResponseHeaderDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "arrayType" : {
+            "type" : "string"
+          },
+          "collectionFormat" : {
+            "type" : "string",
+            "enum" : [ "csv", "multi", "pipes", "ssv", "tsv" ]
+          },
+          "dataFormat" : {
+            "type" : "string"
+          },
+          "dataType" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "example" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "name" ]
+      },
+      "org.apache.camel.model.rest.ResponseMessageDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "examples" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestPropertyDefinition"
+            }
+          },
+          "header" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseHeaderDefinition"
+            }
+          },
+          "message" : {
+            "type" : "string"
+          },
+          "responseModel" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "message" ]
       },
       "org.apache.camel.model.rest.RestBindingDefinition" : {
         "type" : "object",
@@ -7035,7 +7251,7 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecuritiesDefinition"
           },
           "securityRequirements" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecuritiesRequirement"
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityRequirementsDefinition"
           },
           "skipBindingOnErrorCode" : {
             "type" : "boolean"
@@ -7044,114 +7260,6 @@
             "type" : "string"
           }
         }
-      },
-      "org.apache.camel.model.rest.RestOperationParamDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "arrayType" : {
-            "type" : "string"
-          },
-          "collectionFormat" : {
-            "type" : "string",
-            "enum" : [ "csv", "multi", "pipes", "ssv", "tsv" ]
-          },
-          "dataFormat" : {
-            "type" : "string"
-          },
-          "dataType" : {
-            "type" : "string"
-          },
-          "defaultValue" : {
-            "type" : "string"
-          },
-          "description" : {
-            "type" : "string"
-          },
-          "examples" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestPropertyDefinition"
-            }
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "required" : {
-            "type" : "boolean"
-          },
-          "type" : {
-            "type" : "string",
-            "enum" : [ "body", "formData", "header", "path", "query" ]
-          },
-          "value" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        },
-        "required" : [ "name", "type" ]
-      },
-      "org.apache.camel.model.rest.RestOperationResponseHeaderDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "arrayType" : {
-            "type" : "string"
-          },
-          "collectionFormat" : {
-            "type" : "string",
-            "enum" : [ "csv", "multi", "pipes", "ssv", "tsv" ]
-          },
-          "dataFormat" : {
-            "type" : "string"
-          },
-          "dataType" : {
-            "type" : "string"
-          },
-          "description" : {
-            "type" : "string"
-          },
-          "example" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "value" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        },
-        "required" : [ "name" ]
-      },
-      "org.apache.camel.model.rest.RestOperationResponseMsgDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string"
-          },
-          "examples" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestPropertyDefinition"
-            }
-          },
-          "header" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestOperationResponseHeaderDefinition"
-            }
-          },
-          "message" : {
-            "type" : "string"
-          },
-          "responseModel" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "message" ]
       },
       "org.apache.camel.model.rest.RestPropertyDefinition" : {
         "type" : "object",
@@ -7169,140 +7277,24 @@
         "type" : "object",
         "properties" : {
           "apiKey" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityApiKey"
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.ApiKeyDefinition"
           },
           "basicAuth" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityBasicAuth"
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.BasicAuthDefinition"
           },
           "bearer" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityBearerToken"
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.BearerTokenDefinition"
           },
           "mutualTls" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityMutualTLS"
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.MutualTLSDefinition"
           },
           "oauth2" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityOAuth2"
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.OAuth2Definition"
           },
           "openIdConnect" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecurityOpenIdConnect"
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.OpenIdConnectDefinition"
           }
         }
-      },
-      "org.apache.camel.model.rest.RestSecuritiesRequirement" : {
-        "type" : "object",
-        "properties" : {
-          "securityRequirement" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
-          }
-        }
-      },
-      "org.apache.camel.model.rest.RestSecurityApiKey" : {
-        "type" : "object",
-        "properties" : {
-          "description" : {
-            "type" : "string"
-          },
-          "inCookie" : {
-            "type" : "boolean"
-          },
-          "inHeader" : {
-            "type" : "boolean"
-          },
-          "inQuery" : {
-            "type" : "boolean"
-          },
-          "key" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "key", "name" ]
-      },
-      "org.apache.camel.model.rest.RestSecurityBasicAuth" : {
-        "type" : "object",
-        "properties" : {
-          "description" : {
-            "type" : "string"
-          },
-          "key" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "key" ]
-      },
-      "org.apache.camel.model.rest.RestSecurityBearerToken" : {
-        "type" : "object",
-        "properties" : {
-          "description" : {
-            "type" : "string"
-          },
-          "format" : {
-            "type" : "string"
-          },
-          "key" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "key" ]
-      },
-      "org.apache.camel.model.rest.RestSecurityMutualTLS" : {
-        "type" : "object",
-        "properties" : {
-          "description" : {
-            "type" : "string"
-          },
-          "key" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "key" ]
-      },
-      "org.apache.camel.model.rest.RestSecurityOAuth2" : {
-        "type" : "object",
-        "properties" : {
-          "authorizationUrl" : {
-            "type" : "string"
-          },
-          "description" : {
-            "type" : "string"
-          },
-          "flow" : {
-            "type" : "string"
-          },
-          "key" : {
-            "type" : "string"
-          },
-          "refreshUrl" : {
-            "type" : "string"
-          },
-          "scopes" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestPropertyDefinition"
-            }
-          },
-          "tokenUrl" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "key" ]
-      },
-      "org.apache.camel.model.rest.RestSecurityOpenIdConnect" : {
-        "type" : "object",
-        "properties" : {
-          "description" : {
-            "type" : "string"
-          },
-          "key" : {
-            "type" : "string"
-          },
-          "url" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "key", "url" ]
       },
       "org.apache.camel.model.rest.RestsDefinition" : {
         "type" : "object",
@@ -7332,6 +7324,14 @@
           }
         },
         "required" : [ "key" ]
+      },
+      "org.apache.camel.model.rest.SecurityRequirementsDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "securityRequirement" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
+          }
+        }
       },
       "org.apache.camel.model.transformer.CustomTransformerDefinition" : {
         "type" : "object",

@@ -1091,7 +1091,7 @@ public class ModelParser extends BaseParser {
                 case "post": doAdd(doParsePostDefinition(), def.getVerbs(), def::setVerbs); break;
                 case "put": doAdd(doParsePutDefinition(), def.getVerbs(), def::setVerbs); break;
                 case "securityDefinitions": def.setSecurityDefinitions(doParseRestSecuritiesDefinition()); break;
-                case "securityRequirements": def.setSecurityRequirements(doParseRestSecuritiesRequirement()); break;
+                case "securityRequirements": def.setSecurityRequirements(doParseSecurityRequirementsDefinition()); break;
                 default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }
             return true;
@@ -2799,6 +2799,41 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
+    protected ApiKeyDefinition doParseApiKeyDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ApiKeyDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "inCookie": def.setInCookie(val); break;
+                case "inHeader": def.setInHeader(val); break;
+                case "inQuery": def.setInQuery(val); break;
+                case "name": def.setName(val); break;
+                default: return restSecurityDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, noElementHandler(), noValueHandler());
+    }
+    protected <T extends RestSecurityDefinition> AttributeHandler<T> restSecurityDefinitionAttributeHandler() {
+        return (def, key, val) -> {
+            switch (key) {
+                case "description": def.setDescription(val); break;
+                case "key": def.setKey(val); break;
+                default: return false;
+            }
+            return true;
+        };
+    }
+    protected BasicAuthDefinition doParseBasicAuthDefinition() throws IOException, XmlPullParserException {
+        return doParse(new BasicAuthDefinition(),
+            restSecurityDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
+    }
+    protected BearerTokenDefinition doParseBearerTokenDefinition() throws IOException, XmlPullParserException {
+        return doParse(new BearerTokenDefinition(), (def, key, val) -> {
+            if ("format".equals(key)) {
+                def.setFormat(val);
+                return true;
+            }
+            return restSecurityDefinitionAttributeHandler().accept(def, key, val);
+        }, noElementHandler(), noValueHandler());
+    }
     protected DeleteDefinition doParseDeleteDefinition() throws IOException, XmlPullParserException {
         return doParse(new DeleteDefinition(),
             verbDefinitionAttributeHandler(), verbDefinitionElementHandler(), noValueHandler());
@@ -2825,8 +2860,8 @@ public class ModelParser extends BaseParser {
     protected <T extends VerbDefinition> ElementHandler<T> verbDefinitionElementHandler() {
         return (def, key) -> {
             switch (key) {
-                case "param": doAdd(doParseRestOperationParamDefinition(), def.getParams(), def::setParams); break;
-                case "responseMessage": doAdd(doParseRestOperationResponseMsgDefinition(), def.getResponseMsgs(), def::setResponseMsgs); break;
+                case "param": doAdd(doParseParamDefinition(), def.getParams(), def::setParams); break;
+                case "responseMessage": doAdd(doParseResponseMessageDefinition(), def.getResponseMsgs(), def::setResponseMsgs); break;
                 case "security": doAdd(doParseSecurityDefinition(), def.getSecurity(), def::setSecurity); break;
                 case "to": def.setTo(doParseToDefinition()); break;
                 default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
@@ -2834,8 +2869,8 @@ public class ModelParser extends BaseParser {
             return true;
         };
     }
-    protected RestOperationParamDefinition doParseRestOperationParamDefinition() throws IOException, XmlPullParserException {
-        return doParse(new RestOperationParamDefinition(), (def, key, val) -> {
+    protected ParamDefinition doParseParamDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ParamDefinition(), (def, key, val) -> {
             switch (key) {
                 case "arrayType": def.setArrayType(val); break;
                 case "collectionFormat": def.setCollectionFormat(CollectionFormat.valueOf(val)); break;
@@ -2858,8 +2893,8 @@ public class ModelParser extends BaseParser {
             return true;
         }, noValueHandler());
     }
-    protected RestOperationResponseMsgDefinition doParseRestOperationResponseMsgDefinition() throws IOException, XmlPullParserException {
-        return doParse(new RestOperationResponseMsgDefinition(), (def, key, val) -> {
+    protected ResponseMessageDefinition doParseResponseMessageDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ResponseMessageDefinition(), (def, key, val) -> {
             switch (key) {
                 case "code": def.setCode(val); break;
                 case "message": def.setMessage(val); break;
@@ -2870,7 +2905,7 @@ public class ModelParser extends BaseParser {
         }, (def, key) -> {
             switch (key) {
                 case "examples": doAdd(doParseRestPropertyDefinition(), def.getExamples(), def::setExamples); break;
-                case "header": doAdd(doParseRestOperationResponseHeaderDefinition(), def.getHeaders(), def::setHeaders); break;
+                case "header": doAdd(doParseResponseHeaderDefinition(), def.getHeaders(), def::setHeaders); break;
                 default: return false;
             }
             return true;
@@ -2894,6 +2929,47 @@ public class ModelParser extends BaseParser {
         return doParse(new HeadDefinition(),
             verbDefinitionAttributeHandler(), verbDefinitionElementHandler(), noValueHandler());
     }
+    protected MutualTLSDefinition doParseMutualTLSDefinition() throws IOException, XmlPullParserException {
+        return doParse(new MutualTLSDefinition(),
+            restSecurityDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
+    }
+    protected OAuth2Definition doParseOAuth2Definition() throws IOException, XmlPullParserException {
+        return doParse(new OAuth2Definition(), (def, key, val) -> {
+            switch (key) {
+                case "authorizationUrl": def.setAuthorizationUrl(val); break;
+                case "flow": def.setFlow(val); break;
+                case "refreshUrl": def.setRefreshUrl(val); break;
+                case "tokenUrl": def.setTokenUrl(val); break;
+                default: return restSecurityDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, (def, key) -> {
+            if ("scopes".equals(key)) {
+                doAdd(doParseRestPropertyDefinition(), def.getScopes(), def::setScopes);
+                return true;
+            }
+            return false;
+        }, noValueHandler());
+    }
+    protected RestPropertyDefinition doParseRestPropertyDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RestPropertyDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "key": def.setKey(val); break;
+                case "value": def.setValue(val); break;
+                default: return false;
+            }
+            return true;
+        }, noElementHandler(), noValueHandler());
+    }
+    protected OpenIdConnectDefinition doParseOpenIdConnectDefinition() throws IOException, XmlPullParserException {
+        return doParse(new OpenIdConnectDefinition(), (def, key, val) -> {
+            if ("url".equals(key)) {
+                def.setUrl(val);
+                return true;
+            }
+            return restSecurityDefinitionAttributeHandler().accept(def, key, val);
+        }, noElementHandler(), noValueHandler());
+    }
     protected PatchDefinition doParsePatchDefinition() throws IOException, XmlPullParserException {
         return doParse(new PatchDefinition(),
             verbDefinitionAttributeHandler(), verbDefinitionElementHandler(), noValueHandler());
@@ -2905,6 +2981,27 @@ public class ModelParser extends BaseParser {
     protected PutDefinition doParsePutDefinition() throws IOException, XmlPullParserException {
         return doParse(new PutDefinition(),
             verbDefinitionAttributeHandler(), verbDefinitionElementHandler(), noValueHandler());
+    }
+    protected ResponseHeaderDefinition doParseResponseHeaderDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ResponseHeaderDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "arrayType": def.setArrayType(val); break;
+                case "collectionFormat": def.setCollectionFormat(CollectionFormat.valueOf(val)); break;
+                case "dataFormat": def.setDataFormat(val); break;
+                case "dataType": def.setDataType(val); break;
+                case "description": def.setDescription(val); break;
+                case "example": def.setExample(val); break;
+                case "name": def.setName(val); break;
+                default: return false;
+            }
+            return true;
+        }, (def, key) -> {
+            if ("value".equals(key)) {
+                doAdd(doParseText(), def.getAllowableValues(), def::setAllowableValues);
+                return true;
+            }
+            return false;
+        }, noValueHandler());
     }
     protected RestConfigurationDefinition doParseRestConfigurationDefinition() throws IOException, XmlPullParserException {
         return doParse(new RestConfigurationDefinition(), (def, key, val) -> {
@@ -2945,33 +3042,23 @@ public class ModelParser extends BaseParser {
             return true;
         }, noValueHandler());
     }
-    protected RestPropertyDefinition doParseRestPropertyDefinition() throws IOException, XmlPullParserException {
-        return doParse(new RestPropertyDefinition(), (def, key, val) -> {
-            switch (key) {
-                case "key": def.setKey(val); break;
-                case "value": def.setValue(val); break;
-                default: return false;
-            }
-            return true;
-        }, noElementHandler(), noValueHandler());
-    }
     protected RestSecuritiesDefinition doParseRestSecuritiesDefinition() throws IOException, XmlPullParserException {
         return doParse(new RestSecuritiesDefinition(),
             noAttributeHandler(), (def, key) -> {
             switch (key) {
-                case "apiKey": doAdd(doParseRestSecurityApiKey(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
-                case "basicAuth": doAdd(doParseRestSecurityBasicAuth(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
-                case "bearer": doAdd(doParseRestSecurityBearerToken(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
-                case "oauth2": doAdd(doParseRestSecurityOAuth2(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
-                case "openIdConnect": doAdd(doParseRestSecurityOpenIdConnect(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
-                case "mutualTLS": doAdd(doParseRestSecurityMutualTLS(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
+                case "apiKey": doAdd(doParseApiKeyDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
+                case "basicAuth": doAdd(doParseBasicAuthDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
+                case "bearer": doAdd(doParseBearerTokenDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
+                case "oauth2": doAdd(doParseOAuth2Definition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
+                case "openIdConnect": doAdd(doParseOpenIdConnectDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
+                case "mutualTLS": doAdd(doParseMutualTLSDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); break;
                 default: return false;
             }
             return true;
         }, noValueHandler());
     }
-    protected RestSecuritiesRequirement doParseRestSecuritiesRequirement() throws IOException, XmlPullParserException {
-        return doParse(new RestSecuritiesRequirement(),
+    protected SecurityRequirementsDefinition doParseSecurityRequirementsDefinition() throws IOException, XmlPullParserException {
+        return doParse(new SecurityRequirementsDefinition(),
             noAttributeHandler(), (def, key) -> {
             if ("securityRequirement".equals(key)) {
                 doAdd(doParseSecurityDefinition(), def.getSecurityRequirements(), def::setSecurityRequirements);
@@ -2979,93 +3066,6 @@ public class ModelParser extends BaseParser {
             }
             return false;
         }, noValueHandler());
-    }
-    protected RestOperationResponseHeaderDefinition doParseRestOperationResponseHeaderDefinition() throws IOException, XmlPullParserException {
-        return doParse(new RestOperationResponseHeaderDefinition(), (def, key, val) -> {
-            switch (key) {
-                case "arrayType": def.setArrayType(val); break;
-                case "collectionFormat": def.setCollectionFormat(CollectionFormat.valueOf(val)); break;
-                case "dataFormat": def.setDataFormat(val); break;
-                case "dataType": def.setDataType(val); break;
-                case "description": def.setDescription(val); break;
-                case "example": def.setExample(val); break;
-                case "name": def.setName(val); break;
-                default: return false;
-            }
-            return true;
-        }, (def, key) -> {
-            if ("value".equals(key)) {
-                doAdd(doParseText(), def.getAllowableValues(), def::setAllowableValues);
-                return true;
-            }
-            return false;
-        }, noValueHandler());
-    }
-    protected <T extends RestSecurityDefinition> AttributeHandler<T> restSecurityDefinitionAttributeHandler() {
-        return (def, key, val) -> {
-            switch (key) {
-                case "description": def.setDescription(val); break;
-                case "key": def.setKey(val); break;
-                default: return false;
-            }
-            return true;
-        };
-    }
-    protected RestSecurityApiKey doParseRestSecurityApiKey() throws IOException, XmlPullParserException {
-        return doParse(new RestSecurityApiKey(), (def, key, val) -> {
-            switch (key) {
-                case "inCookie": def.setInCookie(val); break;
-                case "inHeader": def.setInHeader(val); break;
-                case "inQuery": def.setInQuery(val); break;
-                case "name": def.setName(val); break;
-                default: return restSecurityDefinitionAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        }, noElementHandler(), noValueHandler());
-    }
-    protected RestSecurityBasicAuth doParseRestSecurityBasicAuth() throws IOException, XmlPullParserException {
-        return doParse(new RestSecurityBasicAuth(),
-            restSecurityDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
-    }
-    protected RestSecurityBearerToken doParseRestSecurityBearerToken() throws IOException, XmlPullParserException {
-        return doParse(new RestSecurityBearerToken(), (def, key, val) -> {
-            if ("format".equals(key)) {
-                def.setFormat(val);
-                return true;
-            }
-            return restSecurityDefinitionAttributeHandler().accept(def, key, val);
-        }, noElementHandler(), noValueHandler());
-    }
-    protected RestSecurityMutualTLS doParseRestSecurityMutualTLS() throws IOException, XmlPullParserException {
-        return doParse(new RestSecurityMutualTLS(),
-            restSecurityDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
-    }
-    protected RestSecurityOAuth2 doParseRestSecurityOAuth2() throws IOException, XmlPullParserException {
-        return doParse(new RestSecurityOAuth2(), (def, key, val) -> {
-            switch (key) {
-                case "authorizationUrl": def.setAuthorizationUrl(val); break;
-                case "flow": def.setFlow(val); break;
-                case "refreshUrl": def.setRefreshUrl(val); break;
-                case "tokenUrl": def.setTokenUrl(val); break;
-                default: return restSecurityDefinitionAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        }, (def, key) -> {
-            if ("scopes".equals(key)) {
-                doAdd(doParseRestPropertyDefinition(), def.getScopes(), def::setScopes);
-                return true;
-            }
-            return false;
-        }, noValueHandler());
-    }
-    protected RestSecurityOpenIdConnect doParseRestSecurityOpenIdConnect() throws IOException, XmlPullParserException {
-        return doParse(new RestSecurityOpenIdConnect(), (def, key, val) -> {
-            if ("url".equals(key)) {
-                def.setUrl(val);
-                return true;
-            }
-            return restSecurityDefinitionAttributeHandler().accept(def, key, val);
-        }, noElementHandler(), noValueHandler());
     }
     public Optional<RestsDefinition> parseRestsDefinition()
             throws IOException, XmlPullParserException {

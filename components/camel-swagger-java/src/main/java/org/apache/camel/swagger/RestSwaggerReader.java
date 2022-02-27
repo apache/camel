@@ -62,17 +62,15 @@ import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.model.rest.ApiKeyDefinition;
+import org.apache.camel.model.rest.ParamDefinition;
+import org.apache.camel.model.rest.ResponseHeaderDefinition;
+import org.apache.camel.model.rest.ResponseMessageDefinition;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestOperationParamDefinition;
-import org.apache.camel.model.rest.RestOperationResponseHeaderDefinition;
-import org.apache.camel.model.rest.RestOperationResponseMsgDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.apache.camel.model.rest.RestSecuritiesDefinition;
-import org.apache.camel.model.rest.RestSecurityApiKey;
-import org.apache.camel.model.rest.RestSecurityBasicAuth;
 import org.apache.camel.model.rest.RestSecurityDefinition;
-import org.apache.camel.model.rest.RestSecurityOAuth2;
 import org.apache.camel.model.rest.SecurityDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
@@ -136,12 +134,12 @@ public class RestSwaggerReader {
         RestSecuritiesDefinition sd = rest.getSecurityDefinitions();
         if (sd != null) {
             for (RestSecurityDefinition def : sd.getSecurityDefinitions()) {
-                if (def instanceof RestSecurityBasicAuth) {
+                if (def instanceof org.apache.camel.model.rest.BasicAuthDefinition) {
                     BasicAuthDefinition auth = new BasicAuthDefinition();
                     auth.setDescription(def.getDescription());
                     swagger.addSecurityDefinition(def.getKey(), auth);
-                } else if (def instanceof RestSecurityApiKey) {
-                    RestSecurityApiKey rs = (RestSecurityApiKey) def;
+                } else if (def instanceof ApiKeyDefinition) {
+                    ApiKeyDefinition rs = (ApiKeyDefinition) def;
                     ApiKeyAuthDefinition auth = new ApiKeyAuthDefinition();
                     auth.setDescription(rs.getDescription());
                     auth.setName(rs.getName());
@@ -151,8 +149,8 @@ public class RestSwaggerReader {
                         auth.setIn(In.QUERY);
                     }
                     swagger.addSecurityDefinition(def.getKey(), auth);
-                } else if (def instanceof RestSecurityOAuth2) {
-                    RestSecurityOAuth2 rs = (RestSecurityOAuth2) def;
+                } else if (def instanceof org.apache.camel.model.rest.OAuth2Definition) {
+                    org.apache.camel.model.rest.OAuth2Definition rs = (org.apache.camel.model.rest.OAuth2Definition) def;
                     OAuth2Definition auth = new OAuth2Definition();
                     auth.setDescription(rs.getDescription());
                     String flow = rs.getFlow();
@@ -206,7 +204,7 @@ public class RestSwaggerReader {
             }
             // there can also be types in response messages
             if (verb.getResponseMsgs() != null) {
-                for (RestOperationResponseMsgDefinition def : verb.getResponseMsgs()) {
+                for (ResponseMessageDefinition def : verb.getResponseMsgs()) {
                     type = def.getResponseModel();
                     if (org.apache.camel.util.ObjectHelper.isNotEmpty(type)) {
                         if (type.endsWith("[]")) {
@@ -311,7 +309,7 @@ public class RestSwaggerReader {
                 op.addSecurity(sd.getKey(), scopes);
             }
 
-            for (RestOperationParamDefinition param : verb.getParams()) {
+            for (ParamDefinition param : verb.getParams()) {
                 Parameter parameter = null;
                 if (param.getType().equals(RestParamType.body)) {
                     parameter = new BodyParameter();
@@ -494,7 +492,7 @@ public class RestSwaggerReader {
     }
 
     private void doParseResponseMessages(Swagger swagger, VerbDefinition verb, Operation op) {
-        for (RestOperationResponseMsgDefinition msg : verb.getResponseMsgs()) {
+        for (ResponseMessageDefinition msg : verb.getResponseMsgs()) {
             Response response = null;
             if (op.getResponses() != null) {
                 response = op.getResponses().get(msg.getCode());
@@ -512,7 +510,7 @@ public class RestSwaggerReader {
 
             // add headers
             if (msg.getHeaders() != null) {
-                for (RestOperationResponseHeaderDefinition header : msg.getHeaders()) {
+                for (ResponseHeaderDefinition header : msg.getHeaders()) {
                     String name = header.getName();
                     String type = header.getDataType();
                     String format = header.getDataFormat();

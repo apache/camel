@@ -37,10 +37,10 @@ import org.apache.camel.util.StringHelper;
 @Metadata(label = "rest")
 @XmlRootElement(name = "responseHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestOperationResponseHeaderDefinition {
+public class ResponseHeaderDefinition {
 
     @XmlTransient
-    private RestOperationResponseMsgDefinition response;
+    private ResponseMessageDefinition response;
 
     @XmlAttribute(required = true)
     private String name;
@@ -63,12 +63,12 @@ public class RestOperationResponseHeaderDefinition {
     @XmlAttribute
     private String example;
 
-    public RestOperationResponseHeaderDefinition(RestOperationResponseMsgDefinition response) {
+    public ResponseHeaderDefinition(ResponseMessageDefinition response) {
         this();
         this.response = response;
     }
 
-    public RestOperationResponseHeaderDefinition() {
+    public ResponseHeaderDefinition() {
         this.collectionFormat = CollectionFormat.csv;
         this.arrayType = "string";
         this.dataType = "string";
@@ -77,7 +77,7 @@ public class RestOperationResponseHeaderDefinition {
     /**
      * Ends the configuration of this response message
      */
-    public RestOperationResponseMsgDefinition endResponseHeader() {
+    public ResponseMessageDefinition endResponseHeader() {
         return response;
     }
 
@@ -172,7 +172,7 @@ public class RestOperationResponseHeaderDefinition {
      * <p>
      * This option is mandatory.
      */
-    public RestOperationResponseHeaderDefinition name(String name) {
+    public ResponseHeaderDefinition name(String name) {
         setName(name);
         return this;
     }
@@ -180,7 +180,7 @@ public class RestOperationResponseHeaderDefinition {
     /**
      * Description of the parameter.
      */
-    public RestOperationResponseHeaderDefinition description(String name) {
+    public ResponseHeaderDefinition description(String name) {
         setDescription(name);
         return this;
     }
@@ -188,7 +188,7 @@ public class RestOperationResponseHeaderDefinition {
     /**
      * Sets the collection format.
      */
-    public RestOperationResponseHeaderDefinition collectionFormat(CollectionFormat collectionFormat) {
+    public ResponseHeaderDefinition collectionFormat(CollectionFormat collectionFormat) {
         setCollectionFormat(collectionFormat);
         return this;
     }
@@ -196,7 +196,7 @@ public class RestOperationResponseHeaderDefinition {
     /**
      * The data type of the array data type
      */
-    public RestOperationResponseHeaderDefinition arrayType(String arrayType) {
+    public ResponseHeaderDefinition arrayType(String arrayType) {
         setArrayType(arrayType);
         return this;
     }
@@ -204,7 +204,7 @@ public class RestOperationResponseHeaderDefinition {
     /**
      * The data type of the header such as <tt>string</tt>, <tt>integer</tt>, <tt>boolean</tt>
      */
-    public RestOperationResponseHeaderDefinition dataType(String type) {
+    public ResponseHeaderDefinition dataType(String type) {
         setDataType(type);
         return this;
     }
@@ -214,7 +214,7 @@ public class RestOperationResponseHeaderDefinition {
      * The format is usually derived from the dataType alone. However you can set this option for more fine grained
      * control of the format in use.
      */
-    public RestOperationResponseHeaderDefinition dataFormat(String type) {
+    public ResponseHeaderDefinition dataFormat(String type) {
         setDataFormat(type);
         return this;
     }
@@ -222,7 +222,7 @@ public class RestOperationResponseHeaderDefinition {
     /**
      * Allowed values of the header when its an enum type
      */
-    public RestOperationResponseHeaderDefinition allowableValues(List<String> allowableValues) {
+    public ResponseHeaderDefinition allowableValues(List<String> allowableValues) {
         setAllowableValues(allowableValues);
         return this;
     }
@@ -230,7 +230,7 @@ public class RestOperationResponseHeaderDefinition {
     /**
      * Allowed values of the parameter when its an enum type
      */
-    public RestOperationResponseHeaderDefinition allowableValues(String... allowableValues) {
+    public ResponseHeaderDefinition allowableValues(String... allowableValues) {
         setAllowableValues(Arrays.asList(allowableValues));
         return this;
     }
@@ -238,7 +238,7 @@ public class RestOperationResponseHeaderDefinition {
     /**
      * Sets an example of this header.
      */
-    public RestOperationResponseHeaderDefinition example(String example) {
+    public ResponseHeaderDefinition example(String example) {
         setExample(example);
         return this;
     }
@@ -246,7 +246,7 @@ public class RestOperationResponseHeaderDefinition {
     /**
      * Ends the configuration of this header
      */
-    public RestOperationResponseMsgDefinition endHeader() {
+    public ResponseMessageDefinition endHeader() {
         // name and type is mandatory
         StringHelper.notEmpty(name, "name");
         StringHelper.notEmpty(dataType, "dataType");

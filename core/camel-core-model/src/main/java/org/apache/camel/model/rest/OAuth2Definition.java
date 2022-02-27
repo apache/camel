@@ -33,7 +33,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "rest,security,configuration")
 @XmlRootElement(name = "oauth2")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestSecurityOAuth2 extends RestSecurityDefinition {
+public class OAuth2Definition extends RestSecurityDefinition {
 
     @XmlAttribute
     private String authorizationUrl;
@@ -47,10 +47,10 @@ public class RestSecurityOAuth2 extends RestSecurityDefinition {
     @XmlElement(name = "scopes")
     private List<RestPropertyDefinition> scopes = new ArrayList<>();
 
-    public RestSecurityOAuth2() {
+    public OAuth2Definition() {
     }
 
-    public RestSecurityOAuth2(RestDefinition rest) {
+    public OAuth2Definition(RestDefinition rest) {
         super(rest);
     }
 
@@ -112,54 +112,54 @@ public class RestSecurityOAuth2 extends RestSecurityDefinition {
         this.scopes = scopes;
     }
 
-    public RestSecurityOAuth2 flow(String flow) {
+    public OAuth2Definition flow(String flow) {
         setFlow(flow);
         return this;
     }
 
-    public RestSecurityOAuth2 authorizationUrl(String authorizationUrl) {
+    public OAuth2Definition authorizationUrl(String authorizationUrl) {
         setAuthorizationUrl(authorizationUrl);
         return this;
     }
 
-    public RestSecurityOAuth2 tokenUrl(String tokenUrl) {
+    public OAuth2Definition tokenUrl(String tokenUrl) {
         setTokenUrl(tokenUrl);
         return this;
     }
 
-    public RestSecurityOAuth2 refreshUrl(String refreshUrl) {
+    public OAuth2Definition refreshUrl(String refreshUrl) {
         setRefreshUrl(refreshUrl);
         return this;
     }
 
-    public RestSecurityOAuth2 password(String tokenUrl) {
+    public OAuth2Definition password(String tokenUrl) {
         setTokenUrl(tokenUrl);
         setFlow("password");
         return this;
     }
 
-    public RestSecurityOAuth2 application(String tokenUrl) {
+    public OAuth2Definition application(String tokenUrl) {
         return clientCredentials(tokenUrl);
     }
 
-    public RestSecurityOAuth2 clientCredentials(String tokenUrl) {
+    public OAuth2Definition clientCredentials(String tokenUrl) {
         setTokenUrl(tokenUrl);
         setFlow("clientCredentials");
         return this;
     }
 
-    public RestSecurityOAuth2 accessCode(String authorizationUrl, String tokenUrl) {
+    public OAuth2Definition accessCode(String authorizationUrl, String tokenUrl) {
         return authorizationCode(authorizationUrl, tokenUrl);
     }
 
-    public RestSecurityOAuth2 authorizationCode(String authorizationUrl, String tokenUrl) {
+    public OAuth2Definition authorizationCode(String authorizationUrl, String tokenUrl) {
         setAuthorizationUrl(authorizationUrl);
         setTokenUrl(tokenUrl);
         setFlow("authorizationCode");
         return this;
     }
 
-    public RestSecurityOAuth2 withScope(String key, String description) {
+    public OAuth2Definition withScope(String key, String description) {
         scopes.add(new RestPropertyDefinition(key, description));
         return this;
     }

@@ -6,7 +6,7 @@
     "description": "To specify the rest operation response headers.",
     "deprecated": false,
     "label": "rest",
-    "javaType": "org.apache.camel.model.rest.RestOperationResponseHeaderDefinition",
+    "javaType": "org.apache.camel.model.rest.ResponseHeaderDefinition",
     "abstract": false,
     "input": false,
     "output": false

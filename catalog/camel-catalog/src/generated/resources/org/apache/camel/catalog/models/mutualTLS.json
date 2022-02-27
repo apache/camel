@@ -6,7 +6,7 @@
     "description": "Rest security mutual TLS authentication definition",
     "deprecated": false,
     "label": "rest,security,configuration",
-    "javaType": "org.apache.camel.model.rest.RestSecurityMutualTLS",
+    "javaType": "org.apache.camel.model.rest.MutualTLSDefinition",
     "abstract": false,
     "input": false,
     "output": false

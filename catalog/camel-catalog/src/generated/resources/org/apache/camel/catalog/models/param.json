@@ -6,7 +6,7 @@
     "description": "To specify the rest operation parameters.",
     "deprecated": false,
     "label": "rest",
-    "javaType": "org.apache.camel.model.rest.RestOperationParamDefinition",
+    "javaType": "org.apache.camel.model.rest.ParamDefinition",
     "abstract": false,
     "input": false,
     "output": false

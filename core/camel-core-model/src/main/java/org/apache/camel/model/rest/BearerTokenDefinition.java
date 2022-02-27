@@ -18,22 +18,38 @@ package org.apache.camel.model.rest;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * Rest security basic auth definition
+ * Rest security bearer token authentication definition
  */
 @Metadata(label = "rest,security,configuration")
-@XmlRootElement(name = "basicAuth")
+@XmlRootElement(name = "bearerToken")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestSecurityBasicAuth extends RestSecurityDefinition {
+public class BearerTokenDefinition extends RestSecurityDefinition {
 
-    public RestSecurityBasicAuth() {
+    @XmlAttribute
+    private String format;
+
+    @SuppressWarnings("unused")
+    public BearerTokenDefinition() {
     }
 
-    public RestSecurityBasicAuth(RestDefinition rest) {
+    public BearerTokenDefinition(RestDefinition rest) {
         super(rest);
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    /**
+     * A hint to the client to identify how the bearer token is formatted.
+     */
+    public void setFormat(String format) {
+        this.format = format;
     }
 }

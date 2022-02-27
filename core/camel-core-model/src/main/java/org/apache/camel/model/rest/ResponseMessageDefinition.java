@@ -35,7 +35,7 @@ import org.apache.camel.util.StringHelper;
 @Metadata(label = "rest")
 @XmlRootElement(name = "responseMessage")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestOperationResponseMsgDefinition {
+public class ResponseMessageDefinition {
 
     @XmlTransient
     private VerbDefinition verb;
@@ -48,16 +48,16 @@ public class RestOperationResponseMsgDefinition {
     @XmlAttribute
     private String responseModel;
     @XmlElement(name = "header")
-    private List<RestOperationResponseHeaderDefinition> headers;
+    private List<ResponseHeaderDefinition> headers;
     @XmlElement(name = "examples")
     private List<RestPropertyDefinition> examples;
 
-    public RestOperationResponseMsgDefinition(VerbDefinition verb) {
+    public ResponseMessageDefinition(VerbDefinition verb) {
         this();
         this.verb = verb;
     }
 
-    public RestOperationResponseMsgDefinition() {
+    public ResponseMessageDefinition() {
         this.code = "200";
         this.message = "success";
     }
@@ -86,11 +86,11 @@ public class RestOperationResponseMsgDefinition {
         this.message = message;
     }
 
-    public List<RestOperationResponseHeaderDefinition> getHeaders() {
+    public List<ResponseHeaderDefinition> getHeaders() {
         return headers;
     }
 
-    public void setHeaders(List<RestOperationResponseHeaderDefinition> headers) {
+    public void setHeaders(List<ResponseHeaderDefinition> headers) {
         this.headers = headers;
     }
 
@@ -108,7 +108,7 @@ public class RestOperationResponseMsgDefinition {
     /**
      * The response code such as a HTTP status code
      */
-    public RestOperationResponseMsgDefinition code(int code) {
+    public ResponseMessageDefinition code(int code) {
         setCode("" + code);
         return this;
     }
@@ -117,7 +117,7 @@ public class RestOperationResponseMsgDefinition {
      * The response code such as a HTTP status code. Can use <tt>general</tt>, or other words to indicate general error
      * responses that do not map to a specific HTTP status code
      */
-    public RestOperationResponseMsgDefinition code(String code) {
+    public ResponseMessageDefinition code(String code) {
         setCode(code);
         return this;
     }
@@ -125,7 +125,7 @@ public class RestOperationResponseMsgDefinition {
     /**
      * The response message (description)
      */
-    public RestOperationResponseMsgDefinition message(String msg) {
+    public ResponseMessageDefinition message(String msg) {
         setMessage(msg);
         return this;
     }
@@ -133,7 +133,7 @@ public class RestOperationResponseMsgDefinition {
     /**
      * The response model
      */
-    public RestOperationResponseMsgDefinition responseModel(Class<?> type) {
+    public ResponseMessageDefinition responseModel(Class<?> type) {
         setResponseModel(type.getCanonicalName());
         return this;
     }
@@ -141,7 +141,7 @@ public class RestOperationResponseMsgDefinition {
     /**
      * Adds an example
      */
-    public RestOperationResponseMsgDefinition example(String key, String example) {
+    public ResponseMessageDefinition example(String key, String example) {
         if (examples == null) {
             examples = new ArrayList<>();
         }
@@ -152,11 +152,11 @@ public class RestOperationResponseMsgDefinition {
     /**
      * Adds a response header
      */
-    public RestOperationResponseHeaderDefinition header(String name) {
+    public ResponseHeaderDefinition header(String name) {
         if (headers == null) {
             headers = new ArrayList<>();
         }
-        RestOperationResponseHeaderDefinition header = new RestOperationResponseHeaderDefinition(this);
+        ResponseHeaderDefinition header = new ResponseHeaderDefinition(this);
         header.setName(name);
         headers.add(header);
         return header;

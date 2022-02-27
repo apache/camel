@@ -16,7 +16,7 @@ Extract RDF data from HTML documents.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="apiKey" type="tns:restSecurityApiKey">
+  <xs:element name="apiKey" type="tns:apiKeyDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Rest security basic auth definition
@@ -56,7 +56,7 @@ Encode and decode data using Base64.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="basicAuth" type="tns:restSecurityBasicAuth">
+  <xs:element name="basicAuth" type="tns:basicAuthDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Rest security basic auth definition
@@ -98,7 +98,7 @@ CSV, delimited, or fixed length formats).
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="bearerToken" type="tns:restSecurityBearerToken">
+  <xs:element name="bearerToken" type="tns:bearerTokenDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Rest security bearer token authentication definition
@@ -823,7 +823,7 @@ Routes the same message to multiple paths either sequentially or in parallel.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="mutualTLS" type="tns:restSecurityMutualTLS">
+  <xs:element name="mutualTLS" type="tns:mutualTLSDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Rest security mutual TLS authentication definition
@@ -839,7 +839,7 @@ Evaluates a MVEL template.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="oauth2" type="tns:restSecurityOAuth2">
+  <xs:element name="oauth2" type="tns:oAuth2Definition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Rest security OAuth2 definition
@@ -879,7 +879,7 @@ Route to be executed when Circuit Breaker EIP executes fallback
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="openIdConnect" type="tns:restSecurityOpenIdConnect">
+  <xs:element name="openIdConnect" type="tns:openIdConnectDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Rest security OpenID Connect definition
@@ -927,7 +927,7 @@ Scans for Java org.apache.camel.builder.RouteBuilder classes in java packages
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="param" type="tns:restOperationParamDefinition">
+  <xs:element name="param" type="tns:paramDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 To specify the rest operation parameters.
@@ -1143,7 +1143,7 @@ Resilience4j Circuit Breaker EIP configuration
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="responseHeader" type="tns:restOperationResponseHeaderDefinition">
+  <xs:element name="responseHeader" type="tns:responseHeaderDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 To specify the rest operation response headers.
@@ -1151,7 +1151,7 @@ To specify the rest operation response headers.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="responseMessage" type="tns:restOperationResponseMsgDefinition">
+  <xs:element name="responseMessage" type="tns:responseMessageDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 To specify the rest operation response messages.
@@ -1416,7 +1416,7 @@ To configure rest security definitions.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="securityRequirements" type="tns:restSecuritiesRequirement">
+  <xs:element name="securityRequirements" type="tns:securityRequirementsDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 To configure global rest security requirements.
@@ -13749,6 +13749,83 @@ configuration, so these custom functions can be used in xquery expressions.
     </xs:simpleContent>
   </xs:complexType>
 
+  <xs:complexType name="apiKeyDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:restSecurityDefinition">
+        <xs:sequence/>
+        <xs:attribute name="name" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The name of the header or query parameter to be used.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="inHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use header as the location of the API key. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="inQuery" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use query parameter as the location of the API key. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="inCookie" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use a cookie as the location of the API key. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType abstract="true" name="restSecurityDefinition">
+    <xs:sequence/>
+    <xs:attribute name="key" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+Key used to refer to this security definition.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="description" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"><![CDATA[
+A short description for security scheme.
+        ]]></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="basicAuthDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:restSecurityDefinition">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="bearerTokenDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:restSecurityDefinition">
+        <xs:sequence/>
+        <xs:attribute name="format" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+A hint to the client to identify how the bearer token is formatted.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="deleteDefinition">
     <xs:complexContent>
       <xs:extension base="tns:verbDefinition">
@@ -13871,7 +13948,7 @@ false
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="restOperationParamDefinition">
+  <xs:complexType name="paramDefinition">
     <xs:sequence>
       <xs:element minOccurs="0" name="allowableValues">
         <xs:complexType>
@@ -13978,9 +14055,9 @@ Property value.
     </xs:attribute>
   </xs:complexType>
 
-  <xs:complexType name="restOperationResponseMsgDefinition">
+  <xs:complexType name="responseMessageDefinition">
     <xs:sequence>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="header" type="tns:restOperationResponseHeaderDefinition">
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="header" type="tns:responseHeaderDefinition">
         <xs:annotation>
           <xs:documentation xml:lang="en"><![CDATA[
 Adds a response header.
@@ -14018,7 +14095,7 @@ The response model.
     </xs:attribute>
   </xs:complexType>
 
-  <xs:complexType name="restOperationResponseHeaderDefinition">
+  <xs:complexType name="responseHeaderDefinition">
     <xs:sequence>
       <xs:element minOccurs="0" name="allowableValues">
         <xs:complexType>
@@ -14116,6 +14193,77 @@ The scopes to allow (separate multiple scopes by comma).
     <xs:complexContent>
       <xs:extension base="tns:verbDefinition">
         <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="mutualTLSDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:restSecurityDefinition">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="oAuth2Definition">
+    <xs:complexContent>
+      <xs:extension base="tns:restSecurityDefinition">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="scopes" type="tns:restPropertyDefinition">
+            <xs:annotation>
+              <xs:documentation xml:lang="en"><![CDATA[
+The available scopes for an OAuth2 security scheme.
+              ]]></xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="authorizationUrl" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The authorization URL to be used for this flow. This SHOULD be in the form of a
+URL. Required for implicit and access code flows.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="tokenUrl" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The token URL to be used for this flow. This SHOULD be in the form of a URL.
+Required for password, application, and access code flows.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="refreshUrl" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The URL to be used for obtaining refresh tokens. This MUST be in the form of a
+URL.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="flow" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The flow used by the OAuth2 security scheme. Valid values are implicit,
+password, application or accessCode.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="openIdConnectDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:restSecurityDefinition">
+        <xs:sequence/>
+        <xs:attribute name="url" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+OpenId Connect URL to discover OAuth2 configuration values.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -14574,7 +14722,7 @@ To configure a special tag for the operations within this rest definition.
       <xs:choice maxOccurs="unbounded" minOccurs="0">
         <xs:element ref="tns:apiKey"/>
         <xs:element ref="tns:basicAuth"/>
-        <xs:element name="bearer" type="tns:restSecurityBearerToken"/>
+        <xs:element name="bearer" type="tns:bearerTokenDefinition"/>
         <xs:element ref="tns:oauth2"/>
         <xs:element ref="tns:openIdConnect"/>
         <xs:element ref="tns:mutualTLS"/>
@@ -14582,155 +14730,7 @@ To configure a special tag for the operations within this rest definition.
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="restSecurityApiKey">
-    <xs:complexContent>
-      <xs:extension base="tns:restSecurityDefinition">
-        <xs:sequence/>
-        <xs:attribute name="name" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The name of the header or query parameter to be used.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="inHeader" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To use header as the location of the API key. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="inQuery" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To use query parameter as the location of the API key. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="inCookie" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To use a cookie as the location of the API key. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType abstract="true" name="restSecurityDefinition">
-    <xs:sequence/>
-    <xs:attribute name="key" type="xs:string" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Key used to refer to this security definition.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="description" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-A short description for security scheme.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-
-  <xs:complexType name="restSecurityBasicAuth">
-    <xs:complexContent>
-      <xs:extension base="tns:restSecurityDefinition">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="restSecurityBearerToken">
-    <xs:complexContent>
-      <xs:extension base="tns:restSecurityDefinition">
-        <xs:sequence/>
-        <xs:attribute name="format" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-A hint to the client to identify how the bearer token is formatted.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="restSecurityOAuth2">
-    <xs:complexContent>
-      <xs:extension base="tns:restSecurityDefinition">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="scopes" type="tns:restPropertyDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-The available scopes for an OAuth2 security scheme.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute name="authorizationUrl" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The authorization URL to be used for this flow. This SHOULD be in the form of a
-URL. Required for implicit and access code flows.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="tokenUrl" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The token URL to be used for this flow. This SHOULD be in the form of a URL.
-Required for password, application, and access code flows.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="refreshUrl" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The URL to be used for obtaining refresh tokens. This MUST be in the form of a
-URL.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="flow" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The flow used by the OAuth2 security scheme. Valid values are implicit,
-password, application or accessCode.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="restSecurityOpenIdConnect">
-    <xs:complexContent>
-      <xs:extension base="tns:restSecurityDefinition">
-        <xs:sequence/>
-        <xs:attribute name="url" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-OpenId Connect URL to discover OAuth2 configuration values.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="restSecurityMutualTLS">
-    <xs:complexContent>
-      <xs:extension base="tns:restSecurityDefinition">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="restSecuritiesRequirement">
+  <xs:complexType name="securityRequirementsDefinition">
     <xs:sequence>
       <xs:element maxOccurs="unbounded" minOccurs="0" name="securityRequirement" type="tns:securityDefinition"/>
     </xs:sequence>

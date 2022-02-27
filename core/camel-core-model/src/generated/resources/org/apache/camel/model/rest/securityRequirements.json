@@ -6,7 +6,7 @@
     "description": "To configure global rest security requirements.",
     "deprecated": false,
     "label": "rest,security,configuration",
-    "javaType": "org.apache.camel.model.rest.RestSecuritiesRequirement",
+    "javaType": "org.apache.camel.model.rest.SecurityRequirementsDefinition",
     "abstract": false,
     "input": false,
     "output": false

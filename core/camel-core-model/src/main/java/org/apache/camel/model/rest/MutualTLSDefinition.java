@@ -18,38 +18,23 @@ package org.apache.camel.model.rest;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * Rest security bearer token authentication definition
+ * Rest security mutual TLS authentication definition
  */
 @Metadata(label = "rest,security,configuration")
-@XmlRootElement(name = "bearerToken")
+@XmlRootElement(name = "mutualTLS")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestSecurityBearerToken extends RestSecurityDefinition {
-
-    @XmlAttribute
-    private String format;
+public class MutualTLSDefinition extends RestSecurityDefinition {
 
     @SuppressWarnings("unused")
-    public RestSecurityBearerToken() {
+    public MutualTLSDefinition() {
     }
 
-    public RestSecurityBearerToken(RestDefinition rest) {
+    public MutualTLSDefinition(RestDefinition rest) {
         super(rest);
-    }
-
-    public String getFormat() {
-        return format;
-    }
-
-    /**
-     * A hint to the client to identify how the bearer token is formatted.
-     */
-    public void setFormat(String format) {
-        this.format = format;
     }
 }

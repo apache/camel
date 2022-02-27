@@ -21,8 +21,8 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.rest.ParamDefinition;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestOperationParamDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ public class FromRestGetPlaceholderParamTest extends ContextTestSupport {
         assertEquals("direct:hello", to.getUri());
 
         // Validate params
-        List<RestOperationParamDefinition> paramDefinitions = rest.getVerbs().get(0).getParams();
+        List<ParamDefinition> paramDefinitions = rest.getVerbs().get(0).getParams();
         assertEquals(1, paramDefinitions.size());
         assertEquals(RestParamType.path, paramDefinitions.get(0).getType());
         assertEquals("id", paramDefinitions.get(0).getName());
@@ -65,7 +65,7 @@ public class FromRestGetPlaceholderParamTest extends ContextTestSupport {
         assertEquals("direct:hello", to.getUri());
 
         // Validate params
-        List<RestOperationParamDefinition> paramDefinitions = rest.getVerbs().get(0).getParams();
+        List<ParamDefinition> paramDefinitions = rest.getVerbs().get(0).getParams();
         assertEquals(3, paramDefinitions.size());
         assertEquals(RestParamType.path, paramDefinitions.get(0).getType());
         assertEquals("id", paramDefinitions.get(0).getName());

@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.rest.ParamDefinition;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestOperationParamDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
@@ -60,10 +60,10 @@ public class RestDefinitionEmitterTest {
             assertThat(definition.getConsumes()).isEqualTo("application/json,application/xml");
             assertThat(definition.getProduces()).isEqualTo("application/xml,application/json");
 
-            final List<RestOperationParamDefinition> params = definition.getParams();
+            final List<ParamDefinition> params = definition.getParams();
             assertThat(params).hasSize(1);
 
-            final RestOperationParamDefinition param = params.get(0);
+            final ParamDefinition param = params.get(0);
             assertThat(param.getName()).isEqualTo("body");
             assertThat(param.getType()).isEqualTo(RestParamType.body);
             assertThat(param.getRequired()).isEqualTo(true);

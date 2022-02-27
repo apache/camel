@@ -39,7 +39,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "rest,security,configuration", title = "Rest Security Requirements")
 @XmlRootElement(name = "securityRequirements")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestSecuritiesRequirement {
+public class SecurityRequirementsDefinition {
 
     @XmlTransient
     RestDefinition rest;
@@ -48,10 +48,10 @@ public class RestSecuritiesRequirement {
     @XmlElements({ @XmlElement(name = "securityRequirement", type = SecurityDefinition.class) })
     List<SecurityDefinition> securityRequirements = new ArrayList<>();
 
-    public RestSecuritiesRequirement() {
+    public SecurityRequirementsDefinition() {
     }
 
-    public RestSecuritiesRequirement(RestDefinition rest) {
+    public SecurityRequirementsDefinition(RestDefinition rest) {
         this.rest = rest;
     }
 

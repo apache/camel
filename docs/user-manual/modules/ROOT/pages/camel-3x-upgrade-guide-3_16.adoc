@@ -138,6 +138,16 @@ Renamed the following classes in package `org.apache.camel.model.rest`:
 - `PatchVerbDefinition` to `PatchDefinition`
 - `PostVerbDefinition` to `PostDefinition`
 - `PutVerbDefinition` to `PutDefinition`
+- `RestSecurityApiKey` to `ApiKeyDefinition`
+- `RestSecurityBasicAuth` to `BasicAuthDefinition`
+- `RestSecurityBearerToken` to `BearerTokenDefinition`
+- `RestSecurityMultalTLS` to `MutalTLSDefinition`
+- `RestSecurityOAuth2` to `OAuth2Definition`
+- `RestSecurityOpenIdConnect` to `OpenIdConnectDefinition`
+- `RestOperationParamDefinition` to `ParamDefinition`
+- `RestOperationResponseHeaderDefinition` to `ResponseHeaderDefinition`
+- `RestOperationResponseMsgDefinition` to `ResponseMessageDefinition`
+- `RestSecuritiesRequirement` to `SecurityRequirementsDefinition`
 
 === Aggregate EIP
 

@@ -37,7 +37,7 @@ import org.apache.camel.util.StringHelper;
 @Metadata(label = "rest")
 @XmlRootElement(name = "param")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestOperationParamDefinition {
+public class ParamDefinition {
 
     @XmlTransient
     private VerbDefinition verb;
@@ -71,10 +71,10 @@ public class RestOperationParamDefinition {
     @XmlElement(name = "examples")
     private List<RestPropertyDefinition> examples;
 
-    public RestOperationParamDefinition() {
+    public ParamDefinition() {
     }
 
-    public RestOperationParamDefinition(VerbDefinition verb) {
+    public ParamDefinition(VerbDefinition verb) {
         this.verb = verb;
     }
 
@@ -208,7 +208,7 @@ public class RestOperationParamDefinition {
      * <p/>
      * This option is mandatory.
      */
-    public RestOperationParamDefinition name(String name) {
+    public ParamDefinition name(String name) {
         setName(name);
         return this;
     }
@@ -216,7 +216,7 @@ public class RestOperationParamDefinition {
     /**
      * Description of the parameter.
      */
-    public RestOperationParamDefinition description(String name) {
+    public ParamDefinition description(String name) {
         setDescription(name);
         return this;
     }
@@ -224,7 +224,7 @@ public class RestOperationParamDefinition {
     /**
      * The default value of the parameter.
      */
-    public RestOperationParamDefinition defaultValue(String name) {
+    public ParamDefinition defaultValue(String name) {
         setDefaultValue(name);
         return this;
     }
@@ -232,7 +232,7 @@ public class RestOperationParamDefinition {
     /**
      * Whether the parameter is required
      */
-    public RestOperationParamDefinition required(Boolean required) {
+    public ParamDefinition required(Boolean required) {
         setRequired(required);
         return this;
     }
@@ -240,7 +240,7 @@ public class RestOperationParamDefinition {
     /**
      * Sets the collection format.
      */
-    public RestOperationParamDefinition collectionFormat(CollectionFormat collectionFormat) {
+    public ParamDefinition collectionFormat(CollectionFormat collectionFormat) {
         setCollectionFormat(collectionFormat);
         return this;
     }
@@ -248,7 +248,7 @@ public class RestOperationParamDefinition {
     /**
      * The data type of the array data type
      */
-    public RestOperationParamDefinition arrayType(String arrayType) {
+    public ParamDefinition arrayType(String arrayType) {
         setArrayType(arrayType);
         return this;
     }
@@ -256,7 +256,7 @@ public class RestOperationParamDefinition {
     /**
      * The data type of the parameter such as <tt>string</tt>, <tt>integer</tt>, <tt>boolean</tt>
      */
-    public RestOperationParamDefinition dataType(String type) {
+    public ParamDefinition dataType(String type) {
         setDataType(type);
         return this;
     }
@@ -266,7 +266,7 @@ public class RestOperationParamDefinition {
      * The format is usually derived from the dataType alone. However you can set this option for more fine grained
      * control of the format in use.
      */
-    public RestOperationParamDefinition dataFormat(String type) {
+    public ParamDefinition dataFormat(String type) {
         setDataFormat(type);
         return this;
     }
@@ -274,7 +274,7 @@ public class RestOperationParamDefinition {
     /**
      * Allowed values of the parameter when its an enum type
      */
-    public RestOperationParamDefinition allowableValues(List<String> allowableValues) {
+    public ParamDefinition allowableValues(List<String> allowableValues) {
         setAllowableValues(allowableValues);
         return this;
     }
@@ -282,7 +282,7 @@ public class RestOperationParamDefinition {
     /**
      * Allowed values of the parameter when its an enum type
      */
-    public RestOperationParamDefinition allowableValues(String... allowableValues) {
+    public ParamDefinition allowableValues(String... allowableValues) {
         setAllowableValues(Arrays.asList(allowableValues));
         return this;
     }
@@ -290,7 +290,7 @@ public class RestOperationParamDefinition {
     /**
      * Allowed values of the parameter when its an enum type
      */
-    public RestOperationParamDefinition allowableValues(String allowableValues) {
+    public ParamDefinition allowableValues(String allowableValues) {
         setAllowableValues(Arrays.asList(allowableValues.split(",")));
         return this;
     }
@@ -298,7 +298,7 @@ public class RestOperationParamDefinition {
     /**
      * The parameter type such as body, form, header, path, query
      */
-    public RestOperationParamDefinition type(RestParamType type) {
+    public ParamDefinition type(RestParamType type) {
         setType(type);
         return this;
     }
@@ -306,7 +306,7 @@ public class RestOperationParamDefinition {
     /**
      * Adds a body example with the given content-type
      */
-    public RestOperationParamDefinition example(String contentType, String example) {
+    public ParamDefinition example(String contentType, String example) {
         if (examples == null) {
             examples = new ArrayList<>();
         }
@@ -317,7 +317,7 @@ public class RestOperationParamDefinition {
     /**
      * Adds a single example
      */
-    public RestOperationParamDefinition example(String example) {
+    public ParamDefinition example(String example) {
         if (examples == null) {
             examples = new ArrayList<>();
         }

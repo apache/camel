@@ -40,12 +40,12 @@ public class RestSecuritiesDefinition {
     private RestDefinition rest;
 
     @XmlElements({
-            @XmlElement(name = "apiKey", type = RestSecurityApiKey.class),
-            @XmlElement(name = "basicAuth", type = RestSecurityBasicAuth.class),
-            @XmlElement(name = "bearer", type = RestSecurityBearerToken.class),
-            @XmlElement(name = "oauth2", type = RestSecurityOAuth2.class),
-            @XmlElement(name = "openIdConnect", type = RestSecurityOpenIdConnect.class),
-            @XmlElement(name = "mutualTLS", type = RestSecurityMutualTLS.class) })
+            @XmlElement(name = "apiKey", type = ApiKeyDefinition.class),
+            @XmlElement(name = "basicAuth", type = BasicAuthDefinition.class),
+            @XmlElement(name = "bearer", type = BearerTokenDefinition.class),
+            @XmlElement(name = "oauth2", type = OAuth2Definition.class),
+            @XmlElement(name = "openIdConnect", type = OpenIdConnectDefinition.class),
+            @XmlElement(name = "mutualTLS", type = MutualTLSDefinition.class) })
     private List<RestSecurityDefinition> securityDefinitions = new ArrayList<>();
 
     public RestSecuritiesDefinition() {
@@ -66,12 +66,12 @@ public class RestSecuritiesDefinition {
         this.securityDefinitions = securityDefinitions;
     }
 
-    public RestSecurityApiKey apiKey(String key) {
+    public ApiKeyDefinition apiKey(String key) {
         return apiKey(key, null);
     }
 
-    public RestSecurityApiKey apiKey(String key, String description) {
-        RestSecurityApiKey auth = new RestSecurityApiKey(rest);
+    public ApiKeyDefinition apiKey(String key, String description) {
+        ApiKeyDefinition auth = new ApiKeyDefinition(rest);
         auth.setKey(key);
         auth.setDescription(description);
         securityDefinitions.add(auth);
@@ -83,7 +83,7 @@ public class RestSecuritiesDefinition {
     }
 
     public RestSecuritiesDefinition basicAuth(String key, String description) {
-        RestSecurityBasicAuth auth = new RestSecurityBasicAuth(rest);
+        BasicAuthDefinition auth = new BasicAuthDefinition(rest);
         securityDefinitions.add(auth);
         auth.setKey(key);
         auth.setDescription(description);
@@ -95,7 +95,7 @@ public class RestSecuritiesDefinition {
     }
 
     public RestSecuritiesDefinition bearerToken(String key, String description, String bearerFormat) {
-        RestSecurityBearerToken auth = new RestSecurityBearerToken(rest);
+        BearerTokenDefinition auth = new BearerTokenDefinition(rest);
         securityDefinitions.add(auth);
         auth.setKey(key);
         auth.setDescription(description);
@@ -108,7 +108,7 @@ public class RestSecuritiesDefinition {
     }
 
     public RestSecuritiesDefinition mutualTLS(String key, String description) {
-        RestSecurityMutualTLS auth = new RestSecurityMutualTLS(rest);
+        MutualTLSDefinition auth = new MutualTLSDefinition(rest);
         securityDefinitions.add(auth);
         auth.setKey(key);
         auth.setDescription(description);
@@ -120,7 +120,7 @@ public class RestSecuritiesDefinition {
     }
 
     public RestSecuritiesDefinition openIdConnect(String key, String description, String url) {
-        RestSecurityOpenIdConnect auth = new RestSecurityOpenIdConnect(rest);
+        OpenIdConnectDefinition auth = new OpenIdConnectDefinition(rest);
         securityDefinitions.add(auth);
         auth.setKey(key);
         auth.setDescription(description);
@@ -128,12 +128,12 @@ public class RestSecuritiesDefinition {
         return this;
     }
 
-    public RestSecurityOAuth2 oauth2(String key) {
+    public OAuth2Definition oauth2(String key) {
         return oauth2(key, null);
     }
 
-    public RestSecurityOAuth2 oauth2(String key, String description) {
-        RestSecurityOAuth2 auth = new RestSecurityOAuth2(rest);
+    public OAuth2Definition oauth2(String key, String description) {
+        OAuth2Definition auth = new OAuth2Definition(rest);
         auth.setKey(key);
         auth.setDescription(description);
         securityDefinitions.add(auth);

@@ -41,9 +41,9 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     private RestDefinition rest;
 
     @XmlElementRef
-    private List<RestOperationParamDefinition> params = new ArrayList<>();
+    private List<ParamDefinition> params = new ArrayList<>();
     @XmlElementRef
-    private List<RestOperationResponseMsgDefinition> responseMsgs = new ArrayList<>();
+    private List<ResponseMessageDefinition> responseMsgs = new ArrayList<>();
     @XmlElementRef
     private List<SecurityDefinition> security = new ArrayList<>();
 
@@ -110,25 +110,25 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
         return this;
     }
 
-    public List<RestOperationParamDefinition> getParams() {
+    public List<ParamDefinition> getParams() {
         return params;
     }
 
     /**
      * To specify the REST operation parameters.
      */
-    public void setParams(List<RestOperationParamDefinition> params) {
+    public void setParams(List<ParamDefinition> params) {
         this.params = params;
     }
 
-    public List<RestOperationResponseMsgDefinition> getResponseMsgs() {
+    public List<ResponseMessageDefinition> getResponseMsgs() {
         return responseMsgs;
     }
 
     /**
      * Sets operation response messages.
      */
-    public void setResponseMsgs(List<RestOperationResponseMsgDefinition> responseMsgs) {
+    public void setResponseMsgs(List<ResponseMessageDefinition> responseMsgs) {
         this.responseMsgs = responseMsgs;
     }
 

@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "rest,security,configuration")
 @XmlRootElement(name = "apiKey")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestSecurityApiKey extends RestSecurityDefinition {
+public class ApiKeyDefinition extends RestSecurityDefinition {
 
     @XmlAttribute(name = "name", required = true)
     @Metadata(required = true)
@@ -44,10 +44,10 @@ public class RestSecurityApiKey extends RestSecurityDefinition {
     @Metadata(javaType = "java.lang.Boolean")
     private String inCookie;
 
-    public RestSecurityApiKey() {
+    public ApiKeyDefinition() {
     }
 
-    public RestSecurityApiKey(RestDefinition rest) {
+    public ApiKeyDefinition(RestDefinition rest) {
         super(rest);
     }
 
@@ -95,7 +95,7 @@ public class RestSecurityApiKey extends RestSecurityDefinition {
         this.inCookie = inCookie;
     }
 
-    public RestSecurityApiKey withHeader(String name) {
+    public ApiKeyDefinition withHeader(String name) {
         setName(name);
         setInHeader(Boolean.toString(true));
         setInQuery(Boolean.toString(false));
@@ -103,7 +103,7 @@ public class RestSecurityApiKey extends RestSecurityDefinition {
         return this;
     }
 
-    public RestSecurityApiKey withQuery(String name) {
+    public ApiKeyDefinition withQuery(String name) {
         setName(name);
         setInQuery(Boolean.toString(true));
         setInHeader(Boolean.toString(false));
@@ -111,7 +111,7 @@ public class RestSecurityApiKey extends RestSecurityDefinition {
         return this;
     }
 
-    public RestSecurityApiKey withCookie(String name) {
+    public ApiKeyDefinition withCookie(String name) {
         setName(name);
         setInCookie(Boolean.toString(true));
         setInHeader(Boolean.toString(false));

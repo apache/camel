@@ -82,7 +82,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     private RestSecuritiesDefinition securityDefinitions;
     @XmlElement(name = "securityRequirements") // use the name Swagger/OpenAPI uses
     @Metadata(label = "security")
-    private RestSecuritiesRequirement securityRequirements;
+    private SecurityRequirementsDefinition securityRequirements;
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<>();
 
@@ -170,14 +170,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         this.securityDefinitions = securityDefinitions;
     }
 
-    public RestSecuritiesRequirement getSecurityRequirements() {
+    public SecurityRequirementsDefinition getSecurityRequirements() {
         return securityRequirements;
     }
 
     /**
      * Sets the security requirement(s) for all endpoints.
      */
-    public void setSecurityRequirements(RestSecuritiesRequirement securityRequirements) {
+    public void setSecurityRequirements(SecurityRequirementsDefinition securityRequirements) {
         this.securityRequirements = securityRequirements;
     }
 
@@ -380,7 +380,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
-    public RestOperationParamDefinition param() {
+    public ParamDefinition param() {
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
@@ -388,7 +388,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return param(verb);
     }
 
-    public RestDefinition param(RestOperationParamDefinition param) {
+    public RestDefinition param(ParamDefinition param) {
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
@@ -397,7 +397,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
-    public RestDefinition params(List<RestOperationParamDefinition> params) {
+    public RestDefinition params(List<ParamDefinition> params) {
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
@@ -406,11 +406,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
-    public RestOperationParamDefinition param(VerbDefinition verb) {
-        return new RestOperationParamDefinition(verb);
+    public ParamDefinition param(VerbDefinition verb) {
+        return new ParamDefinition(verb);
     }
 
-    public RestDefinition responseMessage(RestOperationResponseMsgDefinition msg) {
+    public RestDefinition responseMessage(ResponseMessageDefinition msg) {
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
@@ -419,7 +419,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
-    public RestOperationResponseMsgDefinition responseMessage() {
+    public ResponseMessageDefinition responseMessage() {
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
@@ -427,11 +427,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return responseMessage(verb);
     }
 
-    public RestOperationResponseMsgDefinition responseMessage(VerbDefinition verb) {
-        return new RestOperationResponseMsgDefinition(verb);
+    public ResponseMessageDefinition responseMessage(VerbDefinition verb) {
+        return new ResponseMessageDefinition(verb);
     }
 
-    public RestDefinition responseMessages(List<RestOperationResponseMsgDefinition> msgs) {
+    public RestDefinition responseMessages(List<ResponseMessageDefinition> msgs) {
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
@@ -445,7 +445,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        RestOperationResponseMsgDefinition msg = responseMessage(verb);
+        ResponseMessageDefinition msg = responseMessage(verb);
         msg.setCode(String.valueOf(code));
         msg.setMessage(message);
         return this;
@@ -456,7 +456,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        RestOperationResponseMsgDefinition response = responseMessage(verb);
+        ResponseMessageDefinition response = responseMessage(verb);
         response.setCode(code);
         response.setMessage(message);
         verb.getResponseMsgs().add(response);
@@ -592,7 +592,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         // add to last verb
         if (getVerbs().isEmpty()) {
             if (securityRequirements == null) {
-                securityRequirements = new RestSecuritiesRequirement();
+                securityRequirements = new SecurityRequirementsDefinition();
             }
             securityRequirements.securityRequirement(key, scopes);
         } else {
@@ -809,7 +809,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             } else {
                 binding.setEnableCORS(getEnableCORS());
             }
-            for (RestOperationParamDefinition param : verb.getParams()) {
+            for (ParamDefinition param : verb.getParams()) {
                 // register all the default values for the query and header parameters
                 RestParamType type = param.getType();
                 if ((RestParamType.query == type || RestParamType.header == type)
@@ -908,7 +908,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 if (bodyType.endsWith("[]")) {
                     bodyType = "List[" + bodyType.substring(0, bodyType.length() - 2) + "]";
                 }
-                RestOperationParamDefinition param = findParam(verb, RestParamType.body.name());
+                ParamDefinition param = findParam(verb, RestParamType.body.name());
                 if (param == null) {
                     // must be body type and set the model class as data type
                     param(verb).name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
@@ -979,7 +979,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 params.add("{" + key + "}");
                 //  merge if exists
                 boolean found = false;
-                for (RestOperationParamDefinition param : verb.getParams()) {
+                for (ParamDefinition param : verb.getParams()) {
                     // name is mandatory
                     String name = param.getName();
                     StringHelper.notEmpty(name, "parameter name");
@@ -1015,8 +1015,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
     }
 
-    private RestOperationParamDefinition findParam(VerbDefinition verb, String name) {
-        for (RestOperationParamDefinition param : verb.getParams()) {
+    private ParamDefinition findParam(VerbDefinition verb, String name) {
+        for (ParamDefinition param : verb.getParams()) {
             if (name.equals(param.getName())) {
                 return param;
             }

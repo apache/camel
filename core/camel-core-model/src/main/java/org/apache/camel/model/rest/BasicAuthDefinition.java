@@ -23,18 +23,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Rest security mutual TLS authentication definition
+ * Rest security basic auth definition
  */
 @Metadata(label = "rest,security,configuration")
-@XmlRootElement(name = "mutualTLS")
+@XmlRootElement(name = "basicAuth")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestSecurityMutualTLS extends RestSecurityDefinition {
+public class BasicAuthDefinition extends RestSecurityDefinition {
 
-    @SuppressWarnings("unused")
-    public RestSecurityMutualTLS() {
+    public BasicAuthDefinition() {
     }
 
-    public RestSecurityMutualTLS(RestDefinition rest) {
+    public BasicAuthDefinition(RestDefinition rest) {
         super(rest);
     }
 }
