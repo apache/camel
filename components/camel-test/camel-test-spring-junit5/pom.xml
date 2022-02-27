@@ -29,7 +29,7 @@
     <artifactId>camel-test-spring-junit5</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Test :: Spring:: JUnit5</name>
+    <name>Camel :: Test :: Spring :: JUnit5</name>
     <description>Camel unit testing with Spring and JUnit 5</description>
 
     <properties>
