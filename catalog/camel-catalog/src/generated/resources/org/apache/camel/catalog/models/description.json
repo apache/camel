@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "lang": { "kind": "attribute", "displayName": "Lang", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Language, such as en for english." },
+    "lang": { "kind": "attribute", "displayName": "Lang", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": true, "autowired": false, "secret": false, "description": "Language, such as en for english." },
     "text": { "kind": "value", "displayName": "Text", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The description as human readable text" }
   }
 }

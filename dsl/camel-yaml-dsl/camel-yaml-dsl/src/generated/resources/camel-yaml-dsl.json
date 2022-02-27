@@ -560,9 +560,6 @@
             "bean-type" : {
               "type" : "string"
             },
-            "cache" : {
-              "type" : "boolean"
-            },
             "description" : {
               "type" : "string"
             },

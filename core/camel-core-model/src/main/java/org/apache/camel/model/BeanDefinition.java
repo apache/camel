@@ -33,6 +33,12 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "bean")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
+
+    @XmlTransient
+    private Class<?> beanClass;
+    @XmlTransient
+    private Object bean;
+
     @XmlAttribute
     private String ref;
     @XmlAttribute
@@ -40,16 +46,8 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     @XmlAttribute
     private String beanType;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
-    @Deprecated
-    private String cache;
-    @XmlAttribute
-    @Metadata(defaultValue = "Singleton", enums = "Singleton,Request,Prototype")
+    @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype")
     private String scope;
-    @XmlTransient
-    private Class<?> beanClass;
-    @XmlTransient
-    private Object bean;
 
     public BeanDefinition() {
     }

@@ -196,7 +196,6 @@ public class ModelParser extends BaseParser {
         return doParse(new BeanDefinition(), (def, key, val) -> {
             switch (key) {
                 case "beanType": def.setBeanType(val); break;
-                case "cache": def.setCache(val); break;
                 case "method": def.setMethod(val); break;
                 case "ref": def.setRef(val); break;
                 case "scope": def.setScope(val); break;

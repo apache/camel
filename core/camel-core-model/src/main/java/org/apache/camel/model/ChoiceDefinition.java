@@ -42,6 +42,9 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> implements OutputNode {
+
+    private transient boolean onlyWhenOrOtherwise = true;
+
     @XmlElementRef(name = "when")
     @AsPredicate
     @Metadata(description = "Sets the when nodes")
@@ -49,8 +52,6 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
     @XmlElement
     @Metadata(description = "Sets the otherwise node")
     private OtherwiseDefinition otherwise;
-
-    private transient boolean onlyWhenOrOtherwise = true;
 
     public ChoiceDefinition() {
     }

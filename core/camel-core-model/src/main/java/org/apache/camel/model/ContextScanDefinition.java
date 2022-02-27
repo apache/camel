@@ -35,8 +35,9 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "contextScan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ContextScanDefinition {
+
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String includeNonSingletons;
     @XmlElement(name = "excludes")
     private List<String> excludes = new ArrayList<>();

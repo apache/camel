@@ -71,12 +71,16 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     private ExpressionSubElementDefinition correlationExpression;
     @XmlElement(name = "completionPredicate")
     @AsPredicate
+    @Metadata(label = "advanced")
     private ExpressionSubElementDefinition completionPredicate;
     @XmlElement(name = "completionTimeoutExpression")
+    @Metadata(label = "advanced")
     private ExpressionSubElementDefinition completionTimeoutExpression;
     @XmlElement(name = "completionSizeExpression")
+    @Metadata(label = "advanced")
     private ExpressionSubElementDefinition completionSizeExpression;
     @XmlElement(name = "optimisticLockRetryPolicy")
+    @Metadata(label = "advanced")
     private OptimisticLockRetryPolicyDefinition optimisticLockRetryPolicyDefinition;
 
     @XmlAttribute
@@ -101,9 +105,10 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     @Metadata(javaType = "org.apache.camel.AggregationStrategy")
     private String aggregationStrategy;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String aggregationStrategyMethodName;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
@@ -115,34 +120,34 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     @Metadata(javaType = "java.time.Duration")
     private String completionTimeout;
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
+    @Metadata(label = "advanced", defaultValue = "1000", javaType = "java.time.Duration")
     private String completionTimeoutCheckerInterval = "1000";
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String completionFromBatchConsumer;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String completionOnNewCorrelationGroup;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String eagerCheckCompletion;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidCorrelationKeys;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String closeCorrelationKeyOnCompletion;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String discardOnCompletionTimeout;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String discardOnAggregationFailure;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String forceCompletionOnStop;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String completeAllOnStop;
 
     public AggregateDefinition() {

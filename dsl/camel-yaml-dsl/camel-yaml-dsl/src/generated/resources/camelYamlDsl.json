@@ -464,9 +464,6 @@
             "beanType" : {
               "type" : "string"
             },
-            "cache" : {
-              "type" : "boolean"
-            },
             "description" : {
               "type" : "string"
             },

@@ -1021,7 +1021,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "bean",
             properties = {
                     @YamlProperty(name = "bean-type", type = "string"),
-                    @YamlProperty(name = "cache", type = "boolean", deprecated = true),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -1052,11 +1051,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "bean-type": {
                     String val = asText(node);
                     target.setBeanType(val);
-                    break;
-                }
-                case "cache": {
-                    String val = asText(node);
-                    target.setCache(val);
                     break;
                 }
                 case "inherit-error-handler": {
@@ -4272,7 +4266,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "description",
             properties = {
-                    @YamlProperty(name = "lang", type = "string"),
+                    @YamlProperty(name = "lang", type = "string", deprecated = true),
                     @YamlProperty(name = "text", type = "string")
             }
     )

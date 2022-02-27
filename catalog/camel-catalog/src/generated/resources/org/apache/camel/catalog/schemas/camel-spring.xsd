@@ -2939,7 +2939,7 @@ Sets the id of this node.
         <xs:attribute name="lang" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Language, such as en for english.
+Deprecated: Language, such as en for english.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -3405,13 +3405,6 @@ Sets the method name on the bean to use.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the class name (fully qualified) of the bean to use.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="cache" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: Use singleton option instead. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -4591,13 +4584,6 @@ To use a specific charset when converting.
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
         </xs:choice>
-        <xs:attribute name="executorService" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To use a custom Thread Pool if asyncDelay has been enabled.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="asyncDelayed" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -4611,6 +4597,13 @@ Default value: true
             <xs:documentation xml:lang="en"><![CDATA[
 Whether or not the caller should run the task when it was rejected by the thread
 pool. Is by default true. Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="executorService" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use a custom Thread Pool if asyncDelay has been enabled.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

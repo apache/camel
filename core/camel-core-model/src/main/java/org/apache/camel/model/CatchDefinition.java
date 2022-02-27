@@ -38,13 +38,15 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "doCatch")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CatchDefinition extends OutputDefinition<CatchDefinition> {
+
+    @XmlTransient
+    private List<Class<? extends Throwable>> exceptionClasses;
+
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<>();
     @XmlElement(name = "onWhen")
     @AsPredicate
     private WhenDefinition onWhen;
-    @XmlTransient
-    private List<Class<? extends Throwable>> exceptionClasses;
 
     public CatchDefinition() {
     }

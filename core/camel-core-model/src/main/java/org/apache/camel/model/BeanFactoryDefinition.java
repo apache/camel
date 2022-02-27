@@ -39,23 +39,27 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class BeanFactoryDefinition<
         T extends BeanFactoryDefinition<T, P>, P> {
+
     @XmlTransient
     private P parent;
-    @XmlAttribute(required = true)
-    private String name;
-    @XmlAttribute(required = true)
-    private String type;
-    @XmlAttribute
-    private String beanType;
-    @XmlElement(name = "property")
-    private List<PropertyDefinition> properties;
-    @XmlElement(name = "script")
-    private String script;
     // special for java-dsl to allow using lambda style
     @XmlTransient
     private Class<?> beanClass;
     @XmlTransient
     private RouteTemplateContext.BeanSupplier<Object> beanSupplier;
+
+    @XmlAttribute(required = true)
+    private String name;
+    @XmlAttribute(required = true)
+    private String type;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String beanType;
+    @XmlElement(name = "property")
+    private List<PropertyDefinition> properties;
+    @XmlElement(name = "script")
+    @Metadata(label = "advanced")
+    private String script;
 
     void setParent(P parent) {
         this.parent = parent;

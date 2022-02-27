@@ -31,15 +31,18 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "convertBodyTo")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinition> {
+
+    @XmlTransient
+    private Class<?> typeClass;
+
     @XmlAttribute(required = true)
     private String type;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String mandatory;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String charset;
-    @XmlTransient
-    private Class<?> typeClass;
 
     public ConvertBodyDefinition() {
     }

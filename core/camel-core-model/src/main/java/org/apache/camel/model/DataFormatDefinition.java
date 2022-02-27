@@ -32,6 +32,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
 public class DataFormatDefinition extends IdentifiedType {
+
     @XmlTransient
     private DataFormat dataFormat;
     @XmlTransient

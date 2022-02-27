@@ -39,6 +39,7 @@ import org.apache.camel.spi.annotations.DslProperty;
 public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {
 
     @XmlElement
+    @Deprecated
     private HystrixConfigurationDefinition hystrixConfiguration;
     @XmlElement
     private Resilience4jConfigurationDefinition resilience4jConfiguration;

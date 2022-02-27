@@ -149,6 +149,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      * @return      the builder
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public T description(String id, String text, String lang) {
         if (id != null) {
             setId(id);
