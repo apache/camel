@@ -52,6 +52,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.DependencyStrategy;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ObjectHelper;
@@ -268,6 +269,12 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             var dep = preConfigureDependencies(deps);
             answer.add(dep);
         }
+        // if there are configurations then include them early
+        Node configuration = nodeAt(root, "/spec/configuration");
+        if (configuration != null) {
+            var list = preConfigureConfiguration(configuration);
+            answer.addAll(list);
+        }
         // if there are sources then include them before routes
         Node sources = nodeAt(root, "/spec/sources");
         if (sources != null) {
@@ -302,6 +309,42 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 }
             }
         };
+    }
+
+    private List<CamelContextCustomizer> preConfigureConfiguration(Node node) {
+        List<CamelContextCustomizer> answer = new ArrayList<>();
+
+        final List<String> lines = new ArrayList<>();
+        SequenceNode seq = asSequenceNode(node);
+        for (Node n : seq.getValue()) {
+            MappingNode content = asMappingNode(n);
+            Map<String, Object> params = asMap(content);
+            Object type = params.get("type");
+            Object value = params.get("value");
+            if ("property".equals(type) && value != null) {
+                String line = value.toString();
+                lines.add(line);
+            }
+        }
+        answer.add(new CamelContextCustomizer() {
+            @Override
+            public void configure(CamelContext camelContext) {
+                try {
+                    PropertiesComponent pc = camelContext.getPropertiesComponent();
+                    IntegrationConfigurationPropertiesSource ps
+                            = (IntegrationConfigurationPropertiesSource) pc.getPropertiesSource("integration-configuration");
+                    if (ps == null) {
+                        ps = new IntegrationConfigurationPropertiesSource();
+                        pc.addPropertiesSource(ps);
+                    }
+                    lines.forEach(ps::parseConfigurationValue);
+                } catch (Exception e) {
+                    throw new RuntimeCamelException("Error adding properties from spec/configuration", e);
+                }
+            }
+        });
+
+        return answer;
     }
 
     private List<CamelContextCustomizer> preConfigureSources(Node node) {
