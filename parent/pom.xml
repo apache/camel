@@ -103,8 +103,8 @@
         <c3p0-version>0.9.5.5</c3p0-version>
         <caffeine-version>2.9.2</caffeine-version>
         <californium-version>2.6.5</californium-version>
-        <cassandra-driver-version>4.11.1</cassandra-driver-version>
-        <cassandra-version>3.11.11</cassandra-version>
+        <cassandra-driver-version>4.14.0</cassandra-driver-version>
+        <cassandra-version>3.11.12</cassandra-version>
         <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.2.12</cglib-version>
