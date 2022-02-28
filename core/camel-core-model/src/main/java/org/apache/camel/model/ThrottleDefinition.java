@@ -45,7 +45,6 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     @XmlElement(name = "correlationExpression")
     private ExpressionSubElementDefinition correlationExpression;
-
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorService;
@@ -53,13 +52,13 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String timePeriodMillis;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String asyncDelayed;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String callerRunsWhenRejected;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String rejectExecution;
 
     public ThrottleDefinition() {

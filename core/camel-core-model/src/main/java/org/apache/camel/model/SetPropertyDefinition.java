@@ -33,6 +33,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "setProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetPropertyDefinition extends ExpressionNode {
+
     @XmlAttribute(required = true)
     private String name;
 

@@ -37,10 +37,12 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TemplatedRoutesDefinition extends OptionalIdentifiedDefinition<TemplatedRoutesDefinition>
         implements TemplatedRouteContainer, CamelContextAware {
-    @XmlElementRef
-    private List<TemplatedRouteDefinition> templatedRoutes = new ArrayList<>();
+
     @XmlTransient
     private CamelContext camelContext;
+
+    @XmlElementRef
+    private List<TemplatedRouteDefinition> templatedRoutes = new ArrayList<>();
 
     public TemplatedRoutesDefinition() {
     }

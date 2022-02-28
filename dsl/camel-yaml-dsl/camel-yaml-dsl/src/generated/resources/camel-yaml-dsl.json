@@ -2671,27 +2671,28 @@
         }
       },
       "org.apache.camel.model.SamplingDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "description" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "inherit-error-handler" : {
-            "type" : "boolean"
-          },
-          "message-frequency" : {
-            "type" : "number"
-          },
-          "sample-period" : {
-            "type" : "string"
-          },
-          "units" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "description" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
+            "inherit-error-handler" : {
+              "type" : "boolean"
+            },
+            "message-frequency" : {
+              "type" : "number"
+            },
+            "sample-period" : {
+              "type" : "string"
+            }
           }
-        }
+        } ]
       },
       "org.apache.camel.model.ScriptDefinition" : {
         "type" : "object",

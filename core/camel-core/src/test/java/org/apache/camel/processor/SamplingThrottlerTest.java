@@ -16,12 +16,13 @@
  */
 package org.apache.camel.processor;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -163,9 +164,9 @@ public class SamplingThrottlerTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("direct:sample").sample().to("mock:result");
 
-                from("direct:sample-configured").sample(1, TimeUnit.SECONDS).to("mock:result");
+                from("direct:sample-configured").sample("1000").to("mock:result");
 
-                from("direct:sample-configured-via-dsl").sample(1, TimeUnit.SECONDS).to("mock:result");
+                from("direct:sample-configured-via-dsl").sample(Duration.of(1, ChronoUnit.SECONDS)).to("mock:result");
 
                 from("direct:sample-messageFrequency").sample(10).to("mock:result");
 

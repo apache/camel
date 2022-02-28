@@ -37,17 +37,18 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
 
     @XmlTransient
     protected EndpointProducerBuilder endpointProducerBuilder;
+
     @XmlAttribute
     @Metadata(required = true)
     private String uri;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut,InOptionalOut")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut,InOptionalOut")
     private String pattern;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String cacheSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoint;
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")

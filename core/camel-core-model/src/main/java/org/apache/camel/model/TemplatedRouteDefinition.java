@@ -43,6 +43,9 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TemplatedRouteDefinition implements CamelContextAware {
 
+    @XmlTransient
+    private CamelContext camelContext;
+
     @XmlAttribute(required = true)
     private String routeTemplateRef;
     @XmlAttribute
@@ -53,8 +56,6 @@ public class TemplatedRouteDefinition implements CamelContextAware {
     @XmlElement(name = "bean")
     @Metadata(description = "Adds a local bean as input of the template to build the route")
     private List<TemplatedRouteBeanDefinition> beans;
-    @XmlTransient
-    private CamelContext camelContext;
 
     public String getRouteTemplateRef() {
         return routeTemplateRef;

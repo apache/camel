@@ -46,14 +46,15 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     @XmlTransient
     private CamelSagaService sagaServiceBean;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.saga.CamelSagaService")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.saga.CamelSagaService")
     private String sagaService;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.model.SagaPropagation", defaultValue = "REQUIRED",
+    @Metadata(label = "advanced", javaType = "org.apache.camel.model.SagaPropagation", defaultValue = "REQUIRED",
               enums = "REQUIRED,REQUIRES_NEW,MANDATORY,SUPPORTS,NOT_SUPPORTED,NEVER")
     private String propagation;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.model.SagaCompletionMode", defaultValue = "AUTO", enums = "AUTO,MANUAL")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.model.SagaCompletionMode", defaultValue = "AUTO",
+              enums = "AUTO,MANUAL")
     private String completionMode;
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration")

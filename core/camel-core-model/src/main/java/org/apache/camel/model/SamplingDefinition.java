@@ -41,18 +41,16 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     @XmlAttribute
     @Metadata(javaType = "java.lang.Long")
     private String messageFrequency;
-    @XmlAttribute
-    @Metadata(defaultValue = "SECONDS", enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS",
-              javaType = "java.util.concurrent.TimeUnit", deprecationNote = "Use samplePeriod extended syntax instead")
-    @Deprecated
-    private String units;
 
     public SamplingDefinition() {
     }
 
+    public SamplingDefinition(String samplePeriod) {
+        this.samplePeriod = samplePeriod;
+    }
+
     public SamplingDefinition(Duration period) {
         this.samplePeriod = TimeUtils.printDuration(period);
-        this.units = TimeUnit.MILLISECONDS.name();
     }
 
     public SamplingDefinition(long samplePeriod, TimeUnit units) {
@@ -93,7 +91,7 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
      * Sets the sample message count which only a single {@link org.apache.camel.Exchange} will pass through after this
      * many received.
      *
-     * @param  messageFrequency
+     * @param  messageFrequency the message frequency
      * @return                  the builder
      */
     public SamplingDefinition sampleMessageFrequency(long messageFrequency) {
@@ -118,20 +116,19 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
      * @param  samplePeriod the period
      * @return              the builder
      */
-    public SamplingDefinition samplePeriod(long samplePeriod) {
+    public SamplingDefinition samplePeriod(String samplePeriod) {
         setSamplePeriod(samplePeriod);
         return this;
     }
 
     /**
-     * Sets the time units for the sample period, defaulting to seconds.
+     * Sets the sample period during which only a single {@link org.apache.camel.Exchange} will pass through.
      *
-     * @param  units the time unit of the sample period.
-     * @return       the builder
+     * @param  samplePeriod the period
+     * @return              the builder
      */
-    @Deprecated
-    public SamplingDefinition timeUnits(TimeUnit units) {
-        setUnits(units);
+    public SamplingDefinition samplePeriod(long samplePeriod) {
+        setSamplePeriod(samplePeriod);
         return this;
     }
 
@@ -172,24 +169,4 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
         this.messageFrequency = Long.toString(messageFrequency);
     }
 
-    /**
-     * Sets the time units for the sample period, defaulting to seconds.
-     */
-    @Deprecated
-    public void setUnits(String units) {
-        this.units = units;
-    }
-
-    /**
-     * Sets the time units for the sample period, defaulting to seconds.
-     */
-    @Deprecated
-    public void setUnits(TimeUnit units) {
-        this.units = units.name();
-    }
-
-    @Deprecated
-    public String getUnits() {
-        return units;
-    }
 }

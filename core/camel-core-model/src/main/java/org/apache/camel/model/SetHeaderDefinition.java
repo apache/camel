@@ -33,6 +33,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "setHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetHeaderDefinition extends ExpressionNode {
+
     @XmlAttribute(required = true)
     private String name;
 

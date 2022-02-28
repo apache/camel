@@ -31,6 +31,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "whenSkipSendToEndpoint")
 @XmlTransient // do not output in XSD as this is only used in a special "hack" for intercept
 public class WhenSkipSendToEndpointDefinition extends WhenDefinition {
+
     @Override
     public String getShortName() {
         return "whenSkipSendToEndpoint";

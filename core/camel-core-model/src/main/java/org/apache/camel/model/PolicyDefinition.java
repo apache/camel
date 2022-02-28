@@ -43,7 +43,7 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
     private Policy policy;
 
     @XmlAttribute(required = true)
-    protected String ref;
+    private String ref;
 
     public PolicyDefinition() {
     }

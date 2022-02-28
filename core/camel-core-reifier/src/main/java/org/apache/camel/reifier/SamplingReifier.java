@@ -36,11 +36,8 @@ public class SamplingReifier extends ProcessorReifier<SamplingDefinition> {
         if (freq != null) {
             return new SamplingThrottler(freq);
         } else {
-            // should default be 1 sample period
             long time = parseDuration(definition.getSamplePeriod(), 1);
-            // should default be in seconds
-            TimeUnit tu = definition.getUnits() != null ? parse(TimeUnit.class, definition.getUnits()) : TimeUnit.SECONDS;
-            return new SamplingThrottler(time, tu);
+            return new SamplingThrottler(time, TimeUnit.MILLISECONDS);
         }
     }
 }

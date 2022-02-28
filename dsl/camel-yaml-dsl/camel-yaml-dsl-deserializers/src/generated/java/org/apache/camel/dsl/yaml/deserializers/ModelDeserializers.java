@@ -13229,6 +13229,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            inline = true,
             types = org.apache.camel.model.SamplingDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "sample",
@@ -13237,8 +13238,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "message-frequency", type = "number"),
-                    @YamlProperty(name = "sample-period", type = "string"),
-                    @YamlProperty(name = "units", type = "string", deprecated = true)
+                    @YamlProperty(name = "sample-period", type = "string")
             }
     )
     public static class SamplingDefinitionDeserializer extends YamlDeserializerBase<SamplingDefinition> {
@@ -13249,6 +13249,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected SamplingDefinition newInstance() {
             return new SamplingDefinition();
+        }
+
+        @Override
+        protected SamplingDefinition newInstance(String value) {
+            return new SamplingDefinition(value);
         }
 
         @Override
@@ -13268,11 +13273,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "sample-period": {
                     String val = asText(node);
                     target.setSamplePeriod(val);
-                    break;
-                }
-                case "units": {
-                    String val = asText(node);
-                    target.setUnits(val);
                     break;
                 }
                 case "id": {

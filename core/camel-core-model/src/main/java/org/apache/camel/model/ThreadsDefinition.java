@@ -53,24 +53,24 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
     @Metadata(javaType = "java.lang.Long")
     private String keepAliveTime;
     @XmlAttribute
-    @Metadata(javaType = "java.util.concurrent.TimeUnit",
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.TimeUnit",
               enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
     private String timeUnit;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String maxQueueSize;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String allowCoreThreadTimeOut;
     @XmlAttribute
     @Metadata(defaultValue = "Threads")
     private String threadName;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
+    @Metadata(label = "advanced", javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
               enums = "Abort,CallerRuns,DiscardOldest,Discard")
     private String rejectedPolicy;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(label = "advanced", defaultValue = "true")
     private String callerRunsWhenRejected;
 
     public ThreadsDefinition() {

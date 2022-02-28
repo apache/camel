@@ -35,6 +35,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "sort")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SortDefinition<T> extends ExpressionNode {
+
     @XmlTransient
     private Comparator<? super T> comparatorBean;
     @XmlAttribute

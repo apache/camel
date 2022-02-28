@@ -575,9 +575,9 @@ public class ModelParser extends BaseParser {
         return doParse(new LoadBalanceDefinition(),
             processorDefinitionAttributeHandler(), (def, key) -> {
             switch (key) {
+                case "customLoadBalancer": def.setLoadBalancerType(doParseCustomLoadBalancerDefinition()); break;
                 case "failover": def.setLoadBalancerType(doParseFailoverLoadBalancerDefinition()); break;
                 case "random": def.setLoadBalancerType(doParseRandomLoadBalancerDefinition()); break;
-                case "customLoadBalancer": def.setLoadBalancerType(doParseCustomLoadBalancerDefinition()); break;
                 case "roundRobin": def.setLoadBalancerType(doParseRoundRobinLoadBalancerDefinition()); break;
                 case "sticky": def.setLoadBalancerType(doParseStickyLoadBalancerDefinition()); break;
                 case "topic": def.setLoadBalancerType(doParseTopicLoadBalancerDefinition()); break;
@@ -586,10 +586,6 @@ public class ModelParser extends BaseParser {
             }
             return true;
         }, noValueHandler());
-    }
-    protected LoadBalancerDefinition doParseLoadBalancerDefinition() throws IOException, XmlPullParserException {
-        return doParse(new LoadBalancerDefinition(), 
-            identifiedTypeAttributeHandler(),  noElementHandler(), noValueHandler());
     }
     protected LogDefinition doParseLogDefinition() throws IOException, XmlPullParserException {
         return doParse(new LogDefinition(), (def, key, val) -> {
@@ -1277,7 +1273,6 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "messageFrequency": def.setMessageFrequency(val); break;
                 case "samplePeriod": def.setSamplePeriod(val); break;
-                case "units": def.setUnits(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;

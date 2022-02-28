@@ -1653,9 +1653,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * which only a single exchange is allowed to pass through. All other exchanges will be stopped.
      *
      * @param  samplePeriod this is the sample interval, only one exchange is allowed through in this interval
+     * @return              the builder
+     */
+    public SamplingDefinition sample(String samplePeriod) {
+        SamplingDefinition answer = new SamplingDefinition(samplePeriod);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/sampling.html">Sampling Throttler</a> Creates a sampling throttler allowing you
+     * to extract a sample of exchanges from the traffic through a route. It is configured with a sampling period during
+     * which only a single exchange is allowed to pass through. All other exchanges will be stopped.
+     *
+     * @param  samplePeriod this is the sample interval, only one exchange is allowed through in this interval
      * @param  unit         this is the units for the samplePeriod e.g. Seconds
      * @return              the builder
      */
+    @Deprecated
     public SamplingDefinition sample(long samplePeriod, TimeUnit unit) {
         SamplingDefinition answer = new SamplingDefinition(samplePeriod, unit);
         addOutput(answer);

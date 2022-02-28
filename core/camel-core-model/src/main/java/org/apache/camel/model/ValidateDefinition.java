@@ -38,10 +38,12 @@ import org.apache.camel.spi.PredicateExceptionFactory;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ValidateDefinition extends ExpressionNode {
 
-    @XmlAttribute
-    private String predicateExceptionFactory;
     @XmlTransient
     private PredicateExceptionFactory factory;
+
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "org.apache.camel.spi.PredicateExceptionFactory")
+    private String predicateExceptionFactory;
 
     public ValidateDefinition() {
     }

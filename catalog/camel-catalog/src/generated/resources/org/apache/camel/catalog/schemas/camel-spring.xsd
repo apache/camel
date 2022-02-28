@@ -11083,14 +11083,6 @@ after this many received.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="units" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: Sets the time units for the sample period, defaulting to seconds.
-Default value: SECONDS
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -11912,13 +11904,6 @@ exchange exceeds the request limit Is by default false. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
         <xs:sequence/>
-        <xs:attribute name="ref" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Reference to the exception instance to lookup from the registry to throw.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="message" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -11931,6 +11916,13 @@ To create a new exception instance and use the given message as caused message
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The class of the exception to create using the message.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ref" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Reference to the exception instance to lookup from the registry to throw.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

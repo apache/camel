@@ -48,7 +48,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     @XmlAttribute
     @Metadata(defaultValue = ",")
     private String delimiter;
-
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.AggregationStrategy")
     private String aggregationStrategy;
