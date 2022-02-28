@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "removeHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefinition> {
+
     @XmlAttribute(required = true)
     private String name;
 

@@ -19,12 +19,17 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class PropertyDefinitions {
 
+    @XmlTransient
     private List<PropertyDefinition> properties = new ArrayList<>();
 
     @XmlElement(name = "property")

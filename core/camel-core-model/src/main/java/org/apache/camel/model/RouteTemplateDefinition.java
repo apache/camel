@@ -44,6 +44,9 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
 
+    @XmlTransient
+    private Consumer<RouteTemplateContext> configurer;
+
     @XmlElement(name = "templateParameter")
     @Metadata(description = "Adds a template parameter the route template uses")
     private List<RouteTemplateParameterDefinition> templateParameters;
@@ -52,8 +55,6 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
     private List<RouteTemplateBeanDefinition> templateBeans;
     @XmlElement(name = "route", required = true)
     private RouteDefinition route = new RouteDefinition();
-    @XmlTransient
-    private Consumer<RouteTemplateContext> configurer;
 
     public List<RouteTemplateParameterDefinition> getTemplateParameters() {
         return templateParameters;

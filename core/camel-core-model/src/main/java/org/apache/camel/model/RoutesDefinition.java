@@ -49,8 +49,6 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
 
     private static final Logger LOG = LoggerFactory.getLogger(RoutesDefinition.class);
 
-    @XmlElementRef
-    private List<RouteDefinition> routes = new ArrayList<>();
     @XmlTransient
     private List<InterceptDefinition> intercepts = new ArrayList<>();
     @XmlTransient
@@ -67,6 +65,9 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     private ErrorHandlerFactory errorHandlerFactory;
     @XmlTransient
     private Resource resource;
+
+    @XmlElementRef
+    private List<RouteDefinition> routes = new ArrayList<>();
 
     public RoutesDefinition() {
     }

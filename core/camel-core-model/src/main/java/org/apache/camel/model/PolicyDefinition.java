@@ -38,11 +38,12 @@ import org.apache.camel.spi.TransactedPolicy;
 public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
 
     @XmlTransient
-    protected Class<? extends Policy> type;
-    @XmlAttribute(required = true)
-    protected String ref;
+    private Class<? extends Policy> type;
     @XmlTransient
     private Policy policy;
+
+    @XmlAttribute(required = true)
+    protected String ref;
 
     public PolicyDefinition() {
     }

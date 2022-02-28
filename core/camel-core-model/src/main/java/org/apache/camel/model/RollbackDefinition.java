@@ -30,14 +30,15 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "rollback")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
+
+    @XmlAttribute
+    private String message;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String markRollbackOnly;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String markRollbackOnlyLast;
-    @XmlAttribute
-    private String message;
 
     public RollbackDefinition() {
     }

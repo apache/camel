@@ -11436,7 +11436,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "name", type = "string")
+                    @YamlProperty(name = "name", type = "string", required = true)
             }
     )
     public static class RemovePropertyDefinitionDeserializer extends YamlDeserializerBase<RemovePropertyDefinition> {

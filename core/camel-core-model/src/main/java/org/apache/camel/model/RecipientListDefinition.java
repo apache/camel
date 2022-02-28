@@ -63,7 +63,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String parallelAggregate;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean")
     private String parallelProcessing;
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration", defaultValue = "0")
@@ -72,7 +72,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorService;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String stopOnException;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")

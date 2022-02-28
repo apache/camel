@@ -66,7 +66,6 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.support.ExpressionAdapter;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base class for processor types that most XML types extend.
@@ -77,8 +76,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         implements Block {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
-    @XmlTransient
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     @XmlAttribute
     protected Boolean inheritErrorHandler;
     @XmlTransient
@@ -179,10 +176,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         if (context != null && (context.isSourceLocationEnabled() || context.isDebugging() || context.isTracing())) {
             // we want to capture source location:line for every output
             ProcessorDefinitionHelper.prepareSourceLocation(output);
-            if (log.isDebugEnabled()) {
-                log.debug("{} located in {}:{}", output.getShortName(), output.getLocation(),
-                        output.getLineNumber());
-            }
         }
 
         // inject context

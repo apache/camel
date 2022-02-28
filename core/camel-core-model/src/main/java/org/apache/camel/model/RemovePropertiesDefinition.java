@@ -31,14 +31,17 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "removeProperties")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropertiesDefinition> {
-    @XmlAttribute(required = true)
-    private String pattern;
-    @XmlAttribute
-    private String excludePattern;
+
     // in XML we cannot use String[] for attributes, so we provide a single
     // attribute instead
     @XmlTransient
     private String[] excludePatterns;
+
+    @XmlAttribute(required = true)
+    private String pattern;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String excludePattern;
 
     public RemovePropertiesDefinition() {
     }

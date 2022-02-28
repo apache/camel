@@ -33,6 +33,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "routeConfigurationContextRef")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteConfigurationContextRefDefinition {
+
     @XmlAttribute(required = true)
     private String ref;
 

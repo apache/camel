@@ -32,6 +32,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "property")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertyDefinition {
+
     @XmlAttribute(required = true)
     private String key;
     @XmlAttribute(required = true)

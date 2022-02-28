@@ -33,11 +33,14 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "packageScan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PackageScanDefinition {
+
     @XmlElement(name = "package", required = true)
     private List<String> packages = new ArrayList<>();
     @XmlElement
+    @Metadata(label = "advanced")
     private List<String> excludes = new ArrayList<>();
     @XmlElement
+    @Metadata(label = "advanced")
     private List<String> includes = new ArrayList<>();
 
     public PackageScanDefinition() {

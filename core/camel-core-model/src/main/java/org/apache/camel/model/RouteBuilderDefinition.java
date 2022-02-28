@@ -35,6 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "routeBuilder")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteBuilderDefinition extends IdentifiedType {
+
     @XmlAttribute(required = true)
     private String ref;
 

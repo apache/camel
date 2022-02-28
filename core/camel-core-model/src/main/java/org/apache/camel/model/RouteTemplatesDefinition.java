@@ -38,12 +38,14 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<RouteTemplatesDefinition>
         implements RouteTemplateContainer, CamelContextAware {
-    @XmlElementRef
-    private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
+
     @XmlTransient
     private CamelContext camelContext;
     @XmlTransient
     private ErrorHandlerFactory errorHandlerFactory;
+
+    @XmlElementRef
+    private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
 
     public RouteTemplatesDefinition() {
     }

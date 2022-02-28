@@ -737,10 +737,6 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
                 || getCamelContext().isTracing())) {
             // we want to capture source location:line for every output
             ProcessorDefinitionHelper.prepareSourceLocation(input);
-            if (log.isDebugEnabled()) {
-                log.debug("{} located in {}:{}", input.getShortName(), input.getLocation(),
-                        input.getLineNumber());
-            }
         }
     }
 
@@ -815,6 +811,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * May be null.
      */
     @XmlAttribute
+    @Metadata(label = "advanced")
     public void setGroup(String group) {
         this.group = group;
     }
@@ -862,7 +859,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * Whether message history is enabled on this route.
      */
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
     }
@@ -878,7 +875,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * Whether security mask for Logging is enabled on this route.
      */
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     public void setLogMask(String logMask) {
         this.logMask = logMask;
     }
@@ -894,7 +891,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * Whether to slow down processing messages by a given delay in msec.
      */
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long")
+    @Metadata(label = "advanced", javaType = "java.lang.Long")
     public void setDelayer(String delayer) {
         this.delayer = delayer;
     }
@@ -926,7 +923,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * To configure the ordering of the routes being started
      */
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
     public void setStartupOrder(Integer startupOrder) {
         this.startupOrder = startupOrder;
     }
@@ -996,7 +993,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * To control how to shutdown the route.
      */
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.ShutdownRoute", defaultValue = "Default", enums = "Default,Defer")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.ShutdownRoute", defaultValue = "Default",
+              enums = "Default,Defer")
     public void setShutdownRoute(String shutdownRoute) {
         this.shutdownRoute = shutdownRoute;
     }
@@ -1012,7 +1010,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * To control how to shutdown the route.
      */
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.ShutdownRunningTask", defaultValue = "CompleteCurrentTaskOnly",
+    @Metadata(label = "advanced", javaType = "org.apache.camel.ShutdownRunningTask", defaultValue = "CompleteCurrentTaskOnly",
               enums = "CompleteCurrentTaskOnly,CompleteAllTasks")
     public void setShutdownRunningTask(String shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
@@ -1047,6 +1045,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     }
 
     @XmlAttribute
+    @Metadata(label = "advanced")
     public Boolean isRest() {
         return rest;
     }
@@ -1059,6 +1058,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     }
 
     @XmlAttribute
+    @Metadata(label = "advanced")
     public Boolean isTemplate() {
         return template;
     }
@@ -1086,6 +1086,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     }
 
     @XmlElementRef(required = false)
+    @Metadata(label = "advanced")
     public void setInputType(InputTypeDefinition inputType) {
         this.inputType = inputType;
     }
@@ -1095,6 +1096,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     }
 
     @XmlElementRef(required = false)
+    @Metadata(label = "advanced")
     public void setOutputType(OutputTypeDefinition outputType) {
         this.outputType = outputType;
     }

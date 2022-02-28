@@ -2274,7 +2274,8 @@
               "type" : "string"
             }
           }
-        } ]
+        } ],
+        "required" : [ "name" ]
       },
       "org.apache.camel.model.ResequenceDefinition" : {
         "type" : "object",

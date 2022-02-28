@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "templateParameter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplateParameterDefinition {
+
     @XmlAttribute(required = true)
     String name;
     @XmlAttribute

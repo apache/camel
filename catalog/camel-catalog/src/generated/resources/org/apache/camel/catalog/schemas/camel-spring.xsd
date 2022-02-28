@@ -9656,7 +9656,7 @@ Set output type URN.
         <xs:attribute name="validate" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Set if validation is required for this output type. Default value: false
+Whether if validation is required for this output type. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -10273,7 +10273,7 @@ in-sensitive).
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
         <xs:sequence/>
-        <xs:attribute name="name" type="xs:string">
+        <xs:attribute name="name" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Name of property to remove.
@@ -10506,6 +10506,13 @@ Reference to the rest-dsl.
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
         <xs:sequence/>
+        <xs:attribute name="message" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Message to use in rollback exception.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="markRollbackOnly" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -10519,13 +10526,6 @@ value: false
             <xs:documentation xml:lang="en"><![CDATA[
 Mark only last sub transaction for rollback only. When using sub transactions
 (if the transaction manager support this). Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="message" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Message to use in rollback exception.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
