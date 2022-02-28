@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.cdi;
 
+import javax.enterprise.inject.spi.BeanManager;
+
 import org.apache.camel.cdi.CdiCamelExtension;
 import org.jboss.weld.config.ConfigurationKey;
 import org.jboss.weld.environment.se.Weld;
@@ -24,13 +26,16 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 final class CamelCdiDeployment implements ExtensionContext.Store.CloseableResource {
 
-    private final CamelCdiContext context;
+    private final BeanManager beanManager;
     private final WeldContainer container;
 
-    CamelCdiDeployment(Class<?> test, CamelCdiContext context) {
-        this.context = context;
+    CamelCdiDeployment(Class<?> test) {
         this.container = createWeldContainer(test);
-        context.setBeanManager(container.getBeanManager());
+        this.beanManager = container.getBeanManager();
+    }
+
+    BeanManager beanManager() {
+        return beanManager;
     }
 
     private static WeldContainer createWeldContainer(Class<?> test) {
@@ -66,6 +71,5 @@ final class CamelCdiDeployment implements ExtensionContext.Store.CloseableResour
     @Override
     public void close() {
         container.shutdown();
-        context.unsetBeanManager();
     }
 }
