@@ -7428,9 +7428,6 @@
           "protobuf" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ProtobufDataFormat"
           },
-          "ref" : {
-            "type" : "string"
-          },
           "rss" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.RssDataFormat"
           },

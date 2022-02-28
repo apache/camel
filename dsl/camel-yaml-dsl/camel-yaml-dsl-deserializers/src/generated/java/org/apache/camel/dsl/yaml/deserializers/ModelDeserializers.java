@@ -3010,7 +3010,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "mime-multipart", type = "object:org.apache.camel.model.dataformat.MimeMultipartDataFormat"),
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat"),
-                    @YamlProperty(name = "ref", type = "string"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
                     @YamlProperty(name = "scheme", type = "string"),
                     @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat"),
@@ -3251,11 +3250,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "from-type": {
                     String val = asText(node);
                     target.setFromType(val);
-                    break;
-                }
-                case "ref": {
-                    String val = asText(node);
-                    target.setRef(val);
                     break;
                 }
                 case "scheme": {

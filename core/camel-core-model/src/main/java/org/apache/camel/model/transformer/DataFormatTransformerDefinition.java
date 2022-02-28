@@ -18,7 +18,6 @@ package org.apache.camel.model.transformer;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
@@ -118,20 +117,6 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
             @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
     private DataFormatDefinition dataFormatType;
-
-    @XmlAttribute
-    private String ref;
-
-    public String getRef() {
-        return ref;
-    }
-
-    /**
-     * Set the reference of the DataFormat.
-     */
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
 
     public DataFormatDefinition getDataFormatType() {
         return dataFormatType;

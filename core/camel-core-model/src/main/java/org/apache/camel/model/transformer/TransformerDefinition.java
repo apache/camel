@@ -27,17 +27,13 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Metadata;
 
 /**
- * <p>
- * Represents a {@link org.apache.camel.spi.Transformer} which declaratively transforms message content according to the
+ * Represents a {@link org.apache.camel.spi.Transformer} which declarative transforms message content according to the
  * input type declared by {@link InputTypeDefinition} and/or output type declared by {@link OutputTypeDefinition}.
- * </p>
- * <p>
+ *
  * If you specify from='java:com.example.ABC' and to='xml:XYZ', the transformer will be picked up when current message
  * type is 'java:com.example.ABC' and expected message type is 'xml:XYZ'. If you specify from='java' to='xml', then it
- * will be picked up for all of java to xml transformation. Also it's possible to specify scheme='xml' so that the
- * transformer will be picked up for all of java to xml and xml to java transformation.
- * </p>
- * {@see org.apache.camel.spi.Transformer} {@see InputTypeDefinition} {@see OutputTypeDefinition}
+ * will be picked up for all of Java to xml transformation. Also it's possible to specify scheme='xml' so that the
+ * transformer will be picked up for all of Java to xml and xml to java transformation.
  */
 @Metadata(label = "transformation")
 @XmlType(name = "transformer")

@@ -3116,13 +3116,8 @@ public class ModelParser extends BaseParser {
         };
     }
     protected DataFormatTransformerDefinition doParseDataFormatTransformerDefinition() throws IOException, XmlPullParserException {
-        return doParse(new DataFormatTransformerDefinition(), (def, key, val) -> {
-            if ("ref".equals(key)) {
-                def.setRef(val);
-                return true;
-            }
-            return transformerDefinitionAttributeHandler().accept(def, key, val);
-        }, (def, key) -> {
+        return doParse(new DataFormatTransformerDefinition(),
+            transformerDefinitionAttributeHandler(), (def, key) -> {
             DataFormatDefinition v = doParseDataFormatDefinitionRef(key);
             if (v != null) { 
                 def.setDataFormatType(v);

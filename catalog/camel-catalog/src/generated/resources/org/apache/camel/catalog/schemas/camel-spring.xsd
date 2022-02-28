@@ -14795,7 +14795,6 @@ To configure a special tag for the operations within this rest definition.
             <xs:element ref="tns:zipFile"/>
           </xs:choice>
         </xs:sequence>
-        <xs:attribute name="ref" type="xs:string"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
