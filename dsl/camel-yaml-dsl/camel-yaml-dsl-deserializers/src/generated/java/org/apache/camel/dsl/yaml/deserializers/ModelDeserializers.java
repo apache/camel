@@ -40,7 +40,6 @@ import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
-import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.LoopDefinition;
 import org.apache.camel.model.MarshalDefinition;
@@ -7940,6 +7939,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     setProperties(target, val);
                     break;
                 }
+                case "custom-load-balancer": {
+                    org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition val = asType(node, org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition.class);
+                    target.setLoadBalancerType(val);
+                    break;
+                }
                 case "failover": {
                     org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition val = asType(node, org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition.class);
                     target.setLoadBalancerType(val);
@@ -7947,11 +7951,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "random": {
                     org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition val = asType(node, org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition.class);
-                    target.setLoadBalancerType(val);
-                    break;
-                }
-                case "custom-load-balancer": {
-                    org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition val = asType(node, org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition.class);
                     target.setLoadBalancerType(val);
                     break;
                 }
@@ -7987,38 +7986,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "steps": {
                     setSteps(target, node);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.LoadBalancerDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            properties = @YamlProperty(name = "id", type = "string")
-    )
-    public static class LoadBalancerDefinitionDeserializer extends YamlDeserializerBase<LoadBalancerDefinition> {
-        public LoadBalancerDefinitionDeserializer() {
-            super(LoadBalancerDefinition.class);
-        }
-
-        @Override
-        protected LoadBalancerDefinition newInstance() {
-            return new LoadBalancerDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(LoadBalancerDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
                     break;
                 }
                 default: {

@@ -224,7 +224,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "load-balance": return new ModelDeserializers.LoadBalanceDefinitionDeserializer();
             case "loadBalance": return new ModelDeserializers.LoadBalanceDefinitionDeserializer();
             case "org.apache.camel.model.LoadBalanceDefinition": return new ModelDeserializers.LoadBalanceDefinitionDeserializer();
-            case "org.apache.camel.model.LoadBalancerDefinition": return new ModelDeserializers.LoadBalancerDefinitionDeserializer();
             case "log": return new ModelDeserializers.LogDefinitionDeserializer();
             case "org.apache.camel.model.LogDefinition": return new ModelDeserializers.LogDefinitionDeserializer();
             case "loop": return new ModelDeserializers.LoopDefinitionDeserializer();

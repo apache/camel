@@ -1440,14 +1440,6 @@
           }
         }
       },
-      "org.apache.camel.model.LoadBalancerDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          }
-        }
-      },
       "org.apache.camel.model.LogDefinition" : {
         "oneOf" : [ {
           "type" : "string"

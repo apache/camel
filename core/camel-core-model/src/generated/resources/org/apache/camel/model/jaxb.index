@@ -31,7 +31,6 @@ InterceptFromDefinition
 InterceptSendToEndpointDefinition
 KameletDefinition
 LoadBalanceDefinition
-LoadBalancerDefinition
 LogDefinition
 LoopDefinition
 MarshalDefinition

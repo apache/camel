@@ -5498,9 +5498,9 @@ specified using uri syntax, eg mynamecount=4&type=gold.
       <xs:extension base="tns:output">
         <xs:sequence>
           <xs:choice minOccurs="0">
+            <xs:element ref="tns:customLoadBalancer"/>
             <xs:element ref="tns:failover"/>
             <xs:element ref="tns:random"/>
-            <xs:element ref="tns:customLoadBalancer"/>
             <xs:element ref="tns:roundRobin"/>
             <xs:element ref="tns:sticky"/>
             <xs:element ref="tns:topic"/>
@@ -5579,9 +5579,32 @@ specified using uri syntax, eg mynamecount=4&type=gold.
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="customLoadBalancerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:loadBalancerDefinition">
+        <xs:sequence/>
+        <xs:attribute name="ref" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Refers to the custom load balancer to lookup from the registry.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType abstract="true" name="loadBalancerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:identifiedType">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="failoverLoadBalancerDefinition">
     <xs:complexContent>
-      <xs:extension base="tns:loadBalancer">
+      <xs:extension base="tns:loadBalancerDefinition">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="exception" type="xs:string">
             <xs:annotation>
@@ -5634,40 +5657,17 @@ option can be used whether or not roundRobin is enabled or not. Default value:
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="loadBalancer">
-    <xs:complexContent>
-      <xs:extension base="tns:identifiedType">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:complexType name="randomLoadBalancerDefinition">
     <xs:complexContent>
-      <xs:extension base="tns:loadBalancer">
+      <xs:extension base="tns:loadBalancerDefinition">
         <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="customLoadBalancerDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:loadBalancer">
-        <xs:sequence/>
-        <xs:attribute name="ref" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Refers to the custom load balancer to lookup from the registry.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="roundRobinLoadBalancerDefinition">
     <xs:complexContent>
-      <xs:extension base="tns:loadBalancer">
+      <xs:extension base="tns:loadBalancerDefinition">
         <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
@@ -5675,7 +5675,7 @@ Refers to the custom load balancer to lookup from the registry.
 
   <xs:complexType name="stickyLoadBalancerDefinition">
     <xs:complexContent>
-      <xs:extension base="tns:loadBalancer">
+      <xs:extension base="tns:loadBalancerDefinition">
         <xs:sequence>
           <xs:element name="correlationExpression" type="tns:expressionSubElementDefinition">
             <xs:annotation>
@@ -5691,7 +5691,7 @@ The correlation expression to use to calculate the correlation key.
 
   <xs:complexType name="topicLoadBalancerDefinition">
     <xs:complexContent>
-      <xs:extension base="tns:loadBalancer">
+      <xs:extension base="tns:loadBalancerDefinition">
         <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
@@ -5699,7 +5699,7 @@ The correlation expression to use to calculate the correlation key.
 
   <xs:complexType name="weightedLoadBalancerDefinition">
     <xs:complexContent>
-      <xs:extension base="tns:loadBalancer">
+      <xs:extension base="tns:loadBalancerDefinition">
         <xs:sequence/>
         <xs:attribute name="distributionRatio" type="xs:string" use="required">
           <xs:annotation>
