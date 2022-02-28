@@ -36,20 +36,15 @@ from("direct:start").unmarshal().any23("http://mock.foo/bar").to("mock:result");
 
 == Spring XML Example
 
-The following example shows how to use TidyMarkup
+The following example shows how to use Any23
 to unmarshal using Spring
 
-[source,java]
+[source,xml]
 -----------------------------------------------------------------------
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <dataFormats>
-      <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" >
-        <configurations>
-          <entry>
-            <key>any23.extraction.metadata.nesting</key>
-            <value>off</value>
-          </entry>
-        </configurations>
+      <any23 id="any23" baseUri="http://mock.foo/bar" outputFormat="TURTLE" >
+        <configuration key="any23.extraction.metadata.nesting" value="off"/>
         <extractors>html-head-title</extractors>
       </any23>
     </dataFormats>
@@ -73,7 +68,7 @@ If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
 the download page for the latest versions).
 
-[source,java]
+[source,xml]
 ----------------------------------------
 <dependency>
   <groupId>org.apache.camel</groupId>
