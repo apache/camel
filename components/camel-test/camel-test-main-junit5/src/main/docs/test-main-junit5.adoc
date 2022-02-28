@@ -491,7 +491,7 @@ class SomeTest {
 
 It is possible to dump the route coverage of a given test. This feature needs JMX to be enabled which is done automatically when the feature itself is enabled, it also means that the `camel-management` has to be part of the dependencies of the project to be able to use it. The feature can be enabled globally by setting the system property `CamelTestRouteCoverage` to `true`.
 
-The result is generated in `target/camel-route-coverage/${class-name}-${test-name}.xml`.
+The result is generated in `target/camel-route-coverage/_class-name_-_test-name_.xml`.
 
 === Legacy ===
 The method `isDumpRouteCoverage()` can be overridden to return `true` indicating that the feature is enabled.
