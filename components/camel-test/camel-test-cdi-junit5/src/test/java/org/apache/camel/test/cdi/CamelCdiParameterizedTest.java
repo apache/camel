@@ -41,7 +41,7 @@ class CamelCdiParameterizedTest {
     ProducerTemplate producer;
 
     @ParameterizedTest
-    @ValueSource(strings = { "hello", "parametrized", "test" })
+    @ValueSource(strings = { "hello", "parameterized", "test" })
     void test(String value) throws Exception {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(value);

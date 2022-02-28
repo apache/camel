@@ -19,12 +19,14 @@ package org.apache.camel.test.cdi;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
-import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.Extension;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.jupiter.api.extension.TestInstanceFactory;
 import org.junit.jupiter.api.extension.TestInstanceFactoryContext;
+
+import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
 
 /**
  * The JUnit 5 extension of Camel CDI, this extension allows to inject any existing beans in the test class but also the
@@ -75,26 +77,22 @@ import org.junit.jupiter.api.extension.TestInstanceFactoryContext;
  * @see AdviceRoute
  * @see Beans
  */
-public final class CamelCdiExtension implements BeforeAllCallback, TestInstanceFactory, ParameterResolver {
+public final class CamelCdiExtension implements Extension, TestInstanceFactory, ParameterResolver {
 
+    /**
+     * The namespace used to store the state of the test.
+     */
+    private static final ExtensionContext.Namespace NAMESPACE = create(CamelCdiExtension.class);
     /**
      * The name of key used to store the Camel CDI deployment.
      */
     private static final String CAMEL_CDI_DEPLOYMENT = "camel-cdi-deployment";
-    /**
-     * The CDI context from which the {@code BeanManager} is retrieved.
-     */
-    private final CamelCdiContext camelCdiContext = new CamelCdiContext();
 
     @Override
-    public void beforeAll(ExtensionContext context) {
-        getCamelCdiDeployment(context).put(CAMEL_CDI_DEPLOYMENT,
-                new CamelCdiDeployment(context.getRequiredTestClass(), camelCdiContext));
-    }
-
-    @Override
-    public Object createTestInstance(TestInstanceFactoryContext factoryContext, ExtensionContext extensionContext) {
-        final BeanManager manager = camelCdiContext.getBeanManager();
+    public Object createTestInstance(TestInstanceFactoryContext factoryContext, ExtensionContext context) {
+        final BeanManager manager = getCamelCdiDeployment(context).getOrComputeIfAbsent(
+                CAMEL_CDI_DEPLOYMENT, k -> new CamelCdiDeployment(context.getRequiredTestClass()), CamelCdiDeployment.class)
+                .beanManager();
         final Bean<?> bean = manager.getBeans(factoryContext.getTestClass(), AnyLiteral.INSTANCE).iterator().next();
         // TODO: manage lifecycle of @Dependent beans
         return manager.getReference(bean, bean.getBeanClass(), manager.createCreationalContext(bean));
@@ -108,19 +106,20 @@ public final class CamelCdiExtension implements BeforeAllCallback, TestInstanceF
     }
 
     @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
-        final BeanManager manager = camelCdiContext.getBeanManager();
+    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext context) {
+        final BeanManager manager = getCamelCdiDeployment(context).get(CAMEL_CDI_DEPLOYMENT, CamelCdiDeployment.class)
+                .beanManager();
         // TODO: use a proper CreationalContext...
         return manager.getInjectableReference(
                 new FrameworkMethodInjectionPoint(
-                        extensionContext.getRequiredTestMethod(), parameterContext.getIndex(), manager),
+                        context.getRequiredTestMethod(), parameterContext.getIndex(), manager),
                 manager.createCreationalContext(null));
     }
 
     /**
-     * @return the store in which the Camel CDI deployment of the current test class the is stored
+     * @return the store in which the Camel CDI deployment of the current test class is stored
      */
     private ExtensionContext.Store getCamelCdiDeployment(ExtensionContext context) {
-        return context.getStore(ExtensionContext.Namespace.create(getClass(), context.getRequiredTestClass()));
+        return context.getStore(NAMESPACE);
     }
 }

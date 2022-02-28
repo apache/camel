@@ -29,7 +29,7 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
  * A special annotation meant for the class of type {@code AdviceWithRouteBuilder} in order to provide the id of the
  * route to <i>advice</i> but also to indicate that the start-up of the Camel context needs to be delayed to
  * <i>advice</i> properly the route.
- *
+ * <p/>
  * In the next example, the {@code AdviceWithRouteBuilder} of type {@code ReplaceDirectWithMockBuilder} advises the
  * route whose identifier is <i>main-route</i>.
  *
@@ -56,7 +56,7 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 public @interface AdviceRoute {
 
     /**
-     * @return Gives the id of the route to <i>advice</i>.
+     * @return the id of the route to <i>advice</i>.
      */
     String value();
 }
