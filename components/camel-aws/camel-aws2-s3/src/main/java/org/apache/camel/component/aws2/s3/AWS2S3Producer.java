@@ -611,6 +611,11 @@ public class AWS2S3Producer extends DefaultProducer {
             objectMetadata.put("Content-Md5", String.valueOf(contentMD5));
         }
 
+        Map<String, String> metadata = exchange.getIn().getHeader(AWS2S3Constants.METADATA, Map.class);
+        if (metadata != null) {
+            objectMetadata.putAll(metadata);
+        }
+
         return objectMetadata;
     }
 
