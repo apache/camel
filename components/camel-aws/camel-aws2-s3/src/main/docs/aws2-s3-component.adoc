@@ -111,13 +111,12 @@ values.
 |`CamelAwsS3Acl` |`software.amazon.awssdk.services.s3.model.BucketCannedACL` |A well constructed Amazon S3 Access Control List object.
 see `software.amazon.awssdk.services.s3.model.BucketCannedACL` for more details
 
-|`CamelAwsS3Headers` |`Map<String,String>` |Support to get or set custom objectMetadata headers.
-
 |`CamelAwsS3ServerSideEncryption` |String |Sets the server-side encryption algorithm when encrypting
 the object using AWS-managed keys. For example use AES256.
 
 |`CamelAwsS3VersionId` |`String` |The version Id of the object to be stored or returned from the current operation
-|`CamelAwsS3Metadata` |`Map<String, String>` |A map of metadata stored with the object in S3.
+|`CamelAwsS3Metadata` |`Map<String, String>` |A map of metadata to be stored with the object in S3. More details about
+metadata https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingMetadata.html[here].
 |=======================================================================
 
 === Message headers set by the S3 producer
@@ -179,6 +178,8 @@ specify caching behavior along the HTTP request/reply chain.
 
 |`CamelAwsS3ServerSideEncryption` |String |The server-side encryption algorithm when encrypting the
 object using AWS-managed keys.
+|`CamelAwsS3Metadata` |`Map<String, String>` |A map of metadata stored with the object in S3. More details about
+metadata https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingMetadata.html[here].
 |=======================================================================
 
 === S3 Producer operations
