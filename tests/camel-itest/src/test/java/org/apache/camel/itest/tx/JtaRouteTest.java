@@ -32,11 +32,23 @@ public class JtaRouteTest extends CamelTestSupport {
     @EndpointInject("mock:test")
     private MockEndpoint test;
 
-    @EndpointInject("direct:requires_new")
-    private ProducerTemplate start;
+    @EndpointInject("mock:a")
+    private MockEndpoint a;
 
-    @EndpointInject("direct:route1")
+    @EndpointInject("mock:b")
+    private MockEndpoint b;
+
+    @EndpointInject("mock:c")
+    private MockEndpoint c;
+
+    @EndpointInject("direct:split_test")
+    private ProducerTemplate split;
+
+    @EndpointInject("direct:multicast_test")
     private ProducerTemplate multicast;
+
+    @EndpointInject("direct:recipient_test")
+    private ProducerTemplate recipient;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -45,21 +57,23 @@ public class JtaRouteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 context.getRegistry().bind("PROPAGATION_REQUIRES_NEW", new RequiresNewJtaTransactionPolicy());
 
-                from("direct:requires_new")
+                from("direct:split_test")
                         .transacted("PROPAGATION_REQUIRES_NEW")
+                        .to("direct:split");
+
+                from("direct:split")
                         .split(body()).delimiter("_").to("direct:splitted").end()
-                        .log("after splitter log which you will never see...")
-                        .transform().constant("requires_new");
+                        .log("after splitter log which you will never see...");
 
                 from("direct:splitted").to("mock:splitted");
 
-                from("direct:route1").routeId("r.route1")
+                from("direct:multicast_test").routeId("r.route1")
                         .log(LoggingLevel.DEBUG, "Entering route: ${routeId}")
                         .transacted()
-                        .to("direct:route2")
+                        .to("direct:multicast")
                         .log("will never get here");
 
-                from("direct:route2").routeId("r.route2")
+                from("direct:multicast").routeId("r.route2")
                         .log(LoggingLevel.DEBUG, "Entering route: ${routeId}")
                         .multicast()
                         .to("log:r.test", "direct:route3", "mock:test")
@@ -68,6 +82,13 @@ public class JtaRouteTest extends CamelTestSupport {
                 from("direct:route3").routeId("r.route3")
                         .log(LoggingLevel.DEBUG, "Entering route: ${routeId}");
 
+                from("direct:recipient_test")
+                        .transacted()
+                        .to("direct:recipient");
+
+                from("direct:recipient")
+                        .recipientList(constant("mock:a", "mock:b", "mock:c"));
+
             }
         };
     }
@@ -75,18 +96,25 @@ public class JtaRouteTest extends CamelTestSupport {
     @Test
     void testTransactedSplit() throws Exception {
         splitted.expectedBodiesReceived("requires", "new");
-
-        start.sendBody("requires_new");
-
+        split.sendBody("requires_new");
         splitted.assertIsSatisfied();
     }
 
     @Test
-    public void testMultiCast() throws InterruptedException {
+    public void testTransactedMultiCast() throws Exception {
         test.setExpectedMessageCount(1);
-
-        multicast.sendBody("direct:route1", "msg");
-
+        multicast.sendBody("multicast");
         test.assertIsSatisfied();
+    }
+
+    @Test
+    public void testTransactedRecipient() throws Exception {
+        a.setExpectedMessageCount(1);
+        b.setExpectedMessageCount(1);
+        c.setExpectedMessageCount(1);
+        recipient.sendBody("recipient");
+        a.assertIsSatisfied();
+        b.assertIsSatisfied();
+        c.assertIsSatisfied();
     }
 }

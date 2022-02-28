@@ -32,6 +32,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -227,6 +228,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                         // create a correlated copy as the new exchange to be routed in the splitter from the copy
                         // and do not share the unit of work
                         Exchange newExchange = processorExchangeFactory.createCorrelatedCopy(copy, false);
+                        newExchange.adapt(ExtendedExchange.class).setTransacted(original.isTransacted());
                         // If the splitter has an aggregation strategy
                         // then the StreamCache created by the child routes must not be
                         // closed by the unit of work of the child route, but by the unit of

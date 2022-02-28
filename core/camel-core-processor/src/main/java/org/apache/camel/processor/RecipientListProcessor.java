@@ -32,6 +32,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -287,6 +288,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             Exchange exchange, ExchangePattern pattern, boolean prototypeEndpoint) {
         // copy exchange, and do not share the unit of work
         Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
+        copy.adapt(ExtendedExchange.class).setTransacted(exchange.isTransacted());
 
         // if we share unit of work, we need to prepare the child exchange
         if (isShareUnitOfWork()) {
