@@ -41,6 +41,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     @XmlAttribute
     private String skipSendToOriginalEndpoint;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String afterUri;
 
     public InterceptSendToEndpointDefinition() {

@@ -5200,14 +5200,14 @@ Sets the uri of the endpoint to send to.
         <xs:attribute name="urn" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Set input type URN.
+The input type URN.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="validate" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Set if validation is required for this input type. Default value: false
+Whether if validation is required for this input type. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

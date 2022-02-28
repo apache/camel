@@ -30,10 +30,11 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "globalOption")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GlobalOptionDefinition {
+
     @XmlAttribute(required = true)
-    String key;
+    private String key;
     @XmlAttribute(required = true)
-    String value;
+    private String value;
 
     public GlobalOptionDefinition() {
     }

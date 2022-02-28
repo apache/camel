@@ -37,6 +37,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "intercept")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
+
     @XmlTransient
     protected final List<Processor> intercepted = new ArrayList<>();
 

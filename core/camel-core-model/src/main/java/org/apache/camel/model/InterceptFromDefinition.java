@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "interceptFrom")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptFromDefinition extends InterceptDefinition {
+
     @XmlAttribute
     protected String uri;
 
