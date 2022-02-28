@@ -36,7 +36,7 @@ import org.apache.camel.spi.Metadata;
 public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition> {
 
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
     private String fallbackViaNetwork;
 
     public OnFallbackDefinition() {

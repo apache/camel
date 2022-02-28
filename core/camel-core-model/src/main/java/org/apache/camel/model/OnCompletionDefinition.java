@@ -48,7 +48,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     private boolean routeScoped = true;
 
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.model.OnCompletionMode", defaultValue = "AfterConsumer",
+    @Metadata(label = "advanced", javaType = "org.apache.camel.model.OnCompletionMode", defaultValue = "AfterConsumer",
               enums = "AfterConsumer,BeforeConsumer")
     private String mode;
     @XmlAttribute
@@ -57,18 +57,18 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String onFailureOnly;
-    @XmlElement(name = "onWhen")
-    @AsPredicate
-    private WhenDefinition onWhen;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String parallelProcessing;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorService;
     @XmlAttribute(name = "useOriginalMessage")
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String useOriginalMessage;
+    @XmlElement(name = "onWhen")
+    @AsPredicate
+    private WhenDefinition onWhen;
 
     public OnCompletionDefinition() {
     }
