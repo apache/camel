@@ -135,11 +135,11 @@ final class CamelMainExtension
      * Dump the route coverage for the given test if it is enabled.
      */
     private void dumpRouteCoverageIfNeeded(ExtensionContext context, long time, String currentTestName) throws Exception {
-        final Class<?> requiredTestClass = context.getRequiredTestClass();
-        final CamelMainTest annotation = requiredTestClass.getAnnotation(CamelMainTest.class);
         // if we should dump route stats, then write that to a file
-        if (isRouteCoverageEnabled(annotation)) {
-            String className = requiredTestClass.getSimpleName();
+        if (isRouteCoverageEnabled(context)) {
+            final Class<?> requiredTestClass = context.getRequiredTestClass();
+            // In case of a {@code @Nested} test class, its name will be prefixed by the name of its outer classes
+            String className = requiredTestClass.getName().substring(requiredTestClass.getPackageName().length() + 1);
             String dir = "target/camel-route-coverage";
             String name = String.format("%s-%s.xml", className, StringHelper.before(currentTestName, "("));
 
@@ -158,21 +158,16 @@ final class CamelMainExtension
     }
 
     /**
-     * Indicates whether the route coverage is enabled according to the given extension context.
+     * Indicates whether the route coverage is enabled according to the given extension context and the value of the
+     * system property {@link org.apache.camel.test.junit5.CamelTestSupport#ROUTE_COVERAGE_ENABLED}.
+     * <p/>
+     * In case of {@code @Nested} test classes, the value is always extracted from the annotation of the outer class.
      * 
      * @return {@code true} if the route coverage is enabled, {@code false} otherwise.
      */
     private boolean isRouteCoverageEnabled(ExtensionContext context) {
-        return isRouteCoverageEnabled(context.getRequiredTestClass().getAnnotation(CamelMainTest.class));
-    }
-
-    /**
-     * Indicates whether the route coverage is enabled according to the given annotation and the value of the system
-     * property {@link org.apache.camel.test.junit5.CamelTestSupport#ROUTE_COVERAGE_ENABLED}.
-     * 
-     * @return {@code true} if the route coverage is enabled, {@code false} otherwise.
-     */
-    private boolean isRouteCoverageEnabled(CamelMainTest annotation) {
-        return "true".equalsIgnoreCase(System.getProperty(ROUTE_COVERAGE_ENABLED, "false")) || annotation.dumpRouteCoverage();
+        return "true".equalsIgnoreCase(System.getProperty(ROUTE_COVERAGE_ENABLED, "false"))
+                || context.getRequiredTestInstances().getAllInstances().get(0).getClass()
+                        .getAnnotation(CamelMainTest.class).dumpRouteCoverage();
     }
 }

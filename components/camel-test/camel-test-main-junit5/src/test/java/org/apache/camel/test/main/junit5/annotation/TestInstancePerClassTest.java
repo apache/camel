@@ -23,6 +23,7 @@ import org.apache.camel.test.main.junit5.CamelMainTest;
 import org.apache.camel.test.main.junit5.common.MyMainClass;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -65,5 +66,28 @@ class TestInstancePerClassTest {
         int result = template.requestBody((Object) null, Integer.class);
         mock.assertIsSatisfied();
         assertEquals(2, result);
+    }
+
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @Nested
+    class NestedTest {
+
+        @Order(1)
+        @Test
+        void shouldSupportNestedTestLaunchedFirst() throws Exception {
+            mock.expectedBodiesReceived(3);
+            int result = template.requestBody((Object) null, Integer.class);
+            mock.assertIsSatisfied();
+            assertEquals(3, result);
+        }
+
+        @Order(2)
+        @Test
+        void shouldSupportNestedTestLaunchedSecondWithDifferentResult() throws Exception {
+            mock.expectedBodiesReceived(4);
+            int result = template.requestBody((Object) null, Integer.class);
+            mock.assertIsSatisfied();
+            assertEquals(4, result);
+        }
     }
 }

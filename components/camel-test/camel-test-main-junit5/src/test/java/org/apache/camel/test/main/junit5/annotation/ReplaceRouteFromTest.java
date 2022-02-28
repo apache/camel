@@ -23,6 +23,7 @@ import org.apache.camel.main.MainConfigurationProperties;
 import org.apache.camel.test.main.junit5.CamelMainTest;
 import org.apache.camel.test.main.junit5.Configure;
 import org.apache.camel.test.main.junit5.common.MyConfiguration;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Test class ensuring that a from endpoint can be replaced.
  */
-@CamelMainTest(replaceRouteFromWith = { "foo", "direct:foo" })
+@CamelMainTest(replaceRouteFromWith = { "foo=direct:foo" })
 class ReplaceRouteFromTest {
 
     @EndpointInject("mock:out")
@@ -51,5 +52,21 @@ class ReplaceRouteFromTest {
         String result = template.requestBody((Object) null, String.class);
         mock.assertIsSatisfied();
         assertEquals("Hello Will!", result);
+    }
+
+    @CamelMainTest(replaceRouteFromWith = { "foo=direct:bar" })
+    @Nested
+    class NestedTest {
+
+        @EndpointInject("direct:bar")
+        ProducerTemplate templateBar;
+
+        @Test
+        void shouldSupportNestedTest() throws Exception {
+            mock.expectedBodiesReceived("Hello Will!");
+            String result = templateBar.requestBody((Object) null, String.class);
+            mock.assertIsSatisfied();
+            assertEquals("Hello Will!", result);
+        }
     }
 }

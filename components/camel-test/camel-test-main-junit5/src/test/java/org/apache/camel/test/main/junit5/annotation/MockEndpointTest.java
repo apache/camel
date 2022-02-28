@@ -25,25 +25,18 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.main.MainConfigurationProperties;
 import org.apache.camel.test.main.junit5.CamelMainTest;
 import org.apache.camel.test.main.junit5.Configure;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test ensuring that endpoints matching with a pattern can be mocked.
  */
 @CamelMainTest(mockEndpoints = "*")
 class MockEndpointTest {
-
-    @EndpointInject("mock:direct:start")
-    MockEndpoint mock1;
-    @EndpointInject("mock:direct:foo")
-    MockEndpoint mock2;
-    @EndpointInject("mock:log:foo")
-    MockEndpoint mock3;
-    @EndpointInject("mock:result")
-    MockEndpoint mock4;
 
     @EndpointInject("direct:start")
     ProducerTemplate template;
@@ -61,6 +54,10 @@ class MockEndpointTest {
     void shouldMockEndpoints() throws Exception {
         // notice we have automatically mocked all endpoints and the name of the
         // endpoints is "mock:uri"
+        MockEndpoint mock1 = context.getEndpoint("mock:direct:start", MockEndpoint.class);
+        MockEndpoint mock2 = context.getEndpoint("mock:direct:foo", MockEndpoint.class);
+        MockEndpoint mock3 = context.getEndpoint("mock:log:foo", MockEndpoint.class);
+        MockEndpoint mock4 = context.getEndpoint("mock:result", MockEndpoint.class);
         mock1.expectedBodiesReceived("Hello World");
         mock2.expectedBodiesReceived("Hello World");
         mock3.expectedBodiesReceived("Bye World");
@@ -79,6 +76,37 @@ class MockEndpointTest {
         assertNotNull(context.hasEndpoint("mock:direct:start"));
         assertNotNull(context.hasEndpoint("mock:direct:foo"));
         assertNotNull(context.hasEndpoint("mock:log:foo"));
+    }
+
+    @CamelMainTest(mockEndpoints = "direct:*")
+    @Nested
+    class NestedTest {
+
+        @Test
+        void shouldSupportNestedTest() throws Exception {
+            // notice we have automatically mocked all direct endpoints and the name of the
+            // endpoints is "mock:uri"
+            MockEndpoint mock1 = context.getEndpoint("mock:direct:start", MockEndpoint.class);
+            MockEndpoint mock2 = context.getEndpoint("mock:direct:foo", MockEndpoint.class);
+            MockEndpoint mock4 = context.getEndpoint("mock:result", MockEndpoint.class);
+            mock1.expectedBodiesReceived("Hello World");
+            mock2.expectedBodiesReceived("Hello World");
+            mock4.expectedBodiesReceived("Bye World");
+
+            template.sendBody("Hello World");
+
+            assertIsSatisfied(context);
+
+            // additional test to ensure correct endpoints in registry
+            assertNotNull(context.hasEndpoint("direct:start"));
+            assertNotNull(context.hasEndpoint("direct:foo"));
+            assertNotNull(context.hasEndpoint("log:foo"));
+            assertNotNull(context.hasEndpoint("mock:result"));
+            // all the endpoints was mocked
+            assertNotNull(context.hasEndpoint("mock:direct:start"));
+            assertNotNull(context.hasEndpoint("mock:direct:foo"));
+            assertNull(context.hasEndpoint("mock:log:foo"));
+        }
     }
 
     static class MyRouteBuilder extends RouteBuilder {

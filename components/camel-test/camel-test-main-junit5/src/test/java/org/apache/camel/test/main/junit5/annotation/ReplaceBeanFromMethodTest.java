@@ -26,6 +26,7 @@ import org.apache.camel.test.main.junit5.Configure;
 import org.apache.camel.test.main.junit5.ReplaceInRegistry;
 import org.apache.camel.test.main.junit5.common.Greetings;
 import org.apache.camel.test.main.junit5.common.MyConfiguration;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,6 +67,23 @@ class ReplaceBeanFromMethodTest {
         String result = template.requestBody((Object) null, String.class);
         mock.assertIsSatisfied();
         assertEquals("Hi Will!", result);
+    }
+
+    @Nested
+    class NestedTest {
+
+        @ReplaceInRegistry
+        Greetings myGreetings() {
+            return new CustomGreetings("Willow");
+        }
+
+        @Test
+        void shouldSupportNestedTest() throws Exception {
+            mock.expectedBodiesReceived("Hi Willow!");
+            String result = template.requestBody((Object) null, String.class);
+            mock.assertIsSatisfied();
+            assertEquals("Hi Willow!", result);
+        }
     }
 
     static class CustomGreetings extends Greetings {

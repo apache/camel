@@ -14,49 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.main.junit5.annotation;
+package org.apache.camel.test.main.junit5.legacy;
 
-import org.apache.camel.EndpointInject;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.main.junit5.CamelMainTest;
-import org.apache.camel.test.main.junit5.annotation.other.MyOtherConfiguration;
+import org.apache.camel.main.MainConfigurationProperties;
+import org.apache.camel.test.main.junit5.CamelMainTestSupport;
 import org.apache.camel.test.main.junit5.common.MyConfiguration;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Test ensuring that an additional configuration class can be specified.
+ * A test class ensuring that a Camel context can be configured.
  */
-@CamelMainTest(configurationClasses = MyConfiguration.class)
-class WithConfigurationClassTest {
+class ConfigureTest extends CamelMainTestSupport {
 
-    @EndpointInject("mock:out")
-    MockEndpoint mock;
-
-    @EndpointInject("direct:in")
-    ProducerTemplate template;
-
-    @Test
-    void shouldApplyConfigurationClass() throws Exception {
-        mock.expectedBodiesReceived("Hello Will!");
-        String result = template.requestBody((Object) null, String.class);
-        mock.assertIsSatisfied();
-        assertEquals("Hello Will!", result);
+    @Override
+    protected void configure(MainConfigurationProperties configuration) {
+        // Add the configuration class
+        configuration.addConfiguration(MyConfiguration.class);
     }
 
-    @CamelMainTest(configurationClasses = MyOtherConfiguration.class)
-    @Nested
-    class NestedTest {
-
-        @Test
-        void shouldSupportNestedTest() throws Exception {
-            mock.expectedBodiesReceived("Hello Mark!");
-            String result = template.requestBody((Object) null, String.class);
-            mock.assertIsSatisfied();
-            assertEquals("Hello Mark!", result);
-        }
+    @Test
+    void shouldConfigureTheCamelContext() throws Exception {
+        MockEndpoint mock = context.getEndpoint("mock:out", MockEndpoint.class);
+        mock.expectedBodiesReceived("Hello Will!");
+        String result = template.requestBody("direct:in", null, String.class);
+        mock.assertIsSatisfied();
+        assertEquals("Hello Will!", result);
     }
 }

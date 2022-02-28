@@ -60,6 +60,9 @@ public @interface CamelMainTest {
     /**
      * Allows to specify the main class of the application to test if needed in order to simulate the same behavior as
      * with {@link org.apache.camel.main.Main#Main(Class)}.
+     * <p/>
+     * <b>Note:</b> This attribute can be set from a {@code @Nested} test classes. The value of this attribute set on
+     * the innermost class is used.
      *
      * @return the main class of the application to test if any. {@code void.class} by default indicating that there is
      *         no specific main class.
@@ -76,15 +79,18 @@ public @interface CamelMainTest {
      * <pre>
      * <code>
      *
-     * &#64;CamelMainTest(properties = { "host", "localhost", "port", "8080" })
+     * &#64;CamelMainTest(properties = { "host=localhost", "port=8080" })
      * class SomeTest {
      *     // The rest of the test class
      * }
      * </code>
      * </pre>
-     * 
-     * @return an array of {@code String} in the following order
-     *         {@code property-key-1, property-value-1, property-key-2, ...}
+     * <p/>
+     * <b>Note:</b> This attribute can be set from a {@code @Nested} test classes. The values of this attribute are
+     * added to the values of the outer classes, knowing that the values are ordered from outermost to innermost.
+     *
+     * @return an array of {@code String} in the following format
+     *         {@code "property-key-1=property-value-1", "property-key-2=property-value-2", ...}
      */
     String[] properties() default {};
 
@@ -98,14 +104,18 @@ public @interface CamelMainTest {
      * <pre>
      * <code>
      *
-     * &#64;CamelMainTest(replaceRouteFromWith = { "main-route", "direct:main" })
+     * &#64;CamelMainTest(replaceRouteFromWith = { "main-route=direct:main" })
      * class SomeTest {
      *     // The rest of the test class
      * }
      * </code>
      * </pre>
-     * 
-     * @return an array of {@code String} in the following order {@code route-id-1, new-uri-1, route-id-2, ...}
+     * <p/>
+     * <b>Note:</b> This attribute can be set from a {@code @Nested} test classes. The values of this attribute are
+     * added to the values of the outer classes, knowing that the values are ordered from outermost to innermost.
+     *
+     * @return an array of {@code String} in the following format
+     *         {@code "route-id-1=new-uri-1", "route-id-2=new-uri-2", ...}
      */
     String[] replaceRouteFromWith() default {};
 
@@ -121,6 +131,9 @@ public @interface CamelMainTest {
      * <p>
      * <b>Note:</b> Since the properties files are declared as optional, no exception is raised if they are both absent.
      * <b>Note:</b> If {@link #propertyPlaceholderLocations()} is set, the value of this attribute is ignored.
+     * <p/>
+     * <b>Note:</b> This attribute can be set from a {@code @Nested} test classes. The value of this attribute set on
+     * the innermost class is used.
      *
      * @return the file name of the property placeholder located in the same package as the test class or directly in
      *         the default package. Not set by default.
@@ -135,6 +148,9 @@ public @interface CamelMainTest {
      * the property placeholder and so on.
      * <p>
      * <b>Note:</b> If this attribute is set, the value of {@link #propertyPlaceholderFileName()} is ignored.
+     * <p/>
+     * <b>Note:</b> This attribute can be set from a {@code @Nested} test classes. The value of this attribute set on
+     * the innermost class is used.
      *
      * @return the property placeholder locations to use for the test.
      */
@@ -142,6 +158,9 @@ public @interface CamelMainTest {
 
     /**
      * Gives the additional camel configuration classes to add to the global configuration.
+     * <p/>
+     * <b>Note:</b> This attribute can be set from a {@code @Nested} test classes. The values of this attribute are
+     * added to the values of the outer classes, knowing that the values are ordered from outermost to innermost.
      *
      * @return an array of camel configuration classes.
      */
@@ -150,6 +169,9 @@ public @interface CamelMainTest {
     /**
      * Gives the mappings between the routes to advice and the corresponding route builders to call to advice the
      * routes.
+     * <p/>
+     * <b>Note:</b> This attribute can be set from a {@code @Nested} test classes. The values of this attribute are
+     * added to the values of the outer classes, knowing that the values are ordered from outermost to innermost.
      *
      * @return an array of mapping between route and route builder
      */
@@ -159,6 +181,9 @@ public @interface CamelMainTest {
      * Enable auto mocking endpoints based on the pattern.
      * <p/>
      * Return <tt>*</tt> to mock all endpoints.
+     * <p/>
+     * <b>Note:</b> This attribute can be set from a {@code @Nested} test classes. The value of this attribute set on
+     * the innermost class is used.
      *
      * @see EndpointHelper#matchEndpoint(CamelContext, String, String)
      */
@@ -168,6 +193,9 @@ public @interface CamelMainTest {
      * Enable auto mocking endpoints based on the pattern, and <b>skip</b> sending to original endpoint.
      * <p/>
      * Return <tt>*</tt> to mock all endpoints.
+     * <p/>
+     * <b>Note:</b> This attribute can be set from a {@code @Nested} test classes. The value of this attribute set on
+     * the innermost class is used.
      *
      * @see EndpointHelper#matchEndpoint(CamelContext, String, String)
      */
@@ -181,6 +209,9 @@ public @interface CamelMainTest {
      * <p/>
      * You can also turn on route coverage globally via setting JVM system property
      * <tt>CamelTestRouteCoverage=true</tt>.
+     * <p/>
+     * <b>Note:</b> This attribute can only be set on the outer class, values set on a {@code @Nested} test classes are
+     * ignored.
      *
      * @return <tt>true</tt> to write route coverage status in a xml file in the <tt>target/camel-route-coverage</tt>
      *         directory after the test has finished.
@@ -191,6 +222,9 @@ public @interface CamelMainTest {
      * Returns the timeout to use when shutting down (unit in seconds).
      * <p/>
      * Will default use 10 seconds.
+     * <p/>
+     * <b>Note:</b> This attribute can only be set on the outer class, values set on a {@code @Nested} test classes are
+     * ignored.
      *
      * @return the timeout to use
      */

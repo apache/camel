@@ -51,7 +51,10 @@ import org.apache.camel.main.MainConfigurationProperties;
  * }
  * </code>
  * </pre>
- * 
+ * <p/>
+ * This annotation can be used in {@code @Nested} test classes. The configure methods of outer classes are executed
+ * before the configure methods of inner classes.
+ *
  * @see MainConfigurationProperties
  */
 @Documented

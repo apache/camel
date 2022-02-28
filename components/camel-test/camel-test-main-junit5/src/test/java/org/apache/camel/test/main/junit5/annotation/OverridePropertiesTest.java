@@ -18,11 +18,13 @@ package org.apache.camel.test.main.junit5.annotation;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.PropertyInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.main.MainConfigurationProperties;
 import org.apache.camel.test.main.junit5.CamelMainTest;
 import org.apache.camel.test.main.junit5.Configure;
 import org.apache.camel.test.main.junit5.common.MyConfiguration;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,8 +32,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Test ensuring that the default properties can be overridden.
  */
-@CamelMainTest(properties = { "name", "John" })
+@CamelMainTest(properties = "name=John")
 class OverridePropertiesTest {
+
+    @PropertyInject("name")
+    String name;
 
     @EndpointInject("mock:out")
     MockEndpoint mock;
@@ -51,5 +56,29 @@ class OverridePropertiesTest {
         String result = template.requestBody((Object) null, String.class);
         mock.assertIsSatisfied();
         assertEquals("Hello John!", result);
+    }
+
+    @Nested
+    @CamelMainTest(properties = "name2=Willow")
+    class NestedTest {
+
+        @PropertyInject("name2")
+        String name2;
+
+        @Test
+        void shouldSupportNestedTest() throws Exception {
+            assertEquals("John", name);
+            assertEquals("Willow", name2);
+        }
+
+        @Nested
+        class SuperNestedTest {
+
+            @Test
+            void shouldSupportNestedTest() throws Exception {
+                assertEquals("John", name);
+                assertEquals("Willow", name2);
+            }
+        }
     }
 }
