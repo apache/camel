@@ -30,13 +30,15 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "xtokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLTokenizerExpression extends NamespaceAwareExpression {
+
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String headerName;
     @XmlAttribute
-    @Metadata(enums = "i,w,u,t")
+    @Metadata(label = "advanced", enums = "i,w,u,t")
     private String mode;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String group;
 
     public XMLTokenizerExpression() {

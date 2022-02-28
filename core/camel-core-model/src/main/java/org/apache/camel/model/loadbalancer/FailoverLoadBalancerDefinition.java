@@ -38,6 +38,7 @@ import org.apache.camel.spi.Metadata;
 public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     @XmlTransient
     private List<Class<?>> exceptionTypes = new ArrayList<>();
+
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<>();
     @XmlAttribute

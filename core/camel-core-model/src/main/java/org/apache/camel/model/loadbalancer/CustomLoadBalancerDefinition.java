@@ -36,6 +36,7 @@ public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @XmlTransient
     private LoadBalancer loadBalancer;
+
     @XmlAttribute(required = true)
     private String ref;
 

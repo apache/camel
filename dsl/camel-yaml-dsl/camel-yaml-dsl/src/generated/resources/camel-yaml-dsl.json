@@ -6522,7 +6522,7 @@
             "type" : "string"
           },
           "round-robin" : {
-            "type" : "string"
+            "type" : "boolean"
           }
         },
         "required" : [ "distribution-ratio" ]

@@ -33,6 +33,12 @@ import org.apache.camel.util.StringHelper;
 @XmlRootElement(name = "method")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MethodCallExpression extends ExpressionDefinition {
+
+    @XmlTransient
+    private Class<?> beanType;
+    @XmlTransient
+    private Object instance;
+
     @XmlAttribute
     private String ref;
     @XmlAttribute
@@ -40,12 +46,8 @@ public class MethodCallExpression extends ExpressionDefinition {
     @XmlAttribute(name = "beanType")
     private String beanTypeName;
     @XmlAttribute
-    @Metadata(defaultValue = "Singleton", enums = "Singleton,Request,Prototype")
+    @Metadata(label = "advanced", defaultValue = "Singleton", enums = "Singleton,Request,Prototype")
     private String scope;
-    @XmlTransient
-    private Class<?> beanType;
-    @XmlTransient
-    private Object instance;
 
     public MethodCallExpression() {
     }

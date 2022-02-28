@@ -30,6 +30,7 @@ import org.apache.camel.spi.NamespaceAware;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class NamespaceAwareExpression extends ExpressionDefinition implements NamespaceAware {
+
     @XmlTransient
     private Map<String, String> namespaces;
 

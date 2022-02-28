@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "language")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LanguageExpression extends ExpressionDefinition {
+
     @XmlAttribute(required = true)
     private String language;
 

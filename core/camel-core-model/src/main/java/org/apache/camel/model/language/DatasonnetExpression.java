@@ -35,13 +35,10 @@ public class DatasonnetExpression extends ExpressionDefinition {
 
     @XmlAttribute(name = "bodyMediaType")
     private String bodyMediaType;
-
     @XmlAttribute(name = "outputMediaType")
     private String outputMediaType;
-
     @XmlAttribute(name = "resultType")
     private String resultTypeName;
-
     @XmlTransient
     private Class<?> resultType;
 

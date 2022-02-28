@@ -34,13 +34,21 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XPathExpression extends NamespaceAwareExpression {
 
+    @XmlTransient
+    private Class<?> documentType;
+    @XmlTransient
+    private Class<?> resultType;
+    @XmlTransient
+    private XPathFactory xpathFactory;
+
     @XmlAttribute(name = "documentType")
+    @Metadata(label = "advanced")
     private String documentTypeName;
     @XmlAttribute(name = "resultType")
     @Metadata(defaultValue = "NODESET", enums = "NUMBER,STRING,BOOLEAN,NODESET,NODE")
     private String resultTypeName;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String saxon;
     @XmlAttribute
     @Metadata(label = "advanced")
@@ -49,16 +57,11 @@ public class XPathExpression extends NamespaceAwareExpression {
     @Metadata(label = "advanced")
     private String objectModel;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String logNamespaces;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String headerName;
-    @XmlTransient
-    private Class<?> documentType;
-    @XmlTransient
-    private Class<?> resultType;
-    @XmlTransient
-    private XPathFactory xpathFactory;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String threadSafety;

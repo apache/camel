@@ -35,6 +35,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "sticky")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
+
     @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
 

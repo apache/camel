@@ -35,9 +35,9 @@ import org.apache.camel.spi.Metadata;
 public class ValidatorsDefinition {
 
     @XmlElements({
-            @XmlElement(required = false, name = "endpointValidator", type = EndpointValidatorDefinition.class),
-            @XmlElement(required = false, name = "predicateValidator", type = PredicateValidatorDefinition.class),
-            @XmlElement(required = false, name = "customValidator", type = CustomValidatorDefinition.class) })
+            @XmlElement(name = "endpointValidator", type = EndpointValidatorDefinition.class),
+            @XmlElement(name = "predicateValidator", type = PredicateValidatorDefinition.class),
+            @XmlElement(name = "customValidator", type = CustomValidatorDefinition.class) })
     private List<ValidatorDefinition> validators;
 
     /**

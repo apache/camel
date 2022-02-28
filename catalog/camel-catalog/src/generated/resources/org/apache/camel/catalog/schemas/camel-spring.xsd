@@ -5722,7 +5722,7 @@ Delimiter used to specify the distribution ratio. The default value is ,
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 To enable round robin mode. By default the weighted distribution mode is used.
-The default value is false.
+The default value is false. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -13315,19 +13315,19 @@ evaluation. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="resultType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the class name of the result type (type from output).
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="singleQuotes" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether single quotes can be used as replacement for double quotes. This is
 convenient when you need to work with strings inside strings. Default value:
 true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="resultType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the class name of the result type (type from output).
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

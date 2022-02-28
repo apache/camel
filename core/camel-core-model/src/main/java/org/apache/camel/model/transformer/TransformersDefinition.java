@@ -35,9 +35,9 @@ import org.apache.camel.spi.Metadata;
 public class TransformersDefinition {
 
     @XmlElements({
-            @XmlElement(required = false, name = "dataFormatTransformer", type = DataFormatTransformerDefinition.class),
-            @XmlElement(required = false, name = "endpointTransformer", type = EndpointTransformerDefinition.class),
-            @XmlElement(required = false, name = "customTransformer", type = CustomTransformerDefinition.class) })
+            @XmlElement(name = "dataFormatTransformer", type = DataFormatTransformerDefinition.class),
+            @XmlElement(name = "endpointTransformer", type = EndpointTransformerDefinition.class),
+            @XmlElement(name = "customTransformer", type = CustomTransformerDefinition.class) })
     private List<TransformerDefinition> transformers;
 
     /**

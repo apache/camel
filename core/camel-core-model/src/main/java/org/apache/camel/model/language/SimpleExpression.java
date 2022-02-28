@@ -32,6 +32,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "simple")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SimpleExpression extends ExpressionDefinition {
+
     @XmlAttribute(name = "resultType")
     private String resultTypeName;
     @XmlTransient

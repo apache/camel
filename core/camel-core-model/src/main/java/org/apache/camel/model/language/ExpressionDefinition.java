@@ -52,6 +52,14 @@ import org.apache.camel.util.ObjectHelper;
 public class ExpressionDefinition
         implements Expression, Predicate, ExpressionFactory, ExpressionFactoryAware, PredicateFactory, PredicateFactoryAware,
         HasExpressionType {
+
+    @XmlTransient
+    private Predicate predicate;
+    @XmlTransient
+    private Expression expressionValue;
+    @XmlTransient
+    private ExpressionDefinition expressionType;
+
     @XmlAttribute
     @XmlID
     private String id;
@@ -59,14 +67,8 @@ public class ExpressionDefinition
     @Metadata(required = true)
     private String expression;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String trim;
-    @XmlTransient
-    private Predicate predicate;
-    @XmlTransient
-    private Expression expressionValue;
-    @XmlTransient
-    private ExpressionDefinition expressionType;
 
     public ExpressionDefinition() {
     }

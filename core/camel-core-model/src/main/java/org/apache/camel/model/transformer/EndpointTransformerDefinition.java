@@ -46,8 +46,6 @@ public class EndpointTransformerDefinition extends TransformerDefinition {
 
     /**
      * Set the reference of the Endpoint.
-     *
-     * @param ref reference of the Endpoint
      */
     public void setRef(String ref) {
         this.ref = ref;
@@ -59,8 +57,6 @@ public class EndpointTransformerDefinition extends TransformerDefinition {
 
     /**
      * Set the URI of the Endpoint.
-     *
-     * @param uri URI of the Endpoint
      */
     public void setUri(String uri) {
         this.uri = uri;

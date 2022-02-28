@@ -33,15 +33,15 @@ import org.apache.camel.spi.Metadata;
 public class JoorExpression extends ExpressionDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String preCompile;
+    @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    private String singleQuotes;
     @XmlAttribute(name = "resultType")
     private String resultTypeName;
     @XmlTransient
     private Class<?> resultType;
-    @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
-    private String singleQuotes;
 
     public JoorExpression() {
     }

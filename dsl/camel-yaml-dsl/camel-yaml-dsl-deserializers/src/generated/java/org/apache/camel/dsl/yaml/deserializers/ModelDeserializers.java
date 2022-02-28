@@ -17213,7 +17213,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "distribution-ratio", type = "string", required = true),
                     @YamlProperty(name = "distribution-ratio-delimiter", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "round-robin", type = "string")
+                    @YamlProperty(name = "round-robin", type = "boolean")
             }
     )
     public static class WeightedLoadBalancerDefinitionDeserializer extends YamlDeserializerBase<WeightedLoadBalancerDefinition> {

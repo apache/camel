@@ -30,7 +30,7 @@ class LoadBalanceTest extends YamlTestSupport {
                      - load-balance:
                          weighted:
                            distribution-ratio: "2,1"
-                           round-robin: "false"
+                           round-robin: false
                          steps:
                            - to: "mock:x"
                            - to: "mock:y"

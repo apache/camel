@@ -43,13 +43,13 @@ public class StreamResequencerConfig extends ResequencerConfig {
     @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String timeout;
     @XmlAttribute
-    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
+    @Metadata(label = "advanced", defaultValue = "1000", javaType = "java.time.Duration")
     private String deliveryAttemptInterval;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidExchanges;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String rejectOld;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.processor.resequencer.ExpressionResultComparator")

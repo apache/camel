@@ -40,18 +40,20 @@ public class JsonPathExpression extends ExpressionDefinition {
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String suppressExceptions;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowSimple;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowEasyPredicate;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String writeAsString;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String headerName;
     @XmlAttribute
-    @Metadata(enums = "DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES")
+    @Metadata(label = "advanced",
+              enums = "DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES")
     private String option;
 
     public JsonPathExpression() {

@@ -44,8 +44,6 @@ public class CustomValidatorDefinition extends ValidatorDefinition {
 
     /**
      * Set a bean reference of the {@link Validator}
-     *
-     * @param ref the bean reference of the Transformer
      */
     public void setRef(String ref) {
         this.ref = ref;
@@ -57,8 +55,6 @@ public class CustomValidatorDefinition extends ValidatorDefinition {
 
     /**
      * Set a class name of the {@link Validator}
-     *
-     * @param className the class name of the Validator
      */
     public void setClassName(String className) {
         this.className = className;

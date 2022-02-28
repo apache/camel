@@ -31,12 +31,14 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "weighted")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
+
     @XmlAttribute(required = true)
     private String distributionRatio;
     @XmlAttribute
-    @Metadata(defaultValue = ",")
+    @Metadata(label = "advanced", defaultValue = ",")
     private String distributionRatioDelimiter;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String roundRobin;
 
     public WeightedLoadBalancerDefinition() {

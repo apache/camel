@@ -52,8 +52,6 @@ public abstract class ValidatorDefinition {
     /**
      * Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'.
      * If you specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'.
-     * 
-     * @param type data type name
      */
     public void setType(String type) {
         this.type = type;
@@ -61,8 +59,6 @@ public abstract class ValidatorDefinition {
 
     /**
      * Set the data type using Java class.
-     * 
-     * @param clazz Java class
      */
     public void setType(Class<?> clazz) {
         this.type = new DataType(clazz).toString();

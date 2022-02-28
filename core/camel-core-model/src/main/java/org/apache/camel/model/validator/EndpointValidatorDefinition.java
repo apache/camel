@@ -48,8 +48,6 @@ public class EndpointValidatorDefinition extends ValidatorDefinition {
 
     /**
      * Set the reference of the Endpoint.
-     *
-     * @param ref reference of the Endpoint
      */
     public void setRef(String ref) {
         this.ref = ref;
@@ -61,8 +59,6 @@ public class EndpointValidatorDefinition extends ValidatorDefinition {
 
     /**
      * Set the URI of the Endpoint.
-     *
-     * @param uri URI of the Endpoint
      */
     public void setUri(String uri) {
         this.uri = uri;

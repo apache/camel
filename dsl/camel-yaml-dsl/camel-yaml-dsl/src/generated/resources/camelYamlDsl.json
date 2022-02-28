@@ -6420,7 +6420,7 @@
             "type" : "string"
           },
           "roundRobin" : {
-            "type" : "string"
+            "type" : "boolean"
           }
         },
         "required" : [ "distributionRatio" ]

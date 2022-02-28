@@ -44,8 +44,6 @@ public class CustomTransformerDefinition extends TransformerDefinition {
 
     /**
      * Set a bean reference of the {@link Transformer}
-     *
-     * @param ref the bean reference of the Transformer
      */
     public void setRef(String ref) {
         this.ref = ref;
@@ -57,8 +55,6 @@ public class CustomTransformerDefinition extends TransformerDefinition {
 
     /**
      * Set a class name of the {@link Transformer}
-     *
-     * @param className the class name of the Transformer
      */
     public void setClassName(String className) {
         this.className = className;
