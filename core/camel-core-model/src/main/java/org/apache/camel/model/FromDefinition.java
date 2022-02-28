@@ -33,13 +33,15 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "from")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> implements EndpointRequiredDefinition {
-    @XmlAttribute
-    @Metadata(required = true)
-    private String uri;
+
     @XmlTransient
     private Endpoint endpoint;
     @XmlTransient
     private EndpointConsumerBuilder endpointConsumerBuilder;
+
+    @XmlAttribute
+    @Metadata(required = true)
+    private String uri;
 
     public FromDefinition() {
     }

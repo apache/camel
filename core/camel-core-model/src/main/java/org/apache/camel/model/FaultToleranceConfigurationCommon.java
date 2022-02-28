@@ -26,43 +26,43 @@ import org.apache.camel.spi.Metadata;
 public class FaultToleranceConfigurationCommon extends IdentifiedType {
 
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", javaType = "io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker")
+    @Metadata(label = "advanced", javaType = "io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker")
     private String circuitBreaker;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "5000", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "5000", javaType = "java.time.Duration")
     private String delay;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "1", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "1", javaType = "java.lang.Integer")
     private String successThreshold;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "20", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "20", javaType = "java.lang.Integer")
     private String requestVolumeThreshold;
     @XmlAttribute
-    @Metadata(label = "circuitbreaker", defaultValue = "50", javaType = "java.lang.Integer")
+    @Metadata(defaultValue = "50", javaType = "java.lang.Integer")
     private String failureRatio;
     @XmlAttribute
-    @Metadata(label = "timeout", defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String timeoutEnabled;
     @XmlAttribute
-    @Metadata(label = "timeout", defaultValue = "1000", javaType = "java.time.Duration")
+    @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String timeoutDuration;
     @XmlAttribute
-    @Metadata(label = "timeout", defaultValue = "10", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
     private String timeoutPoolSize;
     @XmlAttribute
-    @Metadata(label = "timeout", javaType = "java.util.concurrent.ScheduledExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ScheduledExecutorService")
     private String timeoutScheduledExecutorService;
     @XmlAttribute
-    @Metadata(label = "bulkhead", defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String bulkheadEnabled;
     @XmlAttribute
-    @Metadata(label = "bulkhead", defaultValue = "10", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
     private String bulkheadMaxConcurrentCalls;
     @XmlAttribute
-    @Metadata(label = "bulkhead", defaultValue = "10", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
     private String bulkheadWaitingTaskQueue;
     @XmlAttribute
-    @Metadata(label = "bulkhead", javaType = "java.util.concurrent.ExecutorService")
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String bulkheadExecutorService;
 
     // Getter/Setter

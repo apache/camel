@@ -31,6 +31,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 @XmlRootElement(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExpressionSubElementDefinition implements HasExpressionType {
+
     @XmlElementRef
     private ExpressionDefinition expressionType;
 

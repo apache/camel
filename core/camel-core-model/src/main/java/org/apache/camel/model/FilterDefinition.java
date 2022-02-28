@@ -36,6 +36,7 @@ import org.apache.camel.spi.Metadata;
 public class FilterDefinition extends OutputExpressionNode {
 
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String statusPropertyName;
 
     public FilterDefinition() {
