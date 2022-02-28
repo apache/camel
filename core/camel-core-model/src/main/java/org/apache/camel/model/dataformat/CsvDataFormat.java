@@ -34,24 +34,28 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "csv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CsvDataFormat extends DataFormatDefinition {
+
     // Format options
     @XmlAttribute
     @Metadata(label = "advanced")
     private String formatRef;
     @XmlAttribute
-    @Metadata(enums = "DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MYSQL,RFC4180")
+    @Metadata(label = "advanced", enums = "DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MYSQL,RFC4180",
+              defaultValue = "DEFAULT")
     private String formatName;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String commentMarkerDisabled;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String commentMarker;
     @XmlAttribute
     private String delimiter;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String escapeDisabled;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String escape;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
@@ -68,9 +72,10 @@ public class CsvDataFormat extends DataFormatDefinition {
     @Metadata(javaType = "java.lang.Boolean")
     private String ignoreSurroundingSpaces;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String nullStringDisabled;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String nullString;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
@@ -85,6 +90,7 @@ public class CsvDataFormat extends DataFormatDefinition {
     @Metadata(javaType = "java.lang.Boolean")
     private String skipHeaderRecord;
     @XmlAttribute
+    @Metadata(enums = "ALL,ALL_NON_NULL,MINIMAL,NON_NUMERIC,NONE")
     private String quoteMode;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
@@ -101,7 +107,7 @@ public class CsvDataFormat extends DataFormatDefinition {
 
     // Unmarshall options
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String lazyLoad;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
@@ -110,9 +116,10 @@ public class CsvDataFormat extends DataFormatDefinition {
     @Metadata(javaType = "java.lang.Boolean")
     private String useOrderedMaps;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String recordConverterRef;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String captureHeaderRecord;
 
     public CsvDataFormat() {

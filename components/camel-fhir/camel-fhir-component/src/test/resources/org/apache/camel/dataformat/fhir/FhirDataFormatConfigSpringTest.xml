@@ -40,7 +40,7 @@
     <property name="parserErrorHandler" ref="errorHandler" />
     <property name="parserOptions" ref="parserOptions" />
     <property name="forceResourceId" ref="forceResourceId" />
-    <property name="fhirContext" ref="fhirContext"/>
+    <property name="fhirContext" value="#bean:fhirContext"/>
     <property name="serverBaseUrl" value="serverBaseUrl"/>
     <property name="prettyPrint" value="TRUE" />
     <property name="omitResourceId" value="TRUE" />
@@ -77,7 +77,7 @@
     <property name="parserErrorHandler" ref="errorHandler" />
     <property name="parserOptions" ref="parserOptions" />
     <property name="forceResourceId" ref="forceResourceId" />
-    <property name="fhirContext" ref="fhirContext"/>
+    <property name="fhirContext" value="#bean:fhirContext"/>
     <property name="serverBaseUrl" value="serverBaseUrl"/>
     <property name="prettyPrint" value="TRUE" />
     <property name="omitResourceId" value="TRUE" />

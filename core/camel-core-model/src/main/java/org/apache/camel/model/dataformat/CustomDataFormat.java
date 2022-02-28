@@ -31,6 +31,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "custom")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomDataFormat extends DataFormatDefinition {
+
     @XmlAttribute(required = true)
     private String ref;
 
