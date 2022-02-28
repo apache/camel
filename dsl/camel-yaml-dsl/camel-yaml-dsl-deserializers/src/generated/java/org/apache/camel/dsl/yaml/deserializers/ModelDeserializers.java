@@ -2399,7 +2399,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "algorithm", type = "string"),
                     @YamlProperty(name = "algorithm-parameter-ref", type = "string"),
-                    @YamlProperty(name = "buffersize", type = "number"),
+                    @YamlProperty(name = "buffer-size", type = "number"),
                     @YamlProperty(name = "crypto-provider", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "init-vector-ref", type = "string"),
@@ -2433,9 +2433,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setAlgorithmParameterRef(val);
                     break;
                 }
-                case "buffersize": {
+                case "buffer-size": {
                     String val = asText(node);
-                    target.setBuffersize(val);
+                    target.setBufferSize(val);
                     break;
                 }
                 case "crypto-provider": {

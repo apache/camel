@@ -31,16 +31,17 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "barcode")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BarcodeDataFormat extends DataFormatDefinition {
+
+    @XmlAttribute
+    private String barcodeFormat;
+    @XmlAttribute
+    private String imageType;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String width;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String height;
-    @XmlAttribute
-    private String imageType;
-    @XmlAttribute
-    private String barcodeFormat;
 
     public BarcodeDataFormat() {
         super("barcode");

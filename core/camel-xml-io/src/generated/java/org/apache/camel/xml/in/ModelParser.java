@@ -2018,7 +2018,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "algorithm": def.setAlgorithm(val); break;
                 case "algorithmParameterRef": def.setAlgorithmParameterRef(val); break;
-                case "buffersize": def.setBuffersize(val); break;
+                case "bufferSize": def.setBufferSize(val); break;
                 case "cryptoProvider": def.setCryptoProvider(val); break;
                 case "initVectorRef": def.setInitVectorRef(val); break;
                 case "inline": def.setInline(val); break;

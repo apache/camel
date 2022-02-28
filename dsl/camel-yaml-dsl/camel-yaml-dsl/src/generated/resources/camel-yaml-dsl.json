@@ -4537,7 +4537,7 @@
           "algorithm-parameter-ref" : {
             "type" : "string"
           },
-          "buffersize" : {
+          "buffer-size" : {
             "type" : "number"
           },
           "crypto-provider" : {

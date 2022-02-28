@@ -44,14 +44,14 @@ public class Any23DataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "RDF4JMODEL", enums = "NTRIPLES,TURTLE,NQUADS,RDFXML,JSONLD,RDFJSON,RDF4JMODEL",
               javaType = "org.apache.camel.dataformat.any23.Any23OutputFormat")
     private String outputFormat;
+    @XmlAttribute
+    private String baseUri;
     @XmlElement(name = "configuration")
     private List<PropertyDefinition> configuration;
     @XmlTransient
     private Map<String, String> configurations;
     @XmlElement
     private List<String> extractors;
-    @XmlAttribute
-    private String baseUri;
 
     public Any23DataFormat() {
         super("any23");

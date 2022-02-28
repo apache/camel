@@ -4438,7 +4438,7 @@
           "algorithmParameterRef" : {
             "type" : "string"
           },
-          "buffersize" : {
+          "bufferSize" : {
             "type" : "number"
           },
           "cryptoProvider" : {

@@ -21,6 +21,8 @@ public class CryptoDataFormatConfigurer extends PropertyConfigurerSupport implem
         case "algorithm": dataformat.setAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "cryptoprovider":
         case "cryptoProvider": dataformat.setCryptoProvider(property(camelContext, java.lang.String.class, value)); return true;
+        case "buffersize":
+        case "bufferSize": dataformat.setBufferSize(property(camelContext, int.class, value)); return true;
         case "macalgorithm":
         case "macAlgorithm": dataformat.setMacAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "shouldappendhmac":

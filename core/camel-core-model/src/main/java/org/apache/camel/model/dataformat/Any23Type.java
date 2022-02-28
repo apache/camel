@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * Represents the different types of bindy data formats.
+ * Represents the different types of any23 data formats.
  */
 @XmlType
 @XmlEnum

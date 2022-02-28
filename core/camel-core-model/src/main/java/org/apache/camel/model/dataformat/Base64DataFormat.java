@@ -36,9 +36,10 @@ public class Base64DataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "76", javaType = "java.lang.Integer")
     private String lineLength;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String lineSeparator;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String urlSafe;
 
     public Base64DataFormat() {

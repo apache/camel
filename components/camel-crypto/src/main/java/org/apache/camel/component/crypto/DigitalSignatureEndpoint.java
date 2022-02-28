@@ -129,12 +129,12 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
         getConfiguration().setAlgorithm(algorithm);
     }
 
-    public Integer getBuffersize() {
+    public Integer getBufferSize() {
         return getConfiguration().getBufferSize();
     }
 
-    public void setBuffersize(Integer buffersize) {
-        getConfiguration().setBufferSize(buffersize);
+    public void setBufferSize(Integer bufferSize) {
+        getConfiguration().setBufferSize(bufferSize);
     }
 
     public String getProvider() {

@@ -32,41 +32,47 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "avro")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AvroDataFormat extends DataFormatDefinition {
-    @XmlAttribute
-    private String instanceClassName;
+
+    @XmlTransient
+    private Class<?> unmarshalType;
+    @XmlTransient
+    private Class<?> jsonView;
+    @XmlTransient
+    private Class<?> collectionType;
     @XmlTransient
     private Object schema;
+
+    @XmlAttribute
+    private String instanceClassName;
     @XmlAttribute
     @Metadata(defaultValue = "ApacheAvro")
     private AvroLibrary library = AvroLibrary.ApacheAvro;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String objectMapper;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String useDefaultObjectMapper;
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
-    @XmlTransient
-    private Class<?> unmarshalType;
     @XmlAttribute(name = "jsonView")
     private String jsonViewTypeName;
-    @XmlTransient
-    private Class<?> jsonView;
     @XmlAttribute
     private String include;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String allowJmsType;
     @XmlAttribute(name = "collectionType")
+    @Metadata(label = "advanced")
     private String collectionTypeName;
-    @XmlTransient
-    private Class<?> collectionType;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String useList;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String moduleClassNames;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String moduleRefs;
     @XmlAttribute
     private String enableFeatures;
@@ -76,6 +82,7 @@ public class AvroDataFormat extends DataFormatDefinition {
     @Metadata(javaType = "java.lang.Boolean")
     private String allowUnmarshallType;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String timezone;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
@@ -86,9 +93,10 @@ public class AvroDataFormat extends DataFormatDefinition {
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String schemaResolver;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String autoDiscoverSchemaResolver;
 
     public AvroDataFormat() {

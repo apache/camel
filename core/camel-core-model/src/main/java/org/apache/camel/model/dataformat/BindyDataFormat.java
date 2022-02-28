@@ -35,21 +35,24 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "bindy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BindyDataFormat extends DataFormatDefinition {
+
+    @XmlTransient
+    private Class<?> clazz;
+
     @XmlAttribute(required = true)
     @Metadata(required = true, javaType = "org.apache.camel.model.dataformat.BindyType", enums = "Csv,Fixed,KeyValue")
     private String type;
     @XmlAttribute
     private String classType;
     @XmlAttribute
-    private String locale;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
-    private String unwrapSingleInstance;
-    @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
     private String allowEmptyStream;
-    @XmlTransient
-    private Class<?> clazz;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    private String unwrapSingleInstance;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String locale;
 
     public BindyDataFormat() {
         super("bindy");

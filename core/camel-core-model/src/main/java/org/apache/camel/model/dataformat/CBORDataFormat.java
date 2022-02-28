@@ -32,19 +32,23 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "cbor")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CBORDataFormat extends DataFormatDefinition {
+
+    @XmlTransient
+    private Class<?> collectionType;
+    @XmlTransient
+    private Class<?> unmarshalType;
+
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String objectMapper;
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String useDefaultObjectMapper;
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
-    @XmlTransient
-    private Class<?> unmarshalType;
     @XmlAttribute(name = "collectionType")
+    @Metadata(label = "advanced")
     private String collectionTypeName;
-    @XmlTransient
-    private Class<?> collectionType;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String useList;
@@ -55,7 +59,7 @@ public class CBORDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String prettyPrint;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
     private String allowJmsType;
     @XmlAttribute
     private String enableFeatures;

@@ -31,19 +31,23 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "crypto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CryptoDataFormat extends DataFormatDefinition {
+
     @XmlAttribute
     private String algorithm;
     @XmlAttribute
-    private String cryptoProvider;
-    @XmlAttribute
     private String keyRef;
     @XmlAttribute
+    @Metadata(label = "advanced")
+    private String cryptoProvider;
+    @XmlAttribute
+    @Metadata(label = "advanced")
     private String initVectorRef;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String algorithmParameterRef;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
-    private String buffersize;
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "4096")
+    private String bufferSize;
     @XmlAttribute
     @Metadata(defaultValue = "HmacSHA1")
     private String macAlgorithm = "HmacSHA1";
@@ -51,7 +55,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String shouldAppendHMAC;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
     private String inline;
 
     public CryptoDataFormat() {
@@ -64,7 +68,6 @@ public class CryptoDataFormat extends DataFormatDefinition {
 
     /**
      * The JCE algorithm name indicating the cryptographic algorithm that will be used.
-     * <p/>
      */
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
@@ -116,15 +119,15 @@ public class CryptoDataFormat extends DataFormatDefinition {
         this.algorithmParameterRef = algorithmParameterRef;
     }
 
-    public String getBuffersize() {
-        return buffersize;
+    public String getBufferSize() {
+        return bufferSize;
     }
 
     /**
      * The size of the buffer used in the signature process.
      */
-    public void setBuffersize(String buffersize) {
-        this.buffersize = buffersize;
+    public void setBufferSize(String bufferSize) {
+        this.bufferSize = bufferSize;
     }
 
     public String getMacAlgorithm() {

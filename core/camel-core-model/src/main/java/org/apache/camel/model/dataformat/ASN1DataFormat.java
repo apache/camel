@@ -32,13 +32,15 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "asn1")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ASN1DataFormat extends DataFormatDefinition {
+
+    @XmlTransient
+    private Class<?> unmarshalType;
+
+    @XmlAttribute(name = "unmarshalType")
+    private String unmarshalTypeName;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String usingIterator;
-    @XmlAttribute(name = "unmarshalType")
-    private String unmarshalTypeName;
-    @XmlTransient
-    private Class<?> unmarshalType;
 
     public ASN1DataFormat() {
         super("asn1");
@@ -65,7 +67,7 @@ public class ASN1DataFormat extends DataFormatDefinition {
     }
 
     /**
-     * If the asn1 file has more then one entry, the setting this option to true, allows to work with the splitter EIP,
+     * If the asn1 file has more than one entry, the setting this option to true, allows working with the splitter EIP,
      * to split the data using an iterator in a streaming mode.
      */
     public void setUsingIterator(String usingIterator) {

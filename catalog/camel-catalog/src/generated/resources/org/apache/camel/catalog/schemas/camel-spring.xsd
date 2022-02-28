@@ -5998,19 +5998,19 @@ provided.
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
-        <xs:attribute name="usingIterator" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-If the asn1 file has more then one entry, the setting this option to true,
-allows to work with the splitter EIP, to split the data using an iterator in a
-streaming mode. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="unmarshalType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Class to use when unmarshalling.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="usingIterator" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If the asn1 file has more than one entry, the setting this option to true,
+allows working with the splitter EIP, to split the data using an iterator in a
+streaming mode. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6197,6 +6197,20 @@ Default value: true
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
+        <xs:attribute name="barcodeFormat" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Barcode format such as QR-Code.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="imageType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Image type of the barcode such as png.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="width" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -6208,20 +6222,6 @@ Width of the barcode.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Height of the barcode.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="imageType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Image type of the barcode such as png.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="barcodeFormat" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Barcode format such as QR-Code.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6350,11 +6350,11 @@ Name of model class to use.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="locale" type="xs:string">
+        <xs:attribute name="allowEmptyStream" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-To configure a default locale to use, such as us for united states. To use the
-JVM platform default locale then use the name default.
+Whether to allow empty streams in the unmarshal process. If true, no exception
+will be thrown when a body without records is provided. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6366,11 +6366,11 @@ wrapped in a java.util.List. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="allowEmptyStream" type="xs:string">
+        <xs:attribute name="locale" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether to allow empty streams in the unmarshal process. If true, no exception
-will be thrown when a body without records is provided. Default value: false
+To configure a default locale to use, such as us for united states. To use the
+JVM platform default locale then use the name default.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6485,17 +6485,17 @@ The JCE algorithm name indicating the cryptographic algorithm that will be used.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="cryptoProvider" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The name of the JCE Security Provider that should be used.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="keyRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to the secret key to lookup from the register to use.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="cryptoProvider" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The name of the JCE Security Provider that should be used.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -6515,10 +6515,10 @@ using the given name as a java.security.spec.AlgorithmParameterSpec type.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="buffersize" type="xs:string">
+        <xs:attribute name="bufferSize" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-The size of the buffer used in the signature process.
+The size of the buffer used in the signature process. Default value: 4096
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

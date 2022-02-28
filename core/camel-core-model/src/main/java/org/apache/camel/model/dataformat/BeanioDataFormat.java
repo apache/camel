@@ -47,6 +47,7 @@ public class BeanioDataFormat extends DataFormatDefinition {
     @Metadata(javaType = "java.lang.Boolean")
     private String ignoreInvalidRecords;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String encoding;
     @XmlAttribute
     @Metadata(label = "advanced")

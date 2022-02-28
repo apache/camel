@@ -148,7 +148,7 @@ definition as follows
 
 or
 
-=== Changing the buffersize
+=== Changing the bufferSize
 
 In case you need to update the size of the buffer...
 

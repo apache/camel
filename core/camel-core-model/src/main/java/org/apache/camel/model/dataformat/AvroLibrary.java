@@ -20,11 +20,12 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * Supported Avro marshalers.
+ * Supported Avro marshallers.
  */
 @XmlType
 @XmlEnum
 public enum AvroLibrary {
+
     ApacheAvro("avro"),
     Jackson("avroJackson");
 

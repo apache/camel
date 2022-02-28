@@ -38,7 +38,7 @@ public class CryptoDataFormatReifier extends DataFormatReifier<CryptoDataFormat>
         properties.put("algorithm", definition.getAlgorithm());
         properties.put("cryptoProvider", definition.getCryptoProvider());
         properties.put("macAlgorithm", definition.getMacAlgorithm());
-        properties.put("buffersize", definition.getBuffersize());
+        properties.put("bufferSize", definition.getBufferSize());
     }
 
 }
