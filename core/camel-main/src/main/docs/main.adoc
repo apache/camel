@@ -209,6 +209,16 @@ The camel.vault.aws supports 4 options, which are listed below.
 | *camel.vault.aws.secretKey* | The AWS secret key |  | String
 |===
 
+=== Camel GCP Vault configurations
+The camel.vault.gcp supports 2 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.vault.gcp.projectId* | The GCP Project ID |  | String
+| *camel.vault.gcp.serviceAccount{zwsp}Key* | The Service Account Key location |  | String
+|===
+
 === Fault Tolerance EIP Circuit Breaker configurations
 The camel.faulttolerance supports 13 options, which are listed below.
 

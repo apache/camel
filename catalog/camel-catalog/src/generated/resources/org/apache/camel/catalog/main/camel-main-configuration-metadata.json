@@ -5,6 +5,7 @@
     { "name": "camel.health", "description": "Camel Health Check configurations", "sourceType": "org.apache.camel.main.HealthConfigurationProperties" },
     { "name": "camel.rest", "description": "Camel Rest-DSL configurations", "sourceType": "org.apache.camel.spi.RestConfiguration" },
     { "name": "camel.vault.aws", "description": "Camel AWS Vault configurations", "sourceType": "org.apache.camel.vault.AwsVaultConfiguration" },
+    { "name": "camel.vault.gcp", "description": "Camel GCP Vault configurations", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration" },
     { "name": "camel.faulttolerance", "description": "Fault Tolerance EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.FaultToleranceConfigurationProperties" },
     { "name": "camel.resilience4j", "description": "Resilience4j EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.Resilience4jConfigurationProperties" },
     { "name": "camel.hystrix", "description": "Hystrix (deprecated) EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.HystrixConfigurationProperties" },
@@ -229,6 +230,8 @@
     { "name": "camel.vault.aws.accessKey", "description": "The AWS access key", "sourceType": "org.apache.camel.vault.AwsVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
     { "name": "camel.vault.aws.defaultCredentialsProvider", "description": "Define if we want to use the AWS Default Credentials Provider or not", "sourceType": "org.apache.camel.vault.AwsVaultConfiguration", "type": "boolean", "javaType": "boolean", "defaultValue": "false" },
     { "name": "camel.vault.aws.region", "description": "The AWS region", "sourceType": "org.apache.camel.vault.AwsVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
-    { "name": "camel.vault.aws.secretKey", "description": "The AWS secret key", "sourceType": "org.apache.camel.vault.AwsVaultConfiguration", "type": "string", "javaType": "java.lang.String" }
+    { "name": "camel.vault.aws.secretKey", "description": "The AWS secret key", "sourceType": "org.apache.camel.vault.AwsVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
+    { "name": "camel.vault.gcp.projectId", "description": "The GCP Project ID", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
+    { "name": "camel.vault.gcp.serviceAccountKey", "description": "The Service Account Key location", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "string", "javaType": "java.lang.String" }
   ]
 }

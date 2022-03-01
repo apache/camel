@@ -17,7 +17,6 @@
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.vault.GcpVaultConfiguration;
 import org.apache.camel.vault.VaultConfiguration;
 
 public class VaultConfigurationProperties extends VaultConfiguration implements BootstrapCloseable {
