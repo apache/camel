@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.vault.AwsVaultConfiguration;
+import org.apache.camel.vault.GcpVaultConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class MainVaultTest {
 
     @Test
-    public void testMain() throws Exception {
+    public void testMainAws() throws Exception {
         Main main = new Main();
 
         main.addInitialProperty("camel.vault.aws.accessKey", "myKey");
@@ -51,7 +52,7 @@ public class MainVaultTest {
     }
 
     @Test
-    public void testMainFluent() throws Exception {
+    public void testMainAwsFluent() throws Exception {
         Main main = new Main();
         main.configure().vault().aws()
                 .withAccessKey("myKey")
@@ -72,6 +73,49 @@ public class MainVaultTest {
         Assertions.assertEquals("mySecret", cfg.getSecretKey());
         Assertions.assertEquals("myRegion", cfg.getRegion());
         Assertions.assertEquals(false, cfg.isDefaultCredentialsProvider());
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainGcp() throws Exception {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.vault.aws.serviceAccountKey", "file:////myKey");
+        main.addInitialProperty("camel.vault.aws.processId", "gcp-project");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        GcpVaultConfiguration cfg = context.getVaultConfiguration().gcp();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("file:////myKey", cfg.getServiceAccountKey());
+        Assertions.assertEquals("gcp-project", cfg.getProjectId());
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainGcpFluent() throws Exception {
+        Main main = new Main();
+        main.configure().vault().gcp()
+                .withServiceAccountKey("file:////myKey")
+                .withProjectId("gcp-project")
+                .end();
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        GcpVaultConfiguration cfg = context.getVaultConfiguration().gcp();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("file:////myKey", cfg.getServiceAccountKey());
+        Assertions.assertEquals("gcp-project", cfg.getProjectId());
 
         main.stop();
     }
