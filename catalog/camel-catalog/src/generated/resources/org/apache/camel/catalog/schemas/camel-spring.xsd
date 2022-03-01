@@ -592,8 +592,7 @@ Deprecated: Hystrix Circuit Breaker EIP configuration
   <xs:element name="ical" type="tns:icalDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Marshal and unmarshal iCal (.ics) documents to/from model objects provided by
-the iCal4j library.
+Marshal and unmarshal iCal (.ics) documents to/from model objects.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -665,7 +664,8 @@ Intercepts messages being sent to an endpoint
   <xs:element name="jacksonXml" type="tns:jacksonXMLDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.
+Unmarshal an XML payloads to POJOs and back using XMLMapper extension of
+Jackson.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -6981,25 +6981,18 @@ Delimited or fixed. Is by default false = delimited. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="delimiter" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The delimiter char (could be ; , or similar). Default value: ,
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="ignoreFirstRecord" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether the first line is ignored for delimited files (for the column headers).
 Is by default true. Default value: true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="textQualifier" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-If the text is qualified with a character. Uses quote character by default.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="delimiter" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The delimiter char (could be ; , or similar). Default value: ,
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7016,6 +7009,13 @@ Default value: false
             <xs:documentation xml:lang="en"><![CDATA[
 Allows for lines to be longer than expected and ignores the extra characters.
 Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="textQualifier" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If the text is qualified with a character. Uses quote character by default.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
