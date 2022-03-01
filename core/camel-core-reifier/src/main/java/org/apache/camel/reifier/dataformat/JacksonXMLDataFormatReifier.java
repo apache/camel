@@ -44,6 +44,7 @@ public class JacksonXMLDataFormatReifier extends DataFormatReifier<JacksonXMLDat
         properties.put("enableFeatures", definition.getEnableFeatures());
         properties.put("disableFeatures", definition.getDisableFeatures());
         properties.put("allowUnmarshallType", definition.getAllowUnmarshallType());
+        properties.put("timezone", definition.getTimezone());
     }
 
 }

@@ -5043,6 +5043,9 @@
           "pretty-print" : {
             "type" : "boolean"
           },
+          "timezone" : {
+            "type" : "string"
+          },
           "unmarshal-type" : {
             "type" : "string"
           },

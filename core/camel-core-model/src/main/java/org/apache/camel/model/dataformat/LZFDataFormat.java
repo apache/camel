@@ -31,6 +31,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "lzf")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LZFDataFormat extends DataFormatDefinition {
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String usingParallelCompression;

@@ -31,6 +31,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "jaxb")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
+
     @XmlAttribute(required = true)
     private String contextPath;
     @XmlAttribute
@@ -45,28 +46,31 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(javaType = "java.lang.Boolean")
     private String prettyPrint;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String objectFactory;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreJAXBElement;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String mustBeJAXBElement;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String filterNonXmlChars;
     @XmlAttribute
     private String encoding;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String fragment;
     // Partial encoding
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String partClass;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String partNamespace;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String namespacePrefixRef;
     @XmlAttribute
     @Metadata(label = "advanced")
@@ -74,6 +78,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     @XmlAttribute
     private String schemaLocation;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String noNamespaceSchemaLocation;
     @XmlAttribute
     @Metadata(label = "advanced")
@@ -121,7 +126,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
 
     /**
      * To validate against an existing schema. Your can use the prefix classpath:, file:* or *http: to specify how the
-     * resource should by resolved. You can separate multiple schema files by using the ',' character.
+     * resource should be resolved. You can separate multiple schema files by using the ',' character.
      */
     public void setSchema(String schema) {
         this.schema = schema;

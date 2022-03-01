@@ -85,7 +85,7 @@ public class AvroDataFormat extends DataFormatDefinition {
     @Metadata(label = "advanced")
     private String timezone;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String autoDiscoverObjectMapper;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",

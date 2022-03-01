@@ -76,6 +76,7 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
             properties.put("schemaResolver", asRef(definition.getSchemaResolver()));
             properties.put("autoDiscoverSchemaResolver", definition.getAutoDiscoverSchemaResolver());
             properties.put("namingStrategy", definition.getNamingStrategy());
+            properties.put("timezone", definition.getTimezone());
         }
     }
 

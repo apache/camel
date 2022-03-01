@@ -35,7 +35,6 @@ public class JsonApiDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
     private Class<?>[] dataFormatTypes;
-
     @XmlAttribute
     private Class<?> mainFormatType;
 

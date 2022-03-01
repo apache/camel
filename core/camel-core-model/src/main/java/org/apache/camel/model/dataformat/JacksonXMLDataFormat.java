@@ -32,45 +32,54 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "jacksonXml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JacksonXMLDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
+
+    @XmlTransient
+    private Class<?> unmarshalType;
+    @XmlTransient
+    private Class<?> jsonView;
+    @XmlTransient
+    private Class<?> collectionType;
+
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String xmlMapper;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean")
     private String prettyPrint;
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
-    @XmlTransient
-    private Class<?> unmarshalType;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
+    private String allowUnmarshallType;
     @XmlAttribute(name = "jsonView")
     private String jsonViewTypeName;
-    @XmlTransient
-    private Class<?> jsonView;
     @XmlAttribute
     private String include;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String allowJmsType;
     @XmlAttribute(name = "collectionType")
+    @Metadata(label = "advanced")
     private String collectionTypeName;
-    @XmlTransient
-    private Class<?> collectionType;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean")
     private String useList;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced")
+    private String timezone;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String enableJaxbAnnotationModule;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String moduleClassNames;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String moduleRefs;
     @XmlAttribute
     private String enableFeatures;
     @XmlAttribute
     private String disableFeatures;
-    @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
-    private String allowUnmarshallType;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
               description = "Whether the data format should set the Content-Type header with the type from the data format."
@@ -297,6 +306,17 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
 
     public void setContentTypeHeader(String contentTypeHeader) {
         this.contentTypeHeader = contentTypeHeader;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    /**
+     * If set then Jackson will use the Timezone when marshalling/unmarshalling.
+     */
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
     }
 
 }

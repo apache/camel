@@ -2186,6 +2186,7 @@ public class ModelParser extends BaseParser {
                 case "moduleClassNames": def.setModuleClassNames(val); break;
                 case "moduleRefs": def.setModuleRefs(val); break;
                 case "prettyPrint": def.setPrettyPrint(val); break;
+                case "timezone": def.setTimezone(val); break;
                 case "unmarshalType": def.setUnmarshalTypeName(val); break;
                 case "useList": def.setUseList(val); break;
                 case "xmlMapper": def.setXmlMapper(val); break;

@@ -7134,6 +7134,15 @@ Class name of the java type to use when unmarshalling.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="allowUnmarshallType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If enabled then Jackson is allowed to attempt to use the
+CamelJacksonUnmarshalType header during the unmarshalling. This should only be
+enabled when desired to be used. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="jsonView" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -7173,6 +7182,13 @@ java.util.Collection based as default.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 To unmarshal to a List of Map or a List of Pojo. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="timezone" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If set then Jackson will use the Timezone when marshalling/unmarshalling.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7224,15 +7240,6 @@ by comma.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="allowUnmarshallType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-If enabled then Jackson is allowed to attempt to use the
-CamelJacksonUnmarshalType header during the unmarshalling. This should only be
-enabled when desired to be used. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="contentTypeHeader" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -7270,7 +7277,7 @@ and not a package name. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 To validate against an existing schema. Your can use the prefix classpath:,
-file: or http: to specify how the resource should by resolved. You can separate
+file: or http: to specify how the resource should be resolved. You can separate
 multiple schema files by using the ',' character.
             ]]></xs:documentation>
           </xs:annotation>

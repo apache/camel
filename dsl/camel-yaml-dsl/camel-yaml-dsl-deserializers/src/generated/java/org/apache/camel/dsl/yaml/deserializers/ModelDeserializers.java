@@ -6966,6 +6966,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "module-class-names", type = "string"),
                     @YamlProperty(name = "module-refs", type = "string"),
                     @YamlProperty(name = "pretty-print", type = "boolean"),
+                    @YamlProperty(name = "timezone", type = "string"),
                     @YamlProperty(name = "unmarshal-type", type = "string"),
                     @YamlProperty(name = "use-list", type = "boolean"),
                     @YamlProperty(name = "xml-mapper", type = "string")
@@ -7048,6 +7049,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "pretty-print": {
                     String val = asText(node);
                     target.setPrettyPrint(val);
+                    break;
+                }
+                case "timezone": {
+                    String val = asText(node);
+                    target.setTimezone(val);
                     break;
                 }
                 case "unmarshal-type": {

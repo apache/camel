@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "jacksonXml",
     "title": "Jackson XML",
-    "description": "Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson.",
+    "description": "Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "dataformat,transformation,xml",

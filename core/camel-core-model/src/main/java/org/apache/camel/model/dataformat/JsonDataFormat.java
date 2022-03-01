@@ -79,6 +79,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(javaType = "java.lang.Boolean")
     private String allowUnmarshallType;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String timezone;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
