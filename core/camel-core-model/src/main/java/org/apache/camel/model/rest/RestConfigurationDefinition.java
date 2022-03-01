@@ -41,12 +41,13 @@ import org.apache.camel.support.CamelContextHelper;
 public class RestConfigurationDefinition {
 
     @XmlAttribute
+    @Metadata(enums = "platform-http,servlet,jetty,undertow,netty-http,coap")
     private String component;
     @XmlAttribute
-    @Metadata(label = "consumer,advanced")
+    @Metadata(label = "consumer,advanced", enums = "openapi,swagger")
     private String apiComponent;
     @XmlAttribute
-    @Metadata(label = "producer,advanced")
+    @Metadata(label = "producer,advanced", enums = "vertx-http,http,undertow,netty-http")
     private String producerComponent;
     @XmlAttribute
     private String scheme;
@@ -55,9 +56,10 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     private String port;
     @XmlAttribute
+    @Metadata(label = "consumer,advanced")
     private String apiHost;
     @XmlAttribute
-    @Metadata(defaultValue = "true", label = "consumer,advanced")
+    @Metadata(label = "consumer,advanced", defaultValue = "true")
     private Boolean useXForwardHeaders;
     @XmlAttribute
     @Metadata(label = "producer,advanced")
@@ -69,7 +71,7 @@ public class RestConfigurationDefinition {
     @Metadata(label = "consumer")
     private String apiContextPath;
     @XmlAttribute
-    @Metadata(label = "consumer")
+    @Metadata(label = "consumer,advanced")
     @Deprecated
     private String apiContextRouteId;
     @XmlAttribute
