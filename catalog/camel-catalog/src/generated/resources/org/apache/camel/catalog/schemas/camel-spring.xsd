@@ -6810,13 +6810,6 @@ DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4. Default value: DSTU3
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="fhirContext" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To use a specific FhirContext instead of the specified fhir version.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="prettyPrint" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
