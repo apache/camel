@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws2.s3.integration;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.EndpointInject;
@@ -46,8 +47,13 @@ public class S3UploadWithUserMetadataIT extends Aws2S3Base {
         result.expectedMessageCount(1);
 
         template.send("direct:putObject", exchange -> {
+            Map<String, String> metadataMap = new HashMap<String, String>() {
+                {
+                    put("user-metadata-example", "MetadataFromCamel");
+                }
+            };
             exchange.getIn().setHeader(AWS2S3Constants.KEY, "camel-content-type.txt");
-            exchange.getIn().setHeader(AWS2S3Constants.METADATA, Map.of("user-metadata-example", "MetadataFromCamel"));
+            exchange.getIn().setHeader(AWS2S3Constants.METADATA, metadataMap);
             exchange.getIn().setBody("Camel rocks!");
         });
 
