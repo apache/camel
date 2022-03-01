@@ -2,7 +2,7 @@
 :doctitle: Jackson XML
 :shortname: jacksonXml
 :artifactid: camel-jacksonxml
-:description: Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.
+:description: Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson.
 :since: 2.16
 :supportlevel: Stable
 //Manually maintained attributes
