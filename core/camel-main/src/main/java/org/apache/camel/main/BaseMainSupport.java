@@ -1130,6 +1130,10 @@ public abstract class BaseMainSupport extends BaseService {
                 // TODO: add more vault providers here
                 target = target.aws();
             }
+            if ("gcp".equalsIgnoreCase(name)) {
+                // TODO: add more vault providers here
+                target = target.gcp();
+            }
             // configure all the properties on the vault at once (to ensure they are configured in right order)
             Map<String, Object> config = PropertiesHelper.extractProperties(properties, name + ".");
             setPropertiesOnTarget(camelContext, target, config, "camel.vault." + name + ".", failIfNotSet, true,
