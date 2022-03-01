@@ -1012,16 +1012,14 @@ public interface NettyComponentBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
          * @param decoders the value to set
          * @return the dsl builder
          */
-        default NettyComponentBuilder decoders(
-                java.util.List<io.netty.channel.ChannelHandler> decoders) {
+        default NettyComponentBuilder decoders(java.lang.String decoders) {
             doSetProperty("decoders", decoders);
             return this;
         }
@@ -1049,16 +1047,14 @@ public interface NettyComponentBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
          * @param encoders the value to set
          * @return the dsl builder
          */
-        default NettyComponentBuilder encoders(
-                java.util.List<io.netty.channel.ChannelHandler> encoders) {
+        default NettyComponentBuilder encoders(java.lang.String encoders) {
             doSetProperty("encoders", encoders);
             return this;
         }
@@ -1397,9 +1393,9 @@ public interface NettyComponentBuilderFactory {
             case "allowDefaultCodec": getOrCreateConfiguration((NettyComponent) component).setAllowDefaultCodec((boolean) value); return true;
             case "autoAppendDelimiter": getOrCreateConfiguration((NettyComponent) component).setAutoAppendDelimiter((boolean) value); return true;
             case "decoderMaxLineLength": getOrCreateConfiguration((NettyComponent) component).setDecoderMaxLineLength((int) value); return true;
-            case "decoders": getOrCreateConfiguration((NettyComponent) component).setDecoders((java.util.List) value); return true;
+            case "decoders": getOrCreateConfiguration((NettyComponent) component).setDecoders((java.lang.String) value); return true;
             case "delimiter": getOrCreateConfiguration((NettyComponent) component).setDelimiter((org.apache.camel.component.netty.TextLineDelimiter) value); return true;
-            case "encoders": getOrCreateConfiguration((NettyComponent) component).setEncoders((java.util.List) value); return true;
+            case "encoders": getOrCreateConfiguration((NettyComponent) component).setEncoders((java.lang.String) value); return true;
             case "encoding": getOrCreateConfiguration((NettyComponent) component).setEncoding((java.lang.String) value); return true;
             case "textline": getOrCreateConfiguration((NettyComponent) component).setTextline((boolean) value); return true;
             case "enabledProtocols": getOrCreateConfiguration((NettyComponent) component).setEnabledProtocols((java.lang.String) value); return true;
