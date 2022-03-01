@@ -910,6 +910,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         for (Processor processor : processors) {
             // copy exchange, and do not share the unit of work
             Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
+            copy.adapt(ExtendedExchange.class).setTransacted(exchange.isTransacted());
 
             if (streamCache != null) {
                 if (index > 0) {
