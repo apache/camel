@@ -49,7 +49,7 @@ public class ResumableCompletion implements Synchronization {
                     LOG.error("Unable to update the offset: {}", e.getMessage(), e);
                 }
             } else {
-                LOG.warn("Cannot perform an offset update because the strategy is not updatable");
+                LOG.debug("Cannot perform an offset update because the strategy is not updatable");
             }
         }
     }
