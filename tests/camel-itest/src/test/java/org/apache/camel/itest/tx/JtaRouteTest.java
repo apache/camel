@@ -16,7 +16,9 @@
  */
 package org.apache.camel.itest.tx;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -41,6 +43,9 @@ public class JtaRouteTest extends CamelTestSupport {
     @EndpointInject("mock:c")
     private MockEndpoint c;
 
+    @EndpointInject("mock:result")
+    private MockEndpoint result;
+
     @EndpointInject("direct:split_test")
     private ProducerTemplate split;
 
@@ -49,6 +54,9 @@ public class JtaRouteTest extends CamelTestSupport {
 
     @EndpointInject("direct:recipient_test")
     private ProducerTemplate recipient;
+
+    @EndpointInject("direct:enrich_test")
+    private ProducerTemplate enrich;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -89,6 +97,27 @@ public class JtaRouteTest extends CamelTestSupport {
                 from("direct:recipient")
                         .recipientList(constant("mock:a", "mock:b", "mock:c"));
 
+                from("direct:enrich_test")
+                        .transacted()
+                        .to("direct:enrich");
+
+                from("direct:enrich")
+                        .enrich("direct:content", new AggregationStrategy() {
+                            @Override
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                if (newExchange == null) {
+                                    return oldExchange;
+                                }
+                                Object oldBody = oldExchange.getIn().getBody();
+                                Object newBody = newExchange.getIn().getBody();
+                                oldExchange.getIn().setBody(oldBody + " " + newBody);
+                                return oldExchange;
+                            }
+                        })
+                        .to("mock:result");
+
+                from("direct:content").transform().constant("Enrich");
+
             }
         };
     }
@@ -103,6 +132,7 @@ public class JtaRouteTest extends CamelTestSupport {
     @Test
     public void testTransactedMultiCast() throws Exception {
         test.setExpectedMessageCount(1);
+        test.expectedBodiesReceived("multicast");
         multicast.sendBody("multicast");
         test.assertIsSatisfied();
     }
@@ -116,5 +146,13 @@ public class JtaRouteTest extends CamelTestSupport {
         a.assertIsSatisfied();
         b.assertIsSatisfied();
         c.assertIsSatisfied();
+    }
+
+    @Test
+    public void testTransactedEnrich() throws Exception {
+        result.setExpectedMessageCount(1);
+        result.expectedBodiesReceived("Message Enrich");
+        enrich.sendBody("Message");
+        result.assertIsSatisfied();
     }
 }
