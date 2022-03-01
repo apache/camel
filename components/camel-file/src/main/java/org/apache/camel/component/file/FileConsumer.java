@@ -307,7 +307,13 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     @Override
+    public FileConsumerResumeStrategy getResumeStrategy() {
+        return resumeStrategy;
+    }
+
+    @Override
     public void setResumeStrategy(FileConsumerResumeStrategy resumeStrategy) {
         this.resumeStrategy = resumeStrategy;
     }
+
 }

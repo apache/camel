@@ -17,7 +17,22 @@
 
 package org.apache.camel;
 
+/**
+ * An interface to represent an object which wishes to support resume operations using a {@link ResumeStrategy}.
+ */
 public interface ResumeAware<T extends ResumeStrategy> {
 
+    /**
+     * Injects the {@link ResumeStrategy} instance into the object
+     *
+     * @param resumeStrategy the resume strategy
+     */
     void setResumeStrategy(T resumeStrategy);
+
+    /**
+     * Gets the {@link ResumeStrategy} instance
+     * 
+     * @return the resume strategy
+     */
+    T getResumeStrategy();
 }

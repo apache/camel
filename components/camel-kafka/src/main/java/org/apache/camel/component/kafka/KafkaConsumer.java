@@ -59,6 +59,7 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
         this.resumeStrategy = resumeStrategy;
     }
 
+    @Override
     public KafkaConsumerResumeStrategy getResumeStrategy() {
         return resumeStrategy;
     }
