@@ -76,8 +76,13 @@ public class ResumableProcessor extends AsyncProcessorSupport
     public ResumableProcessor(ResumeStrategy resumeStrategy, Processor processor) {
         this.resumeStrategy = Objects.requireNonNull(resumeStrategy);
         this.processor = AsyncProcessorConverterHelper.convert(processor);
+    }
 
-        LOG.info("Enabling the resumable strategy of type: {}", resumeStrategy.getClass().getSimpleName());
+    @Override
+    protected void doStart() throws Exception {
+        LOG.debug("Enabling the resumable strategy of type: {}", resumeStrategy.getClass().getSimpleName());
+
+        super.doStart();
     }
 
     @Override
