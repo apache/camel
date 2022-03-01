@@ -47,14 +47,14 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "correlationManager": target.getConfiguration().setCorrelationManager(property(camelContext, org.apache.camel.component.netty.NettyCamelStateCorrelationManager.class, value)); return true;
         case "decodermaxlinelength":
         case "decoderMaxLineLength": target.getConfiguration().setDecoderMaxLineLength(property(camelContext, int.class, value)); return true;
-        case "decoders": target.getConfiguration().setDecoders(property(camelContext, java.util.List.class, value)); return true;
+        case "decoders": target.getConfiguration().setDecoders(property(camelContext, java.lang.String.class, value)); return true;
         case "delimiter": target.getConfiguration().setDelimiter(property(camelContext, org.apache.camel.component.netty.TextLineDelimiter.class, value)); return true;
         case "disconnect": target.getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
         case "disconnectonnoreply":
         case "disconnectOnNoReply": target.getConfiguration().setDisconnectOnNoReply(property(camelContext, boolean.class, value)); return true;
         case "enabledprotocols":
         case "enabledProtocols": target.getConfiguration().setEnabledProtocols(property(camelContext, java.lang.String.class, value)); return true;
-        case "encoders": target.getConfiguration().setEncoders(property(camelContext, java.util.List.class, value)); return true;
+        case "encoders": target.getConfiguration().setEncoders(property(camelContext, java.lang.String.class, value)); return true;
         case "encoding": target.getConfiguration().setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
@@ -182,14 +182,14 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "correlationManager": return org.apache.camel.component.netty.NettyCamelStateCorrelationManager.class;
         case "decodermaxlinelength":
         case "decoderMaxLineLength": return int.class;
-        case "decoders": return java.util.List.class;
+        case "decoders": return java.lang.String.class;
         case "delimiter": return org.apache.camel.component.netty.TextLineDelimiter.class;
         case "disconnect": return boolean.class;
         case "disconnectonnoreply":
         case "disconnectOnNoReply": return boolean.class;
         case "enabledprotocols":
         case "enabledProtocols": return java.lang.String.class;
-        case "encoders": return java.util.List.class;
+        case "encoders": return java.lang.String.class;
         case "encoding": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
@@ -427,8 +427,6 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "decoders": return io.netty.channel.ChannelHandler.class;
-        case "encoders": return io.netty.channel.ChannelHandler.class;
         case "options": return java.lang.Object.class;
         default: return null;
         }
