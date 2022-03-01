@@ -32,11 +32,14 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "hl7")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HL7DataFormat extends DataFormatDefinition {
+
+    @XmlTransient
+    @Metadata(label = "advanced", javaType = "ca.uhn.hl7v2.parser.Parser")
+    private Object parser;
+
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String validate;
-    @XmlTransient
-    private Object parser;
 
     public HL7DataFormat() {
         super("hl7");

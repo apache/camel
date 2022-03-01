@@ -26,7 +26,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Unmarshal a XML payloads to POJOs and back using XMLMapper extension of Jackson.
+ * Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson.
  */
 @Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,xml", title = "Jackson XML")
 @XmlRootElement(name = "jacksonXml")

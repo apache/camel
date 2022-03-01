@@ -25,12 +25,13 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Marshal and unmarshal iCal (*.ics) documents to/from model objects provided by the iCal4j library.
+ * Marshal and unmarshal iCal (*.ics) documents to/from model objects.
  */
 @Metadata(firstVersion = "2.12.0", label = "dataformat,transformation", title = "iCal")
 @XmlRootElement(name = "ical")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IcalDataFormat extends DataFormatDefinition {
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String validating;

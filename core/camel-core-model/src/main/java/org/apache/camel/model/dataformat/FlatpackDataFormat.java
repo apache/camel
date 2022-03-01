@@ -32,25 +32,27 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "flatpack")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FlatpackDataFormat extends DataFormatDefinition {
+
     @XmlAttribute
     private String definition;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String fixed;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
-    private String ignoreFirstRecord;
-    @XmlAttribute
-    private String textQualifier;
-    @XmlAttribute
     @Metadata(defaultValue = ",")
     private String delimiter;
+    @XmlAttribute
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    private String ignoreFirstRecord;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String allowShortLines;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String ignoreExtraColumns;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String textQualifier;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String parserFactoryRef;

@@ -31,21 +31,19 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "grok")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GrokDataFormat extends DataFormatDefinition {
+
     @XmlAttribute(required = true)
     @Metadata
     private String pattern;
-
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
-    private String flattened = Boolean.toString(false);
-
+    @Metadata(javaType = "java.lang.Boolean")
+    private String flattened;
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
-    private String allowMultipleMatchesPerLine = Boolean.toString(true);
-
+    private String allowMultipleMatchesPerLine;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
-    private String namedOnly = Boolean.toString(false);
+    @Metadata(javaType = "java.lang.Boolean")
+    private String namedOnly;
 
     public GrokDataFormat() {
         super("grok");
