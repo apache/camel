@@ -34,14 +34,16 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "tidyMarkup")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TidyMarkupDataFormat extends DataFormatDefinition {
+
+    @XmlTransient
+    private Class<?> dataObjectType;
+
     @XmlAttribute(name = "dataObjectType")
-    @Metadata(defaultValue = "org.w3c.dom.Node")
+    @Metadata(defaultValue = "org.w3c.dom.Node", enums = "org.w3c.dom.Node,java.lang.String")
     private String dataObjectTypeName;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String omitXmlDeclaration;
-    @XmlTransient
-    private Class<?> dataObjectType;
 
     public TidyMarkupDataFormat() {
         super("tidyMarkup");

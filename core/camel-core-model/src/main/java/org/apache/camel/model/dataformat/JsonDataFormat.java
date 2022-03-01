@@ -40,6 +40,9 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String useDefaultObjectMapper;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    private String autoDiscoverObjectMapper;
+    @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String prettyPrint;
     @XmlAttribute
@@ -56,7 +59,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @XmlAttribute
     private String include;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String allowJmsType;
     @XmlAttribute(name = "collectionType")
     private String collectionTypeName;
@@ -66,14 +69,17 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(javaType = "java.lang.Boolean")
     private String useList;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String moduleClassNames;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String moduleRefs;
     @XmlAttribute
     private String enableFeatures;
     @XmlAttribute
     private String disableFeatures;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String permissions;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
@@ -83,24 +89,22 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     private String timezone;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
-    private String autoDiscoverObjectMapper;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
     private String dropRootNode;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
-              description = "Whether the data format should set the Content-Type header with the type from the data format."
-                            + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
-    private String contentTypeHeader;
-    @XmlAttribute
+    @Metadata(label = "advanced")
     private String schemaResolver;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String autoDiscoverSchemaResolver;
     @XmlAttribute
     @Metadata(description = "If set then Jackson will use the the defined Property Naming Strategy."
                             + "Possible values are: LOWER_CAMEL_CASE, LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE and UPPER_CAMEL_CASE")
     private String namingStrategy;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether the data format should set the Content-Type header with the type from the data format."
+                            + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
+    private String contentTypeHeader;
 
     public JsonDataFormat() {
         super("json");

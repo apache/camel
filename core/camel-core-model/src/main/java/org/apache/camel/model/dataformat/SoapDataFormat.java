@@ -32,11 +32,13 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "soap")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SoapDataFormat extends DataFormatDefinition {
+
     @XmlAttribute(required = true)
     private String contextPath;
     @XmlAttribute
     private String encoding;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String elementNameStrategyRef;
     @XmlTransient
     private Object elementNameStrategy;
@@ -44,6 +46,7 @@ public class SoapDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "1.1", enums = "1.1,1.2")
     private String version;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String namespacePrefixRef;
     @XmlAttribute
     private String schema;
@@ -177,7 +180,7 @@ public class SoapDataFormat extends DataFormatDefinition {
 
     /**
      * To validate against an existing schema. Your can use the prefix classpath:, file:* or *http: to specify how the
-     * resource should by resolved. You can separate multiple schema files by using the ',' character.
+     * resource should be resolved. You can separate multiple schema files by using the ',' character.
      */
     public void setSchema(String schema) {
         this.schema = schema;

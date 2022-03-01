@@ -68,7 +68,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     private Class<?> unmarshalType;
     private List<TypeDescription> typeDescriptions;
     private ConcurrentMap<Class<?>, Tag> classTags;
-    private boolean useApplicationContextClassLoader;
+    private boolean useApplicationContextClassLoader = true;
     private boolean prettyFlow;
     private boolean allowAnyType;
     private List<TypeFilter> typeFilters;
@@ -81,9 +81,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
 
     public SnakeYAMLDataFormat(Class<?> type) {
         this.yamlCache = new ThreadLocal<>();
-        this.useApplicationContextClassLoader = true;
-        this.prettyFlow = false;
-        this.allowAnyType = false;
         this.constructor = this::defaultConstructor;
         this.representer = this::defaultRepresenter;
         this.dumperOptions = this::defaultDumperOptions;

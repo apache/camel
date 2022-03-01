@@ -32,6 +32,10 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "thrift")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThriftDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
+
+    @XmlTransient
+    private Object defaultInstance;
+
     @XmlAttribute
     private String instanceClass;
     @XmlAttribute
@@ -42,8 +46,6 @@ public class ThriftDataFormat extends DataFormatDefinition implements ContentTyp
               description = "Whether the data format should set the Content-Type header with the type from the data format."
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
-    @XmlTransient
-    private Object defaultInstance;
 
     public ThriftDataFormat() {
         super("thrift");

@@ -30,14 +30,15 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "univocityFixed")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
+
+    @XmlAttribute
+    private String padding;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String skipTrailingCharsUntilNewline;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String recordEndsOnNewline;
-    @XmlAttribute
-    private String padding;
 
     public UniVocityFixedDataFormat() {
         super("univocityFixed");

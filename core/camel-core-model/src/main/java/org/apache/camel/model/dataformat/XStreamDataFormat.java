@@ -39,22 +39,26 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "xstream")
 @XmlAccessorType(XmlAccessType.NONE)
 public class XStreamDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
+
     @XmlAttribute
     private String permissions;
     @XmlAttribute
     private String encoding;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "com.thoughtworks.xstream.io.HierarchicalStreamDriver")
     private String driver;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "com.thoughtworks.xstream.io.HierarchicalStreamDriver")
     private String driverRef;
     @XmlAttribute
+    @Metadata(label = "advanced",
+              enums = "NO_REFERENCES,ID_REFERENCES,XPATH_RELATIVE_REFERENCES,XPATH_ABSOLUTE_REFERENCES,SINGLE_NODE_XPATH_RELATIVE_REFERENCES,SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES")
     private String mode;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
               description = "Whether the data format should set the Content-Type header with the type from the data format."
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
-
     @XmlElement(name = "converters")
     private List<PropertyDefinition> converters;
     @XmlElement(name = "aliases")

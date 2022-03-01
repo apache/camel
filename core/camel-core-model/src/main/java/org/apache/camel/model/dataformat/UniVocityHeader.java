@@ -31,6 +31,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "univocityHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityHeader {
+
     @XmlValue
     private String name;
     @XmlAttribute

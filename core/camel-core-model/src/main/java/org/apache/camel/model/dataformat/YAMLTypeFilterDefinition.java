@@ -27,6 +27,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "typeFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class YAMLTypeFilterDefinition {
+
     @XmlAttribute
     private String value;
     @XmlAttribute

@@ -31,8 +31,9 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "zipDeflater")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipDeflaterDataFormat extends DataFormatDefinition {
+
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer", defaultValue = "-1")
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "-1", enums = "-1,0,1,2,3,4,5,6,7,8,9")
     private String compressionLevel;
 
     public ZipDeflaterDataFormat() {

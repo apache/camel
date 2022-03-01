@@ -34,6 +34,7 @@ import org.apache.camel.spi.Metadata;
 public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
+    @Metadata(label = "advanced")
     protected String nullValue;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
@@ -53,17 +54,19 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
     @Metadata(javaType = "java.lang.Boolean")
     protected String headerExtractionEnabled;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
     protected String numberOfRecordsToRead;
     @XmlAttribute
+    @Metadata(label = "advanced")
     protected String emptyValue;
     @XmlAttribute
+    @Metadata(label = "advanced")
     protected String lineSeparator;
     @XmlAttribute
-    @Metadata(defaultValue = "\\n")
+    @Metadata(label = "advanced", defaultValue = "\\n")
     protected String normalizedLineSeparator;
     @XmlAttribute
-    @Metadata(defaultValue = "#")
+    @Metadata(label = "advanced", defaultValue = "#")
     protected String comment;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")

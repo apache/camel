@@ -30,8 +30,9 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "univocityTsv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityTsvDataFormat extends UniVocityAbstractDataFormat {
+
     @XmlAttribute
-    @Metadata(defaultValue = "\\")
+    @Metadata(label = "advanced", defaultValue = "\\")
     private String escapeChar;
 
     public UniVocityTsvDataFormat() {

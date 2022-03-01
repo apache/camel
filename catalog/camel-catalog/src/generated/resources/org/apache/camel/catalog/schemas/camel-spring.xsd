@@ -7442,6 +7442,14 @@ Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="autoDiscoverObjectMapper" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If set to true then Jackson will lookup for an objectMapper into the registry.
+Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="prettyPrint" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -7580,14 +7588,6 @@ and xstream.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="autoDiscoverObjectMapper" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-If set to true then Jackson will lookup for an objectMapper into the registry.
-Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="dropRootNode" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -7595,16 +7595,6 @@ Whether XStream will drop the root node in the generated JSon. You may want to
 enable this when using POJOs; as then the written object will include the class
 name as root node, which is often not intended to be written in the JSON output.
 Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="contentTypeHeader" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether the data format should set the Content-Type header with the type from
-the data format. For example application/xml for data formats marshalling to
-XML, or application/json for data formats marshalling to JSON. Default value:
-true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7629,6 +7619,16 @@ Default value: true
 If set then Jackson will use the the defined Property Naming Strategy.Possible
 values are: LOWER_CAMEL_CASE, LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE
 and UPPER_CAMEL_CASE.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="contentTypeHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the data format should set the Content-Type header with the type from
+the data format. For example application/xml for data formats marshalling to
+XML, or application/json for data formats marshalling to JSON. Default value:
+true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7736,33 +7736,6 @@ Name of class to use when unmarshalling.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="contentTypeFormat" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Defines a content type format in which protobuf message will be
-serialized/deserialized from(to) the Java been. The format can either be native
-or json for either native protobuf or json fields representation. The default
-value is native. Default value: native
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="contentTypeHeader" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether the data format should set the Content-Type header with the type from
-the data format. For example application/xml for data formats marshalling to
-XML, or application/json for data formats marshalling to JSON. Default value:
-true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="library" type="tns:protobufLibrary">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Which Protobuf library to use. Default value: GoogleProtobuf
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="objectMapper" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -7775,6 +7748,21 @@ Lookup and use the existing ObjectMapper with the given id when using Jackson.
             <xs:documentation xml:lang="en"><![CDATA[
 Whether to lookup and use default Jackson ObjectMapper from the registry.
 Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="autoDiscoverObjectMapper" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If set to true then Jackson will lookup for an objectMapper into the registry.
+Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="library" type="tns:protobufLibrary">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Which Protobuf library to use. Default value: GoogleProtobuf
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7883,14 +7871,6 @@ If set then Jackson will use the Timezone when marshalling/unmarshalling.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="autoDiscoverObjectMapper" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-If set to true then Jackson will lookup for an objectMapper into the registry.
-Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="schemaResolver" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -7903,6 +7883,26 @@ Optional schema resolver used to lookup schemas for the data in transit.
             <xs:documentation xml:lang="en"><![CDATA[
 When not disabled, the SchemaResolver will be looked up into the registry.
 Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="contentTypeFormat" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Defines a content type format in which protobuf message will be
+serialized/deserialized from(to) the Java been. The format can either be native
+or json for either native protobuf or json fields representation. The default
+value is native. Default value: native
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="contentTypeHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the data format should set the Content-Type header with the type from
+the data format. For example application/xml for data formats marshalling to
+XML, or application/json for data formats marshalling to JSON. Default value:
+true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7977,7 +7977,7 @@ Camel allows you to refer to a map which contains the desired mapping.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 To validate against an existing schema. Your can use the prefix classpath:,
-file: or http: to specify how the resource should by resolved. You can separate
+file: or http: to specify how the resource should be resolved. You can separate
 multiple schema files by using the ',' character.
             ]]></xs:documentation>
           </xs:annotation>
@@ -8001,8 +8001,8 @@ multiple schema files by using the ',' character.
         <xs:attribute name="usingIterator" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If the tar file has more then one entry, the setting this option to true, allows
-to work with the splitter EIP, to split the data using an iterator in a
+If the tar file has more than one entry, the setting this option to true, allows
+working with the splitter EIP, to split the data using an iterator in a
 streaming mode. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
@@ -8010,7 +8010,7 @@ streaming mode. Default value: false
         <xs:attribute name="allowEmptyDirectory" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If the tar file has more then one entry, setting this option to true, allows to
+If the tar file has more than one entry, setting this option to true, allows to
 get the iterator even if the directory is empty. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
@@ -8101,6 +8101,13 @@ value: false
     <xs:complexContent>
       <xs:extension base="tns:uniVocityAbstractDataFormat">
         <xs:sequence/>
+        <xs:attribute name="delimiter" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The delimiter of values. Default value: ,
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="quoteAllFields" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -8119,13 +8126,6 @@ The quote symbol. Default value: "
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The quote escape symbol. Default value: "
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="delimiter" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The delimiter of values. Default value: ,
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8264,6 +8264,13 @@ Header length.
     <xs:complexContent>
       <xs:extension base="tns:uniVocityAbstractDataFormat">
         <xs:sequence/>
+        <xs:attribute name="padding" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The padding character. The default value is a space.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="skipTrailingCharsUntilNewline" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -8277,13 +8284,6 @@ default value is false. Default value: false
             <xs:documentation xml:lang="en"><![CDATA[
 Whether or not the record ends on new line. The default value is false. Default
 value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="padding" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The padding character. The default value is a space.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8354,8 +8354,8 @@ tag is specified, the entire payload is encrypted/decrypted.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 A boolean value to specify whether the XML Element is to be encrypted or the
-contents of the XML Element false = Element Level true = Element Content Level.
-Default value: false
+contents of the XML Element. false = Element Level. true = Element Content
+Level. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8790,8 +8790,8 @@ no compression, and 9 is the best compression. Default value: -1
         <xs:attribute name="usingIterator" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If the zip file has more then one entry, the setting this option to true, allows
-to work with the splitter EIP, to split the data using an iterator in a
+If the zip file has more than one entry, the setting this option to true, allows
+working with the splitter EIP, to split the data using an iterator in a
 streaming mode. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
@@ -8799,7 +8799,7 @@ streaming mode. Default value: false
         <xs:attribute name="allowEmptyDirectory" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If the zip file has more then one entry, setting this option to true, allows to
+If the zip file has more than one entry, setting this option to true, allows to
 get the iterator even if the directory is empty. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
