@@ -175,8 +175,8 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:username").setBody(simple("{{aws:test-3:admin}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{aws:test-1:secret}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{gcp:test-3:admin}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{gcp:test-1:secret}}")).to("mock:bar");
             }
         });
         context.start();
