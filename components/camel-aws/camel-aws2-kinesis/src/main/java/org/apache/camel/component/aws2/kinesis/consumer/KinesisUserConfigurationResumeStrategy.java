@@ -46,9 +46,4 @@ public class KinesisUserConfigurationResumeStrategy implements KinesisResumeStra
             resumable.startingSequenceNumber(configuration.getSequenceNumber());
         }
     }
-
-    @Override
-    public void start() throws Exception {
-
-    }
 }

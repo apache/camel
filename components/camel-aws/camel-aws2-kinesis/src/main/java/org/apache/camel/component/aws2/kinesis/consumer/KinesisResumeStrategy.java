@@ -23,4 +23,14 @@ import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
 public interface KinesisResumeStrategy extends ResumeStrategy {
 
     void setRequestBuilder(GetShardIteratorRequest.Builder builder);
+
+    @Override
+    default void start() {
+
+    }
+
+    @Override
+    default void stop() {
+
+    }
 }

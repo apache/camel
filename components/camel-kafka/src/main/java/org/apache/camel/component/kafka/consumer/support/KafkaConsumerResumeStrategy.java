@@ -33,4 +33,14 @@ public interface KafkaConsumerResumeStrategy extends ResumeStrategy {
     default void resume(KafkaResumable resumable) {
 
     }
+
+    @Override
+    default void start() {
+
+    }
+
+    @Override
+    default void stop() {
+
+    }
 }
