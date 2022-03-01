@@ -97,10 +97,6 @@ public class SalesforceSession extends ServiceSupport {
         this.timeout = timeout;
         this.config = config;
 
-        // strip trailing '/'
-        String loginUrl = config.getLoginUrl();
-        config.setLoginUrl(loginUrl.endsWith("/") ? loginUrl.substring(0, loginUrl.length() - 1) : loginUrl);
-
         this.objectMapper = JsonUtils.createObjectMapper();
         this.listeners = new CopyOnWriteArraySet<>();
     }

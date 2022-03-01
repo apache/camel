@@ -18,40 +18,35 @@ package org.apache.camel.component.salesforce;
 
 import java.util.HashMap;
 
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.Test;
 
-public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
+public class LazyLoginTest extends AbstractSalesforceTestBase {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected SalesforceComponent component;
+    @Test
+    public void lazyLoginDoesNotThrowExceptions() throws Exception {
+        // If we got this far, then createComponent() succeeded without an exception related to lazy login
+        // Now we just need to make sure credentials provided after startup work
+        final SalesforceLoginConfig config = LoginConfigHelper.getLoginConfig();
+        component.getLoginConfig().setLoginUrl(config.getLoginUrl());
+        component.getLoginConfig().setClientId(config.getClientId());
+        component.getLoginConfig().setClientSecret(config.getClientSecret());
+        component.getLoginConfig().setUserName(config.getUserName());
+        component.getLoginConfig().setPassword(config.getPassword());
+        component.getLoginConfig().setKeystore(config.getKeystore());
+        component.getLoginConfig().setRefreshToken(config.getRefreshToken());
+        component.getSession().login(null);
+    }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        // create the test component
-        createComponent();
-
-        return doCreateRouteBuilder();
-    }
-
-    protected RouteBuilder doCreateRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-            }
-        };
-    }
-
     protected void createComponent() throws Exception {
-        // create the component
+        // create the component, but do not set any credentials or login info
         component = new SalesforceComponent();
+        component.setLazyLogin(true);
+
         final SalesforceEndpointConfig config = new SalesforceEndpointConfig();
         config.setApiVersion(System.getProperty("apiVersion", salesforceApiVersionToUse()));
         component.setConfig(config);
-        component.setLoginConfig(LoginConfigHelper.getLoginConfig());
 
         HashMap<String, Object> clientProperties = new HashMap<>();
         clientProperties.put("timeout", "60000");
@@ -66,9 +61,4 @@ public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
         // add it to context
         context().addComponent("salesforce", component);
     }
-
-    protected String salesforceApiVersionToUse() {
-        return SalesforceEndpointConfig.DEFAULT_VERSION;
-    }
-
 }
