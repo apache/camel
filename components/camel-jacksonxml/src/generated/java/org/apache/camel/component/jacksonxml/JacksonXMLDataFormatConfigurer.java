@@ -47,6 +47,7 @@ public class JacksonXMLDataFormatConfigurer extends PropertyConfigurerSupport im
         case "allowUnmarshallType": dataformat.setAllowUnmarshallType(property(camelContext, boolean.class, value)); return true;
         case "contenttypeheader":
         case "contentTypeHeader": dataformat.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
+        case "timezone": dataformat.setTimezone(property(camelContext, java.util.TimeZone.class, value)); return true;
         default: return false;
         }
     }
