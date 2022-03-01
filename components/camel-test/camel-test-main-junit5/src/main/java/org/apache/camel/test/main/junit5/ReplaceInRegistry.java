@@ -24,9 +24,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * {@code @ReplaceInRegistry} is annotation used to mark all the methods and fields that the test framework should
- * consider replacing existing beans in the registry. It is meant to be used to replace a real implementation of a
- * service with a mock or a test implementation.
+ * {@code @ReplaceInRegistry} is an annotation used to mark all the methods and fields whose return value or value
+ * should replace an existing bean in the registry. It is meant to be used to replace a real implementation of a service
+ * with a mock or a test implementation.
  * <p/>
  * If a field is marked with the annotation {@code @ReplaceInRegistry}, the name and the type of the field are used to
  * identify the bean to replace, and the value of the field is the new value of the bean. The field can be in the test
@@ -76,6 +76,9 @@ import java.lang.annotation.Target;
  * }
  * </code>
  * </pre>
+ * <p/>
+ * This annotation can be used in {@code @Nested} test classes. The {@code @ReplaceInRegistry} annotations of outer
+ * classes are processed before the {@code @ReplaceInRegistry} annotations of inner classes.
  */
 @Documented
 @Inherited

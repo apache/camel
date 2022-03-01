@@ -14,32 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.main.junit5.annotation;
+package org.apache.camel.test.main.junit5.annotation.other;
 
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelConfiguration;
+import org.apache.camel.CamelContext;
+import org.apache.camel.test.main.junit5.common.Greetings;
 
 /**
- * A test class ensuring that the annotation inheritance works as expected.
+ * Class to configure the Camel application.
  */
-class InheritanceTest extends AdviceRouteTest {
+public class MyOtherConfiguration implements CamelConfiguration {
 
-    @Test
-    void shouldInheritTheAnnotation() throws Exception {
-        mock.expectedBodiesReceived("Hello Will!");
-        String result = template.requestBody((Object) null, String.class);
-        mock.assertIsSatisfied();
-        assertEquals("Hello Will!", result);
+    @BindToRegistry
+    public Greetings myGreetings() {
+        return new Greetings("Mark");
     }
 
-    @Nested
-    class NestedTest {
-
-        @Test
-        void shouldSupportNestedTest() throws Exception {
-            shouldAdviceTheRoute();
-        }
+    @Override
+    public void configure(CamelContext camelContext) {
+        // this method is optional and can be removed if no additional configuration is needed.
     }
+
 }

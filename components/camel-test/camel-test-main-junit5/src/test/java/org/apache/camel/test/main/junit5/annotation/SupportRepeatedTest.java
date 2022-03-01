@@ -22,6 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.main.junit5.CamelMainTest;
 import org.apache.camel.test.main.junit5.common.MyMainClass;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 
@@ -51,5 +52,14 @@ class SupportRepeatedTest {
         int result = template.requestBody(repetitionInfo.getCurrentRepetition(), Integer.class);
         mock.assertIsSatisfied();
         assertEquals(repetitionInfo.getCurrentRepetition(), result);
+    }
+
+    @Nested
+    class NestedTest {
+
+        @RepeatedTest(5)
+        void shouldSupportNestedTest(RepetitionInfo repetitionInfo) throws Exception {
+            shouldSupportMultipleCalls(repetitionInfo);
+        }
     }
 }

@@ -22,6 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.main.junit5.CamelMainTest;
 import org.apache.camel.test.main.junit5.common.MyMainClass;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -51,5 +52,15 @@ class SupportParameterizedTest {
         String result = template.requestBody((Object) value, String.class);
         mock.assertIsSatisfied();
         assertEquals(value, result);
+    }
+
+    @Nested
+    class NestedTest {
+
+        @ParameterizedTest
+        @ValueSource(strings = { "hello", "nested", "test" })
+        void shouldSupportNestedTest(String value) throws Exception {
+            shouldSupportMultipleCalls(value);
+        }
     }
 }

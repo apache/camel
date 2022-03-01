@@ -20,7 +20,9 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.main.junit5.CamelMainTest;
+import org.apache.camel.test.main.junit5.annotation.other.MyOtherMainClass;
 import org.apache.camel.test.main.junit5.common.MyMainClass;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,5 +45,36 @@ class WithMainClassTest {
         String result = template.requestBody((Object) null, String.class);
         mock.assertIsSatisfied();
         assertEquals("Hello Will!", result);
+    }
+
+    @CamelMainTest(mainClass = MyOtherMainClass.class)
+    @Nested
+    class NestedTest {
+
+        @Test
+        void shouldSupportNestedTest() throws Exception {
+            mock.expectedBodiesReceived("Hello Mark!");
+            String result = template.requestBody((Object) null, String.class);
+            mock.assertIsSatisfied();
+            assertEquals("Hello Mark!", result);
+        }
+
+        @Nested
+        class SuperNestedTest {
+
+            @Test
+            void shouldSupportSuperNestedTest() throws Exception {
+                shouldSupportNestedTest();
+            }
+        }
+    }
+
+    @Nested
+    class OtherNestedTest {
+
+        @Test
+        void shouldSupportOtherNestedTest() throws Exception {
+            shouldFindTheRouteBuilder();
+        }
     }
 }

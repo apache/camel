@@ -23,6 +23,7 @@ import org.apache.camel.main.MainConfigurationProperties;
 import org.apache.camel.test.main.junit5.CamelMainTest;
 import org.apache.camel.test.main.junit5.Configure;
 import org.apache.camel.test.main.junit5.common.MyConfiguration;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,5 +55,14 @@ class LoadCustomConfigurationSamePackageTest {
         String result = template.requestBody((Object) null, String.class);
         mock.assertIsSatisfied();
         assertEquals("Hello John!", result);
+    }
+
+    @Nested
+    class NestedTest {
+
+        @Test
+        void shouldSupportNestedTest() throws Exception {
+            shouldFindCustomConfiguration();
+        }
     }
 }

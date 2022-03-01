@@ -25,6 +25,7 @@ import org.apache.camel.test.main.junit5.AdviceRouteMapping;
 import org.apache.camel.test.main.junit5.CamelMainTest;
 import org.apache.camel.test.main.junit5.Configure;
 import org.apache.camel.test.main.junit5.common.MyConfiguration;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,11 +56,35 @@ class AdviceRouteTest {
         assertEquals("Hello Will!", result);
     }
 
+    @CamelMainTest(advices = @AdviceRouteMapping(route = "foo", advice = AdviceRouteTest.TestBuilder2.class))
+    @Nested
+    class NestedTest {
+
+        @EndpointInject("direct:bar")
+        ProducerTemplate templateBar;
+
+        @Test
+        void shouldSupportNestedTest() throws Exception {
+            mock.expectedBodiesReceived("Hello Will!");
+            String result = templateBar.requestBody((Object) null, String.class);
+            mock.assertIsSatisfied();
+            assertEquals("Hello Will!", result);
+        }
+    }
+
     static class TestBuilder extends AdviceWithRouteBuilder {
 
         @Override
         public void configure() throws Exception {
             replaceFromWith("direct:foo");
+        }
+    }
+
+    static class TestBuilder2 extends AdviceWithRouteBuilder {
+
+        @Override
+        public void configure() throws Exception {
+            replaceFromWith("direct:bar");
         }
     }
 }

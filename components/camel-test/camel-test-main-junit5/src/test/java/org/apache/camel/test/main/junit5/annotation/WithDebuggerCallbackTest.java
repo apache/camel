@@ -28,6 +28,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.test.main.junit5.CamelMainTest;
 import org.apache.camel.test.main.junit5.DebuggerCallback;
 import org.apache.camel.test.main.junit5.common.MyConfiguration;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,6 +55,15 @@ class WithDebuggerCallbackTest implements DebuggerCallback {
         String result = template.requestBody((Object) null, String.class);
         assertEquals("Hello Will!", result);
         assertEquals(4, counter.get());
+    }
+
+    @Nested
+    class NestedTest {
+
+        @Test
+        void shouldSupportNestedTest() throws Exception {
+            shouldInvokeCallbackMethods();
+        }
     }
 
     @Override

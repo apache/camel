@@ -286,7 +286,7 @@ Some properties are inherited from properties file like the `application.propert
 The method `useOverridePropertiesWithPropertiesComponent()` can be overridden to provide an instance of type `java.util.Properties` that contains the properties to override.
 
 === Annotation ===
-The attribute `properties` can be set to provide an array of `String` representing the key/value pairs of properties to override in the following order `property-key-1, property-value-1, property-key-2, ...`.
+The attribute `properties` can be set to provide an array of `String` representing the key/value pairs of properties to override in the following format `"property-key-1=property-value-1", "property-key-2=property-value-1", ...`.
 
 In the next examples, the value of the property whose name is `host` is replaced with `localhost`.
 
@@ -309,7 +309,7 @@ class SomeTest extends CamelMainTestSupport {
 === Annotation ===
 [source,java]
 ----
-@CamelMainTest(properties = { "host", "localhost" })
+@CamelMainTest(properties = { "host=localhost" })
 class SomeTest {
 
     // Rest of the test class
@@ -324,7 +324,7 @@ To be able to test easily the behavior of a route without being affected by the 
 The method `replaceRouteFromWith()` can be called to provide the id of the route to modify and the URI of the new from endpoint.
 
 === Annotation ===
-The attribute `replaceRouteFromWith` can be set to provide an array of `String` representing a list of id of the route to modify and the URI of the new from endpoint in the following order `route-id-1, new-uri-1, route-id-2, ...`.
+The attribute `replaceRouteFromWith` can be set to provide an array of `String` representing a list of id of the route to modify and the URI of the new from endpoint in the following format `"route-id-1=new-uri-1", "route-id-2=new-uri-2", ...`.
 
 In the next examples, the route whose id is `main-route` is advised to replace its current from endpoint with a `direct:main` endpoint.
 
@@ -347,7 +347,7 @@ class SomeTest extends CamelMainTestSupport {
 === Annotation ===
 [source,java]
 ----
-@CamelMainTest(replaceRouteFromWith = { "main-route", "direct:main" })
+@CamelMainTest(replaceRouteFromWith = { "main-route=direct:main" })
 class SomeTest {
 
     // Rest of the test class
@@ -518,3 +518,68 @@ The method `isUseDebugger()` can be overridden to return `true` indicating that 
 
 === Annotation ===
 The test class needs to implement the interface `org.apache.camel.test.main.junit5.DebuggerCallback` to enable the feature. The methods `debugBefore` and `debugAfter` can then be implemented to execute some specific code for debugging purpose.
+
+== Nested tests
+
+The annotation based approach supports natively https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested[Nested tests]. It is even possible to annotate `@Nested` test class with `@CamelMainTest` to change the configuration inherited from the outer class however please note that not all attributes can be set at nested test class level. Indeed, for the sake of simplicity, the attributes `dumpRouteCoverage` and `shutdownTimeout` can only be set at outer class level.
+
+According to the total amount of values accepted by an attribute, if a `@Nested` test class set this attribute, the behavior can change:
+
+ * In case of *multivalued* attributes like `properties`, `replaceRouteFromWith`, `configurationClasses` and `advices`, the values set on the `@Nested` test class are added to the values of the outer classes, and the resulting values are ordered from outermost to innermost.
+ * In case of *mono-valued* attributes like `mainClass`, `propertyPlaceholderFileName`, `mockEndpoints` and `mockEndpointsAndSkip`, the value set on the innermost class is used.
+
+The only exception is the attribute `propertyPlaceholderLocations` that behaves like a mono-valued attribute because it is tightly coupled with `propertyPlaceholderFileName` so it must have the same behavior for the sake of consistency.
+
+To have a better understanding of the behavior for each type of attribute, please check the following examples:
+
+=== Multivalued ===
+In the next example, the property `some-property` is set to `foo` for all the tests in `SomeTest` including the tests in `SomeNestedTest`. Additionally, the property `some-other-property` is set to `bar` but only for all the tests in `SomeNestedTest`.
+
+[source,java]
+----
+@CamelMainTest(properties = { "some-property=foo" })
+class SomeTest {
+
+    @Nested
+    @CamelMainTest(properties = { "some-other-property=bar" })
+    class SomeNestedTest {
+
+        // Rest of the nested test class
+    }
+
+    // Rest of the test class
+}
+----
+
+=== Mono-valued ===
+In the next example, `SomeMainClass` is used as main class for all the tests directly inside `SomeTest` but also the tests in the `@Nested` test class `SomeOtherNestedTest` as it is not redefined. `SomeOtherMainClass` is used as main class for all the tests directly inside `SomeNestedTest` but also the tests in the `@Nested` test class `SomeDeeplyNestedTest` as it is not redefined.
+
+[source,java]
+----
+@CamelMainTest(mainClass = SomeMainClass.class)
+class SomeTest {
+
+    @CamelMainTest(mainClass = SomeOtherMainClass.class)
+    @Nested
+    class SomeNestedTest {
+
+        @Nested
+        class SomeDeeplyNestedTest {
+
+           // Rest of the nested test class
+        }
+
+       // Rest of the nested test class
+    }
+
+    @Nested
+    class SomeOtherNestedTest {
+
+       // Rest of the nested test class
+    }
+
+    // Rest of the test class
+}
+----
+
+The annotations `@Configure` and `@ReplaceInRegistry` can also be used on methods or fields inside `@Nested` test classes knowing that the annotations of outer classes are processed before the annotations of inner classes.

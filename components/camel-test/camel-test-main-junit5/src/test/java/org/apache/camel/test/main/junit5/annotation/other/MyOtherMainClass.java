@@ -14,32 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.main.junit5.annotation;
+package org.apache.camel.test.main.junit5.annotation.other;
 
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-/**
- * A test class ensuring that the annotation inheritance works as expected.
- */
-class InheritanceTest extends AdviceRouteTest {
-
-    @Test
-    void shouldInheritTheAnnotation() throws Exception {
-        mock.expectedBodiesReceived("Hello Will!");
-        String result = template.requestBody((Object) null, String.class);
-        mock.assertIsSatisfied();
-        assertEquals("Hello Will!", result);
-    }
-
-    @Nested
-    class NestedTest {
-
-        @Test
-        void shouldSupportNestedTest() throws Exception {
-            shouldAdviceTheRoute();
-        }
-    }
+public class MyOtherMainClass {
 }

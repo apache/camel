@@ -23,6 +23,9 @@ import org.apache.camel.model.ProcessorDefinition;
 /**
  * {@code DebuggerCallback} is an interface to implement in case a test wishes to be called <strong>immediately</strong>
  * before and after invoking a processor by enabling and configuring automatically the debug mode.
+ * <p/>
+ * Only an outer class can implement this interface, implementing this interface from a {@code @Nested} test class has
+ * no effect.
  */
 public interface DebuggerCallback {
 
