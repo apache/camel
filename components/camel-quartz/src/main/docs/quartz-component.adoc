@@ -97,20 +97,6 @@ configuration file.
 
 This option is set to true by default, unless explicitly disabled.
 
-== Starting the Quartz scheduler
-
-The xref:quartz-component.adoc[Quartz] component offers an option to let the
-Quartz scheduler be started delayed, or not auto started at all.
-
-This is an example:
-
-[source,xml]
-----
-<bean id="quartz" class="org.apache.camel.component.quartz.QuartzComponent">
-    <property name="startDelayedSeconds" value="5"/>
-</bean>
-----
-
 == Clustering
 
 If you use Quartz in clustered mode, e.g. the `JobStore` is clustered.
