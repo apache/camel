@@ -50,7 +50,12 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
         }
 
         @Override
-        public void start() throws Exception {
+        public void start() {
+
+        }
+
+        @Override
+        public void stop() {
 
         }
     }

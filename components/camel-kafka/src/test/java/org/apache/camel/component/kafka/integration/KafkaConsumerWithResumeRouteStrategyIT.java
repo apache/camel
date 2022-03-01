@@ -111,13 +111,7 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
         }
 
         @Override
-        public void stop() {
-
-        }
-
-        @Override
         public void init() {
-            Service.super.init();
             LOG.warn("Init was called");
         }
 

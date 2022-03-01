@@ -36,9 +36,4 @@ public final class LatestUpdateSequenceResumeStrategy implements CouchDbResumeSt
 
         resumable.updateLastOffset(clientWrapper.getLatestUpdateSequence());
     }
-
-    @Override
-    public void start() throws Exception {
-
-    }
 }

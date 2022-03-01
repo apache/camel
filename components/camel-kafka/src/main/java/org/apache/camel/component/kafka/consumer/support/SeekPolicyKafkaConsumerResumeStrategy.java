@@ -58,9 +58,4 @@ public class SeekPolicyKafkaConsumerResumeStrategy implements KafkaConsumerResum
     public void resume(KafkaResumable resumable) {
         resume();
     }
-
-    @Override
-    public void start() throws Exception {
-
-    }
 }

@@ -24,4 +24,14 @@ import org.apache.camel.ResumeStrategy;
  */
 public interface CouchDbResumeStrategy extends ResumeStrategy {
     void setResumable(CouchDbResumable resumable);
+
+    @Override
+    default void start() {
+
+    }
+
+    @Override
+    default void stop() {
+
+    }
 }
