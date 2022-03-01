@@ -64,6 +64,7 @@ Camel also support accessing the secured configuration from an external vault sy
 The following _Vaults_ are supported by Camel:
 
 * xref:components::aws-secrets-manager-component.adoc[AWS Secrets Manager]
+* xref:components::google-secret-manager-component.adoc[Google Secret Manager]
 
 ==== Using AWS Vault
 
@@ -159,4 +160,97 @@ In this case if the secret doesn't exist or the secret exists, but the username 
 NOTE: For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
 
 The only requirement is adding `camel-aws-secrets-manager` JAR to your Camel application.
+
+==== Using GCP Vault
+
+To use GCP Secret Manager you need to provide _serviceAccountKey_ file and GCP _projectId_.
+This can be done using environmental variables before starting the application:
+
+[source,bash]
+----
+export $CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY=file:////path/to/service.accountkey
+export $CAMEL_VAULT_GCP_PROJECT_ID=projectId
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.gcp.serviceAccountKey = accessKey
+camel.vault.gcp.projectId = secretKey
+----
+
+At this point you'll be able to reference a property in the following way by using `gcp:` as prefix in the `{{ }}` syntax:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{gcp:route}}"/>
+    </route>
+</camelContext>
+----
+
+Where `route` will be the name of the secret stored in the GCP Secret Manager Service.
+
+You could specify a default value in case the secret is not present on GCP Secret Manager:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{gcp:route:default}}"/>
+    </route>
+</camelContext>
+----
+
+In this case if the secret doesn't exist, the property will fallback to "default" as value.
+
+Also, you are able to get particular field of the secret, if you have for example a secret named database of this form:
+
+[source,json]
+----
+{
+  "username": "admin",
+  "password": "password123",
+  "engine": "postgres",
+  "host": "127.0.0.1",
+  "port": "3128",
+  "dbname": "db"
+}
+----
+
+You're able to do get single secret value in your route, like for example:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Username is {{gcp:database/username}}"/>
+    </route>
+</camelContext>
+----
+
+Or re-use the property as part of an endpoint.
+
+You could specify a default value in case the particular field of secret is not present on GCP Secret Manager:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Username is {{gcp:database/username:admin}}"/>
+    </route>
+</camelContext>
+----
+
+In this case if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
+
+NOTE: For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
+
+The only requirement is adding `camel-google-secret-manager` JAR to your Camel application.
 
