@@ -167,4 +167,24 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
             assertMockEndpointsSatisfied();
         });
     }
+
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_PROJECT_ID", matches = ".*")
+    @Test
+    public void testComplexSimpleDefaultValueExceptionFunction() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:username").setBody(simple("{{aws:test-3:admin}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{aws:test-1:secret}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("admin", "secret");
+
+        template.sendBody("direct:username", "Hello World");
+        template.sendBody("direct:password", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
 }
