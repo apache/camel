@@ -81,8 +81,8 @@ public class MainVaultTest {
     public void testMainGcp() throws Exception {
         Main main = new Main();
 
-        main.addInitialProperty("camel.vault.aws.serviceAccountKey", "file:////myKey");
-        main.addInitialProperty("camel.vault.aws.processId", "gcp-project");
+        main.addInitialProperty("camel.vault.gcp.serviceAccountKey", "file:////myKey");
+        main.addInitialProperty("camel.vault.gcp.processId", "gcp-project");
 
         main.start();
 
