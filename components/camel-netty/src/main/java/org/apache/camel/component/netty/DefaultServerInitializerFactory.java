@@ -80,7 +80,7 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
             addToPipeline("ssl", channelPipeline, sslHandler);
         }
 
-        List<ChannelHandler> encoders = consumer.getConfiguration().getEncoders();
+        List<ChannelHandler> encoders = consumer.getConfiguration().getEncodersAsList();
         for (int x = 0; x < encoders.size(); x++) {
             ChannelHandler encoder = encoders.get(x);
             if (encoder instanceof ChannelHandlerFactory) {
@@ -90,7 +90,7 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
             addToPipeline("encoder-" + x, channelPipeline, encoder);
         }
 
-        List<ChannelHandler> decoders = consumer.getConfiguration().getDecoders();
+        List<ChannelHandler> decoders = consumer.getConfiguration().getDecodersAsList();
         for (int x = 0; x < decoders.size(); x++) {
             ChannelHandler decoder = decoders.get(x);
             if (decoder instanceof ChannelHandlerFactory) {

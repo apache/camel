@@ -50,6 +50,9 @@ import org.slf4j.LoggerFactory;
 public class NettyConfiguration extends NettyServerBootstrapConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(NettyConfiguration.class);
 
+    private transient List<ChannelHandler> encodersList = new ArrayList<>();
+    private transient List<ChannelHandler> decodersList = new ArrayList<>();
+
     @UriParam(label = "producer")
     private long requestTimeout;
     @UriParam(defaultValue = "true")
@@ -65,9 +68,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @UriParam(label = "codec")
     private String encoding;
     @UriParam(label = "codec")
-    private List<ChannelHandler> encoders = new ArrayList<>();
+    private String encoders;
     @UriParam(label = "codec")
-    private List<ChannelHandler> decoders = new ArrayList<>();
+    private String decoders;
     @UriParam(label = "common, security", defaultValue = "false")
     private boolean hostnameVerification;
     @UriParam
@@ -122,10 +125,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         try {
             NettyConfiguration answer = (NettyConfiguration) clone();
             // make sure the lists is copied in its own instance
-            List<ChannelHandler> encodersCopy = new ArrayList<>(encoders);
-            answer.setEncoders(encodersCopy);
-            List<ChannelHandler> decodersCopy = new ArrayList<>(decoders);
-            answer.setDecoders(decodersCopy);
+            answer.setEncodersAsList(new ArrayList<>(getEncodersAsList()));
+            answer.setDecodersAsList(new ArrayList<>(getDecodersAsList()));
             return answer;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
@@ -134,7 +135,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     public void validateConfiguration() {
         // validate that the encoders is either shareable or is a handler factory
-        for (ChannelHandler encoder : encoders) {
+        for (ChannelHandler encoder : encodersList) {
             if (encoder instanceof ChannelHandlerFactory) {
                 continue;
             }
@@ -147,7 +148,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         }
 
         // validate that the decoders is either shareable or is a handler factory
-        for (ChannelHandler decoder : decoders) {
+        for (ChannelHandler decoder : decodersList) {
             if (decoder instanceof ChannelHandlerFactory) {
                 continue;
             }
@@ -207,10 +208,18 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         // set custom encoders and decoders first
         List<ChannelHandler> referencedEncoders
                 = component.resolveAndRemoveReferenceListParameter(parameters, "encoders", ChannelHandler.class, null);
-        addToHandlersList(encoders, referencedEncoders, ChannelHandler.class);
+        addToHandlersList(encodersList, referencedEncoders, ChannelHandler.class);
         List<ChannelHandler> referencedDecoders
                 = component.resolveAndRemoveReferenceListParameter(parameters, "decoders", ChannelHandler.class, null);
-        addToHandlersList(decoders, referencedDecoders, ChannelHandler.class);
+        addToHandlersList(decodersList, referencedDecoders, ChannelHandler.class);
+
+        // set custom encoders and decoders from config
+        List<ChannelHandler> configEncoders
+                = EndpointHelper.resolveReferenceListParameter(component.getCamelContext(), encoders, ChannelHandler.class);
+        addToHandlersList(encodersList, configEncoders, ChannelHandler.class);
+        List<ChannelHandler> configDecoders
+                = EndpointHelper.resolveReferenceListParameter(component.getCamelContext(), decoders, ChannelHandler.class);
+        addToHandlersList(decodersList, configDecoders, ChannelHandler.class);
 
         // then set parameters with the help of the camel context type converters
         // and use configurer to avoid any reflection calls
@@ -232,36 +241,36 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         }
 
         // add default encoders and decoders
-        if (encoders.isEmpty() && decoders.isEmpty()) {
+        if (encodersList.isEmpty() && decodersList.isEmpty()) {
             if (isAllowDefaultCodec()) {
                 if ("udp".equalsIgnoreCase(protocol)) {
-                    encoders.add(ChannelHandlerFactories.newDatagramPacketEncoder());
+                    encodersList.add(ChannelHandlerFactories.newDatagramPacketEncoder());
                 }
                 // are we textline or byte array
                 if (isTextline()) {
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
-                    encoders.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
+                    encodersList.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
                     ByteBuf[] delimiters
                             = delimiter == TextLineDelimiter.LINE ? Delimiters.lineDelimiter() : Delimiters.nulDelimiter();
-                    decoders.add(
+                    decodersList.add(
                             ChannelHandlerFactories.newDelimiterBasedFrameDecoder(decoderMaxLineLength, delimiters, protocol));
-                    decoders.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
+                    decodersList.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
 
                     LOG.debug(
                             "Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}",
                             charset, delimiter, decoderMaxLineLength);
 
                 } else if ("udp".equalsIgnoreCase(protocol) && isUdpByteArrayCodec()) {
-                    encoders.add(ChannelHandlerFactories.newByteArrayEncoder(protocol));
-                    decoders.add(ChannelHandlerFactories.newByteArrayDecoder(protocol));
+                    encodersList.add(ChannelHandlerFactories.newByteArrayEncoder(protocol));
+                    decodersList.add(ChannelHandlerFactories.newByteArrayDecoder(protocol));
                 } else {
                     // Fall back to allowing Strings to be serialized only
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
-                    encoders.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
-                    decoders.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
+                    encodersList.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
+                    decodersList.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
                 }
                 if ("udp".equalsIgnoreCase(protocol)) {
-                    decoders.add(ChannelHandlerFactories.newDatagramPacketDecoder());
+                    decodersList.add(ChannelHandlerFactories.newDatagramPacketDecoder());
                 }
             } else {
                 LOG.debug("No encoders and decoders will be used");
@@ -381,8 +390,12 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         this.encoding = encoding;
     }
 
-    public List<ChannelHandler> getDecoders() {
-        return decoders;
+    public List<ChannelHandler> getDecodersAsList() {
+        return decodersList;
+    }
+
+    public void setDecodersAsList(List<ChannelHandler> decoders) {
+        this.decodersList = decoders;
     }
 
     /**
@@ -390,11 +403,27 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      * looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup.
      */
     public void setDecoders(List<ChannelHandler> decoders) {
+        this.decodersList = decoders;
+    }
+
+    /**
+     * A list of decoders to be used. You can use a String which have values separated by comma, and have the values be
+     * looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup.
+     */
+    public void setDecoders(String decoders) {
         this.decoders = decoders;
     }
 
-    public List<ChannelHandler> getEncoders() {
-        return encoders;
+    public String getDecoders() {
+        return decoders;
+    }
+
+    public List<ChannelHandler> getEncodersAsList() {
+        return encodersList;
+    }
+
+    public void setEncodersAsList(List<ChannelHandler> encoders) {
+        this.encodersList = encoders;
     }
 
     /**
@@ -402,15 +431,27 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      * looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup.
      */
     public void setEncoders(List<ChannelHandler> encoders) {
+        this.encodersList = encoders;
+    }
+
+    /**
+     * A list of encoders to be used. You can use a String which have values separated by comma, and have the values be
+     * looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup.
+     */
+    public void setEncoders(String encoders) {
         this.encoders = encoders;
+    }
+
+    public String getEncoders() {
+        return encoders;
     }
 
     /**
      * Adds a custom ChannelHandler class that can be used to perform special marshalling of outbound payloads.
      */
     public void addEncoder(ChannelHandler encoder) {
-        if (!encoders.contains(encoder)) {
-            encoders.add(encoder);
+        if (!encodersList.contains(encoder)) {
+            encodersList.add(encoder);
         }
     }
 
@@ -418,8 +459,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      * Adds a custom ChannelHandler class that can be used to perform special marshalling of inbound payloads.
      */
     public void addDecoder(ChannelHandler decoder) {
-        if (!decoders.contains(decoder)) {
-            decoders.add(decoder);
+        if (!decodersList.contains(decoder)) {
+            decodersList.add(decoder);
         }
     }
 
