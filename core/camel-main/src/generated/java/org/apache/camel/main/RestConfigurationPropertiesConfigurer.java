@@ -25,8 +25,6 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ApiComponent": target.setApiComponent(property(camelContext, java.lang.String.class, value)); return true;
         case "apicontextpath":
         case "ApiContextPath": target.setApiContextPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "apicontextrouteid":
-        case "ApiContextRouteId": target.setApiContextRouteId(property(camelContext, java.lang.String.class, value)); return true;
         case "apihost":
         case "ApiHost": target.setApiHost(property(camelContext, java.lang.String.class, value)); return true;
         case "apiproperties":
@@ -84,8 +82,6 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ApiComponent": return java.lang.String.class;
         case "apicontextpath":
         case "ApiContextPath": return java.lang.String.class;
-        case "apicontextrouteid":
-        case "ApiContextRouteId": return java.lang.String.class;
         case "apihost":
         case "ApiHost": return java.lang.String.class;
         case "apiproperties":
@@ -144,8 +140,6 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ApiComponent": return target.getApiComponent();
         case "apicontextpath":
         case "ApiContextPath": return target.getApiContextPath();
-        case "apicontextrouteid":
-        case "ApiContextRouteId": return target.getApiContextRouteId();
         case "apihost":
         case "ApiHost": return target.getApiHost();
         case "apiproperties":

@@ -7183,9 +7183,6 @@
           "api-context-path" : {
             "type" : "string"
           },
-          "api-context-route-id" : {
-            "type" : "string"
-          },
           "api-host" : {
             "type" : "string"
           },

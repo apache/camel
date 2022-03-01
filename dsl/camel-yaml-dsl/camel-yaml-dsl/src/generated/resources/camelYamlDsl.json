@@ -7081,9 +7081,6 @@
           "apiContextPath" : {
             "type" : "string"
           },
-          "apiContextRouteId" : {
-            "type" : "string"
-          },
           "apiHost" : {
             "type" : "string"
           },

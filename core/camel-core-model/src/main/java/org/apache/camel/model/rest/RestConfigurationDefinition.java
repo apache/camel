@@ -71,10 +71,6 @@ public class RestConfigurationDefinition {
     @Metadata(label = "consumer")
     private String apiContextPath;
     @XmlAttribute
-    @Metadata(label = "consumer,advanced")
-    @Deprecated
-    private String apiContextRouteId;
-    @XmlAttribute
     @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private Boolean apiVendorExtension;
     @XmlAttribute
@@ -253,23 +249,6 @@ public class RestConfigurationDefinition {
      */
     public void setApiContextPath(String contextPath) {
         this.apiContextPath = contextPath;
-    }
-
-    @Deprecated
-    public String getApiContextRouteId() {
-        return apiContextRouteId;
-    }
-
-    /**
-     * Sets the route id to use for the route that services the REST API.
-     * <p/>
-     * The route will by default use an auto assigned route id.
-     *
-     * @param apiContextRouteId the route id
-     */
-    @Deprecated
-    public void setApiContextRouteId(String apiContextRouteId) {
-        this.apiContextRouteId = apiContextRouteId;
     }
 
     public Boolean getApiVendorExtension() {
@@ -558,14 +537,6 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * Sets the route id to use for the route that services the REST API.
-     */
-    public RestConfigurationDefinition apiContextRouteId(String routeId) {
-        setApiContextRouteId(routeId);
-        return this;
-    }
-
-    /**
      * Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information
      * as vendor extension (eg keys starting with x-) such as route ids, class names etc. Some API tooling may not
      * support vendor extensions and this option can then be turned off.
@@ -798,9 +769,6 @@ public class RestConfigurationDefinition {
         }
         if (apiContextPath != null) {
             target.setApiContextPath(CamelContextHelper.parseText(context, apiContextPath));
-        }
-        if (apiContextRouteId != null) {
-            target.setApiContextRouteId(CamelContextHelper.parseText(context, apiContextRouteId));
         }
         if (apiVendorExtension != null) {
             target.setApiVendorExtension(apiVendorExtension);

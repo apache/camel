@@ -71,9 +71,6 @@ public final class CamelXmlRestDslParserHelper {
             detail.setProducerApiDoc(extractAttribute(map, "producerApiDoc"));
             detail.setContextPath(extractAttribute(map, "contextPath"));
             detail.setApiContextPath(extractAttribute(map, "apiContextPath"));
-            detail.setApiContextRouteId(extractAttribute(map, "apiContextRouteId"));
-            detail.setApiContextIdPattern(extractAttribute(map, "apiContextIdPattern"));
-            detail.setApiContextListening(extractAttribute(map, "apiContextListening"));
             detail.setApiVendorExtension(extractAttribute(map, "apiVendorExtension"));
             detail.setHostNameResolver(extractAttribute(map, "hostNameResolver"));
             detail.setBindingMode(extractAttribute(map, "bindingMode"));

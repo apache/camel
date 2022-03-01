@@ -279,12 +279,6 @@ public final class CamelJavaRestDslParserHelper {
             node.setContextPath(extractValueFromFirstArgument(clazz, block, mi));
         } else if ("apiContextPath".equals(name)) {
             node.setApiContextPath(extractValueFromFirstArgument(clazz, block, mi));
-        } else if ("apiContextRouteId".equals(name)) {
-            node.setApiContextRouteId(extractValueFromFirstArgument(clazz, block, mi));
-        } else if ("apiContextIdPattern".equals(name)) {
-            node.setApiContextIdPattern(extractValueFromFirstArgument(clazz, block, mi));
-        } else if ("apiContextListening".equals(name)) {
-            node.setApiContextListening(extractValueFromFirstArgument(clazz, block, mi));
         } else if ("apiVendorExtension".equals(name)) {
             node.setApiVendorExtension(extractValueFromFirstArgument(clazz, block, mi));
         } else if ("hostNameResolver".equals(name)) {
