@@ -80,7 +80,8 @@ public class ResumableProcessor extends AsyncProcessorSupport
 
     @Override
     protected void doStart() throws Exception {
-        LOG.debug("Enabling the resumable strategy of type: {}", resumeStrategy.getClass().getSimpleName());
+        LOG.info("Starting the resumable strategy: {}", resumeStrategy.getClass().getSimpleName());
+        resumeStrategy.start();
 
         super.doStart();
     }
@@ -150,4 +151,5 @@ public class ResumableProcessor extends AsyncProcessorSupport
     public boolean hasNext() {
         return processor != null;
     }
+
 }

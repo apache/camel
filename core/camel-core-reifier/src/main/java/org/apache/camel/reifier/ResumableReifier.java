@@ -37,7 +37,6 @@ public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
 
         ResumeStrategy resumeStrategy = resolveResumeStrategy();
         ObjectHelper.notNull(resumeStrategy, "resumeStrategy", definition);
-        resumeStrategy.start();
         route.setResumeStrategy(resumeStrategy);
 
         return new ResumableProcessor(resumeStrategy, childProcessor);
