@@ -2,7 +2,7 @@
 :doctitle: iCal
 :shortname: ical
 :artifactid: camel-ical
-:description: Marshal and unmarshal iCal (.ics) documents to/from model objects provided by the iCal4j library.
+:description: Marshal and unmarshal iCal (.ics) documents to/from model objects.
 :since: 2.12
 :supportlevel: Stable
 //Manually maintained attributes
