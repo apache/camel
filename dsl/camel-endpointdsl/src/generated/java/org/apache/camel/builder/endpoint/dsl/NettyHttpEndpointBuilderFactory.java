@@ -488,27 +488,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: codec
-         * 
-         * @param decoders the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointConsumerBuilder decoders(
-                List<io.netty.channel.ChannelHandler> decoders) {
-            doSetProperty("decoders", decoders);
-            return this;
-        }
-        /**
-         * A list of decoders to be used. You can use a String which have values
-         * separated by comma, and have the values be looked up in the Registry.
-         * Just remember to prefix the value with # so Camel knows it should
-         * lookup.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -525,27 +505,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: codec
-         * 
-         * @param encoders the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointConsumerBuilder encoders(
-                List<io.netty.channel.ChannelHandler> encoders) {
-            doSetProperty("encoders", encoders);
-            return this;
-        }
-        /**
-         * A list of encoders to be used. You can use a String which have values
-         * separated by comma, and have the values be looked up in the Registry.
-         * Just remember to prefix the value with # so Camel knows it should
-         * lookup.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -2825,27 +2785,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: codec
-         * 
-         * @param decoders the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointProducerBuilder decoders(
-                List<io.netty.channel.ChannelHandler> decoders) {
-            doSetProperty("decoders", decoders);
-            return this;
-        }
-        /**
-         * A list of decoders to be used. You can use a String which have values
-         * separated by comma, and have the values be looked up in the Registry.
-         * Just remember to prefix the value with # so Camel knows it should
-         * lookup.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -2862,27 +2802,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: codec
-         * 
-         * @param encoders the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointProducerBuilder encoders(
-                List<io.netty.channel.ChannelHandler> encoders) {
-            doSetProperty("encoders", encoders);
-            return this;
-        }
-        /**
-         * A list of encoders to be used. You can use a String which have values
-         * separated by comma, and have the values be looked up in the Registry.
-         * Just remember to prefix the value with # so Camel knows it should
-         * lookup.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -4427,27 +4347,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: codec
-         * 
-         * @param decoders the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointBuilder decoders(
-                List<io.netty.channel.ChannelHandler> decoders) {
-            doSetProperty("decoders", decoders);
-            return this;
-        }
-        /**
-         * A list of decoders to be used. You can use a String which have values
-         * separated by comma, and have the values be looked up in the Registry.
-         * Just remember to prefix the value with # so Camel knows it should
-         * lookup.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
@@ -4464,27 +4364,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Just remember to prefix the value with # so Camel knows it should
          * lookup.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: codec
-         * 
-         * @param encoders the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointBuilder encoders(
-                List<io.netty.channel.ChannelHandler> encoders) {
-            doSetProperty("encoders", encoders);
-            return this;
-        }
-        /**
-         * A list of encoders to be used. You can use a String which have values
-         * separated by comma, and have the values be looked up in the Registry.
-         * Just remember to prefix the value with # so Camel knows it should
-         * lookup.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
          * 
