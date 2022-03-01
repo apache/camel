@@ -225,7 +225,7 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
                              .routeId("resume-strategy-route")
                              .setHeader(Exchange.OFFSET,
                                      constant(Resumables.of("key", RANDOM_VALUE)))
-                             .resumable().resumableStrategyRef("resumeStrategy")
+                             .resumable().resumeStrategy("resumeStrategy")
                              .to("mock:result");
             }
         };
