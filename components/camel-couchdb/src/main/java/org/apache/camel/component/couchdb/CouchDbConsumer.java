@@ -44,6 +44,7 @@ public class CouchDbConsumer extends DefaultConsumer implements ResumeAware<Couc
         this.resumeStrategy = resumeStrategy;
     }
 
+    @Override
     public CouchDbResumeStrategy getResumeStrategy() {
         return resumeStrategy;
     }
