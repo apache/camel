@@ -92,8 +92,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private boolean recoverableJob;
     @UriParam(label = "scheduler", defaultValue = "500", javaType = "java.time.Duration")
     private long triggerStartDelay = 500;
-    @UriParam(label = "scheduler")
-    private int startDelayedSeconds;
     @UriParam(label = "scheduler", defaultValue = "true")
     private boolean autoStartScheduler = true;
     @UriParam(label = "advanced")
@@ -236,17 +234,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
      */
     public void setJobParameters(Map<String, Object> jobParameters) {
         this.jobParameters = jobParameters;
-    }
-
-    public int getStartDelayedSeconds() {
-        return startDelayedSeconds;
-    }
-
-    /**
-     * Seconds to wait before starting the quartz scheduler.
-     */
-    public void setStartDelayedSeconds(int startDelayedSeconds) {
-        this.startDelayedSeconds = startDelayedSeconds;
     }
 
     public boolean isAutoStartScheduler() {

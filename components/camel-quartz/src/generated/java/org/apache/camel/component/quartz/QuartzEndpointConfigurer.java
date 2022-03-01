@@ -44,8 +44,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "prefixJobNameWithEndpointId": target.setPrefixJobNameWithEndpointId(property(camelContext, boolean.class, value)); return true;
         case "recoverablejob":
         case "recoverableJob": target.setRecoverableJob(property(camelContext, boolean.class, value)); return true;
-        case "startdelayedseconds":
-        case "startDelayedSeconds": target.setStartDelayedSeconds(property(camelContext, int.class, value)); return true;
         case "stateful": target.setStateful(property(camelContext, boolean.class, value)); return true;
         case "triggerparameters":
         case "triggerParameters": target.setTriggerParameters(property(camelContext, java.util.Map.class, value)); return true;
@@ -83,8 +81,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "prefixJobNameWithEndpointId": return boolean.class;
         case "recoverablejob":
         case "recoverableJob": return boolean.class;
-        case "startdelayedseconds":
-        case "startDelayedSeconds": return int.class;
         case "stateful": return boolean.class;
         case "triggerparameters":
         case "triggerParameters": return java.util.Map.class;
@@ -123,8 +119,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "prefixJobNameWithEndpointId": return target.isPrefixJobNameWithEndpointId();
         case "recoverablejob":
         case "recoverableJob": return target.isRecoverableJob();
-        case "startdelayedseconds":
-        case "startDelayedSeconds": return target.getStartDelayedSeconds();
         case "stateful": return target.isStateful();
         case "triggerparameters":
         case "triggerParameters": return target.getTriggerParameters();

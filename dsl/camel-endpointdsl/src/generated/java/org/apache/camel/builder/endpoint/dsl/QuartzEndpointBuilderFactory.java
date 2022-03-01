@@ -312,36 +312,6 @@ public interface QuartzEndpointBuilderFactory {
             return this;
         }
         /**
-         * Seconds to wait before starting the quartz scheduler.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: scheduler
-         * 
-         * @param startDelayedSeconds the value to set
-         * @return the dsl builder
-         */
-        default QuartzEndpointBuilder startDelayedSeconds(
-                int startDelayedSeconds) {
-            doSetProperty("startDelayedSeconds", startDelayedSeconds);
-            return this;
-        }
-        /**
-         * Seconds to wait before starting the quartz scheduler.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: scheduler
-         * 
-         * @param startDelayedSeconds the value to set
-         * @return the dsl builder
-         */
-        default QuartzEndpointBuilder startDelayedSeconds(
-                String startDelayedSeconds) {
-            doSetProperty("startDelayedSeconds", startDelayedSeconds);
-            return this;
-        }
-        /**
          * In case of scheduler has already started, we want the trigger start
          * slightly after current time to ensure endpoint is fully started
          * before the job kicks in. Negative value shifts trigger start time in

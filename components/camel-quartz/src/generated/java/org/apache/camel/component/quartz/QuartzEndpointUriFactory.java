@@ -21,7 +21,7 @@ public class QuartzEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(19);
+        Set<String> props = new HashSet<>(18);
         props.add("cron");
         props.add("triggerName");
         props.add("customCalendar");
@@ -36,7 +36,6 @@ public class QuartzEndpointUriFactory extends org.apache.camel.support.component
         props.add("recoverableJob");
         props.add("triggerParameters");
         props.add("durableJob");
-        props.add("startDelayedSeconds");
         props.add("jobParameters");
         props.add("exceptionHandler");
         props.add("usingFixedCamelContextName");
