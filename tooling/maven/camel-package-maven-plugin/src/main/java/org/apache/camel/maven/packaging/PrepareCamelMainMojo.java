@@ -197,6 +197,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.rest.";
                 } else if (file.getName().contains("AwsVault")) {
                     prefix = "camel.vault.aws.";
+                } else if (file.getName().contains("GcpVault")) {
+                    prefix = "camel.vault.gcp.";
                     // TODO: add more vault providers here
                 } else if (file.getName().contains("Health")) {
                     prefix = "camel.health.";
@@ -230,13 +232,22 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
         }
         // include additional vault configuration from camel-api
         // TODO: add more vault providers here
-        File vaultConfig = new File(camelApiDir, "src/main/java/org/apache/camel/vault/AwsVaultConfiguration.java");
+        File awsVaultConfig = new File(camelApiDir, "src/main/java/org/apache/camel/vault/AwsVaultConfiguration.java");
         try {
-            List<MainModel.MainOptionModel> model = parseConfigurationSource(vaultConfig);
+            List<MainModel.MainOptionModel> model = parseConfigurationSource(awsVaultConfig);
             model.forEach(m -> m.setName("camel.vault.aws." + m.getName()));
             data.addAll(model);
         } catch (Exception e) {
-            throw new MojoFailureException("Error parsing file " + restConfig + " due " + e.getMessage(), e);
+            throw new MojoFailureException("Error parsing file " + awsVaultConfig + " due " + e.getMessage(), e);
+        }
+
+        File gcpVaultConfig = new File(camelApiDir, "src/main/java/org/apache/camel/vault/GcpVaultConfiguration.java");
+        try {
+            List<MainModel.MainOptionModel> model = parseConfigurationSource(gcpVaultConfig);
+            model.forEach(m -> m.setName("camel.vault.gcp." + m.getName()));
+            data.addAll(model);
+        } catch (Exception e) {
+            throw new MojoFailureException("Error parsing file " + gcpVaultConfig + " due " + e.getMessage(), e);
         }
 
         // lets sort so they are always ordered (but camel.main in top)
@@ -269,6 +280,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     new MainGroupModel(
                             "camel.vault.aws", "Camel AWS Vault configurations",
                             "org.apache.camel.vault.AwsVaultConfiguration"));
+            model.getGroups().add(
+                    new MainGroupModel(
+                            "camel.vault.gcp", "Camel GCP Vault configurations",
+                            "org.apache.camel.vault.GcpVaultConfiguration"));
             // TODO: add more vault providers here
             model.getGroups()
                     .add(new MainGroupModel(

@@ -84,6 +84,7 @@ import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.vault.AwsVaultConfiguration;
+import org.apache.camel.vault.GcpVaultConfiguration;
 import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -547,6 +548,12 @@ public final class DefaultConfigurationConfigurer {
         if (aws != null) {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
             vault.setAwsVaultConfiguration(aws);
+        }
+
+        GcpVaultConfiguration gcp = getSingleBeanOfType(registry, GcpVaultConfiguration.class);
+        if (gcp != null) {
+            VaultConfiguration vault = camelContext.getVaultConfiguration();
+            vault.setGcpVaultConfiguration(gcp);
         }
 
         // set the default thread pool profile if defined

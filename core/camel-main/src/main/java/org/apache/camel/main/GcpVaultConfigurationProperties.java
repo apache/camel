@@ -17,16 +17,19 @@
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.vault.AwsVaultConfiguration;
 import org.apache.camel.vault.GcpVaultConfiguration;
-import org.apache.camel.vault.VaultConfiguration;
 
-public class VaultConfigurationProperties extends VaultConfiguration implements BootstrapCloseable {
+/**
+ * Configuration for access to GCP Secret.
+ */
+@Configurer(bootstrap = true)
+public class GcpVaultConfigurationProperties extends GcpVaultConfiguration implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;
-    private AwsVaultConfigurationProperties aws;
-    private GcpVaultConfigurationProperties gcp;
 
-    public VaultConfigurationProperties(MainConfigurationProperties parent) {
+    public GcpVaultConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
     }
 
@@ -37,12 +40,6 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
     @Override
     public void close() {
         parent = null;
-        if (aws != null) {
-            aws.close();
-        }
-        if (gcp != null) {
-            gcp.close();
-        }
     }
 
     // getter and setters
@@ -53,19 +50,20 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
     // fluent builders
     // --------------------------------------------------------------
 
-    @Override
-    public AwsVaultConfigurationProperties aws() {
-        if (aws == null) {
-            aws = new AwsVaultConfigurationProperties(parent);
-        }
-        return aws;
+    /**
+     * The Service Account Key location
+     */
+    public GcpVaultConfigurationProperties withServiceAccountKey(String serviceAccountKey) {
+        setServiceAccountKey(serviceAccountKey);
+        return this;
     }
 
-    @Override
-    public GcpVaultConfigurationProperties gcp() {
-        if (gcp == null) {
-            gcp = new GcpVaultConfigurationProperties(parent);
-        }
-        return gcp;
+    /**
+     * The GCP Project ID
+     */
+    public GcpVaultConfigurationProperties withProjectId(String projectId) {
+        setProjectId(projectId);
+        return this;
     }
+
 }

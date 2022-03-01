@@ -16,47 +16,38 @@
  */
 package org.apache.camel.vault;
 
+import org.apache.camel.spi.Metadata;
+
 /**
- * Base configuration for access to Vaults.
+ * Configuration for access to AWS Secret.
  */
-public class VaultConfiguration {
+public class GcpVaultConfiguration extends VaultConfiguration {
 
-    private AwsVaultConfiguration aws;
-    private GcpVaultConfiguration gcp;
+    @Metadata(secret = true)
+    private String serviceAccountKey;
+    @Metadata
+    private String projectId;
 
-    /**
-     * AWS Vault Configuration
-     */
-    public AwsVaultConfiguration aws() {
-        if (aws == null) {
-            aws = new AwsVaultConfiguration();
-        }
-        return aws;
+    public String getServiceAccountKey() {
+        return serviceAccountKey;
     }
 
     /**
-     * GCP Vault Configuration
+     * The Service Account Key location
      */
-    public GcpVaultConfiguration gcp() {
-        if (gcp == null) {
-            gcp = new GcpVaultConfiguration();
-        }
-        return gcp;
+    public void setServiceAccountKey(String serviceAccountKey) {
+        this.serviceAccountKey = serviceAccountKey;
     }
 
-    public AwsVaultConfiguration getAwsVaultConfiguration() {
-        return aws;
+    public String getProjectId() {
+        return projectId;
     }
 
-    public void setAwsVaultConfiguration(AwsVaultConfiguration aws) {
-        this.aws = aws;
+    /**
+     * The GCP Project ID
+     */
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 
-    public GcpVaultConfiguration getGcpVaultConfiguration() {
-        return gcp;
-    }
-
-    public void setGcpVaultConfiguration(GcpVaultConfiguration gcp) {
-        this.gcp = gcp;
-    }
 }
