@@ -205,6 +205,7 @@
         <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
         <gmavenplus-plugin-version>1.13.1</gmavenplus-plugin-version>
         <gmetric4j-version>1.0.10</gmetric4j-version>
+        <google-auth-library-oauth2-http-version>1.4.0</google-auth-library-oauth2-http-version>
         <google-guava-version>20.0</google-guava-version>
         <google-api-client-version>1.32.1</google-api-client-version>
         <google-api-services-drive-version>v2-rev20220110-1.32.1</google-api-services-drive-version>
