@@ -25,7 +25,7 @@ import org.apache.camel.model.ResumableDefinition;
 import org.apache.camel.processor.resume.ResumableProcessor;
 import org.apache.camel.util.ObjectHelper;
 
-public class ResumableReifier extends ExpressionReifier<ResumableDefinition> {
+public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
     protected ResumableReifier(Route route, ProcessorDefinition<?> definition) {
         super(route, ResumableDefinition.class.cast(definition));
 

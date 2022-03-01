@@ -110,12 +110,12 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
                 from(fileUri("resumeOff?noop=true&recursive=true"))
                         .setHeader(Exchange.OFFSET,
                                 constant(Resumables.of("resume-none.txt", 3)))
-                        .resumable().resumableStrategyRef("resumeStrategy")
+                        .resumable().resumeStrategy("resumeStrategy")
                         .log("${body}")
                         .convertBodyTo(String.class).to("mock:result");
 
                 from(fileUri("resumeMissingOffset?noop=true&recursive=true"))
-                        .resumable().resumableStrategyRef("resumeStrategy")
+                        .resumable().resumeStrategy("resumeStrategy")
                         .log("${body}")
                         .convertBodyTo(String.class).to("mock:result");
 

@@ -22,8 +22,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ResumeStrategy;
 
-public class ResumableDefinition extends OutputExpressionNode {
-    @XmlAttribute(required = true)
+public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition> {
+    @XmlAttribute(required = true, name = "resumeStrategy")
     private String resumeStrategyRef;
 
     @XmlTransient
@@ -52,8 +52,14 @@ public class ResumableDefinition extends OutputExpressionNode {
 
     // Fluent API
     // -------------------------------------------------------------------------
-    public ResumableDefinition resumableStrategyRef(String resumeStrategyRef) {
+    public ResumableDefinition resumeStrategy(String resumeStrategyRef) {
         setResumeStrategyRef(resumeStrategyRef);
+
+        return this;
+    }
+
+    public ResumableDefinition resumeStrategy(ResumeStrategy resumeStrategy) {
+        setResumeStrategy(resumeStrategy);
 
         return this;
     }

@@ -44,6 +44,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.ResumeStrategy;
 import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -3782,6 +3783,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ResumableDefinition resumable() {
         ResumableDefinition answer = new ResumableDefinition();
+
+        addOutput(answer);
+        return answer;
+    }
+
+    public ResumableDefinition resumable(ResumeStrategy resumeStrategy) {
+        ResumableDefinition answer = new ResumableDefinition();
+
+        answer.setResumeStrategy(resumeStrategy);
 
         addOutput(answer);
         return answer;
