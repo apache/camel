@@ -82,7 +82,7 @@ public class MainVaultTest {
         Main main = new Main();
 
         main.addInitialProperty("camel.vault.gcp.serviceAccountKey", "file:////myKey");
-        main.addInitialProperty("camel.vault.gcp.processId", "gcp-project");
+        main.addInitialProperty("camel.vault.gcp.projectId", "gcp-project");
 
         main.start();
 
