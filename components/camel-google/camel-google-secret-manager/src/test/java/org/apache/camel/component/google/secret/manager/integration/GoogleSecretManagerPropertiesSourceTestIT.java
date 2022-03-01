@@ -68,6 +68,26 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_PROJECT_ID", matches = ".*")
     @Test
+    public void testComplexPropertiesWithDefaultFunction() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:username").setBody(simple("{{gcp:database_sample/username:oscerd}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{gcp:database_sample/password:password}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("admin", "password123");
+
+        template.sendBody("direct:username", "Hello World");
+        template.sendBody("direct:password", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_PROJECT_ID", matches = ".*")
+    @Test
     public void testSecretNotFoundFunction() throws Exception {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
