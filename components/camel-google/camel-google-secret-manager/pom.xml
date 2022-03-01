@@ -87,6 +87,10 @@
             <artifactId>google-auth-library-oauth2-http</artifactId>
             <version>${google-auth-library-oauth2-http-version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
