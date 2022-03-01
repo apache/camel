@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "ical",
     "title": "iCal",
-    "description": "Marshal and unmarshal iCal (.ics) documents to\/from model objects provided by the iCal4j library.",
+    "description": "Marshal and unmarshal iCal (.ics) documents to\/from model objects.",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "label": "dataformat,transformation",
