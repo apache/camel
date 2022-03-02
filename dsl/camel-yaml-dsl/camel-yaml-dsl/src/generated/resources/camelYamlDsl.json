@@ -119,6 +119,9 @@
           "resequence" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ResequenceDefinition"
           },
+          "resumable" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.ResumableDefinition"
+          },
           "rollback" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.RollbackDefinition"
           },
@@ -2267,6 +2270,24 @@
           }
         } ],
         "required" : [ "ref" ]
+      },
+      "org.apache.camel.model.ResumableDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "resumeStrategy" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "resumeStrategy" ]
       },
       "org.apache.camel.model.RollbackDefinition" : {
         "oneOf" : [ {

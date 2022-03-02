@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.processor.resume;
 
 import java.util.ArrayList;
@@ -38,12 +37,17 @@ import org.apache.camel.support.AsyncProcessorSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Resume EIP
+ */
 public class ResumableProcessor extends AsyncProcessorSupport
         implements Navigate<Processor>, CamelContextAware, IdAware, RouteIdAware {
+
     private static final Logger LOG = LoggerFactory.getLogger(ResumableProcessor.class);
+
     private CamelContext camelContext;
-    private ResumeStrategy resumeStrategy;
-    private AsyncProcessor processor;
+    private final ResumeStrategy resumeStrategy;
+    private final AsyncProcessor processor;
     private String id;
     private String routeId;
 

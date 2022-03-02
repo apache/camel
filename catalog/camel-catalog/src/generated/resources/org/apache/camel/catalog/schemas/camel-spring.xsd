@@ -1215,6 +1215,14 @@ A series of rest services defined using the rest-dsl
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="resumable" type="tns:resumableDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Resume EIP to support resuming processing from last known offset.
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="ribbonLoadBalancer" type="tns:ribbonServiceCallServiceLoadBalancerConfiguration">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -3038,6 +3046,7 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -3542,6 +3551,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -3642,6 +3652,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -3730,6 +3741,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -3810,6 +3822,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -4856,6 +4869,7 @@ org.apache.camel.spi.SendDynamicAware . Default value: true
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -4941,6 +4955,7 @@ Setting this allows to know if the filter predicate evaluated as true or false.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -5080,6 +5095,7 @@ Global option value.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -5259,6 +5275,7 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -5352,6 +5369,7 @@ configured, then all incoming messages is intercepted.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -5452,6 +5470,7 @@ process its result.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -5546,6 +5565,7 @@ specified using uri syntax, eg mynamecount=4&type=gold.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -5840,6 +5860,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -8874,6 +8895,7 @@ decompressed size. Default value: 1073741824
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -9075,6 +9097,7 @@ should be invoked or not.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -9243,6 +9266,7 @@ failure. If this option is enabled then its considered handled as well.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -9605,6 +9629,7 @@ generate the log message from exchange.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -9742,6 +9767,7 @@ Include finding route builder from these java package names.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -9819,6 +9845,7 @@ Include finding route builder from these java package names.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -10363,6 +10390,7 @@ Name of property to remove.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -10514,7 +10542,13 @@ Reference to the rest-dsl.
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
         <xs:sequence/>
-        <xs:attribute name="resumeStrategy" type="xs:string" use="required"/>
+        <xs:attribute name="resumeStrategy" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the resume strategy to use.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -10654,6 +10688,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -11011,6 +11046,7 @@ compensation/completion exchange.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -11362,6 +11398,7 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -11571,6 +11608,7 @@ individual unit of work. Default value: false
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -12072,6 +12110,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>
@@ -12186,6 +12225,7 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:removeProperties"/>
             <xs:element ref="tns:removeProperty"/>
             <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
             <xs:element ref="tns:rollback"/>
             <xs:element ref="tns:route"/>
             <xs:element ref="tns:routingSlip"/>

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
@@ -26,9 +25,9 @@ import org.apache.camel.processor.resume.ResumableProcessor;
 import org.apache.camel.util.ObjectHelper;
 
 public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
+
     protected ResumableReifier(Route route, ProcessorDefinition<?> definition) {
         super(route, ResumableDefinition.class.cast(definition));
-
     }
 
     @Override
@@ -37,18 +36,17 @@ public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
 
         ResumeStrategy resumeStrategy = resolveResumeStrategy();
         ObjectHelper.notNull(resumeStrategy, "resumeStrategy", definition);
-        route.setResumeStrategy(resumeStrategy);
 
+        route.setResumeStrategy(resumeStrategy);
         return new ResumableProcessor(resumeStrategy, childProcessor);
     }
 
     protected ResumeStrategy resolveResumeStrategy() {
-        String ref = parseString(definition.getResumeStrategyRef());
-
-        if (ref != null) {
-            definition.setResumeStrategy(mandatoryLookup(ref, ResumeStrategy.class));
+        ResumeStrategy strategy = definition.getResumeStrategyBean();
+        if (strategy == null) {
+            String ref = parseString(definition.getResumeStrategy());
+            strategy = mandatoryLookup(ref, ResumeStrategy.class);
         }
-
-        return definition.getResumeStrategy();
+        return strategy;
     }
 }

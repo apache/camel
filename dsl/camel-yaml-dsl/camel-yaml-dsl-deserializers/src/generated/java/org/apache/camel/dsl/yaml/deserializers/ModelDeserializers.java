@@ -67,6 +67,7 @@ import org.apache.camel.model.RemovePropertyDefinition;
 import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
+import org.apache.camel.model.ResumableDefinition;
 import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteConfigurationContextRefDefinition;
@@ -12490,6 +12491,59 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "rest": {
                     java.util.List<org.apache.camel.model.rest.RestDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestDefinition.class);
                     target.setRests(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    target.setDescription(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.ResumableDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = "resumable",
+            properties = {
+                    @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "inherit-error-handler", type = "boolean"),
+                    @YamlProperty(name = "resume-strategy", type = "string", required = true)
+            }
+    )
+    public static class ResumableDefinitionDeserializer extends YamlDeserializerBase<ResumableDefinition> {
+        public ResumableDefinitionDeserializer() {
+            super(ResumableDefinition.class);
+        }
+
+        @Override
+        protected ResumableDefinition newInstance() {
+            return new ResumableDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(ResumableDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "inherit-error-handler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "resume-strategy": {
+                    String val = asText(node);
+                    target.setResumeStrategy(val);
                     break;
                 }
                 case "id": {

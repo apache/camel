@@ -15,53 +15,61 @@ The resume strategies comes in 3 parts:
 * A set of core infrastructure that allow integrations to implement different types of strategies
 * Basic strategies implementations that can be extended to implement the specific resume strategies required by the integrations
 
-=== The DSL method
+== The DSL method
 
-The route needs to use the `resumable()` method followed by a `resumableStrategyRef` to point to an instance of the resume strategy in use. This instance needs to be bound in the Context registry.
+The route needs to use the `resumable()` method followed by a `resumableStrategy` to point to an instance of the resume strategy in use.
+
+This instance can be bound in the Context registry as follows:
 
 [source,java]
 ----
-getCamelContext().getRegistry().bind("testResumeStrategy", testResumeStrategy);
+getCamelContext().getRegistry().bind("testResumeStrategy", new MyTestResumeStrategy());
 
 from("some:component")
     .process(this::process)
-    .resumable().resumableStrategyRef("testResumeStrategy");
+    .resumable().resumableStrategy("testResumeStrategy");
 ----
 
+Or the instance can be constructed as follows:
 
-=== The Core Interfaces
+[source,java]
+----
+from("some:component")
+    .process(this::process)
+    .resumable().resumableStrategy(new MyTestResumeStrategy());
+----
+
+== The Resume API Interfaces
 
 These are the *core interfaces*:
 
-* org.apache.camel.ResumeStrategy: the basic resume strategy
-* org.apache.camel.UpdatableConsumerResumeStrategy: an extension to the resume strategy to allow updatable strategies
-* org.apache.camel.ResumeCache: an interface for local cache for resumable information
+* `org.apache.camel.ResumeStrategy` - the basic resume strategy
+* `org.apache.camel.UpdatableConsumerResumeStrategy` - an extension to the resume strategy to allow updatable strategies
+* `org.apache.camel.ResumeCache` - an interface for local cache for resumable information
 
 These are the *core classes* supporting the strategies:
 
-* org.apache.camel.Resumable: an interface to allow users to work with abstract resumable entities (files, offsets, etc)
-* org.apache.camel.ResumableSet: an interface for resumables with a 1-to-many relationship
-* org.apache.camel.Offset: a generic offset without a concrete type (it may represent a long, a file name, etc)
-
+* `org.apache.camel.Resumable` - an interface to allow users to work with abstract resumable entities (files, offsets, etc)
+* `org.apache.camel.ResumableSet` - an interface for resumables with a 1-to-many relationship
+* `org.apache.camel.Offset` - a generic offset without a concrete type (it may represent a long, a file name, etc)
 
 These are the *supporting classes*:
 
-* org.apache.camel.support.Resumables: resumables handling support
-* org.apache.camel.support.Offsets: offset handling support
+* `org.apache.camel.support.Resumables` - resumables handling support
+* `org.apache.camel.support.Offsets` - offset handling support
 
-
-=== Basic Strategies
+== Basic Strategies
 
 The basic strategies offer a component-specific skeleton that can be used to implement strategies.
 
-* AbstractKafkaResumeStrategy: a resume strategy from the `camel-kafka` component that uses Kafka as the store for the offsets.
-
+* `AbstractKafkaResumeStrategy` - a resume strategy from the `camel-kafka` component that uses Kafka as the store for the offsets.
 
 [source,java]
 ----
 public class KafkaResumeStrategy<K> extends AbstractKafkaResumeStrategy<K, Long> implements GenericFileResumeStrategy<File> {
-private static final Logger LOG = LoggerFactory.getLogger(KafkaResumeStrategy.class);
-public static final int CACHE_SIZE = 100;
+
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaResumeStrategy.class);
+    public static final int CACHE_SIZE = 100;
 
     private final String topic;
     private final ResumeCache<K, Long> cache;
@@ -111,7 +119,7 @@ public static final int CACHE_SIZE = 100;
 ----
 
 
-=== Local Cache Support
+== Local Cache Support
 
 A sample local cache implemented using https://github.com/ben-manes/caffeine[Caffeine].
 
@@ -151,10 +159,9 @@ public class SingleItemCache<K> implements ResumeCache<K, Long> {
 ----
 
 
+== Known Limitations
 
-=== Known Limitations, Bugs and Other Notes
-
-* When using the converters with the file component, beware of the differences in the behavior from `Reader` and `InputStream`:
+When using the converters with the file component, beware of the differences in the behavior from `Reader` and `InputStream`:
 
 For instance, the behavior of:
 

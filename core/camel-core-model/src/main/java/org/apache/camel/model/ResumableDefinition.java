@@ -14,53 +14,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ResumeStrategy;
+import org.apache.camel.spi.Metadata;
 
+/**
+ * Resume EIP to support resuming processing from last known offset.
+ */
+@Metadata(label = "eip,routing")
+@XmlRootElement(name = "resumable")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition> {
-    @XmlAttribute(required = true, name = "resumeStrategy")
-    private String resumeStrategyRef;
 
     @XmlTransient
-    private ResumeStrategy resumeStrategy;
+    private ResumeStrategy resumeStrategyBean;
+
+    @XmlAttribute(required = true)
+    @Metadata(required = true, javaType = "org.apache.camel.ResumeStrategy")
+    private String resumeStrategy;
 
     @Override
     public String getShortName() {
         return "resumable";
     }
 
-    public String getResumeStrategyRef() {
-        return resumeStrategyRef;
+    @Override
+    public String getLabel() {
+        return "resumable";
     }
 
-    public void setResumeStrategyRef(String resumeStrategyRef) {
-        this.resumeStrategyRef = resumeStrategyRef;
+    public ResumeStrategy getResumeStrategyBean() {
+        return resumeStrategyBean;
     }
 
-    public ResumeStrategy getResumeStrategy() {
+    public String getResumeStrategy() {
         return resumeStrategy;
     }
 
-    public void setResumeStrategy(ResumeStrategy resumeStrategy) {
+    public void setResumeStrategy(String resumeStrategy) {
         this.resumeStrategy = resumeStrategy;
+    }
+
+    public void setResumeStrategy(ResumeStrategy resumeStrategyBean) {
+        this.resumeStrategyBean = resumeStrategyBean;
     }
 
     // Fluent API
     // -------------------------------------------------------------------------
-    public ResumableDefinition resumeStrategy(String resumeStrategyRef) {
-        setResumeStrategyRef(resumeStrategyRef);
 
+    /**
+     * Sets the resume strategy to use
+     */
+    public ResumableDefinition resumeStrategy(String resumeStrategyRef) {
+        setResumeStrategy(resumeStrategyRef);
         return this;
     }
 
     public ResumableDefinition resumeStrategy(ResumeStrategy resumeStrategy) {
         setResumeStrategy(resumeStrategy);
-
         return this;
     }
 }

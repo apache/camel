@@ -945,6 +945,15 @@ public class ModelParser extends BaseParser {
             return false;
         }, noElementHandler(), noValueHandler());
     }
+    protected ResumableDefinition doParseResumableDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ResumableDefinition(), (def, key, val) -> {
+            if ("resumeStrategy".equals(key)) {
+                def.setResumeStrategy(val);
+                return true;
+            }
+            return processorDefinitionAttributeHandler().accept(def, key, val);
+        }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
     protected RollbackDefinition doParseRollbackDefinition() throws IOException, XmlPullParserException {
         return doParse(new RollbackDefinition(), (def, key, val) -> {
             switch (key) {
@@ -3241,6 +3250,7 @@ public class ModelParser extends BaseParser {
             case "removeProperties": return doParseRemovePropertiesDefinition();
             case "removeProperty": return doParseRemovePropertyDefinition();
             case "resequence": return doParseResequenceDefinition();
+            case "resumable": return doParseResumableDefinition();
             case "rollback": return doParseRollbackDefinition();
             case "route": return doParseRouteDefinition();
             case "routingSlip": return doParseRoutingSlipDefinition();
