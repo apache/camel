@@ -265,6 +265,19 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     }
 
     @Override
+    public void stopRoute(String routeId, Throwable cause) throws Exception {
+        final Optional<RouteHolder> route = routes.stream().filter(r -> r.getId().equals(routeId)).findFirst();
+
+        if (!route.isPresent()) {
+            // This route is unknown to this controller, apply default behaviour
+            // from super class.
+            super.stopRoute(routeId, cause);
+        } else {
+            doStopRoute(route.get(), true, r -> super.stopRoute(routeId, cause));
+        }
+    }
+
+    @Override
     public void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
         final Optional<RouteHolder> route = routes.stream().filter(r -> r.getId().equals(routeId)).findFirst();
 

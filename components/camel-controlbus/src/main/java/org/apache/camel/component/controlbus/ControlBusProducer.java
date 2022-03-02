@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.controlbus;
 
+import java.util.concurrent.RejectedExecutionException;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -163,6 +165,17 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                 } else if ("stop".equals(action)) {
                     LOG.debug("Stopping route: {}", id);
                     getEndpoint().getCamelContext().getRouteController().stopRoute(id);
+                } else if ("fail".equals(action)) {
+                    LOG.debug("Stopping and failing route: {}", id);
+                    // is there any caused exception from the exchange to mark the route as failed due
+                    Throwable cause = exchange.getException();
+                    if (cause == null) {
+                        cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+                    }
+                    if (cause == null) {
+                        cause = new RejectedExecutionException("Route " + id + " is forced stopped and marked as failed");
+                    }
+                    getEndpoint().getCamelContext().getRouteController().stopRoute(id, cause);
                 } else if ("suspend".equals(action)) {
                     LOG.debug("Suspending route: {}", id);
                     getEndpoint().getCamelContext().getRouteController().suspendRoute(id);

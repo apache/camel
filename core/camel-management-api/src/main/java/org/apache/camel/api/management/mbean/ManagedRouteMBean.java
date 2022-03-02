@@ -89,6 +89,9 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Stop route")
     void stop() throws Exception;
 
+    @ManagedOperation(description = "Stop and marks the route as failed (health-check reporting as DOWN)")
+    void stopAndFail() throws Exception;
+
     @ManagedOperation(description = "Stop route (using timeout in seconds)")
     void stop(long timeout) throws Exception;
 

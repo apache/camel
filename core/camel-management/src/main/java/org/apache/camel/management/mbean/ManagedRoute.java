@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.management.AttributeValueExp;
@@ -287,6 +288,15 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             throw new IllegalArgumentException("CamelContext is not started");
         }
         context.getRouteController().stopRoute(getRouteId());
+    }
+
+    @Override
+    public void stopAndFail() throws Exception {
+        if (!context.getStatus().isStarted()) {
+            throw new IllegalArgumentException("CamelContext is not started");
+        }
+        Throwable cause = new RejectedExecutionException("Route " + getRouteId() + " is forced stopped and marked as failed");
+        context.getRouteController().stopRoute(getRouteId(), cause);
     }
 
     @Override

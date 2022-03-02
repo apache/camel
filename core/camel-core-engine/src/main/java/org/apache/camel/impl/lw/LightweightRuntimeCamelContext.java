@@ -2163,6 +2163,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
             }
 
             @Override
+            public void stopRoute(String routeId, Throwable cause) throws Exception {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
                 throw new UnsupportedOperationException();
             }
