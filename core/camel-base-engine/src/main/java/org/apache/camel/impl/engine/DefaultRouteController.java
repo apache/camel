@@ -125,6 +125,11 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     }
 
     @Override
+    public void stopRoute(String routeId, Throwable cause) throws Exception {
+        getInternalRouteController().stopRoute(routeId, cause);
+    }
+
+    @Override
     public void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
         getInternalRouteController().stopRoute(routeId, timeout, timeUnit);
     }

@@ -24,6 +24,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.SupervisingRouteController;
 
 /**
@@ -100,6 +101,16 @@ class InternalRouteController implements RouteController {
     @Override
     public void stopRoute(String routeId) throws Exception {
         abstractCamelContext.stopRoute(routeId);
+    }
+
+    @Override
+    public void stopRoute(String routeId, Throwable cause) throws Exception {
+        Route route = abstractCamelContext.getRoute(routeId);
+        if (route != null) {
+            abstractCamelContext.stopRoute(routeId);
+            // and mark the route as failed and unhealthy (DOWN)
+            route.setLastError(new DefaultRouteError(RouteError.Phase.STOP, cause, true));
+        }
     }
 
     @Override

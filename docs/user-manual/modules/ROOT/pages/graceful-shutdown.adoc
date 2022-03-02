@@ -161,6 +161,25 @@ camelContext.getRouteController().stopRoute(routeId);
 
 Routes can also be stopped via JMX.
 
+=== Stopping and marking routes as failed due to an exception
+
+It is possible to stop and fail (will do a gracefully shut down) an individual route using
+`stopRoute(routeId, cause)` method as shown:
+
+[source,java]
+----
+Exception cause = ...
+camelContext.getRouteController().stopRoute(routeId, cause);
+----
+
+This will stop the route and then mark the route as failed with the caused exception.
+
+NOTE: The Camel xref:health-check.adoc[Health Check] detect the route as failed and report it as DOWN.
+If the route is manually stopped, then the route is not marked as failed,
+and the xref:health-check.adoc[Health Check] will report the status as UNKNOWN.
+
+Routes can also be stopped and failed via JMX.
+
 == Implementing custom component or ShutdownStrategy
 
 If you develop your own Camel component or want to implement your own

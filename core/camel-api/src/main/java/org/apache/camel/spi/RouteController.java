@@ -125,6 +125,16 @@ public interface RouteController extends CamelContextAware, StaticService {
     void stopRoute(String routeId) throws Exception;
 
     /**
+     * Stops and marks the given route as failed (health check is DOWN) due to a caused exception.
+     *
+     * @param  routeId   the route id
+     * @param  cause     the exception that is causing this route to be stopped and marked as failed
+     * @throws Exception is thrown if the route could not be stopped for whatever reason
+     * @see              #suspendRoute(String)
+     */
+    void stopRoute(String routeId, Throwable cause) throws Exception;
+
+    /**
      * Stops the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout.
      *
      * @param  routeId   the route id
