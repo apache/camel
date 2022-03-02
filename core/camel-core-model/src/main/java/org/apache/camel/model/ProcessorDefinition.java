@@ -3671,7 +3671,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                the builder
      */
     public Type unmarshal(DataFormatDefinition dataFormatType) {
-        addOutput(new UnmarshalDefinition(dataFormatType));
+        return unmarshal(dataFormatType, false);
+    }
+
+    /**
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a> Unmarshals the in body using the specified
+     * {@link DataFormat} and sets the output on the out message body.
+     *
+     * @param  dataFormatType the dataformat
+     * @param  allowNullBody  {@code true} if {@code null} is allowed as value of a body to unmarshall, {@code false}
+     *                        otherwise
+     * @return                the builder
+     */
+    public Type unmarshal(DataFormatDefinition dataFormatType, boolean allowNullBody) {
+        addOutput(new UnmarshalDefinition(dataFormatType).allowNullBody(allowNullBody));
         return asType();
     }
 
@@ -3683,7 +3696,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return            the builder
      */
     public Type unmarshal(DataFormat dataFormat) {
-        return unmarshal(new DataFormatDefinition(dataFormat));
+        return unmarshal(dataFormat, false);
+    }
+
+    /**
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a> Unmarshals the in body using the specified
+     * {@link DataFormat} and sets the output on the out message body.
+     *
+     * @param  dataFormat    the dataformat
+     * @param  allowNullBody {@code true} if {@code null} is allowed as value of a body to unmarshall, {@code false}
+     *                       otherwise
+     * @return               the builder
+     */
+    public Type unmarshal(DataFormat dataFormat, boolean allowNullBody) {
+        return unmarshal(new DataFormatDefinition(dataFormat), allowNullBody);
     }
 
     /**
@@ -3695,7 +3721,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return             the builder
      */
     public Type unmarshal(String dataTypeRef) {
-        return unmarshal(new CustomDataFormat(dataTypeRef));
+        return unmarshal(dataTypeRef, false);
+    }
+
+    /**
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a> Unmarshals the in body using the specified
+     * {@link DataFormat} reference in the {@link org.apache.camel.spi.Registry} and sets the output on the out message
+     * body.
+     *
+     * @param  dataTypeRef reference to a {@link DataFormat} to lookup in the registry
+     * @return             the builder
+     */
+    public Type unmarshal(String dataTypeRef, boolean allowNullBody) {
+        return unmarshal(new CustomDataFormat(dataTypeRef), allowNullBody);
     }
 
     /**

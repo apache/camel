@@ -47,3 +47,22 @@ And in XML:
 </route>
 ----
 
+== Allow Null Body
+
+Sometimes, there are situations where `null` can be a normal value for the body of a message but `null` by default is not an accepted value to unmarshal. To workaround that, it is possible to allow `null` as value to a body to unmarshall using the option `allowNullBody` as shown in the next code snippets:
+
+[source,java]
+----
+// Beginning of the route
+  .unmarshal().allowNullBody().jaxb()
+// End of the route
+----
+
+And in XML:
+
+[source,xml]
+----
+<!-- Beginning of the route -->
+  <unmarshal allowNullBody="true"><jaxb/></unmarshal>
+<!-- End of the route -->
+----

@@ -73,6 +73,7 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 public class DataFormatClause<T extends ProcessorDefinition<?>> {
     private final T processorType;
     private final Operation operation;
+    private boolean allowNullBody;
 
     /**
      * {@link org.apache.camel.spi.DataFormat} operations.
@@ -1378,11 +1379,32 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return dataFormat(fhirXmlDataFormat);
     }
 
+    /**
+     * Allows {@code null} as value of a body to unmarshall.
+     *
+     * @return the builder
+     */
+    public DataFormatClause<T> allowNullBody() {
+        return allowNullBody(true);
+    }
+
+    /**
+     * Indicates whether {@code null} is allowed as value of a body to unmarshall.
+     *
+     * @param  allowNullBody {@code true} if {@code null} is allowed as value of a body to unmarshall, {@code false}
+     *                       otherwise
+     * @return               the builder
+     */
+    public DataFormatClause<T> allowNullBody(boolean allowNullBody) {
+        this.allowNullBody = allowNullBody;
+        return this;
+    }
+
     @SuppressWarnings("unchecked")
     private T dataFormat(DataFormatDefinition dataFormatType) {
         switch (operation) {
             case Unmarshal:
-                return (T) processorType.unmarshal(dataFormatType);
+                return (T) processorType.unmarshal(dataFormatType, allowNullBody);
             case Marshal:
                 return (T) processorType.marshal(dataFormatType);
             default:

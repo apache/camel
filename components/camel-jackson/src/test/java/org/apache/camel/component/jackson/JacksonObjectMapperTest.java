@@ -44,6 +44,9 @@ public class JacksonObjectMapperTest extends JacksonMarshalTest {
 
                 from("direct:inPojo").marshal(formatPojo);
                 from("direct:backPojo").unmarshal(formatPojo).to("mock:reversePojo");
+
+                JacksonDataFormat allowNullBodyDataFormat = new JacksonDataFormat();
+                from("direct:nullBody").unmarshal(allowNullBodyDataFormat, true).to("mock:nullBody");
             }
         };
     }

@@ -75,4 +75,48 @@ class UnmarshalTest extends YamlTestSupport {
                 'gson', 'gson', 'jackson', 'jackson'
             ]
     }
+
+    def "unmarshal definition with allow null body (#resource.location, #expected)"(Resource resource, String expected) {
+        when:
+            context.routesLoader.loadRoutes(resource)
+        then:
+            with(context.routeDefinitions[0].outputs[0], UnmarshalDefinition) {
+                allowNullBody == expected
+            }
+        where:
+            resource << [
+                asResource('allow-null-body-set-to-true', '''
+                    - from:
+                        uri: "direct:start"
+                        steps:
+                          - unmarshal:
+                             allow-null-body: true
+                             json:
+                               library: Gson
+                          - to: "mock:result"
+                    '''),
+                asResource('allow-null-body-set-to-false', '''
+                    - from:
+                        uri: "direct:start"
+                        steps:
+                          - unmarshal:
+                             allow-null-body: false
+                             json:
+                               library: Gson
+                          - to: "mock:result"
+                    '''),
+                asResource('allow-null-body-not-set', '''
+               - from:
+                        uri: "direct:start"
+                        steps:
+                          - unmarshal:
+                             json:
+                               library: Gson
+                          - to: "mock:result"
+                    ''')
+            ]
+        expected << [
+                'true', 'false', null
+        ]
+    }
 }

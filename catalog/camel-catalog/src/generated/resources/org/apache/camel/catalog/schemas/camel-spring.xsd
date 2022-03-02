@@ -12266,6 +12266,14 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:zipFile"/>
           </xs:choice>
         </xs:sequence>
+        <xs:attribute name="allowNullBody" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Indicates whether null is allowed as value of a body to unmarshall. Default
+value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
