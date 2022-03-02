@@ -40,13 +40,13 @@
     <property name="parserErrorHandler">
       <bean class="ca.uhn.fhir.parser.StrictErrorHandler"/>
     </property>
-    <property name="fhirContext" value="#bean:fhirContext"/>
+    <property name="fhirContext" ref="fhirContext"/>
   </bean>
   <bean id="lenient" class="org.apache.camel.model.dataformat.FhirXmlDataFormat">
     <property name="parserErrorHandler">
       <bean class="ca.uhn.fhir.parser.LenientErrorHandler"/>
     </property>
-    <property name="fhirContext" value="#bean:fhirContext"/>
+    <property name="fhirContext" ref="fhirContext"/>
   </bean>
   <bean id="fhirContext" class="ca.uhn.fhir.context.FhirContext" factory-method="forDstu3"/>
 </beans>
