@@ -42,7 +42,7 @@ final class DependencyDownloaderClassResolver extends DefaultClassResolver {
             // okay maybe the class is from a known GAV that we can download first and then load the class
             MavenGav gav = knownDependenciesResolver.mavenGavForClass(name);
             if (gav != null) {
-                if (!DownloaderHelper.alreadyOnClasspath(getCamelContext(), gav.getArtifactId())) {
+                if (!DownloaderHelper.alreadyOnClasspath(getCamelContext(), gav.getArtifactId(), gav.getVersion())) {
                     DownloaderHelper.downloadDependency(getCamelContext(), gav.getGroupId(), gav.getArtifactId(),
                             gav.getVersion());
                 }

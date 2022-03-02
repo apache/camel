@@ -50,7 +50,7 @@ final class DependencyDownloaderComponentResolver extends DefaultComponentResolv
     @Override
     public Component resolveComponent(String name, CamelContext context) {
         ComponentModel model = catalog.componentModel(name);
-        if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getArtifactId())) {
+        if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getArtifactId(), model.getVersion())) {
             DownloaderHelper.downloadDependency(camelContext, model.getGroupId(), model.getArtifactId(), model.getVersion());
         }
         Component answer = super.resolveComponent(name, context);

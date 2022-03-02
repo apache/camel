@@ -78,7 +78,7 @@ public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
     }
 
     private void downloadLoader(String artifactId) {
-        if (!DownloaderHelper.alreadyOnClasspath(getCamelContext(), artifactId)) {
+        if (!DownloaderHelper.alreadyOnClasspath(getCamelContext(), artifactId, getCamelContext().getVersion())) {
             DownloaderHelper.downloadDependency(getCamelContext(), "org.apache.camel", artifactId,
                     getCamelContext().getVersion());
         }

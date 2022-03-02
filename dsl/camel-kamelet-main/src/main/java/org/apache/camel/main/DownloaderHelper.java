@@ -51,15 +51,20 @@ public final class DownloaderHelper {
                 TimeUtils.printDuration(watch.taken()));
     }
 
-    public static boolean alreadyOnClasspath(CamelContext camelContext, String artifactId) {
+    public static boolean alreadyOnClasspath(CamelContext camelContext, String artifactId, String version) {
         // if no artifact then regard this as okay
         if (artifactId == null) {
             return true;
         }
 
+        String target = artifactId;
+        if (version != null) {
+            target = target + "-" + version;
+        }
+
         if (CP != null) {
             // is it already on classpath
-            if (CP.contains(artifactId)) {
+            if (CP.contains(target)) {
                 // already on classpath
                 return true;
             }
@@ -71,7 +76,7 @@ public final class DownloaderHelper {
                 URLClassLoader ucl = (URLClassLoader) cl;
                 for (URL u : ucl.getURLs()) {
                     String s = u.toString();
-                    if (s.contains(artifactId)) {
+                    if (s.contains(target)) {
                         // already on classpath
                         return true;
                     }

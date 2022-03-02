@@ -49,7 +49,7 @@ final class DependencyDownloaderDataFormatResolver extends DefaultDataFormatReso
     @Override
     public DataFormat createDataFormat(String name, CamelContext context) {
         DataFormatModel model = catalog.dataFormatModel(name);
-        if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getArtifactId())) {
+        if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getArtifactId(), model.getVersion())) {
             DownloaderHelper.downloadDependency(camelContext, model.getGroupId(), model.getArtifactId(), model.getVersion());
         }
         return super.createDataFormat(name, context);

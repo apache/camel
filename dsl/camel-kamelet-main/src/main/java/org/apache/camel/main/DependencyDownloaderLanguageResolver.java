@@ -49,7 +49,7 @@ final class DependencyDownloaderLanguageResolver extends DefaultLanguageResolver
     @Override
     public Language resolveLanguage(String name, CamelContext context) {
         LanguageModel model = catalog.languageModel(name);
-        if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getArtifactId())) {
+        if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getArtifactId(), model.getVersion())) {
             DownloaderHelper.downloadDependency(camelContext, model.getGroupId(), model.getArtifactId(), model.getVersion());
         }
 

@@ -70,7 +70,7 @@ public class CommandLineDependencyDownloader extends ServiceSupport implements C
 
     private boolean isValidGav(String gav) {
         MavenGav mg = MavenGav.parseGav(camelContext, gav);
-        boolean exists = DownloaderHelper.alreadyOnClasspath(camelContext, mg.getArtifactId());
+        boolean exists = DownloaderHelper.alreadyOnClasspath(camelContext, mg.getArtifactId(), mg.getVersion());
         // valid if not already on classpath
         return !exists;
     }

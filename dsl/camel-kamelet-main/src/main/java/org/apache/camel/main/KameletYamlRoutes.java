@@ -122,7 +122,7 @@ class KameletYamlRoutes extends YamlRoutesBuilderLoaderSupport implements CamelC
         }
 
         MavenGav mg = MavenGav.parseGav(camelContext, gav);
-        boolean exists = DownloaderHelper.alreadyOnClasspath(camelContext, mg.getArtifactId());
+        boolean exists = DownloaderHelper.alreadyOnClasspath(camelContext, mg.getArtifactId(), mg.getVersion());
         // valid if not already on classpath
         return !exists;
     }
