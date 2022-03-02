@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,6 +65,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -83,6 +85,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.LocalBeanRegistry;
 import org.apache.camel.support.SimpleUuidGenerator;
@@ -796,6 +799,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         }
         try {
             RouteDefinitionHelper.forceAssignIds(getCamelContextReference(), routeDefinitions);
+            List<RouteDefinition> routeDefinitionsToRemove = null;
             for (RouteDefinition routeDefinition : routeDefinitions) {
                 // assign ids to the routes and validate that the id's is all unique
                 String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions);
@@ -871,27 +875,39 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     // need to reset auto assigned ids, so there is no clash when creating routes
                     ProcessorDefinitionHelper.resetAllAutoAssignedNodeIds(routeDefinition);
                 }
+                // Check if the route is included
+                if (includedRoute(routeDefinition)) {
+                    // must ensure route is prepared, before we can start it
+                    if (!routeDefinition.isPrepared()) {
+                        RouteDefinitionHelper.prepareRoute(getCamelContextReference(), routeDefinition);
+                        routeDefinition.markPrepared();
+                    }
 
-                // must ensure route is prepared, before we can start it
-                if (!routeDefinition.isPrepared()) {
-                    RouteDefinitionHelper.prepareRoute(getCamelContextReference(), routeDefinition);
-                    routeDefinition.markPrepared();
+                    StartupStepRecorder recorder
+                            = getCamelContextReference().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
+                    StartupStep step = recorder.beginStep(Route.class, routeDefinition.getRouteId(), "Create Route");
+                    Route route = model.getModelReifierFactory().createRoute(this, routeDefinition);
+                    recorder.endStep(step);
+
+                    RouteService routeService = new RouteService(route);
+                    startRouteService(routeService, true);
+                } else {
+                    // Add the definition to the list of definitions to remove as the route is excluded
+                    if (routeDefinitionsToRemove == null) {
+                        routeDefinitionsToRemove = new ArrayList<>(routeDefinitions.size());
+                    }
+                    routeDefinitionsToRemove.add(routeDefinition);
                 }
-
-                StartupStepRecorder recorder
-                        = getCamelContextReference().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
-                StartupStep step = recorder.beginStep(Route.class, routeDefinition.getRouteId(), "Create Route");
-                Route route = model.getModelReifierFactory().createRoute(this, routeDefinition);
-                recorder.endStep(step);
-
-                RouteService routeService = new RouteService(route);
-                startRouteService(routeService, true);
 
                 // clear local after the route is created via the reifier
                 pc.setLocalProperties(null);
                 if (localBeans != null) {
                     localBeans.setLocalBeanRepository(null);
                 }
+            }
+            if (routeDefinitionsToRemove != null) {
+                // Remove all the excluded routes
+                model.removeRouteDefinitions(routeDefinitionsToRemove);
             }
         } finally {
             if (!alreadyStartingRoutes) {
@@ -973,6 +989,32 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             }
         }
         return removed;
+    }
+
+    /**
+     * Indicates whether the route should be included according to the precondition.
+     *
+     * @param  definition the definition of the route to check.
+     * @return            {@code true} if the route should be included, {@code false} otherwise.
+     */
+    private boolean includedRoute(RouteDefinition definition) {
+        final String precondition = definition.getPrecondition();
+        if (precondition == null) {
+            LOG.debug("No precondition found, the route is included by default");
+            return true;
+        }
+        final ExpressionDefinition expression = new SimpleExpression(precondition);
+        expression.initPredicate(this);
+
+        Predicate predicate = expression.getPredicate();
+        predicate.initPredicate(this);
+
+        boolean matches = predicate.matches(new DefaultExchange(this));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("The precondition has been evaluated to {}, thus the route is {}", matches,
+                    matches ? "included" : "excluded");
+        }
+        return matches;
     }
 
     private static ValueHolder<String> createTransformerKey(TransformerDefinition def) {
