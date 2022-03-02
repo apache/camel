@@ -20,6 +20,7 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -286,6 +287,48 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         getMockEndpoint("mock:bar").expectedBodiesReceived("admin");
 
         template.sendBody("direct:username", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesWithDefaultFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:username").setBody(simple("{{aws:postgresql/username:oscerd}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{aws:postgresql/password:password}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("postgres", "secret");
+
+        template.sendBody("direct:username", "Hello World");
+        template.sendBody("direct:password", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesWithDefaultNotExistentFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:username").setBody(simple("{{aws:db_sample/username:oscerd}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{aws:db_sample/password:password}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("oscerd", "password");
+
+        template.sendBody("direct:username", "Hello World");
+        template.sendBody("direct:password", "Hello World");
         assertMockEndpointsSatisfied();
     }
 }
