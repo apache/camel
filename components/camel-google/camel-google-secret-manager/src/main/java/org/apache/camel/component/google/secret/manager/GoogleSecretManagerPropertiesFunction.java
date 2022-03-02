@@ -22,13 +22,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.gax.core.FixedCredentialsProvider;
-import com.google.api.gax.rpc.NotFoundException;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceSettings;
 import com.google.cloud.secretmanager.v1.SecretVersionName;
+import io.grpc.StatusRuntimeException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -170,7 +170,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
             if (ObjectHelper.isEmpty(returnValue)) {
                 returnValue = defaultValue;
             }
-        } catch (NotFoundException ex) {
+        } catch (StatusRuntimeException ex) {
             if (ObjectHelper.isNotEmpty(defaultValue)) {
                 returnValue = defaultValue;
             } else {
