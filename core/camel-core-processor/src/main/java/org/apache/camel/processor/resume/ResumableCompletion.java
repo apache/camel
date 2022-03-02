@@ -30,16 +30,27 @@ public class ResumableCompletion implements Synchronization {
     private static final Logger LOG = LoggerFactory.getLogger(ResumableCompletion.class);
 
     private final ResumeStrategy resumeStrategy;
-    private final Resumable<?, ?> resumable;
 
-    public ResumableCompletion(ResumeStrategy resumeStrategy, Resumable<?, ?> resumable) {
+    public ResumableCompletion(ResumeStrategy resumeStrategy) {
         this.resumeStrategy = resumeStrategy;
-        this.resumable = resumable;
     }
 
     @Override
     public void onComplete(Exchange exchange) {
-        if (!ExchangeHelper.isFailureHandled(exchange)) {
+        if (ExchangeHelper.isFailureHandled(exchange)) {
+            return;
+        }
+
+        Object offset = ExchangeHelper.getResultMessage(exchange).getHeader(Exchange.OFFSET);
+
+        if (offset instanceof Resumable) {
+            Resumable<?, ?> resumable = (Resumable<?, ?>) offset;
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Processing the resumable: {}", resumable.getAddressable());
+                LOG.debug("Processing the resumable of type: {}", resumable.getLastOffset().offset());
+            }
+
             if (resumeStrategy instanceof UpdatableConsumerResumeStrategy) {
                 UpdatableConsumerResumeStrategy updatableConsumerResumeStrategy
                         = (UpdatableConsumerResumeStrategy) resumeStrategy;
@@ -51,11 +62,14 @@ public class ResumableCompletion implements Synchronization {
             } else {
                 LOG.debug("Cannot perform an offset update because the strategy is not updatable");
             }
+        } else {
+            exchange.setException(new NoOffsetException(exchange));
+            LOG.warn("Cannot update the last offset because it's not available");
         }
     }
 
     @Override
     public void onFailure(Exchange exchange) {
-        LOG.warn("Skipping offset update for {} due to failure in processing", resumable.getAddressable());
+        LOG.warn("Skipping offset update for due to failure in processing");
     }
 }
