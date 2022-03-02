@@ -103,8 +103,8 @@ And you should see the following output:
 [jbang] Resolving dependencies...
 [jbang] Loading MavenCoordinate [org.apache.camel:camel-bom:pom:3.16.0-SNAPSHOT]
 [jbang]     Resolving org.apache.camel:camel-jbang-core:3.16.0-SNAPSHOT...Done
-[jbang]     Resolving org.apache.camel.kamelets:camel-kamelets:0.7.0...Done
-[jbang]     Resolving org.apache.camel.kamelets:camel-kamelets-utils:0.7.0...Done
+[jbang]     Resolving org.apache.camel.kamelets:camel-kamelets:0.7.1...Done
+[jbang]     Resolving org.apache.camel.kamelets:camel-kamelets-utils:0.7.1...Done
 [jbang] Dependencies resolved
 [jbang] Building jar...
 A new lock file was created, delete the file to stop running:
