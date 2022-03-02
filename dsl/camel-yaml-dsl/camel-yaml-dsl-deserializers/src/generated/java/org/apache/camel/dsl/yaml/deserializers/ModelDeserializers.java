@@ -16830,6 +16830,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "unmarshal",
             properties = {
+                    @YamlProperty(name = "allow-null-body", type = "boolean"),
                     @YamlProperty(name = "any23", type = "object:org.apache.camel.model.dataformat.Any23DataFormat"),
                     @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat"),
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat"),
@@ -16889,6 +16890,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(UnmarshalDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "allow-null-body": {
+                    String val = asText(node);
+                    target.setAllowNullBody(val);
+                    break;
+                }
                 case "data-format-type": {
                     MappingNode val = asMappingNode(node);
                     setProperties(target, val);

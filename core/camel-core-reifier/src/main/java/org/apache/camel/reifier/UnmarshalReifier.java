@@ -33,6 +33,6 @@ public class UnmarshalReifier extends ProcessorReifier<UnmarshalDefinition> {
     @Override
     public Processor createProcessor() {
         DataFormat dataFormat = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType());
-        return new UnmarshalProcessor(dataFormat);
+        return new UnmarshalProcessor(dataFormat, Boolean.TRUE == parseBoolean(definition.getAllowNullBody()));
     }
 }

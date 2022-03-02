@@ -86,6 +86,16 @@ public class JacksonMarshalTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
+    public void testUnmarshalNullBody() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:nullBody");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isNull();
+
+        template.sendBody("direct:nullBody", null);
+        mock.assertIsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -107,6 +117,9 @@ public class JacksonMarshalTest extends CamelTestSupport {
 
                 from("direct:inPojo").marshal(formatPojo);
                 from("direct:backPojo").unmarshal(formatPojo).to("mock:reversePojo");
+
+                JacksonDataFormat allowNullBodyDataFormat = new JacksonDataFormat();
+                from("direct:nullBody").unmarshal(allowNullBodyDataFormat, true).to("mock:nullBody");
             }
         };
     }

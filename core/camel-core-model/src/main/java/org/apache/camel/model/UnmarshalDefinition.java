@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -114,6 +115,9 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
             @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
     private DataFormatDefinition dataFormatType;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    private String allowNullBody;
 
     public UnmarshalDefinition() {
     }
@@ -158,4 +162,29 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         this.dataFormatType = dataFormatType;
     }
 
+    public String getAllowNullBody() {
+        return allowNullBody;
+    }
+
+    /**
+     * Indicates whether {@code null} is allowed as value of a body to unmarshall.
+     */
+    public void setAllowNullBody(String allowNullBody) {
+        this.allowNullBody = allowNullBody;
+    }
+
+    // Fluent API
+    // -------------------------------------------------------------------------
+
+    /**
+     * Indicates whether {@code null} is allowed as value of a body to unmarshall.
+     *
+     * @param  allowNullBody {@code true} if {@code null} is allowed as value of a body to unmarshall, {@code false}
+     *                       otherwise
+     * @return               the builder
+     */
+    public UnmarshalDefinition allowNullBody(boolean allowNullBody) {
+        setAllowNullBody(Boolean.toString(allowNullBody));
+        return this;
+    }
 }

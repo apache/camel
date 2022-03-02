@@ -3319,6 +3319,9 @@
       "org.apache.camel.model.UnmarshalDefinition" : {
         "type" : "object",
         "properties" : {
+          "allow-null-body" : {
+            "type" : "boolean"
+          },
           "any23" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Any23DataFormat"
           },

@@ -1535,8 +1535,13 @@ public class ModelParser extends BaseParser {
             processorDefinitionAttributeHandler(), outputDefinitionElementHandler(), noValueHandler());
     }
     protected UnmarshalDefinition doParseUnmarshalDefinition() throws IOException, XmlPullParserException {
-        return doParse(new UnmarshalDefinition(),
-            processorDefinitionAttributeHandler(), (def, key) -> {
+        return doParse(new UnmarshalDefinition(), (def, key, val) -> {
+            if ("allowNullBody".equals(key)) {
+                def.setAllowNullBody(val);
+                return true;
+            }
+            return processorDefinitionAttributeHandler().accept(def, key, val);
+        }, (def, key) -> {
             DataFormatDefinition v = doParseDataFormatDefinitionRef(key);
             if (v != null) { 
                 def.setDataFormatType(v);

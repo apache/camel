@@ -43,9 +43,15 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
     private String routeId;
     private CamelContext camelContext;
     private final DataFormat dataFormat;
+    private final boolean allowNullBody;
 
     public UnmarshalProcessor(DataFormat dataFormat) {
+        this(dataFormat, false);
+    }
+
+    public UnmarshalProcessor(DataFormat dataFormat, boolean allowNullBody) {
         this.dataFormat = dataFormat;
+        this.allowNullBody = allowNullBody;
     }
 
     @Override
@@ -55,13 +61,20 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
         InputStream stream = null;
         Object result = null;
         try {
-            stream = exchange.getIn().getMandatoryBody(InputStream.class);
+            final Message in = exchange.getIn();
+            final Message out;
+            if (allowNullBody && in.getBody() == null) {
+                // The body is null, and it is an allowed value so let's skip the unmarshalling
+                out = exchange.getOut();
+            } else {
+                stream = in.getMandatoryBody(InputStream.class);
 
-            // lets setup the out message before we invoke the dataFormat so that it can mutate it if necessary
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
+                // lets set up the out message before we invoke the dataFormat so that it can mutate it if necessary
+                out = exchange.getOut();
+                out.copyFrom(in);
 
-            result = dataFormat.unmarshal(exchange, stream);
+                result = dataFormat.unmarshal(exchange, stream);
+            }
             if (result instanceof Exchange) {
                 if (result != exchange) {
                     // it's not allowed to return another exchange other than the one provided to dataFormat
