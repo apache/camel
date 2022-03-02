@@ -23,6 +23,7 @@ import java.util.Queue;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ResumeAware;
 import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy;
 import org.apache.camel.component.aws2.kinesis.consumer.KinesisUserConfigurationResumeStrategy;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
@@ -40,12 +41,13 @@ import software.amazon.awssdk.services.kinesis.model.GetShardIteratorResponse;
 import software.amazon.awssdk.services.kinesis.model.Record;
 import software.amazon.awssdk.services.kinesis.model.Shard;
 
-public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
+public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements ResumeAware<KinesisResumeStrategy> {
 
     private static final Logger LOG = LoggerFactory.getLogger(Kinesis2Consumer.class);
 
     private String currentShardIterator;
     private boolean isShardClosed;
+    private KinesisResumeStrategy resumeStrategy;
 
     public Kinesis2Consumer(Kinesis2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -171,8 +173,6 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
     }
 
     private void resume(GetShardIteratorRequest.Builder req) {
-        KinesisResumeStrategy resumeStrategy = getEndpoint().getCamelContext().hasService(KinesisResumeStrategy.class);
-
         if (resumeStrategy == null) {
             resumeStrategy = new KinesisUserConfigurationResumeStrategy(getEndpoint().getConfiguration());
         }
@@ -202,4 +202,13 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
         return exchange;
     }
 
+    @Override
+    public void setResumeStrategy(KinesisResumeStrategy resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
+    }
+
+    @Override
+    public KinesisResumeStrategy getResumeStrategy() {
+        return resumeStrategy;
+    }
 }
