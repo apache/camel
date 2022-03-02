@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClientBuilder;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
-import software.amazon.awssdk.services.secretsmanager.model.ResourceNotFoundException;
+import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerException;
 
 /**
  * A {@link PropertiesFunction} that lookup the property value from AWS Secrets Manager service.
@@ -188,7 +188,7 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             if (ObjectHelper.isEmpty(returnValue)) {
                 returnValue = defaultValue;
             }
-        } catch (ResourceNotFoundException ex) {
+        } catch (SecretsManagerException ex) {
             if (ObjectHelper.isNotEmpty(defaultValue)) {
                 returnValue = defaultValue;
             } else {
