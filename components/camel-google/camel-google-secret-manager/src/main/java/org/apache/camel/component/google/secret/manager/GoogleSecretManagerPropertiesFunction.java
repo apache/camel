@@ -101,7 +101,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
             client = SecretManagerServiceClient.create(settings);
         } else {
             throw new RuntimeCamelException(
-                    "Using the AWS Secrets Manager Properties Function requires setting AWS credentials as application properties or environment variables");
+                    "Using the GCP Secret Manager Properties Function requires setting GCP service account key and project Id as application properties or environment variables");
         }
     }
 
