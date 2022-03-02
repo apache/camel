@@ -102,8 +102,8 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
                 bindToRegistry("testResumeStrategy", new TestResumeStrategy());
 
                 from(fileUri("resume?noop=true&recursive=true"))
-                        .process(e -> setOffset(e))
                         .resumable().resumeStrategy("testResumeStrategy")
+                        .process(e -> setOffset(e))
                         .convertBodyTo(String.class)
                         .to("mock:result");
             }

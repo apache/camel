@@ -25,9 +25,9 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.Resumable;
 import org.apache.camel.ResumeStrategy;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
@@ -51,32 +51,6 @@ public class ResumableProcessor extends AsyncProcessorSupport
     private String id;
     private String routeId;
 
-    private static class ResumableProcessorCallback implements AsyncCallback {
-
-        private final Exchange exchange;
-        private final Synchronization completion;
-        private final AsyncCallback callback;
-
-        public ResumableProcessorCallback(Exchange exchange, Synchronization completion, AsyncCallback callback) {
-            this.exchange = exchange;
-            this.completion = completion;
-            this.callback = callback;
-        }
-
-        @Override
-        public void done(boolean doneSync) {
-            try {
-                if (exchange.isFailed()) {
-                    completion.onFailure(exchange);
-                } else {
-                    completion.onComplete(exchange);
-                }
-            } finally {
-                callback.done(doneSync);
-            }
-        }
-    }
-
     public ResumableProcessor(ResumeStrategy resumeStrategy, Processor processor) {
         this.resumeStrategy = Objects.requireNonNull(resumeStrategy);
         this.processor = AsyncProcessorConverterHelper.convert(processor);
@@ -92,23 +66,11 @@ public class ResumableProcessor extends AsyncProcessorSupport
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        Object offset = exchange.getMessage().getHeader(Exchange.OFFSET);
+        final Synchronization onCompletion = new ResumableCompletion(resumeStrategy);
 
-        if (offset instanceof Resumable) {
-            Resumable<?, ?> resumable = (Resumable<?, ?>) offset;
+        exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
 
-            LOG.warn("Processing the resumable: {}", resumable.getAddressable());
-            LOG.warn("Processing the resumable of type: {}", resumable.getLastOffset().offset());
-
-            final Synchronization onCompletion = new ResumableCompletion(resumeStrategy, resumable);
-            final AsyncCallback target = new ResumableProcessorCallback(exchange, onCompletion, callback);
-            return processor.process(exchange, target);
-
-        } else {
-            exchange.setException(new NoOffsetException(exchange));
-            LOG.warn("Cannot update the last offset because it's not available");
-            return true;
-        }
+        return processor.process(exchange, callback);
     }
 
     @Override
