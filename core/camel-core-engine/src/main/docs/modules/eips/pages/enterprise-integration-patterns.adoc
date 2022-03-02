@@ -280,6 +280,10 @@ a|image::eip/MessageFilterIcon.gif[image]
 |xref:idempotentConsumer-eip.adoc[Idempotent Consumer] |How can a message
 receiver deal with duplicate messages?
 
+a|image::eip/MessageFilterIcon.gif[image]
+|xref:resume-strategies.adoc[Resumable Consumer] |How can a message
+receiver resume from last known offset?
+
 a|image::eip/TransactionalClientIcon.gif[image]
 |xref:transactional-client.adoc[Transactional Client] |How can a client
 control its transactions with the messaging system?
