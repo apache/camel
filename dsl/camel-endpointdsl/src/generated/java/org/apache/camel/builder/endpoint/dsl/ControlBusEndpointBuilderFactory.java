@@ -43,13 +43,13 @@ public interface ControlBusEndpointBuilderFactory {
         /**
          * To denote an action that can be either: start, stop, or status. To
          * either start or stop a route, or to get the status of the route as
-         * output in the message body. You can use suspend and resume from Camel
-         * 2.11.1 onwards to either suspend or resume a route. And from Camel
-         * 2.11.1 onwards you can use stats to get performance statics returned
-         * in XML format; the routeId option can be used to define which route
-         * to get the performance stats for, if routeId is not defined, then you
-         * get statistics for the entire CamelContext. The restart action will
-         * restart the route.
+         * output in the message body. You can use suspend and resume to either
+         * suspend or resume a route. You can use stats to get performance
+         * statics returned in XML format; the routeId option can be used to
+         * define which route to get the performance stats for, if routeId is
+         * not defined, then you get statistics for the entire CamelContext. The
+         * restart action will restart the route. And the fail action will stop
+         * and mark the route as failed (stopped due to an exception).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
