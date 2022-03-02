@@ -297,4 +297,46 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         template.sendBody("direct:username", "Hello World");
         assertMockEndpointsSatisfied();
     }
+
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
+    @Test
+    public void testPropertiesWithDefaultFunction() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:username").setBody(simple("{{aws:postgresql/username:oscerd}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{aws:postgresql/password:password}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("postgres", "secret");
+
+        template.sendBody("direct:username", "Hello World");
+        template.sendBody("direct:password", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
+    @Test
+    public void testPropertiesWithDefaultNotExistentFunction() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:username").setBody(simple("{{aws:db_sample/username:oscerd}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{aws:db_sample/password:password}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("oscerd", "password");
+
+        template.sendBody("direct:username", "Hello World");
+        template.sendBody("direct:password", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
 }

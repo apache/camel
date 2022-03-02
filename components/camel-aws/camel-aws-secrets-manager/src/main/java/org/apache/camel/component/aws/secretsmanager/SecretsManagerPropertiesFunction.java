@@ -141,6 +141,9 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             key = StringHelper.before(remainder, "/");
             subkey = StringHelper.after(remainder, "/");
             defaultValue = StringHelper.after(subkey, ":");
+            if (subkey.contains(":")) {
+                subkey = StringHelper.before(subkey, ":");
+            }
         } else if (remainder.contains(":")) {
             key = StringHelper.before(remainder, ":");
             defaultValue = StringHelper.after(remainder, ":");
