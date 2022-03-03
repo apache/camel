@@ -40,7 +40,7 @@ public final class CronHelper {
     public static CamelCronService resolveCamelCronService(CamelContext context, String name) {
         // Lookup the registry first
         CamelCronService service = ObjectHelper.isEmpty(name)
-                ? CamelContextHelper.findByType(context, CamelCronService.class)
+                ? CamelContextHelper.findSingleByType(context, CamelCronService.class)
                 : CamelContextHelper.lookup(context, name, CamelCronService.class);
 
         if (service != null) {

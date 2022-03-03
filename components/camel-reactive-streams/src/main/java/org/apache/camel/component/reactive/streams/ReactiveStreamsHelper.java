@@ -81,7 +81,7 @@ public final class ReactiveStreamsHelper {
 
     public static <T> T findInstance(CamelContext context, String name, Class<T> type) {
         return ObjectHelper.isEmpty(name)
-                ? CamelContextHelper.findByType(context, type)
+                ? CamelContextHelper.findSingleByType(context, type)
                 : CamelContextHelper.lookup(context, name, type);
     }
 

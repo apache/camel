@@ -27,7 +27,7 @@ public final class JCacheHelper {
     }
 
     public static <K, V> JCacheManager<K, V> createManager(CamelContext camelContext, JCacheConfiguration configuration) {
-        JCacheManagerFactory factory = CamelContextHelper.findByType(camelContext, JCacheManagerFactory.class);
+        JCacheManagerFactory factory = CamelContextHelper.findSingleByType(camelContext, JCacheManagerFactory.class);
         if (factory == null) {
             factory = new DefaultJCacheManagerFactory();
         }
