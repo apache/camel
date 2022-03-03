@@ -56,7 +56,7 @@ public class FhirHistory {
     public <T extends IBaseBundle> T onServer(
             Class<T> returnType, Integer count, Date cutoff, IPrimitiveType<Date> iCutoff,
             Map<ExtraParameters, Object> extraParameters) {
-        IHistoryTyped<T> tiHistoryTyped = client.history().onServer().andReturnBundle(returnType);
+        IHistoryTyped<T> tiHistoryTyped = client.history().onServer().returnBundle(returnType);
         processOptionalParams(count, cutoff, iCutoff, tiHistoryTyped);
         ExtraParameters.process(extraParameters, tiHistoryTyped);
         return tiHistoryTyped.execute();

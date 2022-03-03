@@ -128,13 +128,9 @@ public class GenericFile<T> implements WrappedFile<T>, GenericFileResumable<T> {
 
         exchange.setProperty(FileComponent.FILE_EXCHANGE_FILE, this);
         GenericFileMessage<T> msg = new GenericFileMessage<>(exchange, this);
-        if (exchange.hasOut()) {
-            headers = exchange.getOut().hasHeaders() ? exchange.getOut().getHeaders() : null;
-            exchange.setOut(msg);
-        } else {
-            headers = exchange.getIn().hasHeaders() ? exchange.getIn().getHeaders() : null;
-            exchange.setIn(msg);
-        }
+
+        headers = exchange.getMessage().hasHeaders() ? exchange.getMessage().getHeaders() : null;
+        exchange.setMessage(msg);
 
         // preserve any existing (non file) headers, before we re-populate
         // headers

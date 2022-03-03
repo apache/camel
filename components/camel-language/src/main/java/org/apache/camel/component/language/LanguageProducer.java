@@ -123,11 +123,7 @@ public class LanguageProducer extends DefaultProducer {
 
         // set message body if transform is enabled
         if (getEndpoint().isTransform()) {
-            if (exchange.hasOut()) {
-                exchange.getOut().setBody(result);
-            } else {
-                exchange.getIn().setBody(result);
-            }
+            exchange.getMessage().setBody(result);
         }
     }
 
