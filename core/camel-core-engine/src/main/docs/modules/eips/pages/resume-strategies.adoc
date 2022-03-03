@@ -9,6 +9,13 @@ The resume strategies allow users to implement strategies that point the consume
 
 The resume strategies can be used to allow quicker stop and resume operations when consuming large data sources. For instance, imagine a scenario where the file consumer is reading a large file. Without a resume strategy, stopping and starting Camel would cause the consumer in the File component to read all the bytes of the given file at the initial offset (offset 0). The resume strategy allow integrations can point the consumer to the exact offset to resume the operations.
 
+Support for resume varies according to the component. Initially, the support is available for the following components:
+
+* xref:components::aws2-kinesis-component.adoc[camel-aws2-kinesis]
+* xref:components::couchdb-component.adoc[camel-couchdb]
+* xref:components::file-component.adoc[camel-file]
+* xref:components::kafka-component.adoc[camel-kafka]
+
 The resume strategies comes in 3 parts:
 
 * A DSL method that marks the route as supporting resume operations and points to an instance of a strategy implementation.
