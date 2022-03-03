@@ -458,10 +458,10 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     }
 
     /**
-     * Sets the expression of the precondition in simple language to evaluate to determine if this route should be
-     * included or not.
+     * Sets the predicate of the precondition in simple language to evaluate in order to determine if this route should
+     * be included or not.
      *
-     * @param  precondition the expression corresponding to the test to evaluate.
+     * @param  precondition the predicate corresponding to the test to evaluate.
      * @return              the builder
      */
     public RouteDefinition precondition(String precondition) {
@@ -926,16 +926,16 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     }
 
     /**
-     * The expression of the precondition in simple language to evaluate to determine if this given route should be
-     * included or not.
+     * The predicate of the precondition in simple language to evaluate in order to determine if this given route should
+     * be included or not.
      */
     public String getPrecondition() {
         return precondition;
     }
 
     /**
-     * The expression of the precondition in simple language to evaluate to determine if this route should be included
-     * or not.
+     * The predicate of the precondition in simple language to evaluate in order to determine if this route should be
+     * included or not.
      */
     @XmlAttribute
     @Metadata(label = "advanced")

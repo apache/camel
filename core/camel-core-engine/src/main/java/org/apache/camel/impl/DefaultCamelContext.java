@@ -1000,7 +1000,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     private boolean includedRoute(RouteDefinition definition) {
         final String precondition = definition.getPrecondition();
         if (precondition == null) {
-            LOG.debug("No precondition found, the route is included by default");
+            LOG.trace("No precondition found, the route is included by default");
             return true;
         }
         final ExpressionDefinition expression = new SimpleExpression(precondition);
@@ -1010,8 +1010,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         predicate.initPredicate(this);
 
         boolean matches = predicate.matches(new DefaultExchange(this));
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("The precondition has been evaluated to {}, thus the route is {}", matches,
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("The precondition has been evaluated to {}, consequently the route is {}", matches,
                     matches ? "included" : "excluded");
         }
         return matches;
