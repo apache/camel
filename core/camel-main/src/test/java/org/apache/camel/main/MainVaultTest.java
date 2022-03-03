@@ -94,7 +94,7 @@ public class MainVaultTest {
 
         Assertions.assertEquals("file:////myKey", cfg.getServiceAccountKey());
         Assertions.assertEquals("gcp-project", cfg.getProjectId());
-
+        Assertions.assertEquals(false, cfg.isUseDefaultInstance());
         main.stop();
     }
 
@@ -116,7 +116,7 @@ public class MainVaultTest {
 
         Assertions.assertEquals("file:////myKey", cfg.getServiceAccountKey());
         Assertions.assertEquals("gcp-project", cfg.getProjectId());
-
+        Assertions.assertEquals(false, cfg.isUseDefaultInstance());
         main.stop();
     }
 

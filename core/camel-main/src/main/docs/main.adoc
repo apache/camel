@@ -210,13 +210,14 @@ The camel.vault.aws supports 4 options, which are listed below.
 |===
 
 === Camel GCP Vault configurations
-The camel.vault.gcp supports 2 options, which are listed below.
+The camel.vault.gcp supports 3 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.vault.gcp.projectId* | The GCP Project ID |  | String
 | *camel.vault.gcp.serviceAccount{zwsp}Key* | The Service Account Key location |  | String
+| *camel.vault.gcp.useDefault{zwsp}Instance* | Define if we want to use the GCP Client Default Instance or not | false | boolean
 |===
 
 === Fault Tolerance EIP Circuit Breaker configurations

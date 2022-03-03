@@ -65,4 +65,12 @@ public class GcpVaultConfigurationProperties extends GcpVaultConfiguration imple
         return this;
     }
 
+    /**
+     * The GCP Project ID
+     */
+    public GcpVaultConfigurationProperties withUseDefaultInstance(boolean useDefaultInstance) {
+        setUseDefaultInstance(useDefaultInstance);
+        return this;
+    }
+
 }

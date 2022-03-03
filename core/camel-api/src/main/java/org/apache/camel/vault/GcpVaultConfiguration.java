@@ -27,6 +27,8 @@ public class GcpVaultConfiguration extends VaultConfiguration {
     private String serviceAccountKey;
     @Metadata
     private String projectId;
+    @Metadata
+    private boolean useDefaultInstance;
 
     public String getServiceAccountKey() {
         return serviceAccountKey;
@@ -48,6 +50,17 @@ public class GcpVaultConfiguration extends VaultConfiguration {
      */
     public void setProjectId(String projectId) {
         this.projectId = projectId;
+    }
+
+    public boolean isUseDefaultInstance() {
+        return useDefaultInstance;
+    }
+
+    /**
+     * Define if we want to use the GCP Client Default Instance or not
+     */
+    public void setUseDefaultInstance(boolean useDefaultInstance) {
+        this.useDefaultInstance = useDefaultInstance;
     }
 
 }

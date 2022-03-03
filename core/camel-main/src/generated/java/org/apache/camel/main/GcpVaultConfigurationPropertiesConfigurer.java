@@ -29,6 +29,8 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "ProjectId": target.setProjectId(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "ServiceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "usedefaultinstance":
+        case "UseDefaultInstance": target.setUseDefaultInstance(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -44,6 +46,8 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "ProjectId": return java.lang.String.class;
         case "serviceaccountkey":
         case "ServiceAccountKey": return java.lang.String.class;
+        case "usedefaultinstance":
+        case "UseDefaultInstance": return boolean.class;
         default: return null;
         }
     }
@@ -60,6 +64,8 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "ProjectId": return target.getProjectId();
         case "serviceaccountkey":
         case "ServiceAccountKey": return target.getServiceAccountKey();
+        case "usedefaultinstance":
+        case "UseDefaultInstance": return target.isUseDefaultInstance();
         default: return null;
         }
     }
