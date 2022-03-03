@@ -24,9 +24,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Processor;
 import org.apache.camel.ResumeAware;
 import org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy;
+import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
@@ -37,7 +40,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaConsumerResumeStrategy> {
+public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaConsumerResumeStrategy>, HealthCheckAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumer.class);
 
@@ -67,6 +70,17 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
+
+        // build health-check
+        String rid = getRouteId();
+        if (rid == null) {
+            // not from a route so need some other uuid
+            rid = endpoint.getCamelContext().getUuidGenerator().generateUuid();
+        }
+        HealthCheck hc = new KafkaConsumerHealthCheck(this, rid);
+        CamelContextAware.trySetCamelContext(hc, endpoint.getCamelContext());
+        setHealthCheck(hc);
+
         if (endpoint.getComponent().getPollExceptionStrategy() != null) {
             pollExceptionStrategy = endpoint.getComponent().getPollExceptionStrategy();
         } else {
@@ -99,6 +113,10 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
                 v -> props.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, v));
 
         return props;
+    }
+
+    List<KafkaFetchRecords> getTasks() {
+        return tasks;
     }
 
     @Override
