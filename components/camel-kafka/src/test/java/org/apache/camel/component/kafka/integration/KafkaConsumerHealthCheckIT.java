@@ -145,7 +145,7 @@ public class KafkaConsumerHealthCheckIT extends BaseEmbeddedKafkaTestSupport {
         Optional<HealthCheck.Result> down = res.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN)).findFirst();
         Assertions.assertTrue(down.isPresent());
         String msg = down.get().getMessage().get();
-        Assertions.assertEquals("KafkaConsumer is not connected", msg);
+        Assertions.assertEquals("KafkaConsumer is not ready", msg);
         Map<String, Object> map = down.get().getDetails();
         Assertions.assertEquals(TOPIC, map.get("topic"));
         Assertions.assertEquals("test-health-it", map.get("route.id"));

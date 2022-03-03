@@ -18,9 +18,11 @@ package org.apache.camel.component.kafka;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 
 /**
  * Kafka consumer readiness health-check
@@ -46,20 +48,16 @@ public class KafkaConsumerHealthCheck extends AbstractHealthCheck {
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
         List<KafkaFetchRecords> tasks = kafkaConsumer.getTasks();
         for (KafkaFetchRecords task : tasks) {
-            if (!task.isConnected()) {
+            if (!task.isReady()) {
                 builder.down();
-                builder.message("KafkaConsumer is not connected");
+                builder.message("KafkaConsumer is not ready");
 
                 KafkaConfiguration cfg = kafkaConsumer.getEndpoint().getConfiguration();
-                if (cfg.getBrokers() != null) {
-                    builder.detail("bootstrap.servers", cfg.getBrokers());
-                }
-                if (cfg.getClientId() != null) {
-                    builder.detail("client.id", cfg.getClientId());
-                }
-                if (cfg.getGroupId() != null) {
-                    builder.detail("group.id", cfg.getGroupId());
-                }
+                Properties props = task.getKafkaProps();
+
+                builder.detail("bootstrap.servers", props.getProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG));
+                builder.detail("client.id", task.getKafkaProps().getProperty(ConsumerConfig.CLIENT_ID_CONFIG));
+                builder.detail("group.id", task.getKafkaProps().getProperty(ConsumerConfig.GROUP_ID_CONFIG));
                 if (routeId != null) {
                     // camel route id
                     builder.detail("route.id", routeId);

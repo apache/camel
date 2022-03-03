@@ -35,7 +35,9 @@ import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
 import org.apache.camel.component.kafka.consumer.support.ResumeStrategyFactory;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ReflectionHelper;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.errors.WakeupException;
@@ -412,5 +414,39 @@ class KafkaFetchRecords implements Runnable {
 
     public void setConnected(boolean connected) {
         this.connected = connected;
+    }
+
+    public boolean isReady() {
+        if (!connected) {
+            return false;
+        }
+
+        boolean ready = true;
+        try {
+            if (consumer instanceof org.apache.kafka.clients.consumer.KafkaConsumer) {
+                // need to use reflection to access the network client which has API to check if the client has ready
+                // connections
+                org.apache.kafka.clients.consumer.KafkaConsumer kc = (org.apache.kafka.clients.consumer.KafkaConsumer) consumer;
+                ConsumerNetworkClient nc
+                        = (ConsumerNetworkClient) ReflectionHelper.getField(kc.getClass().getDeclaredField("client"), kc);
+                LOG.trace("ConsumerNetworkClient");
+                ready = nc.hasReadyNodes(System.currentTimeMillis());
+            }
+        } catch (Exception e) {
+            // ignore
+            LOG.debug("Cannot check hasReadyNodes on KafkaConsumer client (ConsumerNetworkClient) due to "
+                      + e.getMessage() + ". This exception is ignored.",
+                    e);
+        }
+
+        return ready;
+    }
+
+    org.apache.kafka.clients.consumer.Consumer getKafkaConsumer() {
+        return consumer;
+    }
+
+    Properties getKafkaProps() {
+        return kafkaProps;
     }
 }
