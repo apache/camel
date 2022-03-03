@@ -45,7 +45,7 @@ public final class ValidatorFactories {
 
         if (validationProviderResolver == null) {
             ValidationProviderResolverFactory factory
-                    = CamelContextHelper.findByType(camelContext, ValidationProviderResolverFactory.class);
+                    = CamelContextHelper.findSingleByType(camelContext, ValidationProviderResolverFactory.class);
             if (factory != null) {
                 validationProviderResolver = factory.createValidationProviderResolver(camelContext);
             }

@@ -102,7 +102,7 @@ public class BeanInfo {
                     BeanComponent beanComponent) {
 
         // use type resolver
-        BeanInfoTypeResolver typeResolver = CamelContextHelper.findByType(camelContext, BeanInfoTypeResolver.class);
+        BeanInfoTypeResolver typeResolver = CamelContextHelper.findSingleByType(camelContext, BeanInfoTypeResolver.class);
         if (typeResolver == null) {
             // use default instance
             typeResolver = DefaultBeanInfoTypeResolver.INSTANCE;

@@ -118,11 +118,11 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
     // *******************************
 
     protected Vertx lookupVertx() {
-        return CamelContextHelper.findByType(context, Vertx.class);
+        return CamelContextHelper.findSingleByType(context, Vertx.class);
     }
 
     protected Vertx createVertxInstance() {
-        VertxOptions options = CamelContextHelper.findByType(context, VertxOptions.class);
+        VertxOptions options = CamelContextHelper.findSingleByType(context, VertxOptions.class);
         if (options == null) {
             options = new VertxOptions();
         }

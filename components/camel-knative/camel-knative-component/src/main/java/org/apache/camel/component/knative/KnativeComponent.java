@@ -268,7 +268,7 @@ public class KnativeComponent extends DefaultComponent {
                         ? KnativeEnvironment.mandatoryLoadFromResource(getCamelContext(), envConfig)
                         : KnativeEnvironment.mandatoryLoadFromSerializedString(envConfig);
             } else {
-                env = CamelContextHelper.findByType(getCamelContext(), KnativeEnvironment.class);
+                env = CamelContextHelper.findSingleByType(getCamelContext(), KnativeEnvironment.class);
             }
 
             if (env == null) {

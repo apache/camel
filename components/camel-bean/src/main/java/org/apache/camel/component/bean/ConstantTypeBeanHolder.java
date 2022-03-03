@@ -83,7 +83,7 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
     @Override
     public Object getBean(Exchange exchange) {
         //  try to get the bean from registry first if there is a single candidate for the type
-        Object answer = CamelContextHelper.findByType(camelContext, type);
+        Object answer = CamelContextHelper.findSingleByType(camelContext, type);
 
         // if not then create a new bean instance from the type
         if (answer == null && beanInfo.hasPublicNoArgConstructors()) {
