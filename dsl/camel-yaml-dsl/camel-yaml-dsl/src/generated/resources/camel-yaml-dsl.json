@@ -2514,6 +2514,9 @@
           "id" : {
             "type" : "string"
           },
+          "precondition" : {
+            "type" : "string"
+          },
           "route-configuration-id" : {
             "type" : "string"
           }

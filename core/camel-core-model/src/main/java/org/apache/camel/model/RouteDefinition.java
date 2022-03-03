@@ -90,6 +90,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     private Map<String, Object> templateParameters;
     private RouteTemplateContext routeTemplateContext;
     private Resource resource;
+    private String precondition;
 
     public RouteDefinition() {
     }
@@ -453,6 +454,18 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      */
     public RouteDefinition autoStartup(boolean autoStartup) {
         setAutoStartup(Boolean.toString(autoStartup));
+        return this;
+    }
+
+    /**
+     * Sets the predicate of the precondition in simple language to evaluate in order to determine if this route should
+     * be included or not.
+     *
+     * @param  precondition the predicate corresponding to the test to evaluate.
+     * @return              the builder
+     */
+    public RouteDefinition precondition(String precondition) {
+        setPrecondition(precondition);
         return this;
     }
 
@@ -910,6 +923,24 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
+    }
+
+    /**
+     * The predicate of the precondition in simple language to evaluate in order to determine if this given route should
+     * be included or not.
+     */
+    public String getPrecondition() {
+        return precondition;
+    }
+
+    /**
+     * The predicate of the precondition in simple language to evaluate in order to determine if this route should be
+     * included or not.
+     */
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    public void setPrecondition(String precondition) {
+        this.precondition = precondition;
     }
 
     /**

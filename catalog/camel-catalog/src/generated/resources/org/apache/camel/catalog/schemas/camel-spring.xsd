@@ -10762,6 +10762,7 @@ Whether message history is enabled on this route. Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="precondition" type="xs:string"/>
         <xs:attribute name="rest" type="xs:boolean"/>
         <xs:attribute name="routeConfigurationId" type="xs:string"/>
         <xs:attribute name="routePolicyRef" type="xs:string">

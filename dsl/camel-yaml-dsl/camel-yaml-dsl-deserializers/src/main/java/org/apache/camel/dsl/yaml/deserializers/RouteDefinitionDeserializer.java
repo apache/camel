@@ -38,6 +38,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
           properties = {
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "description", type = "string"),
+                  @YamlProperty(name = "precondition", type = "string"),
                   @YamlProperty(name = "group", type = "string"),
                   @YamlProperty(name = "route-configuration-id", type = "string"),
                   @YamlProperty(name = "from", type = "object:org.apache.camel.model.FromDefinition", required = true)
@@ -69,6 +70,9 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     break;
                 case "description":
                     target.setDescription(new DescriptionDefinition(asText(val)));
+                    break;
+                case "precondition":
+                    target.setPrecondition(asText(val));
                     break;
                 case "group":
                     target.setGroup(asText(val));

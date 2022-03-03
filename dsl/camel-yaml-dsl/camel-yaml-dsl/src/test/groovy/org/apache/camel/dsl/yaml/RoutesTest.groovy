@@ -186,4 +186,31 @@ class RoutesTest extends YamlTestSupport {
             }
         }
     }
+
+    def "load route description with precondition"() {
+        when:
+        loadRoutes '''
+                - route:
+                    id: demo-route
+                    description: something cool
+                    precondition: "{{?red}}"
+                    from:
+                      uri: "direct:info"
+                      steps:
+                        - log: "message"
+            '''
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0], RouteDefinition) {
+            routeId == 'demo-route'
+            description.text == 'something cool'
+            input.endpointUri == 'direct:info'
+            precondition == '{{?red}}'
+
+            with (outputs[0], LogDefinition) {
+                message == 'message'
+            }
+        }
+    }
 }

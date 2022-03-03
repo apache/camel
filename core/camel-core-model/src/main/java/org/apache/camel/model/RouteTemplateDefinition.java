@@ -417,7 +417,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         } else {
             copy.setDescription(getDescription());
         }
-
+        copy.setPrecondition(route.getPrecondition());
         return copy;
     }
 
