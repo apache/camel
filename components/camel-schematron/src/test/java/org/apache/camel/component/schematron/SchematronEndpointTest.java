@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.schematron;
 
+import java.nio.charset.Charset;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -54,7 +56,8 @@ public class SchematronEndpointTest extends CamelTestSupport {
     @Test
     public void testSchematronFileReadFromFileSystem() throws Exception {
 
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"));
+        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"),
+                Charset.defaultCharset());
         String path = ClassLoader.getSystemResource("sch/schematron-1.sch").getPath();
         Endpoint endpoint = context().getEndpoint("schematron://" + path);
         Producer producer = endpoint.createProducer();

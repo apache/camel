@@ -21,6 +21,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ExchangeHelper;
+import org.cometd.bayeux.Promise;
 import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
@@ -109,7 +110,7 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
                     ServerSession serverSession = getServerSession();
 
                     ServerMessage.Mutable outMessage = binding.createCometdMessage(channel, serverSession, exchange.getOut());
-                    remote.deliver(serverSession, outMessage);
+                    remote.deliver(serverSession, outMessage, Promise.noop());
                 }
             } finally {
                 consumer.releaseExchange(exchange, false);

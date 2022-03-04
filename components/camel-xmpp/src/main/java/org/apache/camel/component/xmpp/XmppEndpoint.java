@@ -256,7 +256,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         }
 
         MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor(connection);
-        List<DomainBareJid> xmppServiceDomains = multiUserChatManager.getXMPPServiceDomains();
+        List<DomainBareJid> xmppServiceDomains = multiUserChatManager.getMucServiceDomains();
         if (xmppServiceDomains.isEmpty()) {
             throw new XMPPErrorException(
                     null,

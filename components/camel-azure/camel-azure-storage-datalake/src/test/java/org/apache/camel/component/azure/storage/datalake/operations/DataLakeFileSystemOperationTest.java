@@ -160,13 +160,13 @@ public class DataLakeFileSystemOperationTest extends CamelTestSupport {
 
     private HttpHeaders deleteFileSystemHeaderMock() {
         final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.put("x-ms-request-id", "12345");
+        httpHeaders.set("x-ms-request-id", "12345");
         return httpHeaders;
     }
 
     private HttpHeaders createFileSystemHeaderMock() {
         final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.put("x-ms-request-id", "12345");
+        httpHeaders.set("x-ms-request-id", "12345");
         return httpHeaders;
     }
 }

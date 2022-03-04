@@ -41,7 +41,7 @@ public class XmlRoutesBuilderLoaderTest {
 
         Resource resource = ResourceHelper.fromString("in-memory.xml", content);
         RouteBuilder builder = (RouteBuilder) new XmlRoutesBuilderLoader().loadRoutesBuilder(resource);
-        builder.setContext(new DefaultCamelContext());
+        builder.setCamelContext(new DefaultCamelContext());
         builder.configure();
 
         assertFalse(builder.getRouteCollection().getRoutes().isEmpty());
@@ -60,7 +60,7 @@ public class XmlRoutesBuilderLoaderTest {
 
         Resource resource = ResourceHelper.fromString("in-memory.xml", content);
         RouteBuilder builder = (RouteBuilder) new XmlRoutesBuilderLoader().loadRoutesBuilder(resource);
-        builder.setContext(new DefaultCamelContext());
+        builder.setCamelContext(new DefaultCamelContext());
         builder.configure();
 
         assertFalse(builder.getRestCollection().getRests().isEmpty());
@@ -82,7 +82,7 @@ public class XmlRoutesBuilderLoaderTest {
 
         Resource resource = ResourceHelper.fromString("in-memory.xml", content);
         RouteBuilder builder = (RouteBuilder) new XmlRoutesBuilderLoader().loadRoutesBuilder(resource);
-        builder.setContext(new DefaultCamelContext());
+        builder.setCamelContext(new DefaultCamelContext());
         builder.configure();
 
         assertFalse(builder.getRouteTemplateCollection().getRouteTemplates().isEmpty());

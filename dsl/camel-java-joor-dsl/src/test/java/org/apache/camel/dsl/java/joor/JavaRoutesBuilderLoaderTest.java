@@ -50,7 +50,7 @@ public class JavaRoutesBuilderLoaderTest {
             assertThat(builders).hasSize(1);
 
             RouteBuilder builder = (RouteBuilder) builders.iterator().next();
-            builder.setContext(context);
+            builder.setCamelContext(context);
             builder.configure();
 
             Assertions.assertThat(builder.getRouteCollection().getRoutes())
@@ -74,7 +74,7 @@ public class JavaRoutesBuilderLoaderTest {
             assertThat(builders).hasSize(1);
 
             RouteBuilder builder = (RouteBuilder) builders.iterator().next();
-            builder.setContext(context);
+            builder.setCamelContext(context);
             builder.configure();
 
             Assertions.assertThat(builder.getRouteCollection().getRoutes())
@@ -100,7 +100,7 @@ public class JavaRoutesBuilderLoaderTest {
             assertThat(builders).hasSize(1);
 
             RouteBuilder builder = (RouteBuilder) builders.iterator().next();
-            builder.setContext(context);
+            builder.setCamelContext(context);
             builder.configure();
 
             Assertions.assertThat(builder.getRestConfiguration())
@@ -119,7 +119,7 @@ public class JavaRoutesBuilderLoaderTest {
             assertThat(builders).hasSize(1);
 
             RouteBuilder builder = (RouteBuilder) builders.iterator().next();
-            builder.setContext(context);
+            builder.setCamelContext(context);
             builder.configure();
 
             Assertions.assertThat(builder.getRestCollection().getRests()).anySatisfy(rd -> {
