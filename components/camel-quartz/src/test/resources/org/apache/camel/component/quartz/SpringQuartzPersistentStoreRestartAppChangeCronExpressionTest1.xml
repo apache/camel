@@ -54,7 +54,7 @@
         <prop key="org.quartz.scheduler.instanceId">AUTO</prop>
         <prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
         <prop key="org.terracotta.quartz.skipUpdateCheck">true</prop>
-        <prop key="org.quartz.jobStore.class">org.quartz.impl.jdbcjobstore.JobStoreTX</prop>
+        <prop key="org.quartz.jobStore.class">org.springframework.scheduling.quartz.LocalDataSourceJobStore</prop>
         <prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
         <prop key="org.quartz.jobStore.isClustered">true</prop>
       </props>
