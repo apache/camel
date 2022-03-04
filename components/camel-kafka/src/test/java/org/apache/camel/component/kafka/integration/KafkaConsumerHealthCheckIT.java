@@ -22,9 +22,11 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.StreamSupport;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,6 +36,8 @@ import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.junit.jupiter.api.AfterEach;
@@ -49,6 +53,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KafkaConsumerHealthCheckIT extends BaseEmbeddedKafkaTestSupport {
@@ -87,6 +92,24 @@ public class KafkaConsumerHealthCheckIT extends BaseEmbeddedKafkaTestSupport {
     }
 
     @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        // install health check manually (yes a bit cumbersome)
+        HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
+        registry.setCamelContext(context);
+        Object hc = registry.resolveById("context");
+        registry.register(hc);
+        hc = registry.resolveById("routes");
+        registry.register(hc);
+        hc = registry.resolveById("consumers");
+        registry.register(hc);
+        context.setExtension(HealthCheckRegistry.class, registry);
+
+        return context;
+    }
+
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
 
@@ -101,10 +124,17 @@ public class KafkaConsumerHealthCheckIT extends BaseEmbeddedKafkaTestSupport {
     @Order(1)
     @Test
     public void kafkaConsumerHealthCheck() throws InterruptedException, IOException {
-        // health-check should be ready
-        Collection<HealthCheck.Result> res = HealthCheckHelper.invokeReadiness(context);
+        // health-check liveness should be UP
+        Collection<HealthCheck.Result> res = HealthCheckHelper.invokeLiveness(context);
         boolean up = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
-        Assertions.assertTrue(up, "readiness check");
+        Assertions.assertTrue(up, "liveness check");
+
+        // health-check readiness should be ready
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
+            Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
+            boolean up2 = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
+            Assertions.assertTrue(up2, "readiness check");
+        });
 
         String propagatedHeaderKey = "PropagatedCustomHeader";
         byte[] propagatedHeaderValue = "propagated header value".getBytes();
@@ -133,22 +163,25 @@ public class KafkaConsumerHealthCheckIT extends BaseEmbeddedKafkaTestSupport {
         assertFalse(headers.containsKey(skippedHeaderKey), "Should not receive skipped header");
         assertTrue(headers.containsKey(propagatedHeaderKey), "Should receive propagated header");
 
-        // stop route
-        try {
-            context.getRouteController().stopAllRoutes();
-        } catch (Exception e) {
-            // ignore
-        }
+        // and shutdown kafka which will make readiness report as DOWN
+        service.shutdown();
 
-        // health-check should not be ready
-        res = HealthCheckHelper.invokeReadiness(context);
-        Optional<HealthCheck.Result> down = res.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN)).findFirst();
-        Assertions.assertTrue(down.isPresent());
-        String msg = down.get().getMessage().get();
-        Assertions.assertEquals("KafkaConsumer is not ready", msg);
-        Map<String, Object> map = down.get().getDetails();
-        Assertions.assertEquals(TOPIC, map.get("topic"));
-        Assertions.assertEquals("test-health-it", map.get("route.id"));
+        // health-check liveness should be UP
+        res = HealthCheckHelper.invokeLiveness(context);
+        up = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
+        Assertions.assertTrue(up, "liveness check");
+        // but health-check readiness should NOT be ready
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
+            Collection<HealthCheck.Result> res2 = HealthCheckHelper.invoke(context);
+            Optional<HealthCheck.Result> down
+                    = res2.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN)).findFirst();
+            Assertions.assertTrue(down.isPresent());
+            String msg = down.get().getMessage().get();
+            Assertions.assertEquals("KafkaConsumer is not ready", msg);
+            Map<String, Object> map = down.get().getDetails();
+            Assertions.assertEquals(TOPIC, map.get("topic"));
+            Assertions.assertEquals("test-health-it", map.get("route.id"));
+        });
     }
 
     private static class MyKafkaHeaderDeserializer extends DefaultKafkaHeaderDeserializer {
