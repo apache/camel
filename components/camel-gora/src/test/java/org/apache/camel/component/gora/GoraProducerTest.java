@@ -85,14 +85,14 @@ public class GoraProducerTest extends GoraTestSupport {
     }
 
     @Test
-    public void processShouldThrowExceptionIfOperationIsNull() throws Exception {
+    public void processShouldThrowExceptionIfOperationIsNull() {
         final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         assertThrows(RuntimeException.class,
                 () -> producer.process(mockCamelExchange));
     }
 
     @Test
-    public void shouldThrowExceptionIfOperationIsUnknown() throws Exception {
+    public void shouldThrowExceptionIfOperationIsUnknown() {
         when(mockCamelExchange.getIn()).thenReturn(mockCamelMessage);
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_OPERATION.value)).thenReturn("dah");
 
@@ -116,7 +116,7 @@ public class GoraProducerTest extends GoraTestSupport {
         when(mockCamelMessage.getBody(Persistent.class)).thenReturn(sampleValue);
 
         final Message outMessage = mock(Message.class);
-        when(mockCamelExchange.getOut()).thenReturn(outMessage);
+        when(mockCamelExchange.getMessage()).thenReturn(outMessage);
 
         final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
@@ -137,7 +137,7 @@ public class GoraProducerTest extends GoraTestSupport {
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_KEY.value)).thenReturn(sampleKey);
 
         final Message outMessage = mock(Message.class);
-        when(mockCamelExchange.getOut()).thenReturn(outMessage);
+        when(mockCamelExchange.getMessage()).thenReturn(outMessage);
 
         final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
@@ -157,7 +157,7 @@ public class GoraProducerTest extends GoraTestSupport {
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_KEY.value)).thenReturn(sampleKey);
 
         final Message outMessage = mock(Message.class);
-        when(mockCamelExchange.getOut()).thenReturn(outMessage);
+        when(mockCamelExchange.getMessage()).thenReturn(outMessage);
 
         final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
@@ -174,7 +174,7 @@ public class GoraProducerTest extends GoraTestSupport {
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_OPERATION.value)).thenReturn("schemaExists");
 
         final Message outMessage = mock(Message.class);
-        when(mockCamelExchange.getOut()).thenReturn(outMessage);
+        when(mockCamelExchange.getMessage()).thenReturn(outMessage);
 
         final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
@@ -190,7 +190,7 @@ public class GoraProducerTest extends GoraTestSupport {
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_OPERATION.value)).thenReturn("createSchema");
 
         final Message outMessage = mock(Message.class);
-        when(mockCamelExchange.getOut()).thenReturn(outMessage);
+        when(mockCamelExchange.getMessage()).thenReturn(outMessage);
 
         final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
@@ -206,7 +206,7 @@ public class GoraProducerTest extends GoraTestSupport {
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_OPERATION.value)).thenReturn("GetSchemANamE");
 
         final Message outMessage = mock(Message.class);
-        when(mockCamelExchange.getOut()).thenReturn(outMessage);
+        when(mockCamelExchange.getMessage()).thenReturn(outMessage);
 
         final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
@@ -222,7 +222,7 @@ public class GoraProducerTest extends GoraTestSupport {
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_OPERATION.value)).thenReturn("DeleteSChEmA");
 
         final Message outMessage = mock(Message.class);
-        when(mockCamelExchange.getOut()).thenReturn(outMessage);
+        when(mockCamelExchange.getMessage()).thenReturn(outMessage);
 
         final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
