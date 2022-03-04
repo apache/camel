@@ -56,8 +56,14 @@ public class KafkaConsumerHealthCheck extends AbstractHealthCheck {
                 Properties props = task.getKafkaProps();
 
                 builder.detail("bootstrap.servers", props.getProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG));
-                builder.detail("client.id", task.getKafkaProps().getProperty(ConsumerConfig.CLIENT_ID_CONFIG));
-                builder.detail("group.id", task.getKafkaProps().getProperty(ConsumerConfig.GROUP_ID_CONFIG));
+                String cid = task.getKafkaProps().getProperty(ConsumerConfig.CLIENT_ID_CONFIG);
+                if (cid != null) {
+                    builder.detail("client.id", cid);
+                }
+                String gid = task.getKafkaProps().getProperty(ConsumerConfig.GROUP_ID_CONFIG);
+                if (gid != null) {
+                    builder.detail("group.id", gid);
+                }
                 if (routeId != null) {
                     // camel route id
                     builder.detail("route.id", routeId);

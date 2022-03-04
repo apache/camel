@@ -429,7 +429,8 @@ class KafkaFetchRecords implements Runnable {
                 org.apache.kafka.clients.consumer.KafkaConsumer kc = (org.apache.kafka.clients.consumer.KafkaConsumer) consumer;
                 ConsumerNetworkClient nc
                         = (ConsumerNetworkClient) ReflectionHelper.getField(kc.getClass().getDeclaredField("client"), kc);
-                LOG.trace("ConsumerNetworkClient");
+                LOG.trace(
+                        "Health-Check calling org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient.hasReadyNode");
                 ready = nc.hasReadyNodes(System.currentTimeMillis());
             }
         } catch (Exception e) {
@@ -438,12 +439,7 @@ class KafkaFetchRecords implements Runnable {
                       + e.getMessage() + ". This exception is ignored.",
                     e);
         }
-
         return ready;
-    }
-
-    org.apache.kafka.clients.consumer.Consumer getKafkaConsumer() {
-        return consumer;
     }
 
     Properties getKafkaProps() {
