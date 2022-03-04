@@ -156,9 +156,11 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
         if (builder.state() == State.DOWN) {
             // reset success since it failed
             successCount = 0;
+            failureCount++;
         } else if (builder.state() == State.UP) {
             // reset failure since it ok
             failureCount = 0;
+            successCount++;
         }
 
         meta.put(INVOCATION_TIME, invocationTime);
