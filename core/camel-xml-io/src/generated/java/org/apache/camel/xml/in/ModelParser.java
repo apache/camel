@@ -3099,16 +3099,6 @@ public class ModelParser extends BaseParser {
             return optionalIdentifiedDefinitionElementHandler().accept(def, key);
         }, noValueHandler());
     }
-    protected SecurityRequirementsDefinition doParseSecurityRequirementsDefinition() throws IOException, XmlPullParserException {
-        return doParse(new SecurityRequirementsDefinition(),
-            noAttributeHandler(), (def, key) -> {
-            if ("securityRequirement".equals(key)) {
-                doAdd(doParseSecurityDefinition(), def.getSecurityRequirements(), def::setSecurityRequirements);
-                return true;
-            }
-            return false;
-        }, noValueHandler());
-    }
     protected CustomTransformerDefinition doParseCustomTransformerDefinition() throws IOException, XmlPullParserException {
         return doParse(new CustomTransformerDefinition(), (def, key, val) -> {
             switch (key) {

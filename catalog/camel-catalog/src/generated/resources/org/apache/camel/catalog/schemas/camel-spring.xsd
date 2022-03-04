@@ -1424,14 +1424,6 @@ To configure rest security definitions.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="securityRequirements" type="tns:securityRequirementsDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-To configure global rest security requirements.
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
   <xs:element name="serviceCall" type="tns:serviceCallDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -14787,12 +14779,6 @@ To configure a special tag for the operations within this rest definition.
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="securityRequirementsDefinition">
-    <xs:sequence>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="securityRequirement" type="tns:securityDefinition"/>
-    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="customTransformer">

@@ -220,7 +220,6 @@ import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.apache.camel.model.rest.RestSecuritiesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.rest.SecurityDefinition;
-import org.apache.camel.model.rest.SecurityRequirementsDefinition;
 import org.apache.camel.model.transformer.CustomTransformerDefinition;
 import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.model.transformer.EndpointTransformerDefinition;
@@ -13435,47 +13434,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "scopes": {
                     String val = asText(node);
                     target.setScopes(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.rest.SecurityRequirementsDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = {
-                    "security-requirements",
-                    "securityRequirements"
-            },
-            properties = @YamlProperty(name = "security-requirement", type = "object:org.apache.camel.model.rest.SecurityDefinition")
-    )
-    public static class SecurityRequirementsDefinitionDeserializer extends YamlDeserializerBase<SecurityRequirementsDefinition> {
-        public SecurityRequirementsDefinitionDeserializer() {
-            super(SecurityRequirementsDefinition.class);
-        }
-
-        @Override
-        protected SecurityRequirementsDefinition newInstance() {
-            return new SecurityRequirementsDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(SecurityRequirementsDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "security-requirement": {
-                    org.apache.camel.model.rest.SecurityDefinition val = asType(node, org.apache.camel.model.rest.SecurityDefinition.class);
-                    java.util.List<org.apache.camel.model.rest.SecurityDefinition> existing = target.getSecurityRequirements();
-                    if (existing == null) {
-                        existing = new java.util.ArrayList<>();
-                    }
-                    existing.add(val);
-                    target.setSecurityRequirements(existing);
                     break;
                 }
                 default: {

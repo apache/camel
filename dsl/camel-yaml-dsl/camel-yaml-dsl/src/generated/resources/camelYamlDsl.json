@@ -7346,14 +7346,6 @@
         },
         "required" : [ "key" ]
       },
-      "org.apache.camel.model.rest.SecurityRequirementsDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "securityRequirement" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
-          }
-        }
-      },
       "org.apache.camel.model.transformer.CustomTransformerDefinition" : {
         "type" : "object",
         "properties" : {

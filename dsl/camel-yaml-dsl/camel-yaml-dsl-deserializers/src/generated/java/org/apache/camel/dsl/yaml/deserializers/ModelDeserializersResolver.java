@@ -391,9 +391,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.ScriptDefinition": return new ModelDeserializers.ScriptDefinitionDeserializer();
             case "security": return new ModelDeserializers.SecurityDefinitionDeserializer();
             case "org.apache.camel.model.rest.SecurityDefinition": return new ModelDeserializers.SecurityDefinitionDeserializer();
-            case "security-requirements": return new ModelDeserializers.SecurityRequirementsDefinitionDeserializer();
-            case "securityRequirements": return new ModelDeserializers.SecurityRequirementsDefinitionDeserializer();
-            case "org.apache.camel.model.rest.SecurityRequirementsDefinition": return new ModelDeserializers.SecurityRequirementsDefinitionDeserializer();
             case "service-call-configuration": return new ModelDeserializers.ServiceCallConfigurationDefinitionDeserializer();
             case "serviceCallConfiguration": return new ModelDeserializers.ServiceCallConfigurationDefinitionDeserializer();
             case "org.apache.camel.model.cloud.ServiceCallConfigurationDefinition": return new ModelDeserializers.ServiceCallConfigurationDefinitionDeserializer();
