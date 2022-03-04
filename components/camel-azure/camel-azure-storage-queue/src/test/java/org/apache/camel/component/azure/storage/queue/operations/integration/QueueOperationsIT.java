@@ -122,7 +122,7 @@ class QueueOperationsIT extends CamelTestSupport {
         final QueueMessageItem messageItem
                 = clientWrapper.receiveMessages(1, Duration.ofSeconds(30), null).stream().findFirst().get();
 
-        assertEquals("testing message", messageItem.getMessageText());
+        assertEquals("testing message", messageItem.getBody().toString());
 
         // test clear queue
         operations.clearQueue(exchange);
@@ -153,9 +153,9 @@ class QueueOperationsIT extends CamelTestSupport {
         final List<PeekedMessageItem> peekedMessageItems = (List<PeekedMessageItem>) peekResponse.getBody();
 
         assertEquals(3, peekedMessageItems.size());
-        assertEquals("testing message-1", peekedMessageItems.get(0).getMessageText());
-        assertEquals("testing message-2", peekedMessageItems.get(1).getMessageText());
-        assertEquals("testing message-3", peekedMessageItems.get(2).getMessageText());
+        assertEquals("testing message-1", peekedMessageItems.get(0).getBody().toString());
+        assertEquals("testing message-2", peekedMessageItems.get(1).getBody().toString());
+        assertEquals("testing message-3", peekedMessageItems.get(2).getBody().toString());
 
         // test receive message
         exchange.getIn().setHeader(QueueConstants.MAX_MESSAGES, 1);
@@ -163,7 +163,7 @@ class QueueOperationsIT extends CamelTestSupport {
         final List<QueueMessageItem> receivedMessageItems = (List<QueueMessageItem>) receiveResponse.getBody();
 
         assertEquals(1, receivedMessageItems.size());
-        assertEquals("testing message-1", receivedMessageItems.get(0).getMessageText());
+        assertEquals("testing message-1", receivedMessageItems.get(0).getBody().toString());
 
         // make sure the message has been deQueued
         assertEquals(2, ((List<PeekedMessageItem>) operations.peekMessages(null).getBody()).size());
@@ -232,7 +232,7 @@ class QueueOperationsIT extends CamelTestSupport {
         final List<PeekedMessageItem> peekedMessageItems = (List<PeekedMessageItem>) peekResponse.getBody();
 
         assertEquals(1, peekedMessageItems.size());
-        assertEquals("updated message-1", peekedMessageItems.get(0).getMessageText());
+        assertEquals("updated message-1", peekedMessageItems.get(0).getBody().toString());
 
         // delete testing queue
         operations.deleteQueue(exchange);

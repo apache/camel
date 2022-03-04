@@ -122,8 +122,8 @@ class BlobContainerOperationsTest {
     private HttpHeaders createContainerMock() {
         final HttpHeaders httpHeaders = new HttpHeaders();
 
-        httpHeaders.put("x-ms-request-id", "12345");
-        httpHeaders.put("Server", "Azure-Server");
+        httpHeaders.set("x-ms-request-id", "12345");
+        httpHeaders.set("Server", "Azure-Server");
 
         return httpHeaders;
     }
@@ -131,9 +131,9 @@ class BlobContainerOperationsTest {
     private HttpHeaders deleteContainerMock() {
         final HttpHeaders httpHeaders = new HttpHeaders();
 
-        httpHeaders.put("x-ms-request-id", "12345");
-        httpHeaders.put("Server", "Azure-Server");
-        httpHeaders.put("x-ms-delete-type-permanent", "true");
+        httpHeaders.set("x-ms-request-id", "12345");
+        httpHeaders.set("Server", "Azure-Server");
+        httpHeaders.set("x-ms-delete-type-permanent", "true");
 
         return httpHeaders;
     }

@@ -476,14 +476,6 @@ public abstract class BuilderSupport implements CamelContextAware {
         return getCamelContext();
     }
 
-    /**
-     * @deprecated use {@link #setCamelContext(CamelContext)}
-     */
-    @Deprecated
-    public void setContext(CamelContext context) {
-        setCamelContext(context);
-    }
-
     public boolean hasErrorHandlerBuilder() {
         return this.errorHandlerBuilder != null;
     }

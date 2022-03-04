@@ -27,6 +27,7 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoEdgeCollection;
 import com.arangodb.ArangoGraph;
 import com.arangodb.ArangoVertexCollection;
+import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.model.AqlQueryOptions;
@@ -347,7 +348,7 @@ public class ArangoDbProducer extends DefaultProducer {
         String database = endpoint.getConfiguration().getDatabase();
         String graph = endpoint.getConfiguration().getGraph();
         // return vertex collection collection
-        return endpoint.getArango().db(database).graph(graph);
+        return endpoint.getArango().db(DbName.of(database)).graph(graph);
     }
 
     /**

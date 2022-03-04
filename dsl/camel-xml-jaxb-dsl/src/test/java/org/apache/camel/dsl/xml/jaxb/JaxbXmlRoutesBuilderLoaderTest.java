@@ -112,7 +112,7 @@ public class JaxbXmlRoutesBuilderLoaderTest {
         loader.setCamelContext(new DefaultCamelContext());
 
         RouteBuilder builder = (RouteBuilder) loader.loadRoutesBuilder(resource);
-        builder.setContext(loader.getCamelContext());
+        builder.setCamelContext(loader.getCamelContext());
         builder.configure();
         return builder;
     }

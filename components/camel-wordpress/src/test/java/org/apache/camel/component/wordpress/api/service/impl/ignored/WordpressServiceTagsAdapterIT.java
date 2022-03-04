@@ -32,7 +32,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyCollectionOf;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.emptyOrNullString;
 
 @Disabled("Not implemented yet")
 public class WordpressServiceTagsAdapterIT {
@@ -51,7 +51,7 @@ public class WordpressServiceTagsAdapterIT {
         final Tag tag = serviceTags.retrieve(6, null);
         assertThat(tag, not(nullValue()));
         assertThat(tag.getId(), is(6));
-        assertThat(tag.getName(), not(isEmptyOrNullString()));
+        assertThat(tag.getName(), not(emptyOrNullString()));
     }
 
     @Test
