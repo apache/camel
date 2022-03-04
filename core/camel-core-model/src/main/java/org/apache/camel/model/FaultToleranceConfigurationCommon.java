@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 public class FaultToleranceConfigurationCommon extends IdentifiedType {
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker")
+    @Metadata(label = "advanced")
     private String circuitBreaker;
     @XmlAttribute
     @Metadata(defaultValue = "5000", javaType = "java.time.Duration")
