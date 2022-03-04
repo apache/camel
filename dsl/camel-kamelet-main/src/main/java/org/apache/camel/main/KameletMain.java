@@ -161,6 +161,8 @@ public class KameletMain extends MainCommandLineSupport {
         }
         answer.setApplicationContextClassLoader(kameletClassLoader);
         answer.setRegistry(registry);
+        // load camel component and custom health-checks
+        answer.setLoadHealthChecks(true);
 
         // embed HTTP server if port is specified
         Object port = getInitialProperties().get("camel.jbang.platform-http.port");

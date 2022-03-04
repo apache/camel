@@ -32,7 +32,7 @@ import org.apache.camel.support.service.ServiceSupport;
 /**
  * Repository for camel-kafka {@link HealthCheck}s.
  */
-@org.apache.camel.spi.annotations.HealthCheck("camel-kafka")
+@org.apache.camel.spi.annotations.HealthCheck("camel-kafka-repository")
 @DeferredContextBinding
 public class KafkaHealthCheckRepository extends ServiceSupport
         implements CamelContextAware, HealthCheckRepository, StaticService, NonManagedService {
