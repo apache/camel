@@ -80,9 +80,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @XmlElement(name = "securityDefinitions") // use the name Swagger/OpenAPI uses
     @Metadata(label = "security")
     private RestSecuritiesDefinition securityDefinitions;
-    @XmlElement(name = "securityRequirements") // use the name Swagger/OpenAPI uses
+    @XmlElement
     @Metadata(label = "security")
-    private SecurityRequirementsDefinition securityRequirements;
+    private List<SecurityDefinition> securityRequirements = new ArrayList<>();
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<>();
 
@@ -170,14 +170,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         this.securityDefinitions = securityDefinitions;
     }
 
-    public SecurityRequirementsDefinition getSecurityRequirements() {
+    public List<SecurityDefinition> getSecurityRequirements() {
         return securityRequirements;
     }
 
     /**
      * Sets the security requirement(s) for all endpoints.
      */
-    public void setSecurityRequirements(SecurityRequirementsDefinition securityRequirements) {
+    public void setSecurityRequirements(List<SecurityDefinition> securityRequirements) {
         this.securityRequirements = securityRequirements;
     }
 
@@ -591,10 +591,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     public RestDefinition security(String key, String scopes) {
         // add to last verb
         if (getVerbs().isEmpty()) {
-            if (securityRequirements == null) {
-                securityRequirements = new SecurityRequirementsDefinition();
+            SecurityDefinition requirement = securityRequirements
+                    .stream().filter(r -> key.equals(r.getKey())).findFirst().orElse(null);
+            if (requirement == null) {
+                requirement = new SecurityDefinition();
+                securityRequirements.add(requirement);
+                requirement.setKey(key);
             }
-            securityRequirements.securityRequirement(key, scopes);
+            requirement.setScopes(scopes);
         } else {
             VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
             SecurityDefinition sd = new SecurityDefinition();

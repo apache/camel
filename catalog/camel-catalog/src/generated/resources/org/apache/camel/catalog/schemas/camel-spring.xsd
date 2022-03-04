@@ -1424,14 +1424,6 @@ To configure rest security definitions.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="securityRequirements" type="tns:securityRequirementsDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-To configure global rest security requirements.
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
   <xs:element name="serviceCall" type="tns:serviceCallDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -14665,7 +14657,13 @@ to refer to an existing data format instance.
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
           <xs:element minOccurs="0" ref="tns:securityDefinitions"/>
-          <xs:element minOccurs="0" ref="tns:securityRequirements"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="securityRequirements" type="tns:securityDefinition">
+            <xs:annotation>
+              <xs:documentation xml:lang="en"><![CDATA[
+Sets the security requirement(s) for all endpoints.
+              ]]></xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:delete"/>
             <xs:element ref="tns:get"/>
@@ -14770,12 +14768,6 @@ To configure a special tag for the operations within this rest definition.
         <xs:element ref="tns:openIdConnect"/>
         <xs:element ref="tns:mutualTLS"/>
       </xs:choice>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="securityRequirementsDefinition">
-    <xs:sequence>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="securityRequirement" type="tns:securityDefinition"/>
     </xs:sequence>
   </xs:complexType>
 

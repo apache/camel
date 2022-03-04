@@ -7269,7 +7269,10 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestSecuritiesDefinition"
           },
           "securityRequirements" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityRequirementsDefinition"
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
+            }
           },
           "skipBindingOnErrorCode" : {
             "type" : "boolean"
@@ -7342,14 +7345,6 @@
           }
         },
         "required" : [ "key" ]
-      },
-      "org.apache.camel.model.rest.SecurityRequirementsDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "securityRequirement" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
-          }
-        }
       },
       "org.apache.camel.model.transformer.CustomTransformerDefinition" : {
         "type" : "object",
