@@ -181,6 +181,22 @@ camel.vault.gcp.serviceAccountKey = accessKey
 camel.vault.gcp.projectId = secretKey
 ----
 
+If you want instead to use the https://cloud.google.com/docs/authentication/production[GCP default client instance], you'll need to provide the following env variables:
+
+[source,bash]
+----
+export $CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE=true
+export $CAMEL_VAULT_GCP_PROJECT_ID=projectId
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.gcp.useDefaultInstance = true
+camel.vault.aws.projectId = region
+----
+
 At this point you'll be able to reference a property in the following way by using `gcp:` as prefix in the `{{ }}` syntax:
 
 [source,xml]
