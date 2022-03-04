@@ -151,7 +151,7 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
 
         // health-check is optional so discover and resolve
         HealthCheckRegistry hcr = endpoint.getCamelContext().getExtension(HealthCheckRegistry.class);
-        if (hcr != null) {
+        if (hcr != null && hcr.isEnabled()) {
             Optional<HealthCheckRepository> hrc = hcr.getRepository("camel-kafka");
             if (hrc.isEmpty()) {
                 // use resolver to load from classpath if needed
