@@ -188,7 +188,7 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_USE_DEFAULT_INSTACE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_PROJECT_ID", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "GOOGLE_APPLICATION_CREDENTIALS", matches = ".*")
     @Test
