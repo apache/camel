@@ -102,9 +102,9 @@ public class GoraProducer extends DefaultProducer {
             dataStore.flush();
         }
 
-        exchange.getOut().setBody(result);
+        exchange.getMessage().setBody(result);
         // preserve headers
-        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+        exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
     }
 
 }
