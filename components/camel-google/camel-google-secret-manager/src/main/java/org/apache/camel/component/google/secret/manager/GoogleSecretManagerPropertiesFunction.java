@@ -102,7 +102,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
             SecretManagerServiceSettings settings = SecretManagerServiceSettings.newBuilder()
                     .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials)).build();
             client = SecretManagerServiceClient.create(settings);
-        } else if ( useDefaultInstance && ObjectHelper.isNotEmpty(projectId)) {
+        } else if (useDefaultInstance && ObjectHelper.isNotEmpty(projectId)) {
             SecretManagerServiceSettings settings = SecretManagerServiceSettings.newBuilder().build();
             client = SecretManagerServiceClient.create(settings);
         } else {
