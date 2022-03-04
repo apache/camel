@@ -61,7 +61,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
     @SuppressWarnings("rawtypes")
     private org.apache.kafka.clients.producer.Producer kafkaProducer;
-    private KafkaProducerHealthCheck healthCheck;
+    private KafkaProducerHealthCheck producerHealthCheck;
     private String clientId;
     private final KafkaEndpoint endpoint;
     private final KafkaConfiguration configuration;
@@ -178,19 +178,23 @@ public class KafkaProducer extends DefaultAsyncProducer {
         // install producer health-check
         HealthCheckRegistry hcr = getEndpoint().getCamelContext().getExtension(HealthCheckRegistry.class);
         if (hcr != null) {
-            healthCheck = new KafkaProducerHealthCheck(this, clientId);
-            hcr.register(healthCheck);
+            producerHealthCheck = new KafkaProducerHealthCheck(this, clientId);
+            hcr.getRepository("camel-kafka").ifPresent(r -> {
+                KafkaHealthCheckRepository kr = (KafkaHealthCheckRepository) r;
+                kr.addHealthCheck(producerHealthCheck);
+            });
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheck != null) {
-            HealthCheckRegistry hcr = getEndpoint().getCamelContext().getExtension(HealthCheckRegistry.class);
-            if (hcr != null) {
-                hcr.unregister(healthCheck);
-            }
-            healthCheck = null;
+        HealthCheckRegistry hcr = endpoint.getCamelContext().getExtension(HealthCheckRegistry.class);
+        if (hcr != null) {
+            hcr.getRepository("camel-kafka").ifPresent(r -> {
+                KafkaHealthCheckRepository kr = (KafkaHealthCheckRepository) r;
+                kr.removeHealthCheck(producerHealthCheck);
+            });
+            producerHealthCheck = null;
         }
 
         if (kafkaProducer != null && closeKafkaProducer) {

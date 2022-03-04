@@ -24,12 +24,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Processor;
 import org.apache.camel.ResumeAware;
 import org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy;
-import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckAware;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
@@ -46,6 +45,7 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
 
     protected ExecutorService executor;
     private final KafkaEndpoint endpoint;
+    private KafkaConsumerHealthCheck consumerHealthCheck;
     // This list helps to work around the infinite loop of KAFKA-1894
     private final List<KafkaFetchRecords> tasks = new ArrayList<>();
     private volatile boolean stopOffsetRepo;
@@ -70,16 +70,6 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
-
-        // build health-check
-        String rid = getRouteId();
-        if (rid == null) {
-            // not from a route so need some other uuid
-            rid = endpoint.getCamelContext().getUuidGenerator().generateUuid();
-        }
-        HealthCheck hc = new KafkaConsumerHealthCheck(this, rid);
-        CamelContextAware.trySetCamelContext(hc, endpoint.getCamelContext());
-        setHealthCheck(hc);
 
         if (endpoint.getComponent().getPollExceptionStrategy() != null) {
             pollExceptionStrategy = endpoint.getComponent().getPollExceptionStrategy();
@@ -125,6 +115,21 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
                 endpoint.getConfiguration().isBreakOnFirstError());
         super.doStart();
 
+        HealthCheckRegistry hcr = endpoint.getCamelContext().getExtension(HealthCheckRegistry.class);
+        if (hcr != null) {
+            String rid = getRouteId();
+            if (rid == null) {
+                // not from a route so need some other uuid
+                rid = endpoint.getCamelContext().getUuidGenerator().generateUuid();
+            }
+            consumerHealthCheck = new KafkaConsumerHealthCheck(this, rid);
+
+            hcr.getRepository("camel-kafka").ifPresent(r -> {
+                KafkaHealthCheckRepository kr = (KafkaHealthCheckRepository) r;
+                kr.addHealthCheck(consumerHealthCheck);
+            });
+        }
+
         // is the offset repository already started?
         StateRepository<String, String> repo = endpoint.getConfiguration().getOffsetRepository();
         if (repo instanceof ServiceSupport) {
@@ -158,6 +163,15 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
     @Override
     protected void doStop() throws Exception {
         LOG.info("Stopping Kafka consumer on topic: {}", endpoint.getConfiguration().getTopic());
+
+        HealthCheckRegistry hcr = endpoint.getCamelContext().getExtension(HealthCheckRegistry.class);
+        if (hcr != null) {
+            hcr.getRepository("camel-kafka").ifPresent(r -> {
+                KafkaHealthCheckRepository kr = (KafkaHealthCheckRepository) r;
+                kr.removeHealthCheck(consumerHealthCheck);
+            });
+            consumerHealthCheck = null;
+        }
 
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
