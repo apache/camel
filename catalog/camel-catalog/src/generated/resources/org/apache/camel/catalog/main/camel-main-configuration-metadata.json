@@ -232,6 +232,7 @@
     { "name": "camel.vault.aws.region", "description": "The AWS region", "sourceType": "org.apache.camel.vault.AwsVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
     { "name": "camel.vault.aws.secretKey", "description": "The AWS secret key", "sourceType": "org.apache.camel.vault.AwsVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
     { "name": "camel.vault.gcp.projectId", "description": "The GCP Project ID", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
-    { "name": "camel.vault.gcp.serviceAccountKey", "description": "The Service Account Key location", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "string", "javaType": "java.lang.String" }
+    { "name": "camel.vault.gcp.serviceAccountKey", "description": "The Service Account Key location", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
+    { "name": "camel.vault.gcp.useDefaultInstance", "description": "Define if we want to use the GCP Client Default Instance or not", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "boolean", "javaType": "boolean", "defaultValue": "false" }
   ]
 }
