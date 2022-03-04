@@ -12165,7 +12165,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "put", type = "array:org.apache.camel.model.rest.PutDefinition"),
                     @YamlProperty(name = "security-definitions", type = "object:org.apache.camel.model.rest.RestSecuritiesDefinition"),
-                    @YamlProperty(name = "security-requirements", type = "object:org.apache.camel.model.rest.SecurityRequirementsDefinition"),
+                    @YamlProperty(name = "security-requirements", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "tag", type = "string")
             }
@@ -12225,7 +12225,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "security-requirements": {
-                    org.apache.camel.model.rest.SecurityRequirementsDefinition val = asType(node, org.apache.camel.model.rest.SecurityRequirementsDefinition.class);
+                    java.util.List<org.apache.camel.model.rest.SecurityDefinition> val = asFlatList(node, org.apache.camel.model.rest.SecurityDefinition.class);
                     target.setSecurityRequirements(val);
                     break;
                 }

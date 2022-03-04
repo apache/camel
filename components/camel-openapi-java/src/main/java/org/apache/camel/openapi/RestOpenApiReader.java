@@ -97,7 +97,6 @@ import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.apache.camel.model.rest.RestSecuritiesDefinition;
 import org.apache.camel.model.rest.RestSecurityDefinition;
 import org.apache.camel.model.rest.SecurityDefinition;
-import org.apache.camel.model.rest.SecurityRequirementsDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.CamelContextHelper;
@@ -258,21 +257,18 @@ public class RestOpenApiReader {
         doParseVerbs(camelContext, openApi, rest, camelContextId, verbs, pathAsTag);
 
         // setup root security node if necessary
-        SecurityRequirementsDefinition securitiesRequirement = rest.getSecurityRequirements();
-        if (securitiesRequirement != null) {
-            Collection<SecurityDefinition> securityRequirements = securitiesRequirement.securityRequirements();
-            securityRequirements.forEach(requirement -> {
-                OasSecurityRequirement oasRequirement = openApi.createSecurityRequirement();
-                List<String> scopes;
-                if (requirement.getScopes() == null || requirement.getScopes().trim().isEmpty()) {
-                    scopes = Collections.emptyList();
-                } else {
-                    scopes = Arrays.asList(requirement.getScopes().trim().split("\\s*,\\s*"));
-                }
-                oasRequirement.addSecurityRequirementItem(requirement.getKey(), scopes);
-                openApi.addSecurityRequirement(oasRequirement);
-            });
-        }
+        Collection<SecurityDefinition> securityRequirements = rest.securityRequirements();
+        securityRequirements.forEach(requirement -> {
+            OasSecurityRequirement oasRequirement = openApi.createSecurityRequirement();
+            List<String> scopes;
+            if (requirement.getScopes() == null || requirement.getScopes().trim().isEmpty()) {
+                scopes = Collections.emptyList();
+            } else {
+                scopes = Arrays.asList(requirement.getScopes().trim().split("\\s*,\\s*"));
+            }
+            oasRequirement.addSecurityRequirementItem(requirement.getKey(), scopes);
+            openApi.addSecurityRequirement(oasRequirement);
+        });
     }
 
     private void parseOas30(Oas30Document openApi, RestDefinition rest, String pathAsTag) {

@@ -1096,7 +1096,7 @@ public class ModelParser extends BaseParser {
                 case "post": doAdd(doParsePostDefinition(), def.getVerbs(), def::setVerbs); break;
                 case "put": doAdd(doParsePutDefinition(), def.getVerbs(), def::setVerbs); break;
                 case "securityDefinitions": def.setSecurityDefinitions(doParseRestSecuritiesDefinition()); break;
-                case "securityRequirements": def.setSecurityRequirements(doParseSecurityRequirementsDefinition()); break;
+                case "securityRequirements": doAdd(doParseSecurityDefinition(), def.getSecurityRequirements(), def::setSecurityRequirements); break;
                 default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }
             return true;
@@ -3066,16 +3066,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, noValueHandler());
     }
-    protected SecurityRequirementsDefinition doParseSecurityRequirementsDefinition() throws IOException, XmlPullParserException {
-        return doParse(new SecurityRequirementsDefinition(),
-            noAttributeHandler(), (def, key) -> {
-            if ("securityRequirement".equals(key)) {
-                doAdd(doParseSecurityDefinition(), def.getSecurityRequirements(), def::setSecurityRequirements);
-                return true;
-            }
-            return false;
-        }, noValueHandler());
-    }
     public Optional<RestsDefinition> parseRestsDefinition()
             throws IOException, XmlPullParserException {
         String tag = getNextTag("rests", "rest");
@@ -3107,6 +3097,16 @@ public class ModelParser extends BaseParser {
                 return true;
             }
             return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        }, noValueHandler());
+    }
+    protected SecurityRequirementsDefinition doParseSecurityRequirementsDefinition() throws IOException, XmlPullParserException {
+        return doParse(new SecurityRequirementsDefinition(),
+            noAttributeHandler(), (def, key) -> {
+            if ("securityRequirement".equals(key)) {
+                doAdd(doParseSecurityDefinition(), def.getSecurityRequirements(), def::setSecurityRequirements);
+                return true;
+            }
+            return false;
         }, noValueHandler());
     }
     protected CustomTransformerDefinition doParseCustomTransformerDefinition() throws IOException, XmlPullParserException {

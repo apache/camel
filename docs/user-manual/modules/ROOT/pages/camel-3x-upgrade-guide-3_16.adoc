@@ -147,7 +147,10 @@ Renamed the following classes in package `org.apache.camel.model.rest`:
 - `RestOperationParamDefinition` to `ParamDefinition`
 - `RestOperationResponseHeaderDefinition` to `ResponseHeaderDefinition`
 - `RestOperationResponseMsgDefinition` to `ResponseMessageDefinition`
-- `RestSecuritiesRequirement` to `SecurityRequirementsDefinition`
+
+==== Removed classes
+
+For the sake of simplicity, the class `RestSecuritiesRequirement` has been removed because it contains only elements of type `SecurityDefinition` which have been moved directly into `RestDefinition`.
 
 === Aggregate EIP
 
