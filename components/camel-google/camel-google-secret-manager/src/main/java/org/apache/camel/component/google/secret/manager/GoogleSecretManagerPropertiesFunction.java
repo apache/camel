@@ -75,6 +75,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
 
     private static final String CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY = "CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY";
     private static final String CAMEL_VAULT_GCP_PROJECT_ID = "CAMEL_VAULT_GCP_PROJECT_ID";
+    private static final String CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE = "CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE";
     private CamelContext camelContext;
     private SecretManagerServiceClient client;
     private String projectId;
@@ -83,12 +84,14 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     protected void doStart() throws Exception {
         super.doStart();
         String serviceAccountKey = System.getenv(CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY);
+        boolean useDefaultInstance = Boolean.parseBoolean(System.getenv(CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE));
         projectId = System.getenv(CAMEL_VAULT_GCP_PROJECT_ID);
         if (ObjectHelper.isEmpty(serviceAccountKey) && ObjectHelper.isEmpty(projectId)) {
             GcpVaultConfiguration gcpVaultConfiguration = getCamelContext().getVaultConfiguration().gcp();
             if (ObjectHelper.isNotEmpty(gcpVaultConfiguration)) {
                 serviceAccountKey = gcpVaultConfiguration.getServiceAccountKey();
                 projectId = gcpVaultConfiguration.getProjectId();
+                useDefaultInstance = gcpVaultConfiguration.isUseDefaultInstance();
             }
         }
         if (ObjectHelper.isNotEmpty(serviceAccountKey) && ObjectHelper.isNotEmpty(projectId)) {
@@ -98,6 +101,9 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
                     .fromStream(resolveMandatoryResourceAsInputStream);
             SecretManagerServiceSettings settings = SecretManagerServiceSettings.newBuilder()
                     .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials)).build();
+            client = SecretManagerServiceClient.create(settings);
+        } else if ( useDefaultInstance && ObjectHelper.isNotEmpty(projectId)) {
+            SecretManagerServiceSettings settings = SecretManagerServiceSettings.newBuilder().build();
             client = SecretManagerServiceClient.create(settings);
         } else {
             throw new RuntimeCamelException(
