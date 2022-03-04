@@ -35,7 +35,6 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import org.apache.camel.maven.dsl.yaml.support.IndexerSupport;
 import org.apache.camel.util.AntPathMatcher;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -168,6 +167,10 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
                     long.class.getName(),
                     float.class.getName(),
                     double.class.getName()));
+    /**
+     * The default value the String attributes of all the JAXB annotations.
+     */
+    private static final String XML_ANNOTATION_DEFAULT_VALUE = "##default";
 
     protected IndexView view;
 
@@ -231,13 +234,11 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
                 name);
     }
 
-    protected static Optional<AnnotationValue> annotationValue(MethodInfo target, DotName annotationName, String name) {
+    private static Optional<AnnotationInstance> annotation(FieldInfo target, DotName annotationName) {
         if (target == null) {
             return Optional.empty();
         }
-        return annotationValue(
-                target.annotation(annotationName),
-                name);
+        return Optional.ofNullable(target.annotation(annotationName));
     }
 
     /**
@@ -571,26 +572,23 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         return Optional.empty();
     }
 
+    /**
+     * @see #fieldName(ClassInfo, FieldInfo)
+     */
     protected String fieldName(FieldInfo field) {
-        ClassInfo ct = view.getClassByName(field.type().name());
+        return fieldName(view.getClassByName(field.type().name()), field);
+    }
 
-        return firstPresent(
-                annotationValue(field, DSL_PROPERTY_ANNOTATION, "name")
-                        .map(AnnotationValue::asString)
-                        .filter(value -> ObjectHelper.isNotEmpty(value)),
-                annotationValue(field, XML_VALUE_ANNOTATION_CLASS, "name")
-                        .map(AnnotationValue::asString)
-                        .filter(value -> !"##default".equals(value)),
-                annotationValue(field, XML_ATTRIBUTE_ANNOTATION_CLASS, "name")
-                        .map(AnnotationValue::asString)
-                        .filter(value -> !"##default".equals(value)),
-                annotationValue(field, XML_ELEMENT_ANNOTATION_CLASS, "name")
-                        .map(AnnotationValue::asString)
-                        .filter(value -> !"##default".equals(value)),
-                annotationValue(ct, XML_ROOT_ELEMENT_ANNOTATION_CLASS, "name")
-                        .map(AnnotationValue::asString)
-                        .filter(value -> !"##default".equals(value)))
-                                .orElseGet(field::name);
+    /**
+     * @return the name from the given annotation or from the annotation {@code @XmlRootElement} of the provided class.
+     */
+    private Optional<String> getNameFromAnnotationOrRef(AnnotationInstance annotation, ClassInfo refClass, String emptyValue) {
+        return annotationValue(annotation, "name")
+            .map(AnnotationValue::asString)
+            .filter(value -> !emptyValue.equals(value))
+            .or(() -> annotationValue(refClass, XML_ROOT_ELEMENT_ANNOTATION_CLASS, "name")
+                .map(AnnotationValue::asString)
+                .filter(v -> !XML_ANNOTATION_DEFAULT_VALUE.equals(v)));
     }
 
     protected boolean isRequired(FieldInfo fi) {
@@ -685,20 +683,29 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
                 .sorted(Comparator.comparing(ClassInfo::name));
     }
 
+    /**
+     * As stated in the JAXB specification:
+     * <ul>
+     *     <li>In case of {@code @XmlAttribute} and {@code @XmlElement}, the name is retrieved from the annotation if it
+     *     has been set, otherwise the field name is used</li>
+     *     <li>In case of {@code @XmlElementRef} and {@code @DslProperty} (the latter is specific to Camel), the name is
+     *     retrieved from the annotation if it has been set, otherwise it is retrieved from the annotation
+     *     {@code @XmlRootElement} on the type being referenced.
+     *     </li>
+     * </ul>
+     */
     protected String fieldName(ClassInfo ci, FieldInfo fi) {
         return firstPresent(
-            annotationValue(fi, XML_VALUE_ANNOTATION_CLASS, "name")
-                .map(AnnotationValue::asString)
-                .filter(value -> !"##default".equals(value)),
+            annotation(fi, DSL_PROPERTY_ANNOTATION)
+                .flatMap(annotation -> getNameFromAnnotationOrRef(annotation, ci, "")),
             annotationValue(fi, XML_ATTRIBUTE_ANNOTATION_CLASS, "name")
                 .map(AnnotationValue::asString)
-                .filter(value -> !"##default".equals(value)),
+                .filter(value -> !XML_ANNOTATION_DEFAULT_VALUE.equals(value)),
             annotationValue(fi, XML_ELEMENT_ANNOTATION_CLASS, "name")
                 .map(AnnotationValue::asString)
-                .filter(value -> !"##default".equals(value)),
-            annotationValue(ci, XML_ROOT_ELEMENT_ANNOTATION_CLASS, "name")
-                .map(AnnotationValue::asString)
-                .filter(value -> !"##default".equals(value))
+                .filter(value -> !XML_ANNOTATION_DEFAULT_VALUE.equals(value)),
+            annotation(fi, XML_ELEMENT_REF_ANNOTATION_CLASS)
+                .flatMap(annotation -> getNameFromAnnotationOrRef(annotation, ci, XML_ANNOTATION_DEFAULT_VALUE))
         ).orElseGet(fi::name);
     }
 }
