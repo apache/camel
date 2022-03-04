@@ -155,7 +155,7 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         Set<String> answer = new LinkedHashSet<>();
         Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
 
-        if (camelContext.ismodeline()) {
+        if (camelContext.isModeline()) {
             ModelineFactory factory = camelContext.adapt(ExtendedCamelContext.class).getModelineFactory();
             // gather resources for modeline
             for (Resource resource : resources) {

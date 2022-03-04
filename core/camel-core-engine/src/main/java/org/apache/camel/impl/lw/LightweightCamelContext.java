@@ -925,13 +925,13 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public Boolean ismodeline() {
-        return delegate.ismodeline();
+    public Boolean isModeline() {
+        return delegate.isModeline();
     }
 
     @Override
-    public void setmodeline(Boolean modeline) {
-        delegate.setmodeline(modeline);
+    public void setModeline(Boolean modeline) {
+        delegate.setModeline(modeline);
     }
 
     @Override

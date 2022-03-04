@@ -4294,12 +4294,12 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public Boolean ismodeline() {
+    public Boolean isModeline() {
         return modeline != null && modeline;
     }
 
     @Override
-    public void setmodeline(Boolean modeline) {
+    public void setModeline(Boolean modeline) {
         this.modeline = modeline;
     }
 

@@ -127,6 +127,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelJAXBContextFactory": target.setModelJAXBContextFactory(property(camelContext, org.apache.camel.spi.ModelJAXBContextFactory.class, value)); return true;
         case "modeltoxmldumper":
         case "ModelToXMLDumper": target.setModelToXMLDumper(property(camelContext, org.apache.camel.spi.ModelToXMLDumper.class, value)); return true;
+        case "modeline":
+        case "Modeline": target.setModeline(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "modelinefactory":
         case "ModelineFactory": target.setModelineFactory(property(camelContext, org.apache.camel.spi.ModelineFactory.class, value)); return true;
         case "name":
@@ -328,6 +330,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelJAXBContextFactory": return org.apache.camel.spi.ModelJAXBContextFactory.class;
         case "modeltoxmldumper":
         case "ModelToXMLDumper": return org.apache.camel.spi.ModelToXMLDumper.class;
+        case "modeline":
+        case "Modeline": return java.lang.Boolean.class;
         case "modelinefactory":
         case "ModelineFactory": return org.apache.camel.spi.ModelineFactory.class;
         case "name":
@@ -530,6 +534,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelJAXBContextFactory": return target.getModelJAXBContextFactory();
         case "modeltoxmldumper":
         case "ModelToXMLDumper": return target.getModelToXMLDumper();
+        case "modeline":
+        case "Modeline": return target.isModeline();
         case "modelinefactory":
         case "ModelineFactory": return target.getModelineFactory();
         case "name":

@@ -1243,12 +1243,12 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public Boolean ismodeline() {
+    public Boolean isModeline() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setmodeline(Boolean modeline) {
+    public void setModeline(Boolean modeline) {
         throw new UnsupportedOperationException();
     }
 
