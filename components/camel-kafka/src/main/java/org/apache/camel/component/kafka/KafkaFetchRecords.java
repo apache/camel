@@ -36,6 +36,7 @@ import org.apache.camel.component.kafka.consumer.support.ResumeStrategyFactory;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ReflectionHelper;
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient;
 import org.apache.kafka.common.TopicPartition;
@@ -49,6 +50,7 @@ class KafkaFetchRecords implements Runnable {
 
     private final KafkaConsumer kafkaConsumer;
     private org.apache.kafka.clients.consumer.Consumer consumer;
+    private String clientId;
     private final String topicName;
     private final Pattern topicPattern;
     private final String threadId;
@@ -124,6 +126,20 @@ class KafkaFetchRecords implements Runnable {
 
             // this may throw an exception if something is wrong with kafka consumer
             this.consumer = kafkaConsumer.getEndpoint().getKafkaClientFactory().getConsumer(kafkaProps);
+
+            // init client id which we may need to get from the kafka producer via reflection
+            if (clientId == null) {
+                clientId = getKafkaProps().getProperty(CommonClientConfigs.CLIENT_ID_CONFIG);
+                if (clientId == null) {
+                    try {
+                        clientId = (String) ReflectionHelper
+                                .getField(consumer.getClass().getDeclaredField("clientId"), consumer);
+                    } catch (Exception e) {
+                        // ignore
+                        clientId = "";
+                    }
+                }
+            }
         } finally {
             Thread.currentThread().setContextClassLoader(threadClassLoader);
         }
@@ -140,7 +156,6 @@ class KafkaFetchRecords implements Runnable {
     }
 
     private void subscribe() {
-
         KafkaConsumerResumeStrategy resumeStrategy = ResumeStrategyFactory.newResumeStrategy(kafkaConsumer);
         resumeStrategy.setConsumer(consumer);
 
@@ -444,5 +459,9 @@ class KafkaFetchRecords implements Runnable {
 
     Properties getKafkaProps() {
         return kafkaProps;
+    }
+
+    String getClientId() {
+        return clientId;
     }
 }

@@ -56,10 +56,7 @@ public class KafkaConsumerHealthCheck extends AbstractHealthCheck {
                 Properties props = task.getKafkaProps();
 
                 builder.detail("bootstrap.servers", props.getProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG));
-                String cid = props.getProperty(ConsumerConfig.CLIENT_ID_CONFIG);
-                if (cid != null) {
-                    builder.detail("client.id", cid);
-                }
+                builder.detail("client.id", task.getClientId());
                 String gid = props.getProperty(ConsumerConfig.GROUP_ID_CONFIG);
                 if (gid != null) {
                     builder.detail("group.id", gid);

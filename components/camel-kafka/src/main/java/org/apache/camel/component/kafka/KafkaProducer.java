@@ -36,11 +36,15 @@ import org.apache.camel.component.kafka.producer.support.KafkaProducerMetadataCa
 import org.apache.camel.component.kafka.producer.support.KeyValueHolderIterator;
 import org.apache.camel.component.kafka.producer.support.ProducerUtil;
 import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.NetworkClient;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -57,6 +61,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
     @SuppressWarnings("rawtypes")
     private org.apache.kafka.clients.producer.Producer kafkaProducer;
+    private KafkaProducerHealthCheck healthCheck;
+    private String clientId;
     private final KafkaEndpoint endpoint;
     private final KafkaConfiguration configuration;
     private ExecutorService workerPool;
@@ -76,6 +82,11 @@ public class KafkaProducer extends DefaultAsyncProducer {
         configKey = configuration.getKey();
     }
 
+    @Override
+    public KafkaEndpoint getEndpoint() {
+        return (KafkaEndpoint) super.getEndpoint();
+    }
+
     Properties getProps() {
         Properties props = configuration.createProducerProperties();
         endpoint.updateClassProperties(props);
@@ -86,6 +97,32 @@ public class KafkaProducer extends DefaultAsyncProducer {
         }
 
         return props;
+    }
+
+    public boolean isReady() {
+        boolean ready = true;
+        try {
+            if (kafkaProducer instanceof org.apache.kafka.clients.producer.KafkaProducer) {
+                // need to use reflection to access the network client which has API to check if the client has ready
+                // connections
+                org.apache.kafka.clients.producer.KafkaProducer kp
+                        = (org.apache.kafka.clients.producer.KafkaProducer) kafkaProducer;
+                org.apache.kafka.clients.producer.internals.Sender sender
+                        = (org.apache.kafka.clients.producer.internals.Sender) ReflectionHelper
+                                .getField(kp.getClass().getDeclaredField("sender"), kp);
+                NetworkClient nc
+                        = (NetworkClient) ReflectionHelper.getField(sender.getClass().getDeclaredField("client"), sender);
+                LOG.trace(
+                        "Health-Check calling org.apache.kafka.clients.NetworkClient.hasReadyNode");
+                ready = nc.hasReadyNodes(System.currentTimeMillis());
+            }
+        } catch (Exception e) {
+            // ignore
+            LOG.debug("Cannot check hasReadyNodes on KafkaConsumer client (ConsumerNetworkClient) due to "
+                      + e.getMessage() + ". This exception is ignored.",
+                    e);
+        }
+        return ready;
     }
 
     @SuppressWarnings("rawtypes")
@@ -123,6 +160,51 @@ public class KafkaProducer extends DefaultAsyncProducer {
             // we create a thread pool so we should also shut it down
             shutdownWorkerPool = true;
         }
+
+        // init client id which we may need to get from the kafka producer via reflection
+        if (clientId == null) {
+            clientId = getProps().getProperty(CommonClientConfigs.CLIENT_ID_CONFIG);
+            if (clientId == null) {
+                try {
+                    clientId = (String) ReflectionHelper
+                            .getField(kafkaProducer.getClass().getDeclaredField("clientId"), kafkaProducer);
+                } catch (Exception e) {
+                    // ignore
+                    clientId = "";
+                }
+            }
+        }
+
+        // install producer health-check
+        HealthCheckRegistry hcr = getEndpoint().getCamelContext().getExtension(HealthCheckRegistry.class);
+        if (hcr != null) {
+            healthCheck = new KafkaProducerHealthCheck(this, clientId);
+            hcr.register(healthCheck);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (healthCheck != null) {
+            HealthCheckRegistry hcr = getEndpoint().getCamelContext().getExtension(HealthCheckRegistry.class);
+            if (hcr != null) {
+                hcr.unregister(healthCheck);
+            }
+            healthCheck = null;
+        }
+
+        if (kafkaProducer != null && closeKafkaProducer) {
+            LOG.debug("Closing KafkaProducer: {}", kafkaProducer);
+            kafkaProducer.close();
+            kafkaProducer = null;
+        }
+
+        if (shutdownWorkerPool && workerPool != null) {
+            int timeout = configuration.getShutdownTimeout();
+            LOG.debug("Shutting down Kafka producer worker threads with timeout {} millis", timeout);
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownGraceful(workerPool, timeout);
+            workerPool = null;
+        }
     }
 
     private void createProducer(Properties props) {
@@ -139,22 +221,6 @@ public class KafkaProducer extends DefaultAsyncProducer {
             Thread.currentThread().setContextClassLoader(threadClassLoader);
         }
         LOG.debug("Created KafkaProducer: {}", kafkaProducer);
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        if (kafkaProducer != null && closeKafkaProducer) {
-            LOG.debug("Closing KafkaProducer: {}", kafkaProducer);
-            kafkaProducer.close();
-            kafkaProducer = null;
-        }
-
-        if (shutdownWorkerPool && workerPool != null) {
-            int timeout = configuration.getShutdownTimeout();
-            LOG.debug("Shutting down Kafka producer worker threads with timeout {} millis", timeout);
-            endpoint.getCamelContext().getExecutorServiceManager().shutdownGraceful(workerPool, timeout);
-            workerPool = null;
-        }
     }
 
     protected Iterator<KeyValueHolder<Object, ProducerRecord<Object, Object>>> createRecordIterable(
