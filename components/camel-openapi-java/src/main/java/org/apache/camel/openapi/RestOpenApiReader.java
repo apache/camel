@@ -20,7 +20,6 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -257,7 +256,7 @@ public class RestOpenApiReader {
         doParseVerbs(camelContext, openApi, rest, camelContextId, verbs, pathAsTag);
 
         // setup root security node if necessary
-        Collection<SecurityDefinition> securityRequirements = rest.securityRequirements();
+        List<SecurityDefinition> securityRequirements = rest.getSecurityRequirements();
         securityRequirements.forEach(requirement -> {
             OasSecurityRequirement oasRequirement = openApi.createSecurityRequirement();
             List<String> scopes;

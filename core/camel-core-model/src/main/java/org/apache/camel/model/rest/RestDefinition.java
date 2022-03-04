@@ -17,16 +17,13 @@
 package org.apache.camel.model.rest;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -34,7 +31,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
@@ -89,8 +85,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     private List<SecurityDefinition> securityRequirements = new ArrayList<>();
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<>();
-    @XmlTransient
-    private Map<String, SecurityDefinition> itemsMap = new HashMap<>();
 
     @Override
     public String getShortName() {
@@ -183,10 +177,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     /**
      * Sets the security requirement(s) for all endpoints.
      */
-    public void setSecurityRequirements(Collection<SecurityDefinition> securityRequirements) {
-        itemsMap = securityRequirements.stream()
-                .collect(Collectors.toMap(SecurityDefinition::getKey, Function.identity(), (u, v) -> u));
-        this.securityRequirements = new ArrayList<>(itemsMap.values());
+    public void setSecurityRequirements(List<SecurityDefinition> securityRequirements) {
+        this.securityRequirements = securityRequirements;
     }
 
     /**
@@ -599,15 +591,14 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     public RestDefinition security(String key, String scopes) {
         // add to last verb
         if (getVerbs().isEmpty()) {
-            SecurityDefinition requirement = itemsMap.get(key);
+            SecurityDefinition requirement = securityRequirements
+                    .stream().filter(r -> key.equals(r.getKey())).findFirst().orElse(null);
             if (requirement == null) {
                 requirement = new SecurityDefinition();
+                securityRequirements.add(requirement);
+                requirement.setKey(key);
             }
-
-            requirement.setKey(key);
             requirement.setScopes(scopes);
-            itemsMap.put(key, requirement);
-            securityRequirements = new ArrayList<>(itemsMap.values());
         } else {
             VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
             SecurityDefinition sd = new SecurityDefinition();
@@ -617,10 +608,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
 
         return this;
-    }
-
-    public Collection<SecurityDefinition> securityRequirements() {
-        return new ArrayList<>(securityRequirements);
     }
 
     /**
