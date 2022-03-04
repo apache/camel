@@ -28,10 +28,10 @@ import org.apache.camel.spi.Metadata;
 public class Resilience4jConfigurationCommon extends IdentifiedType {
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "io.github.resilience4j.circuitbreaker.CircuitBreaker")
+    @Metadata(label = "advanced")
     private String circuitBreaker;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "io.github.resilience4j.circuitbreaker.CircuitBreakerConfig")
+    @Metadata(label = "advanced")
     private String config;
     @XmlAttribute
     @Metadata(defaultValue = "50", javaType = "java.lang.Float")
