@@ -27,6 +27,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -157,6 +158,108 @@ public final class HealthCheckHelper {
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * Gets the {@link HealthCheckRegistry}.
+     *
+     * @param  context the camel context
+     * @return         the health check registry, or <tt>null</tt> if health-check is not enabled.
+     */
+    public static HealthCheckRegistry getHealthCheckRegistry(CamelContext context) {
+        return context.getExtension(HealthCheckRegistry.class);
+    }
+
+    /**
+     * Gets the {@link HealthCheck} by the given id (will resolve from classpath if necessary)
+     *
+     * @param  context the camel context
+     * @param  id      the id of the health check
+     * @return         the health check, or <tt>null</tt> if no health check exists with this id
+     */
+    public static HealthCheck getHealthCheck(CamelContext context, String id) {
+        HealthCheck answer = null;
+
+        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        if (hcr != null && hcr.isEnabled()) {
+            Optional<HealthCheck> check = hcr.getCheck(id);
+            if (check.isEmpty()) {
+                // use resolver to load from classpath if needed
+                HealthCheckResolver resolver
+                        = context.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
+                HealthCheck hc = resolver.resolveHealthCheck(id);
+                if (hc != null) {
+                    check = Optional.of(hc);
+                    hcr.register(hc);
+                }
+            }
+            if (check.isPresent()) {
+                answer = check.get();
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Gets the {@link HealthCheck} by the given id (will resolve from classpath if necessary)
+     *
+     * @param  context the camel context
+     * @param  id      the id of the health check
+     * @param  type    the expected type of the health check repository
+     * @return         the health check, or <tt>null</tt> if no health check exists with this id
+     */
+    public static <T extends HealthCheck> T getHealthCheck(CamelContext context, String id, Class<T> type) {
+        HealthCheck answer = getHealthCheck(context, id);
+        if (answer != null) {
+            return type.cast(answer);
+        }
+        return null;
+    }
+
+    /**
+     * Gets the {@link HealthCheckRepository} by the given id (will resolve from classpath if necessary)
+     *
+     * @param  context the camel context
+     * @param  id      the id of the health check repository
+     * @return         the health check repository, or <tt>null</tt> if no health check repository exists with this id
+     */
+    public static HealthCheckRepository getHealthCheckRepository(CamelContext context, String id) {
+        HealthCheckRepository answer = null;
+
+        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        if (hcr != null && hcr.isEnabled()) {
+            Optional<HealthCheckRepository> repo = hcr.getRepository(id);
+            if (repo.isEmpty()) {
+                // use resolver to load from classpath if needed
+                HealthCheckResolver resolver
+                        = context.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
+                HealthCheckRepository hr = resolver.resolveHealthCheckRepository(id);
+                if (hr != null) {
+                    repo = Optional.of(hr);
+                    hcr.register(hr);
+                }
+            }
+            if (repo.isPresent()) {
+                answer = repo.get();
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Gets the {@link HealthCheckRepository} by the given id (will resolve from classpath if necessary)
+     *
+     * @param  context the camel context
+     * @param  id      the id of the health check repository
+     * @param  type    the expected type of the health check repository
+     * @return         the health check repository, or <tt>null</tt> if no health check repository exists with this id
+     */
+    public static <T extends HealthCheckRepository> T getHealthCheckRepository(CamelContext context, String id, Class<T> type) {
+        HealthCheckRepository answer = getHealthCheckRepository(context, id);
+        if (answer != null) {
+            return type.cast(answer);
+        }
+        return null;
     }
 
     /**

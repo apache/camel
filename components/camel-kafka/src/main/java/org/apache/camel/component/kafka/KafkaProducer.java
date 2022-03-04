@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -30,7 +29,6 @@ import java.util.concurrent.Future;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.component.kafka.producer.support.DelegatingCallback;
 import org.apache.camel.component.kafka.producer.support.KafkaProducerCallBack;
@@ -38,9 +36,7 @@ import org.apache.camel.component.kafka.producer.support.KafkaProducerMetadataCa
 import org.apache.camel.component.kafka.producer.support.KeyValueHolderIterator;
 import org.apache.camel.component.kafka.producer.support.ProducerUtil;
 import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
-import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.health.HealthCheckRepository;
-import org.apache.camel.health.HealthCheckResolver;
+import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.KeyValueHolder;
@@ -181,24 +177,11 @@ public class KafkaProducer extends DefaultAsyncProducer {
         }
 
         // health-check is optional so discover and resolve
-        HealthCheckRegistry hcr = endpoint.getCamelContext().getExtension(HealthCheckRegistry.class);
-        if (hcr != null && hcr.isEnabled()) {
-            Optional<HealthCheckRepository> hrc = hcr.getRepository("camel-kafka");
-            if (hrc.isEmpty()) {
-                // use resolver to load from classpath if needed
-                HealthCheckResolver resolver
-                        = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getHealthCheckResolver();
-                HealthCheckRepository hr = resolver.resolveHealthCheckRepository("camel-kafka");
-                if (hr != null) {
-                    hrc = Optional.of(hr);
-                    hcr.register(hr);
-                }
-            }
-            if (hrc.isPresent()) {
-                healthCheckRepository = (KafkaHealthCheckRepository) hrc.get();
-                producerHealthCheck = new KafkaProducerHealthCheck(this, clientId);
-                healthCheckRepository.addHealthCheck(producerHealthCheck);
-            }
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(endpoint.getCamelContext(), "camel-kafka",
+                KafkaHealthCheckRepository.class);
+        if (healthCheckRepository != null) {
+            producerHealthCheck = new KafkaProducerHealthCheck(this, clientId);
+            healthCheckRepository.addHealthCheck(producerHealthCheck);
         }
     }
 
