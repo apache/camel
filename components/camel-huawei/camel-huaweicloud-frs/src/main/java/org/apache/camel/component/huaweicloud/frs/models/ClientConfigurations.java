@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.huaweicloud.frs.models;
 
+import org.apache.camel.component.huaweicloud.common.models.InputSourceType;
+
 public class ClientConfigurations {
 
     private String accessKey;
@@ -57,6 +59,8 @@ public class ClientConfigurations {
     private String actions;
 
     private String actionTimes;
+
+    private InputSourceType inputSourceType;
 
     public String getAccessKey() {
         return accessKey;
@@ -217,4 +221,13 @@ public class ClientConfigurations {
     public void setActionTimes(String actionTimes) {
         this.actionTimes = actionTimes;
     }
+
+    public InputSourceType getInputSourceType() {
+        return inputSourceType;
+    }
+
+    public void setInputSourceType(InputSourceType inputSourceType) {
+        this.inputSourceType = inputSourceType;
+    }
+
 }
