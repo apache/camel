@@ -44,12 +44,12 @@ public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSu
                         .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64,
                                 constant(testConfiguration.getProperty("anotherImageBase64")))
                         .to("hwcloud-frs:faceVerification?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true"
-                                + "&frsClient=#frsClient")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true"
+                            + "&frsClient=#frsClient")
                         .log("perform faceVerification successfully")
                         .to("mock:perform_face_verification_result_01");
 
@@ -57,13 +57,13 @@ public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSu
                         .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64,
                                 constant(testConfiguration.getProperty("imageBase64")))
                         .to("hwcloud-frs:faceVerification?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&anotherImageBase64=" + constant(testConfiguration.getProperty("anotherImageBase64"))
-                                + "&ignoreSslVerification=true"
-                                + "&frsClient=#frsClient")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&anotherImageBase64=" + constant(testConfiguration.getProperty("anotherImageBase64"))
+                            + "&ignoreSslVerification=true"
+                            + "&frsClient=#frsClient")
                         .log("perform faceVerification successfully")
                         .to("mock:perform_face_verification_result_02");
             }

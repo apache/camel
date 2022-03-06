@@ -34,91 +34,91 @@ public class FaceRecognitionInvalidParamsTest extends CamelTestSupport {
             public void configure() {
                 from("direct:access_key_not_set")
                         .to("hwcloud-frs:faceDetection?"
-                                + "secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true")
+                            + "secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
 
                 from("direct:secret_key_not_set")
                         .to("hwcloud-frs:faceDetection?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
 
                 from("direct:project_id_not_set")
                         .to("hwcloud-frs:faceDetection?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
 
                 from("direct:region_id_not_set")
                         .to("hwcloud-frs:faceDetection?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&ignoreSslVerification=true")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
 
                 from("direct:operation_not_set")
                         .to("hwcloud-frs:?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
 
                 from("direct:operation_invalid")
                         .to("hwcloud-frs:test?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
 
                 from("direct:face_detection_image_not_set")
                         .to("hwcloud-frs:faceDetection?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
 
                 from("direct:face_detection_image_file_not_found")
                         .setProperty(FaceRecognitionProperties.FACE_IMAGE_FILE_PATH, constant(testFilePath))
                         .to("hwcloud-frs:faceDetection?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
 
                 from("direct:face_verification_image_not_set")
                         .to("hwcloud-frs:faceVerification?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
 
                 from("direct:face_verification_only_one_image_set")
                         .setProperty(FaceRecognitionProperties.FACE_IMAGE_FILE_PATH,
                                 constant(testConfiguration.getProperty("imageFilePath")))
                         .to("hwcloud-frs:faceVerification?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
 
                 from("direct:face_verification_image_sources_not_match")
@@ -127,11 +127,11 @@ public class FaceRecognitionInvalidParamsTest extends CamelTestSupport {
                         .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_URL,
                                 constant(testConfiguration.getProperty("imageFilePath")))
                         .to("hwcloud-frs:faceVerification?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
 
                 from("direct:face_verification_image_file_not_found")
@@ -139,43 +139,43 @@ public class FaceRecognitionInvalidParamsTest extends CamelTestSupport {
                         .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_FILE_PATH,
                                 constant(testConfiguration.getProperty("imageFilePath")))
                         .to("hwcloud-frs:faceVerification?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
 
                 from("direct:face_live_detection_video_not_set")
                         .to("hwcloud-frs:faceLiveDetection?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&actions=1,2,3"
-                                + "&ignoreSslVerification=true")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&actions=1,2,3"
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
 
                 from("direct:face_live_detection_video_file_not_found")
                         .setProperty(FaceRecognitionProperties.FACE_VIDEO_FILE_PATH, constant(testFilePath))
                         .to("hwcloud-frs:faceLiveDetection?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&actions=1,2,3"
-                                + "&ignoreSslVerification=true")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&actions=1,2,3"
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
 
                 from("direct:face_live_detection_actions_not_set")
                         .setProperty(FaceRecognitionProperties.FACE_VIDEO_FILE_PATH,
                                 constant(testConfiguration.getProperty("videoFilePath")))
                         .to("hwcloud-frs:faceLiveDetection?"
-                                + "accessKey=" + testConfiguration.getProperty("accessKey")
-                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                                + "&projectId=" + testConfiguration.getProperty("projectId")
-                                + "&region=" + testConfiguration.getProperty("region")
-                                + "&ignoreSslVerification=true")
+                            + "accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&projectId=" + testConfiguration.getProperty("projectId")
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true")
                         .to("mock:result");
             }
         };
@@ -323,7 +323,8 @@ public class FaceRecognitionInvalidParamsTest extends CamelTestSupport {
         Exception exception = assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:face_verification_image_file_not_found", ""));
         assertTrue(exception.getCause() instanceof IllegalArgumentException);
-        String expectedMessage = String.format("Image file paths are invalid: %s, %s", testFilePath, testConfiguration.getProperty("imageFilePath"));
+        String expectedMessage = String.format("Image file paths are invalid: %s, %s", testFilePath,
+                testConfiguration.getProperty("imageFilePath"));
         assertEquals(exception.getCause().getMessage(), expectedMessage);
     }
 

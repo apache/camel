@@ -99,8 +99,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
     /**
      * initialize clientConfigurations
      *
-     * @param endpoint FrsEndpoint
-     * @return ClientConfigurations
+     * @param  endpoint FrsEndpoint
+     * @return          ClientConfigurations
      */
     private ClientConfigurations initializeConfigurations(FaceRecognitionEndpoint endpoint) {
         ClientConfigurations clientConfigurations = new ClientConfigurations();
@@ -173,7 +173,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
         SdkResponse result;
         switch (clientConfigurations.getInputSourceType()) {
             case BASE64:
-                FaceDetectBase64Req base64ReqBody = new FaceDetectBase64Req().withImageBase64(clientConfigurations.getImageBase64());
+                FaceDetectBase64Req base64ReqBody
+                        = new FaceDetectBase64Req().withImageBase64(clientConfigurations.getImageBase64());
                 result = this.frsClient.detectFaceByBase64(new DetectFaceByBase64Request().withBody(base64ReqBody));
                 break;
             case URL:
@@ -182,7 +183,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
                 break;
             default:
                 try (FileInputStream inputStream = new FileInputStream(clientConfigurations.getImageFilePath())) {
-                    DetectFaceByFileRequestBody fileReqBody = new DetectFaceByFileRequestBody().withImageFile(inputStream, getFileName(clientConfigurations.getImageFilePath()));
+                    DetectFaceByFileRequestBody fileReqBody = new DetectFaceByFileRequestBody().withImageFile(inputStream,
+                            getFileName(clientConfigurations.getImageFilePath()));
                     result = this.frsClient.detectFaceByFile(new DetectFaceByFileRequest().withBody(fileReqBody));
                 } catch (IOException e) {
                     throw new IllegalArgumentException(
@@ -202,8 +204,9 @@ public class FaceRecognitionProducer extends DefaultProducer {
         SdkResponse result;
         switch (clientConfigurations.getInputSourceType()) {
             case BASE64:
-                FaceCompareBase64Req base64ReqBody = new FaceCompareBase64Req().withImage1Base64(clientConfigurations.getImageBase64())
-                        .withImage2Base64(clientConfigurations.getAnotherImageBase64());
+                FaceCompareBase64Req base64ReqBody
+                        = new FaceCompareBase64Req().withImage1Base64(clientConfigurations.getImageBase64())
+                                .withImage2Base64(clientConfigurations.getAnotherImageBase64());
                 result = this.frsClient.compareFaceByBase64(new CompareFaceByBase64Request().withBody(base64ReqBody));
                 break;
             case URL:
@@ -220,7 +223,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
                     result = this.frsClient.compareFaceByFile(new CompareFaceByFileRequest().withBody(fileReqBody));
                 } catch (IOException e) {
                     throw new IllegalArgumentException(
-                            String.format("Image file paths are invalid: %s, %s", clientConfigurations.getImageFilePath(), clientConfigurations.getAnotherImageFilePath()));
+                            String.format("Image file paths are invalid: %s, %s", clientConfigurations.getImageFilePath(),
+                                    clientConfigurations.getAnotherImageFilePath()));
                 }
         }
         exchange.getMessage().setBody(result);
@@ -236,7 +240,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
         SdkResponse result;
         switch (clientConfigurations.getInputSourceType()) {
             case BASE64:
-                LiveDetectBase64Req base64ReqBody = new LiveDetectBase64Req().withVideoBase64(clientConfigurations.getVideoBase64())
+                LiveDetectBase64Req base64ReqBody = new LiveDetectBase64Req()
+                        .withVideoBase64(clientConfigurations.getVideoBase64())
                         .withActions(clientConfigurations.getActions()).withActionTime(clientConfigurations.getActionTimes());
                 result = this.frsClient.detectLiveByBase64(new DetectLiveByBase64Request().withBody(base64ReqBody));
                 break;
@@ -247,8 +252,10 @@ public class FaceRecognitionProducer extends DefaultProducer {
                 break;
             default:
                 try (FileInputStream inputStream = new FileInputStream(clientConfigurations.getVideoFilePath())) {
-                    DetectLiveByFileRequestBody fileReqBody = new DetectLiveByFileRequestBody().withVideoFile(inputStream, getFileName(clientConfigurations.getVideoFilePath()))
-                            .withActions(clientConfigurations.getActions()).withActionTime(clientConfigurations.getActionTimes());
+                    DetectLiveByFileRequestBody fileReqBody = new DetectLiveByFileRequestBody()
+                            .withVideoFile(inputStream, getFileName(clientConfigurations.getVideoFilePath()))
+                            .withActions(clientConfigurations.getActions())
+                            .withActionTime(clientConfigurations.getActionTimes());
                     result = this.frsClient.detectLiveByFile(new DetectLiveByFileRequest().withBody(fileReqBody));
                 } catch (IOException e) {
                     throw new IllegalArgumentException(
@@ -276,7 +283,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
             return;
         }
         String imageFilePath = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_FILE_PATH, String.class);
-        clientConfigurations.setImageFilePath(StringUtils.isEmpty(imageFilePath) ? this.endpoint.getImageFilePath() : imageFilePath);
+        clientConfigurations
+                .setImageFilePath(StringUtils.isEmpty(imageFilePath) ? this.endpoint.getImageFilePath() : imageFilePath);
         if (!StringUtils.isEmpty(clientConfigurations.getImageFilePath())) {
             clientConfigurations.setInputSourceType(InputSourceType.FILE_PATH);
             return;
@@ -288,24 +296,31 @@ public class FaceRecognitionProducer extends DefaultProducer {
         String image1Base64 = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64, String.class);
         String image2Base64 = exchange.getProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64, String.class);
         clientConfigurations.setImageBase64(StringUtils.isEmpty(image1Base64) ? this.endpoint.getImageBase64() : image1Base64);
-        clientConfigurations.setAnotherImageBase64(StringUtils.isEmpty(image2Base64) ? this.endpoint.getAnotherImageBase64() : image2Base64);
-        if (!StringUtils.isEmpty(clientConfigurations.getImageBase64()) && !StringUtils.isEmpty(clientConfigurations.getAnotherImageBase64())) {
+        clientConfigurations.setAnotherImageBase64(
+                StringUtils.isEmpty(image2Base64) ? this.endpoint.getAnotherImageBase64() : image2Base64);
+        if (!StringUtils.isEmpty(clientConfigurations.getImageBase64())
+                && !StringUtils.isEmpty(clientConfigurations.getAnotherImageBase64())) {
             clientConfigurations.setInputSourceType(InputSourceType.BASE64);
             return;
         }
         String image1Url = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_URL, String.class);
         String image2Url = exchange.getProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_URL, String.class);
         clientConfigurations.setImageUrl(StringUtils.isEmpty(image1Url) ? this.endpoint.getImageUrl() : image1Url);
-        clientConfigurations.setAnotherImageUrl(StringUtils.isEmpty(image2Url) ? this.endpoint.getAnotherImageUrl() : image2Url);
-        if (!StringUtils.isEmpty(clientConfigurations.getImageUrl()) && !StringUtils.isEmpty(clientConfigurations.getAnotherImageUrl())) {
+        clientConfigurations
+                .setAnotherImageUrl(StringUtils.isEmpty(image2Url) ? this.endpoint.getAnotherImageUrl() : image2Url);
+        if (!StringUtils.isEmpty(clientConfigurations.getImageUrl())
+                && !StringUtils.isEmpty(clientConfigurations.getAnotherImageUrl())) {
             clientConfigurations.setInputSourceType(InputSourceType.URL);
             return;
         }
         String image1FilePath = exchange.getProperty(FaceRecognitionProperties.FACE_IMAGE_FILE_PATH, String.class);
         String image2FilePath = exchange.getProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_FILE_PATH, String.class);
-        clientConfigurations.setImageFilePath(StringUtils.isEmpty(image1FilePath) ? this.endpoint.getImageFilePath() : image1FilePath);
-        clientConfigurations.setAnotherImageFilePath(StringUtils.isEmpty(image2FilePath) ? this.endpoint.getAnotherImageFilePath() : image2FilePath);
-        if (!StringUtils.isEmpty(clientConfigurations.getImageFilePath()) && !StringUtils.isEmpty(clientConfigurations.getAnotherImageFilePath())) {
+        clientConfigurations
+                .setImageFilePath(StringUtils.isEmpty(image1FilePath) ? this.endpoint.getImageFilePath() : image1FilePath);
+        clientConfigurations.setAnotherImageFilePath(
+                StringUtils.isEmpty(image2FilePath) ? this.endpoint.getAnotherImageFilePath() : image2FilePath);
+        if (!StringUtils.isEmpty(clientConfigurations.getImageFilePath())
+                && !StringUtils.isEmpty(clientConfigurations.getAnotherImageFilePath())) {
             clientConfigurations.setInputSourceType(InputSourceType.FILE_PATH);
             return;
         }
@@ -338,7 +353,8 @@ public class FaceRecognitionProducer extends DefaultProducer {
             return;
         }
         String videoFilePath = exchange.getProperty(FaceRecognitionProperties.FACE_VIDEO_FILE_PATH, String.class);
-        clientConfigurations.setVideoFilePath(StringUtils.isEmpty(videoFilePath) ? this.endpoint.getVideoFilePath() : videoFilePath);
+        clientConfigurations
+                .setVideoFilePath(StringUtils.isEmpty(videoFilePath) ? this.endpoint.getVideoFilePath() : videoFilePath);
         if (!StringUtils.isEmpty(clientConfigurations.getVideoFilePath())) {
             clientConfigurations.setInputSourceType(InputSourceType.FILE_PATH);
             return;
