@@ -16,10 +16,7 @@
  */
 package org.apache.camel.service.lra;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +24,7 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPENSATE;
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPLETE;
@@ -83,19 +81,25 @@ public class LRASagaRoutes extends RouteBuilder {
             usedURIs.add(completionURI);
         }
 
+        // CAMEL-17751: Extract URIs from the CamelHttpQuery header
         if (usedURIs.isEmpty()) {
-            Map<String, String> queryParams = extractQueryParamsFromHttpQueryHeader(exchange);
-            if (!queryParams.isEmpty()) {
-                compensationURI = queryParams.get(URL_COMPENSATION_KEY);
-                if (compensationURI != null) {
-                    usedURIs.add(compensationURI);
-                    exchange.getIn().setHeader(URL_COMPENSATION_KEY, compensationURI);
+            try {
+                Map<String, Object> queryParams = URISupport.parseQuery(exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class));
+                if (!queryParams.isEmpty()) {
+                    if (queryParams.get(URL_COMPENSATION_KEY) != null) {
+                        compensationURI = queryParams.get(URL_COMPENSATION_KEY).toString();
+                        usedURIs.add(compensationURI);
+                        exchange.getIn().setHeader(URL_COMPENSATION_KEY, compensationURI);
+                    }
+                    
+                    if (queryParams.get(URL_COMPLETION_KEY) != null) {
+                        completionURI = queryParams.get(URL_COMPLETION_KEY).toString();
+                        usedURIs.add(completionURI);
+                        exchange.getIn().setHeader(URL_COMPLETION_KEY, completionURI);
+                    }
                 }
-                completionURI = queryParams.get(URL_COMPLETION_KEY);
-                if (completionURI != null) {
-                    usedURIs.add(completionURI);
-                    exchange.getIn().setHeader(URL_COMPLETION_KEY, completionURI);
-                }
+            } catch (URISyntaxException ex) {
+                throw new RuntimeCamelException("URISyntaxException during " + Exchange.HTTP_QUERY + " header parsing"); 
             }
         }
 
@@ -104,27 +108,6 @@ public class LRASagaRoutes extends RouteBuilder {
                 throw new IllegalArgumentException("URI " + uri + " is not allowed");
             }
         }
-    }
-
-    private Map<String, String> extractQueryParamsFromHttpQueryHeader(Exchange exchange) {
-        Map<String, String> queryParams = new HashMap<>();
-
-        try {
-            String strQueryParams = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
-            if (strQueryParams != null) {
-                String[] pairs = strQueryParams.split("&");
-                for (String pair : pairs) {
-                    String[] keyValuePair = pair.split("=");
-                    queryParams.put(URLDecoder.decode(keyValuePair[0], StandardCharsets.UTF_8.name()),
-                            keyValuePair.length == 2 ? URLDecoder.decode(keyValuePair[1], StandardCharsets.UTF_8.name()) : "");
-                }
-            }
-
-        } catch (UnsupportedEncodingException ex) {
-            throw new RuntimeCamelException("Unsupported encoding exception during " + Exchange.HTTP_QUERY + " header parsing");
-        }
-
-        return queryParams;
     }
 
 }
