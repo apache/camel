@@ -227,14 +227,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         return httpBinding;
     }
 
-    /**
-     * @deprecated use {@link #setHttpBinding(HttpBinding)}
-     */
-    @Deprecated
-    public void setBinding(HttpBinding httpBinding) {
-        setHttpBinding(httpBinding);
-    }
-
     public HttpBinding getHttpBinding() {
         if (httpBinding == null) {
             // create a new binding and use the options from this endpoint

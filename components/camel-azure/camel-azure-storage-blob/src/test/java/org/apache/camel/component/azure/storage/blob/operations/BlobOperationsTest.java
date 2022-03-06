@@ -123,7 +123,7 @@ class BlobOperationsTest extends CamelTestSupport {
     void testUploadBlockBlob() throws Exception {
         // mocking
         final BlockBlobItem blockBlobItem = new BlockBlobItem("testTag", OffsetDateTime.now(), null, false, null);
-        final HttpHeaders httpHeaders = new HttpHeaders().put("x-test-header", "123");
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "123");
 
         when(client.uploadBlockBlob(any(), anyLong(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(new ResponseBase<>(null, 200, httpHeaders, blockBlobItem, null));
@@ -146,7 +146,7 @@ class BlobOperationsTest extends CamelTestSupport {
 
     @Test
     void testStageBlockBlobList() throws Exception {
-        final HttpHeaders httpHeaders = new HttpHeaders().put("x-test-header", "123");
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "123");
         when(client.stageBlockBlob(anyString(), any(), anyLong(), any(), any(), any())).thenReturn(httpHeaders);
 
         final Exchange exchange = new DefaultExchange(context);

@@ -231,7 +231,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             binding = getHttpBinding();
         }
         if (binding != null) {
-            endpoint.setBinding(binding);
+            endpoint.setHttpBinding(binding);
         }
         if (enableJmx != null) {
             endpoint.setEnableJmx(enableJmx);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.schematron;
 
+import java.nio.charset.Charset;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.schematron.constant.Constants;
@@ -39,7 +41,8 @@ public class SchematronComponentTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"));
+        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"),
+                Charset.defaultCharset());
         template.sendBody("direct:start", payload);
         assertMockEndpointsSatisfied();
         String result = mock.getExchanges().get(0).getIn().getHeader(Constants.VALIDATION_REPORT, String.class);
@@ -55,7 +58,8 @@ public class SchematronComponentTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"));
+        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"),
+                Charset.defaultCharset());
         template.sendBody("direct:start", payload);
         assertMockEndpointsSatisfied();
         String result = mock.getExchanges().get(0).getIn().getHeader(Constants.VALIDATION_REPORT, String.class);
