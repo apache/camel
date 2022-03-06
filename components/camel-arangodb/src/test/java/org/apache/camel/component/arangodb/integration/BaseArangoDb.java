@@ -18,6 +18,7 @@ package org.apache.camel.component.arangodb.integration;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
+import com.arangodb.DbName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.arangodb.services.ArangoDBService;
@@ -42,8 +43,8 @@ public class BaseArangoDb extends CamelTestSupport {
     @BeforeAll
     public static void doBeforeAll() {
         arangoDb = new ArangoDB.Builder().build();
-        arangoDb.createDatabase(DATABASE_NAME);
-        arangoDatabase = arangoDb.db(DATABASE_NAME);
+        arangoDb.createDatabase(DbName.of(DATABASE_NAME));
+        arangoDatabase = arangoDb.db(DbName.of(DATABASE_NAME));
     }
 
     @AfterAll

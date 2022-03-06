@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -51,7 +52,7 @@ public class CamelSpringOverridePropertiesForPropertyInjectTest {
     public void testOverride() throws Exception {
         String response = start.requestBody((Object) "ignored", String.class);
 
-        assertThat(response, is(EXPECTED_PROPERTY_VALUE));
+        MatcherAssert.assertThat(response, is(EXPECTED_PROPERTY_VALUE));
     }
 
 }

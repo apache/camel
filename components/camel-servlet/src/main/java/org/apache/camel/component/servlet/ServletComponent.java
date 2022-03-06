@@ -122,7 +122,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             binding = getHttpBinding();
         }
         if (binding != null) {
-            endpoint.setBinding(binding);
+            endpoint.setHttpBinding(binding);
         }
         // should we use an exception for failed error codes?
         if (throwExceptionOnFailure != null) {
