@@ -61,7 +61,7 @@ public class LiveDetectionWithVideoUrlAndMockClientTest extends CamelTestSupport
      * @throws Exception
      */
     @Test
-    public void testFaceDetection() throws Exception {
+    public void testFaceLiveDetection() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:perform_live_detection_result");
         mock.expectedMinimumMessageCount(1);
         template.sendBody("direct:trigger_route", "");

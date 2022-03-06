@@ -38,20 +38,34 @@ public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSu
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:trigger_route")
+                from("direct:trigger_route_01")
                         .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64,
                                 constant(testConfiguration.getProperty("imageBase64")))
                         .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64,
                                 constant(testConfiguration.getProperty("anotherImageBase64")))
                         .to("hwcloud-frs:faceVerification?"
-                            + "accessKey=" + testConfiguration.getProperty("accessKey")
-                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                            + "&projectId=" + testConfiguration.getProperty("projectId")
-                            + "&region=" + testConfiguration.getProperty("region")
-                            + "&ignoreSslVerification=true"
-                            + "&frsClient=#frsClient")
+                                + "accessKey=" + testConfiguration.getProperty("accessKey")
+                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                                + "&projectId=" + testConfiguration.getProperty("projectId")
+                                + "&region=" + testConfiguration.getProperty("region")
+                                + "&ignoreSslVerification=true"
+                                + "&frsClient=#frsClient")
                         .log("perform faceVerification successfully")
-                        .to("mock:perform_face_verification_result");
+                        .to("mock:perform_face_verification_result_01");
+
+                from("direct:trigger_route_02")
+                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64,
+                                constant(testConfiguration.getProperty("imageBase64")))
+                        .to("hwcloud-frs:faceVerification?"
+                                + "accessKey=" + testConfiguration.getProperty("accessKey")
+                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                                + "&projectId=" + testConfiguration.getProperty("projectId")
+                                + "&region=" + testConfiguration.getProperty("region")
+                                + "&anotherImageBase64=" + constant(testConfiguration.getProperty("anotherImageBase64"))
+                                + "&ignoreSslVerification=true"
+                                + "&frsClient=#frsClient")
+                        .log("perform faceVerification successfully")
+                        .to("mock:perform_face_verification_result_02");
             }
         };
     }
@@ -62,10 +76,30 @@ public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSu
      * @throws Exception
      */
     @Test
-    public void testFaceVerification() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:perform_face_verification_result");
+    public void testFaceVerification01() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:perform_face_verification_result_01");
         mock.expectedMinimumMessageCount(1);
-        template.sendBody("direct:trigger_route", "");
+        template.sendBody("direct:trigger_route_01", "");
+        Exchange responseExchange = mock.getExchanges().get(0);
+        mock.assertIsSatisfied();
+
+        assertTrue(responseExchange.getIn().getBody() instanceof CompareFaceByBase64Response);
+        CompareFaceByBase64Response response = (CompareFaceByBase64Response) responseExchange.getIn().getBody();
+        assertEquals(response.getImage1Face(), MockResult.getCompareFaceResult());
+        assertEquals(response.getImage2Face(), MockResult.getCompareFaceResult());
+        assertEquals(response.getSimilarity(), 1.0);
+    }
+
+    /**
+     * use imageBase64 to perform faceVerification
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testFaceVerification02() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:perform_face_verification_result_02");
+        mock.expectedMinimumMessageCount(1);
+        template.sendBody("direct:trigger_route_02", "");
         Exchange responseExchange = mock.getExchanges().get(0);
         mock.assertIsSatisfied();
 
