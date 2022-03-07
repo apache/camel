@@ -37,6 +37,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport {
+
     private static class TestResumeStrategy implements GenericFileResumeStrategy<File> {
         @Override
         public void resume(GenericFileResumable<File> resumable) {
@@ -126,11 +127,11 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
             @Override
             public void configure() {
 
-                bindToRegistry("resumeStrategy", new TestResumeStrategy());
+                bindToRegistry("myResumeStrategy", new TestResumeStrategy());
                 bindToRegistry("resumeNotToBeCalledStrategy", FAIL_RESUME_STRATEGY);
 
                 from(fileUri("resumeOff?noop=true&recursive=true"))
-                        .resumable().resumeStrategy("resumeStrategy")
+                        .resumable("myResumeStrategy")
                         .setHeader(Exchange.OFFSET,
                                 constant(Resumables.of("resume-none.txt", 3)))
                         .log("${body}")
