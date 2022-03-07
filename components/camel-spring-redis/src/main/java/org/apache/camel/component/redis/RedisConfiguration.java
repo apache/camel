@@ -146,10 +146,10 @@ public class RedisConfiguration {
         managedConnectionFactory = true;
 
         if (host != null) {
-            jedisConnectionFactory.setHostName(host);
+            jedisConnectionFactory.getStandaloneConfiguration().setHostName(host);
         }
         if (port != null) {
-            jedisConnectionFactory.setPort(port);
+            jedisConnectionFactory.getStandaloneConfiguration().setPort(port);
         }
         jedisConnectionFactory.afterPropertiesSet();
         connectionFactory = jedisConnectionFactory;
