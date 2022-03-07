@@ -67,11 +67,7 @@ public class ThriftMethodHandler implements MethodHandler {
                         callback.onError(exception);
                     }
 
-                    if (exchange.hasOut()) {
-                        message = exchange.getOut();
-                    } else {
-                        message = exchange.getIn();
-                    }
+                    message = exchange.getMessage();
 
                     if (message != null) {
                         Class returnType = ThriftUtils.findMethodReturnType(args[args.length - 1].getClass(), "onComplete");
