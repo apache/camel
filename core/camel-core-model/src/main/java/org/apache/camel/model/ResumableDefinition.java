@@ -77,6 +77,9 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
         return this;
     }
 
+    /**
+     * Sets the resume strategy to use
+     */
     public ResumableDefinition resumeStrategy(ResumeStrategy resumeStrategy) {
         setResumeStrategy(resumeStrategy);
         return this;
