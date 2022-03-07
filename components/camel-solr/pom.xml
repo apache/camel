@@ -94,6 +94,10 @@
             <version>${solr-version}</version>
             <scope>test</scope>
             <exclusions>
+                <exclusion>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>protobuf-java</artifactId>
+                </exclusion>
                 <!-- exclude rome 0.9 which is not a valid Maven artifact -->
                 <!-- rome is not a needed dependency -->
                 <exclusion>
@@ -105,6 +109,12 @@
                     <artifactId>jdk.tools</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>${protobuf-version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.solr</groupId>
