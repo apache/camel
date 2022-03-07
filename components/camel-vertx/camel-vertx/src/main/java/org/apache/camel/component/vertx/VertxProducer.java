@@ -99,7 +99,7 @@ public class VertxProducer extends DefaultAsyncProducer {
                 if (e != null) {
                     exchange.setException(e);
                 } else {
-                    exchange.getOut().setBody(event.result().body());
+                    exchange.getMessage().setBody(event.result().body());
                 }
             } finally {
                 callback.done(false);
