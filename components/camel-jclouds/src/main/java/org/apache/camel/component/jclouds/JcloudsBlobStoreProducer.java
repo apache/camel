@@ -58,9 +58,9 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
             LOG.trace("Processing {} operation on '{}'", operation, container + "/" + blobName);
         }
         if (JcloudsConstants.GET.equals(operation)) {
-            exchange.getOut().setBody(JcloudsBlobStoreHelper.readBlob(blobStore, container, blobName));
+            exchange.getMessage().setBody(JcloudsBlobStoreHelper.readBlob(blobStore, container, blobName));
         } else if (JcloudsConstants.COUNT_BLOBS.equals(operation)) {
-            exchange.getOut().setBody(JcloudsBlobStoreHelper.countBlob(blobStore, container));
+            exchange.getMessage().setBody(JcloudsBlobStoreHelper.countBlob(blobStore, container));
         } else if (JcloudsConstants.REMOVE_BLOB.equals(operation)) {
             JcloudsBlobStoreHelper.removeBlob(blobStore, container, blobName);
         } else if (JcloudsConstants.CLEAR_CONTAINER.equals(operation)) {
@@ -68,7 +68,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
         } else if (JcloudsConstants.DELETE_CONTAINER.equals(operation)) {
             JcloudsBlobStoreHelper.deleteContainer(blobStore, container);
         } else if (JcloudsConstants.CONTAINER_EXISTS.equals(operation)) {
-            exchange.getOut().setBody(JcloudsBlobStoreHelper.containerExists(blobStore, container));
+            exchange.getMessage().setBody(JcloudsBlobStoreHelper.containerExists(blobStore, container));
         } else if (JcloudsConstants.REMOVE_BLOBS.equals(operation)) {
             JcloudsBlobStoreHelper.removeBlobs(blobStore, container, blobNames);
         } else {
