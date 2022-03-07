@@ -91,7 +91,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
             Object body = HttpHelper.cacheResponseBodyFromInputStream(responseEntity.getContent(), exchange);
 
             // lets store the result in the output message.
-            Message message = exchange.getOut();
+            Message message = exchange.getMessage();
             message.setBody(body);
 
             // lets set the headers
