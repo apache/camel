@@ -92,8 +92,8 @@ public class QuickfixjProducer extends DefaultProducer {
 
         if (callable != null) {
             Message reply = callable.call();
-            exchange.getOut().getHeaders().putAll(camelMessage.getHeaders());
-            exchange.getOut().setBody(reply);
+            exchange.getMessage().getHeaders().putAll(camelMessage.getHeaders());
+            exchange.getMessage().setBody(reply);
         }
     }
 
