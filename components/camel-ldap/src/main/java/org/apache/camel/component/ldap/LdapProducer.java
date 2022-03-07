@@ -84,8 +84,8 @@ public class LdapProducer extends DefaultProducer {
                 }
                 data = pagedSearch((LdapContext) dirContext, filter);
             }
-            exchange.getOut().setBody(data);
-            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+            exchange.getMessage().setBody(data);
+            exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
         } finally {
             if (dirContext != null) {
                 dirContext.close();
