@@ -125,7 +125,7 @@ public class QuickfixjProducerTest {
                 1000L, Long.class)).thenReturn(5000L);
 
         org.apache.camel.Message mockOutboundCamelMessage = Mockito.mock(org.apache.camel.Message.class);
-        Mockito.when(mockExchange.getOut()).thenReturn(mockOutboundCamelMessage);
+        Mockito.when(mockExchange.getMessage()).thenReturn(mockOutboundCamelMessage);
 
         final Message outboundFixMessage = new Email();
         outboundFixMessage.getHeader().setString(SenderCompID.FIELD, "TARGET");
