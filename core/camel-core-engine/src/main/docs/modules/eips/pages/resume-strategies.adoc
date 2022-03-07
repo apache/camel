@@ -33,7 +33,7 @@ This instance can be bound in the Context registry as follows:
 getCamelContext().getRegistry().bind("testResumeStrategy", new MyTestResumeStrategy());
 
 from("some:component")
-    .resumable().resumableStrategy("testResumeStrategy")
+    .resumable("testResumeStrategy")
     .process(this::process);
 ----
 
@@ -42,8 +42,8 @@ Or the instance can be constructed as follows:
 [source,java]
 ----
 from("some:component")
+    .resumable(new MyTestResumeStrategy())
     .process(this::process)
-    .resumable().resumableStrategy(new MyTestResumeStrategy());
 ----
 
 == The Resume API Interfaces
@@ -175,7 +175,7 @@ For instance, the behavior of:
 [source,java]
 ----
 from("file:{{input.dir}}?noop=true&fileName={{input.file}}")
-    .resumable().resumableStrategy("testResumeStrategy")
+    .resumable("testResumeStrategy")
     .convertBodyTo(Reader.class)
     .process(this::process);
 ----
@@ -185,7 +185,7 @@ Is different from the behavior of:
 [source,java]
 ----
 from("file:{{input.dir}}?noop=true&fileName={{input.file}}")
-    .resumable().resumableStrategyRef("testResumeStrategy")
+    .resumable("testResumeStrategy")
     .convertBodyTo(InputStream.class)
     .process(this::process);
 ----
