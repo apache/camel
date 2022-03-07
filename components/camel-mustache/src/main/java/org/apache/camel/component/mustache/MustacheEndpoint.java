@@ -116,7 +116,7 @@ public class MustacheEndpoint extends ResourceEndpoint {
         writer.flush();
 
         // Fill out message
-        Message out = exchange.getOut();
+        Message out = exchange.getMessage();
         out.setBody(writer.toString());
         out.setHeaders(exchange.getIn().getHeaders());
     }
