@@ -321,6 +321,13 @@ and the `configure` method now takes a `CamelContext` as argument.
 
 The option `baseURI` is renamed to `baseUri`.
 
+=== camel-aws
+
+The `camel-aws2-sqs` component will now map message headers from their original type
+such as boolean, integer, etc. This requires using Camel for both sending and receiving
+as AWS only have string or binary types, so Camel stores custom metadata in the message header
+to know its original type.
+
 === camel-stream
 
 The producer will now by default append new line character to end of output.
