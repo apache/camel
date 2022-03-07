@@ -38,6 +38,9 @@ public interface TikaEndpointBuilderFactory {
      * Builder for endpoint for the Tika component.
      */
     public interface TikaEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedTikaEndpointBuilder advanced() {
+            return (AdvancedTikaEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -83,51 +86,6 @@ public interface TikaEndpointBuilderFactory {
          */
         default TikaEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Tika Config.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.tika.config.TikaConfig&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param tikaConfig the value to set
-         * @return the dsl builder
-         */
-        default TikaEndpointBuilder tikaConfig(
-                org.apache.tika.config.TikaConfig tikaConfig) {
-            doSetProperty("tikaConfig", tikaConfig);
-            return this;
-        }
-        /**
-         * Tika Config.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.tika.config.TikaConfig&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param tikaConfig the value to set
-         * @return the dsl builder
-         */
-        default TikaEndpointBuilder tikaConfig(String tikaConfig) {
-            doSetProperty("tikaConfig", tikaConfig);
-            return this;
-        }
-        /**
-         * Tika Config Url.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param tikaConfigUri the value to set
-         * @return the dsl builder
-         */
-        default TikaEndpointBuilder tikaConfigUri(String tikaConfigUri) {
-            doSetProperty("tikaConfigUri", tikaConfigUri);
             return this;
         }
         /**
@@ -187,6 +145,62 @@ public interface TikaEndpointBuilderFactory {
         }
     }
 
+    /**
+     * Advanced builder for endpoint for the Tika component.
+     */
+    public interface AdvancedTikaEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default TikaEndpointBuilder basic() {
+            return (TikaEndpointBuilder) this;
+        }
+        /**
+         * Tika Config.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.tika.config.TikaConfig&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param tikaConfig the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTikaEndpointBuilder tikaConfig(
+                org.apache.tika.config.TikaConfig tikaConfig) {
+            doSetProperty("tikaConfig", tikaConfig);
+            return this;
+        }
+        /**
+         * Tika Config.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.tika.config.TikaConfig&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param tikaConfig the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTikaEndpointBuilder tikaConfig(String tikaConfig) {
+            doSetProperty("tikaConfig", tikaConfig);
+            return this;
+        }
+        /**
+         * Tika Config Url.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param tikaConfigUri the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTikaEndpointBuilder tikaConfigUri(String tikaConfigUri) {
+            doSetProperty("tikaConfigUri", tikaConfigUri);
+            return this;
+        }
+    }
+
     public interface TikaBuilders {
         /**
          * Tika (camel-tika)
@@ -232,7 +246,7 @@ public interface TikaEndpointBuilderFactory {
         }
     }
     static TikaEndpointBuilder endpointBuilder(String componentName, String path) {
-        class TikaEndpointBuilderImpl extends AbstractEndpointBuilder implements TikaEndpointBuilder {
+        class TikaEndpointBuilderImpl extends AbstractEndpointBuilder implements TikaEndpointBuilder, AdvancedTikaEndpointBuilder {
             public TikaEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }
