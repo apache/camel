@@ -116,12 +116,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
         }
 
         // obtain the message after processing
-        Message msg;
-        if (exchange.hasOut()) {
-            msg = exchange.getOut();
-        } else {
-            msg = exchange.getIn();
-        }
+        Message msg = exchange.getMessage();
 
         if (exchange.getException() != null) {
             consumer.getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
@@ -167,8 +162,8 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
                 // the inOut exchange failed so put the exception in the body
                 // and send back
                 msg.setBody(exchange.getException());
-                exchange.setOut(msg);
-                exchange.getOut().setHeader(RabbitMQConstants.CORRELATIONID,
+                exchange.setMessage(msg);
+                exchange.getMessage().setHeader(RabbitMQConstants.CORRELATIONID,
                         exchange.getIn().getHeader(RabbitMQConstants.CORRELATIONID));
                 try {
                     consumer.getEndpoint().publishExchangeToChannel(exchange, channel, properties.getReplyTo());
