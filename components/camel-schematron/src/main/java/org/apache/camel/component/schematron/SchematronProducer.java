@@ -85,8 +85,8 @@ public class SchematronProducer extends DefaultProducer {
         headers.put(Constants.VALIDATION_STATUS, status);
         headers.put(Constants.VALIDATION_REPORT, report);
         if (exchange.getPattern().isOutCapable()) {
-            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-            exchange.getOut().getHeaders().putAll(headers);
+            exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
+            exchange.getMessage().getHeaders().putAll(headers);
         } else {
             exchange.getIn().getHeaders().putAll(headers);
         }

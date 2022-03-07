@@ -39,7 +39,8 @@ public class SchematronEndpointTest extends CamelTestSupport {
     @Test
     public void testSchematronFileReadFromClassPath() throws Exception {
 
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"));
+        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"),
+                Charset.defaultCharset());
         Endpoint endpoint = context().getEndpoint("schematron://sch/schematron-1.sch");
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
