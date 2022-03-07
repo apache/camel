@@ -107,8 +107,8 @@ public class JcloudsComputeProducer extends JcloudsProducer {
 
         try {
             Set<? extends NodeMetadata> nodeMetadatas = computeService.createNodesInGroup(group, 1, builder.build());
-            exchange.getOut().setBody(nodeMetadatas);
-            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+            exchange.getMessage().setBody(nodeMetadatas);
+            exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
         } catch (RunNodesException e) {
             throw new CamelExchangeException("Error creating jclouds node.", exchange, e);
         }
@@ -144,7 +144,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
 
         exchange.setProperty(JcloudsConstants.RUN_SCRIPT_ERROR, execResponse.getError());
         exchange.setProperty(JcloudsConstants.RUN_SCRIPT_EXIT_CODE, execResponse.getExitStatus());
-        exchange.getOut().setBody(execResponse.getOutput());
+        exchange.getMessage().setBody(execResponse.getOutput());
     }
 
     /**
@@ -161,7 +161,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     protected void listNodes(Exchange exchange) {
         Predicate<ComputeMetadata> predicate = getComputePredicate(exchange);
         Set<? extends ComputeMetadata> computeMetadatas = computeService.listNodesDetailsMatching(predicate);
-        exchange.getOut().setBody(computeMetadatas);
+        exchange.getMessage().setBody(computeMetadatas);
     }
 
     /**
@@ -169,7 +169,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
      */
     protected void listImages(Exchange exchange) {
         Set<? extends Image> images = computeService.listImages();
-        exchange.getOut().setBody(images);
+        exchange.getMessage().setBody(images);
     }
 
     /**
@@ -177,7 +177,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
      */
     protected void listHardware(Exchange exchange) {
         Set<? extends Hardware> hardwareProfiles = computeService.listHardwareProfiles();
-        exchange.getOut().setBody(hardwareProfiles);
+        exchange.getMessage().setBody(hardwareProfiles);
     }
 
     /**
