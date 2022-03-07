@@ -108,10 +108,10 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     @Override
     public void process(Exchange exchange) throws Exception {
         Object body = evaluate(exchange);
-        exchange.getOut().setBody(body);
+        exchange.getMessage().setBody(body);
 
         // propagate headers
-        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+        exchange.getMessage().getHeaders().putAll(exchange.getIn().getHeaders());
     }
 
     @Override
@@ -223,7 +223,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         DOMResult result = new DOMResult();
         DynamicQueryContext context = createDynamicContext(exchange);
         XQueryExpression expression = getExpression();
-        expression.pull(context, result, properties);
+        expression.run(context, result, properties);
         return result.getNode();
     }
 
@@ -232,7 +232,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         Result result = new StreamResult(buffer);
-        getExpression().pull(createDynamicContext(exchange), result, properties);
+        getExpression().run(createDynamicContext(exchange), result, properties);
 
         byte[] answer = buffer.toByteArray();
         buffer.close();
