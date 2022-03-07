@@ -148,7 +148,7 @@ public class ZooKeeperProducer extends DefaultProducer {
             context.exchange.setException(result.getException());
         }
 
-        context.exchange.setOut(out);
+        context.exchange.setMessage(out);
     }
 
     private OperationResult listChildren(ProductionContext context) throws Exception {
