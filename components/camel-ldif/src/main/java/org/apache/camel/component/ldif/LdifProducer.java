@@ -67,11 +67,11 @@ public class LdifProducer extends DefaultProducer {
         List<String> result = null;
 
         // Pass through everything
-        exchange.setOut(exchange.getIn());
+        exchange.setMessage(exchange.getIn());
 
         // If nothing to do, then return an empty body
         if (ObjectHelper.isEmpty(body)) {
-            exchange.getOut().setBody("");
+            exchange.getMessage().setBody("");
         } else if (body.startsWith(LDIF_HEADER)) {
             LOG.debug("Reading from LDIF body");
             result = processLdif(new StringReader(body));
@@ -89,7 +89,7 @@ public class LdifProducer extends DefaultProducer {
             }
         }
 
-        exchange.getOut().setBody(result);
+        exchange.getMessage().setBody(result);
     }
 
     /**
