@@ -69,11 +69,7 @@ public class XStreamDataFormat extends AbstractXStreamWrapper {
         super.marshal(exchange, body, stream);
 
         if (isContentTypeHeader()) {
-            if (exchange.hasOut()) {
-                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-            } else {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-            }
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/xml");
         }
     }
 
