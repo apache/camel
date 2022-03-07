@@ -30,10 +30,10 @@ public class SoapAttachmentResponseProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        exchange.setOut(exchange.getIn());
-        exchange.getOut(AttachmentMessage.class).addAttachment("responseAttachment1.txt",
+        exchange.setMessage(exchange.getIn());
+        exchange.getMessage(AttachmentMessage.class).addAttachment("responseAttachment1.txt",
                 new DataHandler("responseAttachment1", "text/plain"));
-        exchange.getOut(AttachmentMessage.class).addAttachment("responseAttachment2.xml",
+        exchange.getMessage(AttachmentMessage.class).addAttachment("responseAttachment2.xml",
                 new DataHandler("<responseAttachment2/>", "application/xml"));
     }
 

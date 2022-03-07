@@ -42,8 +42,8 @@ public class OkResponseProcessor implements Processor {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(is);
-        exchange.getOut().copyFrom(exchange.getIn());
-        exchange.getOut().setBody(doc);
+        exchange.getMessage().copyFrom(exchange.getIn());
+        exchange.getMessage().setBody(doc);
     }
 
 }

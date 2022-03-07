@@ -61,8 +61,8 @@ public class SoapResponseAttachmentTest {
             }
         });
         assertNotNull(result);
-        assertNotNull(result.getOut(AttachmentMessage.class).getAttachment("requestAttachment1.txt"));
-        assertNotNull(result.getOut(AttachmentMessage.class).getAttachment("responseAttachment1.txt"));
-        assertNotNull(result.getOut(AttachmentMessage.class).getAttachment("responseAttachment2.xml"));
+        assertNotNull(result.getMessage(AttachmentMessage.class).getAttachment("requestAttachment1.txt"));
+        assertNotNull(result.getMessage(AttachmentMessage.class).getAttachment("responseAttachment1.txt"));
+        assertNotNull(result.getMessage(AttachmentMessage.class).getAttachment("responseAttachment2.xml"));
     }
 }
