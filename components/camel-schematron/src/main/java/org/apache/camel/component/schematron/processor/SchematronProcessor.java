@@ -17,6 +17,7 @@
 package org.apache.camel.component.schematron.processor;
 
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -61,7 +62,7 @@ public class SchematronProcessor {
      * @return
      */
     public String validate(final String xml) {
-        final Source source = new SAXSource(reader, new InputSource(IOUtils.toInputStream(xml)));
+        final Source source = new SAXSource(reader, new InputSource(IOUtils.toInputStream(xml, Charset.defaultCharset())));
         return validate(source);
     }
 
