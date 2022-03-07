@@ -203,7 +203,7 @@ public class Jt400PgmProducer extends DefaultProducer {
         Object[] bodyOUT = new Object[results.size()];
         bodyOUT = results.toArray(bodyOUT);
 
-        exchange.getOut().setBody(bodyOUT);
+        exchange.getMessage().setBody(bodyOUT);
     }
 
     private String getOutputMessages(ProgramCall pgmCall) throws Exception {
