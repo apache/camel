@@ -192,7 +192,7 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
 
         crs.process("direct:stream", publisher -> Flowable.fromPublisher(publisher).map(e -> {
             int i = e.getIn().getBody(Integer.class);
-            e.getOut().setBody(-i);
+            e.getMessage().setBody(-i);
 
             return e;
         }));
