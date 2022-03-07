@@ -27,7 +27,7 @@ public class SoapHeaderResponseProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        exchange.setOut(exchange.getIn());
+        exchange.setMessage(exchange.getIn());
     }
 
 }
