@@ -146,7 +146,7 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
     }
 
     private void assertRefused(Exchange exchange, String portExt) {
-        Map<String, Object> headers = exchange.getOut().getHeaders();
+        Map<String, Object> headers = exchange.getMessage().getHeaders();
         //no http response:
         assertNull(headers.get(Exchange.HTTP_RESPONSE_CODE));
         //and got an exception:
