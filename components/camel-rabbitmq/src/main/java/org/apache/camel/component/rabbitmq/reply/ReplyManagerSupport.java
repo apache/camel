@@ -180,13 +180,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     // restore correlation id in case the remote server messed
                     // with it
                     if (holder.getOriginalCorrelationId() != null) {
-                        if (exchange.hasOut()) {
-                            exchange.getOut().setHeader(RabbitMQConstants.CORRELATIONID,
-                                    holder.getOriginalCorrelationId());
-                        } else {
-                            exchange.getIn().setHeader(RabbitMQConstants.CORRELATIONID,
-                                    holder.getOriginalCorrelationId());
-                        }
+                        exchange.getMessage().setHeader(RabbitMQConstants.CORRELATIONID,
+                                holder.getOriginalCorrelationId());
                     }
                 }
             } finally {
