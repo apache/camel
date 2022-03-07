@@ -217,7 +217,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
                 publisher -> Flux.from(publisher)
                         .map(e -> {
                             int i = e.getIn().getBody(Integer.class);
-                            e.getOut().setBody(-i);
+                            e.getMessage().setBody(-i);
 
                             return e;
                         }));
