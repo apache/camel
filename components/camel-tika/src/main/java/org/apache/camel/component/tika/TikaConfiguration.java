@@ -35,9 +35,9 @@ public class TikaConfiguration {
     private TikaParseOutputFormat tikaParseOutputFormat = TikaParseOutputFormat.xml;
     @UriParam(description = "Tika Parse Output Encoding")
     private String tikaParseOutputEncoding = Charset.defaultCharset().name();
-    @UriParam(description = "Tika Config")
+    @UriParam(label = "advanced", description = "Tika Config")
     private TikaConfig tikaConfig = TikaConfig.getDefaultConfig();
-    @UriParam(description = "Tika Config Url")
+    @UriParam(label = "advanced", description = "Tika Config Url")
     private String tikaConfigUri;
 
     public TikaOperation getOperation() {
