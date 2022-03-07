@@ -244,7 +244,7 @@ public class VelocityEndpoint extends ResourceEndpoint {
         engine.evaluate(velocityContext, buffer, logTag, reader);
 
         // now lets output the results to the exchange
-        Message out = exchange.getOut();
+        Message out = exchange.getMessage();
         out.setBody(buffer.toString());
         out.setHeaders(exchange.getIn().getHeaders());
     }
