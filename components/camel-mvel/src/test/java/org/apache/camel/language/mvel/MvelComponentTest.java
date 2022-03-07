@@ -38,7 +38,7 @@ public class MvelComponentTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("{ \"text\": \"The result is 14\" }", exchange.getOut().getBody());
+        assertEquals("{ \"text\": \"The result is 14\" }", exchange.getMessage().getBody());
     }
 
     @Test
@@ -52,7 +52,7 @@ public class MvelComponentTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("{ \"text\": \"The result is 21\" }", exchange.getOut().getBody());
+        assertEquals("{ \"text\": \"The result is 21\" }", exchange.getMessage().getBody());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class MvelComponentTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("{ \"text\": \"The result is 28\" }", exchange.getOut().getBody());
+        assertEquals("{ \"text\": \"The result is 28\" }", exchange.getMessage().getBody());
     }
 
     @Override
