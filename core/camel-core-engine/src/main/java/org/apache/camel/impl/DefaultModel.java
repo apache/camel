@@ -122,7 +122,8 @@ public class DefaultModel implements Model {
 
     @Override
     public void addRouteConfiguration(RouteConfigurationDefinition routesConfiguration) {
-        if (routesConfiguration == null) {
+        // Ensure that the route configuration should be included
+        if (routesConfiguration == null || !includedRouteConfiguration(routesConfiguration)) {
             return;
         }
         // only add if not already exists (route-loader may let Java DSL add route configuration twice
@@ -925,4 +926,13 @@ public class DefaultModel implements Model {
         }
     }
 
+    /**
+     * Indicates whether the route configuration should be included according to the precondition.
+     *
+     * @param  definition the definition of the route configuration to check.
+     * @return            {@code true} if the route configuration should be included, {@code false} otherwise.
+     */
+    private boolean includedRouteConfiguration(RouteConfigurationDefinition definition) {
+        return PreconditionHelper.included(definition, camelContext);
+    }
 }

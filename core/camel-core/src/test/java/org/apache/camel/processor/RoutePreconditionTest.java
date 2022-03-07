@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * The test ensuring that the precondition set on a rule determines if the route is included or not
+ * The test ensuring that the precondition set on a route determines if the route is included or not
  */
 class RoutePreconditionTest extends ContextTestSupport {
 

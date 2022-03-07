@@ -65,7 +65,6 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -85,7 +84,6 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.LocalBeanRegistry;
 import org.apache.camel.support.SimpleUuidGenerator;
@@ -998,23 +996,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
      * @return            {@code true} if the route should be included, {@code false} otherwise.
      */
     private boolean includedRoute(RouteDefinition definition) {
-        final String precondition = definition.getPrecondition();
-        if (precondition == null) {
-            LOG.trace("No precondition found, the route is included by default");
-            return true;
-        }
-        final ExpressionDefinition expression = new SimpleExpression(precondition);
-        expression.initPredicate(this);
-
-        Predicate predicate = expression.getPredicate();
-        predicate.initPredicate(this);
-
-        boolean matches = predicate.matches(new DefaultExchange(this));
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("The precondition has been evaluated to {}, consequently the route is {}", matches,
-                    matches ? "included" : "excluded");
-        }
-        return matches;
+        return PreconditionHelper.included(definition, this);
     }
 
     private static ValueHolder<String> createTransformerKey(TransformerDefinition def) {
