@@ -145,7 +145,7 @@ public class MvelEndpoint extends ResourceEndpoint {
         Object result = TemplateRuntime.execute(compiled, mvelContext, variableMap);
 
         // now lets output the results to the exchange
-        Message out = exchange.getOut();
+        Message out = exchange.getMessage();
         out.setBody(result.toString());
         out.setHeaders(exchange.getIn().getHeaders());
     }
