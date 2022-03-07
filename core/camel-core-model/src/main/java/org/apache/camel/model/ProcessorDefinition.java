@@ -3817,7 +3817,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * This defines the route as resumable, which allows the route to work with the endpoints and components to manage
      * the state of consumers and resume upon restart.
      *
-     * @return                     the builder
+     * @return the builder
      */
     public ResumableDefinition resumable() {
         ResumableDefinition answer = new ResumableDefinition();
@@ -3829,8 +3829,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * This defines the route as resumable, which allows the route to work with the endpoints and components to manage
      * the state of consumers and resume upon restart.
      *
-     * @param  resumeStrategy      the resume strategy
-     * @return                     the builder
+     * @param  resumeStrategy the resume strategy
+     * @return                the builder
      */
     public Type resumable(ResumeStrategy resumeStrategy) {
         ResumableDefinition answer = new ResumableDefinition();
@@ -3843,8 +3843,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * This defines the route as resumable, which allows the route to work with the endpoints and components to manage
      * the state of consumers and resume upon restart.
      *
-     * @param  resumeStrategy      the resume strategy
-     * @return                     the builder
+     * @param  resumeStrategy the resume strategy
+     * @return                the builder
      */
     public Type resumable(String resumeStrategy) {
         ResumableDefinition answer = new ResumableDefinition();
