@@ -72,7 +72,8 @@ public class Web3jMockTestSupport extends CamelTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        super.setUp();
+        try (AutoCloseable closeable = MockitoAnnotations.openMocks(this)) {
+            super.setUp();
+        }
     }
 }
