@@ -64,12 +64,7 @@ public class Hl7AcknowledgementGenerator extends ServiceSupport implements Proce
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Message message;
-        if (exchange.hasOut()) {
-            message = exchange.getOut();
-        } else {
-            message = exchange.getIn();
-        }
+        Message message = exchange.getMessage();
 
         byte[] hl7Bytes = message.getMandatoryBody(byte[].class);
 
