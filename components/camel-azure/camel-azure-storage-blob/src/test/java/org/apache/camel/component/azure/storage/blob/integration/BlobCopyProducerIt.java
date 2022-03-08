@@ -31,7 +31,7 @@ class BlobCopyProducerIt extends CamelTestSupport {
     private ProducerTemplate template;
 
     @Test
-    void testCopyBlob() throws InterruptedException {
+    void testCopyBlob() {
 
         template.send("direct:uploadBlockBlob", exchange -> {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "pmi.txt");
@@ -42,10 +42,10 @@ class BlobCopyProducerIt extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:copyBlob")
                         .to("azure-storage-blob://testblob214/test215?operation=copyBlob&sourceBlobAccessKey=RAW(sourceAccessKey)&accessKey=(accessKey)");
             }

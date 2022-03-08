@@ -91,10 +91,10 @@ class BlobChangeFeedOperationsIT extends Base {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:getChangeFeed")
                         .to("azure-storage-blob://cameldev?operation=getChangeFeed")
                         .to(resultName);

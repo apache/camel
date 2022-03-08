@@ -17,7 +17,6 @@
 package org.apache.camel.component.azure.storage.blob.integration;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
@@ -71,7 +70,7 @@ class BlobProducerIT extends Base {
     }
 
     @Test
-    void testCommitAndStageBlockBlob() throws InterruptedException, IOException {
+    void testCommitAndStageBlockBlob() throws InterruptedException {
         final String blobName = RandomStringUtils.randomAlphabetic(10);
 
         result.expectedMessageCount(1);
@@ -193,10 +192,10 @@ class BlobProducerIT extends Base {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:uploadBlockBlob")
                         .to(componentUri("uploadBlockBlob"))
                         .to(resultName);
