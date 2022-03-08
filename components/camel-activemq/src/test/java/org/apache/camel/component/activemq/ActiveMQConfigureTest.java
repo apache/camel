@@ -63,7 +63,7 @@ public class ActiveMQConfigureTest extends ActiveMQTestSupport {
     }
 
     @Test
-    public void testSessionTransactedWithoutTransactionManager() throws Exception {
+    public void testSessionTransactedWithoutTransactionManager() {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("activemq:test.foo?transacted=true&lazyCreateTransactionManager=false");
         JmsConfiguration configuration = endpoint.getConfiguration();
 

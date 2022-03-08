@@ -39,16 +39,16 @@ public class AdvisoryConsumerExampleTest extends ActiveMQTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AdvisoryConsumerExampleTest.class);
 
     @Test
-    public void testWorks() throws Exception {
+    public void testWorks() {
         // lets create a new queue
         assertDoesNotThrow(
                 () -> template.sendBody("activemq:NewQueue." + System.currentTimeMillis(), "<hello>world!</hello>"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("activemq", activeMQComponent(vmUri("?broker.persistent=false")));
 
                 // lets force the creation of a queue up front

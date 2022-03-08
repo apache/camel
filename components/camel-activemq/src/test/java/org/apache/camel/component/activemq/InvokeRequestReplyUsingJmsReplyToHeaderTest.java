@@ -54,7 +54,7 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends ActiveMQTestSup
     private MyServer myBean = new MyServer();
 
     @Test
-    public void testPerformRequestReplyOverJms() throws Exception {
+    public void testPerformRequestReplyOverJms() {
         Map<String, Object> headers = new HashMap<>();
         headers.put("cheese", 123);
         headers.put("JMSReplyTo", replyQueueName);
@@ -104,7 +104,7 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends ActiveMQTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("activemq:test.server").bean(myBean);

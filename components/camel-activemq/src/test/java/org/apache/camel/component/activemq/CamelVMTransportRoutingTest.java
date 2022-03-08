@@ -139,7 +139,7 @@ public class CamelVMTransportRoutingTest implements ActiveMQSupport {
                 ActiveMQComponent.activeMQComponent(vmUri("?create=false&waitForStart=10000")));
         camelContext.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fromEndpoint).to(toEndpoint);
             }
         });
