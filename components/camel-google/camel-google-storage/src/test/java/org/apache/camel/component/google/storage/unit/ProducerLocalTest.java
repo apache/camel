@@ -47,7 +47,7 @@ public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
     private MockEndpoint result;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 String endpoint = "google-storage://myCamelBucket?autoCreateBucket=true";

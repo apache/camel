@@ -46,7 +46,7 @@ public class ProducerStoreFileTest extends GoogleCloudStorageBaseTest {
     private ProducerTemplate template;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 String endpoint = "google-storage://myCamelBucket?autoCreateBucket=true";
@@ -57,7 +57,7 @@ public class ProducerStoreFileTest extends GoogleCloudStorageBaseTest {
     }
 
     @Test
-    public void testStoreFromFileWithContentLength() throws InterruptedException, IOException {
+    public void testStoreFromFileWithContentLength() throws IOException {
         Path filePath = Path.of(FILE_ENDPOINT, FILE_NAME);
         Exchange storeFileExchange = template.request("direct:fromFile", exchange -> {
             exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, FILE_NAME);
@@ -78,7 +78,7 @@ public class ProducerStoreFileTest extends GoogleCloudStorageBaseTest {
     }
 
     @Test
-    public void testStoreFromFileWithNoContentLength() throws InterruptedException, IOException {
+    public void testStoreFromFileWithNoContentLength() throws IOException {
         Path filePath = Path.of(FILE_ENDPOINT, FILE_NAME);
         Exchange storeFileExchange = template.request("direct:fromFile", exchange -> {
             exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, FILE_NAME);
@@ -98,7 +98,7 @@ public class ProducerStoreFileTest extends GoogleCloudStorageBaseTest {
     }
 
     @Test
-    public void testStoreFromstream() throws InterruptedException {
+    public void testStoreFromstream() {
         final String fileName = "FromStream.txt";
         byte[] payload = "Hi, How are you ?".getBytes();
         ByteArrayInputStream bais = new ByteArrayInputStream(payload);
