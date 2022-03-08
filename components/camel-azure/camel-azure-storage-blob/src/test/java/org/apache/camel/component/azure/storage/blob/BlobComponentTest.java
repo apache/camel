@@ -54,7 +54,7 @@ class BlobComponentTest extends CamelTestSupport {
     }
 
     @Test
-    void testCreateEndpointWithMinConfigForCredsOnly() throws Exception {
+    void testCreateEndpointWithMinConfigForCredsOnly() {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
 
         final BlobEndpoint endpoint = (BlobEndpoint) context
@@ -110,7 +110,7 @@ class BlobComponentTest extends CamelTestSupport {
     }
 
     @Test
-    void testNoBlobNameProducerWithOpThatNeedsBlobName() throws Exception {
+    void testNoBlobNameProducerWithOpThatNeedsBlobName() {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
 
         BlobEndpoint endpointWithOp = (BlobEndpoint) context.getEndpoint(
@@ -123,7 +123,7 @@ class BlobComponentTest extends CamelTestSupport {
     }
 
     @Test
-    void testHierarchicalBlobName() throws Exception {
+    void testHierarchicalBlobName() {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
 
         BlobEndpoint endpoint = (BlobEndpoint) context
