@@ -137,7 +137,7 @@ public class TikaProducer extends DefaultProducer {
         }
     }
 
-    private ContentHandler getContentHandler(TikaConfiguration configuration, OutputStream outputStream)
+    protected ContentHandler getContentHandler(TikaConfiguration configuration, OutputStream outputStream)
             throws TransformerConfigurationException, UnsupportedEncodingException {
 
         ContentHandler result = null;
