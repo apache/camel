@@ -41,12 +41,12 @@ public class AMQPToDSendDynamicTest extends CamelTestSupport {
             .build();
 
     @BeforeAll
-    public static void beforeClass() throws Exception {
+    public static void beforeClass() {
         System.setProperty(AMQP_PORT, amqpPort + "");
     }
 
     @Test
-    public void testToD() throws Exception {
+    public void testToD() {
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 

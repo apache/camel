@@ -40,7 +40,7 @@ public class AMQPToDTest extends CamelTestSupport {
             .build();
 
     @BeforeAll
-    public static void beforeClass() throws Exception {
+    public static void beforeClass() {
         System.setProperty(AMQP_PORT, amqpPort + "");
     }
 
