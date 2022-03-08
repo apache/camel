@@ -121,7 +121,7 @@ public final class GoogleSheetsApiTestServerAssert
             actual.getRunner().createVariable("range", range);
         }
 
-        public void andReturnClearResponse(String clearedRange) throws IOException {
+        public void andReturnClearResponse(String clearedRange) {
             actual.getRunner().async()
                     .actions(
                             actual.getRunner()

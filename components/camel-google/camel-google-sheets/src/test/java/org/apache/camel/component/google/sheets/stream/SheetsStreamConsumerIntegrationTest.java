@@ -157,7 +157,7 @@ public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStr
         assertEquals("b2", values.get(1));
     }
 
-    private RouteBuilder createGoogleStreamRouteBuilder(String spreadsheetId, boolean splitResults) throws Exception {
+    private RouteBuilder createGoogleStreamRouteBuilder(String spreadsheetId, boolean splitResults) {
         return new RouteBuilder() {
             @Override
             public void configure() {

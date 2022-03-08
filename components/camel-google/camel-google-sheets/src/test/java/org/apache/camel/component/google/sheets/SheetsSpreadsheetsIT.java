@@ -52,7 +52,7 @@ public class SheetsSpreadsheetsIT extends AbstractGoogleSheetsTestSupport {
             = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsApiMethod.class).getName();
 
     @Test
-    public void testCreate() throws Exception {
+    public void testCreate() {
         String title = "camel-sheets-" + new SecureRandom().nextInt(Integer.MAX_VALUE);
         Spreadsheet sheetToCreate = new Spreadsheet();
         SpreadsheetProperties sheetProperties = new SpreadsheetProperties();
@@ -96,7 +96,7 @@ public class SheetsSpreadsheetsIT extends AbstractGoogleSheetsTestSupport {
     }
 
     @Test
-    public void testBatchUpdate() throws Exception {
+    public void testBatchUpdate() {
         assertThatGoogleApi(getGoogleApiTestServer())
                 .createSpreadsheetRequest()
                 .hasSheetTitle("TestData")
@@ -130,7 +130,7 @@ public class SheetsSpreadsheetsIT extends AbstractGoogleSheetsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
