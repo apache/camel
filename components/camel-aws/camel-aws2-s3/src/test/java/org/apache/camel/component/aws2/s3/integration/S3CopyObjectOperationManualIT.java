@@ -63,7 +63,7 @@ public class S3CopyObjectOperationManualIT extends CamelTestSupport {
         template.send("direct:putObject", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "test.txt");
                 exchange.getIn().setBody("Test");
             }
@@ -72,7 +72,7 @@ public class S3CopyObjectOperationManualIT extends CamelTestSupport {
         template.send("direct:copyObject", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "test.txt");
                 exchange.getIn().setHeader(AWS2S3Constants.DESTINATION_KEY, "test1.txt");
                 exchange.getIn().setHeader(AWS2S3Constants.BUCKET_DESTINATION_NAME, "mycamel1");
@@ -84,10 +84,10 @@ public class S3CopyObjectOperationManualIT extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=false";
 
                 from("direct:putObject").to(awsEndpoint);

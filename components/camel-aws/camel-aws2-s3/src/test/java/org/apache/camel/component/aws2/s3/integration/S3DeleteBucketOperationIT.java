@@ -41,7 +41,7 @@ public class S3DeleteBucketOperationIT extends Aws2S3Base {
         template.send("direct:listBucket", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listBuckets);
             }
         });
@@ -49,7 +49,7 @@ public class S3DeleteBucketOperationIT extends Aws2S3Base {
         template.send("direct:deleteBucket", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, "mycamel2");
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.deleteBucket);
             }
@@ -59,10 +59,10 @@ public class S3DeleteBucketOperationIT extends Aws2S3Base {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String awsEndpoint = "aws2-s3://mycamel2?autoCreateBucket=true";
 
                 from("direct:listBucket").to(awsEndpoint);

@@ -66,10 +66,10 @@ public class S3GzipOperationIT extends Aws2S3Base {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:putObject")
                         .marshal().gzipDeflater()
                         .to("aws2-s3://mycamel?autoCreateBucket=true");

@@ -51,7 +51,7 @@ public class S3SimpleUploadOperationIT extends Aws2S3Base {
         template.send("direct:putObject", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "camel.txt");
                 exchange.getIn().setBody("Camel rocks!");
             }
@@ -60,7 +60,7 @@ public class S3SimpleUploadOperationIT extends Aws2S3Base {
         template.request("direct:listObjects", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, "mycamel");
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects);
             }
@@ -74,13 +74,13 @@ public class S3SimpleUploadOperationIT extends Aws2S3Base {
     }
 
     @Test
-    public void sendInWithContentType() throws Exception {
+    public void sendInWithContentType() {
         result.expectedMessageCount(1);
 
         template.send("direct:putObject", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "camel-content-type.txt");
                 exchange.getIn().setHeader(AWS2S3Constants.CONTENT_TYPE, "application/text");
                 exchange.getIn().setBody("Camel rocks!");
@@ -94,10 +94,10 @@ public class S3SimpleUploadOperationIT extends Aws2S3Base {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=true";
 
                 from("direct:putObject").to(awsEndpoint);
