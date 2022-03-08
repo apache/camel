@@ -96,7 +96,7 @@ public class DefaultUndertowHttpBindingTest {
             boolean mustWait;  // make sure that the caller is not spinning on read==0
 
             @Override
-            public int read(ByteBuffer dst) throws IOException {
+            public int read(ByteBuffer dst) {
                 if (mustWait) {
                     fail("must wait before reading");
                 }

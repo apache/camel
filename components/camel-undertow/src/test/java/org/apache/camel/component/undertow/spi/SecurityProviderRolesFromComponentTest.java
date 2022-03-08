@@ -56,7 +56,7 @@ public class SecurityProviderRolesFromComponentTest extends AbstractSecurityProv
     }
 
     @Test
-    public void testSecuredNotAllowed() throws Exception {
+    public void testSecuredNotAllowed() {
         securityConfiguration.setRoleToAssign("admin");
 
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
@@ -73,10 +73,10 @@ public class SecurityProviderRolesFromComponentTest extends AbstractSecurityProv
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("undertow:http://localhost:{{port}}/foo")
                         .to("mock:input")
                         .transform(simple("${in.header." + PRINCIPAL_PARAMETER + "}"));

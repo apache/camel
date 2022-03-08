@@ -96,12 +96,12 @@ public class UndertowProducerTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             private InputStream is = new ByteArrayInputStream("This is the InputStream".getBytes());
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("undertow:http://localhost:{{port}}/foo")
                         .to("mock:input")
                         .transform().constant("Bye World");

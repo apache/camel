@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
 
     @Test
-    public void testUnregisterUndertowConsumersForPort() throws Exception {
+    public void testUnregisterUndertowConsumersForPort() {
         UndertowComponent component = context.getComponent("undertow", UndertowComponent.class);
         UndertowConsumer consumerFoo = (UndertowConsumer) context.getRoute("route-foo").getConsumer();
         UndertowConsumer consumerBar = (UndertowConsumer) context.getRoute("route-bar").getConsumer();
@@ -89,7 +89,7 @@ public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("undertow:http://localhost:{{port}}/foo")

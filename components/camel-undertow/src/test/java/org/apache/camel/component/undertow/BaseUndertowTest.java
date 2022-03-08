@@ -35,7 +35,7 @@ public abstract class BaseUndertowTest extends CamelTestSupport {
     private final AtomicInteger counter = new AtomicInteger(1);
 
     @BeforeAll
-    public static void initPort() throws Exception {
+    public static void initPort() {
         port = AvailablePortFinder.getNextAvailable();
         port2 = AvailablePortFinder.getNextAvailable();
     }
@@ -56,7 +56,7 @@ public abstract class BaseUndertowTest extends CamelTestSupport {
     }
 
     @BindToRegistry("prop")
-    public Properties loadProperties() throws Exception {
+    public Properties loadProperties() {
 
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());

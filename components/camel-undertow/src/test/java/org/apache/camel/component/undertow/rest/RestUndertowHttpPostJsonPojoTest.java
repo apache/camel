@@ -45,10 +45,10 @@ public class RestUndertowHttpPostJsonPojoTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use undertow on localhost with the given port
                 // and enable auto binding mode
                 restConfiguration().component("undertow").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);

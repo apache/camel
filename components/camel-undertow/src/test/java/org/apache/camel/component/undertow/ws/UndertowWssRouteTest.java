@@ -18,7 +18,6 @@ package org.apache.camel.component.undertow.ws;
 
 import java.io.IOException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -65,7 +64,7 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
     }
 
     @AfterAll
-    public static void tearDownJaas() throws Exception {
+    public static void tearDownJaas() {
         System.clearProperty("java.security.auth.login.config");
     }
 
@@ -97,7 +96,7 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
         return context;
     }
 
-    protected AsyncHttpClient createAsyncHttpSSLClient() throws IOException, GeneralSecurityException {
+    protected AsyncHttpClient createAsyncHttpSSLClient() throws IOException {
 
         AsyncHttpClient c;
         AsyncHttpClientConfig config;
@@ -165,7 +164,7 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("undertow:ws://localhost:" + getPort() + "/test")

@@ -39,7 +39,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testUndertowPojoTypeValidateModel() throws Exception {
+    public void testUndertowPojoTypeValidateModel() {
         // Wasn't clear if there's a way to put this test into camel-core just to test the model
         // perhaps without starting the Camel Context?
 
@@ -83,7 +83,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
     }
 
     @Test
-    public void testUndertowPojoTypePutUser() throws Exception {
+    public void testUndertowPojoTypePutUser() {
         Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users/1", exchange -> {
             exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
             exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
@@ -248,10 +248,10 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class)
                         .handled(true)
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(400))

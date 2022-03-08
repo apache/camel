@@ -40,7 +40,7 @@ public class SecurityProviderNoAcceptanceTest extends AbstractSecurityProviderTe
     }
 
     @Test
-    public void testSecuredNotAcceptingProvider() throws Exception {
+    public void testSecuredNotAcceptingProvider() {
         securityConfiguration.setRoleToAssign("user");
 
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");

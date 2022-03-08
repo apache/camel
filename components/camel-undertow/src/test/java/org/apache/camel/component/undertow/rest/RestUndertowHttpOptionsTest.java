@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RestUndertowHttpOptionsTest extends BaseUndertowTest {
 
     @Test
-    public void testUndertowServerOptions() throws Exception {
+    public void testUndertowServerOptions() {
         Exchange exchange = template.request("undertow:http://localhost:" + getPort() + "/users/v1/customers",
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS"));
 
@@ -51,10 +51,10 @@ public class RestUndertowHttpOptionsTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use undertow on localhost with the given port
                 restConfiguration().component("undertow").host("localhost").port(getPort());
 

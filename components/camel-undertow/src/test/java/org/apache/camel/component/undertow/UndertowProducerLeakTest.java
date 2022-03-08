@@ -31,10 +31,10 @@ public class UndertowProducerLeakTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("undertow:http://localhost:{{port}}/test").to("log:undertow?showAll=true").to("mock:result");
 
                 from("timer:foo?period=100").transform(constant("hello world"))

@@ -34,7 +34,7 @@ public class RestApiUndertowTest extends BaseUndertowTest {
     }
 
     @Test
-    public void testApi() throws Exception {
+    public void testApi() {
         String out = template.requestBody("undertow:http://localhost:{{port}}/api-doc", null, String.class);
         assertNotNull(out);
         assertTrue(out.contains("\"version\" : \"1.2.3\""));
@@ -45,10 +45,10 @@ public class RestApiUndertowTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().component("undertow").host("localhost").port(getPort()).apiContextPath("/api-doc")
                         .apiProperty("cors", "true").apiProperty("api.title", "The hello rest thing")
                         .apiProperty("api.version", "1.2.3");

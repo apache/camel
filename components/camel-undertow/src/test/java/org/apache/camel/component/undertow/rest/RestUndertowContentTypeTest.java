@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class RestUndertowContentTypeTest extends BaseUndertowTest {
 
     @Test
-    public void testProducerNoContentType() throws Exception {
+    public void testProducerNoContentType() {
         String out = fluentTemplate.withHeader(Exchange.HTTP_METHOD, "post").withBody("{ \"name\": \"Donald Duck\" }")
                 .to("http://localhost:" + getPort() + "/users/123/update")
                 .request(String.class);
@@ -39,7 +39,7 @@ public class RestUndertowContentTypeTest extends BaseUndertowTest {
     }
 
     @Test
-    public void testProducerContentTypeValid() throws Exception {
+    public void testProducerContentTypeValid() {
         String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader(Exchange.HTTP_METHOD, "post").withBody("{ \"name\": \"Donald Duck\" }")
                 .to("http://localhost:" + getPort() + "/users/123/update").request(String.class);
@@ -62,7 +62,7 @@ public class RestUndertowContentTypeTest extends BaseUndertowTest {
     }
 
     @Test
-    public void testProducerMultiContentTypeValid() throws Exception {
+    public void testProducerMultiContentTypeValid() {
         String out = fluentTemplate.withHeader("Accept", "application/csv")
                 .withHeader(Exchange.HTTP_METHOD, "get")
                 .to("http://localhost:" + getPort() + "/users").request(String.class);

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RestUndertowHttpContextPathMatchGetTest extends BaseUndertowTest {
 
     @Test
-    public void testProducerGet() throws Exception {
+    public void testProducerGet() {
         String out = template.requestBody("undertow:http://localhost:{{port}}/users/123", null, String.class);
         assertEquals("123;Donald Duck", out);
 
@@ -34,10 +34,10 @@ public class RestUndertowHttpContextPathMatchGetTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use undertow on localhost with the given port
                 restConfiguration().component("undertow").host("localhost").port(getPort());
 

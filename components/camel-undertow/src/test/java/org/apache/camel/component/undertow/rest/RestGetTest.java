@@ -25,13 +25,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RestGetTest extends BaseUndertowTest {
 
     @Test
-    public void testUndertowProducerGet() throws Exception {
+    public void testUndertowProducerGet() {
         String out = template.requestBody("undertow:http://localhost:{{port}}/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 restConfiguration().component("undertow").host("localhost").port(getPort());

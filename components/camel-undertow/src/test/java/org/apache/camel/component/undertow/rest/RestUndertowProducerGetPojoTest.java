@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class RestUndertowProducerGetPojoTest extends BaseUndertowTest {
 
     @Test
-    public void testUndertowGetPojoRequest() throws Exception {
+    public void testUndertowGetPojoRequest() {
         // should not use reflection when using rest binding in the rest producer
         BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
         bi.setLoggingLevel(LoggingLevel.INFO);
@@ -51,10 +51,10 @@ public class RestUndertowProducerGetPojoTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use undertow on localhost with the given port
                 // and enable auto binding mode
                 restConfiguration()
