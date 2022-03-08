@@ -68,7 +68,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     private String functionName = "myCamelFunction";
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // simple routes
@@ -152,7 +152,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
     @Test
     @SuppressWarnings("unchecked")
-    public void listFunctionsTest() throws Exception {
+    public void listFunctionsTest() {
         CloudFunction cf1 = CloudFunction.newBuilder().build();
         CloudFunction cf2 = CloudFunction.newBuilder().build();
         List<CloudFunction> cfList = Arrays.asList(cf1, cf2);
@@ -175,7 +175,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
     @Test
     @SuppressWarnings("unchecked")
-    public void listFunctionsPojoTest() throws Exception {
+    public void listFunctionsPojoTest() {
         CloudFunction cf1 = CloudFunction.newBuilder().build();
         CloudFunction cf2 = CloudFunction.newBuilder().build();
         List<CloudFunction> cfList = Arrays.asList(cf1, cf2);
@@ -201,7 +201,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     }
 
     @Test
-    public void getFunctionTest() throws Exception {
+    public void getFunctionTest() {
         CloudFunction expectedResponse = CloudFunction.newBuilder()
                 .setName(CloudFunctionName.of(project, location, functionName).toString())
                 .setDescription("description-1724546052").setStatus(CloudFunctionStatus.forNumber(0))
@@ -231,7 +231,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     }
 
     @Test
-    public void getFunctionPojoTest() throws Exception {
+    public void getFunctionPojoTest() {
         CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);
         CloudFunction expectedResponse = CloudFunction.newBuilder().setName(cfName.toString())
                 .setDescription("description-1724546052").setStatus(CloudFunctionStatus.forNumber(0))
@@ -261,7 +261,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     }
 
     @Test
-    public void callFunctionTest() throws Exception {
+    public void callFunctionTest() {
         final String result = "result-934426595";
         CallFunctionResponse expectedResponse = CallFunctionResponse.newBuilder()
                 .setExecutionId("executionId-454906285").setResult(result)
@@ -290,7 +290,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     }
 
     @Test
-    public void callFunctionPojoTest() throws Exception {
+    public void callFunctionPojoTest() {
         final String result = "result-934426595";
         CallFunctionResponse expectedResponse = CallFunctionResponse.newBuilder()
                 .setExecutionId("executionId-454906285").setResult(result)
@@ -321,7 +321,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     }
 
     @Test
-    public void generateDownloadUrlTest() throws Exception {
+    public void generateDownloadUrlTest() {
         String downloadUrl = "downloadUrl-1211148345";
         CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);
 
@@ -344,7 +344,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     }
 
     @Test
-    public void generateDownloadUrlPojoTest() throws Exception {
+    public void generateDownloadUrlPojoTest() {
         String downloadUrl = "downloadUrl-1211148345";
         CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);
 
@@ -371,7 +371,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     }
 
     @Test
-    public void generateUploadUrlTest() throws Exception {
+    public void generateUploadUrlTest() {
         final String updloadUrl = "uploadUrl1239085998";
         LocationName locationName = LocationName.of(project, location);
         GenerateUploadUrlResponse expectedResponse = GenerateUploadUrlResponse.newBuilder()
@@ -392,7 +392,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     }
 
     @Test
-    public void generateUploadUrlTestPojo() throws Exception {
+    public void generateUploadUrlTestPojo() {
         final String updloadUrl = "uploadUrl1239085998";
         LocationName locationName = LocationName.of(project, location);
         GenerateUploadUrlResponse expectedResponse = GenerateUploadUrlResponse.newBuilder()
@@ -416,7 +416,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     }
 
     @Test
-    public void createFunctionTest() throws Exception {
+    public void createFunctionTest() {
         CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);
         CloudFunction expectedResponse = CloudFunction.newBuilder().setName(cfName.toString())
                 .setDescription("description-1724546052").setStatus(CloudFunctionStatus.forNumber(0))
@@ -444,7 +444,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     }
 
     @Test
-    public void createFunctionTestPojo() throws Exception {
+    public void createFunctionTestPojo() {
         CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);
         CloudFunction expectedResponse = CloudFunction.newBuilder().setName(cfName.toString())
                 .setDescription("description-1724546052").setStatus(CloudFunctionStatus.forNumber(0))
@@ -475,7 +475,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
 
     @Disabled
     @Test
-    public void updateFunctionTest() throws Exception {
+    public void updateFunctionTest() {
         CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);
         CloudFunction expectedResponse = CloudFunction.newBuilder().setName(cfName.toString())
                 .setDescription("description-1724546052").setStatus(CloudFunctionStatus.forNumber(0))
@@ -501,7 +501,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     }
 
     @Test
-    public void updateFunctionTestPojo() throws Exception {
+    public void updateFunctionTestPojo() {
         CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);
         CloudFunction expectedResponse = CloudFunction.newBuilder().setName(cfName.toString())
                 .setDescription("description-1724546052").setStatus(CloudFunctionStatus.forNumber(0))
@@ -531,7 +531,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     }
 
     @Test
-    public void deleteFunctionTest() throws Exception {
+    public void deleteFunctionTest() {
         CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);
         Empty expectedResponse = Empty.newBuilder().build();
         Operation resultOperation = Operation.newBuilder().setName(cfName.toString()).setDone(true)
@@ -548,7 +548,7 @@ public class GoogleCloudFunctionsComponentTest extends GoogleCloudFunctionsBaseT
     }
 
     @Test
-    public void deleteFunctionPojoTest() throws Exception {
+    public void deleteFunctionPojoTest() {
         CloudFunctionName cfName = CloudFunctionName.of(project, location, functionName);
         Empty expectedResponse = Empty.newBuilder().build();
         Operation resultOperation = Operation.newBuilder().setName(cfName.toString()).setDone(true)
