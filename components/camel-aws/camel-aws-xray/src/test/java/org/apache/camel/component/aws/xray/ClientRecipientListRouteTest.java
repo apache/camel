@@ -41,7 +41,7 @@ public class ClientRecipientListRouteTest extends CamelAwsXRayTestSupport {
     }
 
     @Test
-    public void testRoute() throws Exception {
+    public void testRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(7).create();
 
         template.requestBody("direct:start", "Hello");
@@ -53,10 +53,10 @@ public class ClientRecipientListRouteTest extends CamelAwsXRayTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("start")
                         .recipientList(constant("seda:a,seda:b,seda:c"));
 

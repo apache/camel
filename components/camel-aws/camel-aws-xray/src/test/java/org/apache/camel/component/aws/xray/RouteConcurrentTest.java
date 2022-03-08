@@ -36,7 +36,7 @@ public class RouteConcurrentTest extends CamelAwsXRayTestSupport {
     }
 
     @Test
-    public void testRoute() throws Exception {
+    public void testRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 
         template.sendBody("seda:foo", "Hello World");
@@ -48,10 +48,10 @@ public class RouteConcurrentTest extends CamelAwsXRayTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo?concurrentConsumers=5").routeId("foo")
                         .log("routing at ${routeId}")
                         .delay(simple("${random(1000,2000)}"))

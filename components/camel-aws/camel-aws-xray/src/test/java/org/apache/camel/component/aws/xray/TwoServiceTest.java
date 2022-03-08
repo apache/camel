@@ -38,7 +38,7 @@ public class TwoServiceTest extends CamelAwsXRayTestSupport {
     }
 
     @Test
-    public void testRoute() throws Exception {
+    public void testRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
         template.requestBody("direct:ServiceA", "Hello");
@@ -49,10 +49,10 @@ public class TwoServiceTest extends CamelAwsXRayTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:ServiceA").routeId("ServiceA")
                         .log("ServiceA has been called")
                         .delay(simple("${random(1000,2000)}"))

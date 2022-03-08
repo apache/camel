@@ -53,10 +53,10 @@ public class ErrorTest extends CamelAwsXRayTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 onException(Exception.class)
                         .process(new ExceptionProcessor())
@@ -90,7 +90,7 @@ public class ErrorTest extends CamelAwsXRayTestSupport {
     }
 
     @Test
-    public void testRoute() throws Exception {
+    public void testRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
         template.requestBody("direct:start", "Hello");
@@ -119,7 +119,7 @@ public class ErrorTest extends CamelAwsXRayTestSupport {
     public static class ExceptionProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Exception ex = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
             LOG.debug("Processing caught exception {}", ex.getLocalizedMessage());
             exchange.getIn().getHeaders().put("HandledError", ex.getLocalizedMessage());
@@ -135,7 +135,7 @@ public class ErrorTest extends CamelAwsXRayTestSupport {
     public static class ExceptionRetryProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Exception ex = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
             LOG.debug(">> Attempting redelivery of handled exception {} with message: {}",
                     ex.getClass().getSimpleName(), ex.getLocalizedMessage());
