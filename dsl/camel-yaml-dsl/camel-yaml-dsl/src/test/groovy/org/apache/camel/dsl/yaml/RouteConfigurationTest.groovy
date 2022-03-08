@@ -21,8 +21,10 @@ import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.dsl.yaml.support.model.MyException
 import org.apache.camel.dsl.yaml.support.model.MyFailingProcessor
+import org.apache.camel.model.RouteConfigurationDefinition
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
+
+import static org.apache.camel.util.PropertiesHelper.asProperties
 
 class RouteConfigurationTest extends YamlTestSupport {
     def "route-configuration"() {
@@ -60,6 +62,61 @@ class RouteConfigurationTest extends YamlTestSupport {
         }
         then:
         MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "route-configuration-precondition"() {
+        setup:
+        context.getPropertiesComponent().setInitialProperties(asProperties("activate", "true"))
+        loadRoutes """
+                - beans:
+                  - name: myFailingProcessor
+                    type: ${MyFailingProcessor.name}
+                - route-configuration:
+                    - precondition: "{{!activate}}"
+                    - on-exception:
+                        handled:
+                          constant: "true"
+                        exception:
+                          - ${MyException.name}
+                        steps:
+                          - transform:
+                              constant: "Not Activated"
+                          - to: "mock:on-exception"  
+                - route-configuration:
+                    - precondition: "{{activate}}"
+                    - on-exception:
+                        handled:
+                          constant: "true"
+                        exception:
+                          - ${MyException.name}
+                        steps:
+                          - transform:
+                              constant: "Activated"
+                          - to: "mock:on-exception"  
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - process: 
+                          ref: "myFailingProcessor"            
+            """
+
+        withMock('mock:on-exception') {
+            expectedBodiesReceived 'Activated'
+        }
+
+        when:
+        context.start()
+
+        withTemplate {
+            to('direct:start').withBody('hello').send()
+        }
+        then:
+        MockEndpoint.assertIsSatisfied(context)
+        context.getRouteConfigurationDefinitions().size() == 1
+
+        with(context.getRouteConfigurationDefinitions().get(0), RouteConfigurationDefinition) {
+            precondition == '{{activate}}'
+        }
     }
 
     def "route-configuration-separate"() {

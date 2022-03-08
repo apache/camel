@@ -984,8 +984,13 @@ public class ModelParser extends BaseParser {
         }, noElementHandler(), noValueHandler());
     }
     protected RouteConfigurationDefinition doParseRouteConfigurationDefinition() throws IOException, XmlPullParserException {
-        return doParse(new RouteConfigurationDefinition(),
-            optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
+        return doParse(new RouteConfigurationDefinition(), (def, key, val) -> {
+            if ("precondition".equals(key)) {
+                def.setPrecondition(val);
+                return true;
+            }
+            return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
+        }, (def, key) -> {
             switch (key) {
                 case "interceptFrom": doAdd(doParseInterceptFromDefinition(), def.getInterceptFroms(), def::setInterceptFroms); break;
                 case "interceptSendToEndpoint": doAdd(doParseInterceptSendToEndpointDefinition(), def.getInterceptSendTos(), def::setInterceptSendTos); break;

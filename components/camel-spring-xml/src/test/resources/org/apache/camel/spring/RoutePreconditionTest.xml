@@ -24,7 +24,7 @@
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <propertyPlaceholder id="properties" location="classpath:org/apache/camel/spring/RoutePreconditionTest.properties"/>
+        <propertyPlaceholder id="properties" location="classpath:org/apache/camel/spring/PreconditionTest.properties"/>
         <routeTemplate id="myTemplate">
             <templateParameter name="activateT"/>
             <route precondition="{{activateT}}">

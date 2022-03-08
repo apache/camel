@@ -323,6 +323,51 @@ And in Camel Main / Quarkus:
 camel.main.startup-summary-level = verbose
 ----
 
+== Route Precondition
+
+The route configurations can be included or not according to the result of a test expressed in simple language that is evaluated only once during the initialization phase.
+
+In the next example, the route configuration is only included if the parameter `activate` has been set to `true`.
+
+[source,java]
+----
+routeConfiguration().precondition("{{activate}}")
+    .onException(IllegalArgumentException.class)
+    .handled(true)
+    .log("WARN: ${exception.message}");
+----
+
+And the same example using XML DSL:
+
+[source,xml]
+----
+<routeConfiguration precondition="{{activate}}">
+    <onException>
+        <exception>java.lang.IllegalArgumentException</exception>
+        <handled>
+            <constant>true</constant>
+        </handled>
+        <log message="XML WARN: ${exception.message}"/>
+    </onException>
+</routeConfiguration>
+----
+
+And in YAML DSL:
+
+[source,yaml]
+----
+- route-configuration:
+    - precondition: "{{activate}}"
+    - on-exception:
+        exception:
+          - "java.lang.IllegalArgumentException"
+        handled:
+          constant: "true"
+        steps:
+          - log:
+              message: "YAML WARN ${exception.message}"
+----
+
 == More Information
 
 See these examples:

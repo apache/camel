@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedRoute;
@@ -57,7 +58,7 @@ import org.apache.camel.spi.RoutePolicy;
 @XmlType(propOrder = { "input", "inputType", "outputType", "outputs", "routeProperties" })
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
-public class RouteDefinition extends OutputDefinition<RouteDefinition> implements NamedRoute {
+public class RouteDefinition extends OutputDefinition<RouteDefinition> implements NamedRoute, PreconditionContainer {
     private final AtomicBoolean prepared = new AtomicBoolean();
     private FromDefinition input;
     private String routeConfigurationId;
@@ -117,7 +118,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * Check if the route has been prepared
      *
      * @return whether the route has been prepared or not
-     * @see    RouteDefinitionHelper#prepareRoute(ModelCamelContext, RouteDefinition)
+     * @see    RouteDefinitionHelper#prepareRoute(CamelContext, RouteDefinition)
      */
     public boolean isPrepared() {
         return prepared.get();
@@ -926,9 +927,10 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     }
 
     /**
-     * The predicate of the precondition in simple language to evaluate in order to determine if this given route should
-     * be included or not.
+     * The predicate of the precondition in simple language to evaluate in order to determine if this route should be
+     * included or not.
      */
+    @Override
     public String getPrecondition() {
         return precondition;
     }
@@ -939,6 +941,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      */
     @XmlAttribute
     @Metadata(label = "advanced")
+    @Override
     public void setPrecondition(String precondition) {
         this.precondition = precondition;
     }

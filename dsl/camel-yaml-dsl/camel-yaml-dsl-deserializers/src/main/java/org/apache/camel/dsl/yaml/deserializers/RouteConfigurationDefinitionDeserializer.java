@@ -40,6 +40,7 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
           nodes = { "route-configuration", "routeConfiguration" },
           properties = {
                   @YamlProperty(name = "id", type = "string"),
+                  @YamlProperty(name = "precondition", type = "string"),
                   @YamlProperty(name = "intercept", type = "array:org.apache.camel.model.InterceptDefinition"),
                   @YamlProperty(name = "intercept-from", type = "array:org.apache.camel.model.InterceptFromDefinition"),
                   @YamlProperty(name = "intercept-send-to-endpoint",
@@ -75,6 +76,9 @@ public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBa
                         target.setId(asText(val));
                         break;
                     }
+                    case "precondition":
+                        target.setPrecondition(asText(val));
+                        break;
                     case "on-exception":
                         setDeserializationContext(val, dc);
                         OnExceptionDefinition oed = asType(val, OnExceptionDefinition.class);

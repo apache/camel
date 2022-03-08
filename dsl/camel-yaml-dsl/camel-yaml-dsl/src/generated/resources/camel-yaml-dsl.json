@@ -2482,6 +2482,9 @@
               "items" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.OnExceptionDefinition"
               }
+            },
+            "precondition" : {
+              "type" : "string"
             }
           }
         } ]
