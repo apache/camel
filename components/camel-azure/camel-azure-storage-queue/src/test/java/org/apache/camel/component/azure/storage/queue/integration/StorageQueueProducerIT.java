@@ -101,10 +101,10 @@ class StorageQueueProducerIT extends StorageQueueBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:createQueue")
                         .to(componentUri("createQueue", "testqueue"))
                         .to(resultName);
@@ -129,7 +129,7 @@ class StorageQueueProducerIT extends StorageQueueBase {
     }
 
     @Test
-    public void testHeaderPreservation() throws InterruptedException {
+    public void testHeaderPreservation() {
 
         // first test if queue is not created
         template.send("direct:sendMessage", ExchangePattern.InOnly, exchange -> {
