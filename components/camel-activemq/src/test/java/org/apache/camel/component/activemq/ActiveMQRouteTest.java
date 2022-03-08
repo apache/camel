@@ -70,9 +70,9 @@ public class ActiveMQRouteTest extends ActiveMQTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(startEndpointUri).to("activemq:queue:test.b");
                 from("activemq:queue:test.b").to("mock:result");
 

@@ -29,9 +29,9 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 public class ActiveMQJmsHeaderRouteForceTest extends ActiveMQJmsHeaderRouteTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // do not map jms message as we want to tamper with the JMS
                 // message directly, and not use the Camel API for that
                 from("activemq:test.a?mapJmsMessage=false").process(new Processor() {

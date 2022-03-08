@@ -132,7 +132,7 @@ public class ComplexRequestReplyTest implements ActiveMQSupport {
         camelContext.addComponent("activemq", amqComponent);
         camelContext.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fromEndpoint).to(ExchangePattern.InOut, toEndpoint);
             }
         });
@@ -149,7 +149,7 @@ public class ComplexRequestReplyTest implements ActiveMQSupport {
                 ActiveMQComponent.activeMQComponent(vmUri(brokerName + "?create=false&waitForStart=1000")));
         camelContext.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(brokerEndpoint).setBody().simple("Returning ${body}")
                         .log("***Reply sent to ${header.JMSReplyTo} CoorId = ${header.JMSCorrelationID}");
             }

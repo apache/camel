@@ -85,11 +85,11 @@ public class ActiveMQJmsHeaderRouteTest extends ActiveMQTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:test.a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // lets set the custom JMS headers using the Camel API
                         exchange.getIn().setHeader("JMSReplyTo", replyQueue);
                         exchange.getIn().setHeader("JMSCorrelationID", correlationID);

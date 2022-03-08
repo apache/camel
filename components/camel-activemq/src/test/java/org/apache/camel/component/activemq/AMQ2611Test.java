@@ -62,7 +62,7 @@ public class AMQ2611Test implements ActiveMQSupport {
         final String queueEndpointName = "activemq:queue" + QUEUE_NAME;
         camelContext.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(queueEndpointName).bean(Consumer.class, "consume");
             }
         });
@@ -86,7 +86,7 @@ public class AMQ2611Test implements ActiveMQSupport {
         producerTemplate.sendBody(queueEndpointName, "message");
     }
 
-    private void destroyCamelContext() throws Exception {
+    private void destroyCamelContext() {
         LOG.info("destroying context");
         camelContext.stop();
         camelContext = null;

@@ -66,7 +66,7 @@ public class SetHeaderTest {
      */
     public static class SetGroupIdProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // lets copy the IN to the OUT message
             Message out = exchange.getMessage();
             out.copyFrom(exchange.getIn());

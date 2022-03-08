@@ -68,9 +68,9 @@ public class InvokeMessageListenerTest extends ActiveMQTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(startEndpointUri).bean(listener);
             }
         };

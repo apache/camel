@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ActiveMQToDSendDynamicTwoTest extends ActiveMQTestSupport {
 
     @Test
-    public void testToD() throws Exception {
+    public void testToD() {
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
         template.sendBodyAndHeader("direct:start", "Hello gin", "where", "gin");
@@ -40,10 +40,10 @@ public class ActiveMQToDSendDynamicTwoTest extends ActiveMQTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("activemq", activeMQComponent(vmUri("?broker.persistent=false")));
 
                 // route message dynamic using toD

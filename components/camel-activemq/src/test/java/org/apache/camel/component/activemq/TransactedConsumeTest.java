@@ -142,7 +142,7 @@ public class TransactedConsumeTest extends ActiveMQSpringTestSupport {
     static class ConnectionLog implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             if (consumed.getAndIncrement() == 0) {
                 firstConsumed.set(System.currentTimeMillis());
             }
