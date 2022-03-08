@@ -73,6 +73,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "messageDeduplicationIdStrategy": getOrCreateConfiguration(target).setMessageDeduplicationIdStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "messagegroupidstrategy":
         case "messageGroupIdStrategy": getOrCreateConfiguration(target).setMessageGroupIdStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "messageheaderexceededlimit":
+        case "messageHeaderExceededLimit": getOrCreateConfiguration(target).setMessageHeaderExceededLimit(property(camelContext, java.lang.String.class, value)); return true;
         case "messageretentionperiod":
         case "messageRetentionPeriod": getOrCreateConfiguration(target).setMessageRetentionPeriod(property(camelContext, java.lang.Integer.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.sqs.Sqs2Operations.class, value)); return true;
@@ -166,6 +168,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "messageDeduplicationIdStrategy": return java.lang.String.class;
         case "messagegroupidstrategy":
         case "messageGroupIdStrategy": return java.lang.String.class;
+        case "messageheaderexceededlimit":
+        case "messageHeaderExceededLimit": return java.lang.String.class;
         case "messageretentionperiod":
         case "messageRetentionPeriod": return java.lang.Integer.class;
         case "operation": return org.apache.camel.component.aws2.sqs.Sqs2Operations.class;
@@ -255,6 +259,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "messageDeduplicationIdStrategy": return getOrCreateConfiguration(target).getMessageDeduplicationIdStrategy();
         case "messagegroupidstrategy":
         case "messageGroupIdStrategy": return getOrCreateConfiguration(target).getMessageGroupIdStrategy();
+        case "messageheaderexceededlimit":
+        case "messageHeaderExceededLimit": return getOrCreateConfiguration(target).getMessageHeaderExceededLimit();
         case "messageretentionperiod":
         case "messageRetentionPeriod": return getOrCreateConfiguration(target).getMessageRetentionPeriod();
         case "operation": return getOrCreateConfiguration(target).getOperation();
