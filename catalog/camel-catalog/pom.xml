@@ -71,6 +71,24 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!--
+        Enforce the dependency with all the core artifacts to ensure that the parallel build won't build this module
+        before the core artifacts to prevent inconsistencies in the catalog
+        -->
+        <!-- disable all core -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-all</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- testing -->
         <dependency>
