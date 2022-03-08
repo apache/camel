@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.is;
 public class MetricsTypeTest {
 
     @Test
-    public void testGetByName() throws Exception {
+    public void testGetByName() {
         for (MetricsType type : EnumSet.allOf(MetricsType.class)) {
             MetricsType t = MetricsType.getByName(type.toString());
             assertThat(t, is(type));

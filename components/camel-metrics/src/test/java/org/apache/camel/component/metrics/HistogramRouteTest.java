@@ -74,10 +74,10 @@ public class HistogramRouteTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in")
                         .to("metrics:histogram:A?value=332491")
                         .to("mock:out");

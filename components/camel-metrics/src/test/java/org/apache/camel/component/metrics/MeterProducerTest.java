@@ -63,7 +63,7 @@ public class MeterProducerTest {
     private InOrder inOrder;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         producer = new MeterProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, registry, meter, exchange, in);
         lenient().when(registry.meter(METRICS_NAME)).thenReturn(meter);
@@ -71,7 +71,7 @@ public class MeterProducerTest {
     }
 
     @Test
-    public void testMeterProducer() throws Exception {
+    public void testMeterProducer() {
         assertThat(producer, is(notNullValue()));
         assertThat(producer.getEndpoint(), is(equalTo(endpoint)));
     }

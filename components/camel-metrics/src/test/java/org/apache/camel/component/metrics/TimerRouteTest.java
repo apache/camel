@@ -60,10 +60,10 @@ public class TimerRouteTest extends CamelSpringTestSupport {
     private InOrder inOrder;
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in-1")
                         .to("metrics:timer:A?action=start")
                         .to("mock:out");

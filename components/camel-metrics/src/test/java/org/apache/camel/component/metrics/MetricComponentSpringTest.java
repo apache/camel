@@ -71,10 +71,10 @@ public class MetricComponentSpringTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in")
                         .to("metrics:counter:A?increment=512")
                         .to("mock:out");
