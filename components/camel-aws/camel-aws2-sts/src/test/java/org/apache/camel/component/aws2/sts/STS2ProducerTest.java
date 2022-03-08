@@ -44,7 +44,7 @@ public class STS2ProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:assumeRole", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(STS2Constants.OPERATION, STS2Operations.assumeRole);
                 exchange.getIn().setHeader(STS2Constants.ROLE_ARN, "arn");
                 exchange.getIn().setHeader(STS2Constants.ROLE_SESSION_NAME, "sessionarn");
@@ -63,7 +63,7 @@ public class STS2ProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:getSessionToken", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(STS2Constants.OPERATION, STS2Operations.getSessionToken);
             }
         });
@@ -80,7 +80,7 @@ public class STS2ProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:getFederationToken", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(STS2Constants.OPERATION, STS2Operations.getFederationToken);
                 exchange.getIn().setHeader(STS2Constants.FEDERATED_NAME, "federation-account");
             }
@@ -93,10 +93,10 @@ public class STS2ProducerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:assumeRole").to("aws2-sts://test?stsClient=#amazonStsClient&operation=assumeRole")
                         .to("mock:result");
                 from("direct:getSessionToken").to("aws2-sts://test?stsClient=#amazonStsClient&operation=getSessionToken")
