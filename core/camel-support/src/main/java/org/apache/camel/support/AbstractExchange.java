@@ -523,6 +523,7 @@ class AbstractExchange implements ExtendedExchange {
         return out;
     }
 
+    @SuppressWarnings("deprecated")
     @Override
     public <T> T getOut(Class<T> type) {
         if (!hasOut()) {
@@ -541,11 +542,13 @@ class AbstractExchange implements ExtendedExchange {
         return context.getTypeConverter().convertTo(type, this, out);
     }
 
+    @SuppressWarnings("deprecated")
     @Override
     public boolean hasOut() {
         return out != null;
     }
 
+    @SuppressWarnings("deprecated")
     @Override
     public void setOut(Message out) {
         this.out = out;
