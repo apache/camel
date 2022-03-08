@@ -30,7 +30,7 @@ public class GoogleMailStreamConsumerIntegrationTest extends AbstractGoogleMailS
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

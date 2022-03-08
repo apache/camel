@@ -38,7 +38,7 @@ public class GmailUsersIT extends AbstractGoogleMailTestSupport {
             = GoogleMailApiCollection.getCollection().getApiName(GmailUsersApiMethod.class).getName();
 
     @Test
-    public void testGetProfile() throws Exception {
+    public void testGetProfile() {
         // using String message body for single parameter "userId"
         final com.google.api.services.gmail.model.Profile result = requestBody("direct://GETPROFILE", CURRENT_USERID);
 
@@ -48,7 +48,7 @@ public class GmailUsersIT extends AbstractGoogleMailTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

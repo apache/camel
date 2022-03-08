@@ -44,7 +44,7 @@ public class GmailUsersLabelsIT extends AbstractGoogleMailTestSupport {
             = GoogleMailApiCollection.getCollection().getApiName(GmailUsersLabelsApiMethod.class).getName();
 
     @Test
-    public void testLabels() throws Exception {
+    public void testLabels() {
         // using String message body for single parameter "userId"
         com.google.api.services.gmail.model.ListLabelsResponse labels = requestBody("direct://LIST", CURRENT_USERID);
 
@@ -93,7 +93,7 @@ public class GmailUsersLabelsIT extends AbstractGoogleMailTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
