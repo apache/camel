@@ -56,7 +56,7 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutDomainName() throws Exception {
+    public void createEndpointWithoutDomainName() {
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-ec2:// ");
@@ -64,7 +64,7 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutAmazonSDBClientConfiguration() throws Exception {
+    public void createEndpointWithoutAmazonSDBClientConfiguration() {
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-ec2://TestDomain");
@@ -72,7 +72,7 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
+    public void createEndpointWithoutAccessKeyConfiguration() {
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-ec2://TestDomain?secretKey=yyy");
@@ -80,7 +80,7 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
+    public void createEndpointWithoutSecretKeyConfiguration() {
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-ec2://TestDomain?accessKey=xxx");
