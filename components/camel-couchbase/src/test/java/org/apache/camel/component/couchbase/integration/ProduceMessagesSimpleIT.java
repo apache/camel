@@ -41,7 +41,7 @@ public class ProduceMessagesSimpleIT extends CouchbaseIntegrationTestBase {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 // need couchbase installed on localhost
                 from("direct:start").setHeader(CouchbaseConstants.HEADER_ID, constant("SimpleDocument_1"))
