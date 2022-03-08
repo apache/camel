@@ -54,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
     @Test
-    public void lambdaCreateFunctionTest() throws Exception {
+    public void lambdaCreateFunctionTest() {
 
         Exchange exchange = template.send("direct:createFunction", ExchangePattern.InOut, new Processor() {
             @Override
@@ -81,11 +81,11 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void lambdaDeleteFunctionTest() throws Exception {
+    public void lambdaDeleteFunctionTest() {
 
         Exchange exchange = template.send("direct:deleteFunction", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
 
             }
         });
@@ -93,11 +93,11 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void lambdaGetFunctionTest() throws Exception {
+    public void lambdaGetFunctionTest() {
 
         Exchange exchange = template.send("direct:getFunction", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
 
             }
         });
@@ -106,11 +106,11 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void lambdaGetFunctionPojoTest() throws Exception {
+    public void lambdaGetFunctionPojoTest() {
 
         Exchange exchange = template.send("direct:getFunctionPojo", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(GetFunctionRequest.builder().functionName("GetHelloWithName").build());
             }
         });
@@ -119,10 +119,10 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void lambdaListFunctionsTest() throws Exception {
+    public void lambdaListFunctionsTest() {
         Exchange exchange = template.send("direct:listFunctions", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
 
             }
         });
@@ -133,10 +133,10 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void lambdaInvokeFunctionTest() throws Exception {
+    public void lambdaInvokeFunctionTest() {
         Exchange exchange = template.send("direct:invokeFunction", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("{\"name\":\"Camel\"}");
             }
         });
@@ -149,7 +149,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
     public void lambdaCreateEventSourceMappingTest() throws Exception {
         Exchange exchange = template.send("direct:createEventSourceMapping", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Lambda2Constants.EVENT_SOURCE_ARN,
                         "arn:aws:sqs:eu-central-1:643534317684:testqueue");
                 exchange.getIn().setHeader(Lambda2Constants.EVENT_SOURCE_BATCH_SIZE, 100);
@@ -165,7 +165,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
     public void lambdaDeleteEventSourceMappingTest() throws Exception {
         Exchange exchange = template.send("direct:deleteEventSourceMapping", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Lambda2Constants.EVENT_SOURCE_UUID, "a1239494949382882383");
             }
         });
@@ -179,7 +179,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
     public void lambdaListEventSourceMappingTest() throws Exception {
         Exchange exchange = template.send("direct:listEventSourceMapping", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
             }
         });
         assertMockEndpointsSatisfied();
@@ -194,7 +194,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         Exchange exchange = template.send("direct:listTags", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Lambda2Constants.RESOURCE_ARN,
                         "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
             }
@@ -210,7 +210,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         Exchange exchange = template.send("direct:tagResource", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Map<String, String> tags = new HashMap<>();
                 tags.put("test", "added-tag");
                 exchange.getIn().setHeader(Lambda2Constants.RESOURCE_ARN,
@@ -229,7 +229,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         Exchange exchange = template.send("direct:untagResource", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 List<String> tagKeys = new ArrayList<>();
                 tagKeys.add("test");
                 exchange.getIn().setHeader(Lambda2Constants.RESOURCE_ARN,
@@ -248,7 +248,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         Exchange exchange = template.send("direct:publishVersion", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Lambda2Constants.VERSION_DESCRIPTION, "This is my description");
             }
         });
@@ -265,7 +265,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         Exchange exchange = template.send("direct:listVersions", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Lambda2Constants.VERSION_DESCRIPTION, "This is my description");
             }
         });
@@ -282,7 +282,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         Exchange exchange = template.send("direct:createAlias", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Lambda2Constants.FUNCTION_ALIAS_DESCRIPTION, "an alias");
                 exchange.getIn().setHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, "alias");
                 exchange.getIn().setHeader(Lambda2Constants.FUNCTION_VERSION, "1");
@@ -302,7 +302,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         Exchange exchange = template.send("direct:deleteAlias", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, "alias");
             }
         });
@@ -317,7 +317,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         Exchange exchange = template.send("direct:getAlias", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, "alias");
             }
         });
@@ -335,7 +335,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         Exchange exchange = template.send("direct:listAliases", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Lambda2Constants.FUNCTION_VERSION, "1");
             }
         });

@@ -39,11 +39,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class LambdaComponentManualIT extends CamelTestSupport {
 
     @Test
-    public void lambdaListFunctionsTest() throws Exception {
+    public void lambdaListFunctionsTest() {
         Exchange exchange = template.send("direct:listFunctions", ExchangePattern.InOut, new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
 
             }
         });
@@ -52,11 +52,11 @@ public class LambdaComponentManualIT extends CamelTestSupport {
     }
 
     @Test
-    public void lambdaGetFunctionTest() throws Exception {
+    public void lambdaGetFunctionTest() {
         Exchange exchange = template.send("direct:getFunction", ExchangePattern.InOut, new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
 
             }
         });
@@ -68,10 +68,10 @@ public class LambdaComponentManualIT extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:listFunctions")
                         .to("aws2-lambda://myFunction?operation=listFunctions&accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&region=eu-west-1");
