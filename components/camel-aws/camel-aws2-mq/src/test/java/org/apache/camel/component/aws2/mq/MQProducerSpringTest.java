@@ -51,7 +51,7 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listBrokers", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(MQ2Constants.OPERATION, MQ2Operations.listBrokers);
             }
         });
@@ -70,7 +70,7 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listBrokersPojo", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(MQ2Constants.OPERATION, MQ2Operations.listBrokers);
                 exchange.getIn().setBody(ListBrokersRequest.builder().maxResults(10).build());
             }
@@ -90,7 +90,7 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:createBroker", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(MQ2Constants.OPERATION, MQ2Operations.createBroker);
                 exchange.getIn().setHeader(MQ2Constants.BROKER_NAME, "test");
                 exchange.getIn().setHeader(MQ2Constants.BROKER_DEPLOYMENT_MODE, DeploymentMode.SINGLE_INSTANCE);
@@ -120,7 +120,7 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:createBroker", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(MQ2Constants.OPERATION, MQ2Operations.deleteBroker);
                 exchange.getIn().setHeader(MQ2Constants.BROKER_ID, "1");
             }
@@ -138,7 +138,7 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         template.request("direct:rebootBroker", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(MQ2Constants.OPERATION, MQ2Operations.rebootBroker);
                 exchange.getIn().setHeader(MQ2Constants.BROKER_ID, "1");
             }
@@ -153,7 +153,7 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:updateBroker", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(MQ2Constants.OPERATION, MQ2Operations.updateBroker);
                 exchange.getIn().setHeader(MQ2Constants.BROKER_ID, "1");
                 ConfigurationId.Builder cId = ConfigurationId.builder();
@@ -174,7 +174,7 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:describeBroker", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(MQ2Constants.OPERATION, MQ2Operations.describeBroker);
                 exchange.getIn().setHeader(MQ2Constants.BROKER_ID, "1");
                 ConfigurationId.Builder cId = ConfigurationId.builder();
