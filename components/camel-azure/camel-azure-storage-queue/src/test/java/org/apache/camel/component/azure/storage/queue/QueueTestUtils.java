@@ -40,7 +40,7 @@ public final class QueueTestUtils {
         return properties;
     }
 
-    public static Properties loadAzureAccessFromJvmEnv() throws Exception {
+    public static Properties loadAzureAccessFromJvmEnv() {
         final Properties properties = new Properties();
         if (System.getProperty("accountName") == null || System.getProperty("accessKey") == null) {
             fail("Make sure to supply azure accessKey or accountName, e.g:  mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey");

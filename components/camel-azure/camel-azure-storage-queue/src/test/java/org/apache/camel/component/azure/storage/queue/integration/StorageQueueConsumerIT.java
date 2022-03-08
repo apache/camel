@@ -58,10 +58,10 @@ class StorageQueueConsumerIT extends StorageQueueBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("azure-storage-queue://cameldev/" + queueName + "?maxMessages=5")
                         .to(resultName);
 

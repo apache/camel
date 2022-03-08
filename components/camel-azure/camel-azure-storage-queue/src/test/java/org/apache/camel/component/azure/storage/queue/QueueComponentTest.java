@@ -52,7 +52,7 @@ class QueueComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testCreateEndpointWithMinConfigForCredsOnly() throws Exception {
+    public void testCreateEndpointWithMinConfigForCredsOnly() {
         context.getRegistry().bind("creds", new StorageSharedKeyCredential("fake", "fake"));
 
         final QueueEndpoint endpoint
