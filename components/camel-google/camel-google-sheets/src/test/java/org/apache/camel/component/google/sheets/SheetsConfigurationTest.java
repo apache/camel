@@ -46,7 +46,7 @@ public class SheetsConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConfiguration() throws Exception {
+    public void testConfiguration() {
         GoogleSheetsEndpoint endpoint = getMandatoryEndpoint(TEST_URI, GoogleSheetsEndpoint.class);
         GoogleSheetsConfiguration configuration = endpoint.getConfiguration();
         assertNotNull(configuration);
@@ -58,7 +58,7 @@ public class SheetsConfigurationTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
