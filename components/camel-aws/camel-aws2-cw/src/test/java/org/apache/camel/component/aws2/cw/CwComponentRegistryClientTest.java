@@ -48,7 +48,7 @@ public class CwComponentRegistryClientTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithMinimalS3ClientMisconfiguration() throws Exception {
+    public void createEndpointWithMinimalS3ClientMisconfiguration() {
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-cw://camel.apache.org/test");
