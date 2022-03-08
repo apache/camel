@@ -39,14 +39,14 @@ public class IAMListUserIT extends Aws2IAMBase {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:createUser", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.createUser);
                 exchange.getIn().setHeader(IAM2Constants.USERNAME, "test");
             }
         });
         exchange = template.request("direct:listUsers", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.listUsers);
             }
         });
@@ -60,10 +60,10 @@ public class IAMListUserIT extends Aws2IAMBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:createUser").to("aws2-iam://test?operation=createUser");
                 from("direct:listUsers").to("aws2-iam://test?operation=listUsers").to("mock:result");
 

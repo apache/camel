@@ -57,7 +57,7 @@ public class IAMProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listKeys", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.listAccessKeys);
             }
         });
@@ -75,7 +75,7 @@ public class IAMProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:createUser", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.createUser);
                 exchange.getIn().setHeader(IAM2Constants.USERNAME, "test");
             }
@@ -93,7 +93,7 @@ public class IAMProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:createUserPojo", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.createUser);
                 exchange.getIn().setBody(CreateUserRequest.builder().userName("test").build());
             }
@@ -111,7 +111,7 @@ public class IAMProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:deleteUser", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.deleteUser);
                 exchange.getIn().setHeader(IAM2Constants.USERNAME, "test");
             }
@@ -129,7 +129,7 @@ public class IAMProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listUsers", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.listUsers);
             }
         });
@@ -147,7 +147,7 @@ public class IAMProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:createAccessKey", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.createAccessKey);
                 exchange.getIn().setHeader(IAM2Constants.USERNAME, "test");
             }
@@ -166,7 +166,7 @@ public class IAMProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:deleteAccessKey", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.deleteAccessKey);
                 exchange.getIn().setHeader(IAM2Constants.USERNAME, "test");
                 exchange.getIn().setHeader(IAM2Constants.ACCESS_KEY_ID, "1");
@@ -185,7 +185,7 @@ public class IAMProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:getUser", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.getUser);
                 exchange.getIn().setHeader(IAM2Constants.USERNAME, "test");
             }
@@ -203,7 +203,7 @@ public class IAMProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:updateAccessKey", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.updateAccessKey);
                 exchange.getIn().setHeader(IAM2Constants.ACCESS_KEY_ID, "1");
                 exchange.getIn().setHeader(IAM2Constants.ACCESS_KEY_STATUS, StatusType.INACTIVE.name());
@@ -222,7 +222,7 @@ public class IAMProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:createGroup", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.createGroup);
                 exchange.getIn().setHeader(IAM2Constants.GROUP_NAME, "Test");
                 exchange.getIn().setHeader(IAM2Constants.GROUP_PATH, "/test");
@@ -242,7 +242,7 @@ public class IAMProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:createGroup", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.deleteGroup);
                 exchange.getIn().setHeader(IAM2Constants.GROUP_NAME, "Test");
             }
@@ -259,7 +259,7 @@ public class IAMProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listGroups", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.listGroups);
             }
         });
@@ -277,7 +277,7 @@ public class IAMProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:addUserToGroup", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.addUserToGroup);
                 exchange.getIn().setHeader(IAM2Constants.GROUP_NAME, "Test");
                 exchange.getIn().setHeader(IAM2Constants.USERNAME, "Test");
@@ -295,7 +295,7 @@ public class IAMProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:removeUserFromGroup", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.removeUserFromGroup);
                 exchange.getIn().setHeader(IAM2Constants.GROUP_NAME, "Test");
                 exchange.getIn().setHeader(IAM2Constants.USERNAME, "Test");
@@ -309,10 +309,10 @@ public class IAMProducerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:listKeys").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listAccessKeys")
                         .to("mock:result");
                 from("direct:createUser").to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createUser")
