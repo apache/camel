@@ -82,7 +82,6 @@
  ** xref:eips:split-eip.adoc[Split]
  ** xref:eips:step-eip.adoc[Step]
  ** xref:eips:stop-eip.adoc[Stop]
- ** xref:eips:switch-eip.adoc[Switch]
  ** xref:eips:threads-eip.adoc[Threads]
  ** xref:eips:throttle-eip.adoc[Throttle]
  ** xref:eips:to-eip.adoc[To]

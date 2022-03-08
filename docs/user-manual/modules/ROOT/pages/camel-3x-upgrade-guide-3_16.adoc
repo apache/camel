@@ -180,6 +180,28 @@ Removed some unnecessary methods in Java DSL.
 
 Renamed `executorServiceRef` to `executorService`.
 
+=== DoSwitch EIP
+
+Replaced by Choice EIP in precondition mode.
+
+Before it was:
+[source,java]
+----
+.doSwitch()
+    .when(simple("{{?red}}")).to("mock:red")
+    .when(simple("{{?blue}}")).to("mock:blue")
+.end()
+----
+
+Now it is:
+[source,java]
+----
+.choice().precondition()
+    .when(simple("{{?red}}")).to("mock:red")
+    .when(simple("{{?blue}}")).to("mock:blue")
+.end()
+----
+
 === Enrich & Poll Enrich EIPs
 
 Renamed `strategyRef` to `aggregationStrategy`, and marked this option as required.

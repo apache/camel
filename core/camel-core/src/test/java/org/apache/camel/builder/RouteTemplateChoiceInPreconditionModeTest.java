@@ -19,10 +19,10 @@ package org.apache.camel.builder;
 import org.apache.camel.ContextTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class RouteTemplateSwitchTest extends ContextTestSupport {
+class RouteTemplateChoiceInPreconditionModeTest extends ContextTestSupport {
 
     @Test
-    public void testRed() throws Exception {
+    void testRed() throws Exception {
         TemplatedRouteBuilder.builder(context, "myTemplate")
                 .parameter("red", "true")
                 .parameter("blue", "false")
@@ -38,7 +38,7 @@ public class RouteTemplateSwitchTest extends ContextTestSupport {
     }
 
     @Test
-    public void testBlue() throws Exception {
+    void testBlue() throws Exception {
         TemplatedRouteBuilder.builder(context, "myTemplate")
                 .parameter("red", "false")
                 .parameter("blue", "true")
@@ -54,7 +54,7 @@ public class RouteTemplateSwitchTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNotProvidedBlue() throws Exception {
+    void testNotProvidedBlue() throws Exception {
         TemplatedRouteBuilder.builder(context, "myTemplate")
                 .parameter("blue", "true")
                 .routeId("myRoute")
@@ -69,7 +69,7 @@ public class RouteTemplateSwitchTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNotProvided() throws Exception {
+    void testNotProvided() throws Exception {
         TemplatedRouteBuilder.builder(context, "myTemplate")
                 .routeId("myRoute")
                 .add();
@@ -92,7 +92,7 @@ public class RouteTemplateSwitchTest extends ContextTestSupport {
                         .templateOptionalParameter("red")
                         .templateOptionalParameter("blue")
                         .from("direct:start")
-                        .doSwitch()
+                        .choice().precondition()
                             .when(simple("{{?red}}")).to("mock:red")
                             .when(simple("{{?blue}}")).to("mock:blue")
                         .end()
