@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AhcClientConfigRealmUriTest extends BaseAhcTest {
 
     @Test
-    public void testAhcProduce() throws Exception {
+    public void testAhcProduce() {
         Object out = template.requestBody(getAhcEndpointUri()
                                           + "?clientConfig.realm.scheme=DIGEST&clientConfig.realm.principal=someUser"
                                           + "&clientConfig.realm.password=somePass&clientConfig.realm.usePreemptiveAuth=true",
@@ -33,10 +33,10 @@ public class AhcClientConfigRealmUriTest extends BaseAhcTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerEndpointUri())
                         .transform(constant("Bye World"));
             }

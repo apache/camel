@@ -94,10 +94,10 @@ public class AhcProducerSessionTest extends BaseAhcTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("ahc:" + getTestServerEndpointSessionUrl())
                         .to("ahc:" + getTestServerEndpointSessionUrl())
@@ -128,7 +128,7 @@ public class AhcProducerSessionTest extends BaseAhcTest {
                 from(getTestServerEndpointSessionUri())
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 HttpMessage message = exchange.getIn(HttpMessage.class);
                                 Object cookiesObj = message.getHeader("Cookie");
                                 HttpSession session = message.getRequest().getSession();

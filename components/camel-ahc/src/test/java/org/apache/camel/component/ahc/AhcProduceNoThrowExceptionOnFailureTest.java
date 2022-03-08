@@ -40,17 +40,17 @@ public class AhcProduceNoThrowExceptionOnFailureTest extends BaseAhcTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to(getAhcEndpointUri())
                         .to("mock:result");
 
                 from(getTestServerEndpointUri())
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
                                 exchange.getMessage().setBody("Does not work");
                             }

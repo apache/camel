@@ -52,10 +52,10 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerEndpointUri())
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 MyCoolBean cool = exchange.getIn().getBody(MyCoolBean.class);
                                 assertNotNull(cool);
 
@@ -89,10 +89,10 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerEndpointUri())
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 MyCoolBean cool = exchange.getIn().getBody(MyCoolBean.class);
                                 assertNotNull(cool);
 
@@ -128,10 +128,10 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerEndpointUri())
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
                                 assertNotNull(body);
                                 assertEquals("Hello World", body);
@@ -162,10 +162,10 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerEndpointUri())
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
                                 assertNotNull(body);
                                 assertEquals("Hello World", body);
@@ -195,10 +195,10 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerEndpointUri())
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
                                 assertNotNull(body);
                                 assertEquals("Hello World", body);

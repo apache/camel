@@ -43,7 +43,7 @@ public class AhcProduceGetTest extends BaseAhcTest {
     }
 
     @Test
-    public void testAhcProduceDirectly() throws Exception {
+    public void testAhcProduceDirectly() {
         Object out = template.requestBody(getAhcEndpointUri(), null, String.class);
         assertEquals("Bye World", out);
     }
@@ -58,10 +58,10 @@ public class AhcProduceGetTest extends BaseAhcTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to(getAhcEndpointUri())
                         .to("mock:result");
