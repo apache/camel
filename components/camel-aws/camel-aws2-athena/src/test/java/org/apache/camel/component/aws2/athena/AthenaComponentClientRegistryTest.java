@@ -36,7 +36,7 @@ public class AthenaComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithMinimalAthenaClientMisconfiguration() throws Exception {
+    public void createEndpointWithMinimalAthenaClientMisconfiguration() {
         Athena2Component component = context.getComponent("aws2-athena", Athena2Component.class);
         assertThrows(IllegalArgumentException.class, () -> component.createEndpoint("aws2-athena://label"));
     }

@@ -195,7 +195,7 @@ public class AthenaComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void startQueryExecutionAndWaitForQueryCompletion() throws Exception {
+    public void startQueryExecutionAndWaitForQueryCompletion() {
         result.expectedMessageCount(1);
 
         Message message = template.send("direct:startQueryExecution", ExchangePattern.InOut, new Processor() {
@@ -222,7 +222,7 @@ public class AthenaComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void startQueryExecutionAndWaitForQueryCompletionWithTransientErrors() throws Exception {
+    public void startQueryExecutionAndWaitForQueryCompletionWithTransientErrors() {
         result.expectedMessageCount(1);
 
         // 1111... will be returned on the first call to startQueryExecution, 2222... on the second call
@@ -273,7 +273,7 @@ public class AthenaComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void startQueryExecutionAndWaitForQueryCompletionWithUnrecoverableErrors() throws Exception {
+    public void startQueryExecutionAndWaitForQueryCompletionWithUnrecoverableErrors() {
         result.expectedMessageCount(1);
 
         // 1111... will be returned on the first call to startQueryExecution, 2222... on the second call
@@ -324,7 +324,7 @@ public class AthenaComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void startQueryExecutionAndWaitForQueryCompletionTimesOut() throws Exception {
+    public void startQueryExecutionAndWaitForQueryCompletionTimesOut() {
         result.expectedMessageCount(1);
 
         // 3333... will be returned on the first call to startQueryExecution
