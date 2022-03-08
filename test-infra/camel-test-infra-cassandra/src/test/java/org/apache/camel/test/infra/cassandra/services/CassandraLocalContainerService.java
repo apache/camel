@@ -36,7 +36,7 @@ public class CassandraLocalContainerService implements CassandraService, Contain
     }
 
     public CassandraLocalContainerService(String imageName) {
-        container = initContainer(IMAGE_NAME);
+        container = initContainer(imageName);
     }
 
     public CassandraLocalContainerService(CassandraContainer container) {
