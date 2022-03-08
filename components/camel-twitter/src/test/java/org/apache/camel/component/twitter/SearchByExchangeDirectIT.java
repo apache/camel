@@ -89,7 +89,7 @@ public class SearchByExchangeDirectIT extends CamelTwitterITSupport {
     }
 
     @Test
-    public void testSearchTimelineWithDynamicQuerySinceIdAndMaxId() throws Exception {
+    public void testSearchTimelineWithDynamicQuerySinceIdAndMaxId() {
         Map<String, Object> headers = new HashMap<>();
         headers.put(TwitterConstants.TWITTER_KEYWORDS, "java");
         headers.put(TwitterConstants.TWITTER_SINCEID, 258347905419730944L);
