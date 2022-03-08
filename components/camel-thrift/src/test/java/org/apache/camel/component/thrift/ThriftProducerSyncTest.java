@@ -42,7 +42,7 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
 
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void testCalculateMethodInvocation() throws Exception {
+    public void testCalculateMethodInvocation() {
         LOG.info("Thrift calculate method sync test start");
 
         List requestBody = new ArrayList();
@@ -59,7 +59,7 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
 
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void testAddMethodInvocation() throws Exception {
+    public void testAddMethodInvocation() {
         LOG.info("Thrift add method (primitive parameters only) sync test start");
 
         List requestBody = new ArrayList();
@@ -76,7 +76,7 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
 
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void testCalculateWithException() throws Exception {
+    public void testCalculateWithException() {
         LOG.info("Thrift calculate method with business exception sync test start");
 
         List requestBody = new ArrayList();
@@ -94,7 +94,7 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
     }
 
     @Test
-    public void testVoidMethodInvocation() throws Exception {
+    public void testVoidMethodInvocation() {
         LOG.info("Thrift method with empty parameters and void output sync test start");
 
         Object requestBody = null;
@@ -103,7 +103,7 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
     }
 
     @Test
-    public void testOneWayMethodInvocation() throws Exception {
+    public void testOneWayMethodInvocation() {
         LOG.info("Thrift one-way method sync test start");
 
         Object requestBody = null;
@@ -113,7 +113,7 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
 
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void testAllTypesMethodInvocation() throws Exception {
+    public void testAllTypesMethodInvocation() {
         LOG.info("Thrift method with all possile types sync test start");
 
         List requestBody = new ArrayList();
@@ -140,7 +140,7 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
 
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void testEchoMethodInvocation() throws Exception {
+    public void testEchoMethodInvocation() {
         LOG.info("Thrift echo method (return output as pass input parameter) sync test start");
 
         List requestBody = new ArrayList();
@@ -156,7 +156,7 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

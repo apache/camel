@@ -57,11 +57,11 @@ public class ThriftMarshalAndUnmarshalSpringTest extends CamelSpringTestSupport 
     }
 
     @Test
-    public void testMarshalAndUnmarshalWithDSL3() throws Exception {
+    public void testMarshalAndUnmarshalWithDSL3() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:unmarshalC").unmarshal().thrift(new CamelException("wrong instance")).to("mock:reverse");
                 }
             });

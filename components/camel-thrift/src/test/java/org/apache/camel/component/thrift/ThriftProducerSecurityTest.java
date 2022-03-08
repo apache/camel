@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.thrift;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -95,7 +94,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
     }
 
     @AfterAll
-    public static void stopThriftServer() throws IOException {
+    public static void stopThriftServer() {
         if (server != null) {
             server.stop();
             serverTransport.close();
@@ -104,7 +103,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         Registry reg = new SimpleRegistry();
         SSLContextParameters sslParameters = new SSLContextParameters();
 
@@ -123,7 +122,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void testCalculateMethodInvocation() throws Exception {
+    public void testCalculateMethodInvocation() {
         LOG.info("Thrift calculate method sync test start");
 
         List requestBody = new ArrayList();
@@ -140,7 +139,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void testCalculateWithException() throws Exception {
+    public void testCalculateWithException() {
         LOG.info("Thrift calculate method with business exception sync test start");
 
         List requestBody = new ArrayList();
@@ -158,7 +157,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
     }
 
     @Test
-    public void testVoidMethodInvocation() throws Exception {
+    public void testVoidMethodInvocation() {
         LOG.info("Thrift method with empty parameters and void output sync test start");
 
         Object requestBody = null;
@@ -167,7 +166,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
     }
 
     @Test
-    public void testOneWayMethodInvocation() throws Exception {
+    public void testOneWayMethodInvocation() {
         LOG.info("Thrift one-way method sync test start");
 
         Object requestBody = null;
@@ -177,7 +176,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void testAllTypesMethodInvocation() throws Exception {
+    public void testAllTypesMethodInvocation() {
         LOG.info("Thrift method with all possile types sync test start");
 
         List requestBody = new ArrayList();
@@ -203,7 +202,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

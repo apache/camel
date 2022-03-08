@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.thrift.local;
 
-import java.io.IOException;
 import java.net.InetAddress;
 
 import org.apache.camel.component.thrift.ThriftProducerSecurityTest;
@@ -85,7 +84,7 @@ public class ThriftThreadPoolServerTest extends CamelTestSupport {
     }
 
     @AfterEach
-    public void stopThriftServer() throws IOException {
+    public void stopThriftServer() {
         if (server != null) {
             server.stop();
             serverTransport.close();
