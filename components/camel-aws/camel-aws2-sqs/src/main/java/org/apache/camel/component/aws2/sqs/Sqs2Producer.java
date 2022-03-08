@@ -303,9 +303,21 @@ public class Sqs2Producer extends DefaultProducer {
                     if (mav != null) {
                         result.put(entry.getKey(), mav);
                     } else {
-                        // cannot translate the message header to message attribute value
-                        LOG.warn("Cannot put the message header key={}, value={} into Sqs MessageAttribute", entry.getKey(),
-                                entry.getValue());
+                        String action = getConfiguration().getMessageHeaderExceededLimit();
+                        if ("WARN".equalsIgnoreCase(action) || "WARN_ONCE".equalsIgnoreCase(action)) {
+                            // cannot translate the message header to message attribute value
+                            LOG.warn("Cannot put the message header key={}, value={} into SQS MessageAttribute", entry.getKey(),
+                                    entry.getValue());
+                            if ("WARN_ONCE".equalsIgnoreCase(action)) {
+                                break;
+                            }
+                        } else if ("IGNORE".equalsIgnoreCase(action)) {
+                            break;
+                        } else if ("FAIL".equalsIgnoreCase(action)) {
+                            throw new IllegalArgumentException(
+                                    "Number of message headers exceeded. At most " + MAX_ATTRIBUTES
+                                                               + " headers is allowed when sending to AWS SQS.");
+                        }
                     }
                 }
             }
