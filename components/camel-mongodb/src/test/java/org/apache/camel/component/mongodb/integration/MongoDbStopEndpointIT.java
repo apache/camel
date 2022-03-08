@@ -33,7 +33,7 @@ public class MongoDbStopEndpointIT extends AbstractMongoDbITSupport {
     MongoDbEndpoint endpoint;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:insertJsonString").routeId("insert").to(endpoint);
@@ -44,7 +44,7 @@ public class MongoDbStopEndpointIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void testStopEndpoint() throws Exception {
+    public void testStopEndpoint() {
         assertEquals(0, testCollection.countDocuments());
 
         template.requestBody("direct:insertJsonString", "{\"scientist\": \"Newton\", \"_id\": \"" + MY_ID + "\"}");

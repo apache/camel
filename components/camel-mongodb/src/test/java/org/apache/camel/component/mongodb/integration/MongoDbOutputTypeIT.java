@@ -95,7 +95,7 @@ public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport {
         try {
             RouteBuilder taillableRouteBuilder = new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true&outputType=MongoIterable")
                             .to("mock:dummy");
                 }
@@ -113,7 +113,7 @@ public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport {
         try {
             RouteBuilder taillableRouteBuilder = new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing&outputType=MongoIterable")
                             .id("tailableCursorConsumer1").autoStartup(false).to("mock:test");
                 }
@@ -127,7 +127,7 @@ public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
 

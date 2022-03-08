@@ -77,7 +77,7 @@ public class MongoDbConnectionBeansIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void checkConnectionOnComponent() throws Exception {
+    public void checkConnectionOnComponent() {
         Endpoint endpoint = context.getEndpoint("mongodb:justARouteName");
 
         assertIsInstanceOf(MongoDbEndpoint.class, endpoint);

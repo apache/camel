@@ -45,7 +45,7 @@ public class MongoDbIdempotentRepositoryIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void add() throws Exception {
+    public void add() {
         String randomUUIDString = UUID.randomUUID().toString();
 
         boolean added = repo.add(randomUUIDString);
@@ -54,7 +54,7 @@ public class MongoDbIdempotentRepositoryIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void addAndContains() throws Exception {
+    public void addAndContains() {
         String randomUUIDString = UUID.randomUUID().toString();
 
         repo.add(randomUUIDString);
@@ -65,7 +65,7 @@ public class MongoDbIdempotentRepositoryIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void addAndRemove() throws Exception {
+    public void addAndRemove() {
         String randomUUIDString = UUID.randomUUID().toString();
 
         repo.add(randomUUIDString);
@@ -77,7 +77,7 @@ public class MongoDbIdempotentRepositoryIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void addDuplicatedFails() throws Exception {
+    public void addDuplicatedFails() {
         String randomUUIDString = UUID.randomUUID().toString();
 
         repo.add(randomUUIDString);
@@ -89,7 +89,7 @@ public class MongoDbIdempotentRepositoryIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void deleteMissingiIsFailse() throws Exception {
+    public void deleteMissingiIsFailse() {
         String randomUUIDString = UUID.randomUUID().toString();
         assertEquals(0, testCollection.countDocuments());
         boolean removed = repo.remove(randomUUIDString);
@@ -97,14 +97,14 @@ public class MongoDbIdempotentRepositoryIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void containsMissingReturnsFalse() throws Exception {
+    public void containsMissingReturnsFalse() {
         String randomUUIDString = UUID.randomUUID().toString();
         boolean found = repo.contains(randomUUIDString);
         assertTrue(!found, "Non existing item is not found");
     }
 
     @Test
-    public void confirmAllwaysReturnsTrue() throws Exception {
+    public void confirmAllwaysReturnsTrue() {
         String randomUUIDString = UUID.randomUUID().toString();
         boolean found = repo.confirm(randomUUIDString);
         assertTrue(found, "Confirm always returns true");

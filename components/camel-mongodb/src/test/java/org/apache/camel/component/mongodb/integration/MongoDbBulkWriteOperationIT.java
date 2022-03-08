@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class MongoDbBulkWriteOperationIT extends AbstractMongoDbITSupport {
 
     @Test
-    public void testBulkWrite() throws Exception {
+    public void testBulkWrite() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -69,7 +69,7 @@ public class MongoDbBulkWriteOperationIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void testOrderedBulkWriteWithError() throws Exception {
+    public void testOrderedBulkWriteWithError() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -94,7 +94,7 @@ public class MongoDbBulkWriteOperationIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void testUnorderedBulkWriteWithError() throws Exception {
+    public void testUnorderedBulkWriteWithError() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -118,7 +118,7 @@ public class MongoDbBulkWriteOperationIT extends AbstractMongoDbITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:bulkWrite").to(

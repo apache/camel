@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class MongoDbExceptionHandlingIT extends AbstractMongoDbITSupport {
 
     @Test
-    public void testInduceParseException() throws Exception {
+    public void testInduceParseException() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -44,7 +44,7 @@ public class MongoDbExceptionHandlingIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void testInduceParseAndThenOkException() throws Exception {
+    public void testInduceParseAndThenOkException() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -64,7 +64,7 @@ public class MongoDbExceptionHandlingIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void testErroneousDynamicOperation() throws Exception {
+    public void testErroneousDynamicOperation() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -80,7 +80,7 @@ public class MongoDbExceptionHandlingIT extends AbstractMongoDbITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
 

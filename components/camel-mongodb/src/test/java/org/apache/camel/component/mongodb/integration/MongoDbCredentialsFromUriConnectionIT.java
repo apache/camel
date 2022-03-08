@@ -42,7 +42,7 @@ public class MongoDbCredentialsFromUriConnectionIT extends MongoDbOperationsIT {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         //This is necessary to avoid creating connection bean for the mongodb component and test credentials instead
         @SuppressWarnings("deprecation")
         CamelContext ctx = new DefaultCamelContext();
@@ -67,7 +67,7 @@ public class MongoDbCredentialsFromUriConnectionIT extends MongoDbOperationsIT {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
 

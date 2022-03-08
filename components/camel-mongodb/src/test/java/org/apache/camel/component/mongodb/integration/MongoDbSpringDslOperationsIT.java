@@ -42,10 +42,10 @@ public class MongoDbSpringDslOperationsIT extends MongoDbOperationsIT {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Nothing, all routes are initialized by the Spring DSL context
                 // file
             }
