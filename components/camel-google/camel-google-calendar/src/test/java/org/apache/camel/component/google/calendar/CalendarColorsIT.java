@@ -38,7 +38,7 @@ public class CalendarColorsIT extends AbstractGoogleCalendarTestSupport {
             = GoogleCalendarApiCollection.getCollection().getApiName(CalendarColorsApiMethod.class).getName();
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         com.google.api.services.calendar.model.Colors result = requestBody("direct://GET", null);
 
         assertNotNull(result, "get result");
@@ -46,7 +46,7 @@ public class CalendarColorsIT extends AbstractGoogleCalendarTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

@@ -60,7 +60,7 @@ public class CalendarConfigurationTest extends AbstractGoogleCalendarTestSupport
     }
 
     @Test
-    public void testConfiguration() throws Exception {
+    public void testConfiguration() {
         GoogleCalendarEndpoint endpoint = getMandatoryEndpoint(TEST_URI, GoogleCalendarEndpoint.class);
         GoogleCalendarConfiguration configuration = endpoint.getConfiguration();
         assertNotNull(configuration);
@@ -72,7 +72,7 @@ public class CalendarConfigurationTest extends AbstractGoogleCalendarTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

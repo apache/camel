@@ -38,7 +38,7 @@ public class CalendarAclIT extends AbstractGoogleCalendarTestSupport {
             = GoogleCalendarApiCollection.getCollection().getApiName(CalendarAclApiMethod.class).getName();
 
     @Test
-    public void testList() throws Exception {
+    public void testList() {
         // using String message body for single parameter "calendarId"
         final com.google.api.services.calendar.model.Acl result = requestBody("direct://LIST", getCalendar().getId());
 
@@ -49,7 +49,7 @@ public class CalendarAclIT extends AbstractGoogleCalendarTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
