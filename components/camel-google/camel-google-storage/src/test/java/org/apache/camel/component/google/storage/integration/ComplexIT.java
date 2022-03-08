@@ -46,10 +46,10 @@ public class ComplexIT extends CamelTestSupport {
     private MockEndpoint mockProcessed;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 final int numberOfObjects = 3;
                 //final String serviceAccountKeyFile = "somefile.json";
                 final String serviceAccountKeyFile = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
