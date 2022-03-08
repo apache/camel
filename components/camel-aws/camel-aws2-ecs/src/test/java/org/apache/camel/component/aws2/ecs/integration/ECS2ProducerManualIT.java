@@ -40,12 +40,12 @@ public class ECS2ProducerManualIT extends CamelTestSupport {
     private MockEndpoint mock;
 
     @Test
-    public void translateTextTest() throws Exception {
+    public void translateTextTest() {
 
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listClusters", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Test");
             }
         });
@@ -55,10 +55,10 @@ public class ECS2ProducerManualIT extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:listClusters")
                         .to("aws2-ecs://test?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=eu-west-1&operation=listClusters")
                         .to("mock:result");

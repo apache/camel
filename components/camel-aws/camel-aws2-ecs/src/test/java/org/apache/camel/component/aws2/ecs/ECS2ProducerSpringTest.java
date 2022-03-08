@@ -42,7 +42,7 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listClusters", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(ECS2Constants.OPERATION, ECS2Operations.listClusters);
             }
         });
@@ -60,7 +60,7 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listClustersPojo", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(ECS2Constants.OPERATION, ECS2Operations.listClusters);
                 exchange.getIn().setBody(ListClustersRequest.builder().maxResults(10).build());
             }
@@ -79,7 +79,7 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:createCluster", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(ECS2Constants.OPERATION, ECS2Operations.createCluster);
                 exchange.getIn().setHeader(ECS2Constants.CLUSTER_NAME, "Test");
             }
@@ -97,7 +97,7 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:describeCluster", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(ECS2Constants.OPERATION, ECS2Operations.describeCluster);
                 exchange.getIn().setHeader(ECS2Constants.CLUSTER_NAME, "Test");
             }
@@ -115,7 +115,7 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:deleteCluster", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(ECS2Constants.OPERATION, ECS2Operations.deleteCluster);
                 exchange.getIn().setHeader(ECS2Constants.CLUSTER_NAME, "Test");
             }
