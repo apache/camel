@@ -107,7 +107,7 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void testPropertyBuilder() throws Exception {
+    public void testPropertyBuilder() {
         Properties props = producer.getProps();
         assertEquals("broker1:1234,broker2:4567", props.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG));
     }
@@ -142,7 +142,7 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void processAsyncSendsMessage() throws Exception {
+    public void processAsyncSendsMessage() {
         endpoint.getConfiguration().setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getMessage()).thenReturn(in);

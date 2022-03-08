@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class KafkaComponentTest extends CamelTestSupport {
 
     @Test
-    public void testPropertiesSet() throws Exception {
+    public void testPropertiesSet() {
         String uri = "kafka:mytopic?brokers=broker1:12345,broker2:12566&partitioner=com.class.Party";
 
         KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
@@ -46,7 +46,7 @@ public class KafkaComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBrokersOnComponent() throws Exception {
+    public void testBrokersOnComponent() {
         KafkaComponent kafka = context.getComponent("kafka", KafkaComponent.class);
         kafka.getConfiguration().setBrokers("broker1:12345,broker2:12566");
 
@@ -255,7 +255,7 @@ public class KafkaComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testCreateProducerConfigTruststorePassword() throws Exception {
+    public void testCreateProducerConfigTruststorePassword() {
         KeyStoreParameters keyStoreParameters = new KeyStoreParameters();
         keyStoreParameters.setPassword("my-password");
 
@@ -275,7 +275,7 @@ public class KafkaComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testCreateConsumerConfigTruststorePassword() throws Exception {
+    public void testCreateConsumerConfigTruststorePassword() {
         KeyStoreParameters keyStoreParameters = new KeyStoreParameters();
         keyStoreParameters.setPassword("my-password");
 

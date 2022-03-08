@@ -38,7 +38,7 @@ public class KafkaConsumerTest {
     private ExchangeFactory ef = mock(ExchangeFactory.class);
 
     @Test
-    public void consumerRequiresBootstrapServers() throws Exception {
+    public void consumerRequiresBootstrapServers() {
         when(endpoint.getCamelContext()).thenReturn(ecc);
         when(ecc.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(ef);
@@ -55,7 +55,7 @@ public class KafkaConsumerTest {
     }
 
     @Test
-    public void consumerOnlyRequiresBootstrapServers() throws Exception {
+    public void consumerOnlyRequiresBootstrapServers() {
         when(endpoint.getCamelContext()).thenReturn(ecc);
         when(ecc.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(ef);
