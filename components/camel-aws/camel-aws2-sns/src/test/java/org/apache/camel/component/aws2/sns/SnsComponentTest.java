@@ -33,9 +33,9 @@ public class SnsComponentTest extends CamelTestSupport {
     AmazonSNSClientMock client = new AmazonSNSClientMock();
 
     @Test
-    public void sendInOnly() throws Exception {
+    public void sendInOnly() {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Sns2Constants.SUBJECT, "This is my subject text.");
                 exchange.getIn().setBody("This is my message text.");
             }
@@ -45,9 +45,9 @@ public class SnsComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void sendInOut() throws Exception {
+    public void sendInOut() {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Sns2Constants.SUBJECT, "This is my subject text.");
                 exchange.getIn().setBody("This is my message text.");
             }
@@ -57,10 +57,10 @@ public class SnsComponentTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient");
             }
         };

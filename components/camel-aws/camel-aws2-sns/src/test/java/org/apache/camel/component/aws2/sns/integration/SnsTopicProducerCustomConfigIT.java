@@ -34,9 +34,9 @@ public class SnsTopicProducerCustomConfigIT extends Aws2SNSBase {
     public static SharedNameGenerator sharedNameGenerator = new TestEntityNameGenerator();
 
     @Test
-    public void sendInOnly() throws Exception {
+    public void sendInOnly() {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Sns2Constants.SUBJECT, "This is my subject");
                 exchange.getIn().setBody("This is my message text.");
             }
@@ -46,9 +46,9 @@ public class SnsTopicProducerCustomConfigIT extends Aws2SNSBase {
     }
 
     @Test
-    public void sendInOut() throws Exception {
+    public void sendInOut() {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Sns2Constants.SUBJECT, "This is my subject");
                 exchange.getIn().setBody("This is my message text.");
             }
@@ -58,10 +58,10 @@ public class SnsTopicProducerCustomConfigIT extends Aws2SNSBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .toF("aws2-sns://%s?subject=The+subject+message&configuration=#class:%s&autoCreateTopic=true",
                                 sharedNameGenerator.getName(), TestSnsConfiguration.class.getName());
