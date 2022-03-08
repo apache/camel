@@ -615,7 +615,7 @@ class Yylex {
                 case 39:
                     break;
                 case 1: {
-                    throw new DeserializationException(yychar, DeserializationException.Problems.UNEXPECTED_CHARACTER, new Character(yycharat(0)));
+                    throw new DeserializationException(yychar, DeserializationException.Problems.UNEXPECTED_CHARACTER, Character.valueOf(yycharat(0)));
                 }
                 case 40:
                     break;
