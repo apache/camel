@@ -24,16 +24,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AhcClientConfigUriTest extends BaseAhcTest {
 
     @Test
-    public void testAhcProduce() throws Exception {
+    public void testAhcProduce() {
         Object out = template.requestBody(getAhcEndpointUri() + "?clientConfig.maxRedirects=4", null, String.class);
         assertEquals("Bye World", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerEndpointUri())
                         .transform(constant("Bye World"));
             }
