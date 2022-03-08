@@ -45,7 +45,7 @@ public class CouchbaseEndpointTest {
     }
 
     @Test
-    public void testHostnameRequired() throws Exception {
+    public void testHostnameRequired() {
         final CouchbaseComponent component = new CouchbaseComponent();
 
         assertThrows(IllegalArgumentException.class,
@@ -55,7 +55,7 @@ public class CouchbaseEndpointTest {
     }
 
     @Test
-    public void testSchemeRequired() throws Exception {
+    public void testSchemeRequired() {
         final CouchbaseComponent component = new CouchbaseComponent();
 
         assertThrows(IllegalArgumentException.class,
@@ -70,7 +70,7 @@ public class CouchbaseEndpointTest {
     }
 
     @Test
-    public void testCouchbaseEndpointWithoutProtocol() throws Exception {
+    public void testCouchbaseEndpointWithoutProtocol() {
         final CouchbaseComponent component = new CouchbaseComponent();
 
         assertThrows(IllegalArgumentException.class,
@@ -85,7 +85,7 @@ public class CouchbaseEndpointTest {
     }
 
     @Test
-    public void testCouchbaseEndpointCreateProducer() throws Exception {
+    public void testCouchbaseEndpointCreateProducer() {
         Map<String, Object> params = new HashMap<>();
         params.put("bucket", "bucket");
 
