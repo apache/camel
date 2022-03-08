@@ -53,7 +53,7 @@ public class TelegramMockRoutes extends RouteBuilder {
     }
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
 
         mocks.forEach((key, value) -> {
             from("netty-http:http://localhost:" + port + "/botmock-token/" + key + "?httpMethodRestrict=" + value.method)

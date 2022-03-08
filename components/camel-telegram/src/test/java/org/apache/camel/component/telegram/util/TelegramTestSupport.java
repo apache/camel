@@ -41,7 +41,7 @@ public class TelegramTestSupport extends CamelTestSupport {
     private TelegramMockRoutes mockRoutes;
 
     @BeforeAll
-    public static void initPort() throws Exception {
+    public static void initPort() {
         port = AvailablePortFinder.getNextAvailable();
     }
 

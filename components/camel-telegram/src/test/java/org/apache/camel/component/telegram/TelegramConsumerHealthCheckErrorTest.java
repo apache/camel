@@ -52,7 +52,7 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
     }
 
     @Test
-    public void testReceptionOfTwoMessages() throws Exception {
+    public void testReceptionOfTwoMessages() {
         HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
         HealthCheckRepository repo = hcr.getRepository("consumers").get();
 
@@ -88,12 +88,12 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
     }
 
     @Override
-    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+    protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
                 getMockRoutes(),
                 new RouteBuilder() {
                     @Override
-                    public void configure() throws Exception {
+                    public void configure() {
                         from("telegram:bots?authorizationToken=mock-token").routeId("telegram")
                                 .convertBodyTo(String.class)
                                 .to("mock:telegram");
