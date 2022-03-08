@@ -46,7 +46,7 @@ public class CassandraComponentProducerUnpreparedIT extends BaseCassandra {
     ProducerTemplate noParameterProducerTemplate;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
 
@@ -59,7 +59,7 @@ public class CassandraComponentProducerUnpreparedIT extends BaseCassandra {
     }
 
     @Test
-    public void testRequestUriCql() throws Exception {
+    public void testRequestUriCql() {
         producerTemplate.requestBody(Arrays.asList("w_jiang", "Willem", "Jiang"));
 
         ResultSet resultSet = getSession()
@@ -71,7 +71,7 @@ public class CassandraComponentProducerUnpreparedIT extends BaseCassandra {
     }
 
     @Test
-    public void testRequestNoParameterNull() throws Exception {
+    public void testRequestNoParameterNull() {
         Object response = noParameterProducerTemplate.requestBody(null);
 
         assertNotNull(response);
@@ -79,7 +79,7 @@ public class CassandraComponentProducerUnpreparedIT extends BaseCassandra {
     }
 
     @Test
-    public void testRequestNoParameterEmpty() throws Exception {
+    public void testRequestNoParameterEmpty() {
         Object response = noParameterProducerTemplate.requestBody(null);
 
         assertNotNull(response);
@@ -87,7 +87,7 @@ public class CassandraComponentProducerUnpreparedIT extends BaseCassandra {
     }
 
     @Test
-    public void testRequestMessageCql() throws Exception {
+    public void testRequestMessageCql() {
         producerTemplate.requestBodyAndHeader(new Object[] { "Claus 2", "Ibsen 2", "c_ibsen" }, CassandraConstants.CQL_QUERY,
                 "update camel_user set first_name=?, last_name=? where login=?");
 
@@ -103,7 +103,7 @@ public class CassandraComponentProducerUnpreparedIT extends BaseCassandra {
      * Test with incoming message containing a header with RegularStatement.
      */
     @Test
-    public void testRequestMessageStatement() throws Exception {
+    public void testRequestMessageStatement() {
         Update update = QueryBuilder.update("camel_user")
                 .setColumn("first_name", literal("Claus 2"))
                 .setColumn("last_name", literal("Ibsen 2"))

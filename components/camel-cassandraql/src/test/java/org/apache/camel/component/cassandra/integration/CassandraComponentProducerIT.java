@@ -38,7 +38,6 @@ import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CassandraComponentProducerIT extends BaseCassandra {
 
@@ -61,7 +60,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
     ProducerTemplate producerTemplateNoEndpointCql;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
 
@@ -79,7 +78,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
     }
 
     @Test
-    public void testRequestUriCql() throws Exception {
+    public void testRequestUriCql() {
         producerTemplate.requestBody(Arrays.asList("w_jiang", "Willem", "Jiang"));
 
         ResultSet resultSet = getSession()
@@ -91,7 +90,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
     }
 
     @Test
-    public void testRequestNoParameterNull() throws Exception {
+    public void testRequestNoParameterNull() {
         Object response = noParameterProducerTemplate.requestBody(null);
 
         assertNotNull(response);
@@ -99,7 +98,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
     }
 
     @Test
-    public void testRequestNoParameterEmpty() throws Exception {
+    public void testRequestNoParameterEmpty() {
         Object response = noParameterProducerTemplate.requestBody(Collections.emptyList());
 
         assertNotNull(response);
@@ -107,7 +106,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
     }
 
     @Test
-    public void testRequestMessageCql() throws Exception {
+    public void testRequestMessageCql() {
         producerTemplate.requestBodyAndHeader(new Object[] { "Claus 2", "Ibsen 2", "c_ibsen" }, CassandraConstants.CQL_QUERY,
                 "update camel_user set first_name=?, last_name=? where login=?");
 
@@ -120,7 +119,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
     }
 
     @Test
-    public void testLoadBalancing() throws Exception {
+    public void testLoadBalancing() {
         loadBalancingPolicyTemplate.requestBodyAndHeader(new Object[] { "Claus 2", "Ibsen 2", "c_ibsen" },
                 CassandraConstants.CQL_QUERY,
                 "update camel_user set first_name=?, last_name=? where login=?");
@@ -139,7 +138,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
      * Test with incoming message containing a header with RegularStatement.
      */
     @Test
-    public void testRequestMessageStatement() throws Exception {
+    public void testRequestMessageStatement() {
 
         Update update = QueryBuilder.update("camel_user")
                 .setColumn("first_name", bindMarker())
@@ -161,7 +160,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
      * the cassandracql endpoint not containing a "cql" Uri parameter
      */
     @Test
-    public void testEndpointNoCqlParameter() throws Exception {
+    public void testEndpointNoCqlParameter() {
         Update update = QueryBuilder.update("camel_user")
                 .setColumn("first_name", bindMarker())
                 .whereColumn("login").isEqualTo(bindMarker());
@@ -190,7 +189,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
     }
 
     @Test
-    public void testRequestNotConsistent() throws Exception {
+    public void testRequestNotConsistent() {
         CassandraEndpoint endpoint
                 = getMandatoryEndpoint(String.format("cql://%s/%s?cql=%s&consistencyLevel=ANY", getUrl(), KEYSPACE_NAME, CQL),
                         CassandraEndpoint.class);

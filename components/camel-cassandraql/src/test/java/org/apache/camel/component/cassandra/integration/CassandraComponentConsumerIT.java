@@ -38,7 +38,7 @@ public class CassandraComponentConsumerIT extends BaseCassandra {
         mock.expectedMinimumMessageCount(1);
         mock.whenAnyExchangeReceived(new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Object body = exchange.getIn().getBody();
                 assertTrue(body instanceof List);
             }
@@ -53,7 +53,7 @@ public class CassandraComponentConsumerIT extends BaseCassandra {
         mock.expectedMinimumMessageCount(1);
         mock.whenAnyExchangeReceived(new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Object body = exchange.getIn().getBody();
                 assertTrue(body instanceof List);
             }
@@ -68,7 +68,7 @@ public class CassandraComponentConsumerIT extends BaseCassandra {
         mock.expectedMinimumMessageCount(1);
         mock.whenAnyExchangeReceived(new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Object body = exchange.getIn().getBody();
                 assertTrue(body instanceof Row);
             }
@@ -79,7 +79,7 @@ public class CassandraComponentConsumerIT extends BaseCassandra {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from(String.format("cql://%s/%s?cql=%s", getUrl(), KEYSPACE_NAME, CQL)).to("mock:resultAll");
