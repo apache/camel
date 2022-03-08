@@ -37,7 +37,7 @@ public class MSKComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithMinimalMSKClientMisconfiguration() throws Exception {
+    public void createEndpointWithMinimalMSKClientMisconfiguration() {
 
         MSK2Component component = context.getComponent("aws2-msk", MSK2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {

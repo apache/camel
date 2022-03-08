@@ -48,7 +48,7 @@ public class MSKProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listClusters", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
             }
         });
 
@@ -65,7 +65,7 @@ public class MSKProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listClustersPojo", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(ListClustersRequest.builder().maxResults(10).build());
             }
         });
@@ -83,7 +83,7 @@ public class MSKProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:createCluster", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(MSK2Constants.CLUSTER_NAME, "test-kafka");
                 exchange.getIn().setHeader(MSK2Constants.CLUSTER_KAFKA_VERSION, "2.1.1");
                 exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_NUMBER, 2);
@@ -105,7 +105,7 @@ public class MSKProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:deleteCluster", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(MSK2Constants.CLUSTER_ARN, "test-kafka");
             }
         });
@@ -123,7 +123,7 @@ public class MSKProducerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:describeCluster", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(MSK2Constants.CLUSTER_ARN, "test-kafka");
             }
         });
@@ -136,10 +136,10 @@ public class MSKProducerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:listClusters").to("aws2-msk://test?mskClient=#amazonMskClient&operation=listClusters")
                         .to("mock:result");
                 from("direct:listClustersPojo")
