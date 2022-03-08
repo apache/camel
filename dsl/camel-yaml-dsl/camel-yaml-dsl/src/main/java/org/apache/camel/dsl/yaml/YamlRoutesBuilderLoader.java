@@ -282,6 +282,12 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             var list = preConfigureTraitConfiguration(configuration);
             answer.addAll(list);
         }
+        // if there are trait environment then include them early
+        configuration = nodeAt(root, "/spec/traits/environment");
+        if (configuration != null) {
+            var list = preConfigureTraitEnvironment(configuration);
+            answer.addAll(list);
+        }
         // if there are sources then include them before routes
         Node sources = nodeAt(root, "/spec/sources");
         if (sources != null) {
@@ -378,6 +384,37 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     lines.forEach(ps::parseConfigurationValue);
                 } catch (Exception e) {
                     throw new RuntimeCamelException("Error adding properties from spec/traits/camel/configuration", e);
+                }
+            }
+        });
+
+        return answer;
+    }
+
+    private List<CamelContextCustomizer> preConfigureTraitEnvironment(Node node) {
+        List<CamelContextCustomizer> answer = new ArrayList<>();
+
+        Node target = nodeAt(node, "configuration/vars/");
+        final List<String> lines = asStringList(target);
+        if (lines == null || lines.isEmpty()) {
+            return answer;
+        }
+
+        answer.add(new CamelContextCustomizer() {
+            @Override
+            public void configure(CamelContext camelContext) {
+                try {
+                    PropertiesComponent pc = camelContext.getPropertiesComponent();
+                    IntegrationConfigurationPropertiesSource ps
+                            = (IntegrationConfigurationPropertiesSource) pc
+                                    .getPropertiesSource("environment-trait-configuration");
+                    if (ps == null) {
+                        ps = new IntegrationConfigurationPropertiesSource("environment-trait-configuration");
+                        pc.addPropertiesSource(ps);
+                    }
+                    lines.forEach(ps::parseConfigurationValue);
+                } catch (Exception e) {
+                    throw new RuntimeCamelException("Error adding properties from spec/traits/environment/configuration", e);
                 }
             }
         });

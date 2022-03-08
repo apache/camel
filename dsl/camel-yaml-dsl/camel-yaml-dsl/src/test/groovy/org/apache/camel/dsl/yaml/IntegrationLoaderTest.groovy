@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.model.LogDefinition
 import org.apache.camel.spi.PropertiesComponent
 
 class IntegrationLoaderTest extends YamlTestSupport {
@@ -82,6 +83,49 @@ class IntegrationLoaderTest extends YamlTestSupport {
         PropertiesComponent pc = context.getPropertiesComponent()
         pc.resolveProperty("camel.component.seda.queueSize").get() == "456"
         pc.resolveProperty("camel.component.seda.default-block-when-full").get() == "true"
+    }
+
+    def "integration env configuration"() {
+        when:
+        loadIntegrations('''
+                apiVersion: camel.apache.org/v1
+                kind: Integration
+                metadata:
+                  name: foobar2
+                spec:
+                  traits:
+                    camel:
+                      configuration:
+                        properties:
+                          - camel.component.seda.queueSize = 456
+                          - camel.component.seda.default-block-when-full = true
+                    environment:
+                      configuration:
+                        vars:
+                          - TEST_MESSAGE = Hello World    
+                  flows:
+                    - from:
+                        uri: "seda:foo"
+                        steps:    
+                          - log:
+                             logging-level: "INFO"
+                             message: "{{TEST_MESSAGE}}"
+                             log-name: "yaml"
+                          - to: "mock:result"   
+                          ''')
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0].outputs[0], LogDefinition) {
+            loggingLevel == 'INFO'
+            message == '{{TEST_MESSAGE}}'
+            logName == 'yaml'
+        }
+
+        PropertiesComponent pc = context.getPropertiesComponent()
+        pc.resolveProperty("camel.component.seda.queueSize").get() == "456"
+        pc.resolveProperty("camel.component.seda.default-block-when-full").get() == "true"
+        pc.resolveProperty("TEST_MESSAGE").get() == "Hello World"
     }
 
 }
