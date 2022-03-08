@@ -18,8 +18,6 @@ package org.apache.camel.component.kafka.integration;
 
 import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
@@ -52,7 +50,7 @@ public class KafkaConsumerIdempotentWithProcessorIT extends KafkaConsumerIdempot
     private int size = 200;
 
     @BeforeEach
-    public void before() throws ExecutionException, InterruptedException, TimeoutException {
+    public void before() {
         kafkaIdempotentRepository.clear();
         kafkaAdminClient.deleteTopics(Arrays.asList(TOPIC, "TEST_IDEMPOTENT")).all();
         doSend(size, TOPIC);
@@ -65,12 +63,12 @@ public class KafkaConsumerIdempotentWithProcessorIT extends KafkaConsumerIdempot
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(from).routeId("idemp-with-prop")
                         .process(exchange -> {
                             byte[] id = exchange.getIn().getHeader("id", byte[].class);

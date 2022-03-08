@@ -43,7 +43,7 @@ public class KafkaConsumerRebalanceIT extends BaseEmbeddedKafkaTestSupport {
     private CountDownLatch messagesLatch;
 
     @Override
-    protected void doPreSetup() throws Exception {
+    protected void doPreSetup() {
         messagesLatch = new CountDownLatch(1);
         stateRepository = new OffsetStateRepository(messagesLatch);
     }
@@ -63,10 +63,10 @@ public class KafkaConsumerRebalanceIT extends BaseEmbeddedKafkaTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("kafka:" + TOPIC + "?groupId=" + TOPIC + "_GROUP" + "&autoCommitIntervalMs=1000"
                      + "&autoOffsetReset=latest" + "&consumersCount=1"
                      + "&offsetRepository=#offset").routeId("consumer-rebalance-route").to("mock:result");

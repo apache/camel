@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kafka.integration;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -110,7 +109,7 @@ public class KafkaConsumerHealthCheckIT extends BaseEmbeddedKafkaTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
@@ -123,7 +122,7 @@ public class KafkaConsumerHealthCheckIT extends BaseEmbeddedKafkaTestSupport {
 
     @Order(1)
     @Test
-    public void kafkaConsumerHealthCheck() throws InterruptedException, IOException {
+    public void kafkaConsumerHealthCheck() throws InterruptedException {
         // health-check liveness should be UP
         Collection<HealthCheck.Result> res = HealthCheckHelper.invokeLiveness(context);
         boolean up = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));

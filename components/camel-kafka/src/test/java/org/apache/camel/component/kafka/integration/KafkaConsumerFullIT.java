@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kafka.integration;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
@@ -84,7 +83,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
@@ -97,7 +96,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
 
     @Order(3)
     @Test
-    public void kafkaMessageIsConsumedByCamel() throws InterruptedException, IOException {
+    public void kafkaMessageIsConsumedByCamel() throws InterruptedException {
         String propagatedHeaderKey = "PropagatedCustomHeader";
         byte[] propagatedHeaderValue = "propagated header value".getBytes();
         String skippedHeaderKey = "CamelSkippedHeader";
@@ -128,7 +127,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
 
     @Order(2)
     @Test
-    public void kafkaRecordSpecificHeadersAreNotOverwritten() throws InterruptedException, IOException {
+    public void kafkaRecordSpecificHeadersAreNotOverwritten() throws InterruptedException {
         String propagatedHeaderKey = KafkaConstants.TOPIC;
         byte[] propagatedHeaderValue = "propagated incorrect topic".getBytes();
         to.expectedHeaderReceived(KafkaConstants.TOPIC, TOPIC);

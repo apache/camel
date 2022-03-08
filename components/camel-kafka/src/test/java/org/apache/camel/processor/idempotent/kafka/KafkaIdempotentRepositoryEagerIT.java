@@ -46,10 +46,10 @@ public class KafkaIdempotentRepositoryEagerIT extends BaseEmbeddedKafkaTestSuppo
     private MockEndpoint mockBefore;
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").to("mock:before").idempotentConsumer(header("id"))
                         .idempotentRepository("kafkaIdempotentRepository").to("mock:out").end();
             }
@@ -57,7 +57,7 @@ public class KafkaIdempotentRepositoryEagerIT extends BaseEmbeddedKafkaTestSuppo
     }
 
     @Test
-    public void testRemovesDuplicates() throws InterruptedException {
+    public void testRemovesDuplicates() {
         for (int i = 0; i < 10; i++) {
             template.sendBodyAndHeader("direct:in", "Test message", "id", i % 5);
         }
@@ -69,7 +69,7 @@ public class KafkaIdempotentRepositoryEagerIT extends BaseEmbeddedKafkaTestSuppo
     }
 
     @Test
-    public void testRollsBackOnException() throws InterruptedException {
+    public void testRollsBackOnException() {
         mockOut.whenAnyExchangeReceived(exchange -> {
             int id = exchange.getIn().getHeader("id", Integer.class);
             if (id == 0) {
