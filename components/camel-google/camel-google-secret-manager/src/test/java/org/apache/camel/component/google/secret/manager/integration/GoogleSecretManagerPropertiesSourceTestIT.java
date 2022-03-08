@@ -32,7 +32,7 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
     public void testFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setBody(simple("{{gcp:hello}}")).to("mock:bar");
             }
         });
@@ -51,7 +51,7 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
     public void testComplexPropertiesFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{gcp:database_sample/username}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{gcp:database_sample/password}}")).to("mock:bar");
             }
@@ -71,7 +71,7 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
     public void testComplexPropertiesWithDefaultFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{gcp:database_sample/username:oscerd}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{gcp:database_sample/password:password}}")).to("mock:bar");
             }
@@ -88,11 +88,11 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_PROJECT_ID", matches = ".*")
     @Test
-    public void testSecretNotFoundFunction() throws Exception {
+    public void testSecretNotFoundFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").setBody(simple("{{gcp:testExample}}")).to("mock:bar");
                 }
             });
@@ -112,7 +112,7 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
     public void testComplexCustomPropertiesDefaultValueFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{gcp:postgresql/additional1:admin}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{gcp:postgresql/additional2:secret}}")).to("mock:bar");
             }
@@ -132,7 +132,7 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
     public void testComplexCustomPropertiesDefaultValueExceptionFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{gcp:test-3/additional1:admin}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{gcp:test-3/additional2:secret}}")).to("mock:bar");
             }
@@ -149,11 +149,11 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_PROJECT_ID", matches = ".*")
     @Test
-    public void testComplexCustomPropertiesExceptionFunction() throws Exception {
+    public void testComplexCustomPropertiesExceptionFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:username").setBody(simple("{{gcp:test-3/additional1}}")).to("mock:bar");
                     from("direct:password").setBody(simple("{{gcp:test-3/additional2}}")).to("mock:bar");
                 }
@@ -174,7 +174,7 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
     public void testComplexSimpleDefaultValueExceptionFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{gcp:test-3:admin}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{gcp:test-1:secret}}")).to("mock:bar");
             }
@@ -195,7 +195,7 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
     public void testComplexPropertiesDefaultInstanceFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{gcp:test-3:admin}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{gcp:test-1:secret}}")).to("mock:bar");
             }

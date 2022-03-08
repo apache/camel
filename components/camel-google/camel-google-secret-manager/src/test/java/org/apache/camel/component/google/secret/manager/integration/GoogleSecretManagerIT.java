@@ -49,10 +49,10 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
     private MockEndpoint listSecrets;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:createSecret")
                         .to("google-secret-manager://" + project + "?serviceAccountKey="
@@ -76,7 +76,7 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
     }
 
     @Test
-    public void sendIn() throws Exception {
+    public void sendIn() {
 
         mockSecret.expectedMessageCount(1);
         mockGetSecret.expectedMessageCount(1);
@@ -85,14 +85,14 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
         template.send("direct:createSecret", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getMessage().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test123");
                 exchange.getMessage().setBody("Hello");
             }
         });
         Exchange ex = template.request("direct:getSecretVersion", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getMessage().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test123");
                 exchange.getMessage().setHeader(GoogleSecretManagerConstants.VERSION_ID, "1");
             }
@@ -102,7 +102,7 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
 
         ex = template.request("direct:getSecretVersion", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getMessage().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test123");
             }
         });
@@ -111,7 +111,7 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
 
         ex = template.request("direct:listSecrets", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
             }
         });
 
@@ -128,7 +128,7 @@ public class GoogleSecretManagerIT extends CamelTestSupport {
         assertEquals(1, totalSecret.get());
         ex = template.request("direct:deleteSecret", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getMessage().setHeader(GoogleSecretManagerConstants.SECRET_ID, "test123");
             }
         });

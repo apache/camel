@@ -40,7 +40,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setBody(simple("{{gcp:hello}}")).to("mock:bar");
             }
         });
@@ -59,7 +59,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{gcp:database_sample/username}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{gcp:database_sample/password}}")).to("mock:bar");
             }
@@ -79,7 +79,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{gcp:database_sample/username:oscerd}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{gcp:database_sample/password:password}}")).to("mock:bar");
             }
@@ -94,13 +94,13 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
     }
 
     @Test
-    public void testSecretNotFoundFunction() throws Exception {
+    public void testSecretNotFoundFunction() {
         context.getVaultConfiguration().gcp().setServiceAccountKey(System.getProperty("camel.vault.gcp.serviceAccountKey"));
         context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").setBody(simple("{{gcp:testExample}}")).to("mock:bar");
                 }
             });
@@ -120,7 +120,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{gcp:postgresql/additional1:admin}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{gcp:postgresql/additional2:secret}}")).to("mock:bar");
             }
@@ -140,7 +140,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{gcp:test-3/additional1:admin}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{gcp:test-3/additional2:secret}}")).to("mock:bar");
             }
@@ -155,13 +155,13 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
     }
 
     @Test
-    public void testComplexCustomPropertiesExceptionFunction() throws Exception {
+    public void testComplexCustomPropertiesExceptionFunction() {
         context.getVaultConfiguration().gcp().setServiceAccountKey(System.getProperty("camel.vault.gcp.serviceAccountKey"));
         context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:username").setBody(simple("{{gcp:test-3/additional1}}")).to("mock:bar");
                     from("direct:password").setBody(simple("{{gcp:test-3/additional2}}")).to("mock:bar");
                 }
@@ -182,7 +182,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{gcp:test-3:admin}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{gcp:test-1:secret}}")).to("mock:bar");
             }
