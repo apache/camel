@@ -45,7 +45,7 @@ public class KmsScheduleDeleteKeyIT extends Aws2KmsBase {
         Exchange ex = template.send("direct:createKey", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, "createKey");
             }
         });
@@ -55,7 +55,7 @@ public class KmsScheduleDeleteKeyIT extends Aws2KmsBase {
         template.send("direct:scheduleDelete", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, "scheduleKeyDeletion");
                 exchange.getIn().setHeader(KMS2Constants.KEY_ID, keyId);
             }
@@ -64,7 +64,7 @@ public class KmsScheduleDeleteKeyIT extends Aws2KmsBase {
         template.send("direct:describeKey", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, "describeKey");
                 exchange.getIn().setHeader(KMS2Constants.KEY_ID, keyId);
             }
@@ -77,10 +77,10 @@ public class KmsScheduleDeleteKeyIT extends Aws2KmsBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String awsEndpoint
                         = "aws2-kms://default?operation=createKey";
                 String describeKey

@@ -45,7 +45,7 @@ public class KmsDisableKeyIT extends Aws2KmsBase {
         Exchange ex = template.send("direct:createKey", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, "createKey");
             }
         });
@@ -55,7 +55,7 @@ public class KmsDisableKeyIT extends Aws2KmsBase {
         template.send("direct:disableKey", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, "disableKey");
                 exchange.getIn().setHeader(KMS2Constants.KEY_ID, keyId);
             }
@@ -64,7 +64,7 @@ public class KmsDisableKeyIT extends Aws2KmsBase {
         template.send("direct:listKeys", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, "listKeys");
             }
         });
@@ -75,10 +75,10 @@ public class KmsDisableKeyIT extends Aws2KmsBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String awsEndpoint
                         = "aws2-kms://default?operation=createKey";
                 String disableKey = "aws2-kms://default?operation=disableKey";

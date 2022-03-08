@@ -37,7 +37,7 @@ public class KMSComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithMinimalKMSClientMisconfiguration() throws Exception {
+    public void createEndpointWithMinimalKMSClientMisconfiguration() {
 
         KMS2Component component = context.getComponent("aws2-kms", KMS2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
