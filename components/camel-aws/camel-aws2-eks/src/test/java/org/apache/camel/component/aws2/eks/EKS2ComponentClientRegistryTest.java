@@ -37,7 +37,7 @@ public class EKS2ComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithMinimalECSClientMisconfiguration() throws Exception {
+    public void createEndpointWithMinimalECSClientMisconfiguration() {
 
         EKS2Component component = context.getComponent("aws2-eks", EKS2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
