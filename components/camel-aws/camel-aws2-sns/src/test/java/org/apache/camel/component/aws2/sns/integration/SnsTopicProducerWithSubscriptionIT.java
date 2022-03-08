@@ -103,9 +103,9 @@ public class SnsTopicProducerWithSubscriptionIT extends Aws2SNSBase {
     }
 
     @Test
-    public void sendInOnly() throws Exception {
+    public void sendInOnly() {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Sns2Constants.SUBJECT, "This is my subject");
                 exchange.getIn().setBody("This is my message text.");
             }
@@ -119,12 +119,12 @@ public class SnsTopicProducerWithSubscriptionIT extends Aws2SNSBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         setUpQueue();
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .toF("aws2-sns://%s?subject=The+subject+message&autoCreateTopic=true&subscribeSNStoSQS=true&queueUrl=%s",
                                 sharedNameGenerator.getName(), sqsQueueUrl);

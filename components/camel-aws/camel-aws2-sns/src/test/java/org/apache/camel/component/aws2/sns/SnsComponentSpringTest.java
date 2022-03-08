@@ -28,9 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SnsComponentSpringTest extends CamelSpringTestSupport {
 
     @Test
-    public void sendInOnly() throws Exception {
+    public void sendInOnly() {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Sns2Constants.SUBJECT, "This is my subject text.");
                 exchange.getIn().setBody("This is my message text.");
             }
@@ -40,9 +40,9 @@ public class SnsComponentSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void sendInOut() throws Exception {
+    public void sendInOut() {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Sns2Constants.SUBJECT, "This is my subject text.");
                 exchange.getIn().setBody("This is my message text.");
             }

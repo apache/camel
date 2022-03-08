@@ -37,7 +37,7 @@ public class SNSComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithMinimalSNSClientMisconfiguration() throws Exception {
+    public void createEndpointWithMinimalSNSClientMisconfiguration() {
 
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
