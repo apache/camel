@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.yaml
 
-import org.apache.camel.component.seda.SedaComponent
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.spi.PropertiesComponent
 
@@ -51,6 +50,38 @@ class IntegrationLoaderTest extends YamlTestSupport {
             PropertiesComponent pc = context.getPropertiesComponent()
             pc.resolveProperty("camel.component.seda.queueSize").get() == "123"
             pc.resolveProperty("camel.component.seda.default-block-when-full").get() == "true"
+    }
+
+    def "integration trait configuration"() {
+        when:
+        loadIntegrations('''
+                apiVersion: camel.apache.org/v1
+                kind: Integration
+                metadata:
+                  name: foobar2
+                spec:
+                  traits:
+                    camel:
+                      configuration:
+                        properties:
+                          - camel.component.seda.queueSize = 456
+                          - camel.component.seda.default-block-when-full = true
+                  flows:
+                    - from:
+                        uri: "seda:foo"
+                        steps:    
+                          - log:
+                             logging-level: "INFO"
+                             message: "test"
+                             log-name: "yaml"
+                          - to: "mock:result"   
+                          ''')
+        then:
+        context.routeDefinitions.size() == 1
+
+        PropertiesComponent pc = context.getPropertiesComponent()
+        pc.resolveProperty("camel.component.seda.queueSize").get() == "456"
+        pc.resolveProperty("camel.component.seda.default-block-when-full").get() == "true"
     }
 
 }

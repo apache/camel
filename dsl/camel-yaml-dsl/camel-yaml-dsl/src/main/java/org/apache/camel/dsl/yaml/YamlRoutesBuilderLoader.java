@@ -68,6 +68,7 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMap;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMappingNode;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asSequenceNode;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asStringList;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
@@ -275,6 +276,12 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             var list = preConfigureConfiguration(configuration);
             answer.addAll(list);
         }
+        // if there are trait configuration then include them early
+        configuration = nodeAt(root, "/spec/traits/camel");
+        if (configuration != null) {
+            var list = preConfigureTraitConfiguration(configuration);
+            answer.addAll(list);
+        }
         // if there are sources then include them before routes
         Node sources = nodeAt(root, "/spec/sources");
         if (sources != null) {
@@ -334,12 +341,43 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     IntegrationConfigurationPropertiesSource ps
                             = (IntegrationConfigurationPropertiesSource) pc.getPropertiesSource("integration-configuration");
                     if (ps == null) {
-                        ps = new IntegrationConfigurationPropertiesSource();
+                        ps = new IntegrationConfigurationPropertiesSource("integration-configuration");
                         pc.addPropertiesSource(ps);
                     }
                     lines.forEach(ps::parseConfigurationValue);
                 } catch (Exception e) {
                     throw new RuntimeCamelException("Error adding properties from spec/configuration", e);
+                }
+            }
+        });
+
+        return answer;
+    }
+
+    private List<CamelContextCustomizer> preConfigureTraitConfiguration(Node node) {
+        List<CamelContextCustomizer> answer = new ArrayList<>();
+
+        Node target = nodeAt(node, "configuration/properties/");
+        final List<String> lines = asStringList(target);
+        if (lines == null || lines.isEmpty()) {
+            return answer;
+        }
+
+        answer.add(new CamelContextCustomizer() {
+            @Override
+            public void configure(CamelContext camelContext) {
+                try {
+                    PropertiesComponent pc = camelContext.getPropertiesComponent();
+                    IntegrationConfigurationPropertiesSource ps
+                            = (IntegrationConfigurationPropertiesSource) pc
+                                    .getPropertiesSource("integration-trait-configuration");
+                    if (ps == null) {
+                        ps = new IntegrationConfigurationPropertiesSource("integration-trait-configuration");
+                        pc.addPropertiesSource(ps);
+                    }
+                    lines.forEach(ps::parseConfigurationValue);
+                } catch (Exception e) {
+                    throw new RuntimeCamelException("Error adding properties from spec/traits/camel/configuration", e);
                 }
             }
         });

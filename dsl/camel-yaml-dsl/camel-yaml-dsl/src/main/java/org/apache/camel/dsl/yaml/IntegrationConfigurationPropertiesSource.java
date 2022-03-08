@@ -31,8 +31,13 @@ import org.apache.camel.util.StringHelper;
  */
 public class IntegrationConfigurationPropertiesSource implements PropertiesSource, CamelContextAware {
 
+    private final String name;
     private final Properties properties = new OrderedProperties();
     private CamelContext camelContext;
+
+    public IntegrationConfigurationPropertiesSource(String name) {
+        this.name = name;
+    }
 
     @Override
     public CamelContext getCamelContext() {
@@ -46,7 +51,7 @@ public class IntegrationConfigurationPropertiesSource implements PropertiesSourc
 
     @Override
     public String getName() {
-        return "integration-configuration";
+        return name;
     }
 
     @Override
