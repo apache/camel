@@ -30,14 +30,14 @@ public class CassandraComponentBeanRefIT extends BaseCassandra {
     public static final String SESSION_URI = "cql:bean:cassandraSession?cql=" + CQL;
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         SimpleRegistry registry = new SimpleRegistry();
         registry.bind("cassandraSession", getSession());
         return registry;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:inputSession").to(SESSION_URI);
@@ -46,7 +46,7 @@ public class CassandraComponentBeanRefIT extends BaseCassandra {
     }
 
     @Test
-    public void testSession() throws Exception {
+    public void testSession() {
         CassandraEndpoint endpoint = getMandatoryEndpoint(SESSION_URI, CassandraEndpoint.class);
 
         assertEquals(KEYSPACE_NAME, endpoint.getKeyspace());
