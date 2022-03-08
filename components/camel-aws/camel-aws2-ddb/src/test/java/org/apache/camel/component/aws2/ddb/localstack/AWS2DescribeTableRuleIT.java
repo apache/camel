@@ -39,10 +39,10 @@ public class AWS2DescribeTableRuleIT extends Aws2DDBBase {
     private final String tableName = "randomTable";
 
     @Test
-    public void describeTable() throws InterruptedException {
+    public void describeTable() {
 
         Exchange exchange = template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.DescribeTable);
                 exchange.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, true);
             }
@@ -54,10 +54,10 @@ public class AWS2DescribeTableRuleIT extends Aws2DDBBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(
                         "aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType=" + KeyType.HASH
                                         + "&keyScalarType=" + ScalarAttributeType.S

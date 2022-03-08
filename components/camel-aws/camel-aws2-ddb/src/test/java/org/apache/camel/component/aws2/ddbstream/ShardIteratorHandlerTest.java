@@ -44,7 +44,7 @@ class ShardIteratorHandlerTest extends CamelTestSupport {
     private AmazonDDBStreamsClientMock dynamoDbStreamsClient;
 
     @BeforeEach
-    void setup() throws Exception {
+    void setup() {
         component = context.getComponent("aws2-ddbstream", Ddb2StreamComponent.class);
         dynamoDbStreamsClient = new AmazonDDBStreamsClientMock();
         component.getConfiguration().setAmazonDynamoDbStreamsClient(dynamoDbStreamsClient);

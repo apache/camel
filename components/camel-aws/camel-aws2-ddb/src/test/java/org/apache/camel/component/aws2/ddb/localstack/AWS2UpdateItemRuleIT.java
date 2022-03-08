@@ -54,7 +54,7 @@ public class AWS2UpdateItemRuleIT extends Aws2DDBBase {
         attributeMap.put("secondary_attribute", AttributeValue.builder().s("value").build());
 
         Exchange exchange = template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.PutItem);
                 exchange.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, "true");
                 exchange.getIn().setHeader(Ddb2Constants.RETURN_VALUES, "ALL_OLD");
@@ -81,7 +81,7 @@ public class AWS2UpdateItemRuleIT extends Aws2DDBBase {
                 .build());
 
         exchange = template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Ddb2Constants.KEY, itemKey);
                 exchange.getIn().setHeader(Ddb2Constants.UPDATE_VALUES, attributeMapUpdated);
                 exchange.getIn().setHeader(Ddb2Constants.RETURN_VALUES, "ALL_NEW");
@@ -96,10 +96,10 @@ public class AWS2UpdateItemRuleIT extends Aws2DDBBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(
                         "aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType=" + KeyType.HASH
                                         + "&keyScalarType=" + ScalarAttributeType.S

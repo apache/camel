@@ -38,10 +38,10 @@ public class AWS2UpdateTableByIdRuleIT extends Aws2DDBBase {
     private final String tableName = "TestTableUpdate";
 
     @Test
-    public void updateTable() throws InterruptedException {
+    public void updateTable() {
 
         Exchange exchange = template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.UpdateTable);
                 exchange.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, true);
                 exchange.getIn().setHeader(Ddb2Constants.READ_CAPACITY, 20L);
@@ -52,10 +52,10 @@ public class AWS2UpdateTableByIdRuleIT extends Aws2DDBBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(
                         "aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType=" + KeyType.HASH
                                         + "&keyScalarType=" + ScalarAttributeType.S
