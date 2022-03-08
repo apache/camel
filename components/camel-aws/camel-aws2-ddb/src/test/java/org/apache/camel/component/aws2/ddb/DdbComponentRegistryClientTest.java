@@ -36,7 +36,7 @@ public class DdbComponentRegistryClientTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutRegistryClient() throws Exception {
+    public void createEndpointWithoutRegistryClient() {
         Ddb2Component component = context.getComponent("aws2-ddb", Ddb2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-ddb://myTable");
