@@ -45,7 +45,7 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutOperation() throws Exception {
+    public void createEndpointWithoutOperation() {
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-lambda://myFunction");
@@ -53,7 +53,7 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutAmazonLambdaClientConfiguration() throws Exception {
+    public void createEndpointWithoutAmazonLambdaClientConfiguration() {
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-lambda://myFunction?operation=getFunction");
@@ -61,7 +61,7 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
+    public void createEndpointWithoutAccessKeyConfiguration() {
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-lambda://myFunction?operation=getFunction&secretKey=yyy");

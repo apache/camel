@@ -66,7 +66,7 @@ public class LambdaPublishVersionIT extends Aws2LambdaBase {
 
         template.send("direct:publishVersion", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Lambda2Constants.VERSION_DESCRIPTION, "This is my description");
             }
         });
@@ -79,10 +79,10 @@ public class LambdaPublishVersionIT extends Aws2LambdaBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String awsEndpoint = "aws2-lambda://GetHelloWithName?operation=createFunction";
                 String publishVersion = "aws2-lambda://GetHelloWithName?operation=publishVersion";
                 from("direct:createFunction").to(awsEndpoint);

@@ -41,7 +41,7 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithMinimalKMSClientMisconfiguration() throws Exception {
+    public void createEndpointWithMinimalKMSClientMisconfiguration() {
 
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
         assertThrows(PropertyBindingException.class, () -> {

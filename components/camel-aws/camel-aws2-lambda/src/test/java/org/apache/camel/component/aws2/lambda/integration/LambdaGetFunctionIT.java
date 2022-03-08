@@ -66,7 +66,7 @@ public class LambdaGetFunctionIT extends Aws2LambdaBase {
 
         template.send("direct:getFunction", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
 
             }
         });
@@ -80,10 +80,10 @@ public class LambdaGetFunctionIT extends Aws2LambdaBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String awsEndpoint = "aws2-lambda://GetHelloWithName?operation=createFunction";
                 String getFunction = "aws2-lambda://GetHelloWithName?operation=getFunction";
                 from("direct:createFunction").to(awsEndpoint);
