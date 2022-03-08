@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() {
         RestComponent component = context().getComponent("rest", RestComponent.class);
         ComponentVerifierExtension verifier = component.getVerifier();
 
@@ -46,7 +46,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
     }
 
     @Test
-    public void testMissingRestParameters() throws Exception {
+    public void testMissingRestParameters() {
         RestComponent component = context.getComponent("rest", RestComponent.class);
         ComponentVerifierExtension verifier = component.getVerifier();
 
@@ -70,7 +70,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
     }
 
     @Test
-    public void testWrongComponentParameters() throws Exception {
+    public void testWrongComponentParameters() {
         RestComponent component = context.getComponent("rest", RestComponent.class);
         ComponentVerifierExtension verifier = component.getVerifier();
 
@@ -95,7 +95,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
     }
 
     @Test
-    public void testConnectivity() throws Exception {
+    public void testConnectivity() {
         RestComponent component = context().getComponent("rest", RestComponent.class);
         ComponentVerifierExtension verifier = component.getVerifier();
 
@@ -111,10 +111,10 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration()
                         .component("undertow")
                         .host("localhost")

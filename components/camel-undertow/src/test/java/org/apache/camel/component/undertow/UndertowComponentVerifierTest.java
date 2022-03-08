@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowComponentVerifierTest extends BaseUndertowTest {
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() {
         UndertowComponent component = context().getComponent("undertow", UndertowComponent.class);
         ComponentVerifierExtension verifier = component.getVerifier();
 
@@ -43,7 +43,7 @@ public class UndertowComponentVerifierTest extends BaseUndertowTest {
     }
 
     @Test
-    public void testMissingParameters() throws Exception {
+    public void testMissingParameters() {
         UndertowComponent component = context.getComponent("undertow", UndertowComponent.class);
         ComponentVerifierExtension verifier = component.getVerifier();
 
@@ -61,7 +61,7 @@ public class UndertowComponentVerifierTest extends BaseUndertowTest {
     }
 
     @Test
-    public void testConnectivity() throws Exception {
+    public void testConnectivity() {
         UndertowComponent component = context().getComponent("undertow", UndertowComponent.class);
         ComponentVerifierExtension verifier = component.getVerifier();
 
@@ -75,7 +75,7 @@ public class UndertowComponentVerifierTest extends BaseUndertowTest {
     }
 
     @Test
-    public void testConnectivityError() throws Exception {
+    public void testConnectivityError() {
         UndertowComponent component = context().getComponent("undertow", UndertowComponent.class);
         ComponentVerifierExtension verifier = component.getVerifier();
 
@@ -95,10 +95,10 @@ public class UndertowComponentVerifierTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("undertow:http://localhost:{{port}}")
                         .process(e -> e.getMessage().setBody("ok"));
             }

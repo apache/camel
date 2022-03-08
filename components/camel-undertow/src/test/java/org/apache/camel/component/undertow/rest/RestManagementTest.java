@@ -52,7 +52,7 @@ public class RestManagementTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 restConfiguration().component("undertow").host("localhost").port(getPort());

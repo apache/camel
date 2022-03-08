@@ -45,7 +45,7 @@ public class SecurityProviderTest extends AbstractSecurityProviderTest {
     }
 
     @Test
-    public void testSecuredNotAllowed() throws Exception {
+    public void testSecuredNotAllowed() {
         securityConfiguration.setRoleToAssign("admin");
 
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");

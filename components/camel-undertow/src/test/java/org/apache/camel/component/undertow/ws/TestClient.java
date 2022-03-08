@@ -61,7 +61,7 @@ public class TestClient {
         this.url = url;
     }
 
-    public void connect() throws InterruptedException, ExecutionException, IOException {
+    public void connect() throws InterruptedException, ExecutionException {
         websocket = client.prepareGet(url).execute(
                 new WebSocketUpgradeHandler.Builder()
                         .addWebSocketListener(new TestWebSocketListener()).build())

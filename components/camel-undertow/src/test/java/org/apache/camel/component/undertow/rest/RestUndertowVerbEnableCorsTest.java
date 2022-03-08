@@ -27,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RestUndertowVerbEnableCorsTest extends BaseUndertowTest {
 
     @Test
-    public void testGetAll() throws Exception {
+    public void testGetAll() {
         String out = template.requestBodyAndHeader("http://localhost:" + getPort() + "/users", null, Exchange.HTTP_METHOD,
                 "GET", String.class);
         assertEquals("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]", out);
     }
 
     @Test
-    public void testGetOne() throws Exception {
+    public void testGetOne() {
         String out = template.requestBodyAndHeader("http://localhost:" + getPort() + "/users/1", null, Exchange.HTTP_METHOD,
                 "GET", String.class);
         assertEquals("{ \"id\":\"1\", \"name\":\"Scott\" }", out);
@@ -78,10 +78,10 @@ public class RestUndertowVerbEnableCorsTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().component("undertow").host("localhost").port(getPort()).enableCORS(true);
 
                 rest()

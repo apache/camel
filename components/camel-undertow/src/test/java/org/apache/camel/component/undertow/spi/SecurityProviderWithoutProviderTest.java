@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class SecurityProviderWithoutProviderTest extends AbstractSecurityProviderTest {
 
     @BeforeAll
-    public static void createSecurtyProviderConfigurationFile() throws Exception {
+    public static void createSecurtyProviderConfigurationFile() {
         URL location = MockSecurityProvider.class.getProtectionDomain().getCodeSource().getLocation();
         File file = new File(location.getPath() + "META-INF/services/" + UndertowSecurityProvider.class.getName());
         if (file.exists()) {
@@ -45,7 +45,7 @@ public class SecurityProviderWithoutProviderTest extends AbstractSecurityProvide
     }
 
     @Test
-    public void testSecuredNoProviderd() throws Exception {
+    public void testSecuredNoProviderd() {
         securityConfiguration.setRoleToAssign("user");
 
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");

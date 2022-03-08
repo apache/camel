@@ -55,7 +55,7 @@ public class UndertowHandlersSpringTest {
     }
 
     @AfterAll
-    public static void tearDownJaas() throws Exception {
+    public static void tearDownJaas() {
         System.clearProperty("java.security.auth.login.config");
     }
 

@@ -38,10 +38,10 @@ public class UndertowProducerContentTypeTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration()
                         .producerComponent("undertow").component("undertow")
                         .host("localhost").port("{{port}}")

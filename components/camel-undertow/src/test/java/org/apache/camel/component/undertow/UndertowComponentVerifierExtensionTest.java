@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowComponentVerifierExtensionTest extends BaseUndertowTest {
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() {
         Component component = context().getComponent("undertow");
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
@@ -45,7 +45,7 @@ public class UndertowComponentVerifierExtensionTest extends BaseUndertowTest {
     }
 
     @Test
-    public void testMissingParameters() throws Exception {
+    public void testMissingParameters() {
         Component component = context().getComponent("undertow");
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
@@ -64,7 +64,7 @@ public class UndertowComponentVerifierExtensionTest extends BaseUndertowTest {
     }
 
     @Test
-    public void testConnectivity() throws Exception {
+    public void testConnectivity() {
         Component component = context().getComponent("undertow");
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
@@ -79,7 +79,7 @@ public class UndertowComponentVerifierExtensionTest extends BaseUndertowTest {
     }
 
     @Test
-    public void testConnectivityError() throws Exception {
+    public void testConnectivityError() {
         Component component = context().getComponent("undertow");
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
@@ -100,10 +100,10 @@ public class UndertowComponentVerifierExtensionTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("undertow:http://localhost:{{port}}")
                         .process(e -> e.getMessage().setBody("ok"));
             }

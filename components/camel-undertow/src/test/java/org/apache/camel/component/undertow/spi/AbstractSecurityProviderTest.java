@@ -50,7 +50,7 @@ public abstract class AbstractSecurityProviderTest extends BaseUndertowTest {
         private MockSecurityConfiguration configuration;
 
         @Override
-        public void addHeader(BiConsumer<String, Object> consumer, HttpServerExchange httpExchange) throws Exception {
+        public void addHeader(BiConsumer<String, Object> consumer, HttpServerExchange httpExchange) {
             String principal = httpExchange.getAttachment(PRINCIPAL_KEY);
             if (principal != null) {
                 consumer.accept(PRINCIPAL_PARAMETER, principal);
@@ -58,7 +58,7 @@ public abstract class AbstractSecurityProviderTest extends BaseUndertowTest {
         }
 
         @Override
-        public int authenticate(HttpServerExchange httpExchange, List<String> allowedRoles) throws Exception {
+        public int authenticate(HttpServerExchange httpExchange, List<String> allowedRoles) {
             if (configuration.getRoleToAssign() != null && allowedRoles != null
                     && allowedRoles.contains(configuration.getRoleToAssign())) {
                 httpExchange.putAttachment(PRINCIPAL_KEY, configuration.getRoleToAssign());
@@ -68,7 +68,7 @@ public abstract class AbstractSecurityProviderTest extends BaseUndertowTest {
         }
 
         @Override
-        public boolean acceptConfiguration(Object configuration, String endpointUri) throws Exception {
+        public boolean acceptConfiguration(Object configuration, String endpointUri) {
             if (configuration instanceof MockSecurityConfiguration) {
                 this.configuration = (MockSecurityConfiguration) configuration;
                 return this.configuration.isAccept();
@@ -77,7 +77,7 @@ public abstract class AbstractSecurityProviderTest extends BaseUndertowTest {
         }
 
         @Override
-        public HttpHandler wrapHttpHandler(HttpHandler httpHandler) throws Exception {
+        public HttpHandler wrapHttpHandler(HttpHandler httpHandler) {
             if (configuration.getWrapHttpHandler() != null) {
                 return configuration.getWrapHttpHandler().apply(httpHandler);
             }
@@ -142,10 +142,10 @@ public abstract class AbstractSecurityProviderTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("undertow:http://localhost:{{port}}/foo?allowedRoles=user")
                         .to("mock:input")
                         .transform(simple("${in.header." + PRINCIPAL_PARAMETER + "}"));

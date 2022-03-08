@@ -38,7 +38,7 @@ public class UndertowHttpProducerSessionTest extends CamelTestSupport {
     private ExchangeCookieHandler exchangeCookieHandler = new ExchangeCookieHandler();
 
     @BeforeAll
-    public static void initPort() throws Exception {
+    public static void initPort() {
         port = AvailablePortFinder.getNextAvailable();
     }
 
@@ -76,10 +76,10 @@ public class UndertowHttpProducerSessionTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("undertow:" + getTestServerEndpointSessionUrl())
                         .to("undertow:" + getTestServerEndpointSessionUrl())
@@ -98,7 +98,7 @@ public class UndertowHttpProducerSessionTest extends CamelTestSupport {
                 from(getTestServerEndpointSessionUri())
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Message message = exchange.getIn();
                                 String body = message.getBody(String.class);
                                 // Undertow servers do not support sessions or

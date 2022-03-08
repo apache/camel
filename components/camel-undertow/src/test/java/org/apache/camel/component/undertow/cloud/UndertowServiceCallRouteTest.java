@@ -44,7 +44,7 @@ public class UndertowServiceCallRouteTest extends CamelTestSupport {
     }
 
     @Test
-    public void testCustomCall() throws Exception {
+    public void testCustomCall() {
         BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
 
         assertEquals("8081", template.requestBody("direct:custom", "hello", String.class));
@@ -55,7 +55,7 @@ public class UndertowServiceCallRouteTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDefaultSchema() throws Exception {
+    public void testDefaultSchema() {
         BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
 
         try {
@@ -69,10 +69,10 @@ public class UndertowServiceCallRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:custom")
                         .serviceCall()
                         .name("myService")

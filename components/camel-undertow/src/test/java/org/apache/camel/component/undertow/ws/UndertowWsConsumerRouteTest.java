@@ -466,7 +466,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 final int port = getPort();
@@ -492,7 +492,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
                         .process(new Processor() {
                             private final Set<String> connectionKeys = new LinkedHashSet<>();
 
-                            public void process(final Exchange exchange) throws Exception {
+                            public void process(final Exchange exchange) {
                                 final Message in = exchange.getIn();
                                 final String connectionKey = in.getHeader(UndertowConstants.CONNECTION_KEY,
                                         String.class);
