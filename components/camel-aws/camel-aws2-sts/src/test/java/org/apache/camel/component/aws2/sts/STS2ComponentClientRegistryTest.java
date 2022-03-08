@@ -37,7 +37,7 @@ public class STS2ComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithMinimalSTSClientMisconfiguration() throws Exception {
+    public void createEndpointWithMinimalSTSClientMisconfiguration() {
 
         STS2Component component = context.getComponent("aws2-sts", STS2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {

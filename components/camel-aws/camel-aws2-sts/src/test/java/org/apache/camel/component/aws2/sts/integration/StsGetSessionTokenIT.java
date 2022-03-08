@@ -44,7 +44,7 @@ public class StsGetSessionTokenIT extends Aws2StsBase {
         template.send("direct:getSessonToken", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(STS2Constants.OPERATION, "getSessionToken");
             }
         });
@@ -55,10 +55,10 @@ public class StsGetSessionTokenIT extends Aws2StsBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String awsEndpoint
                         = "aws2-sts://default?operation=getSessionToken";
                 from("direct:getSessonToken").to(awsEndpoint).to("mock:result");
