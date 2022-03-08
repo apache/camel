@@ -549,7 +549,7 @@ public class Work implements org.apache.thrift.TBase<Work, Work._Fields>, java.i
         return sb.toString();
     }
 
-    public void validate() throws org.apache.thrift.TException {
+    public void validate() {
         // check for required fields
         // check for sub-struct validity
     }

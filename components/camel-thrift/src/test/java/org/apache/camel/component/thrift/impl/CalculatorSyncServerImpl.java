@@ -32,11 +32,11 @@ import org.apache.thrift.TException;
 public class CalculatorSyncServerImpl implements Calculator.Iface {
 
     @Override
-    public void ping() throws TException {
+    public void ping() {
     }
 
     @Override
-    public int add(int num1, int num2) throws TException {
+    public int add(int num1, int num2) {
         return num1 + num2;
     }
 
@@ -73,19 +73,18 @@ public class CalculatorSyncServerImpl implements Calculator.Iface {
     }
 
     @Override
-    public void zip() throws TException {
+    public void zip() {
     }
 
     @Override
-    public Work echo(Work w) throws TException {
+    public Work echo(Work w) {
         return w.deepCopy();
     }
 
     @Override
     public int alltypes(
             boolean v1, byte v2, short v3, int v4, long v5, double v6, String v7, ByteBuffer v8, Work v9, List<Integer> v10,
-            Set<String> v11, Map<String, Long> v12)
-            throws TException {
+            Set<String> v11, Map<String, Long> v12) {
         return 1;
     }
 }

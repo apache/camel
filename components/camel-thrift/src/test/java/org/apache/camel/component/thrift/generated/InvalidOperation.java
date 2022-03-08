@@ -366,7 +366,7 @@ public class InvalidOperation extends org.apache.thrift.TException
         return sb.toString();
     }
 
-    public void validate() throws org.apache.thrift.TException {
+    public void validate() {
         // check for required fields
         // check for sub-struct validity
     }

@@ -67,7 +67,7 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSyncWithConcurrentThreads() throws Exception {
+    public void testSyncWithConcurrentThreads() {
         RunnableAssert ra = new RunnableAssert("testSyncWithConcurrentThreads") {
 
             @Override
@@ -98,7 +98,7 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testAsyncWithConcurrentThreads() throws Exception {
+    public void testAsyncWithConcurrentThreads() {
         RunnableAssert ra = new RunnableAssert("testAsyncWithConcurrentThreads") {
 
             @Override
@@ -157,7 +157,7 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

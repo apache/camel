@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.thrift;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -81,7 +80,7 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
     }
 
     @AfterAll
-    public static void stopThriftServer() throws IOException {
+    public static void stopThriftServer() {
         if (server != null) {
             server.stop();
             serverTransport.close();
@@ -91,7 +90,7 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void testCalculateMethodInvocation() throws Exception {
+    public void testCalculateMethodInvocation() {
         LOG.info("Thrift calculate method sync test start");
 
         List requestBody = new ArrayList();
@@ -107,7 +106,7 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testVoidMethodInvocation() throws Exception {
+    public void testVoidMethodInvocation() {
         LOG.info("Thrift method with empty parameters and void output sync test start");
 
         Object requestBody = null;
@@ -116,7 +115,7 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
