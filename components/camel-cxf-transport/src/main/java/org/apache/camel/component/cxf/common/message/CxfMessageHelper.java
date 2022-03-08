@@ -38,8 +38,8 @@ public final class CxfMessageHelper {
         org.apache.cxf.message.Exchange cxfExchange = exchange
                 .getProperty(CamelTransportConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class);
         org.apache.camel.Message message;
-        if (isClient && exchange.hasOut()) {
-            message = exchange.getOut();
+        if (isClient) {
+            message = exchange.getMessage();
         } else {
             message = exchange.getIn();
         }
