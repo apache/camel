@@ -119,7 +119,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
             }
         } catch (Exception e) {
             // ignore
-            LOG.debug("Cannot check hasReadyNodes on KafkaConsumer client (ConsumerNetworkClient) due to "
+            LOG.debug("Cannot check hasReadyNodes on KafkaProducer client (NetworkClient) due to "
                       + e.getMessage() + ". This exception is ignored.",
                     e);
         }
