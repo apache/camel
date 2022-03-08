@@ -33,7 +33,7 @@ public class TwilioEndpointTest extends AbstractTwilioTestSupport {
     }
 
     @Test
-    public void testTwilioEndpoint() throws Exception {
+    public void testTwilioEndpoint() {
         // should not use reflection when creating and configuring endpoint
 
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
