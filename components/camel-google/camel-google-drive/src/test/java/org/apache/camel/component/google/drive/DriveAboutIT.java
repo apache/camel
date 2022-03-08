@@ -38,7 +38,7 @@ public class DriveAboutIT extends AbstractGoogleDriveTestSupport {
             = GoogleDriveApiCollection.getCollection().getApiName(DriveAboutApiMethod.class).getName();
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         final com.google.api.services.drive.model.About result = requestBody("direct://GET", null);
 
         assertNotNull(result, "get result");
@@ -46,7 +46,7 @@ public class DriveAboutIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for get

@@ -45,7 +45,7 @@ public class DriveChildrenIT extends AbstractGoogleDriveTestSupport {
     private static final String ROOT_FOLDER = "root";
 
     @Test
-    public void testUploadFileToFolder() throws Exception {
+    public void testUploadFileToFolder() {
         File folder = uploadTestFolder();
         File file = uploadTestFile();
 
@@ -78,7 +78,7 @@ public class DriveChildrenIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testUploadFileToRootFolder() throws Exception {
+    public void testUploadFileToRootFolder() {
         File file = uploadTestFile();
 
         final Map<String, Object> headers = new HashMap<>();
@@ -107,7 +107,7 @@ public class DriveChildrenIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 //set proxy if necessary

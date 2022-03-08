@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class GoogleDriveFilesConverterTest extends CamelTestSupport {
 
     @Override
-    protected void doPreSetup() throws Exception {
+    protected void doPreSetup() {
         deleteDirectory("target/file-test");
     }
 
@@ -49,9 +49,9 @@ public class GoogleDriveFilesConverterTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("file://target/file-test?initialDelay=2000").convertBodyTo(com.google.api.services.drive.model.File.class)
                         .to("mock:result");

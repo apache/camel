@@ -42,7 +42,7 @@ public class DriveAppsIT extends AbstractGoogleDriveTestSupport {
     // May have to adjust scopes used
     @Disabled
     @Test
-    public void testList() throws Exception {
+    public void testList() {
         final com.google.api.services.drive.model.App result = requestBody("direct://LIST", null);
 
         assertNotNull(result, "list result");
@@ -50,7 +50,7 @@ public class DriveAppsIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for get
