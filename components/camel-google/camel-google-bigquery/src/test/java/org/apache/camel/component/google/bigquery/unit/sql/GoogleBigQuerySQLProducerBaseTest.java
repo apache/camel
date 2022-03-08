@@ -38,7 +38,7 @@ public abstract class GoogleBigQuerySQLProducerBaseTest extends CamelTestSupport
     protected BigQuery bigquery;
     protected TableResult tableResult;
 
-    protected GoogleBigQuerySQLProducer createAndStartProducer() throws Exception {
+    protected GoogleBigQuerySQLProducer createAndStartProducer() {
         configuration.setProjectId(projectId);
         configuration.setQueryString(sql);
 

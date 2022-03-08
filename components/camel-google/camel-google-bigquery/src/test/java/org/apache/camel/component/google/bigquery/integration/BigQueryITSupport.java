@@ -118,7 +118,7 @@ public class BigQueryITSupport extends CamelTestSupport {
     }
 
     @BindToRegistry("prop")
-    public Properties loadRegProperties() throws Exception {
+    public Properties loadRegProperties() {
         return loadProperties();
     }
 
@@ -155,7 +155,7 @@ public class BigQueryITSupport extends CamelTestSupport {
         }
     }
 
-    private Schema createSchema() throws Exception {
+    private Schema createSchema() {
         FieldList fields = FieldList.of(
                 Field.of("id", StandardSQLTypeName.NUMERIC),
                 Field.of("col1", StandardSQLTypeName.STRING),
