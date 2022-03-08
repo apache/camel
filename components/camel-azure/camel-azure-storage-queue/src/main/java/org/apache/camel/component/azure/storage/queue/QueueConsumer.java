@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
+import com.azure.core.util.BinaryData;
 import com.azure.storage.queue.QueueServiceClient;
 import com.azure.storage.queue.models.QueueMessageItem;
 import com.azure.storage.queue.models.QueueStorageException;
@@ -157,7 +158,8 @@ public class QueueConsumer extends ScheduledBatchPollingConsumer {
         final Exchange exchange = createExchange(true);
         final Message message = exchange.getIn();
 
-        message.setBody(messageItem.getMessageText());
+        BinaryData data = messageItem.getBody();
+        message.setBody(data == null ? null : data.toString());
         message.setHeaders(QueueExchangeHeaders.createQueueExchangeHeadersFromQueueMessageItem(messageItem).toMap());
 
         return exchange;
