@@ -146,11 +146,7 @@ public class GsonDataFormat extends ServiceSupport
         }
 
         if (contentTypeHeader) {
-            if (exchange.hasOut()) {
-                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/json");
-            } else {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
-            }
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json");
         }
     }
 
