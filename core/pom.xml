@@ -58,6 +58,7 @@
         <module>camel-health</module>
         <module>camel-console</module>
         <module>camel-main</module>
+        <module>camel-core-all</module>
     </modules>
 
     <properties>
