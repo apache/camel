@@ -29,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class RecordStringConverterTest {
 
     @Test
-    public void convertRecordToString() throws Exception {
+    public void convertRecordToString() {
         Record record = Record.builder().sequenceNumber("1")
                 .data(SdkBytes.fromByteBuffer(ByteBuffer.wrap("this is a String".getBytes(Charset.forName("UTF-8"))))).build();
 

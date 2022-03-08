@@ -39,14 +39,14 @@ public class KinesisFirehoseEndpointTest {
     private CamelContext camelContext;
 
     @BeforeEach
-    public void setup() throws Exception {
+    public void setup() {
         SimpleRegistry registry = new SimpleRegistry();
         registry.bind("firehoseClient", amazonKinesisFirehoseClient);
         camelContext = new DefaultCamelContext(registry);
     }
 
     @Test
-    public void allEndpointParams() throws Exception {
+    public void allEndpointParams() {
         KinesisFirehose2Endpoint endpoint = (KinesisFirehose2Endpoint) camelContext
                 .getEndpoint("aws2-kinesis-firehose://some_stream_name" + "?amazonKinesisFirehoseClient=#firehoseClient");
         endpoint.start();
@@ -56,7 +56,7 @@ public class KinesisFirehoseEndpointTest {
     }
 
     @Test
-    public void allClientCreationParams() throws Exception {
+    public void allClientCreationParams() {
         KinesisFirehose2Endpoint endpoint = (KinesisFirehose2Endpoint) camelContext
                 .getEndpoint("aws2-kinesis-firehose://some_stream_name" + "?accessKey=xxx&secretKey=yyy&region=us-east-1");
 

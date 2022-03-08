@@ -51,14 +51,14 @@ public class KinesisComponentManualIT extends CamelTestSupport {
         result.expectedMessageCount(2);
 
         template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "partition-1");
                 exchange.getIn().setBody("Kinesis Event 1.");
             }
         });
 
         template.send("direct:start", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "partition-1");
                 exchange.getIn().setBody("Kinesis Event 2.");
             }
@@ -79,10 +79,10 @@ public class KinesisComponentManualIT extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String kinesisEndpointUri = "aws2-kinesis://kinesis1?amazonKinesisClient=#amazonKinesisClient";
 
                 from("direct:start").to(kinesisEndpointUri);

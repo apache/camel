@@ -42,9 +42,9 @@ public class KinesisFirehoseComponentManualIT extends CamelTestSupport {
     FirehoseClient client = FirehoseClient.builder().build();
 
     @Test
-    public void testFirehoseRouting() throws Exception {
+    public void testFirehoseRouting() {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("my message text");
             }
         });
@@ -52,9 +52,9 @@ public class KinesisFirehoseComponentManualIT extends CamelTestSupport {
     }
 
     @Test
-    public void testFirehoseBatchRouting() throws Exception {
+    public void testFirehoseBatchRouting() {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 List<Record> recs = new ArrayList<Record>();
                 Record rec = Record.builder().data(SdkBytes.fromString("Test1", Charset.defaultCharset())).build();
                 Record rec1 = Record.builder().data(SdkBytes.fromString("Test2", Charset.defaultCharset())).build();
@@ -67,10 +67,10 @@ public class KinesisFirehoseComponentManualIT extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("aws2-kinesis-firehose://cc?amazonKinesisFirehoseClient=#FirehoseClient&operation=sendBatchRecord");
             }
