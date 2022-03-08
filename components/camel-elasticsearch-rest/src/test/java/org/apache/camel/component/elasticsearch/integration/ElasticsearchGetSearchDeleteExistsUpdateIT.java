@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSupport {
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         //first, Index a value
         Map<String, String> map = createIndexedData();
         sendBody("direct:index", map);
@@ -60,7 +60,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete() {
         //first, Index a value
         Map<String, String> map = createIndexedData();
         sendBody("direct:index", map);
@@ -83,7 +83,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
     }
 
     @Test
-    public void testSearchWithMapQuery() throws Exception {
+    public void testSearchWithMapQuery() {
         //first, Index a value
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
@@ -106,7 +106,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
     }
 
     @Test
-    public void testSearchWithStringQuery() throws Exception {
+    public void testSearchWithStringQuery() {
         //first, Index a value
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
@@ -132,7 +132,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
     }
 
     @Test
-    public void testMultiSearch() throws Exception {
+    public void testMultiSearch() {
         //first, Index a value
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
@@ -156,7 +156,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
@@ -170,7 +170,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
     }
 
     @Test
-    public void testGetWithHeaders() throws Exception {
+    public void testGetWithHeaders() {
         //first, Index a value
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<>();
@@ -187,7 +187,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
     }
 
     @Test
-    public void testExistsWithHeaders() throws Exception {
+    public void testExistsWithHeaders() {
         //first, Index a value
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<>();
@@ -205,7 +205,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
     }
 
     @Test
-    public void testNotExistsWithHeaders() throws Exception {
+    public void testNotExistsWithHeaders() {
         //first, Index a value
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<>();
@@ -223,7 +223,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
     }
 
     @Test
-    public void testDeleteWithHeaders() throws Exception {
+    public void testDeleteWithHeaders() {
         //first, Index a value
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<>();
@@ -252,7 +252,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
     }
 
     @Test
-    public void testUpdateWithIDInHeader() throws Exception {
+    public void testUpdateWithIDInHeader() {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
@@ -271,7 +271,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
     }
 
     @Test
-    public void getRequestBody() throws Exception {
+    public void getRequestBody() {
         String prefix = createPrefix();
 
         // given
@@ -292,7 +292,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
     }
 
     @Test
-    public void deleteRequestBody() throws Exception {
+    public void deleteRequestBody() {
         String prefix = createPrefix();
 
         // given
@@ -311,7 +311,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
     }
 
     @Test
-    public void testStringUpdate() throws Exception {
+    public void testStringUpdate() {
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
@@ -328,7 +328,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

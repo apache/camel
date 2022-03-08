@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ElasticsearchBulkIT extends ElasticsearchTestSupport {
 
     @Test
-    public void testBulkIndex() throws Exception {
+    public void testBulkIndex() {
         List<Map<String, String>> documents = new ArrayList<>();
         Map<String, String> document1 = createIndexedData("1");
         Map<String, String> document2 = createIndexedData("2");
@@ -51,7 +51,7 @@ public class ElasticsearchBulkIT extends ElasticsearchTestSupport {
     }
 
     @Test
-    public void bulkIndexListRequestBody() throws Exception {
+    public void bulkIndexListRequestBody() {
         String prefix = createPrefix();
 
         // given
@@ -70,7 +70,7 @@ public class ElasticsearchBulkIT extends ElasticsearchTestSupport {
     }
 
     @Test
-    public void bulkIndexRequestBody() throws Exception {
+    public void bulkIndexRequestBody() {
         String prefix = createPrefix();
 
         // given
@@ -90,7 +90,7 @@ public class ElasticsearchBulkIT extends ElasticsearchTestSupport {
     }
 
     @Test
-    public void bulkRequestBody() throws Exception {
+    public void bulkRequestBody() {
         String prefix = createPrefix();
 
         // given
@@ -107,7 +107,7 @@ public class ElasticsearchBulkIT extends ElasticsearchTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
