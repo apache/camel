@@ -27,7 +27,7 @@ public class MyNotificationService {
         NotificationType notification = new NotificationType();
         notification.setEvent("Hello");
 
-        exchange.getOut().setBody(notification);
+        exchange.getMessage().setBody(notification);
     }
 
     public void sendNotification(Exchange exchange) {

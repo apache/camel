@@ -174,11 +174,7 @@ public class JaxbDataFormat extends ServiceSupport
             doMarshal(exchange, graph, stream, marshaller, charset);
 
             if (contentTypeHeader) {
-                if (exchange.hasOut()) {
-                    exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-                } else {
-                    exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-                }
+                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/xml");
             }
         } catch (Exception e) {
             throw new IOException(e);
