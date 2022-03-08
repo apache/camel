@@ -44,10 +44,10 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void sendInOnlyMessageUsingUrlOptions() throws Exception {
+    public void sendInOnlyMessageUsingUrlOptions() {
         Exchange exchange = template.send("direct:start", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
@@ -61,10 +61,10 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void sendInOutMessageUsingUrlOptions() throws Exception {
+    public void sendInOutMessageUsingUrlOptions() {
         Exchange exchange = template.request("direct:start", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
@@ -73,11 +73,11 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void sendRawMessage() throws Exception {
+    public void sendRawMessage() {
         final MockMessage mess = new MockMessage();
         Exchange exchange = template.request("direct:start", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(mess);
             }
         });
@@ -89,9 +89,9 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void sendMessageUsingMessageHeaders() throws Exception {
+    public void sendMessageUsingMessageHeaders() {
         Exchange exchange = template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("This is my message text.");
                 exchange.getIn().setHeader(Ses2Constants.FROM, "anotherFrom@example.com");
                 exchange.getIn().setHeader(Ses2Constants.TO, "anotherTo1@example.com, anotherTo2@example.com");

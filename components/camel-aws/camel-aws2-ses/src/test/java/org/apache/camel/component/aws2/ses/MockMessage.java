@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws2.ses;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
@@ -27,193 +26,192 @@ import javax.mail.Address;
 import javax.mail.Flags;
 import javax.mail.Header;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Multipart;
 
 public class MockMessage extends Message {
 
     @Override
-    public int getSize() throws MessagingException {
+    public int getSize() {
         return 0;
     }
 
     @Override
-    public int getLineCount() throws MessagingException {
+    public int getLineCount() {
         return 0;
     }
 
     @Override
-    public String getContentType() throws MessagingException {
+    public String getContentType() {
         return null;
     }
 
     @Override
-    public boolean isMimeType(String mimeType) throws MessagingException {
+    public boolean isMimeType(String mimeType) {
         return false;
     }
 
     @Override
-    public String getDisposition() throws MessagingException {
+    public String getDisposition() {
         return null;
     }
 
     @Override
-    public void setDisposition(String disposition) throws MessagingException {
+    public void setDisposition(String disposition) {
     }
 
     @Override
-    public String getDescription() throws MessagingException {
+    public String getDescription() {
         return null;
     }
 
     @Override
-    public void setDescription(String description) throws MessagingException {
+    public void setDescription(String description) {
     }
 
     @Override
-    public String getFileName() throws MessagingException {
+    public String getFileName() {
         return null;
     }
 
     @Override
-    public void setFileName(String filename) throws MessagingException {
+    public void setFileName(String filename) {
     }
 
     @Override
-    public InputStream getInputStream() throws IOException, MessagingException {
+    public InputStream getInputStream() {
         return null;
     }
 
     @Override
-    public DataHandler getDataHandler() throws MessagingException {
+    public DataHandler getDataHandler() {
         return null;
     }
 
     @Override
-    public Object getContent() throws IOException, MessagingException {
+    public Object getContent() {
         return null;
     }
 
     @Override
-    public void setDataHandler(DataHandler dh) throws MessagingException {
+    public void setDataHandler(DataHandler dh) {
     }
 
     @Override
-    public void setContent(Object obj, String type) throws MessagingException {
+    public void setContent(Object obj, String type) {
     }
 
     @Override
-    public void setText(String text) throws MessagingException {
+    public void setText(String text) {
     }
 
     @Override
-    public void setContent(Multipart mp) throws MessagingException {
+    public void setContent(Multipart mp) {
     }
 
     @Override
-    public void writeTo(OutputStream os) throws IOException, MessagingException {
+    public void writeTo(OutputStream os) {
     }
 
     @Override
-    public String[] getHeader(String headername) throws MessagingException {
+    public String[] getHeader(String headername) {
         return null;
     }
 
     @Override
-    public void setHeader(String headername, String headervalue) throws MessagingException {
+    public void setHeader(String headername, String headervalue) {
     }
 
     @Override
-    public void addHeader(String headername, String headervalue) throws MessagingException {
+    public void addHeader(String headername, String headervalue) {
     }
 
     @Override
-    public void removeHeader(String headername) throws MessagingException {
+    public void removeHeader(String headername) {
     }
 
     @Override
-    public Enumeration<Header> getAllHeaders() throws MessagingException {
+    public Enumeration<Header> getAllHeaders() {
         return null;
     }
 
     @Override
-    public Enumeration<Header> getMatchingHeaders(String[] headernames) throws MessagingException {
+    public Enumeration<Header> getMatchingHeaders(String[] headernames) {
         return null;
     }
 
     @Override
-    public Enumeration<Header> getNonMatchingHeaders(String[] headernames) throws MessagingException {
+    public Enumeration<Header> getNonMatchingHeaders(String[] headernames) {
         return null;
     }
 
     @Override
-    public Address[] getFrom() throws MessagingException {
+    public Address[] getFrom() {
         return null;
     }
 
     @Override
-    public void setFrom() throws MessagingException {
+    public void setFrom() {
     }
 
     @Override
-    public void setFrom(Address address) throws MessagingException {
+    public void setFrom(Address address) {
     }
 
     @Override
-    public void addFrom(Address[] addresses) throws MessagingException {
+    public void addFrom(Address[] addresses) {
     }
 
     @Override
-    public Address[] getRecipients(RecipientType type) throws MessagingException {
+    public Address[] getRecipients(RecipientType type) {
         return null;
     }
 
     @Override
-    public void setRecipients(RecipientType type, Address[] addresses) throws MessagingException {
+    public void setRecipients(RecipientType type, Address[] addresses) {
     }
 
     @Override
-    public void addRecipients(RecipientType type, Address[] addresses) throws MessagingException {
+    public void addRecipients(RecipientType type, Address[] addresses) {
     }
 
     @Override
-    public String getSubject() throws MessagingException {
+    public String getSubject() {
         return null;
     }
 
     @Override
-    public void setSubject(String subject) throws MessagingException {
+    public void setSubject(String subject) {
     }
 
     @Override
-    public Date getSentDate() throws MessagingException {
+    public Date getSentDate() {
         return null;
     }
 
     @Override
-    public void setSentDate(Date date) throws MessagingException {
+    public void setSentDate(Date date) {
     }
 
     @Override
-    public Date getReceivedDate() throws MessagingException {
+    public Date getReceivedDate() {
         return null;
     }
 
     @Override
-    public Flags getFlags() throws MessagingException {
+    public Flags getFlags() {
         return null;
     }
 
     @Override
-    public void setFlags(Flags flag, boolean set) throws MessagingException {
+    public void setFlags(Flags flag, boolean set) {
     }
 
     @Override
-    public Message reply(boolean replyToAll) throws MessagingException {
+    public Message reply(boolean replyToAll) {
         return null;
     }
 
     @Override
-    public void saveChanges() throws MessagingException {
+    public void saveChanges() {
     }
 }
