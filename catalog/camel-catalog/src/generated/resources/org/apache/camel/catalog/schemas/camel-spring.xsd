@@ -10612,6 +10612,14 @@ Reference to the route templates in the xml dsl.
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:onException"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:onCompletion"/>
         </xs:sequence>
+        <xs:attribute name="precondition" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The predicate of the precondition in simple language to evaluate in order to
+determine if this route configuration should be included or not.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
