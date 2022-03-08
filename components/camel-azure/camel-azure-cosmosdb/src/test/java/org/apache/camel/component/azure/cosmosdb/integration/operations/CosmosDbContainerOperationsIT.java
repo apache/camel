@@ -295,7 +295,7 @@ class CosmosDbContainerOperationsIT {
     }
 
     @Test
-    void testCaptureChangeFeed() throws InterruptedException {
+    void testCaptureChangeFeed() {
         // we create our lease container first with our lease database
         final Mono<CosmosAsyncContainer> leaseContainer = CosmosDbOperationsBuilder.withClient(clientWrapper)
                 .withContainerName("camel-lease")

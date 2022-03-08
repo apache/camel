@@ -430,10 +430,10 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:listDatabases").to("azure-cosmosdb://?operation=listDatabases").to(resultName);
                 from("direct:createDatabase").to("azure-cosmosdb://?operation=createDatabase").to(resultName);
                 from("direct:deleteDatabase").to("azure-cosmosdb://?operation=deleteDatabase").to(resultName);
