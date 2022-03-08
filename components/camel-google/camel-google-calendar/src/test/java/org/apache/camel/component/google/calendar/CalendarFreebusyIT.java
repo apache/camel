@@ -44,7 +44,7 @@ public class CalendarFreebusyIT extends AbstractGoogleCalendarTestSupport {
             = GoogleCalendarApiCollection.getCollection().getApiName(CalendarFreebusyApiMethod.class).getName();
 
     @Test
-    public void testQuery() throws Exception {
+    public void testQuery() {
         // using com.google.api.services.calendar.model.FreeBusyRequest message
         // body for single parameter "content"
         com.google.api.services.calendar.model.FreeBusyRequest request = new FreeBusyRequest();
@@ -62,7 +62,7 @@ public class CalendarFreebusyIT extends AbstractGoogleCalendarTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

@@ -49,7 +49,7 @@ public class CalendarEventsIT extends AbstractGoogleCalendarTestSupport {
             = GoogleCalendarApiCollection.getCollection().getApiName(CalendarEventsApiMethod.class).getName();
 
     @Test
-    public void testInsert() throws Exception {
+    public void testInsert() {
         Event event = new Event();
 
         event.setSummary("Feed the Camel");
@@ -79,7 +79,7 @@ public class CalendarEventsIT extends AbstractGoogleCalendarTestSupport {
     }
 
     @Test
-    public void testManipulatingAnEvent() throws Exception {
+    public void testManipulatingAnEvent() {
         // Add an event
         Map<String, Object> headers = new HashMap<>();
         // parameter type is String
@@ -125,7 +125,7 @@ public class CalendarEventsIT extends AbstractGoogleCalendarTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

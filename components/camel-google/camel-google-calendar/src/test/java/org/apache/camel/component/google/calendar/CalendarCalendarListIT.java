@@ -39,7 +39,7 @@ public class CalendarCalendarListIT extends AbstractGoogleCalendarTestSupport {
             = GoogleCalendarApiCollection.getCollection().getApiName(CalendarCalendarListApiMethod.class).getName();
 
     @Test
-    public void testCalendarList() throws Exception {
+    public void testCalendarList() {
         Calendar calendar = getCalendar();
         assertTrue(isCalendarInList(calendar), "Test calendar should be in the list");
 
@@ -62,7 +62,7 @@ public class CalendarCalendarListIT extends AbstractGoogleCalendarTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

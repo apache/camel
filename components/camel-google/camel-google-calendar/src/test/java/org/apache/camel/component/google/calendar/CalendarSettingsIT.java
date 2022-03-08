@@ -38,7 +38,7 @@ public class CalendarSettingsIT extends AbstractGoogleCalendarTestSupport {
             = GoogleCalendarApiCollection.getCollection().getApiName(CalendarSettingsApiMethod.class).getName();
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         // using String message body for single parameter "setting"
         final com.google.api.services.calendar.model.Setting result = requestBody("direct://GET", "timezone");
 
@@ -47,7 +47,7 @@ public class CalendarSettingsIT extends AbstractGoogleCalendarTestSupport {
     }
 
     @Test
-    public void testList() throws Exception {
+    public void testList() {
         final com.google.api.services.calendar.model.Settings result = requestBody("direct://LIST", null);
 
         assertNotNull(result, "list result");
@@ -55,7 +55,7 @@ public class CalendarSettingsIT extends AbstractGoogleCalendarTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
