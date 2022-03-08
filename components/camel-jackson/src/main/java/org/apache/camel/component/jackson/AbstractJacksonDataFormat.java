@@ -155,11 +155,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         this.objectMapper.writerWithView(jsonView).with(schema).writeValue(stream, graph);
 
         if (contentTypeHeader) {
-            if (exchange.hasOut()) {
-                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, getDefaultContentType());
-            } else {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, getDefaultContentType());
-            }
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, getDefaultContentType());
         }
     }
 
