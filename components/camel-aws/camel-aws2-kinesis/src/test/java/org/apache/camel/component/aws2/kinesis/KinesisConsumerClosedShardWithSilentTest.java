@@ -61,7 +61,7 @@ public class KinesisConsumerClosedShardWithSilentTest {
     private Kinesis2Consumer undertest;
 
     @BeforeEach
-    public void setup() throws Exception {
+    public void setup() {
         Kinesis2Configuration configuration = new Kinesis2Configuration();
         configuration.setAmazonKinesisClient(kinesisClient);
         configuration.setIteratorType(ShardIteratorType.LATEST);

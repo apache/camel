@@ -39,14 +39,14 @@ public class KinesisEndpointTest {
     private CamelContext camelContext;
 
     @BeforeEach
-    public void setup() throws Exception {
+    public void setup() {
         SimpleRegistry registry = new SimpleRegistry();
         registry.bind("kinesisClient", amazonKinesisClient);
         camelContext = new DefaultCamelContext(registry);
     }
 
     @Test
-    public void allTheEndpointParams() throws Exception {
+    public void allTheEndpointParams() {
         Kinesis2Endpoint endpoint = (Kinesis2Endpoint) camelContext
                 .getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient"
                              + "&maxResultsPerRequest=101" + "&iteratorType=latest" + "&shardId=abc" + "&sequenceNumber=123");
@@ -60,7 +60,7 @@ public class KinesisEndpointTest {
     }
 
     @Test
-    public void onlyRequiredEndpointParams() throws Exception {
+    public void onlyRequiredEndpointParams() {
         Kinesis2Endpoint endpoint = (Kinesis2Endpoint) camelContext
                 .getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient");
 
@@ -71,7 +71,7 @@ public class KinesisEndpointTest {
     }
 
     @Test
-    public void afterSequenceNumberRequiresSequenceNumber() throws Exception {
+    public void afterSequenceNumberRequiresSequenceNumber() {
         Kinesis2Endpoint endpoint = (Kinesis2Endpoint) camelContext
                 .getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient"
                              + "&iteratorType=AFTER_SEQUENCE_NUMBER" + "&shardId=abc" + "&sequenceNumber=123");
@@ -84,7 +84,7 @@ public class KinesisEndpointTest {
     }
 
     @Test
-    public void atSequenceNumberRequiresSequenceNumber() throws Exception {
+    public void atSequenceNumberRequiresSequenceNumber() {
         Kinesis2Endpoint endpoint = (Kinesis2Endpoint) camelContext
                 .getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient"
                              + "&iteratorType=AT_SEQUENCE_NUMBER" + "&shardId=abc" + "&sequenceNumber=123");

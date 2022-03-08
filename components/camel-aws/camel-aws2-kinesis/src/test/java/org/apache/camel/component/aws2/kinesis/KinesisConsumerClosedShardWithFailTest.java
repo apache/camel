@@ -60,7 +60,7 @@ public class KinesisConsumerClosedShardWithFailTest {
     private Kinesis2Consumer undertest;
 
     @BeforeEach
-    public void setup() throws Exception {
+    public void setup() {
         Kinesis2Configuration configuration = new Kinesis2Configuration();
         configuration.setAmazonKinesisClient(kinesisClient);
         configuration.setIteratorType(ShardIteratorType.LATEST);
@@ -85,7 +85,7 @@ public class KinesisConsumerClosedShardWithFailTest {
     }
 
     @Test
-    public void itObtainsAShardIteratorOnFirstPoll() throws Exception {
+    public void itObtainsAShardIteratorOnFirstPoll() {
         assertThrows(ReachedClosedStatusException.class, () -> {
             undertest.poll();
         });
