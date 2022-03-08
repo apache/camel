@@ -107,7 +107,7 @@ class BlobOperationsTest extends CamelTestSupport {
         // third: test with exchange provided but with outputstream set
         // mocking
         final ResponseBase<BlobDownloadHeaders, Void> mockedResults2 = new ResponseBase<>(
-                null, 200, new HttpHeaders().put("x-test-header", "123"), null, new BlobDownloadHeaders().setETag("tag1"));
+                null, 200, new HttpHeaders().set("x-test-header", "123"), null, new BlobDownloadHeaders().setETag("tag1"));
         when(client.downloadWithResponse(any(), any(), any(), any(), anyBoolean(), any())).thenReturn(mockedResults2);
         exchange.getIn().setBody(new ByteArrayOutputStream());
 
