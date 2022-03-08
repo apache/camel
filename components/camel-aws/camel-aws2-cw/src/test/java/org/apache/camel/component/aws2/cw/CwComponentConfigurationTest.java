@@ -51,7 +51,7 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
+    public void createEndpointWithoutAccessKeyConfiguration() {
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-cw://camel.apache.org/test?secretKey=yyy");
@@ -59,7 +59,7 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
+    public void createEndpointWithoutSecretKeyConfiguration() {
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxx");
@@ -67,7 +67,7 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
+    public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() {
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxx");

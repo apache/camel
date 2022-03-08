@@ -46,7 +46,7 @@ public class CwComponentTest extends CamelTestSupport {
     public void sendMetricFromHeaderValues() throws Exception {
         mock.expectedMessageCount(1);
         template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Cw2Constants.METRIC_NAMESPACE, "camel.apache.org/overriden");
                 exchange.getIn().setHeader(Cw2Constants.METRIC_NAME, "OverridenMetric");
                 exchange.getIn().setHeader(Cw2Constants.METRIC_VALUE, Double.valueOf(3));
@@ -59,10 +59,10 @@ public class CwComponentTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(
                         "aws2-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&name=testMetric&unit=BYTES&timestamp=#now")
                         .to("mock:result");
