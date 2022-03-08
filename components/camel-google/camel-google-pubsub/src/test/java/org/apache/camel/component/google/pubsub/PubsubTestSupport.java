@@ -77,7 +77,7 @@ public class PubsubTestSupport extends CamelTestSupport {
     }
 
     @BindToRegistry("prop")
-    public Properties loadRegProperties() throws Exception {
+    public Properties loadRegProperties() {
         return loadProperties();
     }
 
@@ -89,7 +89,7 @@ public class PubsubTestSupport extends CamelTestSupport {
         return context;
     }
 
-    public void createTopicSubscription() throws Exception {
+    public void createTopicSubscription() {
     }
 
     public void createTopicSubscriptionPair(String topicName, String subscriptionName) {

@@ -55,7 +55,7 @@ public class AcknowledgementIT extends PubsubTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from(directIn).routeId("Send_to_Fail").to(pubsubTopic);

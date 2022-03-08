@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.pubsub.integration;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.BindToRegistry;
@@ -59,7 +58,7 @@ public class CustomSerializerIT extends PubsubTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from(directIn).to(pubsubTopic);
@@ -81,7 +80,7 @@ public class CustomSerializerIT extends PubsubTestSupport {
     private static final class CustomSerializer implements GooglePubsubSerializer {
 
         @Override
-        public byte[] serialize(Object payload) throws IOException {
+        public byte[] serialize(Object payload) {
             // Append 'custom serialized' to the payload
             String serialized = payload + " custom serialized";
             return serialized.getBytes(StandardCharsets.UTF_8);
