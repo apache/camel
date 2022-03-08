@@ -44,7 +44,7 @@ public class PubsubEndpointTest extends PubsubTestSupport {
     private Endpoint to;
 
     @Test
-    public void testEndpointConfiguration() throws Exception {
+    public void testEndpointConfiguration() {
 
         // :1 identifies the first registered endpoint fo a type in the context
         Endpoint endpoint = context.hasEndpoint(String.format("google-pubsub:%s:%s", PROJECT_ID, SUBSCRIPTION_URI));
@@ -65,7 +65,7 @@ public class PubsubEndpointTest extends PubsubTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from(from).to(to);

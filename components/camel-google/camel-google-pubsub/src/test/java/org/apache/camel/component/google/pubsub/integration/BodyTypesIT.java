@@ -77,7 +77,7 @@ public class BodyTypesIT extends PubsubTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from(directIn).routeId("Single_Send").to(pubsubTopic).to(sendResult);

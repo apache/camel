@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.google.pubsub.integration;
 
-import java.io.IOException;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -64,7 +62,7 @@ public class AckModeNoneIT extends PubsubTestSupport {
     }
 
     @Override
-    public void createTopicSubscription() throws IOException {
+    public void createTopicSubscription() {
         createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME, 1);
     }
 
