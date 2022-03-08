@@ -46,7 +46,7 @@ public class SqsProducerDeleteQueueTest extends CamelTestSupport {
         template.send("direct:start", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Sqs2Constants.SQS_QUEUE_PREFIX, "camel-1");
             }
         });
@@ -56,10 +56,10 @@ public class SqsProducerDeleteQueueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("aws2-sqs://camel-1?amazonSQSClient=#client&operation=deleteQueue").to("mock:result");
             }
         };

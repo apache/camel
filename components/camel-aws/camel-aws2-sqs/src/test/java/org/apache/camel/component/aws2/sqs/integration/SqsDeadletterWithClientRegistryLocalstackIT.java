@@ -49,7 +49,7 @@ public class SqsDeadletterWithClientRegistryLocalstackIT extends Aws2SQSBaseTest
         result.expectedMessageCount(1);
 
         template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("test1");
             }
         });
@@ -58,11 +58,11 @@ public class SqsDeadletterWithClientRegistryLocalstackIT extends Aws2SQSBaseTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String deadletterName = sharedNameGenerator.getName() + "_deadletter";
 
                 errorHandler(deadLetterChannel(String.format("aws2-sqs://%s?autoCreateQueue=true", deadletterName))

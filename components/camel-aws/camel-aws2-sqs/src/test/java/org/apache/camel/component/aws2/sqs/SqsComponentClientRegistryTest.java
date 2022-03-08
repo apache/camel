@@ -37,7 +37,7 @@ public class SqsComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithMinimalSQSClientMisconfiguration() throws Exception {
+    public void createEndpointWithMinimalSQSClientMisconfiguration() {
 
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {

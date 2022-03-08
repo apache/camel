@@ -47,7 +47,7 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
@@ -71,7 +71,7 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
@@ -97,7 +97,7 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
         template.send("direct:start-batch", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Collection c = new ArrayList<Integer>();
                 c.add("team1");
                 c.add("team2");
@@ -119,7 +119,7 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
         template.send("direct:start-delete", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Sqs2Constants.RECEIPT_HANDLE, "123456");
             }
         });

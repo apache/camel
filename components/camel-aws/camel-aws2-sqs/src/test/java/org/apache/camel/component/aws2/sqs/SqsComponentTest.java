@@ -46,7 +46,7 @@ public class SqsComponentTest extends CamelTestSupport {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
@@ -71,7 +71,7 @@ public class SqsComponentTest extends CamelTestSupport {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
@@ -92,7 +92,7 @@ public class SqsComponentTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             final String sqsURI = String.format(
                     "aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&messageRetentionPeriod=%s&maximumMessageSize=%s&policy=%s",
@@ -100,7 +100,7 @@ public class SqsComponentTest extends CamelTestSupport {
                     "");
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(sqsURI);
 
                 from(sqsURI).to("mock:result");
