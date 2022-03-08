@@ -43,7 +43,7 @@ public class AccountIT extends AbstractTwilioTestSupport {
     private static final String PATH_PREFIX = TwilioApiCollection.getCollection().getApiName(AccountApiMethod.class).getName();
 
     @Test
-    public void testFetcher() throws Exception {
+    public void testFetcher() {
         final Account result = requestBody("direct://FETCHER", null);
 
         assertNotNull(result, "fetcher result not null");
@@ -52,7 +52,7 @@ public class AccountIT extends AbstractTwilioTestSupport {
     }
 
     @Test
-    public void testFetcherWithPathSid() throws Exception {
+    public void testFetcherWithPathSid() {
         final Account result = requestBodyAndHeaders("direct://FETCHER", null,
                 headers("CamelTwilioPathSid", ((TwilioComponent) context().getComponent("twilio")).getAccountSid()));
 
@@ -62,7 +62,7 @@ public class AccountIT extends AbstractTwilioTestSupport {
     }
 
     @Test
-    public void testReader() throws Exception {
+    public void testReader() {
         final ResourceSet<Account> result = requestBody("direct://READER", null);
 
         assertNotNull(result, "reader result not null");
@@ -73,7 +73,7 @@ public class AccountIT extends AbstractTwilioTestSupport {
     }
 
     @Test
-    public void testReaderWithStatusActive() throws Exception {
+    public void testReaderWithStatusActive() {
         final ResourceSet<Account> result = requestBodyAndHeaders("direct://READER", null,
                 headers("CamelTwilioStatus", "active"));
 
@@ -91,7 +91,7 @@ public class AccountIT extends AbstractTwilioTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for fetcher
