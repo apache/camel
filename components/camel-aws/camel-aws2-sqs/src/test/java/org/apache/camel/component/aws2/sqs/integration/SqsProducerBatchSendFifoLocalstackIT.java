@@ -42,7 +42,7 @@ public class SqsProducerBatchSendFifoLocalstackIT extends Aws2SQSBaseTest {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Collection c = new ArrayList<Integer>();
                 c.add("2");
                 exchange.getIn().setBody(c);
@@ -53,7 +53,7 @@ public class SqsProducerBatchSendFifoLocalstackIT extends Aws2SQSBaseTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         final String sqsEndpointUri = String.format(
                 "aws2-sqs://%s.fifo?messageGroupIdStrategy=useExchangeId"
                                                     + "&messageDeduplicationIdStrategy=useContentBasedDeduplication&autoCreateQueue=true",
@@ -61,7 +61,7 @@ public class SqsProducerBatchSendFifoLocalstackIT extends Aws2SQSBaseTest {
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").startupOrder(2).setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage"))
                         .to(sqsEndpointUri);
 

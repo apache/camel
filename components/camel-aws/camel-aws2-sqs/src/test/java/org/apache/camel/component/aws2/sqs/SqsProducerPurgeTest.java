@@ -47,7 +47,7 @@ public class SqsProducerPurgeTest extends CamelTestSupport {
         template.send("direct:start", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
             }
         });
         assertMockEndpointsSatisfied();
@@ -56,10 +56,10 @@ public class SqsProducerPurgeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("aws2-sqs://camel-1?amazonSQSClient=#client&operation=purgeQueue").to("mock:result");
             }
         };

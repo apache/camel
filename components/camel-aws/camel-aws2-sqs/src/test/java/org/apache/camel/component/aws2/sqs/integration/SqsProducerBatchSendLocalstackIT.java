@@ -42,7 +42,7 @@ public class SqsProducerBatchSendLocalstackIT extends Aws2SQSBaseTest {
         result.expectedMessageCount(5);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Collection c = new ArrayList<Integer>();
                 c.add("1");
                 c.add("2");
@@ -57,11 +57,11 @@ public class SqsProducerBatchSendLocalstackIT extends Aws2SQSBaseTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").startupOrder(2).setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage"))
                         .toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName());
 

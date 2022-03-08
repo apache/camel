@@ -50,7 +50,7 @@ public class SqsProducerBatchTest extends CamelTestSupport {
         template.send("direct:start", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Collection c = new ArrayList<Integer>();
                 c.add("team1");
                 c.add("team2");
@@ -66,10 +66,10 @@ public class SqsProducerBatchTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("aws2-sqs://camel-1?amazonSQSClient=#client&operation=sendBatchMessage")
                         .to("mock:result");
             }

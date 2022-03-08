@@ -50,7 +50,7 @@ public class SqsBatchConsumerTest extends CamelTestSupport {
     }
 
     @BindToRegistry("amazonSQSClient")
-    public AmazonSQSClientMock addClient() throws Exception {
+    public AmazonSQSClientMock addClient() {
 
         AmazonSQSClientMock clientMock = new AmazonSQSClientMock();
         // add 6 messages, one more we will poll
@@ -68,10 +68,10 @@ public class SqsBatchConsumerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&delay=5000&maxMessagesPerPoll=5").to("mock:result");
             }
         };
