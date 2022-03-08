@@ -37,7 +37,7 @@ public class MQComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithMinimalMQClientMisconfiguration() throws Exception {
+    public void createEndpointWithMinimalMQClientMisconfiguration() {
 
         MQ2Component component = context.getComponent("aws2-mq", MQ2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
