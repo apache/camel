@@ -44,7 +44,7 @@ public class MulticastParallelRouteTest extends CamelAwsXRayTestSupport {
     }
 
     @Test
-    public void testRoute() throws Exception {
+    public void testRoute() {
         NotifyBuilder notify = new NotifyBuilder(context)
                 .from("seda:b").whenDone(1)
                 .and()
@@ -60,10 +60,10 @@ public class MulticastParallelRouteTest extends CamelAwsXRayTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("start")
                         .to("seda:a");
 

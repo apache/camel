@@ -82,10 +82,10 @@ public class EIPTracingTest extends CamelAwsXRayTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("start")
                         .log("start has been called")
                         .bean(TraceBean.class)
@@ -117,7 +117,7 @@ public class EIPTracingTest extends CamelAwsXRayTestSupport {
     public static class CustomProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getIn().setHeader("TEST", "done");
         }
     }
