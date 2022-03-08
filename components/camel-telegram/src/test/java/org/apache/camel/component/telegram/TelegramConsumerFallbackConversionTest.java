@@ -43,7 +43,7 @@ public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport 
     protected ProducerTemplate template;
 
     @Test
-    public void testEverythingOk() throws Exception {
+    public void testEverythingOk() {
 
         template.sendBody(new BrandNewType("wrapped message"));
 
@@ -60,12 +60,12 @@ public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport 
     }
 
     @Override
-    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+    protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
                 getMockRoutes(),
                 new RouteBuilder() {
                     @Override
-                    public void configure() throws Exception {
+                    public void configure() {
                         from("direct:message")
                                 .to("telegram:bots?authorizationToken=mock-token&chatId=1234");
                     }

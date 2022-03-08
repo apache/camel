@@ -62,7 +62,7 @@ public class TelegramWebhookRegistrationTest extends TelegramTestSupport {
 
             context().addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:telegram").to("telegram:bots?authorizationToken=mock-token");
                     from("webhook:telegram:bots?authorizationToken=mock-token").to("mock:endpoint");
                 }
@@ -104,7 +104,7 @@ public class TelegramWebhookRegistrationTest extends TelegramTestSupport {
 
             context().addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("webhook:telegram:bots?authorizationToken=mock-token&webhookAutoRegister=false").to("mock:endpoint");
                 }
             });
