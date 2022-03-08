@@ -37,7 +37,7 @@ public class IAMComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithMinimalECSClientMisconfiguration() throws Exception {
+    public void createEndpointWithMinimalECSClientMisconfiguration() {
 
         IAM2Component component = context.getComponent("aws2-iam", IAM2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
