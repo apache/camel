@@ -46,7 +46,7 @@ public class DataLakeProducerIT extends Base {
     }
 
     @Test
-    void testConsumer() throws Exception {
+    void testConsumer() {
 
         {
             @SuppressWarnings("unchecked")
@@ -105,7 +105,7 @@ public class DataLakeProducerIT extends Base {
     }
 
     @Test
-    void testHeaderPreservation() throws InterruptedException {
+    void testHeaderPreservation() {
         Exchange result = template.send(componentUri(fileSystemName, DataLakeOperationsDefinition.listFileSystem),
                 exchange -> {
                     exchange.getIn().setHeader("DoNotDelete", "keep me");
