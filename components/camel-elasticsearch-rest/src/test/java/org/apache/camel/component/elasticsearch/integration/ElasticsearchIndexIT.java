@@ -31,14 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ElasticsearchIndexIT extends ElasticsearchTestSupport {
 
     @Test
-    public void testIndex() throws Exception {
+    public void testIndex() {
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
     }
 
     @Test
-    public void testIndexDelete() throws Exception {
+    public void testIndexDelete() {
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull(indexId, "indexId should be set");
@@ -49,14 +49,14 @@ public class ElasticsearchIndexIT extends ElasticsearchTestSupport {
     }
 
     @Test
-    public void testIndexWithReplication() throws Exception {
+    public void testIndexWithReplication() {
         Map<String, String> map = createIndexedData();
         String indexId = template.requestBody("direct:indexWithReplication", map, String.class);
         assertNotNull(indexId, "indexId should be set");
     }
 
     @Test
-    public void testIndexWithHeaders() throws Exception {
+    public void testIndexWithHeaders() {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
@@ -67,7 +67,7 @@ public class ElasticsearchIndexIT extends ElasticsearchTestSupport {
     }
 
     @Test
-    public void testIndexWithIDInHeader() throws Exception {
+    public void testIndexWithIDInHeader() {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
@@ -80,7 +80,7 @@ public class ElasticsearchIndexIT extends ElasticsearchTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

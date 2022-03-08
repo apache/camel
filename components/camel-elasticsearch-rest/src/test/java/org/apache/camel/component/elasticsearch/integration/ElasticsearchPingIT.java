@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ElasticsearchPingIT extends ElasticsearchTestSupport {
 
     @Test
-    public void testPing() throws Exception {
+    public void testPing() {
         boolean pingResult = template.requestBody("direct:ping", "test", Boolean.class);
         assertTrue(pingResult, "indexId should be set");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

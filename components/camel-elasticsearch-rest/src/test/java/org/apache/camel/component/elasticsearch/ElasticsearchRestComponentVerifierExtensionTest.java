@@ -33,7 +33,7 @@ public class ElasticsearchRestComponentVerifierExtensionTest extends CamelTestSu
     }
 
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() {
         Component component = context().getComponent("elasticsearch-rest");
 
         ComponentVerifierExtension verifier
@@ -49,7 +49,7 @@ public class ElasticsearchRestComponentVerifierExtensionTest extends CamelTestSu
     }
 
     @Test
-    public void testConnectivity() throws Exception {
+    public void testConnectivity() {
         Component component = context().getComponent("elasticsearch-rest");
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
