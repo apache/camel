@@ -36,9 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SesComponentManualIT extends CamelTestSupport {
 
     @Test
-    public void sendUsingAccessKeyAndSecretKey() throws Exception {
+    public void sendUsingAccessKeyAndSecretKey() {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Ses2Constants.SUBJECT, "This is my subject");
                 exchange.getIn().setHeader(Ses2Constants.TO, "to@example.com");
                 exchange.getIn().setBody("This is my message text.");
@@ -49,10 +49,10 @@ public class SesComponentManualIT extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("aws2-ses://from@example.com?accessKey={{aws.access.key}}&secretKey={{aws.secret.key}}");
             }

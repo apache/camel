@@ -136,7 +136,7 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutSourceName() throws Exception {
+    public void createEndpointWithoutSourceName() {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-ses:// ");
@@ -144,7 +144,7 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutAmazonSESClientConfiguration() throws Exception {
+    public void createEndpointWithoutAmazonSESClientConfiguration() {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-ses://from@example.com");
@@ -152,7 +152,7 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
+    public void createEndpointWithoutAccessKeyConfiguration() {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-ses://from@example.com?secretKey=yyy");
@@ -160,7 +160,7 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
+    public void createEndpointWithoutSecretKeyConfiguration() {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx");
