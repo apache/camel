@@ -53,7 +53,7 @@ public class GmailConfigurationTest extends AbstractGoogleMailTestSupport {
     }
 
     @Test
-    public void testConfiguration() throws Exception {
+    public void testConfiguration() {
         GoogleMailEndpoint endpoint = getMandatoryEndpoint(TEST_URI, GoogleMailEndpoint.class);
         GoogleMailConfiguration configuration = endpoint.getConfiguration();
         assertNotNull(configuration);
@@ -65,7 +65,7 @@ public class GmailConfigurationTest extends AbstractGoogleMailTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

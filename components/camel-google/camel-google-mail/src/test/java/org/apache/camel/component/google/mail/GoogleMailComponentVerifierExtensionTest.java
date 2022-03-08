@@ -37,7 +37,7 @@ public class GoogleMailComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() {
         Component component = context().getComponent("google-mail");
 
         ComponentVerifierExtension verifier
@@ -53,7 +53,7 @@ public class GoogleMailComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConnectivity() throws Exception {
+    public void testConnectivity() {
         Component component = context().getComponent("google-mail");
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
