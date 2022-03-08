@@ -98,7 +98,7 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         MongoDbComponent component = new MongoDbComponent();
         component.setMongoConnection(mongo);
 
@@ -128,7 +128,7 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     }
 
     @Test
-    public void testFindAllNoCriteriaOperation() throws Exception {
+    public void testFindAllNoCriteriaOperation() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -158,7 +158,7 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     }
 
     @Test
-    public void testFindAllAllowDiskUse() throws Exception {
+    public void testFindAllAllowDiskUse() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -179,7 +179,7 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     }
 
     @Test
-    public void testFindAllWithQueryAndNoFIlter() throws Exception {
+    public void testFindAllWithQueryAndNoFIlter() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -207,7 +207,7 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     }
 
     @Test
-    public void testFindAllWithQueryAndFilter() throws Exception {
+    public void testFindAllWithQueryAndFilter() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -236,7 +236,7 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     }
 
     @Test
-    public void testFindAllNoCriteriaWithFilterOperation() throws Exception {
+    public void testFindAllNoCriteriaWithFilterOperation() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -267,7 +267,7 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     }
 
     @Test
-    public void testFindAllIterationOperation() throws Exception {
+    public void testFindAllIterationOperation() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -343,7 +343,7 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     }
 
     @Test
-    public void testFindOneByQuery() throws Exception {
+    public void testFindOneByQuery() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -359,7 +359,7 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     }
 
     @Test
-    public void testFindOneById() throws Exception {
+    public void testFindOneById() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -377,7 +377,7 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     }
 
     @Test
-    public void testFindOneByIdWithObjectId() throws Exception {
+    public void testFindOneByIdWithObjectId() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         Document insertObject = new Document("scientist", "Einstein");
@@ -398,7 +398,7 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
 

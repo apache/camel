@@ -37,10 +37,10 @@ class MongoDbEndpointHostsTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:dbFromHost").to("mongodb:dummy?hosts=localhost&database=test&collection=test&operation=findAll");
             }
         };

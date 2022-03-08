@@ -52,7 +52,7 @@ public class MongoDbMetaExtensionIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void testValidMetaData() throws Exception {
+    public void testValidMetaData() {
         // When
         final String database = "test";
         final String collection = "validatedCollection";

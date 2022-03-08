@@ -426,7 +426,7 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport {
         context.addRoutes(new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing")
                         .id("tailableCursorConsumer1")

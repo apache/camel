@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MongoDbEndpointClientTest extends CamelTestSupport {
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("mongoClient", MongoClients.create("mongodb://localhost"));
     }
 
@@ -44,10 +44,10 @@ class MongoDbEndpointClientTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:dbFromBean").to("mongodb:mongoClient?database=test&collection=test&operation=findAll");
             }
         };

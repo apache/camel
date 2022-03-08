@@ -39,7 +39,7 @@ public class MongoDbHeaderHandlingIT extends AbstractMongoDbITSupport {
         assertEquals(0, testCollection.countDocuments());
         Exchange result = template.request("direct:count", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("irrelevant body");
                 exchange.getIn().setHeader("abc", "def");
             }
@@ -53,7 +53,7 @@ public class MongoDbHeaderHandlingIT extends AbstractMongoDbITSupport {
     public void testInHeadersTransferredToOutOnInsert() {
         Exchange result = template.request("direct:insert", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("{\"_id\":\"testInsertString\", \"scientist\":\"Einstein\"}");
                 exchange.getIn().setHeader("abc", "def");
             }
@@ -87,7 +87,7 @@ public class MongoDbHeaderHandlingIT extends AbstractMongoDbITSupport {
         // with the CamelMongoDbWriteResult header
         Exchange resultExch = template.request("direct:save", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(record1);
             }
         });
@@ -105,7 +105,7 @@ public class MongoDbHeaderHandlingIT extends AbstractMongoDbITSupport {
     public void testWriteResultAsHeaderWithReadOp() {
         Exchange resultExch = template.request("direct:getDbStats", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("irrelevantBody");
                 exchange.getIn().setHeader("abc", "def");
             }
@@ -116,7 +116,7 @@ public class MongoDbHeaderHandlingIT extends AbstractMongoDbITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
 

@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class MongoDbConversionsIT extends AbstractMongoDbITSupport {
 
     @Test
-    public void testInsertMap() throws InterruptedException {
+    public void testInsertMap() {
         assertEquals(0, testCollection.countDocuments());
 
         Map<String, Object> m1 = new HashMap<>();
@@ -111,7 +111,7 @@ public class MongoDbConversionsIT extends AbstractMongoDbITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
 
@@ -140,7 +140,7 @@ public class MongoDbConversionsIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void shouldConvertJsonStringListToBSONList() throws InterruptedException {
+    public void shouldConvertJsonStringListToBSONList() {
         String jsonListArray = "[{\"key\":\"value1\"}, {\"key\":\"value2\"}]";
         List<Bson> bsonList = MongoDbBasicConverters.fromStringToList(jsonListArray);
         assertNotNull(bsonList);
@@ -153,7 +153,7 @@ public class MongoDbConversionsIT extends AbstractMongoDbITSupport {
     }
 
     @Test
-    public void shouldNotConvertJsonStringListToBSONList() throws InterruptedException {
+    public void shouldNotConvertJsonStringListToBSONList() {
         String jsonSingleValue = "{\"key\":\"value1\"}";
         List<Bson> bsonList = MongoDbBasicConverters.fromStringToList(jsonSingleValue);
         assertNull(bsonList);

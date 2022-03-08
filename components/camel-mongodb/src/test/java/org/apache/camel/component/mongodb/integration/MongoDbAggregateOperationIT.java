@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MongoDbAggregateOperationIT extends AbstractMongoDbITSupport {
 
     @Test
-    public void testAggregate() throws Exception {
+    public void testAggregate() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
@@ -111,7 +111,7 @@ public class MongoDbAggregateOperationIT extends AbstractMongoDbITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:aggregate")
