@@ -46,7 +46,7 @@ public abstract class BaseBigQueryTest extends CamelTestSupport {
 
     }
 
-    protected GoogleBigQueryProducer createProducer() throws Exception {
+    protected GoogleBigQueryProducer createProducer() {
         configuration.setProjectId(projectId);
         configuration.setTableId(tableId);
         configuration.setDatasetId(datasetId);
@@ -55,7 +55,7 @@ public abstract class BaseBigQueryTest extends CamelTestSupport {
         return new GoogleBigQueryProducer(bigquery, endpoint, configuration);
     }
 
-    protected void setupBigqueryMock() throws Exception {
+    protected void setupBigqueryMock() {
         bigquery = mock(BigQuery.class);
         tabledataMock = mock(Bigquery.Tabledata.class);
         InsertAllResponse mockResponse = mock(InsertAllResponse.class);
