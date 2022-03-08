@@ -178,10 +178,10 @@ public class TikaParseTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("tika:parse").to("mock:result");
                 from("direct:start2").to("tika:parse?tikaConfigUri=src/test/resources/tika-empty.xml")
                         .to("mock:result");
