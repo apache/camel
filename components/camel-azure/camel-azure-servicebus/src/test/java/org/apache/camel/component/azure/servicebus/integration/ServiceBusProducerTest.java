@@ -156,10 +156,10 @@ class ServiceBusProducerTest extends BaseCamelServiceBusTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:sendBatchMessages").to("azure-servicebus:test//?connectionString=test").to(result);
                 from("direct:sendMessage").to("azure-servicebus:test//?connectionString=test").to(result);
                 from("direct:scheduleMessage")

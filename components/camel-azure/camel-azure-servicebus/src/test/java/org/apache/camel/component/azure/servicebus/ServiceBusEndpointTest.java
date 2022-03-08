@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ServiceBusEndpointTest extends CamelTestSupport {
 
     @Test
-    void testCreateWithInvalidData() throws Exception {
+    void testCreateWithInvalidData() {
         assertThrows(ResolveEndpointFailedException.class,
                 () -> context.getEndpoint("azure-servicebus:test//?"));
 
