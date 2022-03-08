@@ -55,7 +55,7 @@ public class EC2ProducerTest extends CamelTestSupport {
     public void createAndRunInstances() {
 
         Exchange exchange = template.request("direct:createAndRun", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2EC2Constants.OPERATION, AWS2EC2Operations.createAndRunInstances);
                 exchange.getIn().setHeader(AWS2EC2Constants.IMAGE_ID, "test-1");
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_TYPE, InstanceType.T2_MICRO);
@@ -74,7 +74,7 @@ public class EC2ProducerTest extends CamelTestSupport {
     public void createAndRunInstancesPojo() {
 
         Exchange exchange = template.request("direct:createAndRunPojo", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2EC2Constants.OPERATION, AWS2EC2Operations.createAndRunInstances);
                 exchange.getIn()
                         .setBody(RunInstancesRequest.builder().imageId("test-1").instanceType(InstanceType.T2_MICRO).build());
@@ -88,11 +88,11 @@ public class EC2ProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void ec2CreateAndRunTestWithKeyPair() throws Exception {
+    public void ec2CreateAndRunTestWithKeyPair() {
 
         Exchange exchange = template.request("direct:createAndRun", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2EC2Constants.OPERATION, AWS2EC2Operations.createAndRunInstances);
                 exchange.getIn().setHeader(AWS2EC2Constants.IMAGE_ID, "test-1");
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_TYPE, InstanceType.T2_MICRO);
@@ -116,7 +116,7 @@ public class EC2ProducerTest extends CamelTestSupport {
 
         Exchange exchange = template.request("direct:start", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
@@ -134,7 +134,7 @@ public class EC2ProducerTest extends CamelTestSupport {
 
         Exchange exchange = template.request("direct:stop", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
@@ -152,7 +152,7 @@ public class EC2ProducerTest extends CamelTestSupport {
 
         Exchange exchange = template.request("direct:terminate", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
@@ -166,12 +166,12 @@ public class EC2ProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void ec2DescribeSpecificInstancesTest() throws Exception {
+    public void ec2DescribeSpecificInstancesTest() {
 
         Exchange exchange = template.request("direct:describe", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Collection<String> l = new ArrayList<>();
                 l.add("instance-1");
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
@@ -189,7 +189,7 @@ public class EC2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:describeStatus", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
@@ -217,12 +217,12 @@ public class EC2ProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void ec2MonitorInstancesTest() throws Exception {
+    public void ec2MonitorInstancesTest() {
 
         Exchange exchange = template.request("direct:monitor", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
@@ -237,12 +237,12 @@ public class EC2ProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void ec2UnmonitorInstancesTest() throws Exception {
+    public void ec2UnmonitorInstancesTest() {
 
         Exchange exchange = template.request("direct:unmonitor", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCES_IDS, l);
@@ -257,10 +257,10 @@ public class EC2ProducerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:createAndRun")
                         .to("aws2-ec2://test?amazonEc2Client=#amazonEc2Client&operation=createAndRunInstances")
                         .to("mock:result");
