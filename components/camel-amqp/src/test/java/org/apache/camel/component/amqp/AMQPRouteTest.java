@@ -60,7 +60,7 @@ public class AMQPRouteTest extends CamelTestSupport {
     String expectedBody = "Hello there!";
 
     @BeforeAll
-    public static void beforeClass() throws Exception {
+    public static void beforeClass() {
         System.setProperty(AMQPConnectionDetails.AMQP_PORT, amqpPort + "");
     }
 
