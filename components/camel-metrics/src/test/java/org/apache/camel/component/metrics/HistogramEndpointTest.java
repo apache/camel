@@ -47,18 +47,18 @@ public class HistogramEndpointTest {
     private InOrder inOrder;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         endpoint = new MetricsEndpoint(null, null, registry, MetricsType.HISTOGRAM, METRICS_NAME);
         inOrder = Mockito.inOrder(registry);
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testHistogramEndpoint() throws Exception {
+    public void testHistogramEndpoint() {
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint.getRegistry(), is(registry));
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
@@ -72,12 +72,12 @@ public class HistogramEndpointTest {
     }
 
     @Test
-    public void testGetValue() throws Exception {
+    public void testGetValue() {
         assertThat(endpoint.getValue(), is(nullValue()));
     }
 
     @Test
-    public void testSetValue() throws Exception {
+    public void testSetValue() {
         assertThat(endpoint.getValue(), is(nullValue()));
         endpoint.setValue(VALUE);
         assertThat(endpoint.getValue(), is(VALUE));

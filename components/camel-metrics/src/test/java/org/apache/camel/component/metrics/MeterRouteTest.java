@@ -79,10 +79,10 @@ public class MeterRouteTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in-1")
                         .to("metrics:meter:A?mark=3179")
                         .to("mock:out");
