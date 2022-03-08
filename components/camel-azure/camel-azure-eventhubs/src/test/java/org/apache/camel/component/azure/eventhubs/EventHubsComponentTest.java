@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class EventHubsComponentTest extends CamelTestSupport {
 
     @Test
-    public void testCreateEndpointWithNoEventHubsNameOrNameSpace() throws Exception {
+    public void testCreateEndpointWithNoEventHubsNameOrNameSpace() {
         ResolveEndpointFailedException exception = assertThrows(ResolveEndpointFailedException.class,
                 () -> context.getEndpoint("azure-eventhubs:?sharedAccessKey=string&sharedAccessName=name"));
 
