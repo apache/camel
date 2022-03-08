@@ -160,7 +160,7 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the need for overidding the endpoint. This option needs to be
+         * Set the need for overriding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -177,7 +177,7 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the need for overidding the endpoint. This option needs to be
+         * Set the need for overriding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
@@ -965,6 +965,23 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * To define the queueUrl explicitly. All other parameters, which would
+         * influence the queueUrl, are ignored. This parameter is intended to be
+         * used, to connect to a mock implementation of SQS, for testing
+         * purposes.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: queue
+         * 
+         * @param queueUrl the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder queueUrl(String queueUrl) {
+            doSetProperty("queueUrl", queueUrl);
+            return this;
+        }
+        /**
          * If you do not specify WaitTimeSeconds in the request, the queue
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
@@ -1670,23 +1687,6 @@ public interface Sqs2EndpointBuilderFactory {
             doSetProperty("delayQueue", delayQueue);
             return this;
         }
-        /**
-         * To define the queueUrl explicitly. All other parameters, which would
-         * influence the queueUrl, are ignored. This parameter is intended to be
-         * used, to connect to a mock implementation of SQS, for testing
-         * purposes.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param queueUrl the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSqs2EndpointConsumerBuilder queueUrl(String queueUrl) {
-            doSetProperty("queueUrl", queueUrl);
-            return this;
-        }
     }
 
     /**
@@ -1814,7 +1814,7 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the need for overidding the endpoint. This option needs to be
+         * Set the need for overriding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1831,7 +1831,7 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the need for overidding the endpoint. This option needs to be
+         * Set the need for overriding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
@@ -2147,6 +2147,29 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * What to do if sending to AWS SQS has more messages than AWS allows
+         * (currently only maximum 10 message headers is allowed). WARN will log
+         * a WARN about the limit is for each additional header, so the message
+         * can be sent to AWS. WARN_ONCE will only log one time a WARN about the
+         * limit is hit, and drop additional headers, so the message can be sent
+         * to AWS. IGNORE will ignore (no logging) and drop additional headers,
+         * so the message can be sent to AWS. FAIL will cause an exception to be
+         * thrown and the message is not sent to AWS.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: WARN
+         * Group: producer
+         * 
+         * @param messageHeaderExceededLimit the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointProducerBuilder messageHeaderExceededLimit(
+                String messageHeaderExceededLimit) {
+            doSetProperty("messageHeaderExceededLimit", messageHeaderExceededLimit);
+            return this;
+        }
+        /**
          * The operation to do in case the user don't want to send only a
          * message.
          * 
@@ -2305,6 +2328,23 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * To define the queueUrl explicitly. All other parameters, which would
+         * influence the queueUrl, are ignored. This parameter is intended to be
+         * used, to connect to a mock implementation of SQS, for testing
+         * purposes.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: queue
+         * 
+         * @param queueUrl the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointProducerBuilder queueUrl(String queueUrl) {
+            doSetProperty("queueUrl", queueUrl);
+            return this;
+        }
+        /**
          * If you do not specify WaitTimeSeconds in the request, the queue
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
@@ -2426,23 +2466,6 @@ public interface Sqs2EndpointBuilderFactory {
          */
         default AdvancedSqs2EndpointProducerBuilder delayQueue(String delayQueue) {
             doSetProperty("delayQueue", delayQueue);
-            return this;
-        }
-        /**
-         * To define the queueUrl explicitly. All other parameters, which would
-         * influence the queueUrl, are ignored. This parameter is intended to be
-         * used, to connect to a mock implementation of SQS, for testing
-         * purposes.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param queueUrl the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSqs2EndpointProducerBuilder queueUrl(String queueUrl) {
-            doSetProperty("queueUrl", queueUrl);
             return this;
         }
     }
@@ -2569,7 +2592,7 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the need for overidding the endpoint. This option needs to be
+         * Set the need for overriding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -2585,7 +2608,7 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the need for overidding the endpoint. This option needs to be
+         * Set the need for overriding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
@@ -2893,6 +2916,23 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * To define the queueUrl explicitly. All other parameters, which would
+         * influence the queueUrl, are ignored. This parameter is intended to be
+         * used, to connect to a mock implementation of SQS, for testing
+         * purposes.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: queue
+         * 
+         * @param queueUrl the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointBuilder queueUrl(String queueUrl) {
+            doSetProperty("queueUrl", queueUrl);
+            return this;
+        }
+        /**
          * If you do not specify WaitTimeSeconds in the request, the queue
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
@@ -3014,23 +3054,6 @@ public interface Sqs2EndpointBuilderFactory {
          */
         default AdvancedSqs2EndpointBuilder delayQueue(String delayQueue) {
             doSetProperty("delayQueue", delayQueue);
-            return this;
-        }
-        /**
-         * To define the queueUrl explicitly. All other parameters, which would
-         * influence the queueUrl, are ignored. This parameter is intended to be
-         * used, to connect to a mock implementation of SQS, for testing
-         * purposes.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param queueUrl the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSqs2EndpointBuilder queueUrl(String queueUrl) {
-            doSetProperty("queueUrl", queueUrl);
             return this;
         }
     }
