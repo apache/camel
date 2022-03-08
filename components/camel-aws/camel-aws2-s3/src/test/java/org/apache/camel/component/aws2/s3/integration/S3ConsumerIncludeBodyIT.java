@@ -43,7 +43,7 @@ public class S3ConsumerIncludeBodyIT extends Aws2S3Base {
         template.send("direct:putObject", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "test.txt");
                 exchange.getIn().setBody("Test");
             }
@@ -52,7 +52,7 @@ public class S3ConsumerIncludeBodyIT extends Aws2S3Base {
         template.send("direct:putObject", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "test1.txt");
                 exchange.getIn().setBody("Test1");
             }
@@ -61,7 +61,7 @@ public class S3ConsumerIncludeBodyIT extends Aws2S3Base {
         template.send("direct:putObject", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "test2.txt");
                 exchange.getIn().setBody("Test2");
             }
@@ -73,10 +73,10 @@ public class S3ConsumerIncludeBodyIT extends Aws2S3Base {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=true";
 
                 from("direct:putObject").startupOrder(1).to(awsEndpoint).to("mock:result");

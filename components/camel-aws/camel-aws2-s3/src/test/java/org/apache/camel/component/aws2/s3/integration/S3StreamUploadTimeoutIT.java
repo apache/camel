@@ -53,7 +53,7 @@ public class S3StreamUploadTimeoutIT extends Aws2S3Base {
         Exchange ex = template.request("direct:listObjects", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects);
             }
         });
@@ -63,10 +63,10 @@ public class S3StreamUploadTimeoutIT extends Aws2S3Base {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String awsEndpoint1
                         = "aws2-s3://mycamel-1?autoCreateBucket=true&streamingUploadMode=true&keyName=fileTest.txt&batchMessageNumber=25&namingStrategy=random&streamingUploadTimeout=10000";
 

@@ -42,7 +42,7 @@ public class S3UploadWithUserMetadataIT extends Aws2S3Base {
     private MockEndpoint result;
 
     @Test
-    public void sendInWithUserMetadata() throws Exception {
+    public void sendInWithUserMetadata() {
         result.expectedMessageCount(1);
 
         template.send("direct:putObject", exchange -> {
@@ -59,10 +59,10 @@ public class S3UploadWithUserMetadataIT extends Aws2S3Base {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=true";
 
                 from("direct:putObject").to(awsEndpoint);

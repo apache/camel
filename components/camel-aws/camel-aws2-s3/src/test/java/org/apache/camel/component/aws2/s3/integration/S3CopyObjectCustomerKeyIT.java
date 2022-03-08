@@ -67,7 +67,7 @@ public class S3CopyObjectCustomerKeyIT extends Aws2S3Base {
         template.send("direct:putObject", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "test.txt");
                 exchange.getIn().setBody("Test");
             }
@@ -76,7 +76,7 @@ public class S3CopyObjectCustomerKeyIT extends Aws2S3Base {
         template.send("direct:copyObject", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "test.txt");
                 exchange.getIn().setHeader(AWS2S3Constants.DESTINATION_KEY, "test1.txt");
                 exchange.getIn().setHeader(AWS2S3Constants.BUCKET_DESTINATION_NAME, "mycamel1");
@@ -87,7 +87,7 @@ public class S3CopyObjectCustomerKeyIT extends Aws2S3Base {
         Exchange res = template.request("direct:getObject", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                         .key("test1.txt")
                         .bucket("mycamel1")
@@ -107,7 +107,7 @@ public class S3CopyObjectCustomerKeyIT extends Aws2S3Base {
         Exchange res1 = template.request("direct:listObject", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects);
             }
         });
@@ -120,10 +120,10 @@ public class S3CopyObjectCustomerKeyIT extends Aws2S3Base {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=true&useCustomerKey=true&customerKeyId=RAW(" + b64Key
                                      + ")&customerKeyMD5=RAW(" + b64KeyMd5 + ")&customerAlgorithm=" + AES256.name();
                 String awsEndpoint1 = "aws2-s3://mycamel1?autoCreateBucket=true&pojoRequest=true";

@@ -77,7 +77,7 @@ public class S3ConsumerManualIT extends CamelTestSupport {
         template.send("direct:putObject", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "test.txt");
                 exchange.getIn().setBody("Test");
             }
@@ -86,7 +86,7 @@ public class S3ConsumerManualIT extends CamelTestSupport {
         template.send("direct:putObject", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "test1.txt");
                 exchange.getIn().setBody("Test1");
             }
@@ -95,7 +95,7 @@ public class S3ConsumerManualIT extends CamelTestSupport {
         template.send("direct:putObject", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "test2.txt");
                 exchange.getIn().setBody("Test2");
             }
@@ -199,10 +199,10 @@ public class S3ConsumerManualIT extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String template = "aws2-s3://mycamel?autoCreateBucket=true&includeBody=%s&autocloseBody=%s";
                 String includeBodyTrueAutoCloseTrue = String.format(template, true, true);
                 String includeBodyFalseAutoCloseFalse = String.format(template, false, false);

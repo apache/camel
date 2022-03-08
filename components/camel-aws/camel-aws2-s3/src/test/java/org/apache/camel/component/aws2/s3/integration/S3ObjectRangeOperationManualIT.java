@@ -75,7 +75,7 @@ public class S3ObjectRangeOperationManualIT extends CamelTestSupport {
         template.send("direct:getObjectRange", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "element.txt");
                 exchange.getIn().setHeader(AWS2S3Constants.RANGE_START, 0);
                 exchange.getIn().setHeader(AWS2S3Constants.RANGE_END, 9);
@@ -86,10 +86,10 @@ public class S3ObjectRangeOperationManualIT extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String awsEndpoint = "aws2-s3://mycamelbucket?operation=getObjectRange&autoCreateBucket=false";
 
                 from("direct:getObjectRange").to(awsEndpoint).process(new Processor() {
