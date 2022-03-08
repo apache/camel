@@ -102,10 +102,10 @@ class ServiceBusConsumerTest extends BaseCamelServiceBusTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("azure-servicebus:test//?connectionString=test").to(receiveMessagesResult);
                 from("azure-servicebus:test//?connectionString=test&consumerOperation=peekMessages&peekNumMaxMessages=3")
                         .to(peekMessagesResult);
