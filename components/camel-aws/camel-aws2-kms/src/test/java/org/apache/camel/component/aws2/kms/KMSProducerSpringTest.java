@@ -43,7 +43,7 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listKeys", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, KMS2Operations.listKeys);
             }
         });
@@ -61,7 +61,7 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:createKey", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, KMS2Operations.createKey);
             }
         });
@@ -79,7 +79,7 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         template.request("direct:disableKey", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, KMS2Operations.disableKey);
                 exchange.getIn().setHeader(KMS2Constants.KEY_ID, "test");
             }
@@ -95,7 +95,7 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         template.request("direct:enableKey", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, KMS2Operations.enableKey);
                 exchange.getIn().setHeader(KMS2Constants.KEY_ID, "test");
             }
@@ -111,7 +111,7 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:scheduleDelete", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, KMS2Operations.scheduleKeyDeletion);
                 exchange.getIn().setHeader(KMS2Constants.KEY_ID, "test");
             }
@@ -129,7 +129,7 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:describeKey", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, KMS2Operations.describeKey);
                 exchange.getIn().setHeader(KMS2Constants.KEY_ID, "test");
             }
@@ -149,7 +149,7 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listKeysPojo", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, KMS2Operations.listKeys);
                 exchange.getIn().setBody(ListKeysRequest.builder().limit(10).build());
             }
