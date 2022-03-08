@@ -302,7 +302,7 @@ public class ArangoDbProducer extends DefaultProducer {
     private Function<Exchange, Object> aqlQuery() {
         return exchange -> {
             try {
-                ArangoDatabase database = endpoint.getArango().db(endpoint.getConfiguration().getDatabase());
+                ArangoDatabase database = endpoint.getArango().db(DbName.of(endpoint.getConfiguration().getDatabase()));
 
                 // AQL query
                 String query = (String) exchange.getMessage().getHeader(AQL_QUERY);
@@ -338,7 +338,7 @@ public class ArangoDbProducer extends DefaultProducer {
         String collection = endpoint.getConfiguration().getDocumentCollection();
 
         // return collection
-        return endpoint.getArango().db(database).collection(collection);
+        return endpoint.getArango().db(DbName.of(database)).collection(collection);
     }
 
     /**
