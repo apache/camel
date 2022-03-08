@@ -42,7 +42,7 @@ public class DriveChangesIT extends AbstractGoogleDriveTestSupport {
             = GoogleDriveApiCollection.getCollection().getApiName(DriveChangesApiMethod.class).getName();
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         final com.google.api.services.drive.model.ChangeList list = requestBody("direct://LIST", null);
         List<Change> items = list.getItems();
         assumeFalse(items.isEmpty());
@@ -58,7 +58,7 @@ public class DriveChangesIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testList() throws Exception {
+    public void testList() {
         final com.google.api.services.drive.model.ChangeList result = requestBody("direct://LIST", null);
 
         assertNotNull(result, "list result");
@@ -66,7 +66,7 @@ public class DriveChangesIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for get

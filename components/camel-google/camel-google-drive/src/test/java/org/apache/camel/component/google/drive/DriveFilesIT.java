@@ -52,7 +52,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
             = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
 
     @Test
-    public void testCopy() throws Exception {
+    public void testCopy() {
         File testFile = uploadTestFile();
         String fromFileId = testFile.getId();
 
@@ -73,7 +73,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete() {
         File testFile = uploadTestFile();
         String fileId = testFile.getId();
 
@@ -91,7 +91,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         File testFile = uploadTestFile();
         String fileId = testFile.getId();
 
@@ -103,7 +103,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testInsert() throws Exception {
+    public void testInsert() {
         File file = new File();
         file.setTitle(UPLOAD_FILE.getName());
         // using com.google.api.services.drive.model.File message body for single parameter "content"
@@ -113,7 +113,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testInsert1() throws Exception {
+    public void testInsert1() {
         File result = uploadTestFile();
 
         assertNotNull(result, "insert result");
@@ -121,7 +121,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testList() throws Exception {
+    public void testList() {
         // upload a test file
         File testFile = uploadTestFile();
 
@@ -159,7 +159,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testPatch() throws Exception {
+    public void testPatch() {
         File file = uploadTestFile();
 
         // lets update the filename
@@ -181,7 +181,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testTouch() throws Exception {
+    public void testTouch() {
         File theTestFile = uploadTestFile();
         DateTime createdDate = theTestFile.getModifiedDate();
         // using String message body for single parameter "fileId"
@@ -192,7 +192,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testTrash() throws Exception {
+    public void testTrash() {
         File testFile = uploadTestFile();
         String fileId = testFile.getId();
 
@@ -202,7 +202,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         File theTestFile = uploadTestFile();
 
         final Map<String, Object> headers = new HashMap<>();
@@ -218,7 +218,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testUpdate1() throws Exception {
+    public void testUpdate1() {
 
         // First retrieve the file from the API.
         File testFile = uploadTestFile();
@@ -253,7 +253,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     // TODO provide parameter values for watch
     @Disabled
     @Test
-    public void testWatch() throws Exception {
+    public void testWatch() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", null);
@@ -267,7 +267,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for copy

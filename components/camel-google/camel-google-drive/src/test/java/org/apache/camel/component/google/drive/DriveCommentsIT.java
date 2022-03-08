@@ -45,7 +45,7 @@ public class DriveCommentsIT extends AbstractGoogleDriveTestSupport {
             = GoogleDriveApiCollection.getCollection().getApiName(DriveCommentsApiMethod.class).getName();
 
     @Test
-    public void testComment() throws Exception {
+    public void testComment() {
         // 1. create test file
         File testFile = uploadTestFile();
         String fileId = testFile.getId();
@@ -109,7 +109,7 @@ public class DriveCommentsIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for delete

@@ -39,7 +39,7 @@ public class DriveRevisionsIT extends AbstractGoogleDriveTestSupport {
             = GoogleDriveApiCollection.getCollection().getApiName(DriveRevisionsApiMethod.class).getName();
 
     @Test
-    public void testList() throws Exception {
+    public void testList() {
         File testFile = uploadTestFile();
         String fileId = testFile.getId();
 
@@ -51,7 +51,7 @@ public class DriveRevisionsIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for delete

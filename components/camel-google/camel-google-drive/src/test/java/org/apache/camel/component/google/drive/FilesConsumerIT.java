@@ -66,7 +66,7 @@ public class FilesConsumerIT extends AbstractGoogleDriveTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("google-drive://drive-files/list").to("mock:result");

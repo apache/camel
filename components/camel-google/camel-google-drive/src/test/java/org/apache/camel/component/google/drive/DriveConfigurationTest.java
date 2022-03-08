@@ -51,7 +51,7 @@ public class DriveConfigurationTest extends AbstractGoogleDriveTestSupport {
     }
 
     @Test
-    public void testConfiguration() throws Exception {
+    public void testConfiguration() {
         GoogleDriveEndpoint endpoint = getMandatoryEndpoint(TEST_URI, GoogleDriveEndpoint.class);
         GoogleDriveConfiguration configuration = endpoint.getConfiguration();
         assertNotNull(configuration);
@@ -63,7 +63,7 @@ public class DriveConfigurationTest extends AbstractGoogleDriveTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
