@@ -33,7 +33,7 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     public void testFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setBody(simple("{{aws:hello}}")).to("mock:bar");
             }
         });
@@ -53,7 +53,7 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     public void testComplexPropertiesFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:database_sample/username}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{aws:database_sample/password}}")).to("mock:bar");
             }
@@ -74,7 +74,7 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     public void testComplexCustomPropertiesFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:normalkey/username}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{aws:normalkey/password}}")).to("mock:bar");
             }
@@ -92,11 +92,11 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
-    public void testSecretNotFoundFunction() throws Exception {
+    public void testSecretNotFoundFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").setBody(simple("{{aws:testExample}}")).to("mock:bar");
                 }
             });
@@ -114,11 +114,11 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
-    public void testComplexNoSubkeyPropertiesFunction() throws Exception {
+    public void testComplexNoSubkeyPropertiesFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:username").setBody(simple("{{aws:database_sample/not_existent}}")).to("mock:bar");
                 }
             });
@@ -138,7 +138,7 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     public void testComplexCustomPropertiesDefaultValueFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:postgresql/additional1:admin}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{aws:postgresql/additional2:secret}}")).to("mock:bar");
             }
@@ -159,7 +159,7 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     public void testComplexCustomPropertiesDefaultValueExceptionFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:test-3/additional1:admin}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{aws:test-3/additional2:secret}}")).to("mock:bar");
             }
@@ -177,11 +177,11 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
-    public void testComplexCustomPropertiesExceptionFunction() throws Exception {
+    public void testComplexCustomPropertiesExceptionFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:username").setBody(simple("{{aws:test-3/additional1}}")).to("mock:bar");
                     from("direct:password").setBody(simple("{{aws:test-3/additional2}}")).to("mock:bar");
                 }
@@ -203,7 +203,7 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     public void testComplexSimpleDefaultValueExceptionFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:test-3:admin}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{aws:test-1:secret}}")).to("mock:bar");
             }
@@ -221,11 +221,11 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
-    public void testComplexSimpleNoDefaultValueExceptionFunction() throws Exception {
+    public void testComplexSimpleNoDefaultValueExceptionFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:username").setBody(simple("{{aws:secretsuper}}")).to("mock:bar");
                 }
             });
@@ -242,11 +242,11 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
     @Test
-    public void testComplexCustomPropertiesNoDefaultValueFunction() throws Exception {
+    public void testComplexCustomPropertiesNoDefaultValueFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:username").setBody(simple("{{aws:postgresql/additional1}}")).to("mock:bar");
                     from("direct:password").setBody(simple("{{aws:postgresql/additional2}}")).to("mock:bar");
                 }
@@ -268,7 +268,7 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     public void testComplexCustomPropertiesNotExistentDefaultValueFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:newsecret/additional1:admin}}")).to("mock:bar");
             }
         });
@@ -286,7 +286,7 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     public void testComplexCustomPropertiesDefaultCredsDefaultValueFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:newsecret/additional1:admin}}")).to("mock:bar");
             }
         });
@@ -305,7 +305,7 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     public void testPropertiesWithDefaultFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:postgresql/username:oscerd}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{aws:postgresql/password:password}}")).to("mock:bar");
             }
@@ -326,7 +326,7 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
     public void testPropertiesWithDefaultNotExistentFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:db_sample/username:oscerd}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{aws:db_sample/password:password}}")).to("mock:bar");
             }

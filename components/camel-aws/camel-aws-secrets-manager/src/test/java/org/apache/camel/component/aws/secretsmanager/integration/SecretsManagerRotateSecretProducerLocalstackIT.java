@@ -36,12 +36,12 @@ public class SecretsManagerRotateSecretProducerLocalstackIT extends AwsSecretsMa
     private MockEndpoint mock;
 
     @Test
-    public void createSecretTest() throws Exception {
+    public void createSecretTest() {
 
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:createSecret", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(SecretsManagerConstants.SECRET_NAME, "TestSecret4");
                 exchange.getIn().setBody("Body");
             }
@@ -52,7 +52,7 @@ public class SecretsManagerRotateSecretProducerLocalstackIT extends AwsSecretsMa
 
         exchange = template.request("direct:rotateSecret", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(SecretsManagerConstants.SECRET_ID, resultGet.arn());
             }
         });
@@ -64,10 +64,10 @@ public class SecretsManagerRotateSecretProducerLocalstackIT extends AwsSecretsMa
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:createSecret")
                         .to("aws-secrets-manager://test?operation=createSecret");
 

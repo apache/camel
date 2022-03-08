@@ -42,7 +42,7 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setBody(simple("{{aws:hello}}")).to("mock:bar");
             }
         });
@@ -62,7 +62,7 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:database_sample:username}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{aws:database_sample:password}}")).to("mock:bar");
             }
@@ -83,7 +83,7 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:normalkey:username}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{aws:normalkey:password}}")).to("mock:bar");
             }
@@ -98,14 +98,14 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
     }
 
     @Test
-    public void testSecretNotFoundFunction() throws Exception {
+    public void testSecretNotFoundFunction() {
         context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
         context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
         context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").setBody(simple("{{aws:testExample}}")).to("mock:bar");
                 }
             });
@@ -120,14 +120,14 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
     }
 
     @Test
-    public void testComplexNoSubkeyPropertiesFunction() throws Exception {
+    public void testComplexNoSubkeyPropertiesFunction() {
         context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
         context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
         context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:username").setBody(simple("{{aws:database_sample:not_existent}}")).to("mock:bar");
                 }
             });
@@ -147,7 +147,7 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:postgresql/additional1:admin}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{aws:postgresql/additional2:secret}}")).to("mock:bar");
             }
@@ -168,7 +168,7 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:test-3/additional1:admin}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{aws:test-3/additional2:secret}}")).to("mock:bar");
             }
@@ -183,14 +183,14 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
     }
 
     @Test
-    public void testComplexCustomPropertiesExceptionFunction() throws Exception {
+    public void testComplexCustomPropertiesExceptionFunction() {
         context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
         context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
         context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:username").setBody(simple("{{aws:test-3/additional1}}")).to("mock:bar");
                     from("direct:password").setBody(simple("{{aws:test-3/additional2}}")).to("mock:bar");
                 }
@@ -212,7 +212,7 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:test-3:admin}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{aws:test-1:secret}}")).to("mock:bar");
             }
@@ -227,14 +227,14 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
     }
 
     @Test
-    public void testComplexSimpleNoDefaultValueExceptionFunction() throws Exception {
+    public void testComplexSimpleNoDefaultValueExceptionFunction() {
         context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
         context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
         context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:username").setBody(simple("{{aws:secretsuper}}")).to("mock:bar");
                 }
             });
@@ -248,14 +248,14 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
     }
 
     @Test
-    public void testComplexCustomPropertiesNoDefaultValueFunction() throws Exception {
+    public void testComplexCustomPropertiesNoDefaultValueFunction() {
         context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
         context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
         context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:username").setBody(simple("{{aws:postgresql/additional1}}")).to("mock:bar");
                     from("direct:password").setBody(simple("{{aws:postgresql/additional2}}")).to("mock:bar");
                 }
@@ -277,7 +277,7 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:newsecret/additional1:admin}}")).to("mock:bar");
             }
         });
@@ -296,7 +296,7 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:postgresql/username:oscerd}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{aws:postgresql/password:password}}")).to("mock:bar");
             }
@@ -317,7 +317,7 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:username").setBody(simple("{{aws:db_sample/username:oscerd}}")).to("mock:bar");
                 from("direct:password").setBody(simple("{{aws:db_sample/password:password}}")).to("mock:bar");
             }
