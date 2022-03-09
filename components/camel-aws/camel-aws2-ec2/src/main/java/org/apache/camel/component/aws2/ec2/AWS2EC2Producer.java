@@ -259,7 +259,11 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Start Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
-            LOG.trace("Starting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Starting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+            }
+
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }
@@ -297,7 +301,11 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Stop Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
-            LOG.trace("Stopping instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Stopping instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+            }
+
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }
@@ -335,7 +343,11 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Terminate Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
-            LOG.trace("Terminating instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Terminating instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+            }
+
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }
@@ -433,7 +445,10 @@ public class AWS2EC2Producer extends DefaultProducer {
                 throw new IllegalArgumentException("Instances Ids must be specified");
             }
             try {
-                LOG.trace("Rebooting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Rebooting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+                }
+
                 ec2Client.rebootInstances(builder.build());
             } catch (AwsServiceException ase) {
                 LOG.trace("Reboot Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
@@ -474,7 +489,11 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Monitor Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
-            LOG.trace("Start Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Start Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+            }
+
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }
@@ -512,7 +531,11 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Unmonitor Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
-            LOG.trace("Stop Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Stop Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+            }
+
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }
@@ -557,8 +580,11 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Create tags command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
-            LOG.trace("Created tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()),
-                    Arrays.toString(instanceIds.toArray()));
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Created tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()),
+                        Arrays.toString(instanceIds.toArray()));
+            }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }
@@ -603,8 +629,11 @@ public class AWS2EC2Producer extends DefaultProducer {
                 LOG.trace("Delete tags command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
-            LOG.trace("Delete tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()),
-                    Arrays.toString(instanceIds.toArray()));
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Delete tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()),
+                        Arrays.toString(instanceIds.toArray()));
+            }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }
