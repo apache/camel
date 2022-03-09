@@ -33,11 +33,10 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "spring,configuration,error")
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Deprecated
-public class ErrorHandlerDefinition extends IdentifiedType {
+public class SpringErrorHandlerDefinition extends IdentifiedType {
     @XmlAttribute
     @Metadata(defaultValue = "DefaultErrorHandler", required = true)
-    private ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
+    private SpringErrorHandlerType type = SpringErrorHandlerType.DefaultErrorHandler;
     @XmlAttribute
     private String deadLetterUri;
     @XmlAttribute
@@ -73,14 +72,14 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     @XmlElement
     private CamelRedeliveryPolicyFactoryBean redeliveryPolicy;
 
-    public ErrorHandlerType getType() {
+    public SpringErrorHandlerType getType() {
         return type;
     }
 
     /**
      * The type of the error handler
      */
-    public void setType(ErrorHandlerType type) {
+    public void setType(SpringErrorHandlerType type) {
         this.type = type;
     }
 

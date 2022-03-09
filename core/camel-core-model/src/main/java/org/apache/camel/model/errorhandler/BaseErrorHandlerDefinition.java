@@ -16,17 +16,9 @@
  */
 package org.apache.camel.model.errorhandler;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.model.IdentifiedType;
-import org.apache.camel.spi.Metadata;
 
-@Metadata(label = "configuration,error")
-@XmlRootElement(name = "baseErrorHandler")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class BaseErrorHandlerDefinition extends IdentifiedType implements ErrorHandlerFactory {
+public abstract class BaseErrorHandlerDefinition extends IdentifiedType implements ErrorHandlerFactory {
 
 }

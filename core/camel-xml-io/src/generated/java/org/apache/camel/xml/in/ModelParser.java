@@ -388,18 +388,14 @@ public class ModelParser extends BaseParser {
         return doParse(new ErrorHandlerDefinition(),
             identifiedTypeAttributeHandler(), (def, key) -> {
             switch (key) {
-                case "defaultErrorHandler": def.setErrorHandlerType(doParseDefaultErrorHandlerDefinition()); break;
                 case "deadLetterChannel": def.setErrorHandlerType(doParseDeadLetterChannelDefinition()); break;
+                case "defaultErrorHandler": def.setErrorHandlerType(doParseDefaultErrorHandlerDefinition()); break;
                 case "noErrorHandler": def.setErrorHandlerType(doParseNoErrorHandlerDefinition()); break;
                 case "transactionErrorHandler": def.setErrorHandlerType(doParseTransactionErrorHandlerDefinition()); break;
                 default: return false;
             }
             return true;
         }, noValueHandler());
-    }
-    protected BaseErrorHandlerDefinition doParseBaseErrorHandlerDefinition() throws IOException, XmlPullParserException {
-        return doParse(new BaseErrorHandlerDefinition(), 
-            identifiedTypeAttributeHandler(),  noElementHandler(), noValueHandler());
     }
     protected <T extends FaultToleranceConfigurationCommon> AttributeHandler<T> faultToleranceConfigurationCommonAttributeHandler() {
         return (def, key, val) -> {
