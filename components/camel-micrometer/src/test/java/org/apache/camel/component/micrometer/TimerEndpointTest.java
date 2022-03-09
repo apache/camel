@@ -66,7 +66,7 @@ public class TimerEndpointTest {
     }
 
     @Test
-    public void testCreateProducer() throws Exception {
+    public void testCreateProducer() {
         Producer producer = endpoint.createProducer();
         assertThat(producer, is(notNullValue()));
         assertThat(producer, is(instanceOf(TimerProducer.class)));

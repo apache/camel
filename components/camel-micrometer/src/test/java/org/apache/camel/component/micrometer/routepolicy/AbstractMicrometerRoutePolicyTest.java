@@ -40,7 +40,7 @@ public abstract class AbstractMicrometerRoutePolicyTest extends CamelTestSupport
     }
 
     @BindToRegistry(MicrometerConstants.METRICS_REGISTRY_NAME)
-    public CompositeMeterRegistry addRegistry() throws Exception {
+    public CompositeMeterRegistry addRegistry() {
         meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(new SimpleMeterRegistry());
         meterRegistry.add(new JmxMeterRegistry(CamelJmxConfig.DEFAULT, Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));
