@@ -43,16 +43,16 @@ public class KameletConsumerUoWIssueTest extends CamelTestSupport {
     // **********************************************
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("tick")
                         .from("timer:tick?repeatCount=1&delay=-1")
                         .setBody().exchangeProperty(Exchange.TIMER_COUNTER)
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                                     @Override
                                     public void onDone(Exchange exchange) {

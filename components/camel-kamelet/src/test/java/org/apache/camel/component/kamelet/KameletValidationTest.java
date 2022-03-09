@@ -31,7 +31,7 @@ public class KameletValidationTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("setBody")
                         .templateParameter("bodyValue")
                         .from("kamelet:source")

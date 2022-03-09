@@ -42,10 +42,10 @@ public class KameletEipAggregateJoorTest extends CamelTestSupport {
     //
     // **********************************************
 
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("my-aggregate")
                         .templateBean("myAgg", "joor",
                                 // for aggregation we can use a BiFunction that takes Exchange as input and return the aggregated response

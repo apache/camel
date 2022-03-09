@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class KameletEipNoChildrenTest extends CamelTestSupport {
 
     @Test
-    public void testOne() throws Exception {
+    public void testOne() {
         String out = template.requestBody("direct:start", "A", String.class);
         assertEquals("AA", out);
 
@@ -41,10 +41,10 @@ public class KameletEipNoChildrenTest extends CamelTestSupport {
     // **********************************************
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("echo")
                         .from("kamelet:source")
                         .setBody(body().append(body()));

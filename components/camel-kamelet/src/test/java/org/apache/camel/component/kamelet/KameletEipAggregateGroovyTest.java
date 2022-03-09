@@ -42,10 +42,10 @@ public class KameletEipAggregateGroovyTest extends CamelTestSupport {
     //
     // **********************************************
 
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("my-aggregate")
                         .templateBean("myAgg", "groovy",
                                 // for aggregation we need a class that has the method with how to aggregate the messages

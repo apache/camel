@@ -72,10 +72,10 @@ public class KameletComponentPropertiesTest {
                 Kamelet.PROPERTIES_PREFIX + "setBody.test.bodyValue", "from-route");
     }
 
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // template
                 routeTemplate("setBody")
                         .templateParameter("bodyValue")

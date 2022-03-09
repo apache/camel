@@ -44,10 +44,10 @@ public class KameletLocalBeanSupplierTest extends CamelTestSupport {
     // **********************************************
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("whereTo")
                         .templateParameter("foo")
                         .templateBean("myBar", () -> new MyStaticBar(counter.incrementAndGet()))
