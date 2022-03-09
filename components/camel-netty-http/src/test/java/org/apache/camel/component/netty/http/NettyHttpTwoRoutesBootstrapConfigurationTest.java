@@ -28,7 +28,7 @@ public class NettyHttpTwoRoutesBootstrapConfigurationTest extends BaseNettyTest 
     private NettyServerBootstrapConfiguration bootstrapConfiguration;
 
     @BindToRegistry("myBootstrapOptions")
-    public NettyServerBootstrapConfiguration loadNettyBootstrapConf() throws Exception {
+    public NettyServerBootstrapConfiguration loadNettyBootstrapConf() {
 
         // create NettyServerBootstrapConfiguration instance where we can configure the bootstrap
         // option we want to use in our Camel routes. This allows us to configure this once,
@@ -70,10 +70,10 @@ public class NettyHttpTwoRoutesBootstrapConfigurationTest extends BaseNettyTest 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // we want to use the same bootstrap options and want to configure this explicit, so we
                 // have a NettyServerBootstrapConfiguration instance in the registry, with the key = myBootstrapOptions
                 // which we then tell netty-http to lookup and use

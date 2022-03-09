@@ -36,7 +36,7 @@ public class NettyHttpRedirectNoLocationTest extends BaseNettyTest {
     AvailablePortFinder.Port nextPort = AvailablePortFinder.find();
 
     @Test
-    public void testHttpRedirectNoLocation() throws Exception {
+    public void testHttpRedirectNoLocation() {
         try {
             template.requestBody("netty-http:http://localhost:" + nextPort + "/test", "Hello World", String.class);
             fail("Should have thrown an exception");
@@ -50,10 +50,10 @@ public class NettyHttpRedirectNoLocationTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://localhost:" + nextPort + "/test")
                         .process(exchange -> exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 302));
             }

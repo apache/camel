@@ -77,7 +77,7 @@ public class ProxyProtocolTest {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 // route variation that proxies from http://localhost:port to
                 // http://localhost:originPort/path
@@ -194,7 +194,7 @@ public class ProxyProtocolTest {
     }
 
     @AfterAll
-    public static void verifyNoLeaks() throws Exception {
+    public static void verifyNoLeaks() {
         // Force GC to bring up leaks
         System.gc();
         // Kick leak detection logging

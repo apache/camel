@@ -60,10 +60,10 @@ public class NettyHttpProducerSessionTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").toF("netty-http:http://127.0.0.1:%d/session", getPort())
                         .toF("netty-http:http://127.0.0.1:%d/session", getPort()).to("mock:result");
 
@@ -79,7 +79,7 @@ public class NettyHttpProducerSessionTest extends BaseNettyTest {
 
                 fromF("jetty:http://127.0.0.1:%d/session?sessionSupport=true", getPort()).process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         HttpMessage message = exchange.getIn(HttpMessage.class);
                         HttpSession session = message.getRequest().getSession();
                         String body = message.getBody(String.class);
