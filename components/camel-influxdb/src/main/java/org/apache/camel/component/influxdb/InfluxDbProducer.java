@@ -77,7 +77,9 @@ public class InfluxDbProducer extends DefaultProducer {
         if (!endpoint.isBatch()) {
             Point p = exchange.getIn().getMandatoryBody(Point.class);
             try {
-                LOG.debug("Writing point {}", p.lineProtocol());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Writing point {}", p.lineProtocol());
+                }
                 connection.write(dataBaseName, retentionPolicy, p);
             } catch (Exception ex) {
                 exchange.setException(new CamelInfluxDbException(ex));
@@ -85,7 +87,9 @@ public class InfluxDbProducer extends DefaultProducer {
         } else {
             BatchPoints batchPoints = exchange.getIn().getMandatoryBody(BatchPoints.class);
             try {
-                LOG.debug("Writing BatchPoints {}", batchPoints.lineProtocol());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Writing BatchPoints {}", batchPoints.lineProtocol());
+                }
                 connection.write(batchPoints);
             } catch (Exception ex) {
                 exchange.setException(new CamelInfluxDbException(ex));

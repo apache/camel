@@ -229,7 +229,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
                 LOG.debug("Not connected/logged in, connecting to: {}", remoteServer());
             }
             loggedIn = getOperations().connect((RemoteFileConfiguration) endpoint.getConfiguration(), null);
-            if (loggedIn) {
+            if (loggedIn && LOG.isDebugEnabled()) {
                 LOG.debug("Connected and logged in to: {}", remoteServer());
             }
         }

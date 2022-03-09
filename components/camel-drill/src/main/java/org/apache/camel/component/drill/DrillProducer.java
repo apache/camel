@@ -87,7 +87,9 @@ public class DrillProducer extends DefaultProducer {
     private void createJDBCConnection() throws ClassNotFoundException, SQLException {
         Class.forName(DrillConstants.DRILL_DRIVER);
 
-        LOG.info("connection url: {}", endpoint.toJDBCUri());
+        if (LOG.isInfoEnabled()) {
+            LOG.info("connection url: {}", endpoint.toJDBCUri());
+        }
 
         this.connection = DriverManager.getConnection(endpoint.toJDBCUri());
     }

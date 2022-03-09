@@ -249,7 +249,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         final int port = configuration.getPort();
 
         try {
-            log.trace("Reconnect attempt to {}", configuration.remoteServerInformation());
+            if (log.isTraceEnabled()) {
+                log.trace("Reconnect attempt to {}", configuration.remoteServerInformation());
+            }
 
             clientActivityListener.onConnecting(host);
             client.connect(host, port);

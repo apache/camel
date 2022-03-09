@@ -144,7 +144,9 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     private boolean tryConnect(TaskPayload payload) {
-        LOG.trace("Reconnect attempt to {}", payload.configuration.remoteServerInformation());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Reconnect attempt to {}", payload.configuration.remoteServerInformation());
+        }
 
         try {
             if (channel == null || !channel.isConnected()) {
@@ -172,7 +174,10 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     LOG.trace("Connecting ...");
                     channel.connect();
                 }
-                LOG.debug("Connected to {}", payload.configuration.remoteServerInformation());
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Connected to {}", payload.configuration.remoteServerInformation());
+                }
             }
         } catch (JSchException e) {
             payload.exception = e;
