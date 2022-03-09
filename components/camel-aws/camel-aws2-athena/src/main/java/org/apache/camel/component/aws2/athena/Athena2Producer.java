@@ -267,7 +267,10 @@ public class Athena2Producer extends DefaultProducer {
         }
 
         StartQueryExecutionResponse response = athenaClient.startQueryExecution(request.build());
-        LOG.trace("AWS Athena startQueryExecution successful, queryExecutionId={}", response.queryExecutionId());
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("AWS Athena startQueryExecution successful, queryExecutionId={}", response.queryExecutionId());
+        }
         return response;
     }
 
