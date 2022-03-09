@@ -76,7 +76,9 @@ public class BoxFoldersManager {
      */
     public BoxFolder getFolder(String... path) {
         try {
-            LOG.debug("Getting folder at path={}", Arrays.toString(path));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Getting folder at path={}", Arrays.toString(path));
+            }
 
             BoxFolder folder = BoxFolder.getRootFolder(boxConnection);
             if (path == null || path.length == 0) {
@@ -114,8 +116,10 @@ public class BoxFoldersManager {
      */
     public Collection<BoxItem.Info> getFolderItems(String folderId, Long offset, Long limit, String... fields) {
         try {
-            LOG.debug("Getting folder items in folder(id={}) at offset={} and limit={} with fields={}",
-                    folderId, offset, limit, Arrays.toString(fields));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Getting folder items in folder(id={}) at offset={} and limit={} with fields={}",
+                        folderId, offset, limit, Arrays.toString(fields));
+            }
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
@@ -179,7 +183,11 @@ public class BoxFoldersManager {
      */
     public BoxFolder createFolder(String parentFolderId, String... path) {
         try {
-            LOG.debug("Creating folder with path '{}' in parent_folder(id={})", Arrays.toString(path), parentFolderId);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating folder with path '{}' in parent_folder(id={})", Arrays.toString(path), parentFolderId);
+            }
+
             if (parentFolderId == null) {
                 throw new IllegalArgumentException("Parameter 'parentFolderId' can not be null");
             }
