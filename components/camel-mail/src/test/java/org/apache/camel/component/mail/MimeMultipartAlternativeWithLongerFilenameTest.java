@@ -43,7 +43,7 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
     private String alternativeBody = "hello world! (plain text)";
     private String htmlBody = "<html><body><h1>Hello</h1>World<img src=\"cid:myCoolLogo.jpeg\"></body></html>";
 
-    private void sendMultipartEmail(boolean useInlineattachments) throws Exception {
+    private void sendMultipartEmail(boolean useInlineattachments) {
         Mailbox.clearAll();
 
         // create an exchange with a normal body and attachment to be produced as email
@@ -100,9 +100,9 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("pop3://ryan@mymailserver.com?password=secret&initialDelay=100&delay=100").to("mock:result");
             }
         };

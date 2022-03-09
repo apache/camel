@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class MailComponentTest extends CamelTestSupport {
 
     @Test
-    public void testMailEndpointsAreConfiguredProperlyWhenUsingSmtp() throws Exception {
+    public void testMailEndpointsAreConfiguredProperlyWhenUsingSmtp() {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:25/subject");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("smtp", config.getProtocol(), "getProtocol()");
@@ -47,7 +47,7 @@ public class MailComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMailEndpointsAreConfiguredProperlyWhenUsingImap() throws Exception {
+    public void testMailEndpointsAreConfiguredProperlyWhenUsingImap() {
         MailEndpoint endpoint = resolveMandatoryEndpoint("imap://james@myhost:143/subject");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("imap", config.getProtocol(), "getProtocol()");
@@ -61,7 +61,7 @@ public class MailComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMailEndpointsAreConfiguredProperlyWhenUsingPop() throws Exception {
+    public void testMailEndpointsAreConfiguredProperlyWhenUsingPop() {
         MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost:110/subject");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("pop3", config.getProtocol(), "getProtocol()");
@@ -75,7 +75,7 @@ public class MailComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDefaultSMTPConfiguration() throws Exception {
+    public void testDefaultSMTPConfiguration() {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost?password=secret");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("smtp", config.getProtocol(), "getProtocol()");
@@ -99,7 +99,7 @@ public class MailComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDefaultSMTPSConfiguration() throws Exception {
+    public void testDefaultSMTPSConfiguration() {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtps://james@myhost?password=secret");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("smtps", config.getProtocol(), "getProtocol()");
@@ -123,21 +123,21 @@ public class MailComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDebugMode() throws Exception {
+    public void testDebugMode() {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost?password=secret&debugMode=true");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals(true, config.isDebugMode());
     }
 
     @Test
-    public void testConnectionTimeout() throws Exception {
+    public void testConnectionTimeout() {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost?password=secret&connectionTimeout=2500");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals(2500, config.getConnectionTimeout());
     }
 
     @Test
-    public void testDefaultPOP3Configuration() throws Exception {
+    public void testDefaultPOP3Configuration() {
         MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost?password=secret");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("pop3", config.getProtocol(), "getProtocol()");
@@ -158,7 +158,7 @@ public class MailComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDefaultIMAPConfiguration() throws Exception {
+    public void testDefaultIMAPConfiguration() {
         MailEndpoint endpoint = resolveMandatoryEndpoint("imap://james@myhost?password=secret");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("imap", config.getProtocol(), "getProtocol()");
@@ -179,7 +179,7 @@ public class MailComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testManyConfigurations() throws Exception {
+    public void testManyConfigurations() {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:30/subject?password=secret"
                                                          + "&from=me@camelriders.org&delete=true&folderName=riders"
                                                          + "&contentType=text/html&unseen=false");
@@ -265,7 +265,7 @@ public class MailComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMailEndpointsWithFetchSize() throws Exception {
+    public void testMailEndpointsWithFetchSize() {
         MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost?fetchSize=5");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("pop3", config.getProtocol(), "getProtocol()");
@@ -280,7 +280,7 @@ public class MailComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSMTPEndpointWithSubjectOption() throws Exception {
+    public void testSMTPEndpointWithSubjectOption() {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://myhost:25?subject=hello");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("smtp", config.getProtocol(), "getProtocol()");

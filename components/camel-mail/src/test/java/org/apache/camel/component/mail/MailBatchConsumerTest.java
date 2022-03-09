@@ -90,9 +90,9 @@ public class MailBatchConsumerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("pop3://jones@localhost?password=secret&initialDelay=100&delay=100"
                      + "&delete=true").to("mock:result");
             }

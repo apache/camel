@@ -18,7 +18,6 @@ package org.apache.camel.component.mail;
 
 import java.util.Properties;
 
-import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 
@@ -36,7 +35,7 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
     private MySender sender = new MySender();
 
     @Test
-    public void testSendWithCustomMailSender() throws Exception {
+    public void testSendWithCustomMailSender() {
         sendBody("smtp://claus@localhost?javaMailSender=#mySender", "Hello World");
 
         assertTrue(sent, "Should have used custom mail sender");
@@ -45,7 +44,7 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
     private static class MySender implements JavaMailSender {
 
         @Override
-        public void send(MimeMessage mimeMessage) throws MessagingException {
+        public void send(MimeMessage mimeMessage) {
             sent = true;
         }
 

@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class MailSearchTermUriConfigBeanTest extends MailSearchTermUriConfigTest {
 
     @BindToRegistry("mySearchTerm")
-    public SimpleSearchTerm addSearchTerm() throws Exception {
+    public SimpleSearchTerm addSearchTerm() {
         SimpleSearchTerm mySearchTerm = new SimpleSearchTerm();
         mySearchTerm.setSubjectOrBody("Camel");
 
@@ -30,9 +30,9 @@ public class MailSearchTermUriConfigBeanTest extends MailSearchTermUriConfigTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("pop3://bill@localhost?password=secret&searchTerm=#mySearchTerm").to("mock:result");
             }
         };
