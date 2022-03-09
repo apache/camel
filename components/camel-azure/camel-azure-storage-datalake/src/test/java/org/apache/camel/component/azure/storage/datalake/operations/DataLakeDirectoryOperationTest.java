@@ -67,7 +67,7 @@ public class DataLakeDirectoryOperationTest extends CamelTestSupport {
     @Test
     void testDeleteDirectory() {
         final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.put("x-ms-request-id", "12345");
+        httpHeaders.set("x-ms-request-id", "12345");
         when(client.deleteWithResponse(any(), any(), any()))
                 .thenReturn(new ResponseBase<>(null, 200, httpHeaders, null, null));
 
