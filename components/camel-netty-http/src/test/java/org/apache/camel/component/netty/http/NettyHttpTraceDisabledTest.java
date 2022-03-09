@@ -59,10 +59,10 @@ public class NettyHttpTraceDisabledTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://localhost:" + portTraceOff + "/myservice").to("log:foo");
                 from("netty-http:http://localhost:" + portTraceOn + "/myservice?traceEnabled=true").to("log:bar");
             }

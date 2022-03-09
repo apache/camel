@@ -44,7 +44,7 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
     }
 
     @Test
-    public void testSwitchingNoBodyTo204NettyHttpViaCamel() throws Exception {
+    public void testSwitchingNoBodyTo204NettyHttpViaCamel() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("netty-http:http://localhost:{{port}}/bar", inExchange);
 
@@ -59,7 +59,7 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
     }
 
     @Test
-    public void testSwitchingNoBodyTo204ViaCamelRoute() throws Exception {
+    public void testSwitchingNoBodyTo204ViaCamelRoute() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("direct:bar", inExchange);
 
@@ -85,7 +85,7 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
     }
 
     @Test
-    public void testNoSwitchingNoCodeNettyHttpViaCamel() throws Exception {
+    public void testNoSwitchingNoCodeNettyHttpViaCamel() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("netty-http:http://localhost:{{port}}/foo", inExchange);
 
@@ -100,7 +100,7 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
     }
 
     @Test
-    public void testNoSwitchingNoCodeViaCamelRoute() throws Exception {
+    public void testNoSwitchingNoCodeViaCamelRoute() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("direct:foo", inExchange);
 
@@ -126,7 +126,7 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
     }
 
     @Test
-    public void testNoSwitchingNoBodyNettyHttpViaCamel() throws Exception {
+    public void testNoSwitchingNoBodyNettyHttpViaCamel() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("netty-http:http://localhost:{{port}}/foobar", inExchange);
 
@@ -141,7 +141,7 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
     }
 
     @Test
-    public void testNoSwitchingNoBodyViaCamelRoute() throws Exception {
+    public void testNoSwitchingNoBodyViaCamelRoute() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("direct:foobar", inExchange);
 
@@ -156,10 +156,10 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://localhost:{{port}}/bar")
                         .setBody().constant("");
 

@@ -33,7 +33,7 @@ public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
     private MyFooBean bean = new MyFooBean();
 
     @Test
-    public void testFilterCamelHeaders() throws Exception {
+    public void testFilterCamelHeaders() {
         Exchange out = template.request("netty-http:http://localhost:{{port}}/test/filter", exchange -> {
             exchange.getIn().setBody("Claus");
             exchange.getIn().setHeader("bar", 123);
@@ -54,10 +54,10 @@ public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://localhost:{{port}}/test/filter").bean("foo");
             }
         };

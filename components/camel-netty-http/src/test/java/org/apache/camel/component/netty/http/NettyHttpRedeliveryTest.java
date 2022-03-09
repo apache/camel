@@ -47,15 +47,15 @@ public class NettyHttpRedeliveryTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class)
                         .maximumRedeliveries(50).redeliveryDelay(100).onExceptionOccurred(
                                 new Processor() {
                                     @Override
-                                    public void process(Exchange exchange) throws Exception {
+                                    public void process(Exchange exchange) {
                                         // signal to start the route (after 5 attempts)
                                         latch.countDown();
                                         // and there is only 1 inflight

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class NettyProxyMixedCasePathTest extends BaseNettyTest {
 
     @Test
-    public void testMixedCase() throws Exception {
+    public void testMixedCase() {
         String out = template.requestBody("netty-http:http://localhost:{{port}}/Shopping", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
@@ -33,10 +33,10 @@ public class NettyProxyMixedCasePathTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/Shopping").to("netty-http:http://localhost:{{port}}/ws/svc/Shopping");
 
                 from("netty-http:http://0.0.0.0:{{port}}/ws/svc/Shopping").transform(body().prepend("Bye "));

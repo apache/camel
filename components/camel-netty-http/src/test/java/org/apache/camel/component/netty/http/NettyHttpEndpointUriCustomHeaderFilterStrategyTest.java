@@ -45,10 +45,10 @@ public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNett
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:request").setHeader("Date", constant("31-03-2014"))
                         .to("netty-http:http://localhost:{{port}}/myapp/mytest?headerFilterStrategy=#customHeaderFilterStrategy");
 

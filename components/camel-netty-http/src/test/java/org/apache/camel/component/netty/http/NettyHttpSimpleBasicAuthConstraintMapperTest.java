@@ -44,7 +44,7 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
     }
 
     @BindToRegistry("myConstraint")
-    public SecurityConstraintMapping loadSecurityConstraintMapping() throws Exception {
+    public SecurityConstraintMapping loadSecurityConstraintMapping() {
 
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/*");
@@ -80,10 +80,10 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?matchOnUriPrefix=true"
                      + "&securityConfiguration.realm=karaf&securityConfiguration.securityConstraint=#myConstraint")
                              .to("mock:input")

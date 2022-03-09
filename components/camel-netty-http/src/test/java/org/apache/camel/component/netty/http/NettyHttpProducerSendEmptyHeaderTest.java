@@ -34,10 +34,10 @@ public class NettyHttpProducerSendEmptyHeaderTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://localhost:{{port}}/myapp/mytest")
                         .convertBodyTo(String.class)
                         .to("mock:result");

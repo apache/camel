@@ -52,9 +52,9 @@ public class NettyHttpHeaderCaseTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://localhost:{{port}}/myapp/mytest").process(exchange -> {
 
                     // headers received should be in case as well

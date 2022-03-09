@@ -35,7 +35,7 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
     AvailablePortFinder.Port port3 = AvailablePortFinder.find();
 
     @Test
-    public void testProxy() throws Exception {
+    public void testProxy() {
         String reply = template.requestBody("netty-http:http://localhost:" + port1 + "/foo", "World", String.class);
         assertEquals("Bye World", reply);
     }
@@ -48,7 +48,7 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
 
         template.request("netty-http:http://localhost:" + port3 + "/query?bridgeEndpoint=true", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Exchange.HTTP_URI, "http://host:8080/");
                 exchange.getIn().setHeader(Exchange.HTTP_QUERY, "x=%3B");
             }
@@ -64,7 +64,7 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
 
         template.request("netty-http:http://localhost:" + port3 + "/query?bridgeEndpoint=true", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Exchange.HTTP_URI, "http://host:8080/");
                 exchange.getIn().setHeader(Exchange.HTTP_RAW_QUERY, "x=%3B");
                 exchange.getIn().setHeader(Exchange.HTTP_QUERY, "x=;");
@@ -74,10 +74,10 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:" + port1 + "/foo")
                         .to("netty-http:http://localhost:" + port2 + "/bar?bridgeEndpoint=true&throwExceptionOnFailure=false");
 

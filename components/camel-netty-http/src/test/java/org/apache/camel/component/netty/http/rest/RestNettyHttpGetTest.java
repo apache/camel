@@ -30,16 +30,16 @@ public class RestNettyHttpGetTest extends BaseNettyTest {
     private RestNettyHttpBinding binding = new RestNettyHttpBinding();
 
     @Test
-    public void testProducerGet() throws Exception {
+    public void testProducerGet() {
         String out = template.requestBody("netty-http:http://localhost:{{port}}/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use netty-http on localhost with the given port
                 restConfiguration().component("netty-http").host("localhost").port(getPort())
                         .endpointProperty("nettyHttpBinding", "#mybinding");
