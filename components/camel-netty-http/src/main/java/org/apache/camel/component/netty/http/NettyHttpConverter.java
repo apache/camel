@@ -74,12 +74,8 @@ public final class NettyHttpConverter {
             // okay we may need to cheat a bit when we want to grab the HttpRequest as its stored on the NettyHttpMessage
             // so if the message instance is a NettyHttpMessage and its body is the value, then we can grab the
             // HttpRequest from the NettyHttpMessage
-            NettyHttpMessage msg;
-            if (exchange.hasOut()) {
-                msg = exchange.getOut(NettyHttpMessage.class);
-            } else {
-                msg = exchange.getIn(NettyHttpMessage.class);
-            }
+            NettyHttpMessage msg = exchange.getMessage(NettyHttpMessage.class);
+
             if (msg != null && msg.getBody() == value) {
                 return msg.getHttpResponse();
             }
