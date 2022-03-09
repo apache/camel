@@ -144,6 +144,82 @@ There can be some combinations of xref:eips:enterprise-integration-patterns.adoc
 that can hit limits in how far we can take the fluent builder DSL with
 generics you can do in Java programming language.
 
-== See Also
+== Precondition Mode
 
-See xref:switch-eip.adoc[Switch EIP].
+In precondition mode, the Choice EIP is an optimized http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
+Based Router] which selects a single branch (when/otherwise) during startup, and
+always executes the same branch. This allows to optimize the runtime Camel to avoid
+this evaluation process for every message; because they are supposed
+to always be routed on the same branch.
+
+NOTE: Because the Choice EIP in precondition mode evaluates the predicates during startup, then the predicates
+cannot be based on the content of the message. Therefore, the predicates would often
+be based on property placeholders, JVM system properties, or OS Environment variables.
+
+The Choice EIP in precondition mode combined with xref:manual:ROOT:route-template.adoc[Route Templates] allows
+for more flexible templates, as the template parameters can be used as the predicates in the Choice EIP;
+meaning that the Choice EIP in precondition mode is fully parameterized, but is optimized for best runtime performance.
+
+=== Example
+
+The Camel xref:languages:simple-language.adoc[Simple] language
+is great to use with the Choice EIP in precondition mode to select a specific branch based
+on xref:manual:ROOT:using-propertyplaceholder.adoc[property placeholders].
+
+Here we select from the Switch the first predicate that matches. So if there is
+a property placeholder with the key `foo` then its select, and so on.
+Notice how we can use `{{?foo}}` to mark the property placeholder as optional.
+
+[source,java]
+----
+from("direct:a")
+    .choice().precondition()
+        .when(simple("{{?foo}}")).to("direct:foo")
+        .when(simple("{{?bar}}")).to("direct:bar")
+        .otherwise().to("direct:other");
+----
+
+And the same example using XML DSL:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:a"/>
+    <choice precondition="true">
+        <when>
+            <simple>{{?foo}}</simple>
+            <to uri="direct:foo"/>
+        </when>
+        <when>
+            <simple>{{?bar}}</simple>
+            <to uri="direct:bar"/>
+        </when>
+        <otherwise>
+            <to uri="direct:other"/>
+        </otherwise>
+    </choice>
+</route>
+----
+
+And in YAML DS:
+
+[source,yaml]
+----
+- from:
+    uri: "direct:a"
+    steps:
+      - choice:
+          precondition: true
+          when:
+            - simple: "{{?foo}}"
+              steps:
+                - to: "direct:foo"
+            - simple: "{{?bar}}"
+              steps:
+                - to: "direct:bar"
+          otherwise:
+            steps:
+              - to: "direct:other"
+----
+
+TIP: Otherwise, is optional, and if none of the predicates would match, then no branches is selected.

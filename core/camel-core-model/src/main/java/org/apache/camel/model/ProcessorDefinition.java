@@ -1451,18 +1451,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * An optimized <a href="http://camel.apache.org/content-based-router.html">Content Based Router EIP:</a> Optimized
-     * during startup to select one predicate that will always be used.
-     *
-     * @return the builder for a switch expression
-     */
-    public SwitchDefinition doSwitch() {
-        SwitchDefinition answer = new SwitchDefinition();
-        addOutput(answer);
-        return answer;
-    }
-
-    /**
      * Creates a try/catch block
      *
      * @return the builder for a tryBlock expression

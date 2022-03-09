@@ -219,19 +219,21 @@ public class ModelParser extends BaseParser {
         return doParse(new WhenDefinition(),
             processorDefinitionAttributeHandler(), outputExpressionNodeElementHandler(), noValueHandler());
     }
-    protected <T extends ChoiceDefinition> ElementHandler<T> choiceDefinitionElementHandler() {
-        return (def, key) -> {
+    protected ChoiceDefinition doParseChoiceDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ChoiceDefinition(), (def, key, val) -> {
+            if ("precondition".equals(key)) {
+                def.setPrecondition(val);
+                return true;
+            }
+            return processorDefinitionAttributeHandler().accept(def, key, val);
+        }, (def, key) -> {
             switch (key) {
                 case "when": doAdd(doParseWhenDefinition(), def.getWhenClauses(), def::setWhenClauses); break;
                 case "otherwise": def.setOtherwise(doParseOtherwiseDefinition()); break;
                 default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }
             return true;
-        };
-    }
-    protected ChoiceDefinition doParseChoiceDefinition() throws IOException, XmlPullParserException {
-        return doParse(new ChoiceDefinition(), 
-            processorDefinitionAttributeHandler(), choiceDefinitionElementHandler(), noValueHandler());
+        }, noValueHandler());
     }
     protected OtherwiseDefinition doParseOtherwiseDefinition() throws IOException, XmlPullParserException {
         return doParse(new OtherwiseDefinition(),
@@ -1364,10 +1366,6 @@ public class ModelParser extends BaseParser {
     protected StopDefinition doParseStopDefinition() throws IOException, XmlPullParserException {
         return doParse(new StopDefinition(),
             processorDefinitionAttributeHandler(), optionalIdentifiedDefinitionElementHandler(), noValueHandler());
-    }
-    protected SwitchDefinition doParseSwitchDefinition() throws IOException, XmlPullParserException {
-        return doParse(new SwitchDefinition(),
-            processorDefinitionAttributeHandler(), choiceDefinitionElementHandler(), noValueHandler());
     }
     protected TemplatedRouteBeanDefinition doParseTemplatedRouteBeanDefinition() throws IOException, XmlPullParserException {
         return doParse(new TemplatedRouteBeanDefinition(),
@@ -3266,7 +3264,6 @@ public class ModelParser extends BaseParser {
             case "split": return doParseSplitDefinition();
             case "step": return doParseStepDefinition();
             case "stop": return doParseStopDefinition();
-            case "doSwitch": return doParseSwitchDefinition();
             case "threads": return doParseThreadsDefinition();
             case "throttle": return doParseThrottleDefinition();
             case "throwException": return doParseThrowExceptionDefinition();

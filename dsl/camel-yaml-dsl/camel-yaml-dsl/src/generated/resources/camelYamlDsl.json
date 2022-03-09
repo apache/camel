@@ -161,9 +161,6 @@
           "stop" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.StopDefinition"
           },
-          "doSwitch" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.SwitchDefinition"
-          },
           "threads" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ThreadsDefinition"
           },
@@ -531,6 +528,9 @@
           },
           "otherwise" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.OtherwiseDefinition"
+          },
+          "precondition" : {
+            "type" : "boolean"
           },
           "steps" : {
             "type" : "array",
@@ -2848,35 +2848,6 @@
           },
           "inheritErrorHandler" : {
             "type" : "boolean"
-          }
-        }
-      },
-      "org.apache.camel.model.SwitchDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "description" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "inheritErrorHandler" : {
-            "type" : "boolean"
-          },
-          "otherwise" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.OtherwiseDefinition"
-          },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
-          },
-          "when" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.WhenDefinition"
-            }
           }
         }
       },

@@ -445,9 +445,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.StopDefinition": return new ModelDeserializers.StopDefinitionDeserializer();
             case "stream-config": return new ModelDeserializers.StreamResequencerConfigDeserializer();
             case "org.apache.camel.model.config.StreamResequencerConfig": return new ModelDeserializers.StreamResequencerConfigDeserializer();
-            case "do-switch": return new ModelDeserializers.SwitchDefinitionDeserializer();
-            case "doSwitch": return new ModelDeserializers.SwitchDefinitionDeserializer();
-            case "org.apache.camel.model.SwitchDefinition": return new ModelDeserializers.SwitchDefinitionDeserializer();
             case "syslog": return new ModelDeserializers.SyslogDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.SyslogDataFormat": return new ModelDeserializers.SyslogDataFormatDeserializer();
             case "tar-file": return new ModelDeserializers.TarFileDataFormatDeserializer();

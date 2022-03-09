@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class DoSwitchTest extends ContextTestSupport {
+class ChoiceInPreconditionModeTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -31,7 +31,7 @@ public class DoSwitchTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRed() throws Exception {
+    void testRed() throws Exception {
         Properties init = new Properties();
         init.setProperty("red", "true");
         init.setProperty("blue", "false");
@@ -54,7 +54,7 @@ public class DoSwitchTest extends ContextTestSupport {
     }
 
     @Test
-    public void testBlue() throws Exception {
+    void testBlue() throws Exception {
         Properties init = new Properties();
         init.setProperty("red", "false");
         init.setProperty("blue", "true");
@@ -77,7 +77,7 @@ public class DoSwitchTest extends ContextTestSupport {
     }
 
     @Test
-    public void testYellow() throws Exception {
+    void testYellow() throws Exception {
         Properties init = new Properties();
         init.setProperty("red", "false");
         init.setProperty("blue", "false");
@@ -100,12 +100,12 @@ public class DoSwitchTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNone() throws Exception {
+    void testNone() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("myRoute")
-                    .doSwitch().id("mySwitch")
+                    .choice().precondition().id("mySwitch")
                         .when(simple("{{?red}}")).to("mock:red").id("myRed")
                         .when(simple("{{?blue}}")).to("mock:blue").id("myBlue")
                     .end()
@@ -132,7 +132,7 @@ public class DoSwitchTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").routeId("myRoute")
-                        .doSwitch().id("mySwitch")
+                        .choice().precondition(true).id("mySwitch")
                         .when(simple("{{red}}")).to("mock:red").id("myRed")
                         .when(simple("{{blue}}")).to("mock:blue").id("myBlue")
                         .otherwise().to("mock:yellow").id("myYellow");
