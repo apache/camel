@@ -25,7 +25,8 @@ import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
 import io.netty.handler.ssl.ClientAuth;
-import io.netty.handler.ssl.OpenSslServerContext;
+import io.netty.handler.ssl.JdkSslContext;
+import io.netty.handler.ssl.OpenSslClientContext;
 import io.netty.handler.ssl.SslContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm;
@@ -33,6 +34,7 @@ import org.apache.camel.component.grpc.auth.jwt.JwtServerInterceptor;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -68,7 +70,7 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
                 .clientAuth(ClientAuth.REQUIRE)
                 .build();
 
-        assertTrue(sslContext instanceof OpenSslServerContext);
+        Assumptions.assumeTrue(sslContext instanceof OpenSslClientContext || sslContext instanceof JdkSslContext);
 
         grpcServerWithTLS = NettyServerBuilder.forPort(GRPC_TLS_TEST_PORT)
                 .sslContext(sslContext)
