@@ -44,7 +44,7 @@ public class KnativeComponentTest {
     }
 
     @AfterEach
-    public void after() throws Exception {
+    public void after() {
         if (this.context != null) {
             this.context.stop();
         }
