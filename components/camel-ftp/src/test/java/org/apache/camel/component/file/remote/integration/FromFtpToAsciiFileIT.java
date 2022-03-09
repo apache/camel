@@ -73,9 +73,9 @@ public class FromFtpToAsciiFileIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.txt")).convertBodyTo(String.class)
                         .to(fileUri("?fileExist=Override&noop=true")).to("mock:result");
             }

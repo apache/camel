@@ -42,7 +42,7 @@ public class FtpProducerDisconnectIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testDisconnectOnDone() throws Exception {
+    public void testDisconnectOnDone() {
         sendFile(getFtpUrl(), "Hello World", "claus.txt");
 
         FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);

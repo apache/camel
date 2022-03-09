@@ -64,10 +64,10 @@ public class SftpKeyConsumeIT extends SftpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&knownHosts=#knownHosts&privateKey=#privateKey&privateKeyPassphrase=secret&delay=10000&strictHostKeyChecking=yes&useUserKnownHostsFile=false&disconnect=true")
                              .routeId("foo").noAutoStartup().to("mock:result");

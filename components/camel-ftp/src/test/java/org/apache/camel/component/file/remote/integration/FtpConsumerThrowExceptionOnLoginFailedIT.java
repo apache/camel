@@ -63,10 +63,10 @@ public class FtpConsumerThrowExceptionOnLoginFailedIT extends FtpServerTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).routeId("foo").to("mock:result");
             }
         };
@@ -84,7 +84,7 @@ public class FtpConsumerThrowExceptionOnLoginFailedIT extends FtpServerTestSuppo
         }
 
         @Override
-        public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
+        public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) {
             GenericFileOperationFailedException e = assertIsInstanceOf(GenericFileOperationFailedException.class, cause);
             assertEquals(530, e.getCode());
 

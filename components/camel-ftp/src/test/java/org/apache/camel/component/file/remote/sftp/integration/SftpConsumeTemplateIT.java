@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SftpConsumeTemplateIT extends SftpServerTestSupport {
 
     @Test
-    public void testSftpSimpleConsume() throws Exception {
+    public void testSftpSimpleConsume() {
         // create file using regular file
         template.sendBodyAndHeader("file://" + service.getFtpRootDir(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 

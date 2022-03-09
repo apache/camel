@@ -50,7 +50,7 @@ public class FromFtpConsumerTemplateRollbackIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testConsumerTemplateRollback() throws Exception {
+    public void testConsumerTemplateRollback() {
         try {
             consumer.receiveBody(getFtpUrlInvalid(), 2000, String.class);
             fail("Should fail and rollback");

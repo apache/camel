@@ -57,9 +57,9 @@ public class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 ThreadPoolProfile tpp
                         = new ThreadPoolProfileBuilder("ftp-pool").poolSize(5).maxPoolSize(10).maxQueueSize(1000).build();
                 context.getExecutorServiceManager().registerThreadPoolProfile(tpp);

@@ -45,7 +45,7 @@ public class FromFtpKeepLastModifiedIT extends FtpServerTestSupport {
     public void testKeepLastModified() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).delay(3000).to(fileUri("?keepLastModified=true"), "mock:result");
             }
         });
@@ -68,7 +68,7 @@ public class FromFtpKeepLastModifiedIT extends FtpServerTestSupport {
     public void testDoNotKeepLastModified() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).delay(3000).to(fileUri("?keepLastModified=false"), "mock:result");
             }
         });
@@ -91,7 +91,7 @@ public class FromFtpKeepLastModifiedIT extends FtpServerTestSupport {
     public void testDoNotKeepLastModifiedIsDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).delay(3000).to(fileUri(), "mock:result");
             }
         });

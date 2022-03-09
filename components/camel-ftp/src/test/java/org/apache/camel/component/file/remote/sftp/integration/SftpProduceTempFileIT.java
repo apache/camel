@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SftpProduceTempFileIT extends SftpServerTestSupport {
 
     @Test
-    public void testSftpTempFile() throws Exception {
+    public void testSftpTempFile() {
         template.sendBodyAndHeader("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                                    + "?username=admin&password=admin&tempFileName=temp-${file:name}",
                 "Hello World",
@@ -42,7 +42,7 @@ public class SftpProduceTempFileIT extends SftpServerTestSupport {
     }
 
     @Test
-    public void testSftpTempFileNoStartingPath() throws Exception {
+    public void testSftpTempFileNoStartingPath() {
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/?username=admin&password=admin&tempFileName=temp-${file:name}",
                 "Hello World", Exchange.FILE_NAME,

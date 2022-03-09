@@ -52,10 +52,10 @@ public class FtpRecursiveDepthIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl() + "&minDepth=2&maxDepth=2").convertBodyTo(String.class).to("mock:result");
             }
         };

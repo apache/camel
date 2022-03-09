@@ -76,11 +76,11 @@ public class FromFtpPreMoveNoopIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // assert the file is pre moved
                         File file = ftpFile("movefile/work/hello.txt").toFile();
                         assertTrue(file.exists(), "The file should have been moved");

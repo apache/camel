@@ -69,9 +69,9 @@ public class FtpBadLoginConnectionLeakIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).to("mock:result");
             }
         };
@@ -84,29 +84,29 @@ public class FtpBadLoginConnectionLeakIT extends FtpServerTestSupport {
     private class AuditingSocketFactory extends SocketFactory {
 
         @Override
-        public Socket createSocket(String s, int i) throws IOException {
+        public Socket createSocket(String s, int i) {
             return null;
         }
 
         @Override
-        public Socket createSocket(String s, int i, InetAddress inetAddress, int i1) throws IOException {
+        public Socket createSocket(String s, int i, InetAddress inetAddress, int i1) {
             return null;
         }
 
         @Override
-        public Socket createSocket(InetAddress inetAddress, int i) throws IOException {
+        public Socket createSocket(InetAddress inetAddress, int i) {
             return null;
         }
 
         @Override
-        public Socket createSocket() throws IOException {
+        public Socket createSocket() {
             AuditingSocket socket = new AuditingSocket();
             socketAudits.put(System.identityHashCode(socket), new boolean[] { false, false });
             return socket;
         }
 
         @Override
-        public Socket createSocket(InetAddress inetAddress, int i, InetAddress inetAddress1, int i1) throws IOException {
+        public Socket createSocket(InetAddress inetAddress, int i, InetAddress inetAddress1, int i1) {
             return null;
         }
     }

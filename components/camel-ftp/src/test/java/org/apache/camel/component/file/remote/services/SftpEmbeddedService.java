@@ -110,7 +110,7 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
         return (username, key, session) -> true;
     }
 
-    public void tearDown() throws Exception {
+    public void tearDown() {
         tearDownServer();
     }
 

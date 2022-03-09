@@ -46,7 +46,7 @@ public class SftpProducerMoveExistingIT extends SftpServerTestSupport {
     }
 
     @Test
-    public void testExistingFileDoesNotExists() throws Exception {
+    public void testExistingFileDoesNotExists() {
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World",
                 Exchange.FILE_NAME, "hello.txt");
 
@@ -55,7 +55,7 @@ public class SftpProducerMoveExistingIT extends SftpServerTestSupport {
     }
 
     @Test
-    public void testExistingFileExists() throws Exception {
+    public void testExistingFileExists() {
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World",
                 Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Bye World",
@@ -72,7 +72,7 @@ public class SftpProducerMoveExistingIT extends SftpServerTestSupport {
     }
 
     @Test
-    public void testExistingFileExistsMoveSubDir() throws Exception {
+    public void testExistingFileExistsMoveSubDir() {
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=backup", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=backup", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
@@ -88,7 +88,7 @@ public class SftpProducerMoveExistingIT extends SftpServerTestSupport {
     }
 
     @Test
-    public void testFailOnMoveExistingFileExistsEagerDeleteTrue() throws Exception {
+    public void testFailOnMoveExistingFileExistsEagerDeleteTrue() {
         template.sendBodyAndHeader(
                 getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Old file",
                 Exchange.FILE_NAME,
@@ -116,7 +116,7 @@ public class SftpProducerMoveExistingIT extends SftpServerTestSupport {
     }
 
     @Test
-    public void testFailOnMoveExistingFileExistsEagerDeleteFalse() throws Exception {
+    public void testFailOnMoveExistingFileExistsEagerDeleteFalse() {
         template.sendBodyAndHeader(
                 getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Old file",
                 Exchange.FILE_NAME,

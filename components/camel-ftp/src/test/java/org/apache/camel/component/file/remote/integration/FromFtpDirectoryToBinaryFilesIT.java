@@ -54,7 +54,7 @@ public class FromFtpDirectoryToBinaryFilesIT extends FtpServerTestSupport {
     }
 
     @BeforeEach
-    public void prepareFtpServer() throws Exception {
+    public void prepareFtpServer() {
         // prepares the FTP Server by creating a file on the server that we want
         // to unit test that we can pool and store as a local file
         template.sendBodyAndHeader(getFtpUrl(), logoFile, Exchange.FILE_NAME, "logo.jpeg");
@@ -84,9 +84,9 @@ public class FromFtpDirectoryToBinaryFilesIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).to(fileUri("?noop=true"), "mock:result");
             }
         };

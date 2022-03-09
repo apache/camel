@@ -57,10 +57,10 @@ public class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("vm:trigger").pollEnrich("ftp://admin@localhost:{{ftp.server.port}}/poll?password=admin&delete=true")
                         .routeId("foo").to("mock:result");
             }

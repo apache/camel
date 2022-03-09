@@ -86,11 +86,11 @@ public class FtpConsumerLocalWorkDirectoryAsAbsolutePathIT extends FtpServerTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         File body = exchange.getIn().getBody(File.class);
                         assertNotNull(body);
                         assertTrue(body.isAbsolute(), "Should be absolute path");

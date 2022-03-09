@@ -36,7 +36,7 @@ public class FromFtpNoFilesIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testPoolIn3SecondsButNoFiles() throws Exception {
+    public void testPoolIn3SecondsButNoFiles() {
         deleteDirectory(service.getFtpRootDir());
         createDirectory(service.getFtpRootDir().resolve("slowfile"));
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -47,9 +47,9 @@ public class FromFtpNoFilesIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).to("mock:result");
             }
         };

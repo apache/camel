@@ -40,15 +40,15 @@ public class FtpPollingConsumerIdleMessageIT extends FtpServerTestSupport {
     }
 
     @BeforeEach
-    public void setup() throws Exception {
+    public void setup() {
         ftpFile("polling").toFile().mkdirs();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("ftp://admin@localhost:{{ftp.server.port}}/polling?password=admin&delay=50"
                      + "&sendEmptyMessageWhenIdle=true").to("mock:result");
             }

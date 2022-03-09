@@ -41,7 +41,7 @@ public class FromFtpToAsciiFileNoBodyConversionIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testFromFtpToAsciiFileNoBodyConversion() throws Exception {
+    public void testFromFtpToAsciiFileNoBodyConversion() {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
         resultEndpoint.expectedBodiesReceived("Hello ASCII from FTPServer");
@@ -62,9 +62,9 @@ public class FromFtpToAsciiFileNoBodyConversionIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).to(fileUri("?fileExist=Override&noop=true"), "mock:result");
             }
         };

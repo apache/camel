@@ -61,13 +61,13 @@ public class SftpKeyPairDSAConsumeIT extends SftpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         context.getRegistry().bind("keyPair", keyPair);
         context.getRegistry().bind("knownHosts", service.buildKnownHosts());
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&knownHosts=#knownHosts&keyPair=#keyPair&delay=10000&strictHostKeyChecking=yes&useUserKnownHostsFile=false&disconnect=true")
                              .routeId("foo").noAutoStartup()

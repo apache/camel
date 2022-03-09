@@ -55,16 +55,16 @@ public class FtpConsumerNotEagerMaxMessagesPerPollIT extends FtpServerTestSuppor
         assertMockEndpointsSatisfied();
     }
 
-    private void prepareFtpServer() throws Exception {
+    private void prepareFtpServer() {
         sendFile(getFtpUrl(), "CCC", "ccc.txt");
         sendFile(getFtpUrl(), "AAA", "aaa.txt");
         sendFile(getFtpUrl(), "BBB", "bbb.txt");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).noAutoStartup().routeId("foo").to("mock:result");
             }
         };

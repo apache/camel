@@ -38,7 +38,7 @@ public class FtpConsumerIdempotentMemoryRefIT extends FtpServerTestSupport {
     }
 
     @BindToRegistry("myConsumerIdemRepo")
-    public MemoryIdempotentRepository addRepo() throws Exception {
+    public MemoryIdempotentRepository addRepo() {
         repo = new MemoryIdempotentRepository();
         repo.setCacheSize(5);
         return repo;
@@ -84,9 +84,9 @@ public class FtpConsumerIdempotentMemoryRefIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).to("log:result").to("mock:result");
             }
         };

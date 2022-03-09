@@ -38,7 +38,7 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testIllegalConfiguration() throws Exception {
+    public void testIllegalConfiguration() {
         String uri = getFtpUrl() + "&fileExist=Append&tempPrefix=foo";
         Endpoint endpoint = context.getEndpoint(uri);
 

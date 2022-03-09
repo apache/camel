@@ -52,7 +52,7 @@ public class FromFtpExclusiveReadNoneStrategyIT extends FtpServerTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").process(new MySlowFileProcessor());
                 from(getFtpUrl()).to("mock:result");
             }
