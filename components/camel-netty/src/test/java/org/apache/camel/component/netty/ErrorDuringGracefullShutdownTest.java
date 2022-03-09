@@ -32,11 +32,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ErrorDuringGracefullShutdownTest extends BaseNettyTest {
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // mock server
                 from("netty:tcp://0.0.0.0:{{port}}?textline=true&disconnect=false")
                         .log("Got request ${body}")

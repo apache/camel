@@ -36,7 +36,7 @@ public class NettyProducerHangTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(NettyProducerHangTest.class);
 
     @Test
-    public void nettyProducerHangsOnTheSecondRequestToTheSocketWhichIsClosed() throws Exception {
+    public void nettyProducerHangsOnTheSecondRequestToTheSocketWhichIsClosed() {
         new Thread(new Runnable() {
             @Override
             public void run() {

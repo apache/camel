@@ -52,16 +52,16 @@ public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTes
     }
 
     @BindToRegistry("RCVBUF_ALLOCATOR")
-    public FixedRecvByteBufAllocator loadRecv() throws Exception {
+    public FixedRecvByteBufAllocator loadRecv() {
         FixedRecvByteBufAllocator fixedRecvByteBufAllocator = new FixedRecvByteBufAllocator(4096);
         return fixedRecvByteBufAllocator;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:udp://localhost:{{port}}?option." + ChannelOption.RCVBUF_ALLOCATOR.name() + "=#"
                      + ChannelOption.RCVBUF_ALLOCATOR.name()).to("mock:result");
             }

@@ -78,7 +78,7 @@ public class NettyGlobalSSLContextParametersTest extends BaseNettyTest {
             public void configure() {
                 from("netty:tcp://localhost:{{port}}?sync=true&ssl=true")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.getMessage().setBody(
                                         "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                             }

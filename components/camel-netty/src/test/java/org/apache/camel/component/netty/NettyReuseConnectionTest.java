@@ -29,7 +29,7 @@ public class NettyReuseConnectionTest extends BaseNettyTest {
     private String uri = "netty:tcp://localhost:{{port}}?sync=true&disconnect=false";
 
     @Test
-    public void testReuseConnection() throws Exception {
+    public void testReuseConnection() {
         for (int i = 0; i < 20; i++) {
             String out = template.requestBody(uri, "" + i, String.class);
             assertEquals("Reply " + i, out);
@@ -37,10 +37,10 @@ public class NettyReuseConnectionTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(uri).transform().simple("Reply ${body}");
             }
         };

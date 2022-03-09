@@ -56,15 +56,15 @@ public class NettyReuseChannelTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&reuseChannel=true&disconnect=true")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
                                 channels.add(channel);
                                 assertTrue(channel.isActive(), "Should be active");
@@ -74,7 +74,7 @@ public class NettyReuseChannelTest extends BaseNettyTest {
                         .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&reuseChannel=true&disconnect=true")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
                                 channels.add(channel);
                                 assertTrue(channel.isActive(), "Should be active");

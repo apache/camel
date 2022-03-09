@@ -55,7 +55,7 @@ class NettyReuseChannelCallbackTest extends BaseNettyTest {
 
         final EventNotifierSupport nettyEventRecorder = new EventNotifierSupport() {
             @Override
-            public void notify(CamelEvent event) throws Exception {
+            public void notify(CamelEvent event) {
                 if (event instanceof ExchangeSendingEvent) {
                     LOG.info("Got event {}", event);
                     add(((ExchangeSendingEvent) event).getEndpoint());
@@ -104,10 +104,10 @@ class NettyReuseChannelCallbackTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Netty URIs are slightly different (different requestTimeout)
                 // so there is different NettyEndpoint instance for each of them.
                 // This makes distinguishing events easier in test.
@@ -117,7 +117,7 @@ class NettyReuseChannelCallbackTest extends BaseNettyTest {
                         .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&reuseChannel=true&disconnect=true&requestTimeout=1000")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
                                 channels.add(channel);
                                 assertTrue(channel.isActive(), "Should be active");
@@ -127,7 +127,7 @@ class NettyReuseChannelCallbackTest extends BaseNettyTest {
                         .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&reuseChannel=true&disconnect=true&requestTimeout=2000")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
                                 channels.add(channel);
                                 assertTrue(channel.isActive(), "Should be active");

@@ -44,10 +44,10 @@ public class NettyProxyTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromF("netty:tcp://localhost:%s?sync=true&textline=true", port.getPort())
                         .to("mock:before")
                         .toF("netty:tcp://localhost:%s?sync=true&textline=true", port2.getPort())
