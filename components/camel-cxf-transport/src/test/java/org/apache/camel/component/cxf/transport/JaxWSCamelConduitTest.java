@@ -45,7 +45,7 @@ public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
                 from("direct:start3").choice().when(header(Exchange.CONTENT_TYPE).isEqualTo("text/xml; charset=UTF-8"))
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
-                                exchange.getOut().setBody(ANSWER);
+                                exchange.getMessage().setBody(ANSWER);
                             }
                         });
                 // otherwise you will get the request message back
