@@ -45,20 +45,20 @@ public class NettyTextlineInOutNonBlockingTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("log:before")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 beforeThreadName = Thread.currentThread().getName();
                             }
                         })
                         .to("netty:tcp://localhost:{{port}}?textline=true&sync=true")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 afterThreadName = Thread.currentThread().getName();
                             }
                         })
@@ -67,7 +67,7 @@ public class NettyTextlineInOutNonBlockingTest extends BaseNettyTest {
 
                 from("netty:tcp://localhost:{{port}}?textline=true&sync=true")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 beforeThreadName2 = Thread.currentThread().getName();
                             }
                         })
@@ -76,7 +76,7 @@ public class NettyTextlineInOutNonBlockingTest extends BaseNettyTest {
                         // async delayed is non blocking
                         .delay(100).asyncDelayed()
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 afterThreadName2 = Thread.currentThread().getName();
                             }
                         })

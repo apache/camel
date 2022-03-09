@@ -31,10 +31,10 @@ public class NettyRequestTimeoutIssueTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(NettyProducerHangTest.class);
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:out")
                         .to("netty:tcp://localhost:8080?requestTimeout=5000");
 

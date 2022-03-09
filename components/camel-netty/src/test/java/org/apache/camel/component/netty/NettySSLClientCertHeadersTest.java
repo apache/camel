@@ -29,12 +29,12 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 public class NettySSLClientCertHeadersTest extends BaseNettyTest {
 
     @BindToRegistry("ksf")
-    public File loadKeystoreKsf() throws Exception {
+    public File loadKeystoreKsf() {
         return new File("src/test/resources/keystore.jks");
     }
 
     @BindToRegistry("tsf")
-    public File loadKeystoreTsf() throws Exception {
+    public File loadKeystoreTsf() {
         return new File("src/test/resources/keystore.jks");
     }
 

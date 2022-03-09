@@ -65,7 +65,7 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
     }
 
     @Test
-    public void testSharedThreadPool() throws Exception {
+    public void testSharedThreadPool() {
         int delta = Thread.activeCount() - before;
 
         LOG.info("Created threads {}", delta);
@@ -76,10 +76,10 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 for (AvailablePortFinder.Port port : ports) {
                     from("netty:tcp://localhost:" + port.getPort() + "?textline=true&sync=true&usingExecutorService=false"

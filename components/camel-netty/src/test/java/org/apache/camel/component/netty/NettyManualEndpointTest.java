@@ -46,10 +46,10 @@ public class NettyManualEndpointTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 NettyConfiguration nettyConfig = new NettyConfiguration();
                 nettyConfig.setProtocol("tcp");
                 nettyConfig.setHost("localhost");

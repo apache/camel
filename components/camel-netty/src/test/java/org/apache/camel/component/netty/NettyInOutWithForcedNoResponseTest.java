@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class NettyInOutWithForcedNoResponseTest extends BaseNettyTest {
 
     @Test
-    public void testResponse() throws Exception {
+    public void testResponse() {
         Object out = template.requestBody("netty:tcp://localhost:{{port}}", "Copenhagen");
         assertEquals("Hello Claus", out);
     }
 
     @Test
-    public void testNoResponse() throws Exception {
+    public void testNoResponse() {
         try {
             template.requestBody("netty:tcp://localhost:{{port}}", "London");
             fail("Should throw an exception");
@@ -43,9 +43,9 @@ public class NettyInOutWithForcedNoResponseTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}")
                         .choice()
                         .when(body().isEqualTo("Copenhagen")).transform(constant("Hello Claus"))

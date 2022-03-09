@@ -30,7 +30,7 @@ public class NettyUDPSyncTest extends BaseNettyTest {
             = "After the Battle of Thermopylae in 480 BC - Simonides of Ceos (c. 556 BC-468 BC), Greek lyric poet wrote ";
 
     @Test
-    public void testUDPStringInOutWithNettyConsumer() throws Exception {
+    public void testUDPStringInOutWithNettyConsumer() {
         for (int i = 0; i < 5; i++) {
             String response = template.requestBody(
                     "netty:udp://localhost:{{port}}?sync=true",
@@ -40,13 +40,13 @@ public class NettyUDPSyncTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:udp://localhost:{{port}}?sync=true")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.getMessage().setBody(RESPONSE);
                             }
                         });

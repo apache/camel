@@ -36,7 +36,7 @@ public class MainNettyCustomCodecTest extends BaseNettyTest {
         main.addInitialProperty("camel.component.netty.decoders", "#myCustomDecoder,#myCustomDecoder2");
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String uri = "netty:tcp://localhost:" + getPort() + "?disconnect=true&sync=false&allowDefaultCodec=false";
 
                 from(uri).to("log:input")
