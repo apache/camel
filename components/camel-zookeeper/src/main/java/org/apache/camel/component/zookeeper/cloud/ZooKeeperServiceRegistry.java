@@ -263,9 +263,11 @@ public class ZooKeeperServiceRegistry extends AbstractServiceRegistry {
             ObjectHelper.notNull(getCamelContext(), "Camel Context");
             ObjectHelper.notNull(configuration.getBasePath(), "ZooKeeper base path");
 
-            LOGGER.debug("Starting ZooKeeper Curator with namespace '{}', nodes: '{}'",
-                    configuration.getNamespace(),
-                    String.join(",", configuration.getNodes()));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Starting ZooKeeper Curator with namespace '{}', nodes: '{}'",
+                        configuration.getNamespace(),
+                        String.join(",", configuration.getNodes()));
+            }
 
             curator = ZooKeeperCuratorHelper.createCurator(configuration);
             curator.start();
