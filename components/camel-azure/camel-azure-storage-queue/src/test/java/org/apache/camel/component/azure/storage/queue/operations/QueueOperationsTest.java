@@ -59,7 +59,7 @@ public class QueueOperationsTest extends CamelTestSupport {
     @Test
     public void testDeleteMessage() {
         // mocking
-        final HttpHeaders httpHeaders = new HttpHeaders().put("x-test-header", "123");
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "123");
         when(client.deleteMessage(any(), any(), any())).thenReturn(new ResponseBase<>(null, 200, httpHeaders, null, null));
 
         final QueueOperations operations = new QueueOperations(configuration, client);
