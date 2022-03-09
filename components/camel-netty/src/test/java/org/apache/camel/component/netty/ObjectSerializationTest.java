@@ -101,7 +101,7 @@ public class ObjectSerializationTest extends BaseNettyTest {
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 Object obj = exchange.getIn().getBody();
-                                exchange.getOut().setBody(obj);
+                                exchange.getMessage().setBody(obj);
                             }
                         });
 
@@ -109,7 +109,7 @@ public class ObjectSerializationTest extends BaseNettyTest {
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 Object obj = exchange.getIn().getBody();
-                                exchange.getOut().setBody(obj);
+                                exchange.getMessage().setBody(obj);
                             }
                         });
             }

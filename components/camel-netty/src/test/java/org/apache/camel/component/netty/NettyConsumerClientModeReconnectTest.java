@@ -91,7 +91,7 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
                             public void process(final Exchange exchange) {
                                 log.info("Processing exchange in Netty server {}", exchange);
                                 String body = exchange.getIn().getBody(String.class);
-                                exchange.getOut().setBody("Bye " + body);
+                                exchange.getMessage().setBody("Bye " + body);
                             }
                         }).to("log:receive").to("mock:receive").noAutoStartup();
             }

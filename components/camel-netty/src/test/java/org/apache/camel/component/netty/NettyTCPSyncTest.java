@@ -56,7 +56,7 @@ public class NettyTCPSyncTest extends BaseNettyTest {
                 from("netty:tcp://localhost:{{port}}?sync=true")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody(
+                                exchange.getMessage().setBody(
                                         "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                             }
                         });

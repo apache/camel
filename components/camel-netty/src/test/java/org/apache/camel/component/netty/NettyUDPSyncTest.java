@@ -47,7 +47,7 @@ public class NettyUDPSyncTest extends BaseNettyTest {
                 from("netty:udp://localhost:{{port}}?sync=true")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody(RESPONSE);
+                                exchange.getMessage().setBody(RESPONSE);
                             }
                         });
             }

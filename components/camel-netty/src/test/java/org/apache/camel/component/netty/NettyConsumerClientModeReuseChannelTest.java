@@ -92,7 +92,7 @@ public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
                                 assertTrue(channel.isActive(), "Should be active");
 
                                 String body = exchange.getIn().getBody(String.class);
-                                exchange.getOut().setBody("Bye " + body);
+                                exchange.getMessage().setBody("Bye " + body);
                             }
                         })
                         .to("mock:receive")

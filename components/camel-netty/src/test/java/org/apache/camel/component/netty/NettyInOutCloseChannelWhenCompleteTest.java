@@ -38,8 +38,8 @@ public class NettyInOutCloseChannelWhenCompleteTest extends BaseNettyTest {
                 from("netty:tcp://localhost:{{port}}?sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
-                        exchange.getOut().setHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
+                        exchange.getMessage().setBody("Bye " + body);
+                        exchange.getMessage().setHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
                     }
                 });
             }

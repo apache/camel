@@ -67,10 +67,10 @@ public class NettySSLTest extends BaseNettyTest {
                                     X509Certificate cert = (X509Certificate) session.getPeerCertificates()[0];
                                     Principal principal = cert.getSubjectDN();
                                     log.info("Client Cert SubjectDN: {}", principal.getName());
-                                    exchange.getOut().setBody(
+                                    exchange.getMessage().setBody(
                                             "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                                 } else {
-                                    exchange.getOut().setBody("Cannot start conversion without SSLSession");
+                                    exchange.getMessage().setBody("Cannot start conversion without SSLSession");
                                 }
                             }
                         });

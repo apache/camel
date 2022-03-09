@@ -51,7 +51,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}?serverInitializerFactory=#spf&textline=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody(
+                        exchange.getMessage().setBody(
                                 "Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");
                     }
                 });

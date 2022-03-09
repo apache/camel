@@ -38,7 +38,7 @@ public class NettyDisconnectTest extends BaseNettyTest {
                 from("netty:tcp://localhost:{{port}}?sync=true&disconnect=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
+                        exchange.getMessage().setBody("Bye " + body);
                     }
                 });
             }
