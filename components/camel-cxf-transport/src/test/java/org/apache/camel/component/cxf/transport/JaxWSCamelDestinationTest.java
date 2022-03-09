@@ -62,8 +62,8 @@ public class JaxWSCamelDestinationTest extends JaxWSCamelTestSupport {
             }
 
         });
-        assertEquals("text/xml; charset=UTF-8", exchange.getOut().getHeader(Exchange.CONTENT_TYPE, String.class));
-        assertTrue(exchange.getOut().getBody(String.class).indexOf("something!") > 0);
+        assertEquals("text/xml; charset=UTF-8", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class));
+        assertTrue(exchange.getMessage().getBody(String.class).indexOf("something!") > 0);
     }
 
     @Test
@@ -79,6 +79,6 @@ public class JaxWSCamelDestinationTest extends JaxWSCamelTestSupport {
             }
 
         });
-        assertEquals("gzip", exchange.getOut().getHeader(Exchange.CONTENT_ENCODING, String.class));
+        assertEquals("gzip", exchange.getMessage().getHeader(Exchange.CONTENT_ENCODING, String.class));
     }
 }
