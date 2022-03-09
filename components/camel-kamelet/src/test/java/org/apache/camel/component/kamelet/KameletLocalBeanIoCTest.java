@@ -50,10 +50,10 @@ public class KameletLocalBeanIoCTest extends CamelTestSupport {
     // **********************************************
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("whereTo")
                         .templateParameter("bar") // name of bar
                         // use dependency injection to create the local bean via its fqn class name

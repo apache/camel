@@ -48,10 +48,10 @@ public class KameletRouteDumpTest extends CamelTestSupport {
     // **********************************************
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("setBody")
                         .templateParameter("bodyValue")
                         .from("kamelet:source")
