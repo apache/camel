@@ -62,6 +62,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     @XmlTransient
     private CamelContext camelContext;
     @XmlTransient
+    @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     @XmlTransient
     private Resource resource;

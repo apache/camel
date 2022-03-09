@@ -19,6 +19,7 @@ package org.apache.camel;
 /**
  * Factory for creating {@link org.apache.camel.spi.ErrorHandler}s.
  */
+@Deprecated
 public interface ErrorHandlerFactory {
 
 }

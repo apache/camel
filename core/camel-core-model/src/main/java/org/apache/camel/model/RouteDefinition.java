@@ -76,7 +76,9 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     private String shutdownRoute;
     private String shutdownRunningTask;
     private String errorHandlerRef;
+    @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
+    private ErrorHandlerDefinition errorHandler;
     // keep state whether the error handler is context scoped or not
     // (will by default be context scoped of no explicit error handler
     // configured)
@@ -410,6 +412,19 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      */
     public RouteDefinition delayer(long delay) {
         setDelayer("" + delay);
+        return this;
+    }
+
+    /**
+     * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder.
+     *
+     * @param  errorHandlerBuilder the error handler to be used by default for all child routes
+     * @return                     the current builder with the error handler configured
+     */
+    public RouteDefinition errorHandler2(ErrorHandlerDefinition errorHandlerBuilder) {
+        setErrorHandlerFactory(errorHandlerBuilder);
+        // we are now using a route scoped error handler
+        contextScopedErrorHandler = false;
         return this;
     }
 

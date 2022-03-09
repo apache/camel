@@ -92,6 +92,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private ResumeStrategy resumeStrategy;
 
     // camel-core-model
+    @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     // camel-core-model: must be concurrent as error handlers can be mutated concurrently via multicast/recipientlist EIPs
     private final ConcurrentMap<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new ConcurrentHashMap<>();

@@ -31,6 +31,7 @@ import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 @Metadata(label = "spring,configuration,error")
 @XmlType
 @XmlEnum
+@Deprecated
 public enum ErrorHandlerType {
 
     DefaultErrorHandler,

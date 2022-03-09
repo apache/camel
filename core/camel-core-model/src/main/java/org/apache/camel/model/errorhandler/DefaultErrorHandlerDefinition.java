@@ -14,34 +14,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.xml;
+package org.apache.camel.model.errorhandler;
+
+import java.util.concurrent.ScheduledExecutorService;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.Predicate;
+import org.apache.camel.Processor;
+import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Error handler settings
+ * Default error handler.
  */
-@Metadata(label = "spring,configuration,error")
-@XmlRootElement(name = "errorHandler")
+@Metadata(label = "configuration,error")
+@XmlRootElement(name = "defaultErrorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Deprecated
-public class ErrorHandlerDefinition extends IdentifiedType {
+public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
+
+    // TODO: fluent builders
+    // TODO: label, java type, ref
+
+    @XmlTransient
+    private CamelLogger loggerBean;
+    @XmlTransient
+    private Processor onRedeliveryProcessor;
+    @XmlTransient
+    private Processor onPrepareFailureProcessor;
+    @XmlTransient
+    private Processor onExceptionOccurredProcessor;
+    @XmlTransient
+    private ScheduledExecutorService executorServiceBean;
+    @XmlTransient
+    private Predicate retryWhilePredicate;
+
     @XmlAttribute
-    @Metadata(defaultValue = "DefaultErrorHandler", required = true)
-    private ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
-    @XmlAttribute
-    private String deadLetterUri;
-    @XmlAttribute
-    private String deadLetterHandleNewException;
+    private String loggerRef;
     @XmlAttribute
     @Metadata(defaultValue = "ERROR")
     private LoggingLevel level;
@@ -51,13 +68,11 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     @XmlAttribute
     private String logName;
     @XmlAttribute
-    private Boolean useOriginalMessage;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String useOriginalMessage;
     @XmlAttribute
-    private Boolean useOriginalBody;
-    @XmlAttribute
-    private String transactionTemplateRef;
-    @XmlAttribute
-    private String transactionManagerRef;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String useOriginalBody;
     @XmlAttribute
     private String onRedeliveryRef;
     @XmlAttribute
@@ -71,47 +86,25 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     @XmlAttribute
     private String executorServiceRef;
     @XmlElement
-    private CamelRedeliveryPolicyFactoryBean redeliveryPolicy;
+    private RedeliveryPolicyDefinition redeliveryPolicy;
 
-    public ErrorHandlerType getType() {
-        return type;
+    public String getLoggerRef() {
+        return loggerRef;
     }
 
     /**
-     * The type of the error handler
+     * References to a logger to use as logger for the error handler
      */
-    public void setType(ErrorHandlerType type) {
-        this.type = type;
+    public void setLoggerRef(String loggerRef) {
+        this.loggerRef = loggerRef;
     }
 
-    public String getDeadLetterUri() {
-        return deadLetterUri;
+    public CamelLogger getLoggerBean() {
+        return loggerBean;
     }
 
-    /**
-     * The dead letter endpoint uri for the Dead Letter error handler.
-     */
-    public void setDeadLetterUri(String deadLetterUri) {
-        this.deadLetterUri = deadLetterUri;
-    }
-
-    public String getDeadLetterHandleNewException() {
-        return deadLetterHandleNewException;
-    }
-
-    /**
-     * Whether the dead letter channel should handle (and ignore) any new exception that may been thrown during sending
-     * the message to the dead letter endpoint.
-     * <p/>
-     * The default value is <tt>true</tt> which means any such kind of exception is handled and ignored. Set this to
-     * <tt>false</tt> to let the exception be propagated back on the {@link org.apache.camel.Exchange}. This can be used
-     * in situations where you use transactions, and want to use Camel's dead letter channel to deal with exceptions
-     * during routing, but if the dead letter channel itself fails because of a new exception being thrown, then by
-     * setting this to <tt>false</tt> the new exceptions is propagated back and set on the
-     * {@link org.apache.camel.Exchange}, which allows the transaction to detect the exception, and rollback.
-     */
-    public void setDeadLetterHandleNewException(String deadLetterHandleNewException) {
-        this.deadLetterHandleNewException = deadLetterHandleNewException;
+    public void setLoggerBean(CamelLogger loggerBean) {
+        this.loggerBean = loggerBean;
     }
 
     public LoggingLevel getLevel() {
@@ -149,7 +142,7 @@ public class ErrorHandlerDefinition extends IdentifiedType {
         this.logName = logName;
     }
 
-    public Boolean getUseOriginalMessage() {
+    public String getUseOriginalMessage() {
         return useOriginalMessage;
     }
 
@@ -181,14 +174,12 @@ public class ErrorHandlerDefinition extends IdentifiedType {
      * therefore use the parent original message.
      * <p/>
      * By default this feature is off.
-     *
-     * @see #setUseOriginalBody(Boolean)
      */
-    public void setUseOriginalMessage(Boolean useOriginalMessage) {
+    public void setUseOriginalMessage(String useOriginalMessage) {
         this.useOriginalMessage = useOriginalMessage;
     }
 
-    public Boolean getUseOriginalBody() {
+    public String getUseOriginalBody() {
         return useOriginalBody;
     }
 
@@ -220,35 +211,9 @@ public class ErrorHandlerDefinition extends IdentifiedType {
      * therefore use the parent original message.
      * <p/>
      * By default this feature is off.
-     *
-     * @see #setUseOriginalMessage(Boolean)
      */
-    public void setUseOriginalBody(Boolean useOriginalBody) {
+    public void setUseOriginalBody(String useOriginalBody) {
         this.useOriginalBody = useOriginalBody;
-    }
-
-    public String getTransactionTemplateRef() {
-        return transactionTemplateRef;
-    }
-
-    /**
-     * References to the {@link org.springframework.transaction.support.TransactionTemplate} to use with the transaction
-     * error handler.
-     */
-    public void setTransactionTemplateRef(String transactionTemplateRef) {
-        this.transactionTemplateRef = transactionTemplateRef;
-    }
-
-    public String getTransactionManagerRef() {
-        return transactionManagerRef;
-    }
-
-    /**
-     * References to the {@link org.springframework.transaction.PlatformTransactionManager} to use with the transaction
-     * error handler.
-     */
-    public void setTransactionManagerRef(String transactionManagerRef) {
-        this.transactionManagerRef = transactionManagerRef;
     }
 
     public String getOnRedeliveryRef() {
@@ -262,6 +227,19 @@ public class ErrorHandlerDefinition extends IdentifiedType {
      */
     public void setOnRedeliveryRef(String onRedeliveryRef) {
         this.onRedeliveryRef = onRedeliveryRef;
+    }
+
+    public Processor getOnRedeliveryProcessor() {
+        return onRedeliveryProcessor;
+    }
+
+    /**
+     * Sets a processor that should be processed <b>before</b> a redelivery attempt.
+     * <p/>
+     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
+     */
+    public void setOnRedeliveryProcessor(Processor onRedeliveryProcessor) {
+        this.onRedeliveryProcessor = onRedeliveryProcessor;
     }
 
     public String getOnExceptionOccurredRef() {
@@ -278,6 +256,20 @@ public class ErrorHandlerDefinition extends IdentifiedType {
         this.onExceptionOccurredRef = onExceptionOccurredRef;
     }
 
+    public Processor getOnExceptionOccurredProcessor() {
+        return onExceptionOccurredProcessor;
+    }
+
+    /**
+     * Sets a processor that should be processed <b>just after</b> an exception occurred. Can be used to perform custom
+     * logging about the occurred exception at the exact time it happened.
+     * <p/>
+     * Important: Any exception thrown from this processor will be ignored.
+     */
+    public void setOnExceptionOccurredProcessor(Processor onExceptionOccurredProcessor) {
+        this.onExceptionOccurredProcessor = onExceptionOccurredProcessor;
+    }
+
     public String getOnPrepareFailureRef() {
         return onPrepareFailureRef;
     }
@@ -291,14 +283,26 @@ public class ErrorHandlerDefinition extends IdentifiedType {
         this.onPrepareFailureRef = onPrepareFailureRef;
     }
 
+    public Processor getOnPrepareFailureProcessor() {
+        return onPrepareFailureProcessor;
+    }
+
+    /**
+     * Sets a processor to prepare the {@link org.apache.camel.Exchange} before handled by the failure processor / dead
+     * letter channel. This allows for example to enrich the message before sending to a dead letter queue.
+     */
+    public void setOnPrepareFailureProcessor(Processor onPrepareFailureProcessor) {
+        this.onPrepareFailureProcessor = onPrepareFailureProcessor;
+    }
+
     public String getRetryWhileRef() {
         return retryWhileRef;
     }
 
     /**
-     * Sets a reference to an retry while expression.
-     * <p/>
-     * Will continue retrying until expression evaluates to <tt>false</tt>.
+     * Sets a retry while predicate.
+     *
+     * Will continue retrying until the predicate evaluates to false.
      */
     public void setRetryWhileRef(String retryWhileRef) {
         this.retryWhileRef = retryWhileRef;
@@ -326,14 +330,38 @@ public class ErrorHandlerDefinition extends IdentifiedType {
         this.executorServiceRef = executorServiceRef;
     }
 
-    public CamelRedeliveryPolicyFactoryBean getRedeliveryPolicy() {
+    public ScheduledExecutorService getExecutorServiceBean() {
+        return executorServiceBean;
+    }
+
+    /**
+     * Sets a thread pool to be used by the error handler
+     */
+    public void setExecutorServiceBean(ScheduledExecutorService executorServiceBean) {
+        this.executorServiceBean = executorServiceBean;
+    }
+
+    public Predicate getRetryWhilePredicate() {
+        return retryWhilePredicate;
+    }
+
+    /**
+     * Sets a retry while predicate.
+     *
+     * Will continue retrying until the predicate evaluates to false.
+     */
+    public void setRetryWhilePredicate(Predicate retryWhilePredicate) {
+        this.retryWhilePredicate = retryWhilePredicate;
+    }
+
+    public RedeliveryPolicyDefinition getRedeliveryPolicy() {
         return redeliveryPolicy;
     }
 
     /**
      * Sets the redelivery settings
      */
-    public void setRedeliveryPolicy(CamelRedeliveryPolicyFactoryBean redeliveryPolicy) {
+    public void setRedeliveryPolicy(RedeliveryPolicyDefinition redeliveryPolicy) {
         this.redeliveryPolicy = redeliveryPolicy;
     }
 }

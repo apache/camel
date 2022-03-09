@@ -14,29 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
+package org.apache.camel.model.errorhandler;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.spi.Metadata;
 
-/**
- * A builder of a <a href="http://camel.apache.org/error-handler.html">Error Handler</a>
- */
-@Deprecated
-public interface ErrorHandlerBuilder extends ErrorHandlerFactory {
-
-    /**
-     * Whether this error handler supports transacted exchanges.
-     */
-    boolean supportTransacted();
-
-    /**
-     * Clones this builder so each {@link RouteBuilder} has its private builder to use, to avoid changes from one
-     * {@link RouteBuilder} to influence the others.
-     * <p/>
-     * This is needed by the current Camel 2.x architecture.
-     *
-     * @return a clone of this {@link ErrorHandlerBuilder}
-     */
-    ErrorHandlerBuilder cloneBuilder();
+@Metadata(label = "configuration,error")
+@XmlRootElement(name = "baseErrorHandler")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class BaseErrorHandlerDefinition extends IdentifiedType implements ErrorHandlerFactory {
 
 }

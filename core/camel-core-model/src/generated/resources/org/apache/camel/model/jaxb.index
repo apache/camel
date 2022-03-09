@@ -13,6 +13,7 @@ DelayDefinition
 DescriptionDefinition
 DynamicRouterDefinition
 EnrichDefinition
+ErrorHandlerDefinition
 ExpressionSubElementDefinition
 FaultToleranceConfigurationDefinition
 FilterDefinition
