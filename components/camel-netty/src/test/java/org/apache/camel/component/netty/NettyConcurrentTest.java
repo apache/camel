@@ -127,7 +127,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
                 from("netty:tcp://localhost:{{port}}?sync=true&encoders=#encoder&decoders=#decoder").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
+                        exchange.getMessage().setBody("Bye " + body);
                     }
                 }).to("log:progress?groupSize=1000");
             }

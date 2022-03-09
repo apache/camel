@@ -109,7 +109,7 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody(exchange.getIn().getBody(String.class));
+            exchange.getMessage().setBody(exchange.getIn().getBody(String.class));
         }
     }
 }

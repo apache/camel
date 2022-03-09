@@ -71,7 +71,7 @@ public class NettyUdpWithInOutUsingPlainSocketTest extends BaseNettyTest {
                     public void process(Exchange exchange) throws Exception {
                         String s = exchange.getIn().getBody(String.class);
                         LOG.debug("Server got: " + s);
-                        exchange.getOut().setBody("Hello " + s);
+                        exchange.getMessage().setBody("Hello " + s);
                         // just make the remote address is there
                         assertNotNull(exchange.getIn().getHeader(NettyConstants.NETTY_REMOTE_ADDRESS),
                                 "The remote address header should not be Null");

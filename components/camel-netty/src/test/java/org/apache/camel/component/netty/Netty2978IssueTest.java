@@ -95,7 +95,7 @@ public class Netty2978IssueTest extends BaseNettyTest {
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
-                                exchange.getOut().setBody("Bye " + body);
+                                exchange.getMessage().setBody("Bye " + body);
                             }
                         });
             }

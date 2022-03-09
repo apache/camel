@@ -52,7 +52,7 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
                 from("netty:tcp://localhost:{{port}}?serverInitializerFactory=#spf&sync=true&textline=true")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody(
+                                exchange.getMessage().setBody(
                                         "Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");
                             }
                         });
