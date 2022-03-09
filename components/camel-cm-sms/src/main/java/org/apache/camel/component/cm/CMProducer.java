@@ -68,7 +68,7 @@ public class CMProducer extends DefaultProducer {
             for (final ConstraintViolation<SMSMessage> cv : constraintViolations) {
                 msg.append(String.format("- Invalid value for %s: %s", cv.getPropertyPath().toString(), cv.getMessage()));
             }
-            LOG.debug(msg.toString());
+            LOG.debug("SMS message: {}", msg);
             throw new InvalidPayloadRuntimeException(exchange, SMSMessage.class);
         }
         LOG.trace("SMSMessage instance is valid: {}", smsMessage);
