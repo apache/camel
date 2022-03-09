@@ -39,7 +39,7 @@ public class MimeMultipartAlternativeWithContentTypeTest extends CamelTestSuppor
     private String alternativeBody = "hello world! (plain text)";
     private String htmlBody = "<html><body><h1>Hello</h1>World</body></html>";
 
-    private void sendMultipartEmail() throws Exception {
+    private void sendMultipartEmail() {
         Mailbox.clearAll();
 
         // create an exchange with a normal body and attachment to be produced as email
@@ -87,9 +87,9 @@ public class MimeMultipartAlternativeWithContentTypeTest extends CamelTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("pop3://sachin@mymailserver.com?password=secret&initialDelay=100&delay=100&contentType=text/html; charset=UTF-8")
                         .to("mock:result");
             }

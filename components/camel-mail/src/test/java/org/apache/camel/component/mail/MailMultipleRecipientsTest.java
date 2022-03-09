@@ -67,7 +67,7 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    private void assertMailbox(String name) throws Exception {
+    private void assertMailbox(String name) {
         MockEndpoint mock = getMockEndpoint("mock:" + name);
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
@@ -75,9 +75,9 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("pop3://claus@localhost?initialDelay=100&delay=100").to("mock:claus");
 
                 from("pop3://willem@localhost?initialDelay=100&delay=100").to("mock:willem");

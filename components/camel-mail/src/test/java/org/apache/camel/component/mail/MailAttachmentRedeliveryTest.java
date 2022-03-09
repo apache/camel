@@ -98,9 +98,9 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0);
 
                 from("pop3://james@mymailserver.com?password=secret&initialDelay=100&delay=100")
@@ -108,7 +108,7 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
                             private int counter;
 
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Map<String, DataHandler> map = exchange.getIn(AttachmentMessage.class).getAttachments();
                                 assertNotNull(map);
                                 assertEquals(1, map.size());

@@ -52,9 +52,9 @@ public class MailHeaderOverrulePreConfigurationRecipientsTest extends CamelTestS
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("pop3://claus@localhost?to=someone@outhere.com&cc=none@world.com&initialDelay=100&delay=100")
                         .to("mock:result");
             }

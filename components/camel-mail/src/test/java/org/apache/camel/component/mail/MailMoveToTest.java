@@ -110,12 +110,12 @@ public class MailMoveToTest extends CamelTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] { new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("imap://jones@localhost?password=secret&delete=false&moveTo=moveToFolder&initialDelay=100&delay=100")
                         .to("mock:result");
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("imap://jones2@localhost?password=secret&delete=true&moveTo=moveToFolder&initialDelay=100&delay=100")
                         .to("mock:result2");
             }

@@ -513,7 +513,7 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         return att;
     }
 
-    private void addAttachment(DataSource ds, String attFileName, Map<String, String> headers) throws IOException {
+    private void addAttachment(DataSource ds, String attFileName, Map<String, String> headers) {
         DefaultAttachment attachment = new DefaultAttachment(ds);
         if (headers != null) {
             for (String headerName : headers.keySet()) {

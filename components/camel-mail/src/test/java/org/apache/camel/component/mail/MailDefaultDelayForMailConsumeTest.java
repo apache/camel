@@ -60,9 +60,9 @@ public class MailDefaultDelayForMailConsumeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // we overrule the default of 60 sec to 1 so the unit test is faster
                 from("pop3://bond@localhost?delay=1000").to("mock:result");
             }

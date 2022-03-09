@@ -79,9 +79,9 @@ public class MailFetchSizeZeroTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("pop3://bill@localhost?password=secret&fetchSize=0&initialDelay=100&delay=100").to("mock:result");
             }
         };

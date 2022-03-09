@@ -87,9 +87,9 @@ public class MailContentTypeResolverTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 MailComponent mail = getContext().getComponent("smtp", MailComponent.class);
                 mail.setContentTypeResolver(new ContentTypeResolver() {
                     public String resolveContentType(String fileName) {

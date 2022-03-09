@@ -117,7 +117,7 @@ public class SearchTermBuilderTest {
     }
 
     @Test
-    public void testComparison() throws Exception {
+    public void testComparison() {
         assertEquals(1, Comparison.LE.asNum());
         assertEquals(2, Comparison.LT.asNum());
         assertEquals(3, Comparison.EQ.asNum());

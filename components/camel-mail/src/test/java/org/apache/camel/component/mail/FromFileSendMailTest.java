@@ -49,10 +49,10 @@ public class FromFileSendMailTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file://target/mailtext?initialDelay=100&delay=100")
                         .setHeader("Subject", constant("Hello World"))
                         .setHeader("To", constant("james@localhost"))

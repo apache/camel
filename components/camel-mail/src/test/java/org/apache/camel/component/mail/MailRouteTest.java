@@ -82,7 +82,7 @@ public class MailRouteTest extends CamelTestSupport {
 
         template.send("direct:a", new Processor() {
 
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(body);
                 exchange.getIn().setHeader("subject", subject);
                 exchange.setProperty(Exchange.CHARSET_NAME, "US-ASCII");

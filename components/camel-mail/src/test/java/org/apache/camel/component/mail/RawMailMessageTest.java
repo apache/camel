@@ -157,9 +157,9 @@ public class RawMailMessageTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("pop3://davsclaus@apache.org").to("mock:mail");
 
                 from("pop3://jonesRawPop3@localhost?password=secret&initialDelay=100&delay=100&delete=true&mapMailMessage=false")

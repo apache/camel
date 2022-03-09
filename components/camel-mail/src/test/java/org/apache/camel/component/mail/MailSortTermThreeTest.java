@@ -107,9 +107,9 @@ public class MailSortTermThreeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 context.setAutoStartup(false);
 
                 from("imap://bill@localhost?password=secret&sortTerm=#sortDescendingDate&initialDelay=100&delay=100")

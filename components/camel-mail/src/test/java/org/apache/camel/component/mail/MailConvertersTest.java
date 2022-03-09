@@ -82,7 +82,7 @@ public class MailConvertersTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.getIn().setHeader(MailConstants.MAIL_ALTERNATIVE_BODY, "Alternative World");
             }
@@ -107,7 +107,7 @@ public class MailConvertersTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.getIn().setHeader(MailConstants.MAIL_ALTERNATIVE_BODY, "Alternative World");
             }
@@ -132,7 +132,7 @@ public class MailConvertersTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.getIn().setHeader(MailConstants.MAIL_ALTERNATIVE_BODY, "Alternative World");
             }
@@ -151,10 +151,10 @@ public class MailConvertersTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").to("smtp://localhost?username=james@localhost");
 
                 from("pop3://localhost?username=james&password=secret&initialDelay=100&delay=100").to("mock:result");
