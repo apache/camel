@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jdbc;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +33,7 @@ public class JdbcColumnTypeTest extends AbstractJdbcTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testClobColumnType() throws SQLException {
+    public void testClobColumnType() {
         Endpoint directHelloEndpoint = context.getEndpoint("direct:hello");
         Exchange directHelloExchange = directHelloEndpoint.createExchange();
 
@@ -58,10 +57,10 @@ public class JdbcColumnTypeTest extends AbstractJdbcTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:hello").to("jdbc:testdb?readSize=100");
             }
         };

@@ -37,7 +37,7 @@ public class JdbcRouteKeyOrderingTest extends JdbcRouteTest {
     @SuppressWarnings("unchecked")
     @Test
     @Override
-    public void testJdbcRoutes() throws Exception {
+    public void testJdbcRoutes() {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
 

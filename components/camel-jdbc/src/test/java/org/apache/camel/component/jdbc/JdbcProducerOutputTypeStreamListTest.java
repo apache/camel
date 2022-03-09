@@ -55,9 +55,9 @@ public class JdbcProducerOutputTypeStreamListTest extends AbstractJdbcTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("jdbc:testdb?outputType=StreamList").to("mock:result");
                 from("direct:withSplit").to("jdbc:testdb?outputType=StreamList").split(body()).to("mock:result");
             }
