@@ -93,10 +93,10 @@ public class SqlConsumerDeleteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("sql:select * from projects order by id?initialDelay=0&delay=50&consumer.onConsume=delete from projects where id = :#id")

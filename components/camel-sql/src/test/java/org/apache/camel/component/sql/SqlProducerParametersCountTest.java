@@ -56,7 +56,7 @@ public class SqlProducerParametersCountTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExplicitParametersCount() throws Exception {
+    public void testExplicitParametersCount() {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
@@ -72,7 +72,7 @@ public class SqlProducerParametersCountTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);

@@ -42,7 +42,7 @@ public class SqlEndpointLikeTest extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         Registry reg = new SimpleRegistry();
         // this is the database we create with some initial data for our unit test
         db = new EmbeddedDatabaseBuilder()
@@ -61,9 +61,9 @@ public class SqlEndpointLikeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("sql:select * from projects where license like 'A%25'?dataSource=#jdbc/myDataSource")
                         .split(body())

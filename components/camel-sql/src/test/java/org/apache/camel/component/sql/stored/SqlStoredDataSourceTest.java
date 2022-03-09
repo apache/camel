@@ -35,7 +35,7 @@ public class SqlStoredDataSourceTest extends CamelTestSupport {
     private EmbeddedDatabase db;
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         Registry reg = new SimpleRegistry();
 
         // START SNIPPET: e2
@@ -72,10 +72,10 @@ public class SqlStoredDataSourceTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // required for the sql component
 
                 from("direct:query").to("sql-stored:NILADIC()?dataSource=#jdbc/myDataSource").to("mock:query");
