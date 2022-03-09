@@ -127,7 +127,8 @@ public class DataLakeConfigurationOptionsProxy {
     }
 
     public Long getPosition(final Exchange exchange) {
-        LOG.info(String.valueOf(configuration.getPosition()));
+        LOG.info("Position: {}", configuration.getPosition());
+
         return getOption(DataLakeExchangeHeaders::getPositionFromHeaders, configuration::getPosition, exchange);
     }
 
