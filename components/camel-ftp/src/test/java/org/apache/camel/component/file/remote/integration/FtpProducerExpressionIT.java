@@ -38,21 +38,21 @@ public class FtpProducerExpressionIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testProduceBeanByExpression() throws Exception {
+    public void testProduceBeanByExpression() {
         template.sendBody(getFtpUrl() + "&fileName=${bean:myguidgenerator}.bak", "Hello World");
 
         assertFileExists(ftpFile("filelanguage/123.bak"));
     }
 
     @Test
-    public void testProduceBeanByHeader() throws Exception {
+    public void testProduceBeanByHeader() {
         sendFile(getFtpUrl(), "Hello World", "${bean:myguidgenerator}.bak");
 
         assertFileExists(ftpFile("filelanguage/123.bak"));
     }
 
     @Test
-    public void testProducerDateByHeader() throws Exception {
+    public void testProducerDateByHeader() {
         sendFile(getFtpUrl(), "Hello World", "myfile-${date:now:yyyyMMdd}.txt");
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -60,7 +60,7 @@ public class FtpProducerExpressionIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testProducerDateByExpression() throws Exception {
+    public void testProducerDateByExpression() {
         template.sendBody(getFtpUrl() + "&fileName=myfile-${date:now:yyyyMMdd}.txt", "Hello World");
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -68,7 +68,7 @@ public class FtpProducerExpressionIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testProducerComplexByExpression() throws Exception {
+    public void testProducerComplexByExpression() {
         // need one extra subdirectory (=foo) to be able to start with .. in the
         // fileName option
         String url = "ftp://admin@localhost:{{ftp.server.port}}/filelanguage/foo?password=admin&jailStartingDirectory=false";
@@ -81,14 +81,14 @@ public class FtpProducerExpressionIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testProducerSimpleWithHeaderByExpression() throws Exception {
+    public void testProducerSimpleWithHeaderByExpression() {
         template.sendBodyAndHeader(getFtpUrl() + "&fileName=myfile-${header.foo}.txt", "Hello World", "foo", "abc");
 
         assertFileExists(ftpFile("filelanguage/myfile-abc.txt"));
     }
 
     @Test
-    public void testProducerWithDateHeader() throws Exception {
+    public void testProducerWithDateHeader() {
         Calendar cal = Calendar.getInstance();
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();

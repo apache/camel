@@ -43,7 +43,7 @@ public class FtpConsumerTemplateUseListFalseIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testUseListFalse() throws Exception {
+    public void testUseListFalse() {
         String data = consumer.receiveBody(getFtpUrl() + "&fileName=report.txt", 5000, String.class);
         assertEquals("Hello World from FTPServer", data);
 

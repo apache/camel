@@ -43,10 +43,10 @@ public class FtpSimpleConsumeAbsoluteIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // notice we use an absolute starting path: /tmp/mytemp
                 // - we must remember to use // slash because of the url
                 // separator

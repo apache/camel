@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RemoteEndPointRemoteFilePollingConsumerPollStrategyTest extends CamelTestSupport {
 
     @Test
-    public void testPollStrategy() throws Exception {
+    public void testPollStrategy() {
         RemoteFileEndpoint<?> endpoint = context.getEndpoint("ftp://hostname", RemoteFileEndpoint.class);
         assertTrue(endpoint.getPollStrategy() instanceof RemoteFilePollingConsumerPollStrategy);
     }

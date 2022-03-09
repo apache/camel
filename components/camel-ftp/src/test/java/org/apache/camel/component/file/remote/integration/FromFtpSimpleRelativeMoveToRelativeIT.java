@@ -47,16 +47,16 @@ public class FromFtpSimpleRelativeMoveToRelativeIT extends FtpServerTestSupport 
         mock.assertIsSatisfied();
     }
 
-    private void prepareFtpServer() throws Exception {
+    private void prepareFtpServer() {
         template.sendBodyAndHeader(getFtpUrl(), "Hello", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(getFtpUrl(), "Bye", Exchange.FILE_NAME, "sub/bye.txt");
         template.sendBodyAndHeader(getFtpUrl(), "Goodday", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).to("mock:result");
             }
         };

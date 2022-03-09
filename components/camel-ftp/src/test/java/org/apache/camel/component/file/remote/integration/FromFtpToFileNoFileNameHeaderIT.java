@@ -66,9 +66,9 @@ public class FromFtpToFileNoFileNameHeaderIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 String fileUrl = fileUri("?fileExist=Override&noop=true");
                 // we do not set any filename in the header property so the
                 // filename should be the one

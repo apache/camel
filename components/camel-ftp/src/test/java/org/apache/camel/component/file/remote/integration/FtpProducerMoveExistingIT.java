@@ -51,7 +51,7 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testExistingFileDoesNotExists() throws Exception {
+    public void testExistingFileDoesNotExists() {
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World",
                 Exchange.FILE_NAME, "hello.txt");
 

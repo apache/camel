@@ -43,7 +43,7 @@ public class FromFtpRemoteFileSortByIgnoreCaseExpressionIT extends FtpServerTest
     public void testSortFiles() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl() + "&sortBy=file:name").to("mock:result");
             }
         });
@@ -59,7 +59,7 @@ public class FromFtpRemoteFileSortByIgnoreCaseExpressionIT extends FtpServerTest
     public void testSortFilesNoCase() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl() + "&sortBy=ignoreCase:file:name").to("mock:nocase");
             }
         });
@@ -75,7 +75,7 @@ public class FromFtpRemoteFileSortByIgnoreCaseExpressionIT extends FtpServerTest
     public void testSortFilesNoCaseReverse() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl() + "&sortBy=reverse:ignoreCase:file:name").to("mock:nocasereverse");
             }
         });
@@ -87,7 +87,7 @@ public class FromFtpRemoteFileSortByIgnoreCaseExpressionIT extends FtpServerTest
         assertMockEndpointsSatisfied();
     }
 
-    private void prepareFtpServer() throws Exception {
+    private void prepareFtpServer() {
         // prepares the FTP Server by creating files on the server that we want
         // to unit
         // test that we can pool

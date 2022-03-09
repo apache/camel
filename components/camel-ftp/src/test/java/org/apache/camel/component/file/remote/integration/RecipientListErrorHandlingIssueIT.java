@@ -37,11 +37,11 @@ public class RecipientListErrorHandlingIssueIT extends FtpServerTestSupport {
     public void testUsingInterceptor() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true).to("mock:error");
 
                 interceptSendToEndpoint("(ftp|direct):.*").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String target = exchange.getIn().getHeader(Exchange.INTERCEPTED_ENDPOINT, String.class);
                         exchange.getIn().setHeader("target", target);
                     }
@@ -73,7 +73,7 @@ public class RecipientListErrorHandlingIssueIT extends FtpServerTestSupport {
     public void testUsingExistingHeaders() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true).to("mock:error");
 
                 from("direct:start").recipientList(header("foo"));

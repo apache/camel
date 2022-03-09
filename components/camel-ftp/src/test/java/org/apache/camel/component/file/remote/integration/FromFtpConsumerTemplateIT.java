@@ -42,7 +42,7 @@ public class FromFtpConsumerTemplateIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testConsumerTemplate() throws Exception {
+    public void testConsumerTemplate() {
         String body = consumer.receiveBody(getFtpUrl(), 2000, String.class);
         assertEquals("Hello World this file will be deleted", body);
 

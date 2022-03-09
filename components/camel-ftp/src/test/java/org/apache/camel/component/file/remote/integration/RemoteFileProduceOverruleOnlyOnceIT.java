@@ -45,10 +45,10 @@ public class RemoteFileProduceOverruleOnlyOnceIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:input").to("ftp://admin:admin@localhost:{{ftp.server.port}}/out/").to(fileUri("out"),
                         "mock:result");
             }

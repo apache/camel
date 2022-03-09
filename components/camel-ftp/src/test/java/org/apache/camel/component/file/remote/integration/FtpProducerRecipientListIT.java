@@ -30,7 +30,7 @@ public class FtpProducerRecipientListIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testProducerRecipientList() throws Exception {
+    public void testProducerRecipientList() {
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", getFtpUrl() + "&fileName=hello.txt");
         template.sendBodyAndHeader("direct:start", "Bye World", "foo", getFtpUrl() + "&fileName=bye.txt");
         template.sendBodyAndHeader("direct:start", "Hi World", "foo", getFtpUrl() + "&fileName=hi.txt");
@@ -46,10 +46,10 @@ public class FtpProducerRecipientListIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").recipientList(header("foo"));
             }
         };

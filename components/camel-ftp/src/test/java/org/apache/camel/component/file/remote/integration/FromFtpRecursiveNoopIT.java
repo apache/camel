@@ -58,10 +58,10 @@ public class FromFtpRecursiveNoopIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).convertBodyTo(String.class).to("log:ftp").to("mock:result");
             }
         };

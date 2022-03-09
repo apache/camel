@@ -42,7 +42,7 @@ public class FtpProducerRootFileExistFailIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testFail() throws Exception {
+    public void testFail() {
         String uri = getFtpUrl();
         Exception ex = assertThrows(CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "hello.txt"));

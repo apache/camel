@@ -43,10 +43,10 @@ public class SftpKeyUriConsumeIT extends SftpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin"
                      + "&knownHostsUri=file:" + service.getKnownHostsFile()
                      + "&privateKeyUri=file:./src/test/resources/id_rsa&privateKeyPassphrase=secret&useUserKnownHostsFile=false&delay=10000&disconnect=true")

@@ -87,11 +87,11 @@ public class SftpConsumerLocalWorkDirectoryIT extends SftpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).routeId("myRoute").noAutoStartup().process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         File body = exchange.getIn().getBody(File.class);
                         assertNotNull(body);
                         assertTrue(body.exists(), "Local work file should exists");

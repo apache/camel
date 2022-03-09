@@ -78,14 +78,14 @@ public class FromFtpDoNotDeleteFileIfProcessFailsIT extends FtpServerTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // use no delay for fast unit testing
                 onException(IllegalArgumentException.class).maximumRedeliveries(2).redeliveryDelay(0).to("mock:error");
 
                 from(getFtpUrl()).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         throw new IllegalArgumentException("Forced by unittest");
                     }
                 });

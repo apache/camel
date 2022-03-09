@@ -41,7 +41,7 @@ public class SftpConsumerAutoCreateIT extends SftpServerTestSupport {
     }
 
     @Test
-    public void testAutoCreate() throws Exception {
+    public void testAutoCreate() {
         SftpEndpoint endpoint = (SftpEndpoint) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=true");
         endpoint.start();
         endpoint.getExchanges();

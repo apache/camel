@@ -63,10 +63,10 @@ public class FtpSimpleConsumeStreamingStepwiseFalseIT extends FtpServerTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("ftp://localhost:{{ftp.server.port}}"
                      + "/tmp/mytemp?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true&stepwise="
                      + String.valueOf(isStepwise())).routeId("foo").noAutoStartup()

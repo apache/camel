@@ -51,91 +51,91 @@ public class CamelParserFactoryTest {
     }
 
     @Test
-    public void createFileEntryParserUnix() throws Exception {
+    public void createFileEntryParserUnix() {
         when(ftpClientConfig.getServerSystemKey()).thenReturn("bla unix bla");
         FTPFileEntryParser result = CAMEL_PARSER_FACTORY.createFileEntryParser(ftpClientConfig);
         assertThat(result, instanceOf(UnixFTPEntryParser.class));
     }
 
     @Test
-    public void createFileEntryParserLinux() throws Exception {
+    public void createFileEntryParserLinux() {
         when(ftpClientConfig.getServerSystemKey()).thenReturn("bla linux bla");
         FTPFileEntryParser result = CAMEL_PARSER_FACTORY.createFileEntryParser(ftpClientConfig);
         assertThat(result, instanceOf(UnixFTPEntryParser.class));
     }
 
     @Test
-    public void createFileEntryParserTypeL8() throws Exception {
+    public void createFileEntryParserTypeL8() {
         when(ftpClientConfig.getServerSystemKey()).thenReturn("bla type: l8 bla");
         FTPFileEntryParser result = CAMEL_PARSER_FACTORY.createFileEntryParser(ftpClientConfig);
         assertThat(result, instanceOf(UnixFTPEntryParser.class));
     }
 
     @Test
-    public void createFileEntryParserVms() throws Exception {
+    public void createFileEntryParserVms() {
         when(ftpClientConfig.getServerSystemKey()).thenReturn("bla vms bla");
         FTPFileEntryParser result = CAMEL_PARSER_FACTORY.createFileEntryParser(ftpClientConfig);
         assertThat(result, instanceOf(VMSVersioningFTPEntryParser.class));
     }
 
     @Test
-    public void createFileEntryParserPlainWindows() throws Exception {
+    public void createFileEntryParserPlainWindows() {
         when(ftpClientConfig.getServerSystemKey()).thenReturn("WINDOWS");
         FTPFileEntryParser result = CAMEL_PARSER_FACTORY.createFileEntryParser(ftpClientConfig);
         assertThat(result, instanceOf(NTFTPEntryParser.class));
     }
 
     @Test
-    public void createFileEntryParserNotPlainWindows() throws Exception {
+    public void createFileEntryParserNotPlainWindows() {
         when(ftpClientConfig.getServerSystemKey()).thenReturn("WINDOWS XP");
         FTPFileEntryParser result = CAMEL_PARSER_FACTORY.createFileEntryParser(ftpClientConfig);
         assertThat(result, instanceOf(CompositeFileEntryParser.class));
     }
 
     @Test
-    public void createFileEntryParserWin32() throws Exception {
+    public void createFileEntryParserWin32() {
         when(ftpClientConfig.getServerSystemKey()).thenReturn("bla WIN32 bla");
         FTPFileEntryParser result = CAMEL_PARSER_FACTORY.createFileEntryParser(ftpClientConfig);
         assertThat(result, instanceOf(CompositeFileEntryParser.class));
     }
 
     @Test
-    public void createFileEntryParserOs2() throws Exception {
+    public void createFileEntryParserOs2() {
         when(ftpClientConfig.getServerSystemKey()).thenReturn("bla OS/2 bla");
         FTPFileEntryParser result = CAMEL_PARSER_FACTORY.createFileEntryParser(ftpClientConfig);
         assertThat(result, instanceOf(OS2FTPEntryParser.class));
     }
 
     @Test
-    public void createFileEntryParserPlainOs400() throws Exception {
+    public void createFileEntryParserPlainOs400() {
         when(ftpClientConfig.getServerSystemKey()).thenReturn("OS/400");
         FTPFileEntryParser result = CAMEL_PARSER_FACTORY.createFileEntryParser(ftpClientConfig);
         assertThat(result, instanceOf(OS400FTPEntryParser.class));
     }
 
     @Test
-    public void createFileEntryParserNotPlainOs400() throws Exception {
+    public void createFileEntryParserNotPlainOs400() {
         when(ftpClientConfig.getServerSystemKey()).thenReturn("OS/400 bla");
         FTPFileEntryParser result = CAMEL_PARSER_FACTORY.createFileEntryParser(ftpClientConfig);
         assertThat(result, instanceOf(CompositeFileEntryParser.class));
     }
 
     @Test
-    public void createFileEntryParserMvs() throws Exception {
+    public void createFileEntryParserMvs() {
         when(ftpClientConfig.getServerSystemKey()).thenReturn("bla MvS bla");
         FTPFileEntryParser result = CAMEL_PARSER_FACTORY.createFileEntryParser(ftpClientConfig);
         assertThat(result, instanceOf(MVSFTPEntryParser.class));
     }
 
     @Test
-    public void createFileEntryParserNetware() throws Exception {
+    public void createFileEntryParserNetware() {
         when(ftpClientConfig.getServerSystemKey()).thenReturn("bla NeTwArE bla");
         FTPFileEntryParser result = CAMEL_PARSER_FACTORY.createFileEntryParser(ftpClientConfig);
         assertThat(result, instanceOf(NetwareFTPEntryParser.class));
     }
 
     @Test
-    public void createFileEntryParserMacOsPeter() throws Exception {
+    public void createFileEntryParserMacOsPeter() {
         when(ftpClientConfig.getServerSystemKey()).thenReturn("bla MaCoS PeTER bla");
         FTPFileEntryParser result = CAMEL_PARSER_FACTORY.createFileEntryParser(ftpClientConfig);
         assertThat(result, instanceOf(MacOsPeterFTPEntryParser.class));

@@ -50,10 +50,10 @@ public class SftpECKeyFileConsumeIT extends SftpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&knownHostsFile="
                      + service.getKnownHostsFile()
                      + "&privateKeyFile=./src/test/resources/ec.pem&delay=10000&disconnect=true").routeId("foo").noAutoStartup()

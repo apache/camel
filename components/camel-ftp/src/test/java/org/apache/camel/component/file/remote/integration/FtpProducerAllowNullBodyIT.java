@@ -33,7 +33,7 @@ public class FtpProducerAllowNullBodyIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testAllowNullBodyTrue() throws Exception {
+    public void testAllowNullBodyTrue() {
         template.sendBody(getFtpUrl() + "&allowNullBody=true", null);
 
         assertFileExists(ftpFile("allownull/allowNullBody.txt"));

@@ -56,7 +56,7 @@ public class FtpConsumerDeleteNoWritePermissionIT extends FtpServerTestSupport {
         }
     }
 
-    private void prepareFtpServer() throws Exception {
+    private void prepareFtpServer() {
         // prepares the FTP Server by creating files on the server that we want
         // to unit
         // test that we can pool and store as a local file

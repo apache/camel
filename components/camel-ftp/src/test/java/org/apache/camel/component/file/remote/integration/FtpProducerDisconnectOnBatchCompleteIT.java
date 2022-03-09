@@ -48,7 +48,7 @@ public class FtpProducerDisconnectOnBatchCompleteIT extends FtpServerTestSupport
     }
 
     @Test
-    public void testDisconnectOnBatchComplete() throws Exception {
+    public void testDisconnectOnBatchComplete() {
         sendFile(getFtpUrl(), "Hello World", "claus.txt");
 
         FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
@@ -63,7 +63,7 @@ public class FtpProducerDisconnectOnBatchCompleteIT extends FtpServerTestSupport
         template.send(url, new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Exchange.FILE_NAME, simple(fileName));
                 exchange.setProperty(Exchange.BATCH_COMPLETE, true);
             }

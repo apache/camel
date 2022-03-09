@@ -36,7 +36,7 @@ public class FromSftpRecursiveNotStepwiseNoBasePathIT extends BaseServerTestSupp
     }
 
     @BeforeEach
-    public void prepareFtpServer() throws Exception {
+    public void prepareFtpServer() {
         sendFile("Bye World", "bye.txt");
         sendFile("Hello World", "sub/hello.txt");
         sendFile("Goodday World", "sub/sub2/godday.txt");
@@ -51,10 +51,10 @@ public class FromSftpRecursiveNotStepwiseNoBasePathIT extends BaseServerTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getSftpUrl()).convertBodyTo(String.class).to("mock:result");
             }
         };

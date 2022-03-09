@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SftpSetOperationsIT extends SftpServerTestSupport {
 
     @Test
-    public void testSftpSetOperations() throws Exception {
+    public void testSftpSetOperations() {
         String preferredAuthentications = "password,publickey";
         String uri = "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&ciphers=blowfish-cbc" + "&preferredAuthentications=password,publickey";

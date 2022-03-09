@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileToFtpTempFileNameIT extends FtpServerTestSupport {
 
     @Test
-    public void testFileToFtp() throws Exception {
+    public void testFileToFtp() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
         template.sendBodyAndHeader(fileUri("in"), "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
@@ -43,10 +43,10 @@ public class FileToFtpTempFileNameIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("in?recursive=true"))
                         .to("ftp://admin:admin@localhost:{{ftp.server.port}}"
                             + "/out/?fileName=${file:name}&tempFileName=${file:onlyname}.part&stepwise=false");

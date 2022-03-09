@@ -43,10 +43,10 @@ public class SftpUseListFalseIT extends SftpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&delay=10000&disconnect=true&stepwise=false&useList=false&fileName=report.txt&delete=true")
                              .routeId("foo").noAutoStartup()
