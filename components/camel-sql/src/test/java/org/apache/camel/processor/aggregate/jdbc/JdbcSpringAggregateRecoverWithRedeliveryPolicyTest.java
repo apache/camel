@@ -60,7 +60,7 @@ public class JdbcSpringAggregateRecoverWithRedeliveryPolicyTest extends CamelSpr
     public static class MyFailProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             int count = counter.incrementAndGet();
             if (count <= 3) {
                 throw new IllegalArgumentException("Damn");

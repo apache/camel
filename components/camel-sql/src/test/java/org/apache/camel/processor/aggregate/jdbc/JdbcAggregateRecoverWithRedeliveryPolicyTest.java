@@ -59,10 +59,10 @@ public class JdbcAggregateRecoverWithRedeliveryPolicyTest extends AbstractJdbcAg
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)
@@ -71,7 +71,7 @@ public class JdbcAggregateRecoverWithRedeliveryPolicyTest extends AbstractJdbcAg
                         .to("mock:aggregated")
                         // simulate errors the first three times
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 int count = counter.incrementAndGet();
                                 if (count <= 3) {
                                     throw new IllegalArgumentException("Damn");

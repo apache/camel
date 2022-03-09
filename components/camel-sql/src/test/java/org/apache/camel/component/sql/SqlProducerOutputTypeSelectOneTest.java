@@ -40,7 +40,7 @@ public class SqlProducerOutputTypeSelectOneTest {
     private DefaultCamelContext camel1;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.DERBY)
@@ -52,7 +52,7 @@ public class SqlProducerOutputTypeSelectOneTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         camel1.stop();
         db.shutdown();
     }
@@ -61,7 +61,7 @@ public class SqlProducerOutputTypeSelectOneTest {
     public void testSelectOneWithClass() throws Exception {
         camel1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("sql:select * from projects where id=3?outputType=SelectOne&outputClass=org.apache.camel.component.sql.ProjectModel")
                         .to("mock:result");
@@ -91,7 +91,7 @@ public class SqlProducerOutputTypeSelectOneTest {
     public void testSelectOneWithoutClass() throws Exception {
         camel1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("sql:select * from projects where id=3?outputType=SelectOne")
                         .to("mock:result");
@@ -121,7 +121,7 @@ public class SqlProducerOutputTypeSelectOneTest {
     public void testSelectOneSingleColumn() throws Exception {
         camel1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("sql:select project from projects where id=3?outputType=SelectOne")
                         .to("mock:result");
@@ -149,7 +149,7 @@ public class SqlProducerOutputTypeSelectOneTest {
     public void testSelectOneSingleColumnCount() throws Exception {
         camel1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("sql:select count(*) from projects?outputType=SelectOne")
                         .to("mock:result");

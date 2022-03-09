@@ -38,7 +38,7 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
     private EmbeddedDatabase db;
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         SimpleRegistry reg = new SimpleRegistry();
 
         // START SNIPPET: e2
@@ -88,7 +88,7 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
