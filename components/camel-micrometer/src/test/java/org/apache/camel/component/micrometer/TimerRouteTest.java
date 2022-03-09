@@ -62,10 +62,10 @@ public class TimerRouteTest extends CamelSpringTestSupport {
     private MeterRegistry registry = new SimpleMeterRegistry();
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in-1")
                         .setHeader(HEADER_METRIC_NAME, constant("B"))
                         .to("micrometer:timer:A?action=start")

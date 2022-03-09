@@ -57,7 +57,7 @@ public class MicrometerRouteEventNotifierTest extends AbstractMicrometerEventNot
 
     private class TestRoute extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("direct:in").routeId(ROUTE_ID).to("mock:out");
         }
     }

@@ -56,7 +56,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
-    public void addRegistry() throws Exception {
+    public void addRegistry() {
         meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(new SimpleMeterRegistry());
         meterRegistry.add(new JmxMeterRegistry(CamelJmxConfig.DEFAULT, Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));
