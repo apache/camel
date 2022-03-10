@@ -193,8 +193,45 @@ public final class ReflectionHelper {
         }
     }
 
+    public static void setField(String name, Object instance, Object value) {
+        try {
+            Field f = instance.getClass().getField(name);
+            boolean oldAccessible = f.isAccessible();
+            boolean shouldSetAccessible = !Modifier.isPublic(f.getModifiers()) && !oldAccessible;
+            if (shouldSetAccessible) {
+                f.setAccessible(true);
+            }
+            f.set(instance, value);
+            if (shouldSetAccessible) {
+                f.setAccessible(oldAccessible);
+            }
+        } catch (Exception ex) {
+            throw new UnsupportedOperationException(
+                    "Cannot inject value of class: " + value.getClass() + " into field: " + name + " on bean: " + instance);
+        }
+    }
+
     public static Object getField(Field f, Object instance) {
         try {
+            boolean oldAccessible = f.isAccessible();
+            boolean shouldSetAccessible = !Modifier.isPublic(f.getModifiers()) && !oldAccessible;
+            if (shouldSetAccessible) {
+                f.setAccessible(true);
+            }
+            Object answer = f.get(instance);
+            if (shouldSetAccessible) {
+                f.setAccessible(oldAccessible);
+            }
+            return answer;
+        } catch (Exception ex) {
+            // ignore
+        }
+        return null;
+    }
+
+    public static Object getField(String name, Object instance) {
+        try {
+            Field f = instance.getClass().getDeclaredField(name);
             boolean oldAccessible = f.isAccessible();
             boolean shouldSetAccessible = !Modifier.isPublic(f.getModifiers()) && !oldAccessible;
             if (shouldSetAccessible) {
