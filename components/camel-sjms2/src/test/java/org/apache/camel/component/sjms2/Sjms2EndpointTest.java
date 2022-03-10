@@ -33,7 +33,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDefaults() throws Exception {
+    public void testDefaults() {
         Endpoint endpoint = context.getEndpoint("sjms2:test");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Sjms2Endpoint);
@@ -43,7 +43,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testQueueEndpoint() throws Exception {
+    public void testQueueEndpoint() {
         Endpoint sjms = context.getEndpoint("sjms2:queue:test");
         assertNotNull(sjms);
         assertEquals("sjms2://queue:test", sjms.getEndpointUri());
@@ -51,7 +51,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testJndiStyleEndpointName() throws Exception {
+    public void testJndiStyleEndpointName() {
         Sjms2Endpoint sjms = context.getEndpoint("sjms2:/jms/test/hov.t1.dev:topic", Sjms2Endpoint.class);
         assertNotNull(sjms);
         assertFalse(sjms.isTopic());
@@ -59,7 +59,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSetTransacted() throws Exception {
+    public void testSetTransacted() {
         Endpoint endpoint = context.getEndpoint("sjms2:queue:test?transacted=true");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Sjms2Endpoint);
@@ -68,7 +68,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testAsyncProducer() throws Exception {
+    public void testAsyncProducer() {
         Endpoint endpoint = context.getEndpoint("sjms2:queue:test?synchronous=true");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Sjms2Endpoint);
@@ -77,7 +77,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testReplyTo() throws Exception {
+    public void testReplyTo() {
         String replyTo = "reply.to.queue";
         Endpoint endpoint = context.getEndpoint("sjms2:queue:test?replyTo=" + replyTo);
         assertNotNull(endpoint);
@@ -88,7 +88,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDefaultExchangePattern() throws Exception {
+    public void testDefaultExchangePattern() {
         try {
             Sjms2Endpoint sjms = (Sjms2Endpoint) context.getEndpoint("sjms2:queue:test");
             assertNotNull(sjms);
@@ -99,7 +99,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInOnlyExchangePattern() throws Exception {
+    public void testInOnlyExchangePattern() {
         try {
             Endpoint sjms = context.getEndpoint("sjms2:queue:test?exchangePattern=" + ExchangePattern.InOnly);
             assertNotNull(sjms);
@@ -110,7 +110,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInOutExchangePattern() throws Exception {
+    public void testInOutExchangePattern() {
         try {
             Endpoint sjms = context.getEndpoint("sjms2:queue:test?exchangePattern=" + ExchangePattern.InOut);
             assertNotNull(sjms);
@@ -121,7 +121,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testReplyToAndMEPMatch() throws Exception {
+    public void testReplyToAndMEPMatch() {
         String replyTo = "reply.to.queue";
         Endpoint endpoint = context
                 .getEndpoint("sjms2:queue:test?replyTo=" + replyTo + "&exchangePattern=" + ExchangePattern.InOut);
@@ -133,7 +133,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDestinationName() throws Exception {
+    public void testDestinationName() {
         Endpoint endpoint = context.getEndpoint("sjms2:queue:test?synchronous=true");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Sjms2Endpoint);
