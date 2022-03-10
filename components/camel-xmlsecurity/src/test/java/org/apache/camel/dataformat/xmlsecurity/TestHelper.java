@@ -113,11 +113,11 @@ public class TestHelper {
 
     Logger log = LoggerFactory.getLogger(TestHelper.class);
 
-    protected void sendText(final String fragment, CamelContext context) throws Exception {
+    protected void sendText(final String fragment, CamelContext context) {
         ProducerTemplate template = context.createProducerTemplate();
         template.start();
         template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
@@ -184,7 +184,7 @@ public class TestHelper {
         assertFalse(hasEncryptedData(inDoc), "The XML message has encrypted data.");
     }
 
-    private boolean hasEncryptedData(Document doc) throws Exception {
+    private boolean hasEncryptedData(Document doc) {
         NodeList nodeList = doc.getElementsByTagNameNS("http://www.w3.org/2001/04/xmlenc#", "EncryptedData");
         return nodeList.getLength() > 0;
     }

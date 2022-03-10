@@ -53,7 +53,7 @@ public class XMLSecurityConcurrencyTest extends CamelTestSupport {
         for (int i = 0; i < files; i++) {
             final int index = i;
             executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
+                public Object call() {
                     String body = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><body>you can not read me " + index + "</body>";
                     template.sendBody("direct:start", body);
                     return null;
