@@ -41,7 +41,7 @@ public class ReadWriteTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start")
                             .to("weka:version");
                 }
@@ -61,7 +61,7 @@ public class ReadWriteTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("file:src/test/resources/data?fileName=sfny.csv&noop=true")
                             .to("weka:read")
                             .to("direct:end");
@@ -82,7 +82,7 @@ public class ReadWriteTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start")
                             .to("weka:read");
                 }
@@ -105,7 +105,7 @@ public class ReadWriteTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start")
                             .to("weka:read");
                 }
@@ -128,7 +128,7 @@ public class ReadWriteTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start")
                             .to("weka:read?path=src/test/resources/data/sfny.arff");
                 }
@@ -148,7 +148,7 @@ public class ReadWriteTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start")
                             .to("weka:read");
                 }
@@ -171,7 +171,7 @@ public class ReadWriteTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start")
                             .to("file:target/data?fileName=sfny.arff");
                 }
@@ -197,7 +197,7 @@ public class ReadWriteTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start")
                             .to("weka:write")
                             .to("file:target/data?fileName=sfny.arff");
@@ -224,7 +224,7 @@ public class ReadWriteTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start")
                             .to("weka:write?path=target/data/sfny.arff");
                 }

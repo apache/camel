@@ -41,7 +41,7 @@ public class FilterTest {
             camelctx.addRoutes(new RouteBuilder() {
 
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
 
                     // Use the file component to read the CSV file
                     from("file:src/test/resources/data?fileName=sfny.csv&noop=true")
@@ -80,7 +80,7 @@ public class FilterTest {
             camelctx.addRoutes(new RouteBuilder() {
 
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
 
                     // Use weka to read the CSV file
                     from("direct:start")

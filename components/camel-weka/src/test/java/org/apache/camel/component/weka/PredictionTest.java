@@ -43,7 +43,7 @@ public class PredictionTest extends AbstractWekaTest {
             camelctx.addRoutes(new RouteBuilder() {
 
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
 
                     // Use the file component to read the CSV file
                     from("file:src/test/resources/data?fileName=sfny-test.arff&noop=true")
@@ -65,7 +65,7 @@ public class PredictionTest extends AbstractWekaTest {
 
                             // Use a processor to do the prediction
                             .process(new Processor() {
-                                public void process(Exchange exchange) throws Exception {
+                                public void process(Exchange exchange) {
                                     Dataset dataset = exchange.getMessage().getBody(Dataset.class);
                                     dataset.applyToInstances(new NominalPredictor());
                                 }
