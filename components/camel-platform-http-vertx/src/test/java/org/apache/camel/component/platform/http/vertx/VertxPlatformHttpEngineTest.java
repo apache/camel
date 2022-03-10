@@ -120,7 +120,7 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/get")
                             .routeId("get")
                             .setBody().constant("get");
@@ -171,7 +171,7 @@ public class VertxPlatformHttpEngineTest {
 
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/get")
                             .routeId("get")
                             .process(e -> Thread.sleep(TimeUnit.SECONDS.toMillis(3)))
@@ -200,7 +200,7 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/get")
                             .routeId("get")
                             .process(exchange -> {
@@ -231,7 +231,7 @@ public class VertxPlatformHttpEngineTest {
             context.getRegistry().bind("clientSSLContextParameters", clientSSLParameters);
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/")
                             .transform().body(String.class, b -> b.toUpperCase());
                 }
@@ -260,7 +260,7 @@ public class VertxPlatformHttpEngineTest {
 
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/")
                             .transform().body(String.class, b -> b.toUpperCase());
                 }
@@ -289,7 +289,7 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/")
                             .transform().constant("cors");
                 }
@@ -324,7 +324,7 @@ public class VertxPlatformHttpEngineTest {
             final String greeting = "Hello Camel";
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/greeting/{name}?matchOnUriPrefix=true")
                             .transform().simple("Hello ${header.name}");
                 }
@@ -372,7 +372,7 @@ public class VertxPlatformHttpEngineTest {
 
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/upload")
                             .process(exchange -> {
                                 AttachmentMessage message = exchange.getMessage(AttachmentMessage.class);
@@ -403,7 +403,7 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/form/post")
                             .convertBodyTo(String.class);
                 }
@@ -431,7 +431,7 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/text/post")
                             .log("POST:/test/post has body ${body}");
                 }
@@ -460,7 +460,7 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     restConfiguration().component("platform-http");
 
                     rest("/rest")
@@ -511,7 +511,7 @@ public class VertxPlatformHttpEngineTest {
         CamelContext context = createCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("platform-http:/secure")
                         .process(exchange -> {
                             Message message = exchange.getMessage();
