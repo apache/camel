@@ -41,10 +41,10 @@ public class InvokeFunctionServiceKeyTest extends CamelTestSupport {
     ServiceKeys serviceKeys
             = new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:invoke_function")
                         .setProperty(FunctionGraphProperties.XCFFLOGTYPE, constant("tail"))
                         .to("hwcloud-functiongraph:invokeFunction?" +

@@ -38,9 +38,9 @@ public class InvokeFunctionCombinedFunctionalTest extends CamelTestSupport {
     private static final String PROJECT_ID = "replace_this_with_project_id";
     private static final String ENDPOINT = "replace_this_with_endpoint";
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:invoke_function")
                         .setProperty(FunctionGraphProperties.XCFFLOGTYPE, constant("tail"))
                         .setProperty(FunctionGraphProperties.OPERATION, constant("invokeFunction"))
