@@ -132,7 +132,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUntarWithCorruptedTarFile() throws Exception {
+    public void testUntarWithCorruptedTarFile() {
         final File body = new File("src/test/resources/data/corrupt.tar");
 
         assertThrows(CamelExecutionException.class,
@@ -219,7 +219,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUntarWithEmptyDirectorySupported() throws Exception {
+    public void testUntarWithEmptyDirectorySupported() {
         deleteDirectory(new File("hello_out"));
         tar.setUsingIterator(true);
         tar.setAllowEmptyDirectory(true);
@@ -229,7 +229,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUntarWithEmptyDirectoryUnsupported() throws Exception {
+    public void testUntarWithEmptyDirectoryUnsupported() {
         deleteDirectory(new File("hello_out"));
         tar.setUsingIterator(true);
         tar.setAllowEmptyDirectory(false);
@@ -284,10 +284,10 @@ public class TarFileDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("file:*").to("mock:intercepted");
 
                 tar = new TarFileDataFormat();

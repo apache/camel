@@ -42,10 +42,10 @@ public class TarFileMultipleFilesSplitterTest extends TarSplitterRouteTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Untar file and Split it according to FileEntry
                 TarFileDataFormat tarFile = new TarFileDataFormat();
                 tarFile.setUsingIterator(true);
