@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class VelocityOverridesPropertiesTest extends CamelTestSupport {
 
     @Test
-    public void testOverridingProperties() throws Exception {
+    public void testOverridingProperties() {
         Exchange exchange = template.request("direct:a", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Monday");
                 exchange.getIn().setHeader("name", "Christian");
                 exchange.setProperty("item", "7");
@@ -42,9 +42,9 @@ public class VelocityOverridesPropertiesTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a")
                         .to("velocity:org/apache/camel/component/velocity/example.vm?propertiesFile=org/apache/camel/component/velocity/velocity-logging.properties&allowContextMapAll=true");
             }
