@@ -47,7 +47,7 @@ public class VelocityConcurrentTest extends CamelTestSupport {
         for (int i = 0; i < files; i++) {
             final int index = i;
             executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
+                public Object call() {
                     template.sendBody("direct:start", "Hello " + index);
                     return null;
                 }
