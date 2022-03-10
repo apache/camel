@@ -88,7 +88,7 @@ work.
   tarFile.setUsingIterator(true);
   from("file:src/test/resources/org/apache/camel/dataformat/tarfile/?delay=1000&noop=true")
     .unmarshal(tarFile)
-    .split(body(Iterator.class))
+    .split(bodyAs(Iterator.class))
         .streaming()
           .process(new UnTarpedMessageProcessor())
     .end();
