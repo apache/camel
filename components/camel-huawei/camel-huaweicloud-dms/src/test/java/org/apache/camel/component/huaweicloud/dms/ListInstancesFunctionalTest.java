@@ -33,9 +33,9 @@ public class ListInstancesFunctionalTest extends CamelTestSupport {
     private static final String REGION = "replace_this_with_region";
     private static final String ENGINE = "replace_this_with_engine";
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:operation")
                         .to("hwcloud-dms:listInstances?" +
                             "accessKey=" + ACCESS_KEY +
