@@ -37,7 +37,7 @@ public class PahoComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() {
         Component component = context().getComponent("paho");
 
         ComponentVerifierExtension verifier
@@ -52,7 +52,7 @@ public class PahoComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConnectivity() throws Exception {
+    public void testConnectivity() {
         Component component = context().getComponent("paho");
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
