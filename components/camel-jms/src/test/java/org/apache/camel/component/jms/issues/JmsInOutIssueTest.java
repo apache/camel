@@ -34,13 +34,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JmsInOutIssueTest extends CamelTestSupport {
 
     @Test
-    public void testInOutWithRequestBody() throws Exception {
+    public void testInOutWithRequestBody() {
         String reply = template.requestBody("activemq:queue:in", "Hello World", String.class);
         assertEquals("Bye World", reply);
     }
 
     @Test
-    public void testInOutTwoTimes() throws Exception {
+    public void testInOutTwoTimes() {
         String reply = template.requestBody("activemq:queue:in", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
@@ -55,7 +55,7 @@ public class JmsInOutIssueTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInOutWithSendExchange() throws Exception {
+    public void testInOutWithSendExchange() {
         Exchange out = template.send("activemq:queue:in", ExchangePattern.InOut,
                 exchange -> exchange.getIn().setBody("Hello World"));
 
@@ -81,9 +81,9 @@ public class JmsInOutIssueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:in").process(exchange -> exchange.getMessage().setBody("Bye World"));
             }
         };

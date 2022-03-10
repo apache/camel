@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JmsErrorHandlerLogStackTraceTest extends CamelTestSupport {
 
     @Test
-    public void testErrorHandlerLogStackTrace() throws Exception {
+    public void testErrorHandlerLogStackTrace() {
         JmsComponent jms = context.getComponent("jms", JmsComponent.class);
         assertFalse(jms.getConfiguration().isErrorHandlerLogStackTrace());
 
@@ -47,10 +47,10 @@ public class JmsErrorHandlerLogStackTraceTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // dont log any exhausted errors
                 errorHandler(defaultErrorHandler().logExhausted(false));
 

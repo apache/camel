@@ -76,9 +76,9 @@ public class ActiveMQPropagateHeadersTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // must set option to preserve message QoS as we send an InOnly but put a JMSReplyTo
                 // that does not work well on the consumer side, as it would assume it should send a reply
                 // but we do not expect a reply as we are InOnly.

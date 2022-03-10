@@ -84,9 +84,9 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
 
                 onException(AssertionError.class).to(assertionReceiver);
 
@@ -125,7 +125,7 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
     class InHeaderChecker implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
 
             // filtered out by "in" filter
             assertNull(exchange.getIn().getHeader("testheader"));

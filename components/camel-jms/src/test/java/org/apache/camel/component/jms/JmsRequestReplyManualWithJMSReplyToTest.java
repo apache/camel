@@ -37,7 +37,7 @@ public class JmsRequestReplyManualWithJMSReplyToTest extends CamelTestSupport {
     }
 
     @Consume("activemq:queue:foo")
-    public void doSomething(@Header("JMSReplyTo") Destination jmsReplyTo, @Body String body) throws Exception {
+    public void doSomething(@Header("JMSReplyTo") Destination jmsReplyTo, @Body String body) {
         assertEquals("Hello World", body);
 
         String endpointName = "activemq:" + jmsReplyTo.toString();
@@ -45,7 +45,7 @@ public class JmsRequestReplyManualWithJMSReplyToTest extends CamelTestSupport {
     }
 
     @Test
-    public void testManualRequestReply() throws Exception {
+    public void testManualRequestReply() {
         context.start();
 
         // send an InOnly but force Camel to pass JMSReplyTo

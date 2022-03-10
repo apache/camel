@@ -72,9 +72,9 @@ public class JmsCustomJMSReplyToIssueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // must preserve QoS so Camel will send JMSReplyTo even if message is inOnly
                 from("direct:start").process(exchange -> {
                     exchange.getMessage().setBody("Hello World");

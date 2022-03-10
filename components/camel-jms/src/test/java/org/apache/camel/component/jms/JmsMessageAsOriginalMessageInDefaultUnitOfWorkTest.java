@@ -34,7 +34,7 @@ public class JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest extends CamelTes
     public void testUseOriginalMessage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class)
                         .useOriginalMessage()
                         .to(mockResult);

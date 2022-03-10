@@ -90,7 +90,7 @@ public class JMXTXUseOriginalBodyWithTXErrorHandlerTest extends JMXTXUseOriginal
     public static class TestRoutes extends RouteBuilder {
 
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             errorHandler(new TransactionErrorHandlerBuilder());
 
             onException(Exception.class)

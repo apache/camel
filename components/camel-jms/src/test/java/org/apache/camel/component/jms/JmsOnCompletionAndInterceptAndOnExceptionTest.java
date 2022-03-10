@@ -61,10 +61,10 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends CamelTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 intercept().to("mock:intercept");
 
                 // define a global on completion that is invoked when the exchange is complete
@@ -96,7 +96,7 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends CamelTestSupp
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             if ("Kabom".equals(exchange.getIn().getBody())) {
                 throw new IllegalArgumentException("Kabom");
             }

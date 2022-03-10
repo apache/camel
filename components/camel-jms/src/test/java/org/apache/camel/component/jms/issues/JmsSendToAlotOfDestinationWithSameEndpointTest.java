@@ -31,7 +31,7 @@ public class JmsSendToAlotOfDestinationWithSameEndpointTest extends CamelSpringT
     private static final String URI = "activemq:queue:foo?autoStartup=false";
 
     @Test
-    public void testSendToAlotOfMessageToQueues() throws Exception {
+    public void testSendToAlotOfMessageToQueues() {
         int size = 100;
 
         LOG.info("About to send " + size + " messages");

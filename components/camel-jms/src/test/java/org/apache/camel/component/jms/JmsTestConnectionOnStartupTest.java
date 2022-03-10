@@ -37,7 +37,7 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
     public void testConnectionOnStartupConsumerTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo?testConnectionOnStartup=true").to("mock:foo");
             }
         });
@@ -56,7 +56,7 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
     public void testConnectionOnStartupProducerTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("activemq:queue:foo?testConnectionOnStartup=true");
             }
         });

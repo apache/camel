@@ -97,10 +97,10 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:target/stream/in").to("jms:queue:foo");
 
                 from("jms:queue:foo").to("file:target/stream/out").to("mock:result");

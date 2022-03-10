@@ -70,7 +70,7 @@ public class JmsAllowNullBodyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNoAllowNullBody() throws Exception {
+    public void testNoAllowNullBody() {
         try {
             template.sendBodyAndHeader("activemq:queue:foo?allowNullBody=false", null, "bar", 123);
             fail("Should have thrown exception");
@@ -89,10 +89,10 @@ public class JmsAllowNullBodyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo").to("mock:result");
             }
         };

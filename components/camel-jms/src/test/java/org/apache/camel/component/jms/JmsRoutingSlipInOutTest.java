@@ -58,10 +58,10 @@ public class JmsRoutingSlipInOutTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:start").to("direct:start").to("bean:myBean?method=doResult").to("mock:result");
 
                 from("direct:start").to("bean:myBean?method=createSlip").setExchangePattern(ExchangePattern.InOut)

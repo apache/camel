@@ -38,7 +38,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
     protected Object[] expectedBodies = { "body1", "body2", "body3", "body4", "body5", "body6", "body7", "body8" };
 
     @Test
-    public void testSendMessagesThenBrowseQueue() throws Exception {
+    public void testSendMessagesThenBrowseQueue() {
         // send some messages
         for (int i = 0; i < expectedBodies.length; i++) {
             Object expectedBody = expectedBodies[i];
@@ -63,7 +63,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSendMessagesThenBrowseQueueLimitNotHit() throws Exception {
+    public void testSendMessagesThenBrowseQueueLimitNotHit() {
         // send some messages
         for (int i = 0; i < expectedBodies.length; i++) {
             Object expectedBody = expectedBodies[i];
@@ -88,7 +88,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSendMessagesThenBrowseQueueNoMax() throws Exception {
+    public void testSendMessagesThenBrowseQueueNoMax() {
         // send some messages
         for (int i = 0; i < expectedBodies.length; i++) {
             Object expectedBody = expectedBodies[i];
@@ -123,9 +123,9 @@ public class BrowsableQueueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:test.a").to("activemq:test.b");
             }
         };

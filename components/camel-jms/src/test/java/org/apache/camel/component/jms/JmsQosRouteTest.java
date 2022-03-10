@@ -74,9 +74,9 @@ public class JmsQosRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
 
                 // Messages should arrive at mock:preserve with their priorities preserved.
                 from(componentName + ":queue:p1").to(componentName + ":queue:preserve-1?preserveMessageQos=true");

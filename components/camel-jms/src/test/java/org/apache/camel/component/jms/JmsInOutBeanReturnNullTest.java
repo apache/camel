@@ -39,26 +39,26 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class JmsInOutBeanReturnNullTest extends CamelTestSupport {
 
     @Test
-    public void testReturnBean() throws Exception {
+    public void testReturnBean() {
         MyBean out = template.requestBody("activemq:queue:foo", "Camel", MyBean.class);
         assertNotNull(out);
         assertEquals("Camel", out.getName());
     }
 
     @Test
-    public void testReturnNull() throws Exception {
+    public void testReturnNull() {
         Object out = template.requestBody("activemq:queue:foo", "foo");
         assertNull(out);
     }
 
     @Test
-    public void testReturnNullMyBean() throws Exception {
+    public void testReturnNullMyBean() {
         MyBean out = template.requestBody("activemq:queue:foo", "foo", MyBean.class);
         assertNull(out);
     }
 
     @Test
-    public void testReturnNullExchange() throws Exception {
+    public void testReturnNullExchange() {
         Exchange reply = template.request("activemq:queue:foo", exchange -> exchange.getIn().setBody("foo"));
         assertNotNull(reply);
         assertNotEquals("foo", reply.getMessage().getBody(), "There shouldn't be an out message");
@@ -77,10 +77,10 @@ public class JmsInOutBeanReturnNullTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo")
                         .bean(JmsInOutBeanReturnNullTest.class, "doSomething");
             }

@@ -50,9 +50,9 @@ public class JmsInOutPersistentReplyQueueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start")
                         .log("Sending ${body}")
                         .to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=myReplies")

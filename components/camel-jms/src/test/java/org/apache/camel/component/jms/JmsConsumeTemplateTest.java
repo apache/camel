@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JmsConsumeTemplateTest extends CamelTestSupport {
 
     @Test
-    public void testConsumeTemplate() throws Exception {
+    public void testConsumeTemplate() {
         // must start CamelContext because use route builder is false
         context.start();
 

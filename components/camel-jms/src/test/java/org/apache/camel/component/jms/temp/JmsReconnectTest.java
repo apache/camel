@@ -91,7 +91,7 @@ public class JmsReconnectTest {
         context.addRoutes(new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jms:testqueue").bean(new EchoServiceImpl());
                 from("direct:test").to("jms:testqueue");
             }

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JmsRequestReplyFixedReplyToInEndpointTest extends CamelTestSupport {
 
     @Test
-    public void testJmsRequestReplyTempReplyTo() throws Exception {
+    public void testJmsRequestReplyTempReplyTo() {
         Exchange reply = template.request("activemq:queue:foo", exchange -> exchange.getIn().setBody("World"));
         assertEquals("Hello World", reply.getMessage().getBody());
         assertTrue(reply.getMessage().hasHeaders(), "Should have headers");
@@ -40,7 +40,7 @@ public class JmsRequestReplyFixedReplyToInEndpointTest extends CamelTestSupport 
     }
 
     @Test
-    public void testJmsRequestReplyFixedReplyToInEndpoint() throws Exception {
+    public void testJmsRequestReplyFixedReplyToInEndpoint() {
         Exchange reply = template.request("activemq:queue:foo?replyTo=bar", exchange -> exchange.getIn().setBody("World"));
         assertEquals("Hello World", reply.getMessage().getBody());
         assertTrue(reply.getMessage().hasHeaders(), "Should have headers");
@@ -48,7 +48,7 @@ public class JmsRequestReplyFixedReplyToInEndpointTest extends CamelTestSupport 
     }
 
     @Test
-    public void testJmsRequestReplyFixedReplyToInEndpointTwoMessages() throws Exception {
+    public void testJmsRequestReplyFixedReplyToInEndpointTwoMessages() {
         Exchange reply = template.request("activemq:queue:foo?replyTo=bar", exchange -> exchange.getIn().setBody("World"));
         assertEquals("Hello World", reply.getMessage().getBody());
         assertTrue(reply.getMessage().hasHeaders(), "Should have headers");
@@ -69,10 +69,10 @@ public class JmsRequestReplyFixedReplyToInEndpointTest extends CamelTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo")
                         .transform(body().prepend("Hello "));
             }

@@ -35,7 +35,7 @@ public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionTest extend
 
     public static class BadErrorHandler {
         @Handler
-        public void onException(Exchange exchange, Exception exception) throws Exception {
+        public void onException(Exchange exchange, Exception exception) {
             throw new RuntimeCamelException("error in errorhandler");
         }
     }
@@ -47,10 +47,10 @@ public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionTest extend
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // we use DLC to handle the exception but if it throw a new exception
                 // then the DLC handles that too (the transaction will always commit)
                 errorHandler(deadLetterChannel("bean:" + BadErrorHandler.class.getName())
@@ -65,7 +65,7 @@ public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionTest extend
     }
 
     @Test
-    public void shouldNotLoseMessagesOnExceptionInErrorHandler() throws Exception {
+    public void shouldNotLoseMessagesOnExceptionInErrorHandler() {
         template.sendBody(testingEndpoint, "Hello World");
 
         // as we handle new exception, then the exception is ignored

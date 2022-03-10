@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AsyncConsumerInOutTwoTest extends CamelTestSupport {
 
     @Test
-    public void testAsyncJmsConsumer() throws Exception {
+    public void testAsyncJmsConsumer() {
         String out = template.requestBody("activemq:queue:start?replyTo=bar", "Hello World", String.class);
         assertEquals("Bye World", out);
     }
@@ -51,10 +51,10 @@ public class AsyncConsumerInOutTwoTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable async in only mode on the consumer
                 from("activemq:queue:start?asyncConsumer=true")
                         .to("async:camel?delay=2000")

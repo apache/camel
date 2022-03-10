@@ -51,10 +51,10 @@ public class JmsRoutingSlipIssueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         // need to use InOut as we do request/reply over JMS
                         .setExchangePattern(ExchangePattern.InOut)

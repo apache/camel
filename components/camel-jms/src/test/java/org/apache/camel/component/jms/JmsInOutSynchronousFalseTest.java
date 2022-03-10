@@ -34,7 +34,7 @@ public class JmsInOutSynchronousFalseTest extends CamelTestSupport {
     private String url = "activemq:queue:in?synchronous=false";
 
     @Test
-    public void testSynchronous() throws Exception {
+    public void testSynchronous() {
         String reply = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
@@ -50,9 +50,9 @@ public class JmsInOutSynchronousFalseTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("log:before")
                         .process(exchange -> beforeThreadName = Thread.currentThread().getName())

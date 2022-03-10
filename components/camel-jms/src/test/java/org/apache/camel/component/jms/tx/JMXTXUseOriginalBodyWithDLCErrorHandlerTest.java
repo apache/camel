@@ -110,7 +110,7 @@ public class JMXTXUseOriginalBodyWithDLCErrorHandlerTest extends JMXTXUseOrigina
     public static class TestRoutes extends RouteBuilder {
 
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(5));
 
             onException(Exception.class)

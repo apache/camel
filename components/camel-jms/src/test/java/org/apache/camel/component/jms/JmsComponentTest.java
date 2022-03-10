@@ -32,7 +32,7 @@ public class JmsComponentTest extends CamelTestSupport {
     protected JmsEndpoint endpoint;
 
     @Test
-    public void testComponentOptions() throws Exception {
+    public void testComponentOptions() {
         String reply = template.requestBody("activemq123:queue:hello?requestTimeout=5000", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
@@ -94,9 +94,9 @@ public class JmsComponentTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(endpoint).transform(constant("Bye World"));
             }
         };

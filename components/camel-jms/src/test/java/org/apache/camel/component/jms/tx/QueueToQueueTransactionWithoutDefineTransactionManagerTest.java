@@ -38,7 +38,7 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
         context.addRoutes(new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(noErrorHandler());
                 from("activemq:queue:foo?transacted=false").process(new ConditionalExceptionProcessor())
                         .to("activemq:queue:bar?transacted=false");

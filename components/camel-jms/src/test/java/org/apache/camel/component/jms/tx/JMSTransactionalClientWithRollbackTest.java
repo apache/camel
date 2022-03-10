@@ -51,7 +51,7 @@ public class JMSTransactionalClientWithRollbackTest extends CamelSpringTestSuppo
         private int count;
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getIn().setBody("Bye World");
             exchange.getIn().setHeader("count", ++count);
         }

@@ -39,7 +39,7 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
         final ConditionalExceptionProcessor cp = new ConditionalExceptionProcessor(5);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Policy required = context().getRegistry().lookupByNameAndType("PROPAGATION_REQUIRED_POLICY",
                         SpringTransactionPolicy.class);
 
