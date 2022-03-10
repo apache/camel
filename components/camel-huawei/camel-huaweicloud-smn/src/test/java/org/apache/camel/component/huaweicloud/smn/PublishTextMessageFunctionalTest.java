@@ -45,7 +45,7 @@ public class PublishTextMessageFunctionalTest extends CamelTestSupport {
     ServiceKeys serviceKeys
             = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:publish_text_message")
