@@ -65,12 +65,12 @@ public class SpringXmlSignatureTest extends XmlSignatureTest {
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         return new SimpleRegistry();
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {};
     }
 

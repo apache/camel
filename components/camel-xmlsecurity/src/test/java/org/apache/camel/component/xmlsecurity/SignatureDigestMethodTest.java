@@ -138,9 +138,9 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] { new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: signature and digest algorithm
                 from("direct:sha1")
                         .to("xmlsecurity-sign:sha1?keyAccessor=#accessor"
@@ -149,7 +149,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
                 // END SNIPPET: signature and digest algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: signature and digest algorithm
                 from("direct:sha224")
                         .to("xmlsecurity-sign:sha224?keyAccessor=#accessor"
@@ -158,7 +158,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
                 // END SNIPPET: signature and digest algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: signature and digest algorithm
                 from("direct:sha256")
                         .to("xmlsecurity-sign:sha256?keyAccessor=#accessor"
@@ -167,7 +167,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
                 // END SNIPPET: signature and digest algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: signature and digest algorithm
                 from("direct:sha384")
                         .to("xmlsecurity-sign:sha384?keyAccessor=#accessor"
@@ -176,7 +176,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
                 // END SNIPPET: signature and digest algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: signature and digest algorithm
                 from("direct:sha512")
                         .to("xmlsecurity-sign:sha512?keyAccessor=#accessor"
@@ -185,7 +185,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
                 // END SNIPPET: signature and digest algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: signature and digest algorithm
                 from("direct:ripemd160")
                         .to("xmlsecurity-sign:ripemd160?keyAccessor=#accessor"
@@ -194,7 +194,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
                 // END SNIPPET: signature and digest algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: signature and digest algorithm
                 from("direct:whirlpool")
                         .to("xmlsecurity-sign:whirlpool?keyAccessor=#accessor"
@@ -203,7 +203,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
                 // END SNIPPET: signature and digest algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: signature and digest algorithm
                 from("direct:sha3_224")
                         .to("xmlsecurity-sign:sha3_224?keyAccessor=#accessor"
@@ -212,7 +212,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
                 // END SNIPPET: signature and digest algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: signature and digest algorithm
                 from("direct:sha3_256")
                         .to("xmlsecurity-sign:sha3_256?keyAccessor=#accessor"
@@ -221,7 +221,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
                 // END SNIPPET: signature and digest algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: signature and digest algorithm
                 from("direct:sha3_384")
                         .to("xmlsecurity-sign:sha3_384?keyAccessor=#accessor"
@@ -230,7 +230,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
                 // END SNIPPET: signature and digest algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: signature and digest algorithm
                 from("direct:sha3_512")
                         .to("xmlsecurity-sign:sha3_512?keyAccessor=#accessor"
@@ -370,7 +370,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
         super.setUp();
     }
 
-    public void setUpKeys(String algorithm, int keylength) throws Exception {
+    public void setUpKeys(String algorithm, int keylength) {
         keyPair = getKeyPair(algorithm, keylength);
     }
 
@@ -411,12 +411,12 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
         KeyAccessor accessor = new KeyAccessor() {
 
             @Override
-            public KeySelector getKeySelector(Message message) throws Exception {
+            public KeySelector getKeySelector(Message message) {
                 return KeySelector.singletonKeySelector(privateKey);
             }
 
             @Override
-            public KeyInfo getKeyInfo(Message mess, Node messageBody, KeyInfoFactory keyInfoFactory) throws Exception {
+            public KeyInfo getKeyInfo(Message mess, Node messageBody, KeyInfoFactory keyInfoFactory) {
                 return null;
             }
         };
