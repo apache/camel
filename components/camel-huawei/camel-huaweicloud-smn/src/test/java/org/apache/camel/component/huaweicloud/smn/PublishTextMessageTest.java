@@ -38,7 +38,7 @@ public class PublishTextMessageTest extends CamelTestSupport {
     @BindToRegistry("smnClient")
     SmnClientMock smnClientMock = new SmnClientMock(null); // creating mock smn client to stub method behavior for unit testing
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:publish_text_message")
