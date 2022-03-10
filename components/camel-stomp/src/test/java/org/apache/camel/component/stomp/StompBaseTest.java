@@ -66,7 +66,7 @@ public abstract class StompBaseTest extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         SimpleRegistry registry = new SimpleRegistry();
         if (isUseSsl()) {
             registry.bind("sslContextParameters", getClientSSLContextParameters());
