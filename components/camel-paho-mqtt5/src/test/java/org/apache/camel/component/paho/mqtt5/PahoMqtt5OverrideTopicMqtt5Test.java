@@ -22,10 +22,10 @@ import org.junit.jupiter.api.Test;
 public class PahoMqtt5OverrideTopicMqtt5Test extends PahoMqtt5TestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 PahoMqtt5Component paho = context.getComponent("paho-mqtt5", PahoMqtt5Component.class);
                 paho.getConfiguration().setBrokerUrl("tcp://localhost:" + mqttPort);
 

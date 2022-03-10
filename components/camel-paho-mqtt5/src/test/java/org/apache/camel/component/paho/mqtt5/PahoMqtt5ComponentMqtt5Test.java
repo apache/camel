@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.paho.mqtt5;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.EndpointInject;
@@ -38,10 +37,10 @@ public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
     MockEndpoint testCustomizedPahoMock;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 PahoMqtt5Component customizedPaho = new PahoMqtt5Component();
                 context.addComponent("customizedPaho", customizedPaho);
 
@@ -102,7 +101,7 @@ public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
     }
 
     @Test
-    public void shouldKeepDefaultMessageInHeader() throws InterruptedException, UnsupportedEncodingException {
+    public void shouldKeepDefaultMessageInHeader() throws InterruptedException {
         // Given
         final String msg = "msg";
         mock.expectedBodiesReceived(msg);
