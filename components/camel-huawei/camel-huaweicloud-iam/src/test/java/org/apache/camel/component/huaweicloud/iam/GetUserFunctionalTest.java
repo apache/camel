@@ -41,9 +41,9 @@ public class GetUserFunctionalTest extends CamelTestSupport {
     @BindToRegistry("serviceKeys")
     ServiceKeys serviceKeys = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:get_user")
                         .setProperty("CamelHwCloudIamOperation", constant("getUser"))
                         .setProperty("CamelHwCloudIamUserId", constant(USER_ID))

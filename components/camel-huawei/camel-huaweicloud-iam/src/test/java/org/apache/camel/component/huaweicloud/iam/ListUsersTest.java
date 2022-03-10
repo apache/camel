@@ -35,10 +35,10 @@ public class ListUsersTest extends CamelTestSupport {
     @BindToRegistry("iamClient")
     IAMMockClient mockClient = new IAMMockClient(null);
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list_users")
                         .to("hwcloud-iam:listUsers?" +
                             "accessKey=" + testConfiguration.getProperty("accessKey") +

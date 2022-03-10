@@ -35,10 +35,10 @@ public class GetGroupUsersTest extends CamelTestSupport {
     @BindToRegistry("iamClient")
     IAMMockClient mockClient = new IAMMockClient(null);
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:get_group_users")
                         .setProperty("CamelHwCloudIamOperation", constant("getGroupUsers"))
                         .setProperty("CamelHwCloudIamGroupId", constant(testConfiguration.getProperty("groupId")))
