@@ -32,6 +32,7 @@ import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,18 +43,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractFhirTestSupport extends CamelTestSupport {
 
-    static FhirService service;
+    @RegisterExtension
+    public static FhirService service = FhirServiceFactory.createService();
 
     protected Patient patient;
     FhirContext fhirContext;
     IGenericClient fhirClient;
-
-    static {
-        // We don't want a new FHIR server for every test class
-        // https://www.testcontainers.org/test_framework_integration/manual_lifecycle_control/
-        service = FhirServiceFactory.createService();
-        service.initialize();
-    }
 
     @BeforeEach
     public void cleanFhirServerState() {
