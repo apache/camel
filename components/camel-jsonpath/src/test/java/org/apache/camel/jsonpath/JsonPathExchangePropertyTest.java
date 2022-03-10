@@ -26,10 +26,10 @@ import org.junit.jupiter.api.Test;
 public class JsonPathExchangePropertyTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setProperty("foo").jsonpath("$.store.bicycle.color", String.class)
                         .log("${exchangeProperty.foo}")

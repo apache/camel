@@ -28,10 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JsonPathTransformONielEscapedTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .transform().jsonpath("$.store.book[?(@.author == 'John O\\'Niel')].title")
                         .to("mock:authors");

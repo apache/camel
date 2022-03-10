@@ -37,10 +37,10 @@ public class JsonPathSourceTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").transform().jsonpath("$.store.book[0].title", String.class)
                         .to("mock:title");
 

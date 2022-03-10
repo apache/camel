@@ -25,10 +25,10 @@ import org.junit.jupiter.api.Test;
 public class JsonPathHeaderNameTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setHeader("number").jsonpath("$..store.book.length()", false, int.class, "myHeader")
                         .to("mock:result");

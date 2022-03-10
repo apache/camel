@@ -48,7 +48,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExpressionArray() throws Exception {
+    public void testExpressionArray() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/books.json"));
 
@@ -69,7 +69,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExpressionField() throws Exception {
+    public void testExpressionField() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/type.json"));
 
@@ -87,7 +87,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExpressionPojo() throws Exception {
+    public void testExpressionPojo() {
         Exchange exchange = new DefaultExchange(context);
         Map pojo = new HashMap();
         pojo.put("kind", "full");
@@ -108,7 +108,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
     }
 
     @Test
-    public void testPredicate() throws Exception {
+    public void testPredicate() {
         // Test books.json file
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/books.json"));
@@ -124,7 +124,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSuppressException() throws Exception {
+    public void testSuppressException() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/type.json"));
 
