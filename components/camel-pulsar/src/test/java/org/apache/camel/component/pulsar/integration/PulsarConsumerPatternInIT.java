@@ -100,7 +100,7 @@ public class PulsarConsumerPatternInIT extends PulsarITSupport {
         // and for that we add them first as routes, which we then later stop
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fromOne).routeId("one").to("mock:one");
                 from(fromTwo).routeId("two").to("mock:two");
             }
@@ -128,7 +128,7 @@ public class PulsarConsumerPatternInIT extends PulsarITSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(from).to(to).process(e -> LOGGER.info("Processing message {}", e.getIn().getBody(String.class)));
             }
         });
