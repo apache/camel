@@ -41,7 +41,7 @@ public class InitSolrEndpointTest extends SolrTestSupport {
     private String solrUrl = "solr://localhost:" + getPort() + "/solr";
 
     @Test
-    public void endpointCreatedCorrectlyWithAllOptions() throws Exception {
+    public void endpointCreatedCorrectlyWithAllOptions() {
         HttpClient httpClient = HttpClientUtil.createClient(new ModifiableSolrParams());
         context.getRegistry().bind("http", httpClient);
         SolrClient httpSolrClient = new HttpSolrClient.Builder(solrUrl).build();
@@ -53,7 +53,7 @@ public class InitSolrEndpointTest extends SolrTestSupport {
     }
 
     @Test
-    public void streamingEndpointCreatedCorrectly() throws Exception {
+    public void streamingEndpointCreatedCorrectly() {
         SolrEndpoint solrEndpoint = context.getEndpoint(solrUrl, SolrEndpoint.class);
         assertNotNull(solrEndpoint);
         assertEquals(SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE, solrEndpoint.getSolrConfiguration().getStreamingQueueSize(),
@@ -64,7 +64,7 @@ public class InitSolrEndpointTest extends SolrTestSupport {
     }
 
     @Test
-    public void wrongURLFormatFailsEndpointCreation() throws Exception {
+    public void wrongURLFormatFailsEndpointCreation() {
         assertThrows(ResolveEndpointFailedException.class,
                 () -> context.getEndpoint("solr://localhost:x99/solr"));
     }

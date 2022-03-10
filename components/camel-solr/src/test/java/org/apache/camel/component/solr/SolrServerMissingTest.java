@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SolrServerMissingTest extends SolrTestSupport {
 
     @Test
-    public void indexSingleDocumentToNonexistentServer() throws Exception {
+    public void indexSingleDocumentToNonexistentServer() {
         Exchange exchange = createExchangeWithBody(null);
         exchange.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
         exchange.getIn().setHeader("SolrField.id", "MA147LL/A");
@@ -36,10 +36,10 @@ public class SolrServerMissingTest extends SolrTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("solr://localhost:" + getPort() + "/missingSolr");
             }
         };
