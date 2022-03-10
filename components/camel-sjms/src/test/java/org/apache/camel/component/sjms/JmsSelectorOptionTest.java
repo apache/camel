@@ -64,9 +64,9 @@ public class JmsSelectorOptionTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("sjms:queue:hello?messageSelector=color='blue'").to("mock:a");
                 from("sjms:queue:hello?messageSelector=color='red'").to("mock:b");
                 from("sjms:queue:hello?messageSelector=SIZE_NUMBER>1500").to("mock:c");

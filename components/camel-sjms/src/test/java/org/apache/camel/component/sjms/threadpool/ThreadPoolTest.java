@@ -50,10 +50,10 @@ public class ThreadPoolTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("sjms:queue:foo").routeId(FROM_ROUTE);
                 from("sjms:queue:foo").to("log:test.log.1?showBody=true").routeId(TO_ROUTE);
             }

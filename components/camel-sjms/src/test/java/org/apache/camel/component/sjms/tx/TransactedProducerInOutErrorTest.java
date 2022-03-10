@@ -47,10 +47,10 @@ public class TransactedProducerInOutErrorTest {
         LOG.info("Exception was thrown as expected", t);
     }
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:start")
                         .to("sjms:queue:test-in?replyTo=test-out&exchangePattern=InOut&transacted=true")

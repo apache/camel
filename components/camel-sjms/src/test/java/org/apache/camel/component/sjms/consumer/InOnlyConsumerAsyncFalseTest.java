@@ -52,10 +52,10 @@ public class InOnlyConsumerAsyncFalseTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(SJMS_QUEUE_NAME).to("log:before").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         beforeThreadName = Thread.currentThread().getName();
@@ -64,7 +64,7 @@ public class InOnlyConsumerAsyncFalseTest extends JmsTestSupport {
                         }
                     }
                 }).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         afterThreadName = Thread.currentThread().getName();
                     }
                 }).to("log:after").to(MOCK_RESULT);
