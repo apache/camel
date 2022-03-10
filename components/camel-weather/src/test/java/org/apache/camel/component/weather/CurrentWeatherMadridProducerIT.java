@@ -89,10 +89,10 @@ public class CurrentWeatherMadridProducerIT extends BaseWeatherConsumerIT {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 /* The Camel Route uses the apache-camel appid to access the openweathermap service */
                 from("direct:start")
