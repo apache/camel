@@ -61,10 +61,10 @@ public class JMSTXInOutPersistentQueueTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=myReplies")
                         .to("mock:reply")
                         .process(exchange -> {

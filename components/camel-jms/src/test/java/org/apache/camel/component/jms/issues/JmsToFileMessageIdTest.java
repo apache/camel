@@ -57,10 +57,10 @@ public class JmsToFileMessageIdTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Make a route from an activemq queue to a file endpoint, then try to call getMessageId()
                 from("activemq:foo")
                         .process(exchange -> {

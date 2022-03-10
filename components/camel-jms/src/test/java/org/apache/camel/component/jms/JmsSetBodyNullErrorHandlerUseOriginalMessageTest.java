@@ -51,10 +51,10 @@ public class JmsSetBodyNullErrorHandlerUseOriginalMessageTest extends CamelTestS
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("activemq:queue:dead").useOriginalMessage());
 
                 from("activemq:queue:foo")

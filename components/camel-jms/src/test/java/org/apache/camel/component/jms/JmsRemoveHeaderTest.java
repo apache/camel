@@ -60,10 +60,10 @@ public class JmsRemoveHeaderTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo").removeHeader("foo").to("activemq:queue:bar");
 
                 from("activemq:queue:bar").to("mock:result");

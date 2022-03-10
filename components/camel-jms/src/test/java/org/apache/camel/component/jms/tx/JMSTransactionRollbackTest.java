@@ -45,7 +45,7 @@ public class JMSTransactionRollbackTest extends CamelSpringTestSupport {
 
     public static class MyProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             throw new IllegalArgumentException("Forced Exception");
         }
     }

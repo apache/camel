@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JmsRequestReplySharedReplyToTest extends CamelTestSupport {
 
     @Test
-    public void testJmsRequestReplySharedReplyTo() throws Exception {
+    public void testJmsRequestReplySharedReplyTo() {
         StopWatch watch = new StopWatch();
 
         // shared is more slower than exclusive, due it need to use a JMS Message Selector
@@ -56,10 +56,10 @@ public class JmsRequestReplySharedReplyToTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo")
                         .transform(body().prepend("Hello "));
             }

@@ -72,10 +72,10 @@ public class JmsRouteUsingJMSXGroupTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("jms:queue:foo");
 
                 from("jms:queue:foo?concurrentConsumers=2").to("log:foo?showHeaders=false").to("mock:result");

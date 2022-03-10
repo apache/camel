@@ -250,7 +250,7 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInOutJMSDestination() throws Exception {
+    public void testInOutJMSDestination() {
         Destination queue = new ActiveMQQueue("reply");
 
         String reply = (String) template.requestBodyAndHeader("activemq:queue:bar", "Hello World", JmsConstants.JMS_DESTINATION,
@@ -259,7 +259,7 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInOutJMSDestinationName() throws Exception {
+    public void testInOutJMSDestinationName() {
         String reply = (String) template.requestBodyAndHeader("activemq:queue:bar", "Hello World",
                 JmsConstants.JMS_DESTINATION_NAME, "reply");
         assertEquals("Bye World", reply);
@@ -268,7 +268,7 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
     @Test
     public void testInOnlyRouteJMSDestinationName() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:a").to("activemq:queue:b");
                 from("activemq:queue:b").to("mock:result");
             }
@@ -298,10 +298,10 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo").to("mock:result");
 
                 from("activemq:queue:reply").transform(constant("Bye World"));

@@ -35,7 +35,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
     public void testJmsToJmsTestOK() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo")
                         .transacted()
                         .to("activemq:queue:bar");
@@ -53,7 +53,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
     public void testJmsToJmsTestRollbackDueToException() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo")
                         .transacted()
                         .to("mock:start")
@@ -80,7 +80,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
     public void testJmsToJmsTestRollbackDueToRollback() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo")
                         .transacted()
                         .to("mock:start")
@@ -111,7 +111,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
     public void testJmsToJmsTestRollbackDueToMarkRollbackOnly() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo")
                         .transacted()
                         .to("mock:start")

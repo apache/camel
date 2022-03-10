@@ -70,10 +70,10 @@ public class JmsRouteWithInOnlyAndMultipleAcksTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // this route picks up an order request
                 // send out a one way notification to multiple
                 // topic subscribers, lets a bean handle

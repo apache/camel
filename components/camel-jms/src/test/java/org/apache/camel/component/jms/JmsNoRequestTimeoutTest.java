@@ -31,7 +31,7 @@ public class JmsNoRequestTimeoutTest extends CamelTestSupport {
     protected String componentName = "activemq";
 
     @Test
-    public void testNoRequestTimeout() throws Exception {
+    public void testNoRequestTimeout() {
         String reply = template.requestBody("activemq:queue:hello?requestTimeout=0", "Hello World", String.class);
         assertEquals("Bye World", reply);
     }
@@ -47,9 +47,9 @@ public class JmsNoRequestTimeoutTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:hello").transform(constant("Bye World"));
             }
         };

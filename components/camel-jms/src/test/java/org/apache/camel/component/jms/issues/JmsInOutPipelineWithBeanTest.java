@@ -38,19 +38,19 @@ public class JmsInOutPipelineWithBeanTest extends CamelTestSupport {
     private MyDummyBean bean = new MyDummyBean();
 
     @Test
-    public void testA() throws Exception {
+    public void testA() {
         Object response = template.requestBody("activemq:testA", "Hello World");
         assertEquals("Hello World,From Bean,From A,From B", response, "Reply");
     }
 
     @Test
-    public void testB() throws Exception {
+    public void testB() {
         Object response = template.requestBody("activemq:testB", "Hello World");
         assertEquals("Hello World,From A,From Bean,From B", response, "Reply");
     }
 
     @Test
-    public void testC() throws Exception {
+    public void testC() {
         Object response = template.requestBody("activemq:testC", "Hello World");
         assertEquals("Hello World,From A,From B,From Bean", response, "Reply");
     }
@@ -64,9 +64,9 @@ public class JmsInOutPipelineWithBeanTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:testA").to("bean:dummyBean").to("activemq:a").to("activemq:b");
                 from("activemq:testB").to("activemq:a").to("bean:dummyBean").to("activemq:b");
                 from("activemq:testC").to("activemq:a").to("activemq:b").to("bean:dummyBean");

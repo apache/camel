@@ -43,7 +43,7 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         CamelContext context = new DefaultCamelContext();
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
@@ -99,10 +99,10 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:start").routeId("foo").to("log:foo").to("mock:result");
             }
         };

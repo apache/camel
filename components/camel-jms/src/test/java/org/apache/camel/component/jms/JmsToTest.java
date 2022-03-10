@@ -50,10 +50,10 @@ public class JmsToTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // wrongly using to instead of toD
                 from("direct:start").to("activemq:queue:${header.where}");
 

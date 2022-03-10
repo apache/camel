@@ -59,9 +59,9 @@ public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:foo?concurrentConsumers=2&maxConcurrentConsumers=5").routeId("foo").noAutoStartup()
                         .log("${threadName} got ${body}")
                         .delay(simple("${random(0,10)}"))

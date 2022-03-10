@@ -67,10 +67,10 @@ public class AsyncJmsInOutTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // in a fully sync mode it would take at least 5 + 5 sec to process the 100 messages
                 // (there are delays in both routes)
                 // however due async routing, we can leverage the fact to let threads non blocked

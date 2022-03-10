@@ -34,7 +34,7 @@ public class JmsMessageBodySetNullTest extends CamelTestSupport {
     public void testSetNullBodyUsingProcessor() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jms:queue:foo")
                         .to("mock:foo")
                         .process(exchange -> exchange.getIn().setBody(null))
@@ -56,7 +56,7 @@ public class JmsMessageBodySetNullTest extends CamelTestSupport {
     public void testSetNullBodyUsingProcessorPreserveHeaders() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jms:queue:foo")
                         .to("mock:foo")
                         .process(exchange -> exchange.getIn().setBody(null))
@@ -80,7 +80,7 @@ public class JmsMessageBodySetNullTest extends CamelTestSupport {
     public void testSetNullBodyUsingSetBody() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jms:queue:foo")
                         .to("mock:foo")
                         .setBody(simple("${null}"))
@@ -102,7 +102,7 @@ public class JmsMessageBodySetNullTest extends CamelTestSupport {
     public void testSetNullBodyUsingSetBodyPreserveHeaders() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jms:queue:foo")
                         .to("mock:foo")
                         .setBody(simple("${null}"))

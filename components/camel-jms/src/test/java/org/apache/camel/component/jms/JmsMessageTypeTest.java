@@ -202,10 +202,10 @@ public class JmsMessageTypeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:text").to("jms:queue:foo?jmsMessageType=Text");
                 from("direct:bytes").to("jms:queue:foo?jmsMessageType=Bytes");
                 from("direct:map").to("jms:queue:foo?jmsMessageType=Map");

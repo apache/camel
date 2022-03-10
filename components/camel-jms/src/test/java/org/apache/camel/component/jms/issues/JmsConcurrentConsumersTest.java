@@ -78,9 +78,9 @@ public class JmsConcurrentConsumersTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:a?concurrentConsumers=3").to("activemq:b?concurrentConsumers=3");
 
                 from("activemq:b?concurrentConsumers=3").process(exchange -> {

@@ -39,7 +39,7 @@ public class JmsRequestReplyExclusiveReplyToRemoveAddRouteTest extends CamelTest
         // add new route using same jms endpoint uri
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start2").routeId("start2")
                         .to("activemq:queue:foo?replyTo=bar&replyToType=Exclusive")
                         .to("log:start2");
@@ -62,10 +62,10 @@ public class JmsRequestReplyExclusiveReplyToRemoveAddRouteTest extends CamelTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("start")
                         .to("activemq:queue:foo?replyTo=bar&replyToType=Exclusive")
                         .to("log:start");

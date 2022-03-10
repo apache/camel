@@ -73,12 +73,12 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     protected TestInfo testInfo;
 
     private interface ContextBuilder {
-        CamelContext buildContext(CamelContext context) throws Exception;
+        CamelContext buildContext(CamelContext context);
     }
 
     public static class SingleNodeDeadEndRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from(endpointUriA)
                     // We are not expect the response here
                     .setExchangePattern(ExchangePattern.InOnly).process(e -> {
@@ -89,7 +89,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     public static class SingleNodeRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from(endpointUriA).process(e -> {
                 String request = e.getIn().getBody(String.class);
                 e.getMessage().setBody(expectedReply + request.substring(request.indexOf('-')));
@@ -99,7 +99,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     public static class MultiNodeRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from(endpointUriA).to(endpointUriB);
             from(endpointUriB).process(e -> {
                 String request = e.getIn().getBody(String.class);
@@ -110,7 +110,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     public static class MultiNodeReplyToRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from(endpointUriA).to(endpointReplyToUriB);
             from(endpointUriB).process(e -> {
                 Message in = e.getIn();
@@ -125,7 +125,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     public static class MultiNodeDiffCompRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from(endpointUriA).to(endpointUriB1);
             from(endpointUriB1).process(e -> {
                 String request = e.getIn().getBody(String.class);
@@ -136,7 +136,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     public static class ContextBuilderMessageID implements ContextBuilder {
         @Override
-        public CamelContext buildContext(CamelContext context) throws Exception {
+        public CamelContext buildContext(CamelContext context) {
             ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
             JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
             jmsComponent.getConfiguration().setUseMessageIDAsCorrelationID(true);
@@ -270,7 +270,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         }
 
         @Override
-        public Task call() throws Exception {
+        public Task call() {
             for (int i = 0; i < maxCalls; i++) {
                 int callId = counter.incrementAndGet();
                 Object reply = "";
@@ -389,7 +389,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUseCorrelationIDTimeout() throws Exception {
+    public void testUseCorrelationIDTimeout() {
         Object reply = "";
         try {
             // set the timeout for the request, specifically. At this point it is too late to re-configure
@@ -402,7 +402,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUseMessageIDAsCorrelationIDTimeout() throws Exception {
+    public void testUseMessageIDAsCorrelationIDTimeout() {
         Object reply = "";
         try {
             // set the timeout for the request, specifically. At this point it is too late to re-configure
@@ -463,7 +463,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return routeBuilders.get(getTestMethodName());
     }
 }

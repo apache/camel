@@ -37,7 +37,7 @@ public class JmsTransactedOnExceptionRollbackOnExceptionTest extends CamelTestSu
 
         @SuppressWarnings("unused")
         @Handler
-        public void onException(Exchange exchange, Exception exception) throws Exception {
+        public void onException(Exchange exchange, Exception exception) {
             throw new RuntimeCamelException("error in errorhandler");
         }
     }
@@ -45,10 +45,10 @@ public class JmsTransactedOnExceptionRollbackOnExceptionTest extends CamelTestSu
     protected final String testingEndpoint = "activemq:test." + getClass().getName();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // we attempt to handle the exception but if it throw a new exception
                 // then it causes the JMS transaction to rollback
                 onException(Exception.class).handled(true).bean(BadErrorHandler.class);
@@ -61,7 +61,7 @@ public class JmsTransactedOnExceptionRollbackOnExceptionTest extends CamelTestSu
     }
 
     @Test
-    public void shouldNotLoseMessagesOnExceptionInErrorHandler() throws Exception {
+    public void shouldNotLoseMessagesOnExceptionInErrorHandler() {
         template.sendBody(testingEndpoint, "Hello World");
 
         Object dlqBody = consumer.receiveBody("activemq:ActiveMQ.DLQ", 2000);

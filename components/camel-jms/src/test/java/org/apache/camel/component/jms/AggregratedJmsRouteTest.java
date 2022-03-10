@@ -82,9 +82,9 @@ public class AggregratedJmsRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(timeOutEndpointUri).to("jms:queue:test.b");
 
                 from("jms:queue:test.b").aggregate(header("cheese"), (oldExchange, newExchange) -> {
@@ -110,7 +110,7 @@ public class AggregratedJmsRouteTest extends CamelTestSupport {
     private static class MyProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             LOG.info("get the exchange here " + exchange);
         }
 

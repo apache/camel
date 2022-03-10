@@ -38,7 +38,7 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
     public void testJmsSecurityFailure() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo")
                         .transacted()
                         .to("log:foo")
@@ -65,7 +65,7 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
     public void testJmsSecurityOK() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("log:start")
                         .to("activemq:queue:foo");

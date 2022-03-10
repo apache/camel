@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JmsJMSReplyToConsumerEndpointUsingInOutTest extends CamelTestSupport {
 
     @Test
-    public void testCustomJMSReplyToInOut() throws Exception {
+    public void testCustomJMSReplyToInOut() {
         template.sendBody("activemq:queue:hello", "What is your name?");
 
         String reply = consumer.receiveBody("activemq:queue:namedReplyQueue", 5000, String.class);
@@ -41,9 +41,9 @@ public class JmsJMSReplyToConsumerEndpointUsingInOutTest extends CamelTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:hello?replyTo=queue:namedReplyQueue")
                         .to("log:hello")
                         .transform(constant("My name is Camel"));

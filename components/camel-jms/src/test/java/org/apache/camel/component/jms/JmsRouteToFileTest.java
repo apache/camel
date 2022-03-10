@@ -71,9 +71,9 @@ public class JmsRouteToFileTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // using mock endpoint here purely for testing. You would normally write this route as
                 // from("activemq:queue:hello").to("file://target/routetofile");
                 from("activemq:queue:hello").to("file://target/routetofile").to("mock:result");

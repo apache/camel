@@ -121,9 +121,9 @@ public class JmsSimpleRequestCustomReplyToTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(componentName + ":queue:hello").process(exchange -> {
                     assertEquals("Hello World", exchange.getIn().getBody());
 

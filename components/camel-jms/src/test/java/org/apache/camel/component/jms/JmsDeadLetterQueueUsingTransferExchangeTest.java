@@ -66,10 +66,10 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends CamelTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel(getUri()).disableRedelivery());
 
                 from("direct:start").process(exchange -> {

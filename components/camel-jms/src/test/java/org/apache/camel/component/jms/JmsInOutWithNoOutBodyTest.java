@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JmsInOutWithNoOutBodyTest extends CamelTestSupport {
 
     @Test
-    public void testWithNoOutBodySet() throws Exception {
+    public void testWithNoOutBodySet() {
         String reply = template.requestBody("direct:start", "Foo", String.class);
         assertEquals("Foo", reply);
     }
@@ -46,9 +46,9 @@ public class JmsInOutWithNoOutBodyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("log:before")
                         .to("activemq:request")

@@ -113,9 +113,9 @@ public class ConsumeJmsMapMessageTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:test.map").to("mock:result");
                 from("direct:test").to("activemq:test.map");
             }

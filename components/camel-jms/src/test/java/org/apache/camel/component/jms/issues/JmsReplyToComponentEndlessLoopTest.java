@@ -48,7 +48,7 @@ public class JmsReplyToComponentEndlessLoopTest extends CamelTestSupport {
     public void testReplyToInvalid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo?replyTo=foo").to("mock:result");
             }
         });
