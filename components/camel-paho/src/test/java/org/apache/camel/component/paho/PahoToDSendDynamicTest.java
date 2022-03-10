@@ -43,7 +43,7 @@ public class PahoToDSendDynamicTest extends CamelTestSupport {
     }
 
     @Test
-    public void testToD() throws Exception {
+    public void testToD() {
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
@@ -59,10 +59,10 @@ public class PahoToDSendDynamicTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 PahoComponent paho = context.getComponent("paho", PahoComponent.class);
                 paho.getConfiguration().setBrokerUrl("tcp://localhost:" + mqttPort);
 
