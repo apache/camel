@@ -42,10 +42,10 @@ public class BucketMetadataTest extends CamelTestSupport {
             testConfiguration.getProperty("accessKey"),
             testConfiguration.getProperty("secretKey"));
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:bucket_metadata")
                         .setProperty("CamelHwCloudObsBucketName", constant(testConfiguration.getProperty("bucketName")))
                         .to("hwcloud-obs:getBucketMetadata?" +

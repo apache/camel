@@ -48,10 +48,10 @@ public class ListObjectsMaxTest extends CamelTestSupport {
             testConfiguration.getProperty("accessKey"),
             testConfiguration.getProperty("secretKey"));
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list_objects")
                         .setProperty("CamelHwCloudObsBucketName", constant(testConfiguration.getProperty("bucketName")))
                         .to("hwcloud-obs:listObjects?" +

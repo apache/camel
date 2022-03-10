@@ -45,10 +45,10 @@ public class CreateBucketTest extends CamelTestSupport {
             testConfiguration.getProperty("accessKey"),
             testConfiguration.getProperty("secretKey"));
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:create_bucket")
                         .to("hwcloud-obs:createBucket?" +
                             "serviceKeys=#serviceKeys" +

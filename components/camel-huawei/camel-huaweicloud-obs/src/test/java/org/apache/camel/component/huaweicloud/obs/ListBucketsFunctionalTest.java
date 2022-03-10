@@ -32,9 +32,9 @@ public class ListBucketsFunctionalTest extends CamelTestSupport {
     private static final String SECRET_KEY = "replace_this_with_secret_key";
     private static final String REGION = "replace_this_with_region";
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list_buckets")
                         .to("hwcloud-obs:listBuckets?" +
                             "accessKey=" + ACCESS_KEY +
