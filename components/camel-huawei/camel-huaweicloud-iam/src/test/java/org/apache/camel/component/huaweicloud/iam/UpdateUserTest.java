@@ -36,10 +36,10 @@ public class UpdateUserTest extends CamelTestSupport {
     @BindToRegistry("iamClient")
     IAMMockClient mockClient = new IAMMockClient(null);
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:update_user")
                         .to("hwcloud-iam:updateUser?" +
                             "accessKey=" + testConfiguration.getProperty("accessKey") +

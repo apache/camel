@@ -41,10 +41,10 @@ public class UpdateGroupJsonTest extends CamelTestSupport {
             testConfiguration.getProperty("accessKey"),
             testConfiguration.getProperty("secretKey"));
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:update_group")
                         .setProperty("CamelHwCloudIamGroupId", constant(testConfiguration.getProperty("groupId")))
                         .to("hwcloud-iam:updateGroup?" +
