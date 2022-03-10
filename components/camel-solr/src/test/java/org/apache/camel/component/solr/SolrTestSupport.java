@@ -26,7 +26,7 @@ public abstract class SolrTestSupport extends CamelTestSupport {
     private static int httpsPort;
 
     @BeforeAll
-    public static void initPort() throws Exception {
+    public static void initPort() {
         port = AvailablePortFinder.getNextAvailable();
         httpsPort = AvailablePortFinder.getNextAvailable();
         //TODO : add test for TLSv1.3
