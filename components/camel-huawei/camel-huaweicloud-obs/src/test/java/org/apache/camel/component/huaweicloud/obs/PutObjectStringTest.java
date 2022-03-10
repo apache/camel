@@ -51,10 +51,10 @@ public class PutObjectStringTest extends CamelTestSupport {
             testConfiguration.getProperty("accessKey"),
             testConfiguration.getProperty("secretKey"));
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:put_object")
                         .setBody(constant("a test string"))
                         .setProperty(OBSProperties.OBJECT_NAME, constant("string_file.txt"))

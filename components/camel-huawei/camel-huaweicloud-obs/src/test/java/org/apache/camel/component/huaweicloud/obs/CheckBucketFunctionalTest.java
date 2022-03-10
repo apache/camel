@@ -33,10 +33,10 @@ public class CheckBucketFunctionalTest extends CamelTestSupport {
     private static final String REGION = "replace_this_with_region";
     private static final String BUCKET_NAME = "replace_this_with_bucket_name";
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:check_bucket")
                         .to("hwcloud-obs:checkBucketExists?" +
                             "accessKey=" + ACCESS_KEY +
