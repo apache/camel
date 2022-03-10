@@ -33,10 +33,10 @@ public class Base64PropertiesFunctionTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         // Q2FtZWw== is the word Camel
                         .setBody(simple("${body} {{base64:Q2FtZWw==}}"))
