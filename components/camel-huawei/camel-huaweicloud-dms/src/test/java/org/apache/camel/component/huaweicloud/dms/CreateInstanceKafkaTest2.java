@@ -47,10 +47,10 @@ public class CreateInstanceKafkaTest2 extends CamelTestSupport {
     @BindToRegistry("availableZones")
     List<String> availableZones = new ArrayList<>();
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:operation")
                         .setProperty(DMSProperties.NAME, constant(testConfiguration.getProperty("name")))
                         .setProperty(DMSProperties.ENGINE, constant("kafka"))

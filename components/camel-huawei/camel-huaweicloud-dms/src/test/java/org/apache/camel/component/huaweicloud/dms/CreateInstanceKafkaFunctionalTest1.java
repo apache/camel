@@ -58,9 +58,9 @@ public class CreateInstanceKafkaFunctionalTest1 extends CamelTestSupport {
     @BindToRegistry("availableZones")
     List<String> availableZones = new ArrayList<>();
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:operation")
                         .to("hwcloud-dms:createInstance?" +
                             "serviceKeys=#serviceKeys" +
