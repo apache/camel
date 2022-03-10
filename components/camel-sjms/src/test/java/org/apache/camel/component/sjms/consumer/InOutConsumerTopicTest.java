@@ -39,9 +39,9 @@ public class InOutConsumerTopicTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("sjms:topic:start").to("log:request")
                         .to("sjms:topic:in.out.topic?exchangePattern=InOut&replyTo=in.out.topic.response")
                         .to("log:response").to("mock:result");

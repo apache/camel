@@ -34,10 +34,10 @@ public class SjmsToDTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // route message dynamic using toD
                 from("direct:start").toD("sjms:queue:${header.where}");
 

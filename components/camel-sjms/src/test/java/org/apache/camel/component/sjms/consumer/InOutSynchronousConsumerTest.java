@@ -31,7 +31,7 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
     private String url = "sjms:queue:in?replyTo=response.queue&synchronous=true";
 
     @Test
-    public void testSynchronous() throws Exception {
+    public void testSynchronous() {
         String reply = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
@@ -39,9 +39,9 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("log:before")
                         .process(exchange -> beforeThreadName = Thread.currentThread().getName())

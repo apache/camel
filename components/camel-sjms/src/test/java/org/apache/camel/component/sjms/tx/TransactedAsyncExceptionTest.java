@@ -48,7 +48,7 @@ public class TransactedAsyncExceptionTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 AtomicInteger counter = new AtomicInteger();
 
                 from(destination + "?acknowledgementMode=SESSION_TRANSACTED&transacted=true")

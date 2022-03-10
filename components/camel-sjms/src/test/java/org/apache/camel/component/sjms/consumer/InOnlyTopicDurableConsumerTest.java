@@ -59,10 +59,10 @@ public class InOnlyTopicDurableConsumerTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("sjms:topic:foo?durableSubscriptionName=bar1")
                         .to("mock:result");
 

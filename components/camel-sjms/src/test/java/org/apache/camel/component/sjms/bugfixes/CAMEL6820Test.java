@@ -74,9 +74,9 @@ public class CAMEL6820Test extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(FILE_INPUT_URI)
                         .convertBodyTo(InputStream.class)
                         .to(SJMS_QUEUE_URI);

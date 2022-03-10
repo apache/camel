@@ -81,11 +81,10 @@ public class ReconnectProducerTest extends JmsTestSupport {
 
     /**
      * @return
-     * @throws Exception
-     * @see              org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
+     * @see    org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
      */
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")

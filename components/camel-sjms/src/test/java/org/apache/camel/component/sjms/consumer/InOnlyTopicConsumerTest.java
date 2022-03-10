@@ -45,13 +45,12 @@ public class InOnlyTopicConsumerTest extends JmsTestSupport {
     }
 
     /**
-     * @see              org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
+     * @see    org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
      *
      * @return
-     * @throws Exception
      */
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")

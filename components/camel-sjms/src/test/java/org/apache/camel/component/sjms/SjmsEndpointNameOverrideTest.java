@@ -37,7 +37,7 @@ public class SjmsEndpointNameOverrideTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDefaults() throws Exception {
+    public void testDefaults() {
         Endpoint endpoint = context.getEndpoint(BEAN_NAME + ":test");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
@@ -47,7 +47,7 @@ public class SjmsEndpointNameOverrideTest extends CamelTestSupport {
     }
 
     @Test
-    public void testQueueEndpoint() throws Exception {
+    public void testQueueEndpoint() {
         Endpoint sjms = context.getEndpoint(BEAN_NAME + ":queue:test");
         assertNotNull(sjms);
         assertTrue(sjms instanceof SjmsEndpoint);
@@ -55,7 +55,7 @@ public class SjmsEndpointNameOverrideTest extends CamelTestSupport {
     }
 
     @Test
-    public void testTopicEndpoint() throws Exception {
+    public void testTopicEndpoint() {
         Endpoint sjms = context.getEndpoint(BEAN_NAME + ":topic:test");
         assertNotNull(sjms);
         assertTrue(sjms instanceof SjmsEndpoint);

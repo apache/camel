@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SjmsToDSendDynamicTwoTest extends JmsTestSupport {
 
     @Test
-    public void testToD() throws Exception {
+    public void testToD() {
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
         template.sendBodyAndHeader("direct:start", "Hello gin", "where", "gin");
@@ -39,10 +39,10 @@ public class SjmsToDSendDynamicTwoTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // route message dynamic using toD
                 from("direct:start").toD("sjms:queue:${header.where}");
 

@@ -43,11 +43,11 @@ public abstract class SjmsConnectionTestSupport {
     public abstract String getConnectionUri();
 
     @BeforeAll
-    public static void setUpBeforeClass() throws Exception {
+    public static void setUpBeforeClass() {
     }
 
     @AfterAll
-    public static void tearDownAfterClass() throws Exception {
+    public static void tearDownAfterClass() {
     }
 
     @BeforeEach

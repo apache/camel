@@ -77,7 +77,7 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
      * Test to verify that when using the consumer listener for the InOut producer we get the correct message back.
      */
     @Test
-    public void testInOutQueueProducer() throws Exception {
+    public void testInOutQueueProducer() {
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
 
@@ -110,7 +110,7 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
