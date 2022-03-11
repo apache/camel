@@ -132,4 +132,13 @@ public @interface Metadata {
      * specify which options each implementation only supports.
      */
     String includeProperties() default "";
+
+    /**
+     * All the headers that are supported by the consumer and/or producer.
+     * <p/>
+     * The expected values are actually the constant expressions referring the name of the header like for example
+     * {@code KafkaConstants.PARTITION_KEY}. The metadata of each header are retrieved directly from the annotation
+     * {@code @Metadata} added to the corresponding constant.
+     */
+    String[] headers() default {};
 }
