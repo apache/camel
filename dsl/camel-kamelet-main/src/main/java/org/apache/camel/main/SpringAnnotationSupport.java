@@ -16,11 +16,20 @@
  */
 package org.apache.camel.main;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.dsl.support.CompilePostProcessor;
+import org.apache.camel.impl.engine.CamelPostProcessorHelper;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.CamelBeanPostProcessorInjector;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ReflectionHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +40,8 @@ public final class SpringAnnotationSupport {
 
     public static void registerSpringSupport(CamelContext context) {
         context.getRegistry().bind("SpringAnnotationCompilePostProcessor", new SpringAnnotationCompilePostProcessor());
+        context.adapt(ExtendedCamelContext.class).getBeanPostProcessor()
+                .addCamelBeanPostProjectInjector(new SpringBeanPostProcessorInjector(context));
     }
 
     private static class SpringAnnotationCompilePostProcessor implements CompilePostProcessor {
@@ -60,6 +71,41 @@ public final class SpringAnnotationSupport {
                     bpp.setUnbindEnabled(false);
                 }
             }
+        }
+    }
+
+    private static class SpringBeanPostProcessorInjector implements CamelBeanPostProcessorInjector {
+
+        private final CamelContext context;
+        private final CamelPostProcessorHelper helper;
+
+        public SpringBeanPostProcessorInjector(CamelContext context) {
+            this.context = context;
+            this.helper = new CamelPostProcessorHelper(context);
+        }
+
+        @Override
+        public void onFieldInject(Field field, Object bean, String beanName) {
+            Autowired autowired = field.getAnnotation(Autowired.class);
+            if (autowired != null) {
+                String name = null;
+                Qualifier qualifier = field.getAnnotation(Qualifier.class);
+                if (qualifier != null) {
+                    name = qualifier.value();
+                }
+                ReflectionHelper.setField(field, bean,
+                        helper.getInjectionBeanValue(field.getType(), name));
+            }
+            Value value = field.getAnnotation(Value.class);
+            if (value != null) {
+                ReflectionHelper.setField(field, bean,
+                        helper.getInjectionPropertyValue(field.getType(), value.value(), null, null, bean, beanName));
+            }
+        }
+
+        @Override
+        public void onFieldMethod(Method method, Object bean, String beanName) {
+
         }
     }
 }

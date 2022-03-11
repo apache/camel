@@ -113,7 +113,15 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
-                    <artifactId>*</artifactId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

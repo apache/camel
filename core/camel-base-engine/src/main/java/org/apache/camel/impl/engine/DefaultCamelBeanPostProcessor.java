@@ -37,6 +37,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.CamelBeanPostProcessorInjector;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ReflectionHelper;
@@ -65,6 +66,7 @@ import static org.apache.camel.util.ObjectHelper.isEmpty;
 public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, CamelContextAware {
 
     protected static final Logger LOG = LoggerFactory.getLogger(DefaultCamelBeanPostProcessor.class);
+    protected final List<CamelBeanPostProcessorInjector> beanPostProcessorInjectors = new ArrayList<>();
     protected CamelPostProcessorHelper camelPostProcessorHelper;
     protected CamelContext camelContext;
     protected boolean enabled = true;
@@ -103,6 +105,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
     public void setUnbindEnabled(boolean unbindEnabled) {
         this.unbindEnabled = unbindEnabled;
+    }
+
+    @Override
+    public void addCamelBeanPostProjectInjector(CamelBeanPostProcessorInjector injector) {
+        this.beanPostProcessorInjectors.add(injector);
     }
 
     @Override
@@ -268,6 +275,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
                 String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
                 injectField(field, uri, produce.property(), bean, beanName, produce.binding());
             }
+
+            // custom bean injector on the field
+            for (CamelBeanPostProcessorInjector injector : beanPostProcessorInjectors) {
+                injector.onFieldInject(field, bean, beanName);
+            }
         });
     }
 
@@ -323,6 +335,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
             setterInjection(method, bean, beanName);
             getPostProcessorHelper().consumerInjection(method, bean, beanName);
+
+            // custom bean injector on the method
+            for (CamelBeanPostProcessorInjector injector : beanPostProcessorInjectors) {
+                injector.onFieldMethod(method, bean, beanName);
+            }
         });
     }
 
