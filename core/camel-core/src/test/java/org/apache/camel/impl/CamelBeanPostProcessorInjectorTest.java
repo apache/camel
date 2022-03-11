@@ -16,6 +16,9 @@
  */
 package org.apache.camel.impl;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyInject;
@@ -28,9 +31,6 @@ import org.apache.camel.util.ReflectionHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 public class CamelBeanPostProcessorInjectorTest extends ContextTestSupport {
 
