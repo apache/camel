@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dsl.support;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
@@ -35,6 +39,7 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
     private final String extension;
 
     private StartupStepRecorder recorder;
+    private final List<AnnotationPreProcessor> annotationPreProcessors = new ArrayList<>();
 
     protected RouteBuilderLoaderSupport(String extension) {
         this.extension = extension;
@@ -46,12 +51,42 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
         return extension;
     }
 
+    /**
+     * Gets the registered {@link AnnotationPreProcessor}.
+     */
+    public List<AnnotationPreProcessor> getAnnotationPreProcessors() {
+        return annotationPreProcessors;
+    }
+
+    /**
+     * Add a custom {@link AnnotationPreProcessor} to handle specific annotations after compiling the source into a Java
+     * object.
+     */
+    public void addAnnotationPreProcessor(AnnotationPreProcessor preProcessor) {
+        this.annotationPreProcessors.add(preProcessor);
+    }
+
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
 
         if (getCamelContext() != null) {
             this.recorder = getCamelContext().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (getCamelContext() != null) {
+            // discover optional pre-processors to be used
+            Set<AnnotationPreProcessor> pres = getCamelContext().getRegistry().findByType(AnnotationPreProcessor.class);
+            if (pres != null && !pres.isEmpty()) {
+                for (AnnotationPreProcessor pre : pres) {
+                    addAnnotationPreProcessor(pre);
+                }
+            }
         }
     }
 
