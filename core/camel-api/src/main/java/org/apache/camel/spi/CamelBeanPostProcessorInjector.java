@@ -21,12 +21,26 @@ import java.lang.reflect.Method;
 
 /**
  * Used for custom injection when doing {@link CamelBeanPostProcessor} bean post-processing. Can be used to support
- * 3rd-party annotations for dependenct injections.
+ * 3rd-party annotations for dependency injections.
  */
 public interface CamelBeanPostProcessorInjector {
 
+    /**
+     * Field injection
+     *
+     * @param field    the field
+     * @param bean     the bean instance where the field is present
+     * @param beanName optional bean id of the bean
+     */
     void onFieldInject(Field field, Object bean, String beanName);
 
-    void onFieldMethod(Method method, Object bean, String beanName);
+    /**
+     * Method injection
+     *
+     * @param method   the method
+     * @param bean     the bean instance where the method is present
+     * @param beanName optional bean id of the bean
+     */
+    void onMethodInject(Method method, Object bean, String beanName);
 
 }

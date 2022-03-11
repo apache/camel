@@ -338,7 +338,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
             // custom bean injector on the method
             for (CamelBeanPostProcessorInjector injector : beanPostProcessorInjectors) {
-                injector.onFieldMethod(method, bean, beanName);
+                injector.onMethodInject(method, bean, beanName);
             }
         });
     }

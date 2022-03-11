@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.dsl.support.CompilePostProcessor;
 import org.apache.camel.impl.engine.CamelPostProcessorHelper;
 import org.apache.camel.spi.CamelBeanPostProcessor;
@@ -93,8 +94,16 @@ public final class SpringAnnotationSupport {
                 if (qualifier != null) {
                     name = qualifier.value();
                 }
-                ReflectionHelper.setField(field, bean,
-                        helper.getInjectionBeanValue(field.getType(), name));
+
+                try {
+                    ReflectionHelper.setField(field, bean,
+                            helper.getInjectionBeanValue(field.getType(), name));
+                } catch (NoSuchBeanException e) {
+                    if (autowired.required()) {
+                        throw e;
+                    }
+                    // not required so ignore
+                }
             }
             Value value = field.getAnnotation(Value.class);
             if (value != null) {
@@ -104,8 +113,8 @@ public final class SpringAnnotationSupport {
         }
 
         @Override
-        public void onFieldMethod(Method method, Object bean, String beanName) {
-
+        public void onMethodInject(Method method, Object bean, String beanName) {
+            // TODO; @Bean
         }
     }
 }
