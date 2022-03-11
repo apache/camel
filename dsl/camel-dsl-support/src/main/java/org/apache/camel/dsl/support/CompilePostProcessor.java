@@ -19,15 +19,24 @@ package org.apache.camel.dsl.support;
 import org.apache.camel.CamelContext;
 
 /**
- * Allows to plugin custom annotation pre-processors that are processed after the DSL has loaded the source and compiled
- * into a Java object.
+ * Allows to plugin custom post processors that are processed after the DSL has loaded the source and compiled into a
+ * Java object.
  * <p/>
- * This is used to detect and handle {@link org.apache.camel.BindToRegistry} and {@link org.apache.camel.TypeConverter}
+ * This is used to detect and handle {@link org.apache.camel.BindToRegistry} and {@link org.apache.camel.Converter}
  * classes.
  */
-public interface AnnotationPreProcessor {
+public interface CompilePostProcessor {
 
-    void handleAnnotation(
+    /**
+     * Invoked after the class has been compiled
+     *
+     * @param  camelContext the camel context
+     * @param  name         the name of the resource/class
+     * @param  clazz        the class
+     * @param  instance     the object created as instance of the class (if any)
+     * @throws Exception    is thrown if error during post-processing
+     */
+    void postCompile(
             CamelContext camelContext, String name,
             Class<?> clazz, Object instance)
             throws Exception;

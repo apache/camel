@@ -31,7 +31,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.dsl.support.AnnotationPreProcessor;
+import org.apache.camel.dsl.support.CompilePostProcessor;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Resource;
@@ -53,8 +53,8 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     public JavaRoutesBuilderLoader() {
         super(EXTENSION);
 
-        addAnnotationPreProcessor(new ConverterAnnotationPreProcessor());
-        addAnnotationPreProcessor(new BindToRegistryAnnotationPreProcessor());
+        addCompilePostProcessor(new ConverterCompilePostProcessor());
+        addCompilePostProcessor(new BindToRegistryCompilePostProcessor());
     }
 
     @Override
@@ -75,8 +75,8 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             }
 
             // not a route builder but we support annotation scan to register custom beans, type converters, etc.
-            for (AnnotationPreProcessor pre : getAnnotationPreProcessors()) {
-                pre.handleAnnotation(getCamelContext(), name, clazz, obj);
+            for (CompilePostProcessor pre : getCompilePostProcessors()) {
+                pre.postCompile(getCamelContext(), name, clazz, obj);
             }
 
             return null;
@@ -98,10 +98,10 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 : name;
     }
 
-    private static class ConverterAnnotationPreProcessor implements AnnotationPreProcessor {
+    private static class ConverterCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void handleAnnotation(CamelContext camelContext, String name, Class<?> clazz, Object instance) {
+        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, Object instance) throws Exception {
             if (clazz.getAnnotation(Converter.class) != null) {
                 TypeConverterRegistry tcr = camelContext.getTypeConverterRegistry();
                 TypeConverterExists exists = tcr.getTypeConverterExists();
@@ -119,11 +119,10 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         }
     }
 
-    private static class BindToRegistryAnnotationPreProcessor implements AnnotationPreProcessor {
+    private static class BindToRegistryCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void handleAnnotation(CamelContext camelContext, String name, Class<?> clazz, Object instance)
-                throws Exception {
+        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, Object instance) throws Exception {
             BindToRegistry bir = instance.getClass().getAnnotation(BindToRegistry.class);
             Configuration cfg = instance.getClass().getAnnotation(Configuration.class);
             if (bir != null || cfg != null || instance instanceof CamelConfiguration) {

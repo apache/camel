@@ -39,7 +39,7 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
     private final String extension;
 
     private StartupStepRecorder recorder;
-    private final List<AnnotationPreProcessor> annotationPreProcessors = new ArrayList<>();
+    private final List<CompilePostProcessor> compilePostProcessors = new ArrayList<>();
 
     protected RouteBuilderLoaderSupport(String extension) {
         this.extension = extension;
@@ -52,18 +52,18 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
     }
 
     /**
-     * Gets the registered {@link AnnotationPreProcessor}.
+     * Gets the registered {@link CompilePostProcessor}.
      */
-    public List<AnnotationPreProcessor> getAnnotationPreProcessors() {
-        return annotationPreProcessors;
+    public List<CompilePostProcessor> getCompilePostProcessors() {
+        return compilePostProcessors;
     }
 
     /**
-     * Add a custom {@link AnnotationPreProcessor} to handle specific annotations after compiling the source into a Java
-     * object.
+     * Add a custom {@link CompilePostProcessor} to handle specific post-processing after compiling the source into a
+     * Java object.
      */
-    public void addAnnotationPreProcessor(AnnotationPreProcessor preProcessor) {
-        this.annotationPreProcessors.add(preProcessor);
+    public void addCompilePostProcessor(CompilePostProcessor preProcessor) {
+        this.compilePostProcessors.add(preProcessor);
     }
 
     @Override
@@ -81,10 +81,10 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
 
         if (getCamelContext() != null) {
             // discover optional pre-processors to be used
-            Set<AnnotationPreProcessor> pres = getCamelContext().getRegistry().findByType(AnnotationPreProcessor.class);
+            Set<CompilePostProcessor> pres = getCamelContext().getRegistry().findByType(CompilePostProcessor.class);
             if (pres != null && !pres.isEmpty()) {
-                for (AnnotationPreProcessor pre : pres) {
-                    addAnnotationPreProcessor(pre);
+                for (CompilePostProcessor pre : pres) {
+                    addCompilePostProcessor(pre);
                 }
             }
         }

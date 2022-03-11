@@ -18,7 +18,7 @@ package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.dsl.support.AnnotationPreProcessor;
+import org.apache.camel.dsl.support.CompilePostProcessor;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.stereotype.Component;
@@ -30,13 +30,13 @@ public final class SpringAnnotationSupport {
     }
 
     public static void registerSpringSupport(CamelContext context) {
-        context.getRegistry().bind("SpringAnnotationPreProcessor", new SpringAnnotationPreProcessor());
+        context.getRegistry().bind("SpringAnnotationCompilePostProcessor", new SpringAnnotationCompilePostProcessor());
     }
 
-    private static class SpringAnnotationPreProcessor implements AnnotationPreProcessor {
+    private static class SpringAnnotationCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void handleAnnotation(CamelContext camelContext, String name, Class<?> clazz, Object instance) throws Exception {
+        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, Object instance) throws Exception {
             // @Component and @Service are the same
             Component comp = clazz.getAnnotation(Component.class);
             Service service = clazz.getAnnotation(Service.class);
