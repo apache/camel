@@ -601,6 +601,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * @param path clusterName
          * @return the dsl builder
          */
+        @Deprecated
         default ElasticsearchEndpointBuilder elasticsearchRest(String path) {
             return ElasticsearchEndpointBuilderFactory.endpointBuilder("elasticsearch-rest", path);
         }
@@ -622,12 +623,14 @@ public interface ElasticsearchEndpointBuilderFactory {
          * @param path clusterName
          * @return the dsl builder
          */
+        @Deprecated
         default ElasticsearchEndpointBuilder elasticsearchRest(
                 String componentName,
                 String path) {
             return ElasticsearchEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static ElasticsearchEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
