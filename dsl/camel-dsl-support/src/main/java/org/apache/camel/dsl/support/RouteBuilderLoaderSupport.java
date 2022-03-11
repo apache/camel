@@ -37,12 +37,15 @@ import org.apache.camel.support.RoutesBuilderLoaderSupport;
  */
 public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSupport {
     private final String extension;
-
-    private StartupStepRecorder recorder;
     private final List<CompilePostProcessor> compilePostProcessors = new ArrayList<>();
+    private StartupStepRecorder recorder;
 
     protected RouteBuilderLoaderSupport(String extension) {
         this.extension = extension;
+
+        // out of the box camel based compile post processors
+        addCompilePostProcessor(new TypeConverterCompilePostProcessor());
+        addCompilePostProcessor(new BindToRegistryCompilePostProcessor());
     }
 
     @ManagedAttribute(description = "Supported file extension")
