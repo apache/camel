@@ -24,6 +24,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.FileSystems;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -45,6 +46,10 @@ import picocli.CommandLine.Parameters;
 
 @Command(name = "run", description = "Run Camel")
 class Run implements Callable<Integer> {
+
+    private static String[] ACCEPTED_FILE_EXT
+            = new String[] { "properties", "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
+
     private CamelContext context;
     private File lockFile;
     private ScheduledExecutorService executor;
@@ -225,6 +230,11 @@ class Run implements Callable<Integer> {
         StringJoiner js = new StringJoiner(",");
         StringJoiner sjReload = new StringJoiner(",");
         for (String file : files) {
+
+            if (!acceptFile(file)) {
+                continue;
+            }
+
             // check for properties files
             if (file.endsWith(".properties")) {
                 if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
@@ -442,6 +452,11 @@ class Run implements Callable<Integer> {
                 }
             }
         }
+    }
+
+    private boolean acceptFile(String file) {
+        String ext = FileUtil.onlyExt(file, true);
+        return Arrays.stream(ACCEPTED_FILE_EXT).anyMatch(e -> e.equalsIgnoreCase(ext));
     }
 
 }
