@@ -1351,6 +1351,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.ElasticsearchRestComponentBuilderFactory.ElasticsearchRestComponentBuilder elasticsearchRest() {
         return org.apache.camel.builder.component.dsl.ElasticsearchRestComponentBuilderFactory.elasticsearchRest();
     }
