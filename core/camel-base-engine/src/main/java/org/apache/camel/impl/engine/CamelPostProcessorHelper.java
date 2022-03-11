@@ -58,10 +58,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
-import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 /**
- * A helper class for Camel based injector or bean post processing hooks.
+ * A helper class for Camel based injector or bean post-processing hooks.
  */
 public class CamelPostProcessorHelper implements CamelContextAware {
 
