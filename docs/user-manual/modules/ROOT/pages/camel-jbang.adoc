@@ -44,7 +44,7 @@ You can specify which Camel version to run as shown:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 camel@apache/camel [command]
+jbang run -Dcamel.jbang.version=3.14.0 camel@apache/camel [command]
 ----
 
 == Running Routes
