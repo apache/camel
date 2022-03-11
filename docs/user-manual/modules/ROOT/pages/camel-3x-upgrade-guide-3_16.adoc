@@ -343,7 +343,12 @@ and the `configure` method now takes a `CamelContext` as argument.
 
 The option `baseURI` is renamed to `baseUri`.
 
-=== camel-aws
+=== camel-aws2-kinesis
+
+The `camel-aws2-kinesis` component will now set only the raw data as body while consuming from a stream. The data will be an input stream.
+This changes the behavior from the old versions because in the past the component was returning the full record as part of the body.
+
+=== camel-aws2-sqs
 
 The `camel-aws2-sqs` component will now map message headers from their original type
 such as boolean, integer, etc. This requires using Camel for both sending and receiving
