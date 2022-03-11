@@ -35,6 +35,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+/**
+ * To support spring based annotations such as @Component/@Service, @Autowired/@Qualifier, @Value, and @Bean.
+ */
 public final class SpringAnnotationSupport {
 
     private SpringAnnotationSupport() {
