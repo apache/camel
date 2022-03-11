@@ -29,7 +29,7 @@
 
     <artifactId>camel-elasticsearch-rest</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: ElasticSearch REST</name>
+    <name>Camel :: ElasticSearch REST (deprecated)</name>
     <description>Camel ElasticSearch REST support</description>
 
     <properties>

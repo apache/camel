@@ -4,7 +4,7 @@
     "name": "elasticsearch-rest",
     "title": "Elasticsearch Rest",
     "description": "Send requests to ElasticSearch via REST API",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.21.0",
     "label": "search,monitoring",
     "javaType": "org.apache.camel.component.elasticsearch.ElasticsearchComponent",
