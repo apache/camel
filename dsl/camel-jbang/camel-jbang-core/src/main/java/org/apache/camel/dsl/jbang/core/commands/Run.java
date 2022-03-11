@@ -47,7 +47,7 @@ import picocli.CommandLine.Parameters;
 @Command(name = "run", description = "Run Camel")
 class Run implements Callable<Integer> {
 
-    private static String[] ACCEPTED_FILE_EXT
+    private static final String[] ACCEPTED_FILE_EXT
             = new String[] { "properties", "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
 
     private CamelContext context;
