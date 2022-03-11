@@ -31,6 +31,7 @@ import org.apache.camel.util.ReflectionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -114,7 +115,26 @@ public final class SpringAnnotationSupport {
 
         @Override
         public void onMethodInject(Method method, Object bean, String beanName) {
-            // TODO; @Bean
+            Bean bi = method.getAnnotation(Bean.class);
+            if (bi != null) {
+                Object instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName);
+                if (instance != null) {
+                    String name = method.getName();
+                    if (bi.name() != null && bi.name().length > 0) {
+                        name = bi.name()[0];
+                    }
+                    // to support hot reloading of beans then we need to enable unbind mode in bean post processor
+                    CamelBeanPostProcessor bpp = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+                    bpp.setUnbindEnabled(true);
+                    try {
+                        // re-bind the bean to the registry
+                        context.getRegistry().unbind(name);
+                        context.getRegistry().bind(name, instance);
+                    } finally {
+                        bpp.setUnbindEnabled(false);
+                    }
+                }
+            }
         }
     }
 }
