@@ -115,7 +115,10 @@ public interface SlackComponentBuilderFactory {
             return this;
         }
         /**
-         * The token to use.
+         * The token to access Slack. This app needs to have channels:history,
+         * groups:history, im:history, mpim:history, channels:read, groups:read,
+         * im:read and mpim:read permissions. The User OAuth Token is the kind
+         * of token needed.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
