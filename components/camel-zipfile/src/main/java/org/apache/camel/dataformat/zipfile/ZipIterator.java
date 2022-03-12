@@ -48,6 +48,11 @@ public class ZipIterator implements Iterator<Message>, Closeable {
     public ZipIterator(Exchange exchange, InputStream inputStream) {
         this.exchange = exchange;
         this.allowEmptyDirectory = false;
+
+        if (inputStream == null) {
+            throw new IllegalStateException("Input stream cannot be null");
+        }
+
         if (inputStream instanceof ZipInputStream) {
             zipInputStream = (ZipInputStream) inputStream;
         } else {
