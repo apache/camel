@@ -21,6 +21,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -49,9 +50,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
         this.exchange = exchange;
         this.allowEmptyDirectory = false;
 
-        if (inputStream == null) {
-            throw new IllegalStateException("Input stream cannot be null");
-        }
+        Objects.requireNonNull(inputStream);
 
         if (inputStream instanceof ZipInputStream) {
             zipInputStream = (ZipInputStream) inputStream;
