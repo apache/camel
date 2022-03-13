@@ -375,3 +375,9 @@ This component was deprecated and is removed on this version. Users should migra
 === camel-testcontainers-spring-junit5
 
 This component was deprecated and is removed on this version. Users should migrate to xref:test-infra.adoc[camel-test-infra].
+
+=== camel-salesforce
+
+The `sObjectName` query parameter and header now take precedence over the class name of the `AbstractSObjectBase` DTO for
+determining the name of the SObject. We suggest testing your existing routes to identify any potential issues. See
+https://issues.apache.org/jira/browse/CAMEL-17608 for more details.

@@ -325,18 +325,8 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     }
 
     private void processGetSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
-        String sObjectIdValue;
-        // determine parameters from input AbstractSObject
-        final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
-        if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
-            sObjectIdValue = sObjectBase.getId();
-        } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            sObjectIdValue = getParameter(SOBJECT_ID, exchange, USE_BODY, NOT_OPTIONAL);
-        }
-        final String sObjectId = sObjectIdValue;
+        String sObjectName = determineSObjectName(exchange);
+        final String sObjectId = determineSObjectId(exchange);
 
         // use sObject name to load class
         setResponseClass(exchange, sObjectName);
@@ -353,33 +343,20 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     }
 
     private void processCreateSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
-        // determine parameters from input AbstractSObject
-        AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
-        if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
-        } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-        }
+        String sObjectName = determineSObjectName(exchange);
 
         restClient.createSObject(sObjectName, getRequestStream(exchange), determineHeaders(exchange),
                 processWithResponseCallback(exchange, callback));
     }
 
     private void processUpdateSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
-        // determine parameters from input AbstractSObject
+        String sObjectName = determineSObjectName(exchange);
+        String sObjectId = determineSObjectId(exchange);
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
-        String sObjectId;
+        // raw payloads will not be AbstractSObjectBase
         if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
-            // remember the sObject Id
-            sObjectId = sObjectBase.getId();
-            // clear base object fields, which cannot be updated
             sObjectBase.clearBaseFields();
-        } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            sObjectId = getParameter(SOBJECT_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
+
         }
 
         final String finalsObjectId = sObjectId;
@@ -394,18 +371,9 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     }
 
     private void processDeleteSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
-        // determine parameters from input AbstractSObject
+        String sObjectName = determineSObjectName(exchange);
+        final String sObjectId = determineSObjectId(exchange);
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
-        String sObjectIdValue;
-        if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
-            sObjectIdValue = sObjectBase.getId();
-        } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            sObjectIdValue = getParameter(SOBJECT_ID, exchange, USE_BODY, NOT_OPTIONAL);
-        }
-        final String sObjectId = sObjectIdValue;
 
         restClient.deleteSObject(sObjectName, sObjectId, determineHeaders(exchange), new RestClient.ResponseCallback() {
             @Override
@@ -417,7 +385,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     }
 
     private void processGetSobjectWithId(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
+        String sObjectName = determineSObjectName(exchange);
         Object oldValue = null;
         String sObjectExtIdValue;
         final String sObjectExtIdName = getParameter(SOBJECT_EXT_ID_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
@@ -425,11 +393,9 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         // determine parameters from input AbstractSObject
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
         if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
             oldValue = getAndClearPropertyValue(sObjectBase, sObjectExtIdName);
             sObjectExtIdValue = oldValue.toString();
         } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
             sObjectExtIdValue = getParameter(SOBJECT_EXT_ID_VALUE, exchange, USE_BODY, NOT_OPTIONAL);
         }
 
@@ -448,7 +414,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     }
 
     private void processUpsertSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
+        String sObjectName = determineSObjectName(exchange);
         String sObjectExtIdValue;
         final String sObjectExtIdName = getParameter(SOBJECT_EXT_ID_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
 
@@ -456,13 +422,11 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         Object oldValue = null;
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
         if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
             oldValue = getAndClearPropertyValue(sObjectBase, sObjectExtIdName);
             sObjectExtIdValue = oldValue.toString();
             // clear base object fields, which cannot be updated
             sObjectBase.clearBaseFields();
         } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
             sObjectExtIdValue = getParameter(SOBJECT_EXT_ID_VALUE, exchange, IGNORE_BODY, NOT_OPTIONAL);
         }
 
@@ -478,7 +442,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     }
 
     private void processDeleteSobjectWithId(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
+        String sObjectName = determineSObjectName(exchange);
         final String sObjectExtIdName = getParameter(SOBJECT_EXT_ID_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
 
         // determine parameters from input AbstractSObject
@@ -486,11 +450,9 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
         String sObjectExtIdValue;
         if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
             oldValue = getAndClearPropertyValue(sObjectBase, sObjectExtIdName);
             sObjectExtIdValue = oldValue.toString();
         } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
             sObjectExtIdValue = getParameter(SOBJECT_EXT_ID_VALUE, exchange, USE_BODY, NOT_OPTIONAL);
         }
 
@@ -506,21 +468,13 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     }
 
     private void processGetBlobField(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
-        String sObjectName;
+        String sObjectName = determineSObjectName(exchange);
         // get blob field name
         final String sObjectBlobFieldName = getParameter(SOBJECT_BLOB_FIELD_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
 
         // determine parameters from input AbstractSObject
         final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
-        String sObjectIdValue;
-        if (sObjectBase != null) {
-            sObjectName = sObjectBase.getClass().getSimpleName();
-            sObjectIdValue = sObjectBase.getId();
-        } else {
-            sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            sObjectIdValue = getParameter(SOBJECT_ID, exchange, USE_BODY, NOT_OPTIONAL);
-        }
-        final String sObjectId = sObjectIdValue;
+        String sObjectId = determineSObjectId(exchange);
 
         restClient.getBlobField(sObjectName, sObjectId, sObjectBlobFieldName, determineHeaders(exchange),
                 new RestClient.ResponseCallback() {
@@ -631,6 +585,34 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
     private void processLimits(Exchange exchange, AsyncCallback callback) {
         restClient.limits(determineHeaders(exchange), processWithResponseCallback(exchange, callback));
+    }
+
+    private String determineSObjectName(Exchange exchange) throws SalesforceException {
+        String sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
+
+        if (sObjectName == null) {
+            // determine parameters from input AbstractSObject
+            AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
+            if (sObjectBase != null) {
+                sObjectName = sObjectBase.getClass().getSimpleName();
+            } else {
+                throw new IllegalArgumentException(
+                        "Unable to determine sObject name. Body must be of AbstractSObjectBase " +
+                                                   "(base class of generated DTOs) or sObjectName option must be supplied.");
+            }
+        }
+        return sObjectName;
+    }
+
+    private String determineSObjectId(Exchange exchange) throws SalesforceException {
+        String sObjectIdValue;
+        final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
+        if (sObjectBase != null) {
+            sObjectIdValue = sObjectBase.getId();
+        } else {
+            sObjectIdValue = getParameter(SOBJECT_ID, exchange, USE_BODY, NOT_OPTIONAL);
+        }
+        return sObjectIdValue;
     }
 
     @SuppressWarnings("unchecked")
