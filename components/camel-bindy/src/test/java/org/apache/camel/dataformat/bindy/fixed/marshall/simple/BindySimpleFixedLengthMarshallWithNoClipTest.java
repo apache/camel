@@ -42,10 +42,10 @@ public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSuppo
     private List<Map<String, Object>> models = new ArrayList<>();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 BindyFixedLengthDataFormat bindy = new BindyFixedLengthDataFormat(Order.class);
 
                 from("direct:start")
@@ -56,7 +56,7 @@ public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSuppo
     }
 
     @Test
-    public void testMarshallMessage() throws Exception {
+    public void testMarshallMessage() {
         List<Map<String, Object>> model = generateModel();
         Exception ex = assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:start", model));

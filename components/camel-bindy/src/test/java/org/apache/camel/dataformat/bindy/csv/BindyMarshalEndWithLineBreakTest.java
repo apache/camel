@@ -68,10 +68,10 @@ public class BindyMarshalEndWithLineBreakTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:withoutlb")
                         .marshal().bindy(BindyType.Csv, MyCsvRecord2.class)
                         .to("log:after.unmarshal")

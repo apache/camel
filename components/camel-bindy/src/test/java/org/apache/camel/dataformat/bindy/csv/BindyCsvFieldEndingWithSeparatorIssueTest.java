@@ -107,7 +107,7 @@ public class BindyCsvFieldEndingWithSeparatorIssueTest extends CamelTestSupport 
     private RouteBuilder createRoute() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:fromCsv").unmarshal().bindy(BindyType.Csv, MyCsvRecord.class)
                         .setProperty("addressLine1", simple("${in.body.addressLine1}"))
                         .setProperty("addressLine2", simple("${in.body.addressLine2}")).log("${in.body}")
