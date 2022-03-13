@@ -56,7 +56,7 @@ public class BeanMethodWithExchangeTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start1").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // remove the old attachment
                         exchange.getMessage(AttachmentMessage.class).removeAttachment("attachment");
                         // and add 2 new attachments
