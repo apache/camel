@@ -30,7 +30,7 @@ public class ReflectionInOnlyProcessor implements Processor {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         Object body = exchange.getIn().getBody();
         if (body instanceof String) {
             testReflection.setName(String.valueOf(body));
