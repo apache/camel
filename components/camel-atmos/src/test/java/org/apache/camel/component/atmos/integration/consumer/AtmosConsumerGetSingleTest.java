@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AtmosConsumerGetSingleTest extends AtmosTestSupport {
 
-    public AtmosConsumerGetSingleTest() throws Exception {
+    public AtmosConsumerGetSingleTest() {
     }
 
     @Test
@@ -49,7 +49,7 @@ public class AtmosConsumerGetSingleTest extends AtmosTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("atmos://get?remotePath=/dummy.txt&localPath=/home")
