@@ -105,10 +105,10 @@ public class BindyCsvClassTypeAsStringTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 BindyDataFormat bindy = new BindyDataFormat()
                         .classType(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class)
                         .locale("en")

@@ -83,10 +83,10 @@ public class BindyPatternLocaleTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 BindyCsvDataFormat bindy = new BindyCsvDataFormat(Unity.class);
 
                 // As recommended, when we use @Datafield Pattern we must

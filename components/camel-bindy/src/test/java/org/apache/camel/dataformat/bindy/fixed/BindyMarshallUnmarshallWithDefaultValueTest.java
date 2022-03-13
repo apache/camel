@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSupport {
 
     @Test
-    public void testUnMarshallMessage() throws Exception {
+    public void testUnMarshallMessage() {
         MockEndpoint mock = getMockEndpoint("mock:resultUnmarshal");
         template.sendBody("direct:unmarshal", "10A9              ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     ");
 
@@ -48,7 +48,7 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
     }
 
     @Test
-    public void testUnMarshallMessageWithEol() throws Exception {
+    public void testUnMarshallMessageWithEol() {
         MockEndpoint mock = getMockEndpoint("mock:resultUnmarshalEol");
         template.sendBody("direct:unmarshaleol",
                 "10A9              ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     QWERTY");
@@ -83,7 +83,7 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

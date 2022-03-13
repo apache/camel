@@ -35,7 +35,7 @@ public class BigDecimalFormatFactoryTest {
             .withPattern("999.99");
 
     @Test
-    public void canBuild() throws Exception {
+    public void canBuild() {
         assertThat(new BigDecimalFormatFactory().canBuild(formattingOptions), is(true));
         assertThat(new BigDecimalFormatFactory().canBuild(wrongClass), is(false));
         assertThat(new BigDecimalFormatFactory().canBuild(hasPattern), is(false));

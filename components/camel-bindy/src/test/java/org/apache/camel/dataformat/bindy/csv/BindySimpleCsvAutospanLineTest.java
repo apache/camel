@@ -62,10 +62,10 @@ public class BindySimpleCsvAutospanLineTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 final BindyCsvDataFormat bindy = new BindyCsvDataFormat(SpanLastRecord.class);
 
                 from("direct:unmarshal")

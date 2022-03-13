@@ -37,10 +37,10 @@ public class BindySimpleFixedLengthMarshallWithClipAndTrimTest extends CamelTest
     private List<Map<String, Object>> models = new ArrayList<>();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 BindyFixedLengthDataFormat bindy = new BindyFixedLengthDataFormat(Order.class);
                 bindy.setLocale("en");
 

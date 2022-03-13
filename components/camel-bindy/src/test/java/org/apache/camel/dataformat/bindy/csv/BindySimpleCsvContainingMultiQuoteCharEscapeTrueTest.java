@@ -92,10 +92,10 @@ public class BindySimpleCsvContainingMultiQuoteCharEscapeTrueTest extends CamelT
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 BindyCsvDataFormat camelDataFormat1 = new BindyCsvDataFormat(BindyCsvRowFormat75191.class);
 
                 from("direct:startMarshal1")

@@ -62,7 +62,7 @@ public class BindyCsvSkipFieldTest {
             from(URI_DIRECT_START).unmarshal(camelDataFormat)
                     .process(new Processor() {
                         @Override
-                        public void process(Exchange exchange) throws Exception {
+                        public void process(Exchange exchange) {
                             CsvSkipField csvSkipField = (CsvSkipField) exchange.getIn().getBody();
                             assert csvSkipField.getAttention().equals("VOA");
                             assert csvSkipField.getAddressLine1().equals("12 abc street");

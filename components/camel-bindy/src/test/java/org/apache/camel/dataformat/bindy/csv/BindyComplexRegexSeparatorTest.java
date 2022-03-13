@@ -49,10 +49,10 @@ public class BindyComplexRegexSeparatorTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:unmarshal").unmarshal().bindy(BindyType.Csv, Example.class).to("mock:result");
             }
         };

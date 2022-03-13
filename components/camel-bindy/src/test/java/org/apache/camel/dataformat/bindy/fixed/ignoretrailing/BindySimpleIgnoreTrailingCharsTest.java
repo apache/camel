@@ -78,11 +78,11 @@ public class BindySimpleIgnoreTrailingCharsTest extends CamelTestSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         RouteBuilder routeBuilder = new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 BindyDataFormat bindy = new BindyDataFormat();
                 bindy.setClassType(BindySimpleIgnoreTrailingCharsTest.Order.class);
                 bindy.setLocale("en");
