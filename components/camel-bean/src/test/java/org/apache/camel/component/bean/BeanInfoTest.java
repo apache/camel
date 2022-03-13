@@ -89,7 +89,7 @@ public class BeanInfoTest {
                 .intercept(MethodDelegation.to(
                         new Object() {
                             @RuntimeType
-                            public void intercept() throws Exception {
+                            public void intercept() {
                             }
                         }))
                 .make()
