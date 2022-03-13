@@ -42,7 +42,7 @@ public final class QuarkusAnnotationSupport {
     private QuarkusAnnotationSupport() {
     }
 
-    public static void registerSpringSupport(CamelContext context) {
+    public static void registerQuarkus(CamelContext context) {
         context.getRegistry().bind("QuarkusAnnotationCompilePostProcessor", new QuarkusAnnotationCompilePostProcessor());
         context.adapt(ExtendedCamelContext.class).getBeanPostProcessor()
                 .addCamelBeanPostProjectInjector(new QuarkusBeanPostProcessorInjector(context));

@@ -163,8 +163,9 @@ public class KameletMain extends MainCommandLineSupport {
         answer.setRegistry(registry);
         // load camel component and custom health-checks
         answer.setLoadHealthChecks(true);
-        // optional spring annotation support
+        // optional spring/quarkus annotation support
         SpringAnnotationSupport.registerSpringSupport(answer);
+        QuarkusAnnotationSupport.registerQuarkus(answer);
 
         // embed HTTP server if port is specified
         Object port = getInitialProperties().get("camel.jbang.platform-http.port");
