@@ -129,12 +129,12 @@
         <dependency>
             <groupId>jakarta.enterprise</groupId>
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
-            <version>2.0.2</version>
+            <version>${jakarta-cdi-api-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.microprofile.config</groupId>
             <artifactId>microprofile-config-api</artifactId>
-            <version>2.0</version>
+            <version>${microprofile-config-version}</version>
         </dependency>
 
         <dependency>
