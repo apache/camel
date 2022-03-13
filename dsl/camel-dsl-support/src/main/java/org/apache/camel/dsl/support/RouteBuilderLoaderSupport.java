@@ -42,10 +42,6 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
 
     protected RouteBuilderLoaderSupport(String extension) {
         this.extension = extension;
-
-        // out of the box camel based compile post processors
-        addCompilePostProcessor(new TypeConverterCompilePostProcessor());
-        addCompilePostProcessor(new BindToRegistryCompilePostProcessor());
     }
 
     @ManagedAttribute(description = "Supported file extension")

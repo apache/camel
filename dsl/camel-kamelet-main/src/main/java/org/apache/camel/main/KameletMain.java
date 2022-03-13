@@ -163,7 +163,8 @@ public class KameletMain extends MainCommandLineSupport {
         answer.setRegistry(registry);
         // load camel component and custom health-checks
         answer.setLoadHealthChecks(true);
-        // optional spring/quarkus annotation support
+        // optional camel/spring/quarkus annotation support in DSL and Java beans
+        CamelAnnotationSupport.registerCamelSupport(answer);
         SpringAnnotationSupport.registerSpringSupport(answer);
         QuarkusAnnotationSupport.registerQuarkus(answer);
 

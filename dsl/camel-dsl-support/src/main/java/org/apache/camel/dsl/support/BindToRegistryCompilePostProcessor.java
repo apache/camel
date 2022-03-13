@@ -26,6 +26,8 @@ import org.apache.camel.util.ObjectHelper;
 
 public class BindToRegistryCompilePostProcessor implements CompilePostProcessor {
 
+    // TODO: move to camel-kamelet-main
+
     @Override
     public void postCompile(CamelContext camelContext, String name, Class<?> clazz, Object instance) throws Exception {
         BindToRegistry bir = instance.getClass().getAnnotation(BindToRegistry.class);

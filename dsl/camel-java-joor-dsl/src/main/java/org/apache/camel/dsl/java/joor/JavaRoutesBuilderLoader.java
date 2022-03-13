@@ -54,17 +54,17 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
 
             Reflect ref = Reflect.compile(name, content).create();
             Class<?> clazz = ref.type();
-
             Object obj = ref.get();
-            if (obj instanceof RouteBuilder) {
-                return (RouteBuilder) obj;
-            }
 
-            // not a route builder but we support annotation scan to register custom beans, type converters, etc.
+            // support custom annotation scanning post compilation
+            // such as to register custom beans, type converters, etc.
             for (CompilePostProcessor pre : getCompilePostProcessors()) {
                 pre.postCompile(getCamelContext(), name, clazz, obj);
             }
 
+            if (obj instanceof RouteBuilder) {
+                return (RouteBuilder) obj;
+            }
             return null;
         }
     }

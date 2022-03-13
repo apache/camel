@@ -24,6 +24,8 @@ import org.apache.camel.spi.TypeConverterRegistry;
 
 public class TypeConverterCompilePostProcessor implements CompilePostProcessor {
 
+    // TODO: move to camel-kamelet-main
+
     @Override
     public void postCompile(CamelContext camelContext, String name, Class<?> clazz, Object instance) throws Exception {
         if (clazz.getAnnotation(Converter.class) != null) {
