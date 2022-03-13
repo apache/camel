@@ -26,10 +26,13 @@ import org.apache.camel.component.atmos.integration.AtmosTestSupport;
 import org.apache.camel.component.atmos.util.AtmosResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AtmosProducerGetFolderTest extends AtmosTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(AtmosProducerGetFolderTest.class);
 
     public AtmosProducerGetFolderTest() throws Exception {
     }
@@ -54,7 +57,7 @@ public class AtmosProducerGetFolderTest extends AtmosTestSupport {
         assertNotNull(header);
         assertNotNull(body);
 
-        System.out.println(header.toString());
+        LOG.debug("Header: {}", header);
     }
 
     @Override
