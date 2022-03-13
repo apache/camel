@@ -33,10 +33,10 @@ public class AtmosConsumerTest extends CamelTestSupport {
     private String fake = Base64.getEncoder().encodeToString("fakeSecret".getBytes());
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromF("atmos:foo/get?remotePath=/path&fullTokenId=fakeToken&secretKey=%s&uri=https://fake/uri", fake)
                         .to("mock:test");
             }

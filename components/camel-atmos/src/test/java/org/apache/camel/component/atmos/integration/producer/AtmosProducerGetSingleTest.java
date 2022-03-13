@@ -31,14 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AtmosProducerGetSingleTest extends AtmosTestSupport {
 
-    public AtmosProducerGetSingleTest() throws Exception {
+    public AtmosProducerGetSingleTest() {
     }
 
     @Test
     public void testCamelAtmos() throws Exception {
         template.send("direct:start", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader("test", "test");
             }
         });
@@ -56,7 +56,7 @@ public class AtmosProducerGetSingleTest extends AtmosTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
