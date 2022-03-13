@@ -380,7 +380,7 @@ public class ProducerTest extends BeanstalkMockTestSupport {
     }
 
     @Test
-    void test2BeanstalkException() throws Exception {
+    void test2BeanstalkException() {
         final long jobId = 111;
 
         when(client.touch(jobId))

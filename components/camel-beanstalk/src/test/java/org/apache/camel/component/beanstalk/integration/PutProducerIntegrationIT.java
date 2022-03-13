@@ -49,7 +49,7 @@ public class PutProducerIntegrationIT extends BeanstalkCamelITSupport {
     private final String testMessage = "Hello, world!";
 
     @Test
-    void testPut() throws InterruptedException, IOException {
+    void testPut() throws InterruptedException {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.allMessages().header(Headers.JOB_ID).isNotNull();
         direct.sendBody(testMessage);
@@ -67,7 +67,7 @@ public class PutProducerIntegrationIT extends BeanstalkCamelITSupport {
     }
 
     @Test
-    void testOut() throws InterruptedException, IOException {
+    void testOut() {
         final Endpoint endpoint = context.getEndpoint("beanstalk:" + tubeName);
         final Exchange exchange
                 = template.send(endpoint, ExchangePattern.InOut, exchange1 -> exchange1.getIn().setBody(testMessage));
@@ -86,7 +86,7 @@ public class PutProducerIntegrationIT extends BeanstalkCamelITSupport {
     }
 
     @Test
-    void testDelay() throws InterruptedException, IOException {
+    void testDelay() throws InterruptedException {
         final byte[] testBytes = new byte[0];
 
         resultEndpoint.expectedMessageCount(1);

@@ -30,7 +30,7 @@ public class EndpointTest {
     CamelContext context;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         context = new DefaultCamelContext(false);
         context.disableJMX();
         context.start();
