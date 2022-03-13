@@ -61,14 +61,14 @@ public class WireTapTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 AttachmentMessage am = exchange.getMessage(AttachmentMessage.class);
                                 am.addAttachment("message1.xml",
                                         new DataHandler(new FileDataSource(new File("src/test/data/message1.xml"))));
@@ -80,7 +80,7 @@ public class WireTapTest extends CamelTestSupport {
                 from("direct:tap")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 AttachmentMessage am = exchange.getMessage(AttachmentMessage.class);
                                 am.addAttachmentObject("message2.xml",
                                         new DefaultAttachment(new FileDataSource(new File("src/test/data/message2.xml"))));
