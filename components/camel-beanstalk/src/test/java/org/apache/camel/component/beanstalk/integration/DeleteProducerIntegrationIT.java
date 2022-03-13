@@ -45,7 +45,7 @@ public class DeleteProducerIntegrationIT extends BeanstalkCamelITSupport {
     protected ProducerTemplate direct;
 
     @Test
-    void testDelete() throws InterruptedException, IOException {
+    void testDelete() throws InterruptedException {
         long jobId = writer.put(0, 0, 5, new byte[0]);
         assertTrue(jobId > 0, "Valid Job Id");
 

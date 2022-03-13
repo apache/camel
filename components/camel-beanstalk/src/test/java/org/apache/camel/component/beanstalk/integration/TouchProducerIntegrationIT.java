@@ -47,7 +47,7 @@ public class TouchProducerIntegrationIT extends BeanstalkCamelITSupport {
 
     @Disabled("requires reserve - touch sequence")
     @Test
-    void testBury() throws InterruptedException, IOException {
+    void testBury() throws InterruptedException {
         long jobId = writer.put(0, 0, 5, new byte[0]);
         assertTrue(jobId > 0, "Valid Job Id");
 
