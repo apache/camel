@@ -17,6 +17,7 @@
 
 package org.apache.camel;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
@@ -30,8 +31,8 @@ public interface ResumableSet<T> {
      * @return
      */
     default T[] resumeEach(T[] input, Predicate<T> resumableCheck) {
-
-        T[] tmp = Arrays.copyOf(input, input.length);
+        @SuppressWarnings("unchecked")
+        T[] tmp = (T[]) Array.newInstance(input.getClass().getComponentType(), input.length);
         int count = 0;
 
         for (T entry : input) {
@@ -41,7 +42,7 @@ public interface ResumableSet<T> {
             }
         }
 
-        if (count != input.length) {
+        if (count > 0 && count != input.length) {
             return Arrays.copyOf(tmp, count);
         }
 
