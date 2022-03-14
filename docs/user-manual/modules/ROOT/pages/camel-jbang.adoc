@@ -259,7 +259,7 @@ You can use the following Camel annotations (they work on all runtimes):
 You can use the following Spring Boot annotations:
 
 - `@Component` or `@Service` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
-- `@Autowired` to dependency inject an bean on a class field. `@Qualifier` can be used to specify the bean id.
+- `@Autowired` to dependency inject a bean on a class field. `@Qualifier` can be used to specify the bean id.
 - `@Value` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
 - `@Bean` on a method to create a bean by invoking the method.
 
