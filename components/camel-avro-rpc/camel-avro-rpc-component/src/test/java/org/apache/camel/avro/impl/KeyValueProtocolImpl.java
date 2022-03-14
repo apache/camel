@@ -19,7 +19,6 @@ package org.apache.camel.avro.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.avro.AvroRemoteException;
 import org.apache.camel.avro.generated.Key;
 import org.apache.camel.avro.generated.KeyValueProtocol;
 import org.apache.camel.avro.generated.Value;
