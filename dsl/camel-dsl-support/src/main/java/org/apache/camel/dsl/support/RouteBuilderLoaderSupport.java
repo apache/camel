@@ -79,7 +79,7 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
         super.doStart();
 
         if (getCamelContext() != null) {
-            // discover optional pre-processors to be used
+            // discover optional compile post-processors to be used
             Set<CompilePostProcessor> pres = getCamelContext().getRegistry().findByType(CompilePostProcessor.class);
             if (pres != null && !pres.isEmpty()) {
                 for (CompilePostProcessor pre : pres) {
