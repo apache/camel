@@ -64,6 +64,7 @@ import org.apache.camel.tooling.model.ApiModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
+import org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.SupportLevel;
@@ -92,7 +93,8 @@ import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexReader;
 import org.jboss.jandex.IndexView;
 
-import static org.apache.camel.tooling.model.ComponentModel.*;
+import static java.lang.reflect.Modifier.isStatic;
+import static org.apache.camel.tooling.model.ComponentModel.ApiOptionModel;
 
 @Mojo(name = "generate-endpoint-schema", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
@@ -258,6 +260,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
         }
 
+        // component headers
+        addEndpointHeaders(componentModel, uriEndpoint);
+
         // endpoint options
         findClassProperties(componentModel, classElement, new HashSet<>(), "", null, null, false);
 
@@ -289,6 +294,85 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         generateEndpointConfigurer(classElement, uriEndpoint, scheme, schemes, componentModel, parentData);
 
         return componentModel;
+    }
+
+    /**
+     * Retrieve the metadata added to all the {@code String} constants defined in class corresponding to the element
+     * {@code headersClass} of the annotation {@code UriEndpoint}, convert the metadata found into instances of
+     * {@link EndpointHeaderModel} and finally add the instances of {@link EndpointHeaderModel} to the given component
+     * model.
+     * 
+     * @param componentModel the component model to which the headers should be added.
+     * @param uriEndpoint    the annotation from which the headers class is retrieved.
+     */
+    void addEndpointHeaders(ComponentModel componentModel, UriEndpoint uriEndpoint) {
+        final Class<?> headersClass = uriEndpoint.headersClass();
+        if (headersClass == void.class) {
+            getLog().debug(String.format("The endpoint %s has not defined any headers class", uriEndpoint.scheme()));
+            return;
+        }
+        // A header class has been defined
+        boolean foundHeader = false;
+        for (Field field : headersClass.getDeclaredFields()) {
+            if (isStatic(field.getModifiers()) && field.getType() == String.class
+                    && field.isAnnotationPresent(Metadata.class)) {
+                getLog().debug(
+                        String.format("Trying to add the constant %s in the class %s as header.", field.getName(),
+                                headersClass.getName()));
+                addEndpointHeader(componentModel, field);
+                foundHeader = true;
+                continue;
+            }
+            getLog().debug(
+                    String.format("The field %s of the class %s is not considered as a name of a header, thus it is skipped",
+                            field.getName(), headersClass.getName()));
+        }
+        if (!foundHeader) {
+            getLog().debug(String.format("No headers have been detected in the headers class %s", headersClass.getName()));
+        }
+    }
+
+    /**
+     * Retrieve the metadata added to the given field, convert the metadata found into an instance of
+     * {@link EndpointHeaderModel} and finally add the instance of {@link EndpointHeaderModel} to the given component
+     * model.
+     * 
+     * @param componentModel the component to which the header should be added.
+     * @param field          the field corresponding to the constant from which the metadata should be extracted.
+     */
+    private void addEndpointHeader(ComponentModel componentModel, Field field) {
+        final Metadata metadata = field.getAnnotation(Metadata.class);
+        if (metadata == null) {
+            getLog().debug(String.format("The field %s in class %s has no Metadata", field.getName(),
+                    field.getDeclaringClass().getName()));
+            return;
+        }
+        final EndpointHeaderModel header = new EndpointHeaderModel();
+        header.setDescription(metadata.description().trim());
+        header.setKind("header");
+        header.setDisplayName(metadata.displayName());
+        header.setJavaType(metadata.javaType());
+        header.setRequired(metadata.required());
+        header.setDefaultValue(metadata.defaultValue());
+        header.setDeprecated(field.isAnnotationPresent(Deprecated.class));
+        header.setDeprecationNote(metadata.deprecationNote());
+        header.setSecret(metadata.secret());
+        header.setGroup(EndpointHelper.labelAsGroupName(metadata.label(), componentModel.isConsumerOnly(),
+                componentModel.isProducerOnly()));
+        header.setLabel(metadata.label());
+        try {
+            header.setEnums(getEnums(metadata, header.getJavaType().isEmpty() ? null : loadClass(header.getJavaType())));
+        } catch (NoClassDefFoundError e) {
+            getLog().debug(String.format("The java type %s could not be found", header.getJavaType()), e);
+        }
+        try {
+            field.trySetAccessible();
+            header.setName((String) field.get(null));
+            componentModel.addEndpointHeader(header);
+        } catch (IllegalAccessException e) {
+            getLog().debug(String.format("The field %s in class %s cannot be accessed", field.getName(),
+                    field.getDeclaringClass().getName()));
+        }
     }
 
     private String getExcludedEnd(Metadata classElement) {
@@ -730,19 +814,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 }
 
                 // gather enums
-                List<String> enums = null;
-                if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
-                    String[] values = metadata.enums().split(",");
-                    enums = Stream.of(values).map(String::trim).collect(Collectors.toList());
-                } else if (fieldType.isEnum()) {
-                    enums = new ArrayList<>();
-                    for (Object val : fieldType.getEnumConstants()) {
-                        String str = val.toString();
-                        if (!enums.contains(str)) {
-                            enums.add(str);
-                        }
-                    }
-                }
+                List<String> enums = getEnums(metadata, fieldType);
 
                 // the field type may be overloaded by another type
                 boolean isDuration = false;
@@ -837,6 +909,23 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 break;
             }
         }
+    }
+
+    private List<String> getEnums(Metadata metadata, Class<?> fieldType) {
+        List<String> enums = null;
+        if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
+            String[] values = metadata.enums().split(",");
+            enums = Stream.of(values).map(String::trim).collect(Collectors.toList());
+        } else if (fieldType != null && fieldType.isEnum()) {
+            enums = new ArrayList<>();
+            for (Object val : fieldType.getEnumConstants()) {
+                String str = val.toString();
+                if (!enums.contains(str)) {
+                    enums.add(str);
+                }
+            }
+        }
+        return enums;
     }
 
     private Field getFieldElement(Class<?> classElement, String fieldName) {

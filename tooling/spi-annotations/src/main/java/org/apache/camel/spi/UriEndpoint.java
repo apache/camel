@@ -175,4 +175,16 @@ public @interface UriEndpoint {
      */
     String apiSyntax() default "";
 
+    /**
+     * The class that contains all the name of headers that are supported by the consumer and/or producer. The name of
+     * the headers are defined as {@code String} constants in the headers class.
+     * <p/>
+     * The class to provide can be any class but by convention, we would expect a class whose name is of type
+     * <i>xxxConstants</i> where <i>xxx</i> is the name of the corresponding component like for example
+     * <i>FtpConstants</i> for the component <i>camel-ftp</i>.
+     * <p/>
+     * The metadata of a given header are retrieved directly from the annotation {@code @Metadata} added to the
+     * {@code String} constant representing its name and defined in the headers class.
+     */
+    Class<?> headersClass() default void.class;
 }

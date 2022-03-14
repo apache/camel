@@ -37,6 +37,7 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
     protected boolean lenientProperties;
     protected String verifiers;
     protected final List<EndpointOptionModel> endpointOptions = new ArrayList<>();
+    protected final List<EndpointHeaderModel> headers = new ArrayList<>();
     // lets sort apis A..Z so they are always in the same order
     protected final Collection<ApiModel> apiOptions = new TreeSet<>(Comparators.apiModelComparator());
 
@@ -160,6 +161,14 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
         endpointOptions.add(option);
     }
 
+    public List<EndpointHeaderModel> getEndpointHeaders() {
+        return headers;
+    }
+
+    public void addEndpointHeader(EndpointHeaderModel header) {
+        headers.add(header);
+    }
+
     public List<EndpointOptionModel> getEndpointParameterOptions() {
         return endpointOptions.stream()
                 .filter(o -> "parameter".equals(o.getKind()))
@@ -174,6 +183,10 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
 
     public Collection<ApiModel> getApiOptions() {
         return apiOptions;
+    }
+
+    public static class EndpointHeaderModel extends BaseOptionModel {
+
     }
 
     public static class ComponentOptionModel extends BaseOptionModel {
