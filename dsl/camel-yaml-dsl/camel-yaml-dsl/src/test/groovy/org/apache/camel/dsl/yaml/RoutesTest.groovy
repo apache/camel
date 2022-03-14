@@ -144,6 +144,8 @@ class RoutesTest extends YamlTestSupport {
         loadRoutes '''
                 - route:
                     id: demo-route
+                    stream-caching: true
+                    auto-startup: false
                     from:
                       uri: "direct:info"
                       steps:
@@ -154,6 +156,8 @@ class RoutesTest extends YamlTestSupport {
 
         with(context.routeDefinitions[0], RouteDefinition) {
             routeId == 'demo-route'
+            streamCache == 'true'
+            autoStartup == 'false'
             input.endpointUri == 'direct:info'
 
             with (outputs[0], LogDefinition) {

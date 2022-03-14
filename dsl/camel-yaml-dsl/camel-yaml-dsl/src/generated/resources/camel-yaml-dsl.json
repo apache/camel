@@ -2502,6 +2502,9 @@
       "org.apache.camel.model.RouteDefinition" : {
         "type" : "object",
         "properties" : {
+          "auto-startup" : {
+            "type" : "boolean"
+          },
           "description" : {
             "type" : "string"
           },
@@ -2519,6 +2522,9 @@
           },
           "route-configuration-id" : {
             "type" : "string"
+          },
+          "stream-caching" : {
+            "type" : "boolean"
           }
         },
         "required" : [ "from" ]

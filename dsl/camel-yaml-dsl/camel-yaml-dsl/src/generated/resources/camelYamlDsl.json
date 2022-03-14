@@ -2406,6 +2406,9 @@
       "org.apache.camel.model.RouteDefinition" : {
         "type" : "object",
         "properties" : {
+          "autoStartup" : {
+            "type" : "boolean"
+          },
           "description" : {
             "type" : "string"
           },
@@ -2423,6 +2426,9 @@
           },
           "routeConfigurationId" : {
             "type" : "string"
+          },
+          "streamCaching" : {
+            "type" : "boolean"
           }
         },
         "required" : [ "from" ]
