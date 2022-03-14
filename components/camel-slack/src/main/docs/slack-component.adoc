@@ -167,6 +167,7 @@ read (`channels:read`, `groups:read`, `mpim:read` and `im:read`) user token scop
 view messages in the corresponding channel.
 
 For Bot tokens you'll need the following permissions:
+
 - channels:history
 - groups:history
 - im:history
@@ -177,6 +178,7 @@ For Bot tokens you'll need the following permissions:
 - mpim:read
 
 For User tokens you'll need the following permissions:
+
 - channels:history
 - groups:history
 - im:history
