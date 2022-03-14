@@ -541,12 +541,6 @@ public final class JsonMapper {
         return prop;
     }
 
-    public static JsonObject asJsonObject(EndpointHeaderModel header) {
-        JsonObject prop = new JsonObject();
-        prop.put("description", header.getDescription());
-        return prop;
-    }
-
     public static MainModel generateMainModel(String json) {
         JsonObject obj = deserialize(json);
         return generateMainModel(obj);

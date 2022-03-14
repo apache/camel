@@ -84,10 +84,7 @@ import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Javadoc;
 import org.jboss.forge.roaster.model.JavaDoc;
 import org.jboss.forge.roaster.model.JavaDocCapable;
-import org.jboss.forge.roaster.model.StaticCapable;
-import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
-import org.jboss.forge.roaster.model.source.Import;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.jandex.AnnotationInstance;
@@ -96,6 +93,7 @@ import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexReader;
 import org.jboss.jandex.IndexView;
 
+import static java.lang.reflect.Modifier.isStatic;
 import static org.apache.camel.tooling.model.ComponentModel.ApiOptionModel;
 
 @Mojo(name = "generate-endpoint-schema", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
@@ -263,7 +261,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         // component headers
-        addEndpointHeaders(componentModel, classElement);
+        addEndpointHeaders(componentModel, uriEndpoint);
 
         // endpoint options
         findClassProperties(componentModel, classElement, new HashSet<>(), "", null, null, false);
@@ -299,125 +297,43 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     /**
-     * Retrieve the metadata added to the constants specified in the element {@code headers} of the annotation
-     * {@code Metadata}, convert the metadata retrieved into instances of {@link EndpointHeaderModel} and finally add
-     * the instances of {@link EndpointHeaderModel} to the given component model.
+     * Retrieve the metadata added to all the {@code String} constants defined in class corresponding to the element
+     * {@code headersClass} of the annotation {@code UriEndpoint}, convert the metadata found into instances of
+     * {@link EndpointHeaderModel} and finally add the instances of {@link EndpointHeaderModel} to the given component
+     * model.
      * 
      * @param componentModel the component model to which the headers should be added.
-     * @param classElement   the class from which the annotation {@code Metadata} will be retrieved.
+     * @param uriEndpoint    the annotation from which the headers class is retrieved.
      */
-    void addEndpointHeaders(ComponentModel componentModel, Class<?> classElement) {
-        final Metadata componentMetadata = classElement.getAnnotation(Metadata.class);
-        if (componentMetadata == null || componentMetadata.headers().length == 0) {
+    void addEndpointHeaders(ComponentModel componentModel, UriEndpoint uriEndpoint) {
+        final Class<?> headersClass = uriEndpoint.headersClass();
+        if (headersClass == void.class) {
+            getLog().debug(String.format("The endpoint %s has not defined any headers class", uriEndpoint.scheme()));
             return;
         }
-        // There are headers to load
-        try {
-            final JavaClassSource source = javaClassSource(classElement.getName());
-            final AnnotationSource<?> annotationSource = source.getAnnotation(Metadata.class);
-            if (annotationSource == null) {
-                getLog().warn(String.format("The annotation @Metadata could not be found by the parser in the class %s",
-                        classElement.getName()));
-                return;
+        // A header class has been defined
+        boolean foundHeader = false;
+        for (Field field : headersClass.getDeclaredFields()) {
+            if (isStatic(field.getModifiers()) && field.getType() == String.class
+                    && field.isAnnotationPresent(Metadata.class)) {
+                getLog().debug(
+                        String.format("Trying to add the constant %s in the class %s as header.", field.getName(),
+                                headersClass.getName()));
+                addEndpointHeader(componentModel, field);
+                foundHeader = true;
+                continue;
             }
-            final String[] headers = annotationSource.getStringArrayValue("headers");
-            if (headers == null) {
-                getLog().warn(String.format("The element headers of @Metadata could not be found by the parser in the class %s",
-                        classElement.getName()));
-                return;
-            }
-            for (String headerRef : headers) {
-                getLog().debug(String.format("Header ref found %s", headerRef));
-                addEndpointHeader(componentModel, source, headerRef);
-            }
-        } catch (Exception e) {
-            getLog().warn(String.format("The headers of %s could not be loaded", classElement.getName()), e);
+            getLog().debug(
+                    String.format("The field %s of the class %s is not considered as a name of a header, thus it is skipped",
+                            field.getName(), headersClass.getName()));
+        }
+        if (!foundHeader) {
+            getLog().debug(String.format("No headers have been detected in the headers class %s", headersClass.getName()));
         }
     }
 
     /**
-     * Identify the constant corresponding to the given header reference and retrieve the metadata added to it, convert
-     * the metadata retrieved into an instance of {@link EndpointHeaderModel} and finally add the instance of
-     * {@link EndpointHeaderModel} to the given component model.
-     * 
-     * @param componentModel the component to which the header should be added.
-     * @param source         the source of the file that contains the definition of the header references.
-     * @param headerRef      the header reference to process.
-     */
-    private void addEndpointHeader(ComponentModel componentModel, JavaClassSource source, String headerRef) {
-        final int lastIndex = headerRef.lastIndexOf('.');
-        final String constantName;
-        final String qualifiedName;
-        if (lastIndex == -1) {
-            // No prefix
-            final Optional<Import> optionalImport = source.getImports().stream()
-                    .filter(StaticCapable::isStatic)
-                    .filter(imp -> imp.getSimpleName().equals(headerRef))
-                    .findFirst();
-            if (optionalImport.isPresent()) {
-                constantName = headerRef;
-                final String importQualifiedName = optionalImport.get().getQualifiedName();
-                qualifiedName = importQualifiedName.substring(0, importQualifiedName.length() - headerRef.length() - 1);
-            } else {
-                getLog().debug(String.format("The header %s defined in the class %s could not be found", headerRef,
-                        source.getQualifiedName()));
-                return;
-            }
-        } else if (headerRef.startsWith(source.getPackage())) {
-            // Fully qualified
-            constantName = headerRef.substring(lastIndex + 1);
-            qualifiedName = headerRef.substring(0, lastIndex);
-        } else {
-            // With prefix
-            final String prefix = headerRef.substring(0, lastIndex);
-            final int firstIndex = prefix.indexOf('.');
-            final String root = firstIndex == -1 ? prefix : prefix.substring(0, firstIndex);
-            final Optional<Import> optionalImport = source.getImports().stream()
-                    .filter(imp -> !imp.isStatic())
-                    .filter(imp -> imp.getQualifiedName().endsWith(root))
-                    .findFirst();
-            constantName = headerRef.substring(lastIndex + 1);
-            if (optionalImport.isPresent()) {
-                // In another package
-                if (firstIndex == -1) {
-                    // No inner class
-                    qualifiedName = optionalImport.get().getQualifiedName();
-                } else {
-                    // In inner class
-                    qualifiedName = String.format("%s$%s", optionalImport.get().getQualifiedName(),
-                            prefix.substring(firstIndex + 1).replace('.', '$'));
-                }
-            } else {
-                // In the same package
-                qualifiedName = String.format("%s.%s", source.getPackage(), prefix);
-            }
-        }
-        addEndpointHeader(componentModel, constantName, qualifiedName);
-    }
-
-    /**
-     * Retrieve the metadata added to the given constant of the given class, convert the metadata retrieved into an
-     * instance of {@link EndpointHeaderModel} and finally add the instance of {@link EndpointHeaderModel} to the given
-     * component model.
-     * 
-     * @param componentModel the component to which the header should be added.
-     * @param constantName   the name of the constant from which the metadata defining the header should be extracted.
-     * @param qualifiedName  the full qualified name of the class containing the constant.
-     */
-    private void addEndpointHeader(ComponentModel componentModel, String constantName, String qualifiedName) {
-        getLog().debug(
-                String.format("Trying to add the constant %s in the class %s as header.", constantName, qualifiedName));
-        try {
-            addEndpointHeader(componentModel, loadClass(qualifiedName).getDeclaredField(constantName));
-        } catch (NoClassDefFoundError e) {
-            getLog().debug(String.format("The class %s could not be found", qualifiedName), e);
-        } catch (NoSuchFieldException e) {
-            getLog().debug(String.format("The field %s in class %s could not be found", constantName, qualifiedName), e);
-        }
-    }
-
-    /**
-     * Retrieve the metadata added to the given field, convert the metadata retrieved into an instance of
+     * Retrieve the metadata added to the given field, convert the metadata found into an instance of
      * {@link EndpointHeaderModel} and finally add the instance of {@link EndpointHeaderModel} to the given component
      * model.
      * 

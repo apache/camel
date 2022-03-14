@@ -14,33 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven.packaging.endpoint;
+package org.apache.camel.component.foo;
 
 import org.apache.camel.spi.Metadata;
 
-public final class SamePackageConstants {
-    @Metadata(description = "key2 desc")
-    static final String KEY_2 = "name-2";
-    @Metadata(description = "key17 desc")
-    static final String KEY_17 = "name-17";
+public final class FooConstants {
 
-    private SamePackageConstants() {
-    }
+    @Metadata(description = "My description of the SomeHeader")
+    public static final String SOME_HEADER = "SomeHeaderName";
 
-    public final class Inner {
-        @Metadata(description = "key7 desc")
-        public static final String KEY_7 = "name-7";
-        @Metadata(description = "key11 desc")
-        public static final String KEY_11 = "name-11";
-
-        private Inner() {
-        }
-    }
-
-    public static class InnerStatic {
-        @Metadata(description = "key8 desc")
-        public static final String KEY_8 = "name-8";
-        @Metadata(description = "key12 desc")
-        public static final String KEY_12 = "name-12";
+    private FooConstants() {
     }
 }

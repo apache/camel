@@ -24,8 +24,7 @@ import org.apache.camel.spi.UriPath;
 
 @UriEndpoint(firstVersion = "1.1.0", scheme = "foo", extendsScheme = "foo", title = "FOO",
     syntax = "foo:host:port", alternativeSyntax = "foo:host@port",
-    category = { Category.FILE })
-@Metadata(headers = ConstantsSamePackage.SAME_PACKAGE_KEY)
+    category = { Category.FILE }, headersClass = FooConstants.class)
 public class FooEndpoint {
 
     @UriPath(description = "Hostname of the Foo server")

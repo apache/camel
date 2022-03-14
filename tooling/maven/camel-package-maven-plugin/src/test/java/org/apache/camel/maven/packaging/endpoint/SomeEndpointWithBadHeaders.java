@@ -17,11 +17,15 @@
 package org.apache.camel.maven.packaging.endpoint;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
 
-@Metadata(
-          headers = { "non-existing", SomeEndpointWithBadHeaders.NO_METADATA })
+@UriEndpoint(scheme = "some", syntax = "some", title = "some", headersClass = SomeEndpointWithBadHeaders.class)
 public final class SomeEndpointWithBadHeaders {
     public static final String NO_METADATA = "no-metadata";
+    @Metadata(description = "some description")
+    public static final int NOT_A_STRING = 1;
+    @Metadata(description = "some description")
+    public final String notStatic = "not-static";
 
     private SomeEndpointWithBadHeaders() {
 

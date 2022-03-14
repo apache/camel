@@ -16,8 +16,8 @@
  */
 package org.apache.camel.maven.packaging.endpoint;
 
-import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
 
-@Metadata
+@UriEndpoint(scheme = "some", syntax = "some", title = "some", headersClass = SomeEndpointWithoutHeaders.class)
 public class SomeEndpointWithoutHeaders {
 }

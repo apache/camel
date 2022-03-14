@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpoint;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadHeaders;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithoutHeaders;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
 import org.apache.maven.project.MavenProject;
@@ -52,51 +53,51 @@ class EndpointSchemaGeneratorMojoTest {
 
     @Test
     void testCanRetrieveMetadataOfHeaders() {
-        mojo.addEndpointHeaders(model, SomeEndpoint.class);
+        mojo.addEndpointHeaders(model, SomeEndpoint.class.getAnnotation(UriEndpoint.class));
         List<EndpointHeaderModel> endpointHeaders = model.getEndpointHeaders();
-        assertEquals(18, endpointHeaders.size());
-        for (int i = 1; i < endpointHeaders.size(); i++) {
-            EndpointHeaderModel header = endpointHeaders.get(i);
-            assertEquals("header", header.getKind());
-            assertEquals(String.format("name-%d", i + 1), header.getName());
-            assertEquals(String.format("key%d desc", i + 1), header.getDescription());
-            assertTrue(header.getDisplayName().isEmpty());
-            assertTrue(header.getJavaType().isEmpty());
-            assertFalse(header.isRequired());
-            assertInstanceOf(String.class, header.getDefaultValue());
-            assertTrue(((String) header.getDefaultValue()).isEmpty());
-            assertFalse(header.isDeprecated());
-            assertTrue(header.getDeprecationNote().isEmpty());
-            assertFalse(header.isSecret());
-            assertTrue(header.getLabel().isEmpty());
-            assertNull(header.getEnums());
-            assertEquals("common", header.getGroup());
-        }
-        EndpointHeaderModel header = endpointHeaders.get(0);
-        assertEquals("header", header.getKind());
-        assertEquals("name-1", header.getName());
-        assertEquals("key1 desc", header.getDescription());
-        assertEquals("my display name", header.getDisplayName());
-        assertEquals("org.apache.camel.maven.packaging.endpoint.SomeEndpoint$MyEnum", header.getJavaType());
-        assertTrue(header.isRequired());
-        assertEquals("VAL1", header.getDefaultValue());
-        assertTrue(header.isDeprecated());
-        assertEquals("my deprecated note", header.getDeprecationNote());
-        assertTrue(header.isSecret());
-        assertEquals("my label", header.getLabel());
-        assertEquals(3, header.getEnums().size());
-        assertEquals("my label", header.getGroup());
+        assertEquals(2, endpointHeaders.size());
+        // Full
+        EndpointHeaderModel headerFull = endpointHeaders.get(0);
+        assertEquals("header", headerFull.getKind());
+        assertEquals("name-full", headerFull.getName());
+        assertEquals("key full desc", headerFull.getDescription());
+        assertEquals("my display name", headerFull.getDisplayName());
+        assertEquals("org.apache.camel.maven.packaging.endpoint.SomeEndpoint$MyEnum", headerFull.getJavaType());
+        assertTrue(headerFull.isRequired());
+        assertEquals("VAL1", headerFull.getDefaultValue());
+        assertTrue(headerFull.isDeprecated());
+        assertEquals("my deprecated note", headerFull.getDeprecationNote());
+        assertTrue(headerFull.isSecret());
+        assertEquals("my label", headerFull.getLabel());
+        assertEquals(3, headerFull.getEnums().size());
+        assertEquals("my label", headerFull.getGroup());
+        // Empty
+        EndpointHeaderModel headerEmpty = endpointHeaders.get(1);
+        assertEquals("header", headerEmpty.getKind());
+        assertEquals("name-empty", headerEmpty.getName());
+        assertTrue(headerEmpty.getDescription().isEmpty());
+        assertTrue(headerEmpty.getDisplayName().isEmpty());
+        assertTrue(headerEmpty.getJavaType().isEmpty());
+        assertFalse(headerEmpty.isRequired());
+        assertInstanceOf(String.class, headerEmpty.getDefaultValue());
+        assertTrue(((String) headerEmpty.getDefaultValue()).isEmpty());
+        assertFalse(headerEmpty.isDeprecated());
+        assertTrue(headerEmpty.getDeprecationNote().isEmpty());
+        assertFalse(headerEmpty.isSecret());
+        assertTrue(headerEmpty.getLabel().isEmpty());
+        assertNull(headerEmpty.getEnums());
+        assertEquals("common", headerEmpty.getGroup());
     }
 
     @Test
     void testHeadersNotProperlyDefinedAreIgnored() {
-        mojo.addEndpointHeaders(model, SomeEndpointWithBadHeaders.class);
+        mojo.addEndpointHeaders(model, SomeEndpointWithBadHeaders.class.getAnnotation(UriEndpoint.class));
         assertEquals(0, model.getEndpointHeaders().size());
     }
 
     @Test
     void testEndpointWithoutHeadersAreIgnored() {
-        mojo.addEndpointHeaders(model, SomeEndpointWithoutHeaders.class);
+        mojo.addEndpointHeaders(model, SomeEndpointWithoutHeaders.class.getAnnotation(UriEndpoint.class));
         assertEquals(0, model.getEndpointHeaders().size());
     }
 }

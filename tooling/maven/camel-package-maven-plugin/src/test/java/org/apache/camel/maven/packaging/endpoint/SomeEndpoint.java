@@ -16,66 +16,16 @@
  */
 package org.apache.camel.maven.packaging.endpoint;
 
-import org.apache.camel.maven.packaging.endpoint.other.OtherPackageConstants;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.maven.packaging.endpoint.SamePackageConstants.Inner.KEY_7;
-import static org.apache.camel.maven.packaging.endpoint.SamePackageConstants.InnerStatic.KEY_8;
-import static org.apache.camel.maven.packaging.endpoint.SomeEndpoint.Inner.KEY_13;
-import static org.apache.camel.maven.packaging.endpoint.SomeEndpoint.InnerStatic.KEY_14;
-import static org.apache.camel.maven.packaging.endpoint.other.OtherPackageConstants.KEY_4;
-import static org.apache.camel.maven.packaging.endpoint.other.OtherPackageConstants.Inner.KEY_9;
-import static org.apache.camel.maven.packaging.endpoint.other.OtherPackageConstants.InnerStatic.KEY_10;
-
-@Metadata(
-          headers = {
-                  SomeEndpoint.KEY_1,
-                  SamePackageConstants.KEY_2,
-                  OtherPackageConstants.KEY_3,
-                  KEY_4,
-                  OtherPackageConstants.Inner.KEY_5,
-                  OtherPackageConstants.InnerStatic.KEY_6,
-                  KEY_7,
-                  KEY_8,
-                  KEY_9,
-                  KEY_10,
-                  SamePackageConstants.Inner.KEY_11,
-                  SamePackageConstants.InnerStatic.KEY_12,
-                  KEY_13,
-                  KEY_14,
-                  SomeEndpoint.Inner.KEY_15,
-                  SomeEndpoint.InnerStatic.KEY_16,
-                  org.apache.camel.maven.packaging.endpoint.SamePackageConstants.KEY_17,
-                  org.apache.camel.maven.packaging.endpoint.other.OtherPackageConstants.KEY_18
-          })
+@UriEndpoint(scheme = "some", syntax = "some", title = "some", headersClass = SomeConstants.class)
 public class SomeEndpoint {
-    @Deprecated
-    @Metadata(description = "key1 desc", label = "my label", displayName = "my display name",
-              javaType = "org.apache.camel.maven.packaging.endpoint.SomeEndpoint$MyEnum", required = true,
-              defaultValue = "VAL1", deprecationNote = "my deprecated note", secret = true)
-    public static final String KEY_1 = "name-1";
 
     @UriPath(description = "Hostname of the Foo server")
     @Metadata(required = true)
     private String host;
-
-    public final class Inner {
-        @Metadata(description = "key13 desc")
-        public static final String KEY_13 = "name-13";
-        @Metadata(description = "key15 desc")
-        public static final String KEY_15 = "name-15";
-
-        private Inner() {
-        }
-    }
-
-    public static class InnerStatic {
-        @Metadata(description = "key14 desc")
-        public static final String KEY_14 = "name-14";
-        @Metadata(description = "key16 desc")
-        public static final String KEY_16 = "name-16";
-    }
 
     public String getHost() {
         return host;

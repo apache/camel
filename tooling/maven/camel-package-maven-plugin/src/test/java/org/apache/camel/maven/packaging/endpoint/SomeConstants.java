@@ -14,15 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.foo;
+package org.apache.camel.maven.packaging.endpoint;
 
 import org.apache.camel.spi.Metadata;
 
-public final class ConstantsSamePackage {
+public final class SomeConstants {
+    @Deprecated
+    @Metadata(description = "key full desc", label = "my label", displayName = "my display name",
+              javaType = "org.apache.camel.maven.packaging.endpoint.SomeEndpoint$MyEnum", required = true,
+              defaultValue = "VAL1", deprecationNote = "my deprecated note", secret = true)
+    public static final String KEY_FULL = "name-full";
+    @Metadata
+    static final String KEY_EMPTY = "name-empty";
 
-    @Metadata(description = "My Constant in same package")
-    public static final String SAME_PACKAGE_KEY = "SomeKeyName";
-
-    private ConstantsSamePackage() {
+    private SomeConstants() {
     }
 }
