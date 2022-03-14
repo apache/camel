@@ -288,6 +288,7 @@
         <javax-annotation-api-version>1.3.2</javax-annotation-api-version>
         <jakarta-mail-version>1.6.6</jakarta-mail-version>
         <javax-servlet-api-version>3.1.0</javax-servlet-api-version>
+        <jakarta-cdi-api-version>2.0.2</jakarta-cdi-api-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
         <jakarta.el-version>3.0.3</jakarta.el-version>
         <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>

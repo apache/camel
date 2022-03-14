@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dsl.support;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
@@ -33,7 +37,7 @@ import org.apache.camel.support.RoutesBuilderLoaderSupport;
  */
 public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSupport {
     private final String extension;
-
+    private final List<CompilePostProcessor> compilePostProcessors = new ArrayList<>();
     private StartupStepRecorder recorder;
 
     protected RouteBuilderLoaderSupport(String extension) {
@@ -46,12 +50,42 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
         return extension;
     }
 
+    /**
+     * Gets the registered {@link CompilePostProcessor}.
+     */
+    public List<CompilePostProcessor> getCompilePostProcessors() {
+        return compilePostProcessors;
+    }
+
+    /**
+     * Add a custom {@link CompilePostProcessor} to handle specific post-processing after compiling the source into a
+     * Java object.
+     */
+    public void addCompilePostProcessor(CompilePostProcessor preProcessor) {
+        this.compilePostProcessors.add(preProcessor);
+    }
+
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
 
         if (getCamelContext() != null) {
             this.recorder = getCamelContext().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (getCamelContext() != null) {
+            // discover optional compile post-processors to be used
+            Set<CompilePostProcessor> pres = getCamelContext().getRegistry().findByType(CompilePostProcessor.class);
+            if (pres != null && !pres.isEmpty()) {
+                for (CompilePostProcessor pre : pres) {
+                    addCompilePostProcessor(pre);
+                }
+            }
         }
     }
 

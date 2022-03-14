@@ -21,24 +21,15 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.camel.BindToRegistry;
-import org.apache.camel.CamelConfiguration;
-import org.apache.camel.Configuration;
-import org.apache.camel.Converter;
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.LoggingLevel;
-import org.apache.camel.TypeConverterExists;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.dsl.support.CompilePostProcessor;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
-import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.joor.Reflect;
 
 @ManagedResource(description = "Managed JavaRoutesBuilderLoader")
@@ -63,51 +54,16 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
 
             Reflect ref = Reflect.compile(name, content).create();
             Class<?> clazz = ref.type();
+            Object obj = ref.get();
 
-            if (clazz.getAnnotation(Converter.class) != null) {
-                TypeConverterRegistry tcr = getCamelContext().getTypeConverterRegistry();
-                TypeConverterExists exists = tcr.getTypeConverterExists();
-                LoggingLevel level = tcr.getTypeConverterExistsLoggingLevel();
-                // force type converter to override as we could be re-loading
-                tcr.setTypeConverterExists(TypeConverterExists.Override);
-                tcr.setTypeConverterExistsLoggingLevel(LoggingLevel.OFF);
-                try {
-                    tcr.addTypeConverters(clazz);
-                } finally {
-                    tcr.setTypeConverterExists(exists);
-                    tcr.setTypeConverterExistsLoggingLevel(level);
-                }
-                return null;
+            // support custom annotation scanning post compilation
+            // such as to register custom beans, type converters, etc.
+            for (CompilePostProcessor pre : getCompilePostProcessors()) {
+                pre.postCompile(getCamelContext(), name, clazz, obj);
             }
 
-            Object obj = ref.get();
             if (obj instanceof RouteBuilder) {
                 return (RouteBuilder) obj;
-            } else if (obj != null) {
-                BindToRegistry bir = obj.getClass().getAnnotation(BindToRegistry.class);
-                Configuration cfg = obj.getClass().getAnnotation(Configuration.class);
-                if (bir != null || cfg != null || obj instanceof CamelConfiguration) {
-                    CamelBeanPostProcessor bpp = getCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-                    if (bir != null && ObjectHelper.isNotEmpty(bir.value())) {
-                        name = bir.value();
-                    } else if (cfg != null && ObjectHelper.isNotEmpty(cfg.value())) {
-                        name = cfg.value();
-                    }
-                    // to support hot reloading of beans then we need to enable unbind mode in bean post processor
-                    bpp.setUnbindEnabled(true);
-                    try {
-                        // this class is a bean service which needs to be post processed and registered which happens
-                        // automatic by the bean post processor
-                        bpp.postProcessBeforeInitialization(obj, name);
-                        bpp.postProcessAfterInitialization(obj, name);
-                    } finally {
-                        bpp.setUnbindEnabled(false);
-                    }
-                    if (obj instanceof CamelConfiguration) {
-                        ((CamelConfiguration) obj).configure(getCamelContext());
-                    }
-                    return null;
-                }
             }
             return null;
         }
@@ -127,4 +83,5 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 ? matcher.group(1) + "." + name
                 : name;
     }
+
 }

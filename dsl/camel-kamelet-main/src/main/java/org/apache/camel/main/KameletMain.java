@@ -31,6 +31,7 @@ import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
  * A Main class for booting up Camel with Kamelet in standalone mode.
  */
 public class KameletMain extends MainCommandLineSupport {
+
     public static final String DEFAULT_KAMELETS_LOCATION = "classpath:/kamelets,github:apache:camel-kamelets/kamelets";
 
     private static ClassLoader kameletClassLoader;
@@ -163,6 +164,8 @@ public class KameletMain extends MainCommandLineSupport {
         answer.setRegistry(registry);
         // load camel component and custom health-checks
         answer.setLoadHealthChecks(true);
+        // annotation based dependency injection for camel/spring/quarkus annotations in DSLs and Java beans
+        AnnotationDependencyInjection.initAnnotationBasedDependencyInjection(answer);
 
         // embed HTTP server if port is specified
         Object port = getInitialProperties().get("camel.jbang.platform-http.port");
