@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.beanstalk.integration;
 
-import java.io.IOException;
-
 import com.surftools.BeanstalkClient.Job;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
