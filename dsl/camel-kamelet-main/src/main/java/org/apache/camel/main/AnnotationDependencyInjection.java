@@ -33,11 +33,13 @@ import org.apache.camel.Converter;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.dsl.support.CompilePostProcessor;
 import org.apache.camel.impl.engine.CamelPostProcessorHelper;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelBeanPostProcessorInjector;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
@@ -58,26 +60,25 @@ public final class AnnotationDependencyInjection {
     }
 
     public static void initAnnotationBasedDependencyInjection(CamelContext context) {
+        Registry registry = context.getRegistry();
+        CamelBeanPostProcessor cbbp = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+
         // camel / common
-        context.getRegistry().bind("CamelTypeConverterCompilePostProcessor", new TypeConverterCompilePostProcessor());
-        context.getRegistry().bind("CamelBindToRegistryCompilePostProcessor", new BindToRegistryCompilePostProcessor());
-
+        registry.bind("CamelTypeConverterCompilePostProcessor", new TypeConverterCompilePostProcessor());
+        registry.bind("CamelBindToRegistryCompilePostProcessor", new BindToRegistryCompilePostProcessor());
         // spring
-        context.getRegistry().bind("SpringAnnotationCompilePostProcessor", new SpringAnnotationCompilePostProcessor());
-        context.adapt(ExtendedCamelContext.class).getBeanPostProcessor()
-                .addCamelBeanPostProjectInjector(new SpringBeanPostProcessorInjector(context));
-
+        registry.bind("SpringAnnotationCompilePostProcessor", new SpringAnnotationCompilePostProcessor());
+        cbbp.addCamelBeanPostProjectInjector(new SpringBeanPostProcessorInjector(context));
         // quarkus
-        context.getRegistry().bind("QuarkusAnnotationCompilePostProcessor", new QuarkusAnnotationCompilePostProcessor());
-        context.adapt(ExtendedCamelContext.class).getBeanPostProcessor()
-                .addCamelBeanPostProjectInjector(new QuarkusBeanPostProcessorInjector(context));
+        registry.bind("QuarkusAnnotationCompilePostProcessor", new QuarkusAnnotationCompilePostProcessor());
+        cbbp.addCamelBeanPostProjectInjector(new QuarkusBeanPostProcessorInjector(context));
     }
 
     private static class TypeConverterCompilePostProcessor implements CompilePostProcessor {
 
         @Override
         public void postCompile(CamelContext camelContext, String name, Class<?> clazz, Object instance) throws Exception {
-            if (clazz.getAnnotation(Converter.class) != null) {
+            if (clazz.isAnnotationPresent(Converter.class)) {
                 TypeConverterRegistry tcr = camelContext.getTypeConverterRegistry();
                 TypeConverterExists exists = tcr.getTypeConverterExists();
                 LoggingLevel level = tcr.getTypeConverterExistsLoggingLevel();
@@ -111,7 +112,7 @@ public final class AnnotationDependencyInjection {
                 // to support hot reloading of beans then we need to enable unbind mode in bean post processor
                 bpp.setUnbindEnabled(true);
                 try {
-                    // this class is a bean service which needs to be post processed and registered which happens
+                    // this class uses camels own annotations so the bind to registry happens
                     // automatic by the bean post processor
                     bpp.postProcessBeforeInitialization(instance, name);
                     bpp.postProcessAfterInitialization(instance, name);
@@ -140,18 +141,7 @@ public final class AnnotationDependencyInjection {
                 } else if (service != null && ObjectHelper.isNotEmpty(service.value())) {
                     name = service.value();
                 }
-                // to support hot reloading of beans then we need to enable unbind mode in bean post processor
-                bpp.setUnbindEnabled(true);
-                try {
-                    // re-bind the bean to the registry
-                    camelContext.getRegistry().unbind(name);
-                    camelContext.getRegistry().bind(name, instance);
-                    // this class is a bean service which needs to be post processed
-                    bpp.postProcessBeforeInitialization(instance, name);
-                    bpp.postProcessAfterInitialization(instance, name);
-                } finally {
-                    bpp.setUnbindEnabled(false);
-                }
+                bindBean(camelContext, name, instance, true);
             }
         }
     }
@@ -200,19 +190,10 @@ public final class AnnotationDependencyInjection {
                 Object instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName);
                 if (instance != null) {
                     String name = method.getName();
-                    if (bi.name() != null && bi.name().length > 0) {
+                    if (bi.name().length > 0) {
                         name = bi.name()[0];
                     }
-                    // to support hot reloading of beans then we need to enable unbind mode in bean post processor
-                    CamelBeanPostProcessor bpp = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-                    bpp.setUnbindEnabled(true);
-                    try {
-                        // re-bind the bean to the registry
-                        context.getRegistry().unbind(name);
-                        context.getRegistry().bind(name, instance);
-                    } finally {
-                        bpp.setUnbindEnabled(false);
-                    }
+                    bindBean(context, name, instance, false);
                 }
             }
         }
@@ -230,19 +211,7 @@ public final class AnnotationDependencyInjection {
                 if (named != null) {
                     name = named.value();
                 }
-                CamelBeanPostProcessor bpp = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-                // to support hot reloading of beans then we need to enable unbind mode in bean post processor
-                bpp.setUnbindEnabled(true);
-                try {
-                    // re-bind the bean to the registry
-                    camelContext.getRegistry().unbind(name);
-                    camelContext.getRegistry().bind(name, instance);
-                    // this class is a bean service which needs to be post processed
-                    bpp.postProcessBeforeInitialization(instance, name);
-                    bpp.postProcessAfterInitialization(instance, name);
-                } finally {
-                    bpp.setUnbindEnabled(false);
-                }
+                bindBean(camelContext, name, instance, true);
             }
         }
     }
@@ -288,18 +257,29 @@ public final class AnnotationDependencyInjection {
                     if (bi != null && !bi.value().isBlank()) {
                         name = bi.value();
                     }
-                    // to support hot reloading of beans then we need to enable unbind mode in bean post processor
-                    CamelBeanPostProcessor bpp = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-                    bpp.setUnbindEnabled(true);
-                    try {
-                        // re-bind the bean to the registry
-                        context.getRegistry().unbind(name);
-                        context.getRegistry().bind(name, instance);
-                    } finally {
-                        bpp.setUnbindEnabled(false);
-                    }
+                    bindBean(context, name, instance, false);
                 }
             }
+        }
+    }
+
+    private static void bindBean(CamelContext context, String name, Object instance, boolean postProcess) {
+        // to support hot reloading of beans then we need to enable unbind mode in bean post processor
+        Registry registry = context.getRegistry();
+        CamelBeanPostProcessor bpp = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+        bpp.setUnbindEnabled(true);
+        try {
+            // re-bind the bean to the registry
+            registry.unbind(name);
+            registry.bind(name, instance);
+            if (postProcess) {
+                bpp.postProcessBeforeInitialization(instance, name);
+                bpp.postProcessAfterInitialization(instance, name);
+            }
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        } finally {
+            bpp.setUnbindEnabled(false);
         }
     }
 

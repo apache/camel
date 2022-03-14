@@ -267,7 +267,7 @@ You can use the following Spring Boot annotations:
 
 You can use the following Quarkus annotations:
 
-- `@ApplicationScoped` or `@Single` on class level to create an instance of the class and register in the xref:registry.adoc[Registry]. `@Named` can be used to specify the bean id.
+- `@ApplicationScoped` or `@Singleton` on class level to create an instance of the class and register in the xref:registry.adoc[Registry]. `@Named` can be used to specify the bean id.
 - `@Inject` to dependency inject an bean on a class field. `@Named` can be used to specify the bean id.
 - `@ConfigProperty` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
 - `@Produces` on a method to create a bean by invoking the method. `@Named` can be used to specify the bean id.
