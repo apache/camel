@@ -20,7 +20,7 @@ import ca.uhn.hl7v2.model.v24.message.ORU_R01;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.r4.model.Patient;
 
 /**
  * Simple Patient processor that converts the Patient segment of a {@link ORU_R01} message into a FHIR dtsu3

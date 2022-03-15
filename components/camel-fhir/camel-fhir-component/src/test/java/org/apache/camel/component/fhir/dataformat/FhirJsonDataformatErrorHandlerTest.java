@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.FhirJsonDataFormat;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +41,7 @@ public class FhirJsonDataformatErrorHandlerTest extends CamelTestSupport {
             = "{\"resourceType\":\"Patient\",\"extension\":[ {\"valueDateTime\":\"2011-01-02T11:13:15\"} ]}";
 
     private MockEndpoint mockEndpoint;
-    private final FhirContext fhirContext = FhirContext.forDstu3();
+    private final FhirContext fhirContext = FhirContext.forR4();
 
     @Override
     @BeforeEach
