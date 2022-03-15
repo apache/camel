@@ -175,7 +175,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             FileResumeSet resumeSet = new FileResumeSet(dirFiles);
             resumeStrategy.resume(resumeSet);
 
-            return resumeSet.hasResumables() ? resumeSet.resumed() : dirFiles;
+            return resumeSet.resumed();
         }
 
         return dirFiles;
