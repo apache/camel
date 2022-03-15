@@ -46,9 +46,9 @@ public class ResumableCompletion implements Synchronization {
         if (offset instanceof Resumable) {
             Resumable<?, ?> resumable = (Resumable<?, ?>) offset;
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Processing the resumable: {}", resumable.getAddressable());
-                LOG.debug("Processing the resumable of type: {}", resumable.getLastOffset().offset());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing the resumable: {}", resumable.getAddressable());
+                LOG.trace("Processing the resumable of type: {}", resumable.getLastOffset().offset());
             }
 
             if (resumeStrategy instanceof UpdatableConsumerResumeStrategy) {
