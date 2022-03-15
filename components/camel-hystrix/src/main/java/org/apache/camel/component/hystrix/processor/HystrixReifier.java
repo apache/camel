@@ -235,7 +235,8 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
         // camel context takes the precedence over those in the registry
         loadProperties(properties, Suppliers.firstNotNull(
                 () -> camelContext.getExtension(Model.class).getHystrixConfiguration(null),
-                () -> lookup(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, HystrixConfigurationDefinition.class)),
+                () -> lookupByNameAndType(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID,
+                        HystrixConfigurationDefinition.class)),
                 configurer);
 
         // Extract properties from referenced configuration, the one configured

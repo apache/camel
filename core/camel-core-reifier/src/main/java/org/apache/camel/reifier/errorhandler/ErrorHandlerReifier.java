@@ -349,7 +349,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
 
     protected <T> T getBean(Class<T> clazz, T bean, String ref) {
         if (bean == null && ref != null) {
-            bean = lookup(ref, clazz);
+            bean = lookupByNameAndType(ref, clazz);
         }
         return bean;
     }

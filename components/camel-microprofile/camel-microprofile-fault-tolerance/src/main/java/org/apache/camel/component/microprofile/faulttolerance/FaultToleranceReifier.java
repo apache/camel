@@ -116,7 +116,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
         if (config.getBulkheadExecutorService() != null) {
             String ref = config.getBulkheadExecutorService();
             boolean shutdownThreadPool = false;
-            ExecutorService executorService = lookup(ref, ExecutorService.class);
+            ExecutorService executorService = lookupByNameAndType(ref, ExecutorService.class);
             if (executorService == null) {
                 executorService = lookupExecutorServiceRef("CircuitBreaker", definition, ref);
                 shutdownThreadPool = true;
@@ -141,7 +141,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
         // camel context takes the precedence over those in the registry
         loadProperties(properties, Suppliers.firstNotNull(
                 () -> camelContext.getExtension(Model.class).getFaultToleranceConfiguration(null),
-                () -> lookup(FaultToleranceConstants.DEFAULT_FAULT_TOLERANCE_CONFIGURATION_ID,
+                () -> lookupByNameAndType(FaultToleranceConstants.DEFAULT_FAULT_TOLERANCE_CONFIGURATION_ID,
                         FaultToleranceConfigurationDefinition.class)),
                 configurer);
 

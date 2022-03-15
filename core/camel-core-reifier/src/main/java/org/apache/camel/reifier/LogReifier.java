@@ -115,7 +115,7 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
 
     private MaskingFormatter getMaskingFormatter() {
         if (route.isLogMask()) {
-            MaskingFormatter formatter = lookup(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
+            MaskingFormatter formatter = lookupByNameAndType(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
             if (formatter == null) {
                 formatter = new DefaultMaskingFormatter();
             }

@@ -93,7 +93,8 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         ScheduledExecutorService timeoutThreadPool = definition.getTimeoutCheckerExecutorServiceBean();
         if (timeoutThreadPool == null && definition.getTimeoutCheckerExecutorService() != null) {
             // lookup existing thread pool
-            timeoutThreadPool = lookup(definition.getTimeoutCheckerExecutorService(), ScheduledExecutorService.class);
+            timeoutThreadPool
+                    = lookupByNameAndType(definition.getTimeoutCheckerExecutorService(), ScheduledExecutorService.class);
             if (timeoutThreadPool == null) {
                 // then create a thread pool assuming the ref is a thread pool
                 // profile id

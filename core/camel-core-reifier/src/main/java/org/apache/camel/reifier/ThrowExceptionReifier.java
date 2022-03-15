@@ -33,7 +33,7 @@ public class ThrowExceptionReifier extends ProcessorReifier<ThrowExceptionDefini
         Exception exception = definition.getException();
         String ref = parseString(definition.getRef());
         if (exception == null && ref != null) {
-            exception = lookup(ref, Exception.class);
+            exception = lookupByNameAndType(ref, Exception.class);
         }
 
         Class<? extends Exception> exceptionClass = definition.getExceptionClass();

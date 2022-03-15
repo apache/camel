@@ -348,14 +348,24 @@ public final class EndpointHelper {
      * @throws NoSuchBeanException if object was not found in registry and <code>mandatory</code> is <code>true</code>.
      */
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
-        // it may refer to a type
-        if (value.startsWith("#type:")) {
+        if (value.startsWith("#class:")) {
+            Object answer;
+            try {
+                answer = createBean(context, value, type);
+            } catch (Exception e) {
+                throw new NoSuchBeanException(value, e);
+            }
+            if (mandatory && answer == null) {
+                throw new NoSuchBeanException(value);
+            }
+            return type.cast(answer);
+        } else if (value.startsWith("#type:")) {
             try {
                 Object answer = null;
 
                 String valueNoHash = value.substring(6);
                 Class<?> clazz = context.getClassResolver().resolveMandatoryClass(valueNoHash);
-                Set<T> set = context.getRegistry().findByType(type);
+                Set<?> set = context.getRegistry().findByType(clazz);
                 if (set.size() == 1) {
                     answer = set.iterator().next();
                 } else if (set.size() > 1) {
@@ -364,6 +374,9 @@ public final class EndpointHelper {
                 }
                 if (mandatory && answer == null) {
                     throw new NoSuchBeanException(value);
+                }
+                if (answer != null) {
+                    answer = context.getTypeConverter().convertTo(type, answer);
                 }
                 return type.cast(answer);
             } catch (ClassNotFoundException e) {
@@ -378,6 +391,40 @@ public final class EndpointHelper {
                 return CamelContextHelper.lookupAndConvert(context, valueNoHash, type);
             }
         }
+    }
+
+    private static <T> T createBean(CamelContext camelContext, String name, Class<T> type) throws Exception {
+        Object answer;
+
+        // if there is a factory method then the class/bean should be created in a different way
+        String className;
+        String factoryMethod = null;
+        String parameters = null;
+        className = name.substring(7);
+        if (className.endsWith(")") && className.indexOf('(') != -1) {
+            parameters = StringHelper.after(className, "(");
+            parameters = parameters.substring(0, parameters.length() - 1); // clip last )
+            className = StringHelper.before(className, "(");
+        }
+        if (className != null && className.indexOf('#') != -1) {
+            factoryMethod = StringHelper.after(className, "#");
+            className = StringHelper.before(className, "#");
+        }
+        Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(className);
+
+        if (factoryMethod != null && parameters != null) {
+            answer = PropertyBindingSupport.newInstanceFactoryParameters(camelContext, clazz, factoryMethod, parameters);
+        } else if (factoryMethod != null) {
+            answer = camelContext.getInjector().newInstance(type, factoryMethod);
+        } else if (parameters != null) {
+            answer = PropertyBindingSupport.newInstanceConstructorParameters(camelContext, clazz, parameters);
+        } else {
+            answer = camelContext.getInjector().newInstance(clazz);
+        }
+        if (answer == null) {
+            throw new IllegalStateException("Cannot create bean: " + name);
+        }
+        return type.cast(answer);
     }
 
     /**
