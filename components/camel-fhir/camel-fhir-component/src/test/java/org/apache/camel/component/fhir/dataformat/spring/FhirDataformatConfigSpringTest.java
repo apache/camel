@@ -27,7 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.fhir.FhirDataFormat;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.r4.model.IdType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -58,7 +58,7 @@ public class FhirDataformatConfigSpringTest extends CamelSpringTestSupport {
     }
 
     private void assertConfig(FhirDataFormat fhirJson) {
-        assertEquals(FhirVersionEnum.DSTU3, fhirJson.getFhirContext().getVersion().getVersion());
+        assertEquals(FhirVersionEnum.R4, fhirJson.getFhirContext().getVersion().getVersion());
         Set<String> dontEncodeElements = fhirJson.getDontEncodeElements();
         assertCollection(dontEncodeElements);
         List<String> dontStripVersionsFromReferencesAtPaths = fhirJson.getDontStripVersionsFromReferencesAtPaths();

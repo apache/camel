@@ -48,5 +48,5 @@
     </property>
     <property name="fhirContext" ref="fhirContext"/>
   </bean>
-  <bean id="fhirContext" class="ca.uhn.fhir.context.FhirContext" factory-method="forDstu3"/>
+  <bean id="fhirContext" class="ca.uhn.fhir.context.FhirContext" factory-method="forR4"/>
 </beans>

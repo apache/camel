@@ -111,10 +111,10 @@
     </property>
   </bean>
 
-  <bean id="fhirContext" class="ca.uhn.fhir.context.FhirContext" factory-method="forDstu3"/>
+  <bean id="fhirContext" class="ca.uhn.fhir.context.FhirContext" factory-method="forR4"/>
   <bean id ="errorHandler" class="ca.uhn.fhir.parser.LenientErrorHandler"/>
   <bean id="parserOptions" class="ca.uhn.fhir.context.ParserOptions" />
-  <bean id="forceResourceId" class="org.hl7.fhir.dstu3.model.IdType" />
-  <bean id="patient" class="org.hl7.fhir.dstu3.model.Patient" />
+  <bean id="forceResourceId" class="org.hl7.fhir.r4.model.IdType" />
+  <bean id="patient" class="org.hl7.fhir.r4.model.Patient" />
 
 </beans>
