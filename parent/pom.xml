@@ -310,7 +310,7 @@
         <jclouds-google-guava-version-range>[18.0,19.0)</jclouds-google-guava-version-range>
         <jcommander-version>1.72</jcommander-version>
         <jcr-version>2.0</jcr-version>
-        <jedis-client-version>3.7.0</jedis-client-version>
+        <jedis-client-version>3.7.1</jedis-client-version>
         <jersey-version>2.35</jersey-version>
         <jetcd-version>0.5.11</jetcd-version>
         <jetty9-version>9.4.45.v20220203</jetty9-version>
