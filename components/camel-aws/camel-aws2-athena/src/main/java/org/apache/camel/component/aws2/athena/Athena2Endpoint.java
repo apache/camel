@@ -32,8 +32,7 @@ import software.amazon.awssdk.services.athena.AthenaClient;
  * Access AWS Athena service using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.4.0", scheme = "aws2-athena", title = "AWS Athena", syntax = "aws2-athena:label",
-             producerOnly = true, category = {
-                     Category.CLOUD, Category.DATABASE })
+             producerOnly = true, category = { Category.CLOUD, Category.DATABASE }, headersClass = Athena2Constants.class)
 public class Athena2Endpoint extends DefaultEndpoint {
 
     private AthenaClient athenaClient;
