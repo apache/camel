@@ -34,7 +34,7 @@ public interface ResumableSet<T> {
      * @param  input          the input array to check for resumables
      * @param  resumableCheck a checker method that returns true if a single entry of the input should be resumed or
      *                        false otherwise. For instance: given a set A, B and C, where B has already been processed,
-     *                        then a test for A and C returns false, whereas a test for B returns true.
+     *                        then a test for A and C returns true, whereas a test for B returns false.
      * @return                a new array containing the elements that still need to be processed
      */
     default T[] resumeEach(T[] input, Predicate<T> resumableCheck) {
@@ -61,7 +61,7 @@ public interface ResumableSet<T> {
      *
      * @param resumableCheck a checker method that returns true if a single entry of the input should be resumed or
      *                       false otherwise. For instance: given a set A, B and C, where B has already been processed,
-     *                       then a test for A and C returns false, whereas a test for B returns true.
+     *                       then a test for A and C returns true, whereas a test for B returns false.
      */
     void resumeEach(Predicate<T> resumableCheck);
 
