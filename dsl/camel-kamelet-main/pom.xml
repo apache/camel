@@ -110,20 +110,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring-version}</version>
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.springframework</groupId>-->
-<!--                    <artifactId>spring-aop</artifactId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.springframework</groupId>-->
-<!--                    <artifactId>spring-core</artifactId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.springframework</groupId>-->
-<!--                    <artifactId>spring-expression</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
         </dependency>
         <!-- optional quarkus annotation support -->
         <dependency>
