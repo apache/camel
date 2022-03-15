@@ -49,7 +49,7 @@ public interface ResumableSet<T> {
             }
         }
 
-        if (count > 0 && count != input.length) {
+        if (count != input.length) {
             return Arrays.copyOf(tmp, count);
         }
 
