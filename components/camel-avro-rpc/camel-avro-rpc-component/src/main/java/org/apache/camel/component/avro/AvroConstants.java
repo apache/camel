@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.avro;
 
+import org.apache.camel.spi.Metadata;
+
 public final class AvroConstants {
 
     public static final String AVRO_NETTY_TRANSPORT = "netty";
     public static final String AVRO_HTTP_TRANSPORT = "http";
     public static final String AVRO_MESSAGE_NAME_SEPARATOR = "/";
 
+    @Metadata(description = "The name of the message to send. In consumer overrides message name from URI (if any)",
+              javaType = "String")
     public static final String AVRO_MESSAGE_NAME = "CamelAvroMessageName";
 
     private AvroConstants() {
