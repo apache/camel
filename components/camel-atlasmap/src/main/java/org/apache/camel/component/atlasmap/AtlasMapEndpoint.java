@@ -49,7 +49,7 @@ import static io.atlasmap.api.AtlasContextFactory.Format.JSON;
  * Transforms the message using an AtlasMap transformation.
  */
 @UriEndpoint(firstVersion = "3.7.0", scheme = "atlasmap", title = "AtlasMap", syntax = "atlasmap:resourceUri",
-             producerOnly = true, category = { Category.TRANSFORMATION })
+             producerOnly = true, category = { Category.TRANSFORMATION }, headersClass = AtlasMapConstants.class)
 public class AtlasMapEndpoint extends ResourceEndpoint {
 
     public static final String CONTENT_TYPE_JSON = "application/json";
