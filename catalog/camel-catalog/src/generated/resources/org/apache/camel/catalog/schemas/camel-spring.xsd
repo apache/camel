@@ -6806,7 +6806,7 @@ registry.
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The version of FHIR to use. Possible values are:
-DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4. Default value: DSTU3
+DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5. Default value: R4
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
