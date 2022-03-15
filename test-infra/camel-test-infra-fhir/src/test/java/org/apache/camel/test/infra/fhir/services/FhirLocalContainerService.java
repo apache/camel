@@ -48,7 +48,7 @@ public class FhirLocalContainerService implements FhirService, ContainerService<
         return new GenericContainer(imageName)
                 .withNetworkAliases(containerName)
                 .withExposedPorts(FhirProperties.DEFAULT_SERVICE_PORT)
-                .withEnv("HAPI_FHIR_VERSION", "DSTU3")
+                .withEnv("HAPI_FHIR_VERSION", "R4")
                 .withEnv("HAPI_REUSE_CACHED_SEARCH_RESULTS_MILLIS", "-1")
                 .waitingFor(Wait.forListeningPort())
                 .waitingFor(Wait.forHttp("/hapi-fhir-jpaserver/fhir/metadata"));
