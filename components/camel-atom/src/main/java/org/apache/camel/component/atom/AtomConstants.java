@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.atom;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Atom constants
  */
@@ -24,6 +26,8 @@ public final class AtomConstants {
     /**
      * Header key for the {@link org.apache.abdera.model.Feed} object is stored on the in message on the exchange.
      */
+    @Metadata(description = "When consuming the `org.apache.abdera.model.Feed` object is set to this header.",
+              javaType = "org.apache.abdera.model.Feed")
     public static final String ATOM_FEED = "CamelAtomFeed";
 
     private AtomConstants() {
