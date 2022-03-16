@@ -16,15 +16,25 @@
  */
 package org.apache.camel.component.aws2.msk;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants used in Camel AWS MSK module SDK v2
  */
 public interface MSK2Constants {
+    @Metadata(description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsMSKOperation";
+    @Metadata(description = "The cluster name filter for list operation", javaType = "String")
     String CLUSTERS_FILTER = "CamelAwsMSKClusterFilter";
+    @Metadata(description = "The cluster name for list and create operation", javaType = "String")
     String CLUSTER_NAME = "CamelAwsMSKClusterName";
+    @Metadata(description = "The cluster arn for delete operation", javaType = "String")
     String CLUSTER_ARN = "CamelAwsMSKClusterArn";
+    @Metadata(description = "The Kafka for the cluster during create operation", javaType = "String")
     String CLUSTER_KAFKA_VERSION = "CamelAwsMSKClusterKafkaVersion";
+    @Metadata(description = "The number of nodes for the cluster during create operation", javaType = "Integer")
     String BROKER_NODES_NUMBER = "CamelAwsMSKBrokerNodesNumber";
+    @Metadata(description = "The Broker nodes group info to provide during the create operation",
+              javaType = "software.amazon.awssdk.services.kafka.model.BrokerNodeGroupInfo")
     String BROKER_NODES_GROUP_INFO = "CamelAwsMSKBrokerNodesGroupInfo";
 }

@@ -67,26 +67,9 @@ You have the possibility of avoiding the usage of explicit static credentials, b
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
-=== Message headers evaluated by the MSK producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelAwsMSKOperation` |`String` |The operation to perform
-
-|`CamelAwsMSKClusterFilter` |`String` |The cluster name filter for list operation
-
-|`CamelAwsMSKClusterName` |`String` |The cluster name for list and create operation
-
-|`CamelAwsMSKClusterArn` |`String` |The cluster arn for delete operation
-
-|`CamelAwsMSKClusterKafkaVersion` |`String` | The Kafka for the cluster during create operation
-
-|`CamelAwsMSKBrokerNodesNumber` |`Integer`| The number of nodes for the cluster during create operation
-
-|`CamelAwsMSKBrokerNodesGroupInfo` |`com.amazonaws.services.kafka.model.BrokerNodeGroupInfo`| The Broker nodes group info to provide during the create operation
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === MSK Producer operations
 
