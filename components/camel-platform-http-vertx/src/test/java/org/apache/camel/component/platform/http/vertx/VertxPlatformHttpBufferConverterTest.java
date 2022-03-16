@@ -21,6 +21,7 @@ import java.io.InputStream;
 import io.netty.buffer.Unpooled;
 import io.vertx.core.buffer.Buffer;
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
@@ -83,4 +84,12 @@ public class VertxPlatformHttpBufferConverterTest extends CamelTestSupport {
         byte[] result = context.getTypeConverter().convertTo(byte[].class, Buffer.buffer(BODY.getBytes()));
         Assertions.assertEquals(BODY, new String(result));
     }
+
+    @Test
+    public void testToStreamCache() {
+        Buffer buffer = context.getTypeConverter().convertTo(Buffer.class, BODY);
+        StreamCache sc = context.getTypeConverter().convertTo(StreamCache.class, buffer);
+        Assertions.assertNotNull(sc);
+    }
+
 }

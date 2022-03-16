@@ -26,6 +26,8 @@ import io.vertx.core.buffer.Buffer;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.StreamCache;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -85,6 +87,11 @@ public final class VertxBufferConverter {
     @Converter
     public static InputStream toInputStream(Buffer buffer) {
         return new ByteArrayInputStream(buffer.getBytes());
+    }
+
+    @Converter
+    public static StreamCache toStreamCache(Buffer buffer) {
+        return new ByteArrayInputStreamCache(new ByteArrayInputStream(buffer.getBytes()));
     }
 
     /**
