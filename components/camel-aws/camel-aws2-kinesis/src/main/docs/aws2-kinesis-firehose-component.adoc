@@ -89,6 +89,10 @@ You have the possibility of avoiding the usage of explicit static credentials, b
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 === Amazon Kinesis Firehose configuration
 
 You then have to reference the FirehoseClient in the `amazonKinesisFirehoseClient` URI option.
@@ -143,18 +147,6 @@ from("direct:start").to("aws2-kinesis-firehose://cc?amazonKinesisFirehoseClient=
 --------------------------------------------------------------------------------------------------------------------
 
 In the deliveryStream you'll find "Test1Test2".
-
-=== Message headers set by the Kinesis producer on successful storage of a Record
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelAwsKinesisFirehoseRecordId` |`String` |The record ID, as defined in
-http://docs.aws.amazon.com/firehose/latest/APIReference/API_PutRecord.html#API_PutRecord_ResponseSyntax[Response Syntax]
-
-
-|=======================================================================
 
 == Dependencies
 

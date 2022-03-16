@@ -34,7 +34,7 @@ import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
  * Consume and produce records from and to AWS Kinesis Streams using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis", title = "AWS Kinesis", syntax = "aws2-kinesis:streamName",
-             category = { Category.CLOUD, Category.MESSAGING })
+             category = { Category.CLOUD, Category.MESSAGING }, headersClass = Kinesis2Constants.class)
 public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     @UriParam
