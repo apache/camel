@@ -34,7 +34,8 @@ import software.amazon.awssdk.services.sts.StsClient;
 @UriEndpoint(firstVersion = "3.5.0", scheme = "aws2-sts", title = "AWS Security Token Service (STS)",
              syntax = "aws2-sts:label", producerOnly = true, category = {
                      Category.CLOUD,
-                     Category.MANAGEMENT })
+                     Category.MANAGEMENT },
+             headersClass = STS2Constants.class)
 public class STS2Endpoint extends DefaultEndpoint {
 
     private StsClient stsClient;
