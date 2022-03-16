@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.translate.TranslateClient;
  * Translate texts using AWS Translate and AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-translate", title = "AWS Translate", syntax = "aws2-translate:label",
-             producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT })
+             producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT }, headersClass = Translate2Constants.class)
 public class Translate2Endpoint extends ScheduledPollEndpoint {
 
     private TranslateClient translateClient;
