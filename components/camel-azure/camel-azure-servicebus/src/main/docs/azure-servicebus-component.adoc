@@ -56,47 +56,9 @@ This allows camel route to consume and produce events asynchronously without blo
 
 == Usage
 
-=== Message headers evaluated by the component producer
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Description
-
-|`CamelAzureServiceBusScheduledEnqueueTime`| `ServiceBusConstants.SCHEDULED_ENQUEUE_TIME`|`OffsetDateTime`| Overrides the OffsetDateTime at which the message should appear in the Service Bus queue or topic.
-|`CamelAzureServiceBusServiceBusTransactionContext`| `ServiceBusConstants.SERVICE_BUS_TRANSACTION_CONTEXT`|`ServiceBusTransactionContext`| Overrides the transaction in service. This object just contains transaction id.
-|`CamelAzureServiceBusProducerOperation`| `ServiceBusConstants.PRODUCER_OPERATION`|`ServiceBusProducerOperationDefinition`| Overrides the desired operation to be used in the producer.
-|=======================================================================
-
-
-=== Message headers set by the component consumer
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Description
-
-|`CamelAzureServiceBusApplicationProperties`| `ServiceBusConstants.APPLICATION_PROPERTIES`|`Map<String, Object>`| Gets the set of free-form {@link ServiceBusReceivedMessage} properties which may be used for passing metadata  associated with the {@link ServiceBusReceivedMessage} during Service Bus operations.
-|`CamelAzureServiceBusContentType`| `ServiceBusConstants.CONTENT_TYPE`|`String`| Gets the content type of the message.
-|`CamelAzureServiceBusMessageId`| `ServiceBusConstants.MESSAGE_ID`|`String`| Gets the identifier for the message.
-|`CamelAzureServiceBusCorrelationId`| `ServiceBusConstants.CORRELATION_ID`|`String`| Gets a correlation identifier.
-|`CamelAzureServiceBusDeadLetterErrorDescription`| `ServiceBusConstants.DEAD_LETTER_ERROR_DESCRIPTION`|`String`| Gets the description for a message that has been dead-lettered.
-|`CamelAzureServiceBusDeadLetterReason`| `ServiceBusConstants.DEAD_LETTER_REASON`|`String`| Gets the reason a message was dead-lettered.
-|`CamelAzureServiceBusDeadLetterSource`| `ServiceBusConstants.DEAD_LETTER_SOURCE`|`String`| Gets the name of the queue or subscription that this message was enqueued on, before it was dead-lettered.
-|`CamelAzureServiceBusDeliveryCount`| `ServiceBusConstants.DELIVERY_COUNT`|`long`| Gets the number of the times this message was delivered to clients.
-|`CamelAzureServiceBusScheduledEnqueueTime`| `ServiceBusConstants.SCHEDULED_ENQUEUE_TIME`|`OffsetDateTime`| Gets the scheduled enqueue time of this message.
-|`CamelAzureServiceBusEnqueuedSequenceNumber`| `ServiceBusConstants.ENQUEUED_SEQUENCE_NUMBER`|`long`| Gets the enqueued sequence number assigned to a message by Service Bus.
-|`CamelAzureServiceBusEnqueuedTime`| `ServiceBusConstants.ENQUEUED_TIME`|`OffsetDateTime`| Gets the datetime at which this message was enqueued in Azure Service Bus.
-|`CamelAzureServiceBusExpiresAt`| `ServiceBusConstants.EXPIRES_AT`|`OffsetDateTime`| Gets the datetime at which this message will expire.
-|`CamelAzureServiceBusLockToken`| `ServiceBusConstants.LOCK_TOKEN`|`String`| Gets the lock token for the current message.
-|`CamelAzureServiceBusLockedUntil`| `ServiceBusConstants.LOCKED_UNTIL`|`OffsetDateTime`| Gets the datetime at which the lock of this message expires.
-|`CamelAzureServiceBusPartitionKey`| `ServiceBusConstants.PARTITION_KEY`|`String`| Gets the partition key for sending a message to a partitioned entity.
-|`CamelAzureServiceBusRawAmqpMessage`| `ServiceBusConstants.RAW_AMQP_MESSAGE`|`AmqpAnnotatedMessage`| The representation of message as defined by AMQP protocol.
-|`CamelAzureServiceBusReplyTo`| `ServiceBusConstants.REPLY_TO`|`String`| Gets the address of an entity to send replies to.
-|`CamelAzureServiceBusReplyToSessionId`| `ServiceBusConstants.REPLY_TO_SESSION_ID`|`String`| Gets or sets a session identifier augmenting the {@link #getReplyTo() ReplyTo} address.
-|`CamelAzureServiceBusSequenceNumber`| `ServiceBusConstants.SEQUENCE_NUMBER`|`long`| Gets the unique number assigned to a message by Service Bus.
-|`CamelAzureServiceBusSessionId`| `ServiceBusConstants.SESSION_ID`|`String`| Gets the session id of the message.
-|`CamelAzureServiceBusSubject`| `ServiceBusConstants.SUBJECT`|`String`| Gets the subject for the message.
-|`CamelAzureServiceBusTimeToLive`| `ServiceBusConstants.TIME_TO_LIVE`|`Duration`| Gets the duration before this message expires.
-|`CamelAzureServiceBusTimeTo`| `ServiceBusConstants.TO`|`String`| Gets the "to" address.
-|=======================================================================
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Message Body
 In the producer, this component accepts message body of `String` type or `List<String>` to send batch messages.
