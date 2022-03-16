@@ -71,7 +71,7 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
             }
             try {
                 // only commit offsets if the component has control
-                if (configuration.getAutoCommitEnable()) {
+                if (!configuration.getAutoCommitEnable() && offset != -1L) {
                     if (stopping) {
                         commitManager.commitOffsetOnStop(partition, offset);
                     } else {
