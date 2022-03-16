@@ -32,7 +32,8 @@ import software.amazon.awssdk.services.kms.KmsClient;
  * Manage keys stored in AWS KMS instances using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-kms", title = "AWS Key Management Service (KMS)",
-             syntax = "aws2-kms:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT })
+             syntax = "aws2-kms:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
+             headersClass = KMS2Constants.class)
 public class KMS2Endpoint extends ScheduledPollEndpoint {
 
     private KmsClient kmsClient;
