@@ -77,34 +77,9 @@ You have the possibility of avoiding the usage of explicit static credentials, b
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
-=== Message headers set by the SQS producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelAwsSqsMD5OfBody` |`String` |The MD5 checksum of the Amazon SQS message.
-
-|`CamelAwsSqsMessageId` |`String` |The Amazon SQS message ID.
-
-|`CamelAwsSqsDelaySeconds` |`Integer` |The delay seconds that the Amazon SQS message can be
-see by others.
-|=======================================================================
-
-=== Message headers set by the SQS consumer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelAwsSqsMD5OfBody` |`String` |The MD5 checksum of the Amazon SQS message.
-
-|`CamelAwsSqsMessageId` |`String` |The Amazon SQS message ID. 
-
-|`CamelAwsSqsReceiptHandle` |`String` |The Amazon SQS message receipt handle.
-
-|`CamelAwsSqsMessageAttributes` |`Map<String, String>` |The Amazon SQS message attributes.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Advanced AmazonSQS configuration
 
