@@ -395,12 +395,16 @@ public class YamlDeserializerSupport {
 
     public static void setSteps(Block target, Node node) {
         final YamlDeserializationContext dc = getDeserializationContext(node);
+        boolean flow = dc.getDeserializationMode() == YamlDeserializationMode.FLOW;
+        setSteps(target, node, flow);
+    }
 
+    public static void setSteps(Block target, Node node, boolean flowMode) {
         Block block = target;
         for (ProcessorDefinition<?> definition : asFlatList(node, ProcessorDefinition.class)) {
             block.addOutput(definition);
 
-            if (dc.getDeserializationMode() == YamlDeserializationMode.FLOW) {
+            if (flowMode) {
                 if (definition instanceof OutputNode) {
                     if (ObjectHelper.isEmpty(definition.getOutputs())) {
                         block = definition;
