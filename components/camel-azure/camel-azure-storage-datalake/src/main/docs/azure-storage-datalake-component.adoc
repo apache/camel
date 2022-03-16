@@ -79,87 +79,15 @@ from("azure-storage-datalake:camelTesting/filesystem?fileName=test.txt&accountKe
 to("file://fileDirectory");
 ----
 
-=== Message Headers specified by user
-
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|===
-|Header |Variable Name |Type |Description
-|`CamelAzureStorageDataLakeListFileSystemsOptions` |`DataLakeConstants.LIST_FILESYSTEMS_OPTIONS` | `ListFileSystemsOptions` | Defines options available to configure the behavior of a call to listFileSystemsSegment on a DataLakeServiceAsyncClient object. Null may be passed.
-|`CamelAzureStorageDataLakeTimeout` |`DataLakeConstants.TIMEOUT` |`Duration` | An optional timeout value beyond which a RuntimeException will be raised.
-|`CamelAzureStorageDataLakeOperation` |`DataLakeConstants.DATALAKE_OPERATION` |`DataLakeOperationsDefinition` | Specify the producer operation to execute. Different operations allowed are shown below.
-|`CamelAzureStorageDataLakeFileSystemName` |`DataLakeConstants.FILESYSTEM_NAME` |`String` | Name of the file system in azure datalake on which operation is to be performed. Please make sure that filesystem name is all lowercase.
-|`CamelAzureStorageDataLakeDirectoryName` |`DataLakeConstants.DIRECTORY_NAME` |`String` | Name of the directory in azure datalake on which operation is to be performed.
-|`CamelAzureStorageDataLakeFileName` |`DataLakeConstants.FILE_NAME` |`String` | Name of the file in azure datalake on which operation is to be performed.
-|`CamelAzureStorageDataLakeMetadata` |`DataLakeConstants.METADATA` |`Map<String,String>` | The metadata to associate with the file.
-|`CamelAzureStorageDataLakePublicAccessType` |`DataLakeConstants.PUBLIC_ACCESS_TYPE` |`PublicAccessType` |
-|`CamelAzureStorageDataLakeRequestCondition` |`DataLakeConstants.DATALAKE_REQUEST_CONDITION` |`DataLakeRequestConditions` | This contains values which will restrict the successful operation of a variety of requests to the conditions present. These conditions are entirely optional.
-|`CamelAzureStorageDataLakeListPathOptions` |`DataLakeConstants.LIST_PATH_OPTIONS` |`ListPathOptions` | Defines options available to configure the behavior of a call to listContainersSegment on a DataLakeFileSystemClient object. Null may be passed.
-|`CamelAzureStorageDataLakePath` |`DataLakeConstants.PATH` |`String` | Path of the file to be used for upload operations.
-|`CamelAzureStorageDataLakeRecursive` |`DataLakeConstants.RECURSIVE` |`Boolean` | Specifies if the call to listContainersSegment should recursively include all paths.
-|`CamelAzureStorageDataLakeMaxResults` |`DataLakeConstants.MAX_RESULTS` |`Integer` | Specifies the maximum number of blobs to return, including all BlobPrefix elements.
-|`CamelAzureStorageDataLakeUserPrincipalNameReturned` |`DataLakeConstants.USER_PRINCIPAL_NAME_RETURNED` |`Boolean` | 
-|`CamelAzureStorageDataLakeRegex` |`DataLakeConstants.REGEX` |`String` | Filter the results to return only those files with match the specified regular expression.
-|`CamelAzureStorageDataLakeFileDir` |`DataLakeConstants.FILE_DIR` |`String` | Directory in which the file is to be downloaded.
-|`CamelAzureStorageDataLakeContentMD5` |`DataLakeConstants.CONTENT_MD5` |`byte[]` | An MD5 hash of the content. The hash is used to verify the intergity of the file during transport.
-|`CamelAzureStorageDataLakeFileRange` |`DataLakeConstants.FILE_RANGE` |`FileRange` | This is a representation of a range of bytes on a file, typically used during a download operation. Passing null as a FileRange value will default to the entire range of the file.
-|`CamelAzureStorageDataLakeParallelTransferOptions` |`DataLakeConstants.PARALLEL_TRANSFER_OPTIONS` | `ParallelTransferOptions` | 
-|`CamelAzureStorageDataLakeOpenOptions` |`DataLakeConstants.OPEN_OPTIONS` |`Set<OpenOption>` | Set of OpenOption used to configure how to open or create a file.
-|`CamelAzureStorageDataLakeIncrementalCopy` |`DataLakeConstants.INCREMENTAL_COPY` |`Boolean` | Flag indicating if the file was incrementally copied.
-|`CamelAzureStorageDataLakeDownloadLinkExpiration` |`DataLakeConstants.DOWNLOAD_LINK_EXPIRATION` |`Long` | Set the Expiration time of the download link.
-|`CamelAzureStorageDataLakeFileOffset` |`DataLakeConstants.FILE_OFFSET` |`Long` | The position where the data is to be appended.
-|`CamelAzureStorageDataLakeLeaseId` |`DataLakeConstants.LEASE_ID` |`String` | By setting lease id, requests will fail if the provided lease does not match the active lease on the file.
-|`CamelAzureStorageDataLakePathHttpHeaders` |`DataLakeConstants.PATH_HTTP_HEADERS` |`PathHttpHeaders` | Additional parameters for a set of operations.
-|`CamelAzureStorageDataLakeRetainCommitedData` |`DataLakeConstants.RETAIN_UNCOMMITED_DATA` |`Boolean` | Determines Whether or not uncommitted data is to be retained after the operation.
-|`CamelAzureStorageDataLakeClose` |`DataLakeConstants.CLOSE` |`Boolean` | Whether or not a file changed event raised indicates completion (true) or modification (false).
-|`CamelAzureStorageDataLakePosition` |`DataLakeConstants.POSITION` |`Long` | The length of the file after all data has been written.
-|`CamelAzureStorageDataLakeExpression` |`DataLakeConstants.EXPRESSION` |`String` | The query expression on the file.
-|`CamelAzureStorageDataLakeInputSerialization` |`DataLakeConstants.INPUT_SERIALIZATION` |`FileQuerySerialization` | Defines the input serialization for a file query request. either FileQueryJsonSerialization or FileQueryDelimitedSerialization
-|`CamelAzureStorageDataLakeOutputSerialization` |`DataLakeConstants.OUTPUT_SERIALIZATION` |`FileQuerySerialization` | Defines the output serialization for a file query request. either FileQueryJsonSerialization or FileQueryDelimitedSerialization
-|`CamelAzureStorageDataLakeErrorConsumer` |`DataLakeConstants.ERROR_CONSUMER` |`Consumer<FileQueryError>` | Sets error consumer for file query
-|`CamelAzureStorageDataLakeProgressConsumer` |`DataLakeConstants.PROGRESS_CONSUMER` |`Consumer<FileQueryProgress>` | Sets progress consumer for file query
-|`CamelAzureStorageDataLakeQueryOptions` |`DataLakeConstants.QUERY_OPTIONS` |`FileQueryOptions` | Optional parameters for File Query.
-|`CamelAzureStorageDataLakePermission` |`DataLakeConstants.PERMISSION` |`String` | Sets the permission for file.
-|`CamelAzureStorageDataLakeUmask` |`DataLakeConstants.UMASK` |`String` | Sets the umask for file.
-|===
-
-=== Message headers set by the component
-
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|===
-|Header |Variable Name |Type |Description
-|`CamelAzureStorageDataLakeMetadata` |`DataLakeConstants.METADATA` |`Map<String,String>` | The metadata to associate with the file.
-|`CamelAzureStorageDataLakeRawHttpHeaders` |`DataLakeConstants.RAW_HTTP_HEADERS` |`HttpHeaders` | Non parsed http headers that can be used by the user.
-|`CamelAzureStorageDataLakeAccessTier` |`DataLakeConstants.ACCESS_TIER` |`AccessTier` | Access tier of file.
-|`CamelAzureStorageDataLakeAccessTierChangeTime` |`DataLakeConstants.ACCESS_TIER_CHANGE_TIME` |`OffsetDateTime` | Datetime when the access tier of the blob last changed.
-|`CamelAzureStorageDataLakeArchiveStatus` |`DataLakeConstants.ARCHIVE_STATUS` |`ArchiveStatus` | Archive status of file. 
-|`CamelAzureStorageDataLakeCacheControl` |`DataLakeConstants.CACHE_CONTROL` |`String` | Cache control specified for the file. 
-|`CamelAzureStorageDataLakeContentDisposition` |`DataLakeConstants.CONTENT_DISPOSITION` |`String` | Content disposition specified for the file.
-|`CamelAzureStorageDataLakeContentEncoding` |`DataLakeConstants.CONTENT_ENCODING` |`String` | Content encoding specified for the file.
-|`CamelAzureStorageDataLakeContentLanguage` |`DataLakeConstants.CONTENT_LANGUAGE` |`String` | Content language specified for the file.
-|`CamelAzureStorageDataLakeContentType` |`DataLakeConstants.CONTENT_TYPE` |`String` | Content type specified for the file.
-|`CamelAzureStorageDataLakeCopyCompletionTime` |`DataLakeConstants.COPY_COMPLETION_TIME` |`OffsetDateTime` | Conclusion time of the last attempted Copy Blob operation where this file was the destination file.
-|`CamelAzureStorageDataLakeCopyId` |`DataLakeConstants.COPY_ID` |`String` | String identifier for this copy operation.
-|`CamelAzureStorageDataLakeCopyProgress` |`DataLakeConstants.COPY_PROGRESS` |`String` | Contains the number of bytes copied and the total bytes in the source in the last attempted Copy Blob operation where this file was the destination file.
-|`CamelAzureStorageDataLakeCopySource` |`DataLakeConstants.COPY_SOURCE` |`String` | URL up to 2 KB in length that specifies the source file or file used in the last attempted Copy Blob operation where this file was the destination file.
-|`CamelAzureStorageDataLakeCopyStatus` |`DataLakeConstants.COPY_STATUS` |`CopyStatusType` | Status of the last copy operation performed on the file.
-|`CamelAzureStorageDataLakeCopyStatusDescription` |`DataLakeConstants.COPY_STATUS_DESCRIPTION` |`String` |
-|`CamelAzureStorageDataLakeCreationTime` |`DataLakeConstants.CREATION_TIME` |`OffsetDateTime` | Creation time of the file.
-|`CamelAzureStorageDataLakeEncryptionKeySha256` |`DataLakeConstants.ENCRYPTION_KEY_SHA_256` |`String` | The SHA-256 hash of the encryption key used to encrypt the file.
-|`CamelAzureStorageDataLakeServerEncrypted` |`DataLakeConstants.SERVER_ENCRYPTED` |`Boolean` | Flag indicating if the file's content is encrypted on the server.
-|`CamelAzureStorageDataLakeETag` |`DataLakeConstants.E_TAG` |`String` | The E Tag of the file.
-|`CamelAzureStorageDataLakeFileSize` |`DataLakeConstants.FILE_SIZE` |`Long` | Size of the file.
-|`CamelAzureStorageDataLakeLastModified` |`DataLakeConstants.LAST_MODIFIED` |`OffsetDateTime` | Datetime when the file was last modified.
-|`CamelAzureStorageDataLakeLeaseDuration` |`DataLakeConstants.LEASE_DURATION` |`LeaseDurationType` | Type of lease on the file.
-|`CamelAzureStorageDataLakeLeaseState` |`DataLakeConstants.LEASE_STATE` |`LeaseStateType` | State of the lease on the file.
-|`CamelAzureStorageDataLakeLeaseStatus` |`DataLakeConstants.LEASE_STATUS` |`LeaseStatusType` | Status of the lease on the file.
-|`CamelAzureStorageDataLakeDownloadLink` |`DataLakeConstants.DOWNLOAD_LINK` |`String` | The link that can be used to download the file from datalake.
-|===
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Automatic detection of service client
 
 The component is capable of automatically detecting the presence of a DataLakeServiceClient bean in the registry.
 Hence, if your registry has only one instance of type DataLakeServiceClient, it will be automatically used as the default client.
-You won't have to explicitly define it as an uri paramater.
+You won't have to explicitly define it as an uri parameter.
 
 === Azure Storage DataLake Producer Operations
 
