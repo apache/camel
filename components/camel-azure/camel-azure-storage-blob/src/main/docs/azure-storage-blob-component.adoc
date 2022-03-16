@@ -89,85 +89,9 @@ from("azure-storage-blob://camelazure/container1?blobName=hello.txt&accessKey=yo
 to("file://blobdirectory");
 --------------------------------------------------------------------------------
 
-=== Message headers evaluated by the component producer
-[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Operations |Description
-
-|`CamelAzureStorageBlobTimeout` |`BlobConstants.TIMEOUT`|`Duration`|All|An optional timeout value beyond which a {@link RuntimeException} will be raised.
-|`CamelAzureStorageBlobMetadata`|`BlobConstants.METADATA`|`Map<String,String>`|Operations related to container and blob| Metadata to associate with the container or blob.
-|`CamelAzureStorageBlobPublicAccessType`|`BlobConstants.PUBLIC_ACCESS_TYPE`|`PublicAccessType`|`createContainer`|Specifies how the data in this container is available to the public. Pass `null` for no public access.
-|`CamelAzureStorageBlobRequestCondition`|`BlobConstants.BLOB_REQUEST_CONDITION`|`BlobRequestConditions`|Operations related to container and blob|This contains values which will restrict the successful operation of a variety of requests to the conditions present. These conditions are entirely optional.
-|`CamelAzureStorageBlobListDetails`|`BlobConstants.BLOB_LIST_DETAILS`|`BlobListDetails`|`listBlobs`|The details for listing specific blobs
-|`CamelAzureStorageBlobPrefix`|`BlobConstants.PREFIX`|`String`|`listBlobs`,`getBlob`|Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all blobs.
-|`CamelAzureStorageBlobMaxResultsPerPage`|`BlobConstants.MAX_RESULTS_PER_PAGE`|`Integer`|`listBlobs`| Specifies the maximum number of blobs to return, including all BlobPrefix elements. If the request does not specify maxResultsPerPage or specifies a value greater than 5,000, the server will return up to 5,000 items.
-|`CamelAzureStorageBlobListBlobOptions`|`BlobConstants.LIST_BLOB_OPTIONS`|`ListBlobsOptions`|`listBlobs`|Defines options available to configure the behavior of a call to listBlobsFlatSegment on a {@link BlobContainerClient} object.
-|`CamelAzureStorageBlobHttpHeaders`|`BlobConstants.BLOB_HTTP_HEADERS`|`BlobHttpHeaders`|`uploadBlockBlob`, `commitBlobBlockList`, `createAppendBlob`, `createPageBlob`|  Additional parameters for a set of operations.
-|`CamelAzureStorageBlobAccessTier`|`BlobConstants.ACCESS_TIER`|`AccessTier`|`uploadBlockBlob`, `commitBlobBlockList`| Defines values for AccessTier.
-|`CamelAzureStorageBlobContentMD5`|`BlobConstants.CONTENT_MD5`|`byte[]`|Most operations related to upload blob|An MD5 hash of the block content. This hash is used to verify the integrity of the block during transport. When this header is specified, the storage service compares the hash of the content that has arrived with this header value. Note that this MD5 hash is not stored with the blob. If the two hashes do not match, the operation will fail.
-|`CamelAzureStorageBlobPageBlobRange`|`BlobConstants.PAGE_BLOB_RANGE`|`PageRange`|Operations related to page blob| A {@link PageRange} object. Given that pages must be aligned with 512-byte boundaries, the start offset must be a modulus of 512 and the end offset must be a modulus of 512 - 1. Examples of valid byte ranges are 0-511, 512-1023, etc.
-|`CamelAzureStorageBlobCommitBlobBlockListLater`|`BlobConstants.COMMIT_BLOCK_LIST_LATER`|`boolean`|`stageBlockBlobList`| When is set to `true`, the staged blocks will not be committed directly.
-|`CamelAzureStorageBlobCreateAppendBlob`|`BlobConstants.CREATE_APPEND_BLOB`|`boolean`|`commitAppendBlob`| When is set to `true`, the append blocks will be created when committing append blocks.
-|`CamelAzureStorageBlobCreatePageBlob`|`BlobConstants.CREATE_PAGE_BLOB`|`boolean`|`uploadPageBlob`| When is set to `true`, the page blob will be created when uploading page blob.
-|`CamelAzureStorageBlobBlockListType`|`BlobConstants.BLOCK_LIST_TYPE`|`BlockListType`|`getBlobBlockList`| Specifies which type of blocks to return.
-|`CamelAzureStorageBlobPageBlobSize`|`BlobConstants.PAGE_BLOB_SIZE`|`Long`|`createPageBlob`, `resizePageBlob`| Specifies the maximum size for the page blob, up to 8 TB. The page blob size must be aligned to a 512-byte boundary.
-|`CamelAzureStorageBlobSequenceNumber`|`BlobConstants.BLOB_SEQUENCE_NUMBER`|`Long`|`createPageBlob`|A user-controlled value that you can use to track requests. The value of the sequence number must be between 0 and 2^63 - 1.The default value is 0.
-|`CamelAzureStorageBlobDeleteSnapshotsOptionType`|`BlobConstants.DELETE_SNAPSHOT_OPTION_TYPE`|`DeleteSnapshotsOptionType`|`deleteBlob`| Specifies the behavior for deleting the snapshots on this blob. {@code Include} will delete the base blob and all snapshots. {@code Only} will delete only the snapshots. If a snapshot is being deleted, you must pass null.
-|`CamelAzureStorageBlobListBlobContainersOptions`|`BlobConstants.LIST_BLOB_CONTAINERS_OPTIONS`|`ListBlobContainersOptions`|`listBlobContainers`| A {@link ListBlobContainersOptions} which specifies what data should be returned by the service.
-|`CamelAzureStorageBlobParallelTransferOptions`|`BlobConstants.PARALLEL_TRANSFER_OPTIONS`|`ParallelTransferOptions`|`downloadBlobToFile`| {@link ParallelTransferOptions} to use to download to file. Number of parallel transfers parameter is ignored.
-|`CamelAzureStorageBlobFileDir`|`BlobConstants.FILE_DIR`|`String`|`downloadBlobToFile`|The file directory where the downloaded blobs will be saved to.
-|`CamelAzureStorageBlobDownloadLinkExpiration`|`BlobConstants.DOWNLOAD_LINK_EXPIRATION`|`Long`|`downloadLink`| Override the default expiration (millis) of URL download link.
-|`CamelAzureStorageBlobBlobName`|`BlobConstants.BLOB_NAME`|`String`|Operations related to blob| Override/set the blob name on the exchange headers.
-|`CamelAzureStorageBlobContainerName`|`BlobConstants.BLOB_CONTAINER_NAME`|`String`|Operations related to container and blob|Override/set the container name on the exchange headers.
-|`CamelAzureStorageBlobOperation`|`BlobConstants.BLOB_OPERATION`|`BlobOperationsDefinition`|All|Specify the producer operation to execute, please see the doc on this page related to producer operation.
-|`CamelAzureStorageBlobRegex`|`BlobConstants.REGEX`|`String`|`listBlobs`,`getBlob`|Filters the results to return only blobs whose names match the specified regular expression. May be null to return all. If both prefix and regex are set, regex takes the priority and prefix is ignored.
-|`CamelAzureStorageBlobChangeFeedStartTime`|`BlobConstants.CHANGE_FEED_START_TIME`|`OffsetDateTime`|`getChangeFeed`| It filters the results to return events approximately after the start time. Note: A few events belonging to the previous hour can also be returned. A few events belonging to this hour can be missing; to ensure all events from the hour are returned, round the start time down by an hour.
-|`CamelAzureStorageBlobChangeFeedEndTime`|`BlobConstants.CHANGE_FEED_END_TIME`|`OffsetDateTime`|`getChangeFeed`| It filters  the results to return events approximately before the end time. Note: A few events belonging to the next hour can also be returned. A few events belonging to this hour can be missing; to ensure all events from the hour are returned, round the end time up by an hour.
-|`CamelAzureStorageBlobChangeFeedContext`|`BlobConstants.CHANGE_FEED_CONTEXT`|`Context`|`getChangeFeed`| This gives additional context that is passed through the Http pipeline during the service call.
-|`CamelAzureStorageBlobSourceBlobAccountName`|`BlobConstants.SOURCE_BLOB_ACCOUNT_NAME`|`String`|`copyBlob`| The source blob account name to be used as source account name in a copy blob operation
-|`CamelAzureStorageBlobSourceBlobContainerName`|`BlobConstants.SOURCE_BLOB_CONTAINER_NAME`|`String`|`copyBlob`| The source blob container name to be used as source container name in a copy blob operation
-|=======================================================================
-
-=== Message headers set by either component producer or consumer
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Description
-
-|`CamelAzureStorageBlobAccessTier`|`BlobConstants.ACCESS_TIER`|`AccessTier`| Access tier of the blob.
-|`CamelAzureStorageBlobAccessTierChangeTime`|`BlobConstants.ACCESS_TIER_CHANGE_TIME`|`OffsetDateTime`| Datetime when the access tier of the blob last changed.
-|`CamelAzureStorageBlobArchiveStatus`|`BlobConstants.ARCHIVE_STATUS`|`ArchiveStatus`|Archive status of the blob.
-|`CamelAzureStorageBlobCreationTime`|`BlobConstants.CREATION_TIME`|`OffsetDateTime`|Creation time of the blob.
-|`CamelAzureStorageBlobSequenceNumber`|`BlobConstants.BLOB_SEQUENCE_NUMBER`|`Long`|The current sequence number for a page blob.
-|`CamelAzureStorageBlobBlobSize`|`BlobConstants.BLOB_SIZE`|`long`|The size of the blob.
-|`CamelAzureStorageBlobBlobType`|`BlobConstants.BLOB_TYPE`|`BlobType`|The type of the blob.
-|`CamelAzureStorageBlobCacheControl`|`BlobConstants.CACHE_CONTROL`|`String`|Cache control specified for the blob.
-|`CamelAzureStorageBlobCommittedBlockCount`|`BlobConstants.COMMITTED_BLOCK_COUNT`|`Integer`|  Number of blocks committed to an append blob
-|`CamelAzureStorageBlobContentDisposition`|`BlobConstants.CONTENT_DISPOSITION`|`String`|Content disposition specified for the blob.
-|`CamelAzureStorageBlobContentEncoding`|`BlobConstants.CONTENT_ENCODING`|`String`|Content encoding specified for the blob.
-|`CamelAzureStorageBlobContentLanguage`|`BlobConstants.CONTENT_LANGUAGE`|`String`|Content language specified for the blob.
-|`CamelAzureStorageBlobContentMd5`|`BlobConstants.CONTENT_MD5`|`byte[]`|Content MD5 specified for the blob.
-|`CamelAzureStorageBlobContentType`|`BlobConstants.CONTENT_TYPE`|`String`|Content type specified for the blob.
-|`CamelAzureStorageBlobCopyCompletionTime`|`BlobConstants.COPY_COMPILATION_TIME`|`OffsetDateTime`|Datetime when the last copy operation on the blob completed.
-|`CamelAzureStorageBlobCopyDestinationSnapshot`|`BlobConstants.COPY_DESTINATION_SNAPSHOT`|`String`|Snapshot identifier of the last incremental copy snapshot for the blob.
-|`CamelAzureStorageBlobCopyId`|`BlobConstants.COPY_ID`|`String`|Identifier of the last copy operation performed on the blob.
-|`CamelAzureStorageBlobCopyProgress`|`BlobConstants.COPY_PROGRESS`|`String`|Progress of the last copy operation performed on the blob.
-|`CamelAzureStorageBlobCopySource`|`BlobConstants.COPY_SOURCE`|`String`|Source of the last copy operation performed on the blob.
-|`CamelAzureStorageBlobCopyStatus`|`BlobConstants.COPY_STATUS`|`CopyStatusType`|Status of the last copy operation performed on the blob.
-|`CamelAzureStorageBlobCopyStatusDescription` | `BlobConstants.COPY_STATUS_DESCRIPTION`|`String`|Description of the last copy operation on the blob.
-|`CamelAzureStorageBlobETag`|`BlobConstants.E_TAG`|`String`| The E Tag of the blob
-|`CamelAzureStorageBlobIsAccessTierInferred`|`BlobConstants.IS_ACCESS_TIER_INFRRRED`|`boolean`| Flag indicating if the access tier of the blob was inferred from properties of the blob.
-|`CamelAzureStorageBlobIsIncrementalCopy`|`BlobConstants.IS_INCREMENTAL_COPY`|`boolean`|Flag indicating if the blob was incrementally copied.
-|`CamelAzureStorageBlobIsServerEncrypted`|`BlobConstants.IS_SERVER_ENCRYPTED`|`boolean`|Flag indicating if the blob's content is encrypted on the server.
-|`CamelAzureStorageBlobLastModified`|`BlobConstants.LAST_MODIFIED`|`OffsetDateTime`|Datetime when the blob was last modified.
-|`CamelAzureStorageBlobLeaseDuration`|`BlobConstants.LEASE_DURATION`|`LeaseDurationType`|Type of lease on the blob.
-|`CamelAzureStorageBlobLeaseState`|`BlobConstants.LEASE_STATE`|`LeaseStateType`|State of the lease on the blob.
-|`CamelAzureStorageBlobLeaseStatus`|`BlobConstants.LEASE_STATUS`|`LeaseStatusType`|Status of the lease on the blob.
-|`CamelAzureStorageBlobMetadata`|`BlobConstants.METADATA`|`Map<String, String>`| Additional metadata associated with the blob.
-|`CamelAzureStorageBlobAppendOffset`|`BlobConstants.APPEND_OFFSET`|`String`| The offset at which the block was committed to the block blob.
-|`CamelAzureStorageBlobFileName`|`BlobConstants.FILE_NAME`|`String`|The downloaded filename from the operation `downloadBlobToFile`.
-|`CamelAzureStorageBlobDownloadLink`|`BlobConstants.DOWNLOAD_LINK`|`String`|The download link generated by `downloadLink` operation.
-|`CamelAzureStorageBlobRawHttpHeaders`|`BlobConstants.RAW_HTTP_HEADERS`|`HttpHeaders`|Returns non-parsed httpHeaders that can be used by the user.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Advanced Azure Storage Blob configuration
 
