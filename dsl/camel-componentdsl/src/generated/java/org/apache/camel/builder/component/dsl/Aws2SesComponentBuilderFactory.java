@@ -66,7 +66,7 @@ public interface Aws2SesComponentBuilderFactory {
         }
         /**
          * List of comma separated destination blind carbon copy (bcc) email
-         * address. Can be overriden with 'CamelAwsSesBcc' header.
+         * address. Can be overridden with 'CamelAwsSesBcc' header.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -81,7 +81,7 @@ public interface Aws2SesComponentBuilderFactory {
         }
         /**
          * List of comma separated destination carbon copy (cc) email address.
-         * Can be overriden with 'CamelAwsSesCc' header.
+         * Can be overridden with 'CamelAwsSesCc' header.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -276,7 +276,7 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
-         * List of comma separated destination email address. Can be overriden
+         * List of comma separated destination email address. Can be overridden
          * with 'CamelAwsSesTo' header.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
