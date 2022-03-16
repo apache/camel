@@ -105,27 +105,9 @@ from("azure-eventhubs:/camel/camelHub?sharedAccessName=SASaccountName&sharedAcce
   .to("file://queuedirectory");
 --------------------------------------------------------------------------------
 
-=== Message headers evaluated by the component producer
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Description
-
-|`CamelAzureEventHubsPartitionKey`| `EventHubsConstants.PARTITION_KEY`|`String`| Overrides the hashing key to be provided for the batch of events, which instructs the Event Hubs service to map this key to a specific partition.
-|`CamelAzureEventHubsPartitionId`| `EventHubsConstants.PARTITION_ID`|`String`| Overrides the identifier of the Event Hub partition that the {link EventData events} will be sent to.
-|=======================================================================
-
-
-=== Message headers set by the component consumer
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Description
-
-|`CamelAzureEventHubsPartitionKey`| `EventHubsConstants.PARTITION_KEY`|`String`| It sets the partition hashing key if it was set when originally publishing the event. If it exists, this value was used to compute a hash to select a partition to send the message to. This is only present on a received {@link EventData}.
-|`CamelAzureEventHubsPartitionId`| `EventHubsConstants.PARTITION_ID`|`String`| It sets the partition id of the Event Hub.
-|`CamelAzureEventHubsOffset`| `EventHubsConstants.OFFSET`|`Long`| It sets the offset of the event when it was received from the associated Event Hub partition. This is only present on a received {@link EventData}.
-|`CamelAzureEventHubsEnqueuedTime`| `EventHubsConstants.ENQUEUED_TIME`|`Instant`| It sets the instant, in UTC, of when the event was enqueued in the Event Hub partition. This is only present on a received {@link EventData}.
-|`CamelAzureEventHubsSequenceNumber`| `EventHubsConstants.SEQUENCE_NUMBER`|`Long`| It sets the sequence number assigned to the event when it was enqueued in the associated Event Hub partition. This is unique for every message received in the Event Hub partition. This is only present on a received {@link EventData}.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Message body type
 The component's producer expects the data in the message body to be in `byte[]`. This allows the user to utilize Camel TypeConverter to marshal/unmarshal data with ease.

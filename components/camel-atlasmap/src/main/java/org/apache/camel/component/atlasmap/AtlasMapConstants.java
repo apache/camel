@@ -16,15 +16,23 @@
  */
 package org.apache.camel.component.atlasmap;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.Metadata;
+
 /**
  * AtlasMap Constants.
  */
 public final class AtlasMapConstants {
 
+    @Metadata(description = "The new resource URI to use.", javaType = "java.lang.String")
     public static final String ATLAS_RESOURCE_URI = "CamelAtlasResourceUri";
+    @Metadata(description = "The Atlas mapping to use.", javaType = "java.lang.String")
     public static final String ATLAS_MAPPING = "CamelAtlasMapping";
     public static final String ATLAS_SOURCE_MAP = "CamelAtlasSourceMap";
     public static final String ATLAS_TARGET_MAP = "CamelAtlasTargetMap";
+    @Metadata(description = "The content type that is set according to the datasource (json or xml).",
+              javaType = "java.lang.String")
+    public static final String CONTENT_TYPE = Exchange.CONTENT_TYPE;
 
     private AtlasMapConstants() {
     }

@@ -30,7 +30,8 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "3.12.0", scheme = "azure-servicebus", title = "Azure ServiceBus",
              syntax = "azure-servicebus:topicOrQueueName", category = {
-                     Category.CLOUD, Category.MESSAGING })
+                     Category.CLOUD, Category.MESSAGING },
+             headersClass = ServiceBusConstants.class)
 public class ServiceBusEndpoint extends DefaultEndpoint {
 
     @UriParam

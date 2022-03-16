@@ -16,10 +16,21 @@
  */
 package org.apache.camel.component.asterisk;
 
+import org.apache.camel.spi.Metadata;
+
 public final class AsteriskConstants {
+    @Metadata(label = "consumer", description = "The name of the Asterisk event.", javaType = "java.lang.String",
+              defaultValue = "Simple name of the event")
     public static final String EVENT_NAME = "CamelAsteriskEventName";
+    @Metadata(label = "producer", description = "The extension to query in case of an `ExtensionStateAction`.",
+              javaType = "java.lang.String")
     public static final String EXTENSION = "CamelAsteriskExtension";
+    @Metadata(label = "producer",
+              description = "The name of the context that contains the extension to query in case of an `ExtensionStateAction`.",
+              javaType = "java.lang.String")
     public static final String CONTEXT = "CamelAsteriskContext";
+    @Metadata(label = "producer", description = "The Asterisk action to do.",
+              javaType = "org.apache.camel.component.asterisk.AsteriskAction")
     public static final String ACTION = "CamelAsteriskAction";
 
     private AsteriskConstants() {

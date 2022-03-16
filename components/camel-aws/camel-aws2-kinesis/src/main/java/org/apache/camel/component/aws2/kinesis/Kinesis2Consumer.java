@@ -197,7 +197,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         exchange.getIn().setHeader(Kinesis2Constants.SEQUENCE_NUMBER, record.sequenceNumber());
         if (record.approximateArrivalTimestamp() != null) {
             long ts = record.approximateArrivalTimestamp().getEpochSecond() * 1000;
-            exchange.getIn().setHeader(Exchange.MESSAGE_TIMESTAMP, ts);
+            exchange.getIn().setHeader(Kinesis2Constants.MESSAGE_TIMESTAMP, ts);
         }
         return exchange;
     }

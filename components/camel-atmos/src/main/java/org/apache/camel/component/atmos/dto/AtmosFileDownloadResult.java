@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.atmos.util.AtmosResultHeader;
+import org.apache.camel.component.atmos.util.AtmosConstants;
 
 public class AtmosFileDownloadResult extends AtmosResult {
 
@@ -45,14 +45,14 @@ public class AtmosFileDownloadResult extends AtmosResult {
                 pathExtracted = entry.getKey();
                 baosExtracted = entry.getValue();
             }
-            exchange.getIn().setHeader(AtmosResultHeader.DOWNLOADED_FILE.name(), pathExtracted);
+            exchange.getIn().setHeader(AtmosConstants.DOWNLOADED_FILE, pathExtracted);
             exchange.getIn().setBody(baosExtracted);
         } else {
             StringBuffer pathsExtracted = new StringBuffer();
             for (Map.Entry<String, ByteArrayOutputStream> entry : map.entrySet()) {
                 pathsExtracted.append(entry.getKey() + "\n");
             }
-            exchange.getIn().setHeader(AtmosResultHeader.DOWNLOADED_FILES.name(), pathsExtracted.toString());
+            exchange.getIn().setHeader(AtmosConstants.DOWNLOADED_FILES, pathsExtracted.toString());
             exchange.getIn().setBody(map);
         }
     }

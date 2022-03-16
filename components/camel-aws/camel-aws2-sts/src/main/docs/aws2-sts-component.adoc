@@ -69,7 +69,11 @@ You have the possibility of avoiding the usage of explicit static credentials, b
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
  - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable AWS_CONTAINER_CREDENTIALS_RELATIVE_URI is set.
- - Amazon EC2 Instance profile credentials. 
+ - Amazon EC2 Instance profile credentials.
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === STS Producer operations
 
@@ -77,7 +81,7 @@ Camel-AWS STS component provides the following operation on the producer side:
 
 - assumeRole
 - getSessionToken
-- getFedeationToken
+- getFederationToken
 
 == Producer Examples
 

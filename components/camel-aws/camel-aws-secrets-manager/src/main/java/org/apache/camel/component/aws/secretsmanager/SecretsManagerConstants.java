@@ -16,16 +16,26 @@
  */
 package org.apache.camel.component.aws.secretsmanager;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants used in Camel AWS Secrets Manager module
  */
 public interface SecretsManagerConstants {
+    @Metadata(description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsSecretsManagerOperation";
+    @Metadata(description = "The number of results to include in the response.", javaType = "Integer")
     String MAX_RESULTS = "CamelAwsSecretsManagerMaxResults";
+    @Metadata(description = "The name of the secret.", javaType = "String")
     String SECRET_NAME = "CamelAwsSecretsManagerSecretName";
+    @Metadata(description = "The description of the secret.", javaType = "String")
     String SECRET_DESCRIPTION = "CamelAwsSecretsManagerSecretDescription";
+    @Metadata(description = "The ARN or name of the secret.", javaType = "String")
     String SECRET_ID = "CamelAwsSecretsManagerSecretId";
+    @Metadata(description = "The ARN of the Lambda rotation function that can rotate the secret.", javaType = "String")
     String LAMBDA_ROTATION_FUNCTION_ARN = "CamelAwsSecretsManagerLambdaRotationFunctionArn";
+    @Metadata(description = "The unique identifier of the version of the secret.", javaType = "String")
     String SECRET_VERSION_ID = "CamelAwsSecretsManagerSecretVersionId";
+    @Metadata(description = "A comma separated list of Regions in which to replicate the secret.", javaType = "String")
     String SECRET_REPLICATION_REGIONS = "CamelAwsSecretsManagerSecretReplicationRegions";
 }

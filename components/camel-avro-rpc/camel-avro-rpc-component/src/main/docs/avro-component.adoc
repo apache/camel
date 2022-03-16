@@ -140,23 +140,16 @@ The response will be added in the body of the "out" message.
 In a similar manner when using camel avro consumers for avro ipc, the
 requests parameters will be placed inside the "in" message body of the
 created exchange and once the exchange is processed the body of the
-"out" message will be send as a response.
+"out" message will be sent as a response.
 
 *Note:* By default consumer parameters are wrapped into array. If you've
 got only one parameter, *since 2.12* you can use `singleParameter` URI
-option to receive it direcly in the "in" message body without array
+option to receive it directly in the "in" message body without array
 wrapping.
 
-
-== Avro RPC Headers
-
-[width="100%",cols="20%,80%",options="header",]
-|=======================================================================
-|Name |Description
-
-|`CamelAvroMessageName` |The name of the message to send. In consumer overrides message name from
-URI (if any)
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Examples
 

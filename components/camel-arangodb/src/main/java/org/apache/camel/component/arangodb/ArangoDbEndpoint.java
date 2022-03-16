@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  * Perform operations on ArangoDb when used as a Document Database, or as a Graph Database
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "arangodb", title = "ArangoDb", syntax = "arangodb:database",
-             category = { Category.DATABASE, Category.NOSQL }, producerOnly = true)
+             category = { Category.DATABASE, Category.NOSQL }, producerOnly = true, headersClass = ArangoDbConstants.class)
 public class ArangoDbEndpoint extends DefaultEndpoint {
     private ArangoDB arango;
 

@@ -408,7 +408,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         if (s3Object.response().lastModified() != null) {
             message.setHeader(AWS2S3Constants.LAST_MODIFIED, s3Object.response().lastModified());
             long ts = s3Object.response().lastModified().getEpochSecond() * 1000;
-            message.setHeader(Exchange.MESSAGE_TIMESTAMP, ts);
+            message.setHeader(AWS2S3Constants.MESSAGE_TIMESTAMP, ts);
         }
 
         /*

@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriEndpoint;
  * Poll Atom RSS feeds.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "atom", title = "Atom", syntax = "atom:feedUri", consumerOnly = true,
-             category = { Category.RSS }, lenientProperties = true)
+             category = { Category.RSS }, lenientProperties = true, headersClass = AtomConstants.class)
 public class AtomEndpoint extends FeedEndpoint {
 
     public AtomEndpoint() {

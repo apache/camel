@@ -30,7 +30,8 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "azure-eventhubs", title = "Azure Event Hubs",
              syntax = "azure-eventhubs:namespace/eventHubName", category = {
-                     Category.CLOUD, Category.MESSAGING })
+                     Category.CLOUD, Category.MESSAGING },
+             headersClass = EventHubsConstants.class)
 public class EventHubsEndpoint extends DefaultEndpoint {
 
     @UriParam

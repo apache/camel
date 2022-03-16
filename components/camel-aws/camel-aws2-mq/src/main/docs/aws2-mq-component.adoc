@@ -67,32 +67,9 @@ You have the possibility of avoiding the usage of explicit static credentials, b
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
-=== Message headers evaluated by the MQ producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelAwsMQMaxResults` |`String` |The number of results that must be retrieved from listBrokers operation
-
-|`CamelAwsMQBrokerName` |`String` |The broker name
-
-|`CamelAwsMQOperation` |`String` |The operation we want to perform
-
-|`CamelAwsMQBrokerId` |`String` |The broker id
-
-|`CamelAwsMQBrokerDeploymentMode` |`String` |The deployment mode for the broker in the createBroker operation
-
-|`CamelAwsMQBrokerInstanceType` |`String` |The instance type for the MQ machine in the createBroker operation
-
-|`CamelAwsMQBrokerEngine` |`String` |The Broker Engine for MQ. Default is ACTIVEMQ
-
-|`CamelAwsMQBrokerEngineVersion` |`String` |The Broker Engine Version for MQ. Currently you can choose between 5.15.6 and 5.15.0 of ACTIVEMQ
-
-|`CamelAwsMQBrokerUsers` |`List<User>` |The list of users for MQ
-
-|`CamelAwsMQBrokerPubliclyAccessible` |`Boolean` |If the MQ instance must be publicly available or not. Default is false.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === MQ Producer operations
 

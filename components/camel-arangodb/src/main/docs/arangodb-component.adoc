@@ -49,6 +49,10 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 == Examples
 
 === Producer Examples
@@ -64,9 +68,9 @@ from("direct:insert")
 And you can set as body a BaseDocument class 
 
 --------------------------------------------------------------------------------
-        BaseDocument myObject = new BaseDocument();
-        myObject.addAttribute("a", "Foo");
-        myObject.addAttribute("b", 42);
+BaseDocument myObject = new BaseDocument();
+myObject.addAttribute("a", "Foo");
+myObject.addAttribute("b", 42);
 --------------------------------------------------------------------------------
 
 ==== Query a collection
@@ -80,14 +84,14 @@ from("direct:query")
 And you can invoke an AQL Query in this way
 
 --------------------------------------------------------------------------------
-        String query = "FOR t IN " + COLLECTION_NAME + " FILTER t.value == @value";
-        Map<String, Object> bindVars = new MapBuilder().put("value", "hello")
-                .get();
+String query = "FOR t IN " + COLLECTION_NAME + " FILTER t.value == @value";
+Map<String, Object> bindVars = new MapBuilder().put("value", "hello")
+        .get();
 
-        Exchange result = template.request("direct:query", exchange -> {
-            exchange.getMessage().setHeader(AQL_QUERY, query);
-            exchange.getMessage().setHeader(AQL_QUERY_BIND_PARAMETERS, bindVars);
-        });
+Exchange result = template.request("direct:query", exchange -> {
+    exchange.getMessage().setHeader(AQL_QUERY, query);
+    exchange.getMessage().setHeader(AQL_QUERY_BIND_PARAMETERS, bindVars);
+});
 --------------------------------------------------------------------------------
 
 

@@ -32,7 +32,8 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
  * Manage AWS Secrets Manager services using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.9.0", scheme = "aws-secrets-manager", title = "AWS Secrets Manager",
-             syntax = "aws-secrets-manager:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT })
+             syntax = "aws-secrets-manager:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
+             headersClass = SecretsManagerConstants.class)
 public class SecretsManagerEndpoint extends ScheduledPollEndpoint {
 
     private SecretsManagerClient secretsManagerClient;

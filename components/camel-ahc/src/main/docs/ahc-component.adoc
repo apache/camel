@@ -59,32 +59,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Message Headers
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-|`Exchange.HTTP_URI` |`String` |URI to call. Will override existing URI set directly on the endpoint.
-
-|`Exchange.HTTP_PATH` |`String` |Request URI's path, the header will be used to build the request URI
-with the HTTP_URI. If the path is start with "/", http producer will try
-to find the relative path based on the Exchange.HTTP_BASE_URI header or
-the `exchange.getFromEndpoint().getEndpointUri();`
-
-|`Exchange.HTTP_QUERY` |`String` |*Camel 2.11 onwards:* URI parameters. Will override existing URI
-parameters set directly on the endpoint.
-
-|`Exchange.HTTP_RESPONSE_CODE` |`int` |The HTTP response code from the external server. Is 200 for OK.
-
-|`Exchange.HTTP_CHARACTER_ENCODING` |`String` |Character encoding.
-
-|`Exchange.CONTENT_TYPE` |`String` |The HTTP content type. Is set on both the IN and OUT message to provide
-a content type, such as `text/html`.
-
-|`Exchange.CONTENT_ENCODING` |`String` |The HTTP content encoding. Is set on both the IN and OUT message to
-provide a content encoding, such as `gzip`.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Message Body
 

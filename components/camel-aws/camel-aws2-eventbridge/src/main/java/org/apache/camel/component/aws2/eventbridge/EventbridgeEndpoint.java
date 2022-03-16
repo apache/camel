@@ -36,7 +36,8 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 @UriEndpoint(firstVersion = "3.6.0", scheme = "aws2-eventbridge", title = "AWS Eventbridge",
              syntax = "aws2-eventbridge://eventbusNameOrArn", producerOnly = true, category = {
                      Category.CLOUD,
-                     Category.MANAGEMENT })
+                     Category.MANAGEMENT },
+             headersClass = EventbridgeConstants.class)
 public class EventbridgeEndpoint extends DefaultEndpoint {
 
     private EventBridgeClient eventbridgeClient;

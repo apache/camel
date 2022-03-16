@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atmos.integration.AtmosTestSupport;
-import org.apache.camel.component.atmos.util.AtmosResultHeader;
+import org.apache.camel.component.atmos.util.AtmosConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +49,7 @@ public class AtmosProducerPutSingleFileWithRemotePathTest extends AtmosTestSuppo
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         Exchange exchange = exchanges.get(0);
-        Object header = exchange.getIn().getHeader(AtmosResultHeader.UPLOADED_FILE.name());
+        Object header = exchange.getIn().getHeader(AtmosConstants.UPLOADED_FILE);
         Object body = exchange.getIn().getBody();
         assertNotNull(header);
         assertNotNull(body);

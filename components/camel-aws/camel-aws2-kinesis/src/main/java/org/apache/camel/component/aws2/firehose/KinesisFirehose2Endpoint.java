@@ -35,7 +35,8 @@ import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
 @UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis-firehose", title = "AWS Kinesis Firehose",
              syntax = "aws2-kinesis-firehose:streamName", producerOnly = true, category = {
                      Category.CLOUD,
-                     Category.MESSAGING })
+                     Category.MESSAGING },
+             headersClass = KinesisFirehose2Constants.class)
 public class KinesisFirehose2Endpoint extends DefaultEndpoint {
 
     @UriParam

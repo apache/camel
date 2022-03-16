@@ -55,7 +55,7 @@ import software.amazon.awssdk.services.sns.model.Topic;
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sns", title = "AWS Simple Notification System (SNS)",
              syntax = "aws2-sns:topicNameOrArn", producerOnly = true,
-             category = { Category.CLOUD, Category.MESSAGING, Category.MOBILE })
+             category = { Category.CLOUD, Category.MESSAGING, Category.MOBILE }, headersClass = Sns2Constants.class)
 public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sns2Endpoint.class);

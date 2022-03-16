@@ -16,15 +16,24 @@
  */
 package org.apache.camel.component.aws2.eventbridge;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants used in Camel AWS2 Eventbridge module
  */
 public interface EventbridgeConstants {
+    @Metadata(description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsEventbridgeOperation";
+    @Metadata(description = "The name of the rule.", javaType = "String")
     String RULE_NAME = "CamelAwsEventbridgeRuleName";
+    @Metadata(description = "The prefix matching the rule name.", javaType = "String")
     String RULE_NAME_PREFIX = "CamelAwsEventbridgeRuleNamePrefix";
+    @Metadata(description = "The event pattern.", javaType = "String")
     String EVENT_PATTERN = "CamelAwsEventbridgeEventPattern";
+    @Metadata(description = "The targets to update or add to the rule.", javaType = "Collection<Target>")
     String TARGETS = "CamelAwsEventbridgeTargets";
+    @Metadata(description = "The IDs of the targets to remove from the rule.", javaType = "Collection<String>")
     String TARGETS_IDS = "CamelAwsEventbridgeTargetsIds";
+    @Metadata(description = "The Amazon Resource Name (ARN) of the target resource.", javaType = "String")
     String TARGET_ARN = "CamelAwsEventbridgeTargetArn";
 }

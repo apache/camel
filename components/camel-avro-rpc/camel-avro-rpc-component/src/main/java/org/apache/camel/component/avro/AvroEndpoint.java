@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Produce or consume Apache Avro RPC services.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "avro", title = "Avro RPC", syntax = "avro:transport:host:port/messageName",
-             category = { Category.RPC })
+             category = { Category.RPC }, headersClass = AvroConstants.class)
 public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     @UriParam

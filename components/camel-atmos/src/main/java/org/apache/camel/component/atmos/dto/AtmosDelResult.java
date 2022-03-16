@@ -17,19 +17,19 @@
 package org.apache.camel.component.atmos.dto;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.atmos.util.AtmosResultHeader;
+import org.apache.camel.component.atmos.util.AtmosConstants;
 
 public class AtmosDelResult extends AtmosResult {
 
     /**
-     * Object payload contained in Exchange Exchange Body is populated with the remote path deleted on atmos.
+     * Object payload contained in Exchange Body is populated with the remote path deleted on atmos.
      * 
      * @param exchange
      */
     @Override
     public void populateExchange(Exchange exchange) {
         String remotePath = (String) resultEntries;
-        exchange.getIn().setHeader(AtmosResultHeader.DELETED_PATH.name(), remotePath);
+        exchange.getIn().setHeader(AtmosConstants.DELETED_PATH, remotePath);
         exchange.getIn().setBody(remotePath);
     }
 }

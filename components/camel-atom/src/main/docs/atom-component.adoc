@@ -75,16 +75,9 @@ Depending on the `splitEntries` flag Camel will either return one
 Camel can set the `Feed` object on the In header (see `feedHeader`
 option to disable this):
 
-== Message Headers
-
-Camel atom uses these headers.
-
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Header |Description
-|`CamelAtomFeed` |When consuming the `org.apache.abdera.model.Feed` object is set to this
-header.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Examples
 
