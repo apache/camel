@@ -16,13 +16,20 @@
  */
 package org.apache.camel.component.aws2.sns;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants used in Camel AWS SNS module
  */
 public interface Sns2Constants {
 
+    @Metadata(description = "The Amazon SNS message ID.", javaType = "String")
     String MESSAGE_ID = "CamelAwsSnsMessageId";
+    @Metadata(description = "The Amazon SNS message subject. If not set, the subject from the\n" +
+                            "`SnsConfiguration` is used.",
+              javaType = "String")
     String SUBJECT = "CamelAwsSnsSubject";
+    @Metadata(description = "The message structure to use such as json.", javaType = "String")
     String MESSAGE_STRUCTURE = "CamelAwsSnsMessageStructure";
     String MESSAGE_GROUP_ID_PROPERTY = "CamelAwsSnsMessageGroupId";
 }
