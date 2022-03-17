@@ -68,7 +68,7 @@ class Run implements Callable<Integer> {
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     private String name;
 
-    @Option(names = { "--logging" }, description = "Can be used to turn of logging")
+    @Option(names = { "--logging" }, description = "Can be used to turn off logging")
     private boolean logging = true;
 
     @Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
