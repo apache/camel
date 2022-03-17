@@ -84,19 +84,21 @@ class KafkaFetchRecords implements Runnable {
         }
 
         do {
+            String phase = "General error";
             try {
                 if (!isConnected()) {
+                    phase = "Error creating";
                     createConsumer();
-
                     commitManager = CommitManagers.createCommitManager(consumer, kafkaConsumer, threadId, getPrintableTopic());
 
+                    phase = "Error initializing";
                     initializeConsumer();
                     setConnected(true);
                 }
             } catch (Exception e) {
                 setConnected(false);
                 // ensure this is logged so users can see the problem
-                LOG.warn("Error creating org.apache.kafka.clients.consumer.KafkaConsumer due {}", e.getMessage(), e);
+                LOG.warn("{} org.apache.kafka.clients.consumer.KafkaConsumer due to: {}", phase, e.getMessage(), e);
                 continue;
             }
 
@@ -450,7 +452,7 @@ class KafkaFetchRecords implements Runnable {
             }
         } catch (Exception e) {
             // ignore
-            LOG.debug("Cannot check hasReadyNodes on KafkaConsumer client (ConsumerNetworkClient) due to "
+            LOG.debug("Cannot check hasReadyNodes on KafkaConsumer client (ConsumerNetworkClient) due to: "
                       + e.getMessage() + ". This exception is ignored.",
                     e);
         }
