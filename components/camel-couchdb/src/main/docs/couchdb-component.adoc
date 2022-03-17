@@ -67,25 +67,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Headers
-
-The following headers are set on exchanges during message transport.
-
-[width="100%",cols="20%,80%",options="header",]
-|=======================================================================
-|Property |Value
-
-|`CouchDbDatabase` |the database the message came from
-
-|`CouchDbSeq` |the couchdb changeset sequence number of the update / delete message
-
-|`CouchDbId` |the couchdb document id
-
-|`CouchDbRev` |the couchdb document revision
-
-|`CouchDbMethod` |the method (delete / update)
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 Headers are set by the consumer once the message is received. The
 producer will also set the headers for downstream processors once the
