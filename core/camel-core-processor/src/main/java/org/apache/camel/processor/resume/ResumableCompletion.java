@@ -70,6 +70,7 @@ public class ResumableCompletion implements Synchronization {
 
     @Override
     public void onFailure(Exchange exchange) {
-        LOG.warn("Skipping offset update for due to failure in processing");
+        LOG.warn("Skipping offset update due to failure in processing: {}", exchange.getException().getMessage(),
+                exchange.getException());
     }
 }
