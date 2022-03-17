@@ -26,6 +26,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.caffeine.CaffeineConfiguration;
+import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.caffeine.EvictionType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -40,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "caffeine-cache", title = "Caffeine Cache",
              syntax = "caffeine-cache:cacheName", category = { Category.CACHE, Category.DATAGRID, Category.CLUSTERING },
-             producerOnly = true)
+             producerOnly = true, headersClass = CaffeineConstants.class)
 public class CaffeineCacheEndpoint extends DefaultEndpoint {
     @UriPath(description = "the cache name")
     @Metadata(required = true)
