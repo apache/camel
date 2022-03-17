@@ -35,25 +35,33 @@ public class IterationTimeBoundedBudgetBuilder implements BudgetBuilder<Iteratio
     private int maxIterations = DEFAULT_MAX_ITERATIONS;
 
     public IterationTimeBoundedBudgetBuilder withInitialDelay(Duration duration) {
-        this.initialDelay = duration.toMillis();
+        if (duration != null) {
+            this.initialDelay = duration.toMillis();
+        }
 
         return this;
     }
 
     public IterationTimeBoundedBudgetBuilder withInterval(Duration duration) {
-        this.interval = duration.toMillis();
+        if (duration != null) {
+            this.interval = duration.toMillis();
+        }
 
         return this;
     }
 
     public IterationTimeBoundedBudgetBuilder withMaxIterations(int maxIterations) {
-        this.maxIterations = maxIterations;
+        if (maxIterations > 0) {
+            this.maxIterations = maxIterations;
+        }
 
         return this;
     }
 
     public IterationTimeBoundedBudgetBuilder withMaxDuration(Duration duration) {
-        this.maxDuration = duration.toMillis();
+        if (duration != null) {
+            this.maxDuration = duration.toMillis();
+        }
 
         return this;
     }

@@ -116,6 +116,14 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
                 endpoint.getConfiguration().isBreakOnFirstError());
         super.doStart();
 
+        // health-check is optional so discover and resolve
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(endpoint.getCamelContext(), "camel-kafka",
+                KafkaHealthCheckRepository.class);
+        if (healthCheckRepository != null) {
+            consumerHealthCheck = new KafkaConsumerHealthCheck(this, getRouteId());
+            healthCheckRepository.addHealthCheck(consumerHealthCheck);
+        }
+
         // is the offset repository already started?
         StateRepository<String, String> repo = endpoint.getConfiguration().getOffsetRepository();
         if (repo instanceof ServiceSupport) {
@@ -143,14 +151,6 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
             executor.submit(task);
 
             tasks.add(task);
-        }
-
-        // health-check is optional so discover and resolve
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(endpoint.getCamelContext(), "camel-kafka",
-                KafkaHealthCheckRepository.class);
-        if (healthCheckRepository != null) {
-            consumerHealthCheck = new KafkaConsumerHealthCheck(this, getRouteId());
-            healthCheckRepository.addHealthCheck(consumerHealthCheck);
         }
     }
 

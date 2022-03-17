@@ -42,6 +42,14 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     private KafkaClientFactory kafkaClientFactory;
     @Metadata(autowired = true, label = "consumer,advanced")
     private PollExceptionStrategy pollExceptionStrategy;
+    @Metadata(label = "consumer,advanced")
+    private int createConsumerBackoffMaxAttempts;
+    @Metadata(label = "consumer,advanced", defaultValue = "5000")
+    private long createConsumerBackoffInterval = 5000;
+    @Metadata(label = "consumer,advanced")
+    private int subscribeConsumerBackoffMaxAttempts;
+    @Metadata(label = "consumer,advanced", defaultValue = "5000")
+    private long subscribeConsumerBackoffInterval = 5000;
 
     public KafkaComponent() {
     }
@@ -147,6 +155,51 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
      */
     public void setPollExceptionStrategy(PollExceptionStrategy pollExceptionStrategy) {
         this.pollExceptionStrategy = pollExceptionStrategy;
+    }
+
+    public int getCreateConsumerBackoffMaxAttempts() {
+        return createConsumerBackoffMaxAttempts;
+    }
+
+    /**
+     * Maximum attempts to create the kafka consumer (kafka-client), before eventually giving up and failing.
+     */
+    public void setCreateConsumerBackoffMaxAttempts(int createConsumerBackoffMaxAttempts) {
+        this.createConsumerBackoffMaxAttempts = createConsumerBackoffMaxAttempts;
+    }
+
+    public long getCreateConsumerBackoffInterval() {
+        return createConsumerBackoffInterval;
+    }
+
+    /**
+     * The delay in millis seconds to wait before trying again to create the kafka consumer (kafka-client).
+     */
+    public void setCreateConsumerBackoffInterval(long createConsumerBackoffInterval) {
+        this.createConsumerBackoffInterval = createConsumerBackoffInterval;
+    }
+
+    public int getSubscribeConsumerBackoffMaxAttempts() {
+        return subscribeConsumerBackoffMaxAttempts;
+    }
+
+    /**
+     * Maximum number the kafka consumer will attempt to subscribe to the kafka broker, before eventually giving up and
+     * failing.
+     */
+    public void setSubscribeConsumerBackoffMaxAttempts(int subscribeConsumerBackoffMaxAttempts) {
+        this.subscribeConsumerBackoffMaxAttempts = subscribeConsumerBackoffMaxAttempts;
+    }
+
+    public long getSubscribeConsumerBackoffInterval() {
+        return subscribeConsumerBackoffInterval;
+    }
+
+    /**
+     * The delay in millis seconds to wait before trying again to subscribe to the kafka broker.
+     */
+    public void setSubscribeConsumerBackoffInterval(long subscribeConsumerBackoffInterval) {
+        this.subscribeConsumerBackoffInterval = subscribeConsumerBackoffInterval;
     }
 
     @Override
