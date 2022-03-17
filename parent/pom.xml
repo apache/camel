@@ -91,7 +91,7 @@
         <azure-identity-version>1.4.0</azure-identity-version>
         <azure-messaging-eventhubs-checkpointstore-blob-version>1.10.1</azure-messaging-eventhubs-checkpointstore-blob-version>
         <azure-messaging-servicebus-version>7.4.2</azure-messaging-servicebus-version>
-        <azure-storage-blob-version>12.14.1</azure-storage-blob-version>
+        <azure-storage-blob-version>12.14.4</azure-storage-blob-version>
         <azure-storage-blob-changedfeed-version>12.0.0-beta.10</azure-storage-blob-changedfeed-version>
         <azure-storage-datalake-version>12.7.1</azure-storage-datalake-version>
         <azure-storage-queue-version>12.11.1</azure-storage-queue-version>
