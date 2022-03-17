@@ -27,9 +27,8 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
-import org.apache.camel.impl.health.ConsumersHealthCheckRepository;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
-import org.apache.camel.impl.health.RoutesHealthCheckRepository;
+import org.apache.camel.impl.health.HealthCheckRegistryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +38,6 @@ import org.slf4j.LoggerFactory;
  */
 public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegistry implements StartupListener {
 
-    public static final String CONSUMERS_CHECK_NAME = "camel-consumers";
-    public static final String ROUTES_CHECK_NAME = "camel-routes";
     private static final Logger LOG = LoggerFactory.getLogger(CamelMicroProfileHealthCheckRegistry.class);
     private final Set<HealthCheckRepository> repositories = new CopyOnWriteArraySet<>();
 
@@ -87,9 +84,18 @@ public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegi
             removeMicroProfileHealthCheck(check);
         } else {
             HealthCheckRepository repository = (HealthCheckRepository) obj;
-            if (repository instanceof ConsumersHealthCheckRepository || repository instanceof RoutesHealthCheckRepository) {
+            boolean isAllChecksLiveness = repository.stream().allMatch(HealthCheck::isLiveness);
+            boolean isAllChecksReadiness = repository.stream().allMatch(HealthCheck::isReadiness);
+
+            if (!(repository instanceof HealthCheckRegistryRepository) && (isAllChecksLiveness || isAllChecksReadiness)) {
                 try {
-                    getReadinessRegistry().remove(repository.getId());
+                    if (isAllChecksLiveness) {
+                        getLivenessRegistry().remove(repository.getId());
+                    }
+
+                    if (isAllChecksReadiness) {
+                        getReadinessRegistry().remove(repository.getId());
+                    }
                 } catch (IllegalStateException e) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Failed to remove repository readiness health {} check due to: {}", repository.getId(),
@@ -121,28 +127,40 @@ public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegi
 
     protected void registerRepositoryChecks(HealthCheckRepository repository) {
         if (repository.isEnabled()) {
-            // Since the number of potential checks for consumers / routes is non-deterministic
-            // avoid registering each one with SmallRye health and instead aggregate the results so
-            // that we avoid highly verbose health output
-            if (repository instanceof ConsumersHealthCheckRepository) {
-                CamelMicroProfileRepositoryHealthCheck repositoryHealthCheck
-                        = new CamelMicroProfileRepositoryHealthCheck(repository, CONSUMERS_CHECK_NAME);
-                getReadinessRegistry().register(repository.getId(), repositoryHealthCheck);
-            } else if (repository instanceof RoutesHealthCheckRepository) {
-                CamelMicroProfileRepositoryHealthCheck repositoryHealthCheck
-                        = new CamelMicroProfileRepositoryHealthCheck(repository, ROUTES_CHECK_NAME);
-                getReadinessRegistry().register(repository.getId(), repositoryHealthCheck);
-            } else {
+            boolean isAllChecksLiveness = repository.stream().allMatch(HealthCheck::isLiveness);
+            boolean isAllChecksReadiness = repository.stream().allMatch(HealthCheck::isReadiness);
+
+            if (repository instanceof HealthCheckRegistryRepository || !isAllChecksLiveness && !isAllChecksReadiness) {
+                // Register each check individually for HealthCheckRegistryRepository or where the repository contains
+                // a mix or readiness and liveness checks
                 repository.stream()
                         .filter(healthCheck -> healthCheck.isEnabled())
                         .forEach(this::registerMicroProfileHealthCheck);
+            } else {
+                // Since the number of potential checks for consumers / routes etc is non-deterministic
+                // avoid registering each one with SmallRye health and instead aggregate the results so
+                // that we avoid highly verbose health output
+                String healthCheckName = repository.getId();
+                if (repository.getClass().getName().startsWith("org.apache.camel") && !healthCheckName.startsWith("camel-")) {
+                    healthCheckName = "camel-" + healthCheckName;
+                }
+
+                CamelMicroProfileRepositoryHealthCheck repositoryHealthCheck
+                        = new CamelMicroProfileRepositoryHealthCheck(getCamelContext(), repository, healthCheckName);
+                if (isAllChecksLiveness) {
+                    getLivenessRegistry().register(repository.getId(), repositoryHealthCheck);
+                }
+
+                if (isAllChecksReadiness) {
+                    getReadinessRegistry().register(repository.getId(), repositoryHealthCheck);
+                }
             }
         }
     }
 
     protected void registerMicroProfileHealthCheck(HealthCheck camelHealthCheck) {
         org.eclipse.microprofile.health.HealthCheck microProfileHealthCheck
-                = new CamelMicroProfileHealthCheck(camelHealthCheck);
+                = new CamelMicroProfileHealthCheck(getCamelContext(), camelHealthCheck);
 
         if (camelHealthCheck.isReadiness()) {
             getReadinessRegistry().register(camelHealthCheck.getId(), microProfileHealthCheck);

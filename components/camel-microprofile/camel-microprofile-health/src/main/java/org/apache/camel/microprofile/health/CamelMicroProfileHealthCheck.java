@@ -18,6 +18,8 @@ package org.apache.camel.microprofile.health;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
@@ -31,9 +33,11 @@ import static org.apache.camel.health.HealthCheck.*;
  */
 final class CamelMicroProfileHealthCheck implements HealthCheck {
 
+    private final CamelContext camelContext;
     private final org.apache.camel.health.HealthCheck camelHealthCheck;
 
-    CamelMicroProfileHealthCheck(org.apache.camel.health.HealthCheck camelHealthCheck) {
+    CamelMicroProfileHealthCheck(CamelContext camelContext, org.apache.camel.health.HealthCheck camelHealthCheck) {
+        this.camelContext = camelContext;
         this.camelHealthCheck = camelHealthCheck;
     }
 
@@ -52,7 +56,9 @@ final class CamelMicroProfileHealthCheck implements HealthCheck {
         }
 
         if (enabled) {
-            CamelMicroProfileHealthHelper.applyHealthDetail(builder, result);
+            HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
+
+            CamelMicroProfileHealthHelper.applyHealthDetail(builder, result, registry.getExposureLevel());
 
             if (result.getState() == State.DOWN) {
                 builder.down();

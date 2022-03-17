@@ -33,7 +33,6 @@ import org.apache.camel.health.HealthCheckRepository;
 import org.eclipse.microprofile.health.HealthCheckResponse.Status;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.microprofile.health.CamelMicroProfileHealthCheckRegistry.ROUTES_CHECK_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfileHealthTestSupport {
@@ -53,7 +52,7 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput(ROUTES_CHECK_NAME, Status.UP, checks.getJsonObject(0));
+        assertHealthCheckOutput("camel-routes", Status.UP, checks.getJsonObject(0));
     }
 
     @Test
@@ -73,7 +72,7 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput(ROUTES_CHECK_NAME, Status.DOWN, checks.getJsonObject(0), jsonObject -> {
+        assertHealthCheckOutput("camel-routes", Status.DOWN, checks.getJsonObject(0), jsonObject -> {
             assertEquals("healthyRoute", jsonObject.getString("route.id"));
             assertEquals(ServiceStatus.Stopped.name(), jsonObject.getString("route.status"));
         });
@@ -136,11 +135,150 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
         assertEquals(Status.DOWN.name(), healthObject.getString("status"));
 
         JsonArray checks = healthObject.getJsonArray("checks");
-        assertEquals(2, checks.size());
+        assertEquals(1, checks.size());
 
-        assertHealthCheckOutput("check-3", Status.DOWN, checks.getJsonObject(0));
+        assertHealthCheckOutput("camel-custom-repository", Status.DOWN, checks.getJsonObject(0));
+    }
 
-        assertHealthCheckOutput("check-1", Status.UP, checks.getJsonObject(1));
+    @Test
+    public void testRegisterHealthCheckRepositoryAllLiveness() {
+        List<HealthCheck> repositoryChecks = new ArrayList<>();
+        repositoryChecks.add(createLivenessCheck("check-1", true, builder -> builder.up()));
+        repositoryChecks.add(createLivenessCheck("check-2", true, builder -> builder.up()));
+
+        HealthCheckRepository repository = new HealthCheckRepository() {
+            @Override
+            public boolean isEnabled() {
+                return true;
+            }
+
+            @Override
+            public void setEnabled(boolean enabled) {
+                // Noop
+            }
+
+            @Override
+            public Stream<HealthCheck> stream() {
+                return repositoryChecks.stream();
+            }
+
+            @Override
+            public String getId() {
+                return "custom-repository";
+            }
+        };
+
+        HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
+        healthCheckRegistry.register(repository);
+
+        SmallRyeHealth liveness = reporter.getLiveness();
+        SmallRyeHealth readiness = reporter.getReadiness();
+
+        JsonObject livenessHealthObject = getHealthJson(liveness);
+        assertEquals(Status.UP.name(), livenessHealthObject.getString("status"));
+
+        JsonArray livenessChecks = livenessHealthObject.getJsonArray("checks");
+        assertEquals(1, livenessChecks.size());
+
+        JsonObject readinessHealthObject = getHealthJson(readiness);
+        assertEquals(Status.UP.name(), readinessHealthObject.getString("status"));
+
+        JsonArray readinessChecks = readinessHealthObject.getJsonArray("checks");
+        assertEquals(0, readinessChecks.size());
+    }
+
+    @Test
+    public void testRegisterHealthCheckRepositoryAllReadiness() {
+        List<HealthCheck> repositoryChecks = new ArrayList<>();
+        repositoryChecks.add(createReadinessCheck("check-1", true, builder -> builder.up()));
+        repositoryChecks.add(createReadinessCheck("check-2", true, builder -> builder.up()));
+
+        HealthCheckRepository repository = new HealthCheckRepository() {
+            @Override
+            public boolean isEnabled() {
+                return true;
+            }
+
+            @Override
+            public void setEnabled(boolean enabled) {
+                // Noop
+            }
+
+            @Override
+            public Stream<HealthCheck> stream() {
+                return repositoryChecks.stream();
+            }
+
+            @Override
+            public String getId() {
+                return "custom-repository";
+            }
+        };
+
+        HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
+        healthCheckRegistry.register(repository);
+
+        SmallRyeHealth liveness = reporter.getLiveness();
+        SmallRyeHealth readiness = reporter.getReadiness();
+
+        JsonObject livenessHealthObject = getHealthJson(liveness);
+        assertEquals(Status.UP.name(), livenessHealthObject.getString("status"));
+
+        JsonArray livenessChecks = livenessHealthObject.getJsonArray("checks");
+        assertEquals(0, livenessChecks.size());
+
+        JsonObject readinessHealthObject = getHealthJson(readiness);
+        assertEquals(Status.UP.name(), readinessHealthObject.getString("status"));
+
+        JsonArray readinessChecks = readinessHealthObject.getJsonArray("checks");
+        assertEquals(1, readinessChecks.size());
+    }
+
+    @Test
+    public void testRegisterHealthCheckRepositoryMixedLivenessAndReadiness() {
+        List<HealthCheck> repositoryChecks = new ArrayList<>();
+        repositoryChecks.add(createLivenessCheck("check-1", true, builder -> builder.up()));
+        repositoryChecks.add(createReadinessCheck("check-2", true, builder -> builder.up()));
+
+        HealthCheckRepository repository = new HealthCheckRepository() {
+            @Override
+            public boolean isEnabled() {
+                return true;
+            }
+
+            @Override
+            public void setEnabled(boolean enabled) {
+                // Noop
+            }
+
+            @Override
+            public Stream<HealthCheck> stream() {
+                return repositoryChecks.stream();
+            }
+
+            @Override
+            public String getId() {
+                return "custom-repository";
+            }
+        };
+
+        HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
+        healthCheckRegistry.register(repository);
+
+        SmallRyeHealth liveness = reporter.getLiveness();
+        SmallRyeHealth readiness = reporter.getReadiness();
+
+        JsonObject livenessHealthObject = getHealthJson(liveness);
+        assertEquals(Status.UP.name(), livenessHealthObject.getString("status"));
+
+        JsonArray livenessChecks = livenessHealthObject.getJsonArray("checks");
+        assertEquals(1, livenessChecks.size());
+
+        JsonObject readinessHealthObject = getHealthJson(readiness);
+        assertEquals(Status.UP.name(), readinessHealthObject.getString("status"));
+
+        JsonArray readinessChecks = readinessHealthObject.getJsonArray("checks");
+        assertEquals(1, readinessChecks.size());
     }
 
     @Test
@@ -157,7 +295,7 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput(ROUTES_CHECK_NAME, Status.UP, checks.getJsonObject(0));
+        assertHealthCheckOutput("camel-routes", Status.UP, checks.getJsonObject(0));
 
         healthCheckRegistry.unregister(hc);
 
@@ -168,6 +306,176 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
 
         checks = healthObject.getJsonArray("checks");
         assertEquals(0, checks.size());
+    }
+
+    @Test
+    public void testUnregisterHealthCheckRepositoryAllLiveness() {
+        List<HealthCheck> repositoryChecks = new ArrayList<>();
+        repositoryChecks.add(createLivenessCheck("check-1", true, builder -> builder.up()));
+        repositoryChecks.add(createLivenessCheck("check-2", true, builder -> builder.up()));
+
+        HealthCheckRepository repository = new HealthCheckRepository() {
+            @Override
+            public boolean isEnabled() {
+                return true;
+            }
+
+            @Override
+            public void setEnabled(boolean enabled) {
+                // Noop
+            }
+
+            @Override
+            public Stream<HealthCheck> stream() {
+                return repositoryChecks.stream();
+            }
+
+            @Override
+            public String getId() {
+                return "custom-repository";
+            }
+        };
+
+        HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
+        healthCheckRegistry.register(repository);
+
+        SmallRyeHealth liveness = reporter.getLiveness();
+        SmallRyeHealth readiness = reporter.getReadiness();
+
+        JsonObject livenessHealthObject = getHealthJson(liveness);
+        assertEquals(Status.UP.name(), livenessHealthObject.getString("status"));
+
+        JsonArray livenessChecks = livenessHealthObject.getJsonArray("checks");
+        assertEquals(1, livenessChecks.size());
+
+        JsonObject readinessHealthObject = getHealthJson(readiness);
+        assertEquals(Status.UP.name(), readinessHealthObject.getString("status"));
+
+        JsonArray readinessChecks = readinessHealthObject.getJsonArray("checks");
+        assertEquals(0, readinessChecks.size());
+
+        healthCheckRegistry.unregister(repository);
+
+        liveness = reporter.getLiveness();
+
+        livenessHealthObject = getHealthJson(liveness);
+        livenessChecks = livenessHealthObject.getJsonArray("checks");
+        assertEquals(0, livenessChecks.size());
+    }
+
+    @Test
+    public void testUnregisterHealthCheckRepositoryAllReadiness() {
+        List<HealthCheck> repositoryChecks = new ArrayList<>();
+        repositoryChecks.add(createReadinessCheck("check-1", true, builder -> builder.up()));
+        repositoryChecks.add(createReadinessCheck("check-2", true, builder -> builder.up()));
+
+        HealthCheckRepository repository = new HealthCheckRepository() {
+            @Override
+            public boolean isEnabled() {
+                return true;
+            }
+
+            @Override
+            public void setEnabled(boolean enabled) {
+                // Noop
+            }
+
+            @Override
+            public Stream<HealthCheck> stream() {
+                return repositoryChecks.stream();
+            }
+
+            @Override
+            public String getId() {
+                return "custom-repository";
+            }
+        };
+
+        HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
+        healthCheckRegistry.register(repository);
+
+        SmallRyeHealth liveness = reporter.getLiveness();
+        SmallRyeHealth readiness = reporter.getReadiness();
+
+        JsonObject livenessHealthObject = getHealthJson(liveness);
+        assertEquals(Status.UP.name(), livenessHealthObject.getString("status"));
+
+        JsonArray livenessChecks = livenessHealthObject.getJsonArray("checks");
+        assertEquals(0, livenessChecks.size());
+
+        JsonObject readinessHealthObject = getHealthJson(readiness);
+        assertEquals(Status.UP.name(), readinessHealthObject.getString("status"));
+
+        JsonArray readinessChecks = readinessHealthObject.getJsonArray("checks");
+        assertEquals(1, readinessChecks.size());
+
+        healthCheckRegistry.unregister(repository);
+
+        readiness = reporter.getReadiness();
+
+        readinessHealthObject = getHealthJson(readiness);
+        readinessChecks = readinessHealthObject.getJsonArray("checks");
+        assertEquals(0, readinessChecks.size());
+    }
+
+    @Test
+    public void testUnregisterHealthCheckRepositoryMixedLivenessAndReadiness() {
+        List<HealthCheck> repositoryChecks = new ArrayList<>();
+        repositoryChecks.add(createLivenessCheck("check-1", true, builder -> builder.up()));
+        repositoryChecks.add(createReadinessCheck("check-2", true, builder -> builder.up()));
+
+        HealthCheckRepository repository = new HealthCheckRepository() {
+            @Override
+            public boolean isEnabled() {
+                return true;
+            }
+
+            @Override
+            public void setEnabled(boolean enabled) {
+                // Noop
+            }
+
+            @Override
+            public Stream<HealthCheck> stream() {
+                return repositoryChecks.stream();
+            }
+
+            @Override
+            public String getId() {
+                return "custom-repository";
+            }
+        };
+
+        HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
+        healthCheckRegistry.register(repository);
+
+        SmallRyeHealth liveness = reporter.getLiveness();
+        SmallRyeHealth readiness = reporter.getReadiness();
+
+        JsonObject livenessHealthObject = getHealthJson(liveness);
+        assertEquals(Status.UP.name(), livenessHealthObject.getString("status"));
+
+        JsonArray livenessChecks = livenessHealthObject.getJsonArray("checks");
+        assertEquals(1, livenessChecks.size());
+
+        JsonObject readinessHealthObject = getHealthJson(readiness);
+        assertEquals(Status.UP.name(), readinessHealthObject.getString("status"));
+
+        JsonArray readinessChecks = readinessHealthObject.getJsonArray("checks");
+        assertEquals(1, readinessChecks.size());
+
+        healthCheckRegistry.unregister(repository);
+
+        liveness = reporter.getLiveness();
+        readiness = reporter.getReadiness();
+
+        livenessHealthObject = getHealthJson(liveness);
+        livenessChecks = livenessHealthObject.getJsonArray("checks");
+        assertEquals(0, livenessChecks.size());
+
+        readinessHealthObject = getHealthJson(readiness);
+        readinessChecks = readinessHealthObject.getJsonArray("checks");
+        assertEquals(0, readinessChecks.size());
     }
 
     @Override
