@@ -56,7 +56,7 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_VI
  * Query Couchbase Views with a poll strategy and/or perform various operations against Couchbase databases.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "couchbase", title = "Couchbase", syntax = "couchbase:protocol://hostname:port",
-             category = { Category.DATABASE, Category.NOSQL })
+             category = { Category.DATABASE, Category.NOSQL }, headersClass = CouchbaseConstants.class)
 public class CouchbaseEndpoint extends ScheduledPollEndpoint {
 
     @UriPath

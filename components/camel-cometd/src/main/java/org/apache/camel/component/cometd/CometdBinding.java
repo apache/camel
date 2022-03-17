@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultMessage;
 import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerMessage;
@@ -38,7 +39,9 @@ import org.slf4j.LoggerFactory;
 public class CometdBinding {
 
     public static final String HEADERS_FIELD = "CamelHeaders";
+    @Metadata(description = "The clientId of the session", javaType = "String")
     public static final String COMETD_CLIENT_ID_HEADER_NAME = "CometdClientId";
+    @Metadata(description = "The subscription", javaType = "String")
     public static final String COMETD_SUBSCRIPTION_HEADER_NAME = "subscription";
     public static final String COMETD_SESSION_ATTR_HEADER_NAME = "CometdSessionAttr";
 

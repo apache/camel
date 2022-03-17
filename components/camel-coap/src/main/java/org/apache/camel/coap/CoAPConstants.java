@@ -16,6 +16,9 @@
  */
 package org.apache.camel.coap;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.Metadata;
+
 /**
  * CoAP component constants
  */
@@ -38,7 +41,17 @@ public interface CoAPConstants {
     /**
      * CoAP exchange header names
      */
+    @Metadata(description = "The request method that the CoAP producer should use when calling the target CoAP\n" +
+                            "server URI. Valid options are DELETE, GET, PING, POST & PUT.",
+              javaType = "String")
     String COAP_METHOD = "CamelCoapMethod";
+    @Metadata(description = "The CoAP response code sent by the external server. See RFC 7252 for details\n" +
+                            "of what each code means.",
+              javaType = "String")
     String COAP_RESPONSE_CODE = "CamelCoapResponseCode";
+    @Metadata(description = "The URI of a CoAP server to call. Will override any existing URI configured directly on the endpoint.",
+              javaType = "String")
     String COAP_URI = "CamelCoapUri";
+    @Metadata(description = "The content type", javaType = "String")
+    String CONTENT_TYPE = Exchange.CONTENT_TYPE;
 }

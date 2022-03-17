@@ -104,35 +104,9 @@ Consumer] which means there is more options you can configure, such as
 how frequent the consumer should poll. For more details
 see Polling Consumer.
 
-== Consumer Headers
-
-The consumer stores a number of job headers in the Exchange message:
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Property |Type |Description
-
-|_beanstalk.jobId_ |long | Job ID
-
-|_beanstalk.tube_ |string |the name of the tube that contains this job
-
-|_beanstalk.state_ |string |“ready” or “delayed” or “reserved” or “buried” (must be “reserved”)
-
-|_beanstalk.priority_ |long |the priority value set
-
-|_beanstalk.age_ |int |the time in seconds since the put command that created this job
-
-|_beanstalk.time-left_ |int |the number of seconds left until the server puts this job into the ready
-queue
-
-|_beanstalk.timeouts_ |int |the number of times this job has timed out during a reservation
-
-|_beanstalk.releases_ |int |the number of times a client has released this job from a reservation
-
-|_beanstalk.buries_ |int |the number of times this job has been buried
-
-|_beanstalk.kicks_ |int |the number of times this job has been kicked
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Examples
 

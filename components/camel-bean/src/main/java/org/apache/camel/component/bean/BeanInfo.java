@@ -183,7 +183,7 @@ public class BeanInfo {
 
         MethodInfo methodInfo = null;
 
-        String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
+        String methodName = exchange.getIn().getHeader(BeanConstants.BEAN_METHOD_NAME, String.class);
         if (methodName != null) {
 
             // do not use qualifier for name

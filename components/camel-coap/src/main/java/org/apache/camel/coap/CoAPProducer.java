@@ -49,7 +49,7 @@ public class CoAPProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         CoapClient client = getClient(exchange);
-        String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+        String ct = exchange.getIn().getHeader(CoAPConstants.CONTENT_TYPE, String.class);
         if (ct == null) {
             // ?default?
             ct = "application/octet-stream";
@@ -83,7 +83,7 @@ public class CoAPProducer extends DefaultProducer {
         if (response != null) {
             Message resp = exchange.getOut();
             String mt = MediaTypeRegistry.toString(response.getOptions().getContentFormat());
-            resp.setHeader(org.apache.camel.Exchange.CONTENT_TYPE, mt);
+            resp.setHeader(CoAPConstants.CONTENT_TYPE, mt);
             resp.setHeader(CoAPConstants.COAP_RESPONSE_CODE, response.getCode().toString());
             resp.setBody(response.getPayload());
         }

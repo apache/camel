@@ -39,7 +39,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
  * Retrieve and post-process Beanstalk jobs.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "beanstalk", title = "Beanstalk", syntax = "beanstalk:connectionSettings",
-             category = { Category.MESSAGING })
+             category = { Category.MESSAGING }, headersClass = Headers.class)
 public class BeanstalkEndpoint extends ScheduledPollEndpoint implements AsyncEndpoint {
     final ConnectionSettings conn;
 

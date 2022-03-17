@@ -44,39 +44,9 @@ include::partial$component-endpoint-options.adoc[]
 
 == Usage
 
-=== Message headers evaluated by the producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Default Value |Description
-
-|`CamelCMISFolderPath` |`/` |The current folder to use during the execution. If not specified will
-use the root folder
-
-|`CamelCMISRetrieveContent` |`false` |In `queryMode` this header will force the producer to retrieve the
-content of document nodes.
-
-|`CamelCMISReadSize` |`0` |Max number of nodes to read.
-
-|`cmis:path` |`null` |If `CamelCMISFolderPath` is not set, will try to find out the path of
-the node from this cmis property and it is name
-
-|`cmis:name` |`null` |If `CamelCMISFolderPath` is not set, will try to find out the path of
-the node from this cmis property and it is path
-
-|`cmis:objectTypeId` |`null` |The type of the node
-
-|`cmis:contentStreamMimeType` |`null` |The mimetype to set for a document
-|=======================================================================
-
-=== Message headers set during querying Producer operation
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelCMISResultCount` |`Integer` |Number of nodes returned from the query.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 The message body will contain a list of maps, where each entry in the
 map is cmis property and its value. If `CamelCMISRetrieveContent` header is set to true, one additional

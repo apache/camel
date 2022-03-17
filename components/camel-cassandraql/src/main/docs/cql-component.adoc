@@ -40,6 +40,10 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 == Endpoint Connection Syntax
 
 The endpoint can initiate the Cassandra connection or use an existing
