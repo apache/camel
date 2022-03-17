@@ -60,6 +60,7 @@ class KafkaFetchRecords implements Runnable {
     private final BridgeExceptionHandlerToErrorHandler bridge;
     private final ReentrantLock lock = new ReentrantLock();
     private CommitManager commitManager;
+    private Exception lastError;
 
     private boolean retry = true;
     private boolean reconnect; // must be false at init (this is the policy whether to reconnect)
@@ -99,9 +100,11 @@ class KafkaFetchRecords implements Runnable {
                 setConnected(false);
                 // ensure this is logged so users can see the problem
                 LOG.warn("{} org.apache.kafka.clients.consumer.KafkaConsumer due to: {}", phase, e.getMessage(), e);
+                lastError = e;
                 continue;
             }
 
+            lastError = null;
             startPolling();
         } while ((isRetrying() || isReconnect()) && isKafkaConsumerRunnable());
 
@@ -465,5 +468,9 @@ class KafkaFetchRecords implements Runnable {
 
     String getClientId() {
         return clientId;
+    }
+
+    Exception getLastError() {
+        return lastError;
     }
 }

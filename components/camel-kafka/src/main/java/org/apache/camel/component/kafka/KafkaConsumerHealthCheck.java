@@ -51,6 +51,8 @@ public class KafkaConsumerHealthCheck extends AbstractHealthCheck {
             if (!task.isReady()) {
                 builder.down();
                 builder.message("KafkaConsumer is not ready");
+                // was this caused by consumer not able to connect then this is stored in last error
+                builder.error(task.getLastError());
 
                 KafkaConfiguration cfg = kafkaConsumer.getEndpoint().getConfiguration();
                 Properties props = task.getKafkaProps();
