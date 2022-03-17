@@ -45,7 +45,7 @@ import org.apache.camel.utils.cassandra.CassandraSessionHolder;
  * DataStax.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace",
-             category = { Category.DATABASE, Category.NOSQL })
+             category = { Category.DATABASE, Category.NOSQL }, headersClass = CassandraConstants.class)
 public class CassandraEndpoint extends ScheduledPollEndpoint {
 
     private volatile CassandraSessionHolder sessionHolder;
