@@ -110,7 +110,7 @@ public class CMISSessionFacade {
             LOG.debug("Processing page {}", pageNumber);
             for (QueryResult item : currentPage) {
                 Map<String, Object> properties = CMISHelper.propertyDataToMap(item.getProperties());
-                Object objectTypeId = item.getPropertyValueById(PropertyIds.OBJECT_TYPE_ID);
+                Object objectTypeId = item.getPropertyValueById(CamelCMISConstants.OBJECT_TYPE_ID);
                 InputStream inputStream = null;
                 if (readContent && CamelCMISConstants.CMIS_DOCUMENT.equals(objectTypeId)) {
                     inputStream = getContentStreamFor(item);
@@ -173,7 +173,7 @@ public class CMISSessionFacade {
     }
 
     public Document getDocument(QueryResult queryResult) {
-        if (CamelCMISConstants.CMIS_DOCUMENT.equals(queryResult.getPropertyValueById(PropertyIds.OBJECT_TYPE_ID))
+        if (CamelCMISConstants.CMIS_DOCUMENT.equals(queryResult.getPropertyValueById(CamelCMISConstants.OBJECT_TYPE_ID))
                 || CamelCMISConstants.CMIS_DOCUMENT.equals(queryResult.getPropertyValueById(PropertyIds.BASE_TYPE_ID))) {
             String objectId = (String) queryResult.getPropertyById(PropertyIds.OBJECT_ID).getFirstValue();
             return (org.apache.chemistry.opencmis.client.api.Document) session.getObject(objectId);

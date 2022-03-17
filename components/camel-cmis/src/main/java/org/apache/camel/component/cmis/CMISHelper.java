@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Property;
-import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 
 public final class CMISHelper {
@@ -61,7 +60,7 @@ public final class CMISHelper {
     }
 
     public static Object getObjectTypeId(CmisObject child) {
-        return child.getPropertyValue(PropertyIds.OBJECT_TYPE_ID); //BASE_TYPE_ID?
+        return child.getPropertyValue(CamelCMISConstants.OBJECT_TYPE_ID); //BASE_TYPE_ID?
     }
 
 }

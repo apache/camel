@@ -55,9 +55,9 @@ public class CMISProducerTest extends CMISTestSupport {
     void storeMessageBodyAsTextDocument() throws Exception {
         String content = "Some content to be store";
         Exchange exchange = createExchangeWithInBody(content);
-        exchange.getIn().getHeaders().put(PropertyIds.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
-        exchange.getIn().getHeaders().put(PropertyIds.NAME, "test.file");
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.NAME, "test.file");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.CREATE);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, createSession().getRootFolder().getId());
 
@@ -74,22 +74,22 @@ public class CMISProducerTest extends CMISTestSupport {
     @Test
     void getDocumentMimeTypeFromMessageContentType() {
         Exchange exchange = createExchangeWithInBody("Some content to be store");
-        exchange.getIn().getHeaders().put(PropertyIds.CONTENT_STREAM_MIME_TYPE, "text/plain");
-        exchange.getIn().getHeaders().put(PropertyIds.NAME, "test.file");
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.CONTENT_STREAM_MIME_TYPE, "text/plain");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.NAME, "test.file");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.CREATE);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, createSession().getRootFolder().getId());
 
         template.send(exchange);
         CmisObject cmisObject = exchange.getMessage().getBody(CmisObject.class);
 
-        assertEquals("text/plain", cmisObject.getPropertyValue(PropertyIds.CONTENT_STREAM_MIME_TYPE));
+        assertEquals("text/plain", cmisObject.getPropertyValue(CamelCMISConstants.CONTENT_STREAM_MIME_TYPE));
     }
 
     @Test
     void namePropertyIsAlwaysRequired() {
         Exchange exchange = createExchangeWithInBody("Some content that will fail to be stored");
-        exchange.getIn().getHeaders().put(PropertyIds.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.CREATE);
 
         template.send(exchange);
@@ -103,9 +103,9 @@ public class CMISProducerTest extends CMISTestSupport {
     @Test
     void createDocumentWithoutContentByExplicitlySpecifyingObjectTypeHeader() {
         Exchange exchange = createExchangeWithInBody(null);
-        exchange.getIn().getHeaders().put(PropertyIds.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
-        exchange.getIn().getHeaders().put(PropertyIds.NAME, "test.file");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.NAME, "test.file");
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.CREATE);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, createSession().getRootFolder().getId());
 
@@ -114,13 +114,13 @@ public class CMISProducerTest extends CMISTestSupport {
         CmisObject cmisObject = exchange.getMessage().getBody(CmisObject.class);
         assertNotNull(cmisObject);
 
-        assertEquals(CamelCMISConstants.CMIS_DOCUMENT, cmisObject.getPropertyValue(PropertyIds.OBJECT_TYPE_ID));
+        assertEquals(CamelCMISConstants.CMIS_DOCUMENT, cmisObject.getPropertyValue(CamelCMISConstants.OBJECT_TYPE_ID));
     }
 
     @Test
     void emptyBodyAndMissingObjectTypeHeaderCreatesFolderNode() {
         Exchange exchange = createExchangeWithInBody(null);
-        exchange.getIn().getHeaders().put(PropertyIds.NAME, "testFolder");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.NAME, "testFolder");
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.CREATE);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, createSession().getRootFolder().getId());
 
@@ -128,16 +128,16 @@ public class CMISProducerTest extends CMISTestSupport {
         CmisObject cmisObject = exchange.getMessage().getBody(CmisObject.class);
 
         assertNotNull(cmisObject);
-        assertEquals(CamelCMISConstants.CMIS_FOLDER, cmisObject.getPropertyValue(PropertyIds.OBJECT_TYPE_ID));
+        assertEquals(CamelCMISConstants.CMIS_FOLDER, cmisObject.getPropertyValue(CamelCMISConstants.OBJECT_TYPE_ID));
         assertTrue(cmisObject instanceof Folder);
     }
 
     @Test
     void cmisPropertiesAreStored() {
         Exchange exchange = createExchangeWithInBody("Some content to be store");
-        exchange.getIn().getHeaders().put(PropertyIds.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
-        exchange.getIn().getHeaders().put(PropertyIds.NAME, "test.txt");
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.NAME, "test.txt");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.CREATE);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, createSession().getRootFolder().getId());
         exchange.getIn().getHeaders().put(CamelCMISConstants.VERSIONING_STATE, VersioningState.MAJOR);
@@ -145,9 +145,9 @@ public class CMISProducerTest extends CMISTestSupport {
         template.send(exchange);
         CmisObject cmisObject = exchange.getMessage().getBody(CmisObject.class);
 
-        assertEquals("test.txt", cmisObject.getPropertyValue(PropertyIds.NAME));
+        assertEquals("test.txt", cmisObject.getPropertyValue(CamelCMISConstants.NAME));
         assertEquals("text/plain; charset=UTF-8",
-                cmisObject.getPropertyValue(PropertyIds.CONTENT_STREAM_MIME_TYPE));
+                cmisObject.getPropertyValue(CamelCMISConstants.CONTENT_STREAM_MIME_TYPE));
     }
 
     @Test
@@ -156,11 +156,11 @@ public class CMISProducerTest extends CMISTestSupport {
         List<String> secondaryTypes = Arrays.asList("MySecondaryType");
 
         Exchange exchange = createExchangeWithInBody("Some content to be store");
-        exchange.getIn().getHeaders().put(PropertyIds.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
-        exchange.getIn().getHeaders().put(PropertyIds.NAME, "test.txt");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.NAME, "test.txt");
         exchange.getIn().getHeaders().put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, secondaryTypes);
         exchange.getIn().getHeaders().put("SecondaryStringProp", "secondaryTypePropValue");
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.CREATE);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, createSession().getRootFolder().getId());
 
@@ -178,7 +178,7 @@ public class CMISProducerTest extends CMISTestSupport {
         Producer producer = endpoint.createProducer();
 
         Exchange exchange = createExchangeWithInBody("Some content to be store");
-        exchange.getIn().getHeaders().put(PropertyIds.NAME, "test.txt");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.NAME, "test.txt");
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.CREATE);
 
         assertThrows(RuntimeCamelException.class, () -> {
@@ -190,8 +190,8 @@ public class CMISProducerTest extends CMISTestSupport {
     void failCreatingFolderAtNonExistingParentId() {
 
         Exchange exchange = createExchangeWithInBody(null);
-        exchange.getIn().getHeaders().put(PropertyIds.NAME, "folder1");
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.NAME, "folder1");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.CREATE);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, "Wrong Id");
 
@@ -215,16 +215,16 @@ public class CMISProducerTest extends CMISTestSupport {
         Folder folder = createFolderWithName("New Folder");
 
         Exchange exchange = createExchangeWithInBody(null);
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, folder.getId());
-        exchange.getIn().getHeaders().put(PropertyIds.NAME, "Renamed Folder");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.NAME, "Renamed Folder");
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.RENAME);
 
         template.send(exchange);
 
         CmisObject cmisObject = exchange.getMessage().getBody(CmisObject.class);
 
-        assertEquals("Renamed Folder", cmisObject.getPropertyValue(PropertyIds.NAME));
+        assertEquals("Renamed Folder", cmisObject.getPropertyValue(CamelCMISConstants.NAME));
         assertEquals(folder.getId(), cmisObject.getId());
         assertTrue(cmisObject instanceof Folder);
     }
@@ -235,16 +235,16 @@ public class CMISProducerTest extends CMISTestSupport {
         Document document = createTextDocument(createSession().getRootFolder(), "This is new test document", "document.txt");
 
         Exchange exchange = createExchangeWithInBody(null);
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, document.getId());
-        exchange.getIn().getHeaders().put(PropertyIds.NAME, "Renamed Document.txt");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.NAME, "Renamed Document.txt");
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.RENAME);
 
         template.send(exchange);
 
         CmisObject cmisObject = exchange.getMessage().getBody(CmisObject.class);
 
-        assertEquals("Renamed Document.txt", cmisObject.getPropertyValue(PropertyIds.NAME));
+        assertEquals("Renamed Document.txt", cmisObject.getPropertyValue(CamelCMISConstants.NAME));
         assertEquals(document.getId(), cmisObject.getId());
         assertTrue(cmisObject instanceof Document);
     }
@@ -255,7 +255,7 @@ public class CMISProducerTest extends CMISTestSupport {
         Folder folder = createFolderWithName("Test");
 
         Exchange exchange = createExchangeWithInBody(null);
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.DELETE_FOLDER);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, folder.getId());
 
@@ -279,7 +279,7 @@ public class CMISProducerTest extends CMISTestSupport {
         Document document = createTextDocument(createSession().getRootFolder(), "This is new test document", "document.txt");
 
         Exchange exchange = createExchangeWithInBody(null);
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.DELETE_DOCUMENT);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, document.getId());
 
@@ -296,7 +296,7 @@ public class CMISProducerTest extends CMISTestSupport {
         Folder destinationFolder = createFolderWithName("Destination");
 
         Exchange exchange = createExchangeWithInBody(null);
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.MOVE_FOLDER);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, toBeMoved.getId());
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_DESTIONATION_FOLDER_ID, destinationFolder.getId());
@@ -316,7 +316,7 @@ public class CMISProducerTest extends CMISTestSupport {
         Folder destinationFolder = createFolderWithName("Destination");
 
         Exchange exchange = createExchangeWithInBody(null);
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.MOVE_DOCUMENT);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, toBeMoved.getId());
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_SOURCE_FOLDER_ID, rootFolder.getId());
@@ -333,7 +333,7 @@ public class CMISProducerTest extends CMISTestSupport {
         Document document = createTextDocument(createSession().getRootFolder(), "This is new test document", "document.txt");
 
         Exchange exchange = createExchangeWithInBody(null);
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.COPY_DOCUMENT);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, document.getId());
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_DESTIONATION_FOLDER_ID, destination.getId());
@@ -354,9 +354,9 @@ public class CMISProducerTest extends CMISTestSupport {
         Document document = createTextDocument(createSession().getRootFolder(), "This is new test document", "document.txt");
 
         Exchange exchange = createExchangeWithInBody(null);
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.COPY_DOCUMENT);
-        exchange.getIn().getHeaders().put(PropertyIds.NAME, "renamedDocument.txt");
+        exchange.getIn().getHeaders().put(CamelCMISConstants.NAME, "renamedDocument.txt");
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, document.getId());
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_DESTIONATION_FOLDER_ID, destination.getId());
 
@@ -378,7 +378,7 @@ public class CMISProducerTest extends CMISTestSupport {
         Folder destination = createFolderWithName("Destination Folder");
 
         Exchange exchange = createExchangeWithInBody(null);
-        exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
+        exchange.getIn().getHeaders().put(CamelCMISConstants.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.COPY_FOLDER);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, folder.getId());
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_DESTIONATION_FOLDER_ID, destination.getId());

@@ -32,7 +32,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Read and write data from to/from a CMIS compliant content repositories.
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "cmis", title = "CMIS", syntax = "cmis:cmsUrl",
-             category = { Category.CMS, Category.DATABASE })
+             category = { Category.CMS, Category.DATABASE }, headersClass = CamelCMISConstants.class)
 public class CMISEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "URL to the cmis repository")
