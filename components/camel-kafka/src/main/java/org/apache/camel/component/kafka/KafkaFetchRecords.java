@@ -131,7 +131,7 @@ class KafkaFetchRecords implements Runnable {
                     break;
                 }
 
-                // task that deals with creating kafka consumer
+                // task that deals with subscribing kafka consumer
                 task = Tasks.foregroundTask()
                         .withName("Subscribe KafkaConsumer")
                         .withBudget(Budgets.iterationBudget()
