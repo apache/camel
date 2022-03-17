@@ -36,19 +36,31 @@ public class IterationBoundedBudgetBuilder implements BudgetBuilder<IterationBud
     protected BackOffStrategy backOffStrategy;
 
     public IterationBoundedBudgetBuilder withInitialDelay(Duration duration) {
-        this.initialDelay = duration.toMillis();
+        if (duration != null) {
+            this.initialDelay = duration.toMillis();
+        }
 
         return this;
     }
 
     public IterationBoundedBudgetBuilder withInterval(Duration duration) {
-        this.interval = duration.toMillis();
+        if (duration != null) {
+            this.interval = duration.toMillis();
+        }
 
         return this;
     }
 
     public IterationBoundedBudgetBuilder withMaxIterations(int maxIterations) {
-        this.maxIterations = maxIterations;
+        if (maxIterations > 0) {
+            this.maxIterations = maxIterations;
+        }
+
+        return this;
+    }
+
+    public IterationBoundedBudgetBuilder withUnlimitedMaxIterations() {
+        this.maxIterations = Integer.MAX_VALUE;
 
         return this;
     }

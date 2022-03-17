@@ -36,13 +36,26 @@ public class ForegroundTask implements BlockingTask {
      * A builder helper for building new foreground tasks
      */
     public static class ForegroundTaskBuilder extends AbstractTaskBuilder<ForegroundTask> {
+        private String name;
         private IterationBudget budget;
 
         /**
-         * Sets an iteration budget for the task (i.e.: the task will not run more than the given number of iterations)
+         * Sets the name of the task
          * 
+         * @param  name the name
+         * @return      an instance of this builder
+         */
+        public ForegroundTaskBuilder withName(String name) {
+            this.name = name;
+
+            return this;
+        }
+
+        /**
+         * Sets an iteration budget for the task (i.e.: the task will not run more than the given number of iterations)
+         *
          * @param  budget the budget
-         * @return        an instance of the this builder
+         * @return        an instance of this builder
          */
         public ForegroundTaskBuilder withBudget(IterationBudget budget) {
             this.budget = budget;
@@ -52,7 +65,7 @@ public class ForegroundTask implements BlockingTask {
 
         @Override
         public ForegroundTask build() {
-            return new ForegroundTask(budget, getName());
+            return new ForegroundTask(budget, name != null ? name : getName());
         }
     }
 

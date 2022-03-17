@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
+import org.apache.camel.util.TimeUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 
 /**
@@ -50,7 +51,16 @@ public class KafkaConsumerHealthCheck extends AbstractHealthCheck {
         for (KafkaFetchRecords task : tasks) {
             if (!task.isReady()) {
                 builder.down();
-                builder.message("KafkaConsumer is not ready");
+
+                String msg = "KafkaConsumer is not ready";
+                if (task.isTerminated()) {
+                    msg += " (gave up recovering and terminated the kafka consumer; restart route or application to recover).";
+                } else if (task.isRecoverable()) {
+                    String time = TimeUtils.printDuration(task.getCurrentRecoveryInterval());
+                    msg += " (recovery in progress using " + time + " intervals).";
+                }
+                builder.message(msg);
+
                 // was this caused by consumer not able to connect then this is stored in last error
                 builder.error(task.getLastError());
 
