@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.corda;
 
+import org.apache.camel.spi.Metadata;
+
 public interface CordaConstants {
+    @Metadata(label = "producer", description = "The operation to perform", javaType = "String")
     String OPERATION = "OPERATION";
     String NODE_INFO = "NODE_INFO";
     String CURRENT_NODE_TIME = "CURRENT_NODE_TIME";
@@ -58,13 +61,27 @@ public interface CordaConstants {
     String STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED = "STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED";
     String START_TRACKED_FLOW_DYNAMIC = "START_TRACKED_FLOW_DYNAMIC";
 
+    @Metadata(label = "producer", description = "The attachment query criteria",
+              javaType = "net.corda.core.node.services.vault.AttachmentQueryCriteria")
     String ATTACHMENT_QUERY_CRITERIA = "ATTACHMENT_QUERY_CRITERIA";
+    @Metadata(label = "producer", description = "The sort")
     String SORT = "SORT";
+    @Metadata(label = "producer",
+              description = "If true, a case sensitive match is done against each component of each X.500 name.",
+              javaType = "Boolean")
     String EXACT_MATCH = "EXACT_MATCH";
+    @Metadata(label = "producer", description = "The arguments.", javaType = "Object[]")
     String ARGUMENTS = "ARGUMENTS";
+    @Metadata(label = "producer", description = "The value of the node's flows draining mode.", javaType = "Boolean")
     String DRAINING_MODE = "DRAINING_MODE";
+    @Metadata(label = "producer", description = "Container for a cryptographically secure hash value.",
+              javaType = "net.corda.core.crypto.SecureHash")
     String SECURE_HASH = "SECURE_HASH";
+    @Metadata(label = "producer", description = "The query criteria.",
+              javaType = "net.corda.core.node.services.vault.QueryCriteria")
     String QUERY_CRITERIA = "QUERY_CRITERIA";
+    @Metadata(label = "producer", description = "The PageSpecification allows specification of a page number and page size",
+              javaType = "net.corda.core.node.services.vault.PageSpecification")
     String PAGE_SPECIFICATION = "PAGE_SPECIFICATION";
 
     String TERMINATE = "TERMINATE";
