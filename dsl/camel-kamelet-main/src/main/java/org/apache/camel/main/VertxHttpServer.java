@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -44,6 +46,7 @@ import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.SimpleEventNotifierSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -303,8 +306,10 @@ public final class VertxHttpServer {
         sb.append("            \"name\": \"").append(d.getCheck().getId()).append("\",\n");
         sb.append("            \"status\": \"").append(d.getState()).append("\",\n");
         if (d.getError().isPresent()) {
-            String msg = d.getError().get().getMessage();
+            String msg = allCausedByErrorMessages(d.getError().get());
             sb.append("            \"error-message\": \"").append(msg)
+                    .append("\",\n");
+            sb.append("            \"error-stacktrace\": \"").append(errorStackTrace(d.getError().get()))
                     .append("\",\n");
         }
         if (d.getMessage().isPresent()) {
@@ -326,6 +331,35 @@ public final class VertxHttpServer {
             }
             sb.append("            }\n");
         }
+    }
+
+    private static String allCausedByErrorMessages(Throwable e) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(e.getMessage());
+
+        while (e.getCause() != null) {
+            e = e.getCause();
+            if (e.getMessage() != null) {
+                sb.append("; Caused by: ");
+                sb.append(ObjectHelper.classCanonicalName(e));
+                sb.append(": ");
+                sb.append(e.getMessage());
+            }
+        }
+
+        return sb.toString();
+    }
+
+    private static String errorStackTrace(Throwable e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+
+        String trace = sw.toString();
+        // because the stacktrace is printed in json we need to make it safe
+        trace = trace.replace('"', '\'');
+        trace = trace.replace('\t', ' ');
+        trace = trace.replace(System.lineSeparator(), " ");
+        return trace;
     }
 
 }
