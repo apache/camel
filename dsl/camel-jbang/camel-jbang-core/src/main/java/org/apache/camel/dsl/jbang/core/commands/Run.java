@@ -116,10 +116,10 @@ class Run implements Callable<Integer> {
     @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
     private int port;
 
-    @Option(names = { "--console" }, description = "Developer console at /dev on local HTTP server (port 8080 by default)")
+    @Option(names = { "--console" }, description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
     private boolean console;
 
-    @Option(names = { "--health" }, description = "Health check at /health on local HTTP server (port 8080 by default)")
+    @Option(names = { "--health" }, description = "Health check at /q/health on local HTTP server (port 8080 by default)")
     private boolean health;
 
     @Option(names = { "--modeline" }, description = "Enables Camel-K style modeline")

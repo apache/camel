@@ -148,7 +148,7 @@ public final class VertxHttpServer {
     }
 
     private static void doRegisterConsole(CamelContext context) {
-        Route dev = router.route("/dev");
+        Route dev = router.route("/q/dev");
         dev.method(HttpMethod.GET);
         dev.produces("text/plain");
         dev.handler(new Handler<RoutingContext>() {
@@ -180,7 +180,7 @@ public final class VertxHttpServer {
                 }
             }
         });
-        phc.addHttpEndpoint("/dev");
+        phc.addHttpEndpoint("/q/dev");
     }
 
     public static void registerHealthCheck(CamelContext camelContext) {
@@ -190,13 +190,13 @@ public final class VertxHttpServer {
     }
 
     private static void doRegisterHealthCheck(CamelContext context) {
-        final Route health = router.route("/health");
+        final Route health = router.route("/q/health");
         health.method(HttpMethod.GET);
         health.produces("application/json");
-        final Route live = router.route("/health/live");
+        final Route live = router.route("/q/health/live");
         live.method(HttpMethod.GET);
         live.produces("application/json");
-        final Route ready = router.route("/health/ready");
+        final Route ready = router.route("/q/health/ready");
         ready.method(HttpMethod.GET);
         ready.produces("application/json");
 
@@ -237,7 +237,7 @@ public final class VertxHttpServer {
         live.handler(handler);
         ready.handler(handler);
 
-        phc.addHttpEndpoint("/health");
+        phc.addHttpEndpoint("/q/health");
     }
 
     private static void healthCheckOneline(StringBuilder sb, Collection<HealthCheck.Result> res) {
