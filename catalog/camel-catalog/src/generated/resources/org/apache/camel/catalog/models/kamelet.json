@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "kamelet",
     "title": "Kamelet",
-    "description": "To call Kamelets",
+    "description": "To call Kamelets in special situations",
     "deprecated": false,
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.KameletDefinition",
