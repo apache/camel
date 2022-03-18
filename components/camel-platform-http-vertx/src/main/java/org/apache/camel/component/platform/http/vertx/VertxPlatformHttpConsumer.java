@@ -165,7 +165,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         // for the rest dsl, then the following code may result in a blocking operation that could
         // block Vert.x event-loop for too long if the target service takes long to respond, as
         // example in case the service is a knative service scaled to zero that could take some time
-        // to be come available:
+        // to become available:
         //
         //     rest("/results")
         //         .get("/{id}")
@@ -183,11 +183,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                     }
 
                     getAsyncProcessor().process(exchange, c -> {
-                        if (!exchange.isFailed()) {
-                            promise.complete();
-                        } else {
-                            promise.fail(exchange.getException());
-                        }
+                        promise.complete();
                     });
                 },
                 false,
