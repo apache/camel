@@ -21,6 +21,8 @@ import java.util.Optional;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.ResumeAware;
+import org.apache.camel.ResumeStrategy;
 import org.apache.camel.StartupListener;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -38,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * A consumer which is only really active when the {@link CamelClusterView} has the leadership.
  */
 @ManagedResource(description = "Managed Master Consumer")
-public class MasterConsumer extends DefaultConsumer {
+public class MasterConsumer extends DefaultConsumer implements ResumeAware {
     private static final transient Logger LOG = LoggerFactory.getLogger(MasterConsumer.class);
 
     private final CamelClusterService clusterService;
@@ -48,6 +50,7 @@ public class MasterConsumer extends DefaultConsumer {
     private final CamelClusterEventListener.Leadership leadershipListener;
     private volatile Consumer delegatedConsumer;
     private volatile CamelClusterView view;
+    private ResumeStrategy resumeStrategy;
 
     public MasterConsumer(MasterEndpoint masterEndpoint, Processor processor, CamelClusterService clusterService) {
         super(masterEndpoint, processor);
@@ -57,6 +60,16 @@ public class MasterConsumer extends DefaultConsumer {
         this.delegatedEndpoint = masterEndpoint.getEndpoint();
         this.processor = processor;
         this.leadershipListener = new LeadershipListener();
+    }
+
+    @Override
+    public ResumeStrategy getResumeStrategy() {
+        return resumeStrategy;
+    }
+
+    @Override
+    public void setResumeStrategy(ResumeStrategy resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
     }
 
     @Override
@@ -123,6 +136,11 @@ public class MasterConsumer extends DefaultConsumer {
         delegatedConsumer = delegatedEndpoint.createConsumer(processor);
         if (delegatedConsumer instanceof StartupListener) {
             getEndpoint().getCamelContext().addStartupListener((StartupListener) delegatedConsumer);
+        }
+
+        if (delegatedConsumer instanceof ResumeAware) {
+            LOG.info("Setting up the resume strategy for the delegated consumer");
+            ((ResumeAware) delegatedConsumer).setResumeStrategy(resumeStrategy);
         }
 
         ServiceHelper.startService(delegatedEndpoint, delegatedConsumer);
