@@ -132,4 +132,21 @@ public @interface Metadata {
      * specify which options each implementation only supports.
      */
     String includeProperties() default "";
+
+    /**
+     * Indicates the list of schemes for which this metadata is applicable. This is used to filter out message headers
+     * that are shared with several endpoints but only applicable for some of them.
+     * <p/>
+     * In the next example, the header {@code SOME_HEADER} is only applicable for endpoints whose scheme is "foo" or
+     * "bar".
+     *
+     * <pre>
+     * <code>
+     *
+     * &#64;Metadata(description = "some description", javaType = "String", applicableFor = {"foo", "bar"})
+     * public static final String SOME_HEADER = "someHeaderName";
+     * </code>
+     * </pre>
+     */
+    String[] applicableFor() default {};
 }
