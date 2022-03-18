@@ -68,7 +68,7 @@
     <aws-java-sdk2-version>2.17.151</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
-    <azure-cosmos-version>4.20.0</azure-cosmos-version>
+    <azure-cosmos-version>4.26.0</azure-cosmos-version>
     <azure-eventhubs-version>5.10.2</azure-eventhubs-version>
     <azure-identity-version>1.4.0</azure-identity-version>
     <azure-jackson2-version>2.13.1</azure-jackson2-version>

@@ -712,7 +712,7 @@ Evaluates a JSONPath expression against a JSON message body.
   <xs:element name="kamelet" type="tns:kameletDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-To call Kamelets in special situations
+To call Kamelets
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
