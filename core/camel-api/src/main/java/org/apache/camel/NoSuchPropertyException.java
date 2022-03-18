@@ -51,6 +51,6 @@ public class NoSuchPropertyException extends CamelExchangeException {
         if (value == null) {
             return "";
         }
-        return " but has value: " + value + " of type: " + value.getClass().getCanonicalName();
+        return " but has type: " + value.getClass().getCanonicalName();
     }
 }
