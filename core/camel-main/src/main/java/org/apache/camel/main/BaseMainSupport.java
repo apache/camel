@@ -81,12 +81,14 @@ import static org.apache.camel.util.StringHelper.matches;
  * Base class for main implementations to allow bootstrapping Camel in standalone mode.
  */
 public abstract class BaseMainSupport extends BaseService {
+
     public static final String DEFAULT_PROPERTY_PLACEHOLDER_LOCATION = "classpath:application.properties;optional=true";
     public static final String INITIAL_PROPERTIES_LOCATION = "camel.main.initial-properties-location";
     public static final String OVERRIDE_PROPERTIES_LOCATION = "camel.main.override-properties-location";
     public static final String PROPERTY_PLACEHOLDER_LOCATION = "camel.main.property-placeholder-location";
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
+
     protected final List<MainListener> listeners = new ArrayList<>();
     protected volatile CamelContext camelContext;
     protected MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
@@ -100,12 +102,12 @@ public abstract class BaseMainSupport extends BaseService {
     protected final MainHelper helper;
 
     protected BaseMainSupport() {
-        helper = new MainHelper();
+        this.helper = new MainHelper();
     }
 
     protected BaseMainSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
-        helper = new MainHelper();
+        this.helper = new MainHelper();
     }
 
     /**
@@ -149,33 +151,6 @@ public abstract class BaseMainSupport extends BaseService {
      */
     public void setDefaultPropertyPlaceholderLocation(String defaultPropertyPlaceholderLocation) {
         this.defaultPropertyPlaceholderLocation = defaultPropertyPlaceholderLocation;
-    }
-
-    @Deprecated
-    public boolean isAutoConfigurationEnabled() {
-        return mainConfigurationProperties.isAutoConfigurationEnabled();
-    }
-
-    /**
-     * Whether auto-configuration of components/dataformats/languages is enabled or not. When enabled the configuration
-     * parameters are loaded from the properties component and configured as defaults (similar to spring-boot
-     * auto-configuration). You can prefix the parameters in the properties file with: -
-     * camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1
-     * - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2
-     * Where name is the name of the component, dataformat or language such as seda,direct,jaxb.
-     * <p/>
-     * The auto-configuration also works for any options on components that is a complex type (not standard Java type)
-     * and there has been an explicit single bean instance registered to the Camel registry via the
-     * {@link org.apache.camel.spi.Registry#bind(String, Object)} method or by using the
-     * {@link org.apache.camel.BindToRegistry} annotation style.
-     * <p/>
-     * This option is default enabled.
-     *
-     * @deprecated use {@link #configure()}
-     */
-    @Deprecated
-    public void setAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
-        mainConfigurationProperties.setAutoConfigurationEnabled(autoConfigurationEnabled);
     }
 
     public Properties getInitialProperties() {
