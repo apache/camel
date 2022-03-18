@@ -109,8 +109,8 @@ public class CxfProducer extends DefaultAsyncProducer {
 
             Map<String, Object> invocationContext = new HashMap<>();
             Map<String, Object> responseContext = new HashMap<>();
-            invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
-            invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
+            invocationContext.put(CxfConstants.RESPONSE_CONTEXT, responseContext);
+            invocationContext.put(CxfConstants.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
 
             CxfClientCallback cxfClientCallback = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
             // send the CXF async request
@@ -146,8 +146,8 @@ public class CxfProducer extends DefaultAsyncProducer {
 
         Map<String, Object> invocationContext = new HashMap<>();
         Map<String, Object> responseContext = new HashMap<>();
-        invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
-        invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
+        invocationContext.put(CxfConstants.RESPONSE_CONTEXT, responseContext);
+        invocationContext.put(CxfConstants.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
 
         try {
             // send the CXF request
@@ -163,7 +163,7 @@ public class CxfProducer extends DefaultAsyncProducer {
                     Message inMessage = cxfExchange.getInMessage();
                     if (inMessage != null) {
                         Map<String, List<String>> cxfHeaders
-                                = CastUtils.cast((Map<?, ?>) inMessage.get(Message.PROTOCOL_HEADERS));
+                                = CastUtils.cast((Map<?, ?>) inMessage.get(CxfConstants.PROTOCOL_HEADERS));
                         endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange),
                                 cxfHeaders);
                     }
@@ -215,7 +215,7 @@ public class CxfProducer extends DefaultAsyncProducer {
         if (endpoint.getCookieHandler() != null) {
             try {
                 Map<String, List<String>> transportHeaders
-                        = CastUtils.cast((Map<?, ?>) requestContext.get(Message.PROTOCOL_HEADERS));
+                        = CastUtils.cast((Map<?, ?>) requestContext.get(CxfConstants.PROTOCOL_HEADERS));
                 boolean added;
                 if (transportHeaders == null) {
                     transportHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -226,7 +226,7 @@ public class CxfProducer extends DefaultAsyncProducer {
                 transportHeaders
                         .putAll(endpoint.getCookieHandler().loadCookies(camelExchange, endpoint.getRequestUri(camelExchange)));
                 if (added && transportHeaders.size() > 0) {
-                    requestContext.put(Message.PROTOCOL_HEADERS, transportHeaders);
+                    requestContext.put(CxfConstants.PROTOCOL_HEADERS, transportHeaders);
                 }
             } catch (IOException e) {
                 LOG.warn("Cannot load cookies", e);
@@ -236,7 +236,7 @@ public class CxfProducer extends DefaultAsyncProducer {
         // Remove protocol headers from scopes.  Otherwise, response headers can be
         // overwritten by request headers when SOAPHandlerInterceptor tries to create
         // a wrapped message context by the copyScoped() method.
-        requestContext.getScopes().remove(Message.PROTOCOL_HEADERS);
+        requestContext.getScopes().remove(CxfConstants.PROTOCOL_HEADERS);
 
         return requestContext.getWrappedMap();
     }
