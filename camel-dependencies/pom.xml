@@ -411,9 +411,9 @@
     <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
     <metrics-version>4.2.7</metrics-version>
     <micrometer-version>1.8.3</micrometer-version>
-    <microprofile-config-version>2.0</microprofile-config-version>
+    <microprofile-config-version>2.0.1</microprofile-config-version>
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
-    <microprofile-metrics-version>3.0</microprofile-metrics-version>
+    <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
     <milo-guava-version>26.0-jre</milo-guava-version>
     <milo-version>0.3.7</milo-version>
     <mina-version>2.1.5</mina-version>
@@ -446,7 +446,7 @@
     <openjpa-version>3.2.1</openjpa-version>
     <openstack4j-version>3.10</openstack4j-version>
     <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
-    <opentelemetry-version>1.11.0</opentelemetry-version>
+    <opentelemetry-version>1.12.0</opentelemetry-version>
     <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
     <opentracing-version>0.33.0</opentracing-version>
     <optaplanner-version>8.19.0.Final</optaplanner-version>
@@ -502,8 +502,8 @@
     <slf4j-api-version>1.7.36</slf4j-api-version>
     <slf4j-version>1.7.36</slf4j-version>
     <smack-version>4.3.5</smack-version>
-    <smallrye-config-version>2.8.2</smallrye-config-version>
-    <smallrye-fault-tolerance-version>5.3.0</smallrye-fault-tolerance-version>
+    <smallrye-config-version>2.9.2</smallrye-config-version>
+    <smallrye-fault-tolerance-version>5.3.1</smallrye-fault-tolerance-version>
     <smallrye-health-version>3.2.0</smallrye-health-version>
     <smallrye-metrics-version>3.0.4</smallrye-metrics-version>
     <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
