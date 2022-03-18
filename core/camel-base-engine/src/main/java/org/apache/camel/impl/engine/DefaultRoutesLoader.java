@@ -101,6 +101,12 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
                         "Cannot find RoutesBuilderLoader in classpath supporting file extension: " + extension);
             }
 
+            if (camelContext.isModeline()) {
+                ModelineFactory factory = camelContext.adapt(ExtendedCamelContext.class).getModelineFactory();
+                // gather resources for modeline
+                factory.parseModeline(resource);
+            }
+
             RoutesBuilder builder = loader.loadRoutesBuilder(resource);
             if (builder != null) {
                 answer.add(builder);

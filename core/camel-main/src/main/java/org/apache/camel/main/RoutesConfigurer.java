@@ -46,7 +46,6 @@ public class RoutesConfigurer {
     private CamelBeanPostProcessor beanPostProcessor;
     private List<RoutesBuilder> routesBuilders;
     private String basePackageScan;
-    private boolean modeline;
     private String routesBuilderClasses;
     private String javaRoutesExcludePattern;
     private String javaRoutesIncludePattern;
@@ -67,14 +66,6 @@ public class RoutesConfigurer {
 
     public void setBasePackageScan(String basePackageScan) {
         this.basePackageScan = basePackageScan;
-    }
-
-    public boolean ismodeline() {
-        return modeline;
-    }
-
-    public void setmodeline(boolean modeline) {
-        this.modeline = modeline;
     }
 
     public String getRoutesBuilderClasses() {
@@ -232,22 +223,6 @@ public class RoutesConfigurer {
         // sort routes according to ordered
         routes.sort(OrderedComparator.get());
 
-        if (modeline) {
-            ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-            ModelineFactory factory = ecc.getModelineFactory();
-            List<Resource> resources = new ArrayList<>();
-            // gather resources for modeline
-            for (RoutesBuilder builder : routes) {
-                if (builder instanceof RouteBuilder) {
-                    resources.add(((RouteBuilder) builder).getResource());
-                }
-            }
-            for (Resource resource : resources) {
-                LOG.debug("Parsing modeline: {}", resource);
-                factory.parseModeline(resource);
-            }
-        }
-
         // first add the routes configurations as they are globally for all routes
         for (RoutesBuilder builder : routes) {
             if (builder instanceof RouteConfigurationsBuilder) {
@@ -260,6 +235,52 @@ public class RoutesConfigurer {
         for (RoutesBuilder builder : routes) {
             LOG.debug("Adding routes into CamelContext from RoutesBuilder: {}", builder);
             camelContext.addRoutes(builder);
+        }
+    }
+
+    /**
+     * Discover routes and rests from directories and scan for modeline present in their source code, which is then
+     * parsed using {@link ModelineFactory}.
+     *
+     * @param camelContext the Camel context
+     */
+    public void configureModeline(CamelContext camelContext) throws Exception {
+        final List<RoutesBuilder> routes = new ArrayList<>();
+
+        if (getRoutesCollector() != null) {
+            try {
+                LOG.debug("RoutesCollectorEnabled: {}", getRoutesCollector());
+
+                // add discovered routes from directories
+                StopWatch watch = new StopWatch();
+                Collection<RoutesBuilder> routesFromDirectory = getRoutesCollector().collectRoutesFromDirectory(
+                        camelContext,
+                        getRoutesExcludePattern(),
+                        getRoutesIncludePattern());
+                routes.addAll(routesFromDirectory);
+
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
+
+        // sort routes according to ordered
+        routes.sort(OrderedComparator.get());
+
+        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        ModelineFactory factory = ecc.getModelineFactory();
+        List<Resource> resources = new ArrayList<>();
+        // gather resources for modeline
+        for (RoutesBuilder builder : routes) {
+            if (builder instanceof RouteBuilder) {
+                resources.add(((RouteBuilder) builder).getResource());
+            }
+        }
+        LOG.debug("Discovered {} resources with potential modeline", resources.size());
+
+        for (Resource resource : resources) {
+            LOG.debug("Parsing modeline: {}", resource);
+            factory.parseModeline(resource);
         }
     }
 

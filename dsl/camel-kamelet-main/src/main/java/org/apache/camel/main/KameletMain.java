@@ -183,6 +183,7 @@ public class KameletMain extends MainCommandLineSupport {
             VertxHttpServer.registerConsole(answer);
         }
         configure().withLoadHealthChecks(true);
+        configure().withModeline(true);
 
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
         if (health && port == null) {
@@ -190,7 +191,6 @@ public class KameletMain extends MainCommandLineSupport {
             VertxHttpServer.registerServer(answer, 8080);
         }
         if (health) {
-            configure().withLoadHealthChecks(true);
             VertxHttpServer.registerHealthCheck(answer);
         }
 

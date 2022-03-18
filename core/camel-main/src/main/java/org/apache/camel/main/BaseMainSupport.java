@@ -383,6 +383,13 @@ public abstract class BaseMainSupport extends BaseService {
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
             autoConfigurationFailFast(camelContext, autoConfiguredProperties);
             autoConfigurationPropertiesComponent(camelContext, autoConfiguredProperties);
+
+            // eager load properties from modeline by scanning DSL sources and gather properties for auto configuration
+            if (camelContext.isModeline() || configure().isModeline()) {
+                autoConfigurationRoutesIncludePattern(camelContext, autoConfiguredProperties);
+                modelineRoutes(camelContext);
+            }
+
             autoConfigurationMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
         }
 
@@ -490,10 +497,9 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    protected void configureRoutes(CamelContext camelContext) throws Exception {
+    protected void modelineRoutes(CamelContext camelContext) throws Exception {
         // then configure and add the routes
         RoutesConfigurer configurer = new RoutesConfigurer();
-        configurer.setmodeline(camelContext.isModeline());
 
         if (mainConfigurationProperties.isRoutesCollectorEnabled()) {
             configurer.setRoutesCollector(routesCollector);
@@ -510,6 +516,30 @@ public abstract class BaseMainSupport extends BaseService {
         configurer.setJavaRoutesIncludePattern(mainConfigurationProperties.getJavaRoutesIncludePattern());
         configurer.setRoutesExcludePattern(mainConfigurationProperties.getRoutesExcludePattern());
         configurer.setRoutesIncludePattern(mainConfigurationProperties.getRoutesIncludePattern());
+
+        configurer.configureModeline(camelContext);
+    }
+
+    protected void configureRoutes(CamelContext camelContext) throws Exception {
+        // then configure and add the routes
+        RoutesConfigurer configurer = new RoutesConfigurer();
+
+        if (mainConfigurationProperties.isRoutesCollectorEnabled()) {
+            configurer.setRoutesCollector(routesCollector);
+        }
+
+        configurer.setBeanPostProcessor(camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor());
+        configurer.setRoutesBuilders(mainConfigurationProperties.getRoutesBuilders());
+        configurer.setRoutesBuilderClasses(mainConfigurationProperties.getRoutesBuilderClasses());
+        if (mainConfigurationProperties.isBasePackageScanEnabled()) {
+            // only set the base package if enabled
+            configurer.setBasePackageScan(mainConfigurationProperties.getBasePackageScan());
+        }
+        configurer.setJavaRoutesExcludePattern(mainConfigurationProperties.getJavaRoutesExcludePattern());
+        configurer.setJavaRoutesIncludePattern(mainConfigurationProperties.getJavaRoutesIncludePattern());
+        configurer.setRoutesExcludePattern(mainConfigurationProperties.getRoutesExcludePattern());
+        configurer.setRoutesIncludePattern(mainConfigurationProperties.getRoutesIncludePattern());
+
         configurer.configureRoutes(camelContext);
     }
 
@@ -645,6 +675,96 @@ public abstract class BaseMainSupport extends BaseService {
                 mainConfigurationProperties
                         .setAutoConfigurationFailFast(CamelContextHelper.parseBoolean(camelContext, failFast.toString()));
                 autoConfiguredProperties.put("camel.main.auto-configuration-fail-fast", failFast.toString());
+            }
+        }
+    }
+
+    protected void autoConfigurationRoutesIncludePattern(
+            CamelContext camelContext, Map<String, String> autoConfiguredProperties)
+            throws Exception {
+
+        Object pattern = getInitialProperties().getProperty("camel.main.routesIncludePattern");
+        if (pattern != null) {
+            mainConfigurationProperties
+                    .setRoutesIncludePattern(CamelContextHelper.parseText(camelContext, pattern.toString()));
+            autoConfiguredProperties.put("camel.main.routes-include-pattern", pattern.toString());
+        }
+
+        // load properties
+        Properties prop = camelContext.getPropertiesComponent().loadProperties(name -> name.startsWith("camel."));
+        LOG.debug("Properties from Camel properties component:");
+        for (String key : prop.stringPropertyNames()) {
+            LOG.debug("    {}={}", key, prop.getProperty(key));
+        }
+
+        // special for environment-variable-enabled as we need to know this early before we set all the other options
+        pattern = prop.remove("camel.main.routesIncludePattern");
+        if (pattern == null) {
+            pattern = prop.remove("camel.main.routes-include-pattern");
+            if (pattern != null) {
+                mainConfigurationProperties.setRoutesIncludePattern(
+                        CamelContextHelper.parseText(camelContext, pattern.toString()));
+                autoConfiguredProperties.put("camel.main.auto-configuration-environment-variables-enabled",
+                        pattern.toString());
+            }
+        }
+        // special for system-properties-enabled as we need to know this early before we set all the other options
+        Object jvmEnabled = prop.remove("camel.main.routesIncludePattern");
+        if (jvmEnabled == null) {
+            jvmEnabled = prop.remove("camel.main.routes-include-pattern");
+            if (jvmEnabled != null) {
+                mainConfigurationProperties.setRoutesIncludePattern(
+                        CamelContextHelper.parseText(camelContext, jvmEnabled.toString()));
+                autoConfiguredProperties.put("camel.main.routes-include-pattern",
+                        jvmEnabled.toString());
+            }
+        }
+
+        // load properties from ENV (override existing)
+        Properties propENV = null;
+        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
+            propENV = helper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
+            if (!propENV.isEmpty()) {
+                prop.putAll(propENV);
+                LOG.debug("Properties from OS environment variables:");
+                for (String key : propENV.stringPropertyNames()) {
+                    LOG.debug("    {}={}", key, propENV.getProperty(key));
+                }
+            }
+        }
+        // load properties from JVM (override existing)
+        Properties propJVM = null;
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            propJVM = helper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
+            if (!propJVM.isEmpty()) {
+                prop.putAll(propJVM);
+                LOG.debug("Properties from JVM system properties:");
+                for (String key : propJVM.stringPropertyNames()) {
+                    LOG.debug("    {}={}", key, propJVM.getProperty(key));
+                }
+            }
+        }
+
+        // special for fail-fast as we need to know this early before we set all the other options
+        pattern = propENV != null ? propENV.remove("camel.main.routesincludepattern") : null;
+        if (propJVM != null) {
+            Object val = propJVM.remove("camel.main.routesincludepattern");
+            if (val != null) {
+                pattern = val;
+            }
+        }
+        if (pattern != null) {
+            mainConfigurationProperties
+                    .setRoutesIncludePattern(CamelContextHelper.parseText(camelContext, pattern.toString()));
+        } else {
+            pattern = prop.remove("camel.main.routesIncludePattern");
+            if (pattern == null) {
+                pattern = prop.remove("camel.main.routes-include-pattern");
+            }
+            if (pattern != null) {
+                mainConfigurationProperties
+                        .setRoutesIncludePattern(CamelContextHelper.parseText(camelContext, pattern.toString()));
+                autoConfiguredProperties.put("camel.main.routes-include-pattern", pattern.toString());
             }
         }
     }
@@ -1087,11 +1207,9 @@ public abstract class BaseMainSupport extends BaseService {
         for (String key : keys) {
             String name = StringHelper.before(key, ".");
             if ("aws".equalsIgnoreCase(name)) {
-                // TODO: add more vault providers here
                 target = target.aws();
             }
             if ("gcp".equalsIgnoreCase(name)) {
-                // TODO: add more vault providers here
                 target = target.gcp();
             }
             // configure all the properties on the vault at once (to ensure they are configured in right order)

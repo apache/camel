@@ -22,6 +22,7 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.CamelContextCustomizer;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.ResourceHelper;
@@ -37,6 +38,7 @@ public class PropertyTrait implements Trait, PropertiesSource, CamelContextAware
 
     private final Properties properties = new OrderedProperties();
     private CamelContext camelContext;
+    private PropertiesComponent pc;
 
     @Override
     public CamelContext getCamelContext() {
@@ -63,7 +65,7 @@ public class PropertyTrait implements Trait, PropertiesSource, CamelContextAware
         if (trait.contains("=")) {
             String key = StringHelper.before(trait, "=").trim();
             String value = StringHelper.after(trait, "=").trim();
-            properties.setProperty(key, value);
+            setProperty(key, value);
         } else {
             if (ResourceHelper.hasScheme(trait)) {
                 // it is a properties file so load resource
@@ -74,7 +76,7 @@ public class PropertyTrait implements Trait, PropertiesSource, CamelContextAware
                         String v = prop.getProperty(k);
                         String key = k.trim();
                         String value = v.trim();
-                        properties.setProperty(key, value);
+                        setProperty(key, value);
                     }
                 } catch (Exception e) {
                     // ignore
@@ -82,6 +84,14 @@ public class PropertyTrait implements Trait, PropertiesSource, CamelContextAware
             }
         }
         return null;
+    }
+
+    protected void setProperty(String key, String value) {
+        properties.setProperty(key, value);
+        if (!camelContext.isStarted()) {
+            // if we are bootstrapping then also set as initial property, so it can be used there as well
+            camelContext.getPropertiesComponent().addInitialProperty(key, value);
+        }
     }
 
     @Override
