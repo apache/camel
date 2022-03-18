@@ -11,7 +11,7 @@ A regular Camel service that manages cluster resources such as _views_ (see belo
 Represent a view of the cluster with its own set of isolated resources. As today views provide supports for:
 +
     * Leader Election
-    * Topology events like members joining/leaving the cluster)
+    * Topology events like members joining/leaving the cluster
 
 - *Cluster Member*
 +
