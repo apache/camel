@@ -356,7 +356,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             return false;
         }
         final String[] applicableFor = metadata.applicableFor();
-        if (applicableFor.length > 0 && !Arrays.stream(applicableFor).anyMatch(s -> s.equals(scheme))) {
+        if (applicableFor.length > 0 && Arrays.stream(applicableFor).noneMatch(s -> s.equals(scheme))) {
             getLog().debug(String.format("The field %s in class %s is not applicable for %s", field.getName(),
                     field.getDeclaringClass().getName(), scheme));
             return false;
