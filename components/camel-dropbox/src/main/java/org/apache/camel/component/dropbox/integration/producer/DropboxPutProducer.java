@@ -23,9 +23,9 @@ import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxFileUploadResult;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxHelper;
 import org.apache.camel.component.dropbox.util.DropboxResultCode;
-import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.apache.camel.component.dropbox.validator.DropboxConfigurationValidator;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ public class DropboxPutProducer extends DropboxProducer {
         Map<String, DropboxResultCode> map = result.getResults();
         if (map.size() == 1) {
             for (Map.Entry<String, DropboxResultCode> entry : map.entrySet()) {
-                exchange.getIn().setHeader(DropboxResultHeader.UPLOADED_FILE.name(), entry.getKey());
+                exchange.getIn().setHeader(DropboxConstants.UPLOADED_FILE, entry.getKey());
                 exchange.getIn().setBody(entry.getValue());
             }
 
@@ -61,7 +61,7 @@ public class DropboxPutProducer extends DropboxProducer {
             for (Map.Entry<String, DropboxResultCode> entry : map.entrySet()) {
                 pathsExtracted.append(entry.getKey()).append("\n");
             }
-            exchange.getIn().setHeader(DropboxResultHeader.UPLOADED_FILES.name(), pathsExtracted.toString());
+            exchange.getIn().setHeader(DropboxConstants.UPLOADED_FILES, pathsExtracted.toString());
             exchange.getIn().setBody(map);
         }
 

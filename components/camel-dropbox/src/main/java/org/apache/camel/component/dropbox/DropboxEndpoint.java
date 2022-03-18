@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * Upload, download and manage files, folders, groups, collaborations, etc on Dropbox.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation",
-             category = { Category.CLOUD, Category.FILE, Category.API })
+             category = { Category.CLOUD, Category.FILE, Category.API }, headersClass = DropboxConstants.class)
 public class DropboxEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxEndpoint.class);
