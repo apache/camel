@@ -67,7 +67,7 @@ public class NoTypeConversionAvailableException extends CamelException {
     public static String createMessage(Object value, Class<?> type) {
         return "No type converter available to convert from type: "
                + (value != null ? value.getClass().getCanonicalName() : null)
-               + " to the required type: " + type.getCanonicalName() + " with value " + value;
+               + " to the required type: " + type.getCanonicalName();
     }
 
     /**
@@ -76,6 +76,6 @@ public class NoTypeConversionAvailableException extends CamelException {
     public static String createMessage(Object value, Class<?> type, Throwable cause) {
         return "Converting Exception when converting from type: "
                + (value != null ? value.getClass().getCanonicalName() : null) + " to the required type: "
-               + type.getCanonicalName() + " with value " + value + ", which is caused by " + cause;
+               + type.getCanonicalName() + ", which is caused by " + cause;
     }
 }
