@@ -21,7 +21,8 @@ public class PlatformHttpEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(11);
+        Set<String> props = new HashSet<>(12);
+        props.add("muteException");
         props.add("fileNameExtWhitelist");
         props.add("path");
         props.add("bridgeErrorHandler");

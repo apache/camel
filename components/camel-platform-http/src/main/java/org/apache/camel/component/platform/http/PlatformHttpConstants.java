@@ -17,6 +17,7 @@
 package org.apache.camel.component.platform.http;
 
 public final class PlatformHttpConstants {
+
     public static final String PLATFORM_HTTP_COMPONENT_NAME = "platform-http";
     public static final String PLATFORM_HTTP_ENGINE_NAME = "platform-http-engine";
     public static final String PLATFORM_HTTP_ENGINE_FACTORY = "platform-http-engine";

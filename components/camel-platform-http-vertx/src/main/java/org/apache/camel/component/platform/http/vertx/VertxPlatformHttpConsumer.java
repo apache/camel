@@ -64,6 +64,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
 
     private final List<Handler<RoutingContext>> handlers;
     private final String fileNameExtWhitelist;
+    private final boolean muteExceptions;
     private Set<Method> methods;
     private String path;
     private Route route;
@@ -77,6 +78,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         this.handlers = handlers;
         this.fileNameExtWhitelist
                 = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
+        this.muteExceptions = endpoint.isMuteException();
     }
 
     @Override
@@ -192,7 +194,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                     try {
                         if (result.succeeded()) {
                             try {
-                                writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy());
+                                writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy(), muteExceptions);
                             } catch (Exception e) {
                                 failure = e;
                             }

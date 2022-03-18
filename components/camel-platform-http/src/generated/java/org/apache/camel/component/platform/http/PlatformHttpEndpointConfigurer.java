@@ -36,6 +36,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "httpMethodRestrict": target.setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
         case "matchonuriprefix":
         case "matchOnUriPrefix": target.setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "platformhttpengine":
         case "platformHttpEngine": target.setPlatformHttpEngine(property(camelContext, org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class, value)); return true;
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
@@ -61,6 +63,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "httpMethodRestrict": return java.lang.String.class;
         case "matchonuriprefix":
         case "matchOnUriPrefix": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "platformhttpengine":
         case "platformHttpEngine": return org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class;
         case "produces": return java.lang.String.class;
@@ -87,6 +91,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "httpMethodRestrict": return target.getHttpMethodRestrict();
         case "matchonuriprefix":
         case "matchOnUriPrefix": return target.isMatchOnUriPrefix();
+        case "muteexception":
+        case "muteException": return target.isMuteException();
         case "platformhttpengine":
         case "platformHttpEngine": return target.getPlatformHttpEngine();
         case "produces": return target.getProduces();
