@@ -46,61 +46,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Headers
-
-[width="100%",cols="10%,10%,20%a,60%",options="header",]
-|===
-| Name
-| Type
-| Values
-| Description
-
-| CamelAtomixResourceAction
-| AtomixMap.Action
-| * PUT
-  * PUT_IF_ABSENT
-  * GET
-  * CLEAR
-  * SIZE
-  * CONTAINS_KEY
-  * CONTAINS_VALUE
-  * IS_EMPTY
-  * ENTRY_SET
-  * REMOVE
-  * REPLACE
-  * VALUES
-| The action to perform
-
-| CamelAtomixResourceKey
-| Object
-| -
-| The key to operate on
-
-| CamelAtomixResourceValue
-| Object
-| -
-| The value, if missing In Body is used
-
-| CamelAtomixResourceOldValue
-| Object
-| -
-| The old value
-
-| CamelAtomixResourceTTL
-| String / long
-| -
-| The entry TTL
-
-| CamelAtomixResourceReadConsistency
-| ReadConsistency
-| * ATOMIC
-  * ATOMIC_LEASE
-  * SEQUENTIAL
-  * LOCAL
-| The read consistency level
-
-|===
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Configuring the component to connect to an Atomix cluster
 

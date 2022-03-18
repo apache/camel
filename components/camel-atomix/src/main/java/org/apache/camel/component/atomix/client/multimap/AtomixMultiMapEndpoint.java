@@ -18,19 +18,22 @@ package org.apache.camel.component.atomix.client.multimap;
 
 import org.apache.camel.Producer;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientEndpoint;
+import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+
+import static org.apache.camel.component.atomix.client.AtomixClientConstants.SCHEME_MULTIMAP;
 
 /**
  * Access Atomix's <a href="http://atomix.io/atomix/docs/collections/#distributedmultimap">distributed multi map</a>.
  */
 @UriEndpoint(
              firstVersion = "2.20.0",
-             scheme = "atomix-multimap",
+             scheme = SCHEME_MULTIMAP,
              title = "Atomix MultiMap",
              syntax = "atomix-multimap:resourceName",
              producerOnly = true,
-             label = "clustering")
+             label = "clustering", headersClass = AtomixClientConstants.class)
 public final class AtomixMultiMapEndpoint
         extends AbstractAtomixClientEndpoint<AtomixMultiMapComponent, AtomixMultiMapConfiguration> {
     @UriParam
