@@ -326,4 +326,12 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
     public void setPollDuration(Duration pollDuration) {
         this.pollDuration = Objects.requireNonNull(pollDuration, "The poll duration cannot be null");
     }
+
+    protected Consumer<K, V> getConsumer() {
+        return consumer;
+    }
+
+    protected Producer<K, V> getProducer() {
+        return producer;
+    }
 }
