@@ -108,21 +108,6 @@ public abstract class BaseMainSupport extends BaseService {
         helper = new MainHelper();
     }
 
-    private static CamelSagaService resolveLraSagaService(CamelContext camelContext) throws Exception {
-        // lookup in service registry first
-        CamelSagaService answer = camelContext.getRegistry().findSingleByType(CamelSagaService.class);
-        if (answer == null) {
-            answer = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
-                    .newInstance("lra-saga-service", CamelSagaService.class)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Cannot find LRASagaService on classpath. Add camel-lra to classpath."));
-
-            // add as service so its discover by saga eip
-            camelContext.addService(answer, true, false);
-        }
-        return answer;
-    }
-
     /**
      * To configure options on Camel Main.
      */
@@ -1470,6 +1455,21 @@ public abstract class BaseMainSupport extends BaseService {
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
+    }
+
+    private static CamelSagaService resolveLraSagaService(CamelContext camelContext) throws Exception {
+        // lookup in service registry first
+        CamelSagaService answer = camelContext.getRegistry().findSingleByType(CamelSagaService.class);
+        if (answer == null) {
+            answer = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
+                    .newInstance("lra-saga-service", CamelSagaService.class)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Cannot find LRASagaService on classpath. Add camel-lra to classpath."));
+
+            // add as service so its discover by saga eip
+            camelContext.addService(answer, true, false);
+        }
+        return answer;
     }
 
 }
