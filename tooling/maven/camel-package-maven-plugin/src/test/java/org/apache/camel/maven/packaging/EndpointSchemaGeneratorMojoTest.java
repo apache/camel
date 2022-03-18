@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.maven.packaging.endpoint.SomeEndpoint;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadHeaders;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithFilter;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithoutHeaders;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -53,7 +54,7 @@ class EndpointSchemaGeneratorMojoTest {
 
     @Test
     void testCanRetrieveMetadataOfHeaders() {
-        mojo.addEndpointHeaders(model, SomeEndpoint.class.getAnnotation(UriEndpoint.class));
+        mojo.addEndpointHeaders(model, SomeEndpoint.class.getAnnotation(UriEndpoint.class), "some");
         List<EndpointHeaderModel> endpointHeaders = model.getEndpointHeaders();
         assertEquals(2, endpointHeaders.size());
         // Full
@@ -91,13 +92,25 @@ class EndpointSchemaGeneratorMojoTest {
 
     @Test
     void testHeadersNotProperlyDefinedAreIgnored() {
-        mojo.addEndpointHeaders(model, SomeEndpointWithBadHeaders.class.getAnnotation(UriEndpoint.class));
+        mojo.addEndpointHeaders(model, SomeEndpointWithBadHeaders.class.getAnnotation(UriEndpoint.class), "some");
         assertEquals(0, model.getEndpointHeaders().size());
     }
 
     @Test
     void testEndpointWithoutHeadersAreIgnored() {
-        mojo.addEndpointHeaders(model, SomeEndpointWithoutHeaders.class.getAnnotation(UriEndpoint.class));
+        mojo.addEndpointHeaders(model, SomeEndpointWithoutHeaders.class.getAnnotation(UriEndpoint.class), "some");
         assertEquals(0, model.getEndpointHeaders().size());
+    }
+
+    @Test
+    void testEndpointWithFilterKeepOnlyApplicableHeaders() {
+        mojo.addEndpointHeaders(model, SomeEndpointWithFilter.class.getAnnotation(UriEndpoint.class), "some");
+        List<EndpointHeaderModel> endpointHeaders = model.getEndpointHeaders();
+        assertEquals(2, endpointHeaders.size());
+        for (int i = 0; i < endpointHeaders.size(); i++) {
+            EndpointHeaderModel headerEmpty = endpointHeaders.get(i);
+            assertEquals("header", headerEmpty.getKind());
+            assertEquals(String.format("keep-%d", i + 1), headerEmpty.getName());
+        }
     }
 }

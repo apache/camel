@@ -261,7 +261,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         // component headers
-        addEndpointHeaders(componentModel, uriEndpoint);
+        addEndpointHeaders(componentModel, uriEndpoint, scheme);
 
         // endpoint options
         findClassProperties(componentModel, classElement, new HashSet<>(), "", null, null, false);
@@ -301,11 +301,14 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
      * {@code headersClass} of the annotation {@code UriEndpoint}, convert the metadata found into instances of
      * {@link EndpointHeaderModel} and finally add the instances of {@link EndpointHeaderModel} to the given component
      * model.
-     * 
+     * <p/>
+     * Only headers applicable for the given scheme are added.
+     *
      * @param componentModel the component model to which the headers should be added.
      * @param uriEndpoint    the annotation from which the headers class is retrieved.
+     * @param scheme         the scheme for which we want to add the headers.
      */
-    void addEndpointHeaders(ComponentModel componentModel, UriEndpoint uriEndpoint) {
+    void addEndpointHeaders(ComponentModel componentModel, UriEndpoint uriEndpoint, String scheme) {
         final Class<?> headersClass = uriEndpoint.headersClass();
         if (headersClass == void.class) {
             getLog().debug(String.format("The endpoint %s has not defined any headers class", uriEndpoint.scheme()));
@@ -319,9 +322,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 getLog().debug(
                         String.format("Trying to add the constant %s in the class %s as header.", field.getName(),
                                 headersClass.getName()));
-                addEndpointHeader(componentModel, field);
-                foundHeader = true;
-                continue;
+                if (addEndpointHeader(componentModel, field, scheme)) {
+                    foundHeader = true;
+                    continue;
+                }
             }
             getLog().debug(
                     String.format("The field %s of the class %s is not considered as a name of a header, thus it is skipped",
@@ -336,16 +340,26 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
      * Retrieve the metadata added to the given field, convert the metadata found into an instance of
      * {@link EndpointHeaderModel} and finally add the instance of {@link EndpointHeaderModel} to the given component
      * model.
+     * <p/>
+     * The header is only added if it is applicable for the given scheme.
      * 
-     * @param componentModel the component to which the header should be added.
-     * @param field          the field corresponding to the constant from which the metadata should be extracted.
+     * @param  componentModel the component to which the header should be added.
+     * @param  field          the field corresponding to the constant from which the metadata should be extracted.
+     * @param  scheme         the scheme for which we want to add the header.
+     * @return                {@code true} if the header has been added, {@code false} otherwise.
      */
-    private void addEndpointHeader(ComponentModel componentModel, Field field) {
+    private boolean addEndpointHeader(ComponentModel componentModel, Field field, String scheme) {
         final Metadata metadata = field.getAnnotation(Metadata.class);
         if (metadata == null) {
             getLog().debug(String.format("The field %s in class %s has no Metadata", field.getName(),
                     field.getDeclaringClass().getName()));
-            return;
+            return false;
+        }
+        final String[] applicableFor = metadata.applicableFor();
+        if (applicableFor.length > 0 && !Arrays.stream(applicableFor).anyMatch(s -> s.equals(scheme))) {
+            getLog().debug(String.format("The field %s in class %s is not applicable for %s", field.getName(),
+                    field.getDeclaringClass().getName(), scheme));
+            return false;
         }
         final EndpointHeaderModel header = new EndpointHeaderModel();
         header.setDescription(metadata.description().trim());
@@ -373,6 +387,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             getLog().debug(String.format("The field %s in class %s cannot be accessed", field.getName(),
                     field.getDeclaringClass().getName()));
         }
+        return true;
     }
 
     private String getExcludedEnd(Metadata classElement) {
