@@ -22,8 +22,8 @@ import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxSearchResult;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxHelper;
-import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.dropbox.validator.DropboxConfigurationValidator;
 
 public class DropboxSearchProducer extends DropboxProducer {
@@ -47,7 +47,7 @@ public class DropboxSearchProducer extends DropboxProducer {
             fileExtracted.append(entry.getMetadata().getName()).append("-").append(entry.getMetadata().getPathDisplay())
                     .append("\n");
         }
-        exchange.getIn().setHeader(DropboxResultHeader.FOUND_FILES.name(), fileExtracted.toString());
+        exchange.getIn().setHeader(DropboxConstants.FOUND_FILES, fileExtracted.toString());
         exchange.getIn().setBody(result.getFound());
     }
 }

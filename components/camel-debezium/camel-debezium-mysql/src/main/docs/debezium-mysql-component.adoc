@@ -69,22 +69,9 @@ For more information about configuration:
 https://debezium.io/documentation/reference/0.10/operations/embedded.html#engine-properties[https://debezium.io/documentation/reference/0.10/operations/embedded.html#engine-properties]
 https://debezium.io/documentation/reference/0.10/connectors/mysql.html#connector-properties[https://debezium.io/documentation/reference/0.10/connectors/mysql.html#connector-properties]
 
-== Message headers
-
-=== Consumer headers
-
-The following headers are available when consuming change events from Debezium.
-[width="100%",cols="2m,2m,1m,5",options="header"]
-|===
-| Header constant                           | Header value                                   | Type        | Description
-| DebeziumConstants.HEADER_IDENTIFIER       | "CamelDebeziumIdentifier"                      | String      | The identifier of the connector, normally is this format "+++{server-name}.{database-name}.{table-name}+++".
-| DebeziumConstants.HEADER_KEY              | "CamelDebeziumKey"                             | Struct      | The key of the event, normally is the table Primary Key.
-| DebeziumConstants.HEADER_SOURCE_METADATA  | "CamelDebeziumSourceMetadata"                  | Map         | The metadata about the source event, for example `table` name, database `name`, log position, etc, please refer to the Debezium documentation for more info.
-| DebeziumConstants.HEADER_OPERATION        | "CamelDebeziumOperation"                       | String      | If presents, the type of event operation. Values for the connector are `c` for create (or insert), `u` for update, `d` for delete or `r` in case of a snapshot event.
-| DebeziumConstants.HEADER_TIMESTAMP        | "CamelDebeziumTimestamp"                       | Long        | If presents, the time (using the system clock in the JVM) at which the connector processed the event.
-| DebeziumConstants.HEADER_BEFORE           | "CamelDebeziumBefore"                          | Struct      | If presents, contains the state of the row before the event occurred.
-| DebeziumConstants.HEADER_DDL_SQL          | "CamelDebeziumDdlSQL"                          | String      | If presents, the ddl sql text of the event.
-|===
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Message body
 The message body if is not `null` (in case of tombstones), it contains the state of the row after the event occurred as `Struct` format or `Map` format if you use the included Type Converter from `Struct` to `Map` (please look below for more explanation).

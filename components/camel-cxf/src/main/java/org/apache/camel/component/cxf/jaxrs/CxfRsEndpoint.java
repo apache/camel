@@ -33,6 +33,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.component.cxf.NullFaultListener;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -62,11 +63,13 @@ import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_CXF_RS;
+
 /**
  * Expose JAX-RS REST services using Apache CXF or connect to external REST services using CXF REST client.
  */
-@UriEndpoint(firstVersion = "2.0.0", scheme = "cxfrs", title = "CXF-RS", syntax = "cxfrs:beanId:address", label = "rest",
-             lenientProperties = true)
+@UriEndpoint(firstVersion = "2.0.0", scheme = SCHEME_CXF_RS, title = "CXF-RS", syntax = "cxfrs:beanId:address", label = "rest",
+             lenientProperties = true, headersClass = CxfConstants.class)
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);

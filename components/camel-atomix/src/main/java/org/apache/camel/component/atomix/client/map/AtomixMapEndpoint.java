@@ -20,18 +20,21 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientEndpoint;
+import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+
+import static org.apache.camel.component.atomix.client.AtomixClientConstants.SCHEME_MAP;
 
 /**
  * Access Atomix's <a href="http://atomix.io/atomix/docs/collections/#distributedmap">distributed map</a>.
  */
 @UriEndpoint(
              firstVersion = "2.20.0",
-             scheme = "atomix-map",
+             scheme = SCHEME_MAP,
              title = "Atomix Map",
              syntax = "atomix-map:resourceName",
-             label = "clustering")
+             label = "clustering", headersClass = AtomixClientConstants.class)
 public class AtomixMapEndpoint extends AbstractAtomixClientEndpoint<AtomixMapComponent, AtomixMapConfiguration> {
     @UriParam
     private AtomixMapConfiguration configuration;

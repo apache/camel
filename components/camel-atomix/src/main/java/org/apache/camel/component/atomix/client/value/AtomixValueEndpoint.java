@@ -20,18 +20,21 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientEndpoint;
+import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+
+import static org.apache.camel.component.atomix.client.AtomixClientConstants.SCHEME_VALUE;
 
 /**
  * Access Atomix's <a href="http://atomix.io/atomix/docs/variables/#distributedvalue">distributed value</a>.
  */
 @UriEndpoint(
              firstVersion = "2.20.0",
-             scheme = "atomix-value",
+             scheme = SCHEME_VALUE,
              title = "Atomix Value",
              syntax = "atomix-value:resourceName",
-             label = "clustering")
+             label = "clustering", headersClass = AtomixClientConstants.class)
 public final class AtomixValueEndpoint extends AbstractAtomixClientEndpoint<AtomixValueComponent, AtomixValueConfiguration> {
     @UriParam
     private AtomixValueConfiguration configuration;

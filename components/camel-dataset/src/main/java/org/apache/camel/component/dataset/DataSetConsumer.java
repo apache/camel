@@ -92,7 +92,7 @@ public class DataSetConsumer extends DefaultConsumer {
 
         if (!endpoint.getDataSetIndex().equals("off")) {
             Message in = exchange.getIn();
-            in.setHeader(Exchange.DATASET_INDEX, messageIndex);
+            in.setHeader(DataSetConstants.DATASET_INDEX, messageIndex);
         }
 
         return exchange;

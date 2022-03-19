@@ -122,12 +122,12 @@ public final class CxfEndpointUtils {
      * @param defaultAddress
      */
     public static String getEffectiveAddress(Exchange exchange, String defaultAddress) {
-        String retval = exchange.getIn().getHeader(Exchange.DESTINATION_OVERRIDE_URL, String.class);
+        String retval = exchange.getIn().getHeader(CxfConstants.DESTINATION_OVERRIDE_URL, String.class);
         if (retval == null) {
             retval = defaultAddress;
         } else {
             LOG.trace("Client address is overridden by header '{}' to value '{}'",
-                    Exchange.DESTINATION_OVERRIDE_URL, retval);
+                    CxfConstants.DESTINATION_OVERRIDE_URL, retval);
         }
         return retval;
     }

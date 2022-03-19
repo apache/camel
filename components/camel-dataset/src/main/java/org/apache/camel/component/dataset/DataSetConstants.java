@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.drill;
+package org.apache.camel.component.dataset;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 
-public final class DrillConstants {
+public final class DataSetConstants {
 
-    @Metadata(description = "The drill query", javaType = "String")
-    public static final String DRILL_QUERY = "CamelDrillQuery";
+    @Metadata(description = "The dataset index", javaType = "Long")
+    public static final String DATASET_INDEX = Exchange.DATASET_INDEX;
 
-    public static final String DRILL_DRIVER = "org.apache.drill.jdbc.Driver";
-
-    private DrillConstants() {
-        // Utility class
+    private DataSetConstants() {
     }
 }

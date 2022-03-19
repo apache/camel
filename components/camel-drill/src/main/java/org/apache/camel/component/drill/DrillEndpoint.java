@@ -38,7 +38,7 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
  * Perform queries against an Apache Drill cluster.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "drill", title = "Drill", syntax = "drill:host", producerOnly = true,
-             category = { Category.DATABASE, Category.SQL })
+             category = { Category.DATABASE, Category.SQL }, headersClass = DrillConstants.class)
 public class DrillEndpoint extends DefaultPollingEndpoint {
 
     @UriPath(description = "Host name or IP address")

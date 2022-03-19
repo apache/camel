@@ -69,7 +69,6 @@ import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.SoapVersion;
 import org.apache.cxf.common.util.PropertyUtils;
 import org.apache.cxf.common.util.StringUtils;
-import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
@@ -115,17 +114,17 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // propagate request context
         Map<String, Object> camelHeaders = camelExchange.getIn().getHeaders();
         extractInvocationContextFromCamel(camelExchange, camelHeaders,
-                requestContext, Client.REQUEST_CONTEXT);
+                requestContext, CxfConstants.REQUEST_CONTEXT);
 
         // propagate headers
         propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange,
                 requestContext);
 
-        String overrideAddress = camelExchange.getIn().getHeader(Exchange.DESTINATION_OVERRIDE_URL, String.class);
+        String overrideAddress = camelExchange.getIn().getHeader(CxfConstants.DESTINATION_OVERRIDE_URL, String.class);
 
         if (overrideAddress != null) {
             LOG.trace("Client address is overridden by header '{}' to value '{}'",
-                    Exchange.DESTINATION_OVERRIDE_URL, overrideAddress);
+                    CxfConstants.DESTINATION_OVERRIDE_URL, overrideAddress);
             requestContext.put(Message.ENDPOINT_ADDRESS, overrideAddress);
         }
 
@@ -188,10 +187,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
         // propagate response context
         if (responseContext != null && responseContext.size() > 0) {
-            if (!headerFilterStrategy.applyFilterToExternalHeaders(Client.RESPONSE_CONTEXT,
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(CxfConstants.RESPONSE_CONTEXT,
                     responseContext, camelExchange)) {
-                camelExchange.getMessage().setHeader(Client.RESPONSE_CONTEXT, responseContext);
-                LOG.trace("Set header = {} value = {}", Client.RESPONSE_CONTEXT, responseContext);
+                camelExchange.getMessage().setHeader(CxfConstants.RESPONSE_CONTEXT, responseContext);
+                LOG.trace("Set header = {} value = {}", CxfConstants.RESPONSE_CONTEXT, responseContext);
             }
         }
 
@@ -311,14 +310,14 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         SecurityContext securityContext = cxfMessage.get(SecurityContext.class);
         if (securityContext instanceof LoginSecurityContext
                 && ((LoginSecurityContext) securityContext).getSubject() != null) {
-            camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION,
+            camelExchange.getIn().getHeaders().put(CxfConstants.AUTHENTICATION,
                     ((LoginSecurityContext) securityContext).getSubject());
         } else if (securityContext != null) {
             Principal user = securityContext.getUserPrincipal();
             if (user != null) {
                 Subject subject = new Subject();
                 subject.getPrincipals().add(user);
-                camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION, subject);
+                camelExchange.getIn().getHeaders().put(CxfConstants.AUTHENTICATION, subject);
             }
         }
 
@@ -328,11 +327,11 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         //camelExchange.getProperties().putAll(cxfExchange);
 
         // propagate request context
-        Object value = cxfMessage.get(Client.REQUEST_CONTEXT);
+        Object value = cxfMessage.get(CxfConstants.REQUEST_CONTEXT);
         if (value != null && !headerFilterStrategy.applyFilterToExternalHeaders(
-                Client.REQUEST_CONTEXT, value, camelExchange)) {
-            camelExchange.getIn().setHeader(Client.REQUEST_CONTEXT, value);
-            LOG.trace("Populate context from CXF message {} value={}", Client.REQUEST_CONTEXT, value);
+                CxfConstants.REQUEST_CONTEXT, value, camelExchange)) {
+            camelExchange.getIn().setHeader(CxfConstants.REQUEST_CONTEXT, value);
+            LOG.trace("Populate context from CXF message {} value={}", CxfConstants.REQUEST_CONTEXT, value);
         }
 
         // setup the charset from content-type header
@@ -389,12 +388,12 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // propagate response context
         Map<String, Object> camelHeaders = response.getHeaders();
         extractInvocationContextFromCamel(camelExchange, camelHeaders,
-                responseContext, Client.RESPONSE_CONTEXT);
+                responseContext, CxfConstants.RESPONSE_CONTEXT);
 
         propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange,
                 responseContext);
         if (cxfExchange.getOutMessage() != null) {
-            cxfExchange.getOutMessage().put(Message.PROTOCOL_HEADERS, responseContext.get(Message.PROTOCOL_HEADERS));
+            cxfExchange.getOutMessage().put(CxfConstants.PROTOCOL_HEADERS, responseContext.get(CxfConstants.PROTOCOL_HEADERS));
         }
     }
 
@@ -430,7 +429,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // propagate response context
         Map<String, Object> camelHeaders = response.getHeaders();
         extractInvocationContextFromCamel(camelExchange, camelHeaders,
-                responseContext, Client.RESPONSE_CONTEXT);
+                responseContext, CxfConstants.RESPONSE_CONTEXT);
 
         propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange,
                 responseContext);
@@ -453,7 +452,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         outMessage.putAll(responseContext);
 
         // Do we still need to put the response context back like this
-        outMessage.put(Client.RESPONSE_CONTEXT, responseContext);
+        outMessage.put(CxfConstants.RESPONSE_CONTEXT, responseContext);
 
         LOG.trace("Set out response context = {}", responseContext);
 
@@ -628,7 +627,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     protected void propagateHeadersFromCxfToCamel(
             Message cxfMessage,
             org.apache.camel.Message camelMessage, Exchange exchange) {
-        Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>) cxfMessage.get(Message.PROTOCOL_HEADERS));
+        Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>) cxfMessage.get(CxfConstants.PROTOCOL_HEADERS));
         Map<String, Object> camelHeaders = camelMessage.getHeaders();
         camelHeaders.put(CxfConstants.CAMEL_CXF_MESSAGE, cxfMessage);
 
@@ -757,12 +756,12 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // use a treemap to keep ordering and ignore key case
         Map<String, List<String>> transportHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         if (camelExchange != null) {
-            Map<String, List<String>> h = CastUtils.cast((Map<?, ?>) camelExchange.getProperty(Message.PROTOCOL_HEADERS));
+            Map<String, List<String>> h = CastUtils.cast((Map<?, ?>) camelExchange.getProperty(CxfConstants.PROTOCOL_HEADERS));
             if (h != null) {
                 transportHeaders.putAll(h);
             }
         }
-        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>) camelHeaders.get(Message.PROTOCOL_HEADERS));
+        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>) camelHeaders.get(CxfConstants.PROTOCOL_HEADERS));
         if (headers != null) {
             transportHeaders.putAll(headers);
         }
@@ -772,7 +771,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
         for (Map.Entry<String, Object> entry : camelHeaders.entrySet()) {
             // put response code in request context so it will be copied to CXF message's property
-            if (Message.RESPONSE_CODE.equals(entry.getKey()) || Exchange.HTTP_RESPONSE_CODE.equals(entry.getKey())) {
+            if (Message.RESPONSE_CODE.equals(entry.getKey()) || CxfConstants.HTTP_RESPONSE_CODE.equals(entry.getKey())) {
                 LOG.debug("Propagate to CXF header: {} value: {}", Message.RESPONSE_CODE, entry.getValue());
                 cxfContext.put(Message.RESPONSE_CODE, entry.getValue());
                 continue;
@@ -828,11 +827,11 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
 
         if (transportHeaders.size() > 0) {
-            cxfContext.put(Message.PROTOCOL_HEADERS, transportHeaders);
+            cxfContext.put(CxfConstants.PROTOCOL_HEADERS, transportHeaders);
         } else {
             // no propagated transport headers does really mean no headers, not the ones
             // from the previous request or response propagated with the invocation context
-            cxfContext.remove(Message.PROTOCOL_HEADERS);
+            cxfContext.remove(CxfConstants.PROTOCOL_HEADERS);
         }
         if (camelHeaders.get(CxfConstants.OPERATION_NAMESPACE) == null
                 && camelHeaders.get(CxfConstants.OPERATION_NAME) == null) {
