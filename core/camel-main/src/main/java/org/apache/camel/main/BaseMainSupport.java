@@ -680,8 +680,7 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     protected void autoConfigurationRoutesIncludePattern(
-            CamelContext camelContext, Map<String, String> autoConfiguredProperties)
-            throws Exception {
+            CamelContext camelContext, Map<String, String> autoConfiguredProperties) {
 
         Object pattern = getInitialProperties().getProperty("camel.main.routesIncludePattern");
         if (pattern != null) {

@@ -251,8 +251,8 @@ public class RoutesConfigurer {
             try {
                 LOG.debug("RoutesCollectorEnabled: {}", getRoutesCollector());
 
-                // add discovered routes from directories
-                StopWatch watch = new StopWatch();
+                // we can only scan for modeline for routes that we can load from directory as modelines
+                // are comments in the source files
                 Collection<RoutesBuilder> routesFromDirectory = getRoutesCollector().collectRoutesFromDirectory(
                         camelContext,
                         getRoutesExcludePattern(),
