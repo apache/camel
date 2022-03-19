@@ -185,7 +185,7 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     /**
-     * Adds a initial property for the properties component, which will be used before any locations are resolved.
+     * Adds a property (initial) for the properties component, which will be used before any locations are resolved.
      *
      * @param key   the property key
      * @param value the property value
@@ -775,6 +775,7 @@ public abstract class BaseMainSupport extends BaseService {
             CamelContext camelContext, MainConfigurationProperties config,
             Map<String, String> autoConfiguredProperties)
             throws Exception {
+
         if (config.getFileConfigurations() != null) {
             String[] locs = config.getFileConfigurations().split(",");
             for (String loc : locs) {
