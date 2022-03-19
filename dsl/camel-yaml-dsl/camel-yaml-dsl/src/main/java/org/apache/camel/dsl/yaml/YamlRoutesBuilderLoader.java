@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -59,11 +61,18 @@ import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.snakeyaml.engine.v2.api.YamlUnicodeReader;
+import org.snakeyaml.engine.v2.composer.Composer;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 import org.snakeyaml.engine.v2.nodes.NodeType;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
+import org.snakeyaml.engine.v2.parser.Parser;
+import org.snakeyaml.engine.v2.parser.ParserImpl;
+import org.snakeyaml.engine.v2.scanner.StreamReader;
 
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMap;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMappingNode;
@@ -78,6 +87,8 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeseri
 public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     public static final String EXTENSION = "yaml";
+
+    private static final Logger LOG = LoggerFactory.getLogger(YamlRoutesBuilderLoader.class);
 
     // API versions for Camel-K Integration and Kamelet Binding
     // we are lenient so lets just assume we can work with any of the v1 even if they evolve
@@ -104,7 +115,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 ctx.setResource(resource);
                 setDeserializationContext(root, ctx);
 
-                Object target = preConfigureNode(root, ctx);
+                Object target = preConfigureNode(root, ctx, false);
                 if (target == null) {
                     return;
                 }
@@ -196,7 +207,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 ctx.setResource(resource);
                 setDeserializationContext(root, ctx);
 
-                Object target = preConfigureNode(root, ctx);
+                Object target = preConfigureNode(root, ctx, false);
                 if (target == null) {
                     return;
                 }
@@ -236,7 +247,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         };
     }
 
-    private Object preConfigureNode(Node root, YamlDeserializationContext ctx) throws Exception {
+    private Object preConfigureNode(Node root, YamlDeserializationContext ctx, boolean preParse) throws Exception {
         Object target = root;
 
         // check if the yaml is a camel-k yaml with embedded binding/routes (called flow(s))
@@ -249,8 +260,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             boolean binding = anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(BINDING_VERSION)) &&
                     anyTupleMatches(mn.getValue(), "kind", "KameletBinding");
             if (integration) {
-                target = preConfigureIntegration(root, ctx, target);
-            } else if (binding) {
+                target = preConfigureIntegration(root, ctx, target, preParse);
+            } else if (binding && !preParse) {
+                // kamelet binding does not take part in pre-parse phase
                 target = preConfigureKameletBinding(root, ctx, target);
             }
         }
@@ -261,7 +273,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     /**
      * Camel K Integration file
      */
-    private Object preConfigureIntegration(Node root, YamlDeserializationContext ctx, Object target) {
+    private Object preConfigureIntegration(Node root, YamlDeserializationContext ctx, Object target, boolean preParse) {
+        // when in pre-parse phase then we only want to gather spec/dependencies,spec/configuration,spec/traits
+
         List<Object> answer = new ArrayList<>();
 
         // if there are dependencies then include them first
@@ -270,6 +284,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             var dep = preConfigureDependencies(deps);
             answer.add(dep);
         }
+
         // if there are configurations then include them early
         Node configuration = nodeAt(root, "/spec/configuration");
         if (configuration != null) {
@@ -288,20 +303,24 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             var list = preConfigureTraitEnvironment(configuration);
             answer.addAll(list);
         }
-        // if there are sources then include them before routes
-        Node sources = nodeAt(root, "/spec/sources");
-        if (sources != null) {
-            var list = preConfigureSources(sources);
-            answer.addAll(list);
+
+        if (!preParse) {
+            // if there are sources then include them before routes
+            Node sources = nodeAt(root, "/spec/sources");
+            if (sources != null) {
+                var list = preConfigureSources(sources);
+                answer.addAll(list);
+            }
+            // add routes last
+            Node routes = nodeAt(root, "/spec/flows");
+            if (routes == null) {
+                routes = nodeAt(root, "/spec/flow");
+            }
+            if (routes != null) {
+                answer.add(routes);
+            }
         }
-        // add routes last
-        Node routes = nodeAt(root, "/spec/flows");
-        if (routes == null) {
-            routes = nodeAt(root, "/spec/flow");
-        }
-        if (routes != null) {
-            answer.add(routes);
-        }
+
         return answer;
     }
 
@@ -622,6 +641,48 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         } else {
             return uri;
         }
+    }
+
+    @Override
+    public void preParseRoute(Resource resource) throws Exception {
+        LOG.trace("Pre-parsing: {}", resource.getLocation());
+
+        if (!resource.exists()) {
+            throw new FileNotFoundException("Resource not found: " + resource.getLocation());
+        }
+
+        try (InputStream is = resource.getInputStream()) {
+            final StreamReader reader = new StreamReader(settings, new YamlUnicodeReader(is));
+            final Parser parser = new ParserImpl(settings, reader);
+            final Composer composer = new Composer(settings, parser);
+
+            composer.getSingleNode()
+                    .map(node -> preParseNode(node, resource));
+        }
+    }
+
+    private Object preParseNode(Node root, Resource resource) {
+        LOG.trace("Pre-parsing node: {}", root);
+
+        YamlDeserializationContext ctx = getDeserializationContext();
+        ctx.setResource(resource);
+        setDeserializationContext(root, ctx);
+
+        try {
+            Object target = preConfigureNode(root, ctx, true);
+            Iterator<?> it = ObjectHelper.createIterator(target);
+            while (it.hasNext()) {
+                target = it.next();
+                if (target instanceof CamelContextCustomizer) {
+                    CamelContextCustomizer customizer = (CamelContextCustomizer) target;
+                    customizer.configure(getCamelContext());
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Error pre-parsing resource: " + resource.getLocation(), e);
+        }
+
+        return null;
     }
 
 }

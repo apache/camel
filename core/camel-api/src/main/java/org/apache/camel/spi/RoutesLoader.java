@@ -115,4 +115,8 @@ public interface RoutesLoader extends CamelContextAware {
      * @return           a collection {@link RoutesBuilder}
      */
     Collection<RoutesBuilder> findRoutesBuilders(Collection<Resource> resources) throws Exception;
+
+    default void preParseRoute(Resource resource) throws Exception {
+        // noop
+    }
 }

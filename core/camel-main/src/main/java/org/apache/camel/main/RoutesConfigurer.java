@@ -30,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
@@ -282,6 +283,13 @@ public class RoutesConfigurer {
             LOG.debug("Parsing modeline: {}", resource);
             factory.parseModeline(resource);
         }
+        // the resource may also have additional configurations which we need to detect via pre-parsing
+        for (Resource resource : resources) {
+            LOG.debug("Pre-parsing: {}", resource);
+            RoutesLoader loader = camelContext.adapt(ExtendedCamelContext.class).getRoutesLoader();
+            loader.preParseRoute(resource);
+        }
+
     }
 
 }

@@ -50,9 +50,9 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderSupport {
     public static final String DESERIALIZATION_MODE = "CamelYamlDslDeserializationMode";
 
-    private LoadSettings settings;
-    private YamlDeserializationContext deserializationContext;
-    private YamlDeserializationMode deserializationMode;
+    LoadSettings settings;
+    YamlDeserializationContext deserializationContext;
+    YamlDeserializationMode deserializationMode;
 
     public YamlRoutesBuilderLoaderSupport(String extension) {
         super(extension);

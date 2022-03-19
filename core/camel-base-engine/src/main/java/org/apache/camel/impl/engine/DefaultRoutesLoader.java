@@ -87,24 +87,14 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         List<RoutesBuilder> answer = new ArrayList<>(resources.size());
 
         for (Resource resource : resources) {
-            // the loader to use is derived from the file extension
-            final String extension = FileUtil.onlyExt(resource.getLocation(), false);
-
-            if (ObjectHelper.isEmpty(extension)) {
-                throw new IllegalArgumentException(
-                        "Unable to determine file extension for resource: " + resource.getLocation());
-            }
-
-            RoutesBuilderLoader loader = getRoutesLoader(extension);
-            if (loader == null) {
-                throw new IllegalArgumentException(
-                        "Cannot find RoutesBuilderLoader in classpath supporting file extension: " + extension);
-            }
+            RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource);
 
             if (camelContext.isModeline()) {
                 ModelineFactory factory = camelContext.adapt(ExtendedCamelContext.class).getModelineFactory();
                 // gather resources for modeline
                 factory.parseModeline(resource);
+                // pre-parse before loading
+                loader.preParseRoute(resource);
             }
 
             RoutesBuilder builder = loader.loadRoutesBuilder(resource);
@@ -114,6 +104,11 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         }
 
         return answer;
+    }
+
+    @Override
+    public void preParseRoute(Resource resource) throws Exception {
+        resolveRoutesBuilderLoader(resource).preParseRoute(resource);
     }
 
     /**
@@ -176,6 +171,23 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         }
 
         return answer;
+    }
+
+    protected RoutesBuilderLoader resolveRoutesBuilderLoader(Resource resource) throws Exception {
+        // the loader to use is derived from the file extension
+        final String extension = FileUtil.onlyExt(resource.getLocation(), false);
+
+        if (ObjectHelper.isEmpty(extension)) {
+            throw new IllegalArgumentException(
+                    "Unable to determine file extension for resource: " + resource.getLocation());
+        }
+
+        RoutesBuilderLoader loader = getRoutesLoader(extension);
+        if (loader == null) {
+            throw new IllegalArgumentException(
+                    "Cannot find RoutesBuilderLoader in classpath supporting file extension: " + extension);
+        }
+        return loader;
     }
 
 }
