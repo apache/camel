@@ -63,7 +63,7 @@ public class IntegrationConfigurationPropertiesSource implements PropertiesSourc
         if (line.contains("=")) {
             String key = StringHelper.before(line, "=").trim();
             String value = StringHelper.after(line, "=").trim();
-            properties.setProperty(key, value);
+            setProperty(key, value);
         } else {
             if (ResourceHelper.hasScheme(line)) {
                 // it is a properties file so load resource
@@ -74,12 +74,20 @@ public class IntegrationConfigurationPropertiesSource implements PropertiesSourc
                         String v = prop.getProperty(k);
                         String key = k.trim();
                         String value = v.trim();
-                        properties.setProperty(key, value);
+                        setProperty(key, value);
                     }
                 } catch (Exception e) {
                     // ignore
                 }
             }
+        }
+    }
+
+    protected void setProperty(String key, String value) {
+        properties.setProperty(key, value);
+        if (!camelContext.isStarted()) {
+            // if we are bootstrapping then also set as initial property, so it can be used there as well
+            camelContext.getPropertiesComponent().addInitialProperty(key, value);
         }
     }
 
