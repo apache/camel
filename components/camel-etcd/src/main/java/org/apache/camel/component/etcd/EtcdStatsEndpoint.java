@@ -22,11 +22,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 
+import static org.apache.camel.component.etcd.EtcdConstants.SCHEME_STATS;
+
 /**
  * Access etcd cluster statistcs.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "etcd-stats", title = "Etcd Stats",
-             syntax = "etcd-stats:path", label = "clustering,database")
+@UriEndpoint(firstVersion = "2.18.0", scheme = SCHEME_STATS, title = "Etcd Stats",
+             syntax = "etcd-stats:path", label = "clustering,database", headersClass = EtcdConstants.class)
 public class EtcdStatsEndpoint extends AbstractEtcdPollingEndpoint {
 
     public EtcdStatsEndpoint(
