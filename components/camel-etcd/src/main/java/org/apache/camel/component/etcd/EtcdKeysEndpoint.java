@@ -22,11 +22,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 
+import static org.apache.camel.component.etcd.EtcdConstants.SCHEME_KEYS;
+
 /**
  * Get, set or delete keys in etcd key-value store.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "etcd-keys", title = "Etcd Keys", producerOnly = true,
-             syntax = "etcd-keys:path", category = { Category.CLUSTERING, Category.DATABASE })
+@UriEndpoint(firstVersion = "2.18.0", scheme = SCHEME_KEYS, title = "Etcd Keys", producerOnly = true,
+             syntax = "etcd-keys:path", category = { Category.CLUSTERING, Category.DATABASE },
+             headersClass = EtcdConstants.class)
 public class EtcdKeysEndpoint extends AbstractEtcdEndpoint {
 
     public EtcdKeysEndpoint(

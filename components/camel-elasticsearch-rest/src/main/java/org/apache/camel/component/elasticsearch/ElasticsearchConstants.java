@@ -16,15 +16,27 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import org.apache.camel.spi.Metadata;
+
 public interface ElasticsearchConstants {
 
+    @Metadata(description = "The operation to perform",
+              javaType = "org.apache.camel.component.elasticsearch.ElasticsearchOperation")
     String PARAM_OPERATION = "operation";
+    @Metadata(description = "The id of the indexed document.", javaType = "String")
     String PARAM_INDEX_ID = "indexId";
+    @Metadata(description = "The name of the index to act against", javaType = "String")
     String PARAM_INDEX_NAME = "indexName";
+    @Metadata(description = "The index creation waits for the write consistency number of shards to be available",
+              javaType = "Integer")
     String PARAM_WAIT_FOR_ACTIVE_SHARDS = "waitForActiveShards";
+    @Metadata(description = "The starting index of the response.", javaType = "Integer")
     String PARAM_SCROLL_KEEP_ALIVE_MS = "scrollKeepAliveMs";
+    @Metadata(description = "Set to true to enable scroll usage", javaType = "Boolean")
     String PARAM_SCROLL = "useScroll";
+    @Metadata(description = "The size of the response.", javaType = "Integer")
     String PARAM_SIZE = "size";
+    @Metadata(description = "The starting index of the response.", javaType = "Integer")
     String PARAM_FROM = "from";
 
     String PROPERTY_SCROLL_ES_QUERY_COUNT = "CamelElasticsearchScrollQueryCount";

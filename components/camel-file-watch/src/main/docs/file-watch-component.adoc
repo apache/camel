@@ -30,7 +30,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Examples:
 
@@ -58,43 +60,5 @@ from("file-watch://some-directory?events=MODIFY&recursive=false")
     .setHeader(Exchange.FILE_NAME, simple("${header.CamelFileName}.${header.CamelFileLastModified}"))
     .to("file:some-directory/snapshots");
 ----
-
-== Message Headers
-
-The following headers are supported by this component:
-
-=== File Watch consumer only
-
-[width="100%",cols="10%,90%",options="header",]
-|===
-|Header |Description
-
-|`CamelFileEventType` |Type of event. Possible values: CREATE, DELETE, MODIFY.
-The java type of this header is String
-
-|`CamelFileName` |Name of the consumed file as a relative file path with offset from the
-starting directory configured on the endpoint.
-
-|`CamelFileNameOnly` |Only the file name (the name with no leading paths).
-
-|`CamelFileAbsolute` |A `boolean` option specifying whether the consumed file denotes an
-absolute path or not. Should normally be `false` for relative paths.
-Absolute paths should normally not be used but we added to the move
-option to allow moving files to absolute paths. But can be used
-elsewhere as well.
-
-|`CamelFileAbsolutePath` |The absolute path to the file. For relative files this path holds the
-relative path instead.
-
-|`CamelFilePath` |The file path. For relative files this is the starting directory + the
-relative filename. For absolute files this is the absolute path.
-
-|`CamelFileRelativePath` |The relative path.
-
-|`CamelFileParent` |The parent path.
-
-|`CamelFileLastModified` |A `Long` value containing the last modified timestamp of the file.
-|===
-
 
 include::spring-boot:partial$starter.adoc[]

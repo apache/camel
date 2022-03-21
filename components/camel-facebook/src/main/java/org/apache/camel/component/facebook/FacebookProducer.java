@@ -109,8 +109,7 @@ public class FacebookProducer extends DefaultAsyncProducer {
                     // copy headers
                     exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
                     if (rawJSON != null) {
-                        exchange.getMessage().setHeader(FacebookConstants.FACEBOOK_PROPERTY_PREFIX + "rawJSON",
-                                rawJSON);
+                        exchange.getMessage().setHeader(FacebookConstants.RAW_JSON_HEADER, rawJSON);
                     }
 
                 } catch (Exception t) {

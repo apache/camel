@@ -49,7 +49,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
  * Use ElSql to define SQL queries. Extends the SQL Component.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "elsql", title = "ElSQL", syntax = "elsql:elsqlName:resourceUri",
-             category = { Category.DATABASE, Category.SQL })
+             category = { Category.DATABASE, Category.SQL }, headersClass = ElsqlConstants.class)
 public class ElsqlEndpoint extends DefaultSqlEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElsqlEndpoint.class);

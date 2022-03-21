@@ -14,25 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.freemarker;
+package org.apache.camel.component.flatpack;
 
 import org.apache.camel.spi.Metadata;
 
-/**
- * Freemarker Constants
- */
-public final class FreemarkerConstants {
+public final class FlatpackConstants {
 
-    @Metadata(description = "A URI for the template resource to use instead of the endpoint\n" +
-                            "configured.",
-              javaType = "String")
-    public static final String FREEMARKER_RESOURCE_URI = "CamelFreemarkerResourceUri";
-    @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
-    public static final String FREEMARKER_TEMPLATE = "CamelFreemarkerTemplate";
-    @Metadata(description = "The data model", javaType = "Object")
-    public static final String FREEMARKER_DATA_MODEL = "CamelFreemarkerDataModel";
+    @Metadata(label = "producer", description = "The current row index. For `splitRows=false` the counter is the total\n" +
+                                                "number of rows.",
+              javaType = "int")
+    public static final String FLATPACK_COUNTER = "CamelFlatpackCounter";
 
-    private FreemarkerConstants() {
+    private FlatpackConstants() {
         // Utility class
     }
 }

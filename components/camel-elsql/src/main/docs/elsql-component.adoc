@@ -71,7 +71,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Result of the query
 
@@ -86,22 +88,6 @@ is an alternative to using a full message enrichment pattern to add
 headers, it provides a concise syntax for querying a sequence or some
 other small value into a header.  It is convenient to use outputHeader
 and outputType together:
-
-== Header values
-
-When performing `update` operations, the SQL Component stores the update
-count in the following message headers:
-
-[width="100%",cols="10%,90%",options="header",]
-|===
-|Header |Description
-
-|`CamelSqlUpdateCount` |The number of rows updated for `update` operations, returned as an
-`Integer` object.
-
-|`CamelSqlRowCount` |The number of rows returned for `select` operations, returned as an
-`Integer` object.
-|===
 
 === Sample
 

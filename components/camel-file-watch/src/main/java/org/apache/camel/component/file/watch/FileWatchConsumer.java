@@ -143,21 +143,22 @@ public class FileWatchConsumer extends DefaultConsumer {
         File file = event.getEventPath().toFile();
         Message message = exchange.getIn();
         message.setBody(file);
-        message.setHeader(FileWatchComponent.EVENT_TYPE_HEADER, event.getEventType().name());
-        message.setHeader(Exchange.FILE_NAME_ONLY, event.getEventPath().getFileName().toString());
-        message.setHeader("CamelFileAbsolute", true);
+        message.setHeader(FileWatchConstants.EVENT_TYPE_HEADER, event.getEventType().name());
+        message.setHeader(FileWatchConstants.FILE_NAME_ONLY, event.getEventPath().getFileName().toString());
+        message.setHeader(FileWatchConstants.FILE_ABSOLUTE, true);
 
         final String absolutePath = PathUtils.normalizeToString(event.getEventPath().toAbsolutePath());
-        message.setHeader("CamelFileAbsolutePath", absolutePath);
-        message.setHeader(Exchange.FILE_PATH, absolutePath);
+        message.setHeader(FileWatchConstants.FILE_ABSOLUTE_PATH, absolutePath);
+        message.setHeader(FileWatchConstants.FILE_PATH, absolutePath);
 
         final String relativePath = PathUtils.normalizeToString(baseDirectory.relativize(event.getEventPath()));
-        message.setHeader(Exchange.FILE_NAME, relativePath);
-        message.setHeader("CamelFileRelativePath", relativePath);
-        message.setHeader(Exchange.FILE_NAME_CONSUMED, relativePath);
+        message.setHeader(FileWatchConstants.FILE_NAME, relativePath);
+        message.setHeader(FileWatchConstants.FILE_RELATIVE_PATH, relativePath);
+        message.setHeader(FileWatchConstants.FILE_NAME_CONSUMED, relativePath);
 
-        message.setHeader(Exchange.FILE_PARENT, PathUtils.normalizeToString(event.getEventPath().getParent().toAbsolutePath()));
-        message.setHeader(Exchange.FILE_LAST_MODIFIED, event.getEventDate());
+        message.setHeader(FileWatchConstants.FILE_PARENT,
+                PathUtils.normalizeToString(event.getEventPath().getParent().toAbsolutePath()));
+        message.setHeader(FileWatchConstants.FILE_LAST_MODIFIED, event.getEventDate());
         message.setHeader(Exchange.MESSAGE_TIMESTAMP, event.getEventDate());
 
         return exchange;

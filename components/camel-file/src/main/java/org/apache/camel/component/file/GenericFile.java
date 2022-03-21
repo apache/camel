@@ -150,43 +150,43 @@ public class GenericFile<T> implements WrappedFile<T>, GenericFileResumable<T> {
      */
     public void populateHeaders(GenericFileMessage<T> message, boolean isProbeContentTypeFromEndpoint) {
         if (message != null) {
-            message.setHeader(Exchange.FILE_NAME_ONLY, getFileNameOnly());
-            message.setHeader(Exchange.FILE_NAME, getFileName());
-            message.setHeader(Exchange.FILE_NAME_CONSUMED, getFileName());
-            message.setHeader("CamelFileAbsolute", isAbsolute());
-            message.setHeader("CamelFileAbsolutePath", getAbsoluteFilePath());
+            message.setHeader(FileConstants.FILE_NAME_ONLY, getFileNameOnly());
+            message.setHeader(FileConstants.FILE_NAME, getFileName());
+            message.setHeader(FileConstants.FILE_NAME_CONSUMED, getFileName());
+            message.setHeader(FileConstants.FILE_ABSOLUTE, isAbsolute());
+            message.setHeader(FileConstants.FILE_ABSOLUTE_PATH, getAbsoluteFilePath());
 
             if (extendedAttributes != null) {
-                message.setHeader("CamelFileExtendedAttributes", extendedAttributes);
+                message.setHeader(FileConstants.FILE_EXTENDED_ATTRIBUTES, extendedAttributes);
             }
 
             if ((isProbeContentTypeFromEndpoint || probeContentType) && file instanceof File) {
                 File f = (File) file;
                 Path path = f.toPath();
                 try {
-                    message.setHeader(Exchange.FILE_CONTENT_TYPE, Files.probeContentType(path));
+                    message.setHeader(FileConstants.FILE_CONTENT_TYPE, Files.probeContentType(path));
                 } catch (Exception e) {
                     // just ignore the exception
                 }
             }
 
             if (isAbsolute()) {
-                message.setHeader(Exchange.FILE_PATH, getAbsoluteFilePath());
+                message.setHeader(FileConstants.FILE_PATH, getAbsoluteFilePath());
             } else {
                 // we must normalize path according to protocol if we build our
                 // own paths
                 String path = normalizePathToProtocol(getEndpointPath() + File.separator + getRelativeFilePath());
-                message.setHeader(Exchange.FILE_PATH, path);
+                message.setHeader(FileConstants.FILE_PATH, path);
             }
 
-            message.setHeader("CamelFileRelativePath", getRelativeFilePath());
-            message.setHeader(Exchange.FILE_PARENT, getParent());
+            message.setHeader(FileConstants.FILE_RELATIVE_PATH, getRelativeFilePath());
+            message.setHeader(FileConstants.FILE_PARENT, getParent());
 
             if (getFileLength() >= 0) {
-                message.setHeader(Exchange.FILE_LENGTH, getFileLength());
+                message.setHeader(FileConstants.FILE_LENGTH, getFileLength());
             }
             if (getLastModified() > 0) {
-                message.setHeader(Exchange.FILE_LAST_MODIFIED, getLastModified());
+                message.setHeader(FileConstants.FILE_LAST_MODIFIED, getLastModified());
                 message.setHeader(Exchange.MESSAGE_TIMESTAMP, getLastModified());
             }
         }

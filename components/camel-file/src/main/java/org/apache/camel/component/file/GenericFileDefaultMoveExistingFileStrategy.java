@@ -46,9 +46,9 @@ public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExist
         Exchange dummy = endpoint.createExchange();
         String parent = FileUtil.onlyPath(fileName);
         String onlyName = FileUtil.stripPath(fileName);
-        dummy.getIn().setHeader(Exchange.FILE_NAME, fileName);
-        dummy.getIn().setHeader(Exchange.FILE_NAME_ONLY, onlyName);
-        dummy.getIn().setHeader(Exchange.FILE_PARENT, parent);
+        dummy.getIn().setHeader(FileConstants.FILE_NAME, fileName);
+        dummy.getIn().setHeader(FileConstants.FILE_NAME_ONLY, onlyName);
+        dummy.getIn().setHeader(FileConstants.FILE_PARENT, parent);
 
         String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
 

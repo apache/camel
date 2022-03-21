@@ -53,51 +53,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Message headers
-
-The supported headers are defined in
-`org.apache.camel.component.exec.ExecBinding`.
-
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Name |Type |Message |Description
-
-|`ExecBinding.EXEC_COMMAND_EXECUTABLE` |`String` |`in` |The name of the system command that will be executed. Overrides
-`executable` in the URI.
-
-|`ExecBinding.EXEC_COMMAND_ARGS` |`java.util.List<String>` |`in` |Command-line arguments to pass to the executed process. The arguments
-are used literally - no quoting is applied. Overrides any existing
-`args` in the URI.
-
-|`ExecBinding.EXEC_COMMAND_ARGS` |`String`| `in` |The arguments of the executable as a Single string where
-each argument is whitespace separated (see `args` in URI option). The
-arguments are used literally, no quoting is applied. Overrides any
-existing `args` in the URI.
-
-|`ExecBinding.EXEC_COMMAND_OUT_FILE` |`String` |`in` |The name of a file, created by the executable, that should be considered
-as its output. Overrides any existing `outFile` in the URI.
-
-|`ExecBinding.EXEC_COMMAND_TIMEOUT` |`long` |`in` |The timeout, in milliseconds, after which the executable should be
-terminated. Overrides any existing `timeout` in the URI.
-
-|`ExecBinding.EXEC_COMMAND_WORKING_DIR` |`String` |`in` |The directory in which the command should be executed. Overrides any
-existing `workingDir` in the URI.
-
-|`ExecBinding.EXEC_EXIT_VALUE` |`int` |`out` |The value of this header is the _exit value_ of the executable. Non-zero
-exit values typically indicate abnormal termination. Note that the exit
-value is OS-dependent.
-
-|`ExecBinding.EXEC_STDERR` |`java.io.InputStream` |`out` |The value of this header points to the standard error stream (stderr) of
-the executable. If no stderr is written, the value is `null`.
-
-|`ExecBinding.EXEC_USE_STDERR_ON_EMPTY_STDOUT` |`boolean` |`in` |Indicates that when `stdout` is empty, this component will populate the
-Camel Message Body with `stderr`. This behavior is disabled (`false`) by
-default.
-
-|`ExecBinding.EXEC_COMMANDS_LOG_LEVEL` |`String` |`in` |Logging level to be used for commands during execution. The default value is DEBUG.
-Possible values are TRACE, DEBUG, INFO, WARN, ERROR or OFF (Values of LoggingLevel enum)
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Message body
 

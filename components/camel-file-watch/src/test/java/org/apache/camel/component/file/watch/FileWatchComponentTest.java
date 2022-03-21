@@ -122,7 +122,7 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
         MockEndpoint mock = getMockEndpoint("mock:watchAll");
         mock.expectedMessageCount(10);
         mock.expectedMessagesMatches(exchange -> exchange.getIn()
-                .getHeader(FileWatchComponent.EVENT_TYPE_HEADER, FileEventEnum.class) == FileEventEnum.CREATE);
+                .getHeader(FileWatchConstants.EVENT_TYPE_HEADER, FileEventEnum.class) == FileEventEnum.CREATE);
 
         for (int i = 0; i < 10; i++) {
             createFile(testPath(), i + "");

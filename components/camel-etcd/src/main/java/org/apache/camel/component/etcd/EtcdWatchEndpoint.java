@@ -21,11 +21,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 
+import static org.apache.camel.component.etcd.EtcdConstants.SCHEME_WATCH;
+
 /**
  * Watch specific etcd keys or directories for changes.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "etcd-watch", title = "Etcd Watch", consumerOnly = true,
-             syntax = "etcd-watch:path", label = "clustering,database")
+@UriEndpoint(firstVersion = "2.18.0", scheme = SCHEME_WATCH, title = "Etcd Watch", consumerOnly = true,
+             syntax = "etcd-watch:path", label = "clustering,database", headersClass = EtcdConstants.class)
 public class EtcdWatchEndpoint extends AbstractEtcdEndpoint {
 
     public EtcdWatchEndpoint(

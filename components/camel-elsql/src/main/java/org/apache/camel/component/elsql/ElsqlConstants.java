@@ -14,25 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.freemarker;
+package org.apache.camel.component.elsql;
 
+import org.apache.camel.component.sql.SqlConstants;
 import org.apache.camel.spi.Metadata;
 
-/**
- * Freemarker Constants
- */
-public final class FreemarkerConstants {
+public final class ElsqlConstants {
 
-    @Metadata(description = "A URI for the template resource to use instead of the endpoint\n" +
-                            "configured.",
-              javaType = "String")
-    public static final String FREEMARKER_RESOURCE_URI = "CamelFreemarkerResourceUri";
-    @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
-    public static final String FREEMARKER_TEMPLATE = "CamelFreemarkerTemplate";
-    @Metadata(description = "The data model", javaType = "Object")
-    public static final String FREEMARKER_DATA_MODEL = "CamelFreemarkerDataModel";
+    @Metadata(label = "producer", description = "The number of rows updated for `update` operations, returned as an\n" +
+                            "`Integer` object.",
+              javaType = "Integer")
+    public static final String SQL_UPDATE_COUNT = SqlConstants.SQL_UPDATE_COUNT;
+    @Metadata(label = "producer", description = "The number of rows returned for `select` operations, returned as an\n" +
+                            "`Integer` object.",
+              javaType = "Integer")
+    public static final String SQL_ROW_COUNT = SqlConstants.SQL_ROW_COUNT;
 
-    private FreemarkerConstants() {
+    private ElsqlConstants() {
         // Utility class
     }
 }
