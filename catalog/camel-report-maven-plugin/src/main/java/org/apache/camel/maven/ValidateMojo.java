@@ -219,15 +219,13 @@ public class ValidateMojo extends AbstractExecMojo {
         // TODO: implement me
 
         Set<File> propertiesFiles = new LinkedHashSet<>();
-        List list = project.getResources();
-        for (Object obj : list) {
-            Resource dir = (Resource) obj;
+        List<Resource> list = project.getResources();
+        for (Resource dir : list) {
             findPropertiesFiles(new File(dir.getDirectory()), propertiesFiles);
         }
         if (includeTest) {
             list = project.getTestResources();
-            for (Object obj : list) {
-                Resource dir = (Resource) obj;
+            for (Resource dir : list) {
                 findPropertiesFiles(new File(dir.getDirectory()), propertiesFiles);
             }
         }
@@ -656,15 +654,13 @@ public class ValidateMojo extends AbstractExecMojo {
 
     private void findXmlRouters(Set<File> xmlFiles) {
         if (includeXml) {
-            List list = project.getResources();
-            for (Object obj : list) {
-                Resource dir = (Resource) obj;
+            List<Resource> list = project.getResources();
+            for (Resource dir : list) {
                 findXmlFiles(new File(dir.getDirectory()), xmlFiles);
             }
             if (includeTest) {
                 list = project.getTestResources();
-                for (Object obj : list) {
-                    Resource dir = (Resource) obj;
+                for (Resource dir : list) {
                     findXmlFiles(new File(dir.getDirectory()), xmlFiles);
                 }
             }
@@ -673,15 +669,13 @@ public class ValidateMojo extends AbstractExecMojo {
 
     private void findJavaRouteBuilderClasses(Set<File> javaFiles) {
         if (includeJava) {
-            List list = project.getCompileSourceRoots();
-            for (Object obj : list) {
-                String dir = (String) obj;
+            List<String> list = project.getCompileSourceRoots();
+            for (String dir : list) {
                 findJavaFiles(new File(dir), javaFiles);
             }
             if (includeTest) {
                 list = project.getTestCompileSourceRoots();
-                for (Object obj : list) {
-                    String dir = (String) obj;
+                for (String dir : list) {
                     findJavaFiles(new File(dir), javaFiles);
                 }
             }
@@ -949,9 +943,8 @@ public class ValidateMojo extends AbstractExecMojo {
     private static String findCamelVersion(MavenProject project) {
         Dependency candidate = null;
 
-        List list = project.getDependencies();
-        for (Object obj : list) {
-            Dependency dep = (Dependency) obj;
+        List<Dependency> list = project.getDependencies();
+        for (Dependency dep : list) {
             if ("org.apache.camel".equals(dep.getGroupId())) {
                 if ("camel-core".equals(dep.getArtifactId())) {
                     // favor camel-core
@@ -1073,33 +1066,29 @@ public class ValidateMojo extends AbstractExecMojo {
     private String stripRootPath(String name) {
         // strip out any leading source / resource directory
 
-        List list = project.getCompileSourceRoots();
-        for (Object obj : list) {
-            String dir = (String) obj;
+        List<String> list = project.getCompileSourceRoots();
+        for (String dir : list) {
             dir = asRelativeFile(dir);
             if (name.startsWith(dir)) {
                 return name.substring(dir.length() + 1);
             }
         }
         list = project.getTestCompileSourceRoots();
-        for (Object obj : list) {
-            String dir = (String) obj;
+        for (String dir : list) {
             dir = asRelativeFile(dir);
             if (name.startsWith(dir)) {
                 return name.substring(dir.length() + 1);
             }
         }
-        List resources = project.getResources();
-        for (Object obj : resources) {
-            Resource resource = (Resource) obj;
+        List<Resource> resources = project.getResources();
+        for (Resource resource : resources) {
             String dir = asRelativeFile(resource.getDirectory());
             if (name.startsWith(dir)) {
                 return name.substring(dir.length() + 1);
             }
         }
         resources = project.getTestResources();
-        for (Object obj : resources) {
-            Resource resource = (Resource) obj;
+        for (Resource resource : resources) {
             String dir = asRelativeFile(resource.getDirectory());
             if (name.startsWith(dir)) {
                 return name.substring(dir.length() + 1);
