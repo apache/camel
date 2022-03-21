@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.fop;
 
+import org.apache.camel.spi.Metadata;
+
 public interface FopConstants {
     String CAMEL_FOP_RENDER = "CamelFop.Render.";
     String CAMEL_FOP_ENCRYPT = "CamelFop.Encrypt.";
     String CAMEL_FOP_RENDERER_OPTIONS = "CamelFop.RendererOptions.";
+    @Metadata(description = "The output format", javaType = "String")
     String CAMEL_FOP_OUTPUT_FORMAT = "CamelFop.Output.Format";
 }
