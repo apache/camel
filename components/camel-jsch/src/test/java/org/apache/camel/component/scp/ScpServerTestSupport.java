@@ -23,6 +23,9 @@ import java.security.Provider.Service;
 import java.security.PublicKey;
 import java.security.Security;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Consumer;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -30,7 +33,11 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.sshd.common.NamedFactory;
+import org.apache.sshd.common.kex.KeyExchangeFactory;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
+import org.apache.sshd.common.signature.BuiltinSignatures;
+import org.apache.sshd.common.signature.Signature;
 import org.apache.sshd.scp.server.ScpCommandFactory;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
@@ -57,6 +64,8 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
 
     private boolean setupComplete;
     private SshServer sshd;
+
+    protected Consumer<SshServer> serverConfigurer = null;
 
     protected ScpServerTestSupport() {
         this(true);
@@ -136,6 +145,14 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
                 return true;
             }
         });
+        List<NamedFactory<Signature>> signatures = new LinkedList<NamedFactory<Signature>>(sshd.getSignatureFactories());
+        signatures.remove(BuiltinSignatures.rsa);
+        sshd.setSignatureFactories(signatures);
+        List<KeyExchangeFactory> kexFactories = new LinkedList<KeyExchangeFactory>(sshd.getKeyExchangeFactories());
+        sshd.setKeyExchangeFactories(kexFactories);
+        if (serverConfigurer != null) {
+            serverConfigurer.accept(sshd);
+        }
         try {
             sshd.start();
             return true;
