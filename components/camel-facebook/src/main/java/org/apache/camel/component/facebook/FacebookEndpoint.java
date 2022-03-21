@@ -55,7 +55,7 @@ import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.
  * locations, etc.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "facebook", title = "Facebook", syntax = "facebook:methodName",
-             category = { Category.SOCIAL })
+             category = { Category.SOCIAL }, headersClass = FacebookConstants.class)
 public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstants {
 
     private static final Logger LOG = LoggerFactory.getLogger(FacebookEndpoint.class);
