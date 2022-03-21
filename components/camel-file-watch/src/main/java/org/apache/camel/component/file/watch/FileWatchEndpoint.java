@@ -37,7 +37,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Get notified about file events in a directory using {@link java.nio.file.WatchService}.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "file-watch", title = "File Watch", syntax = "file-watch:path",
-             category = { Category.FILE }, consumerOnly = true)
+             category = { Category.FILE }, consumerOnly = true, headersClass = FileWatchConstants.class)
 public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath(label = "consumer", description = "Path of directory to consume events from.")
     @Metadata(required = true)
