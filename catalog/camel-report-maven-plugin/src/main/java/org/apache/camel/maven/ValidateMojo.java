@@ -41,7 +41,6 @@ import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
 import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.model.Dependency;
@@ -234,9 +233,7 @@ public class ValidateMojo extends AbstractExecMojo {
 
         for (File file : propertiesFiles) {
             if (matchPropertiesFile(file)) {
-                InputStream is = null;
-                try {
-                    is = new FileInputStream(file);
+                try (InputStream is = new FileInputStream(file)) {
                     Properties prop = new OrderedProperties();
                     prop.load(is);
 
@@ -261,8 +258,6 @@ public class ValidateMojo extends AbstractExecMojo {
                     }
                 } catch (Exception e) {
                     getLog().warn("Error parsing file " + file + " code due " + e.getMessage(), e);
-                } finally {
-                    IOHelper.close(is);
                 }
             }
         }
