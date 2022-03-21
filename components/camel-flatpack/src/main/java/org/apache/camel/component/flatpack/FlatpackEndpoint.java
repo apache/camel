@@ -49,7 +49,7 @@ import org.apache.camel.util.ObjectHelper;
  * Parse fixed width and delimited files using the FlatPack library.
  */
 @UriEndpoint(firstVersion = "1.4.0", scheme = "flatpack", title = "Flatpack", syntax = "flatpack:type:resourceUri",
-             category = { Category.TRANSFORMATION })
+             category = { Category.TRANSFORMATION }, headersClass = FlatpackConstants.class)
 public class FlatpackEndpoint extends DefaultPollingEndpoint {
 
     private LoadBalancer loadBalancer = new RoundRobinLoadBalancer();
@@ -101,7 +101,7 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
         Exchange exchange = ExchangeHelper.createCorrelatedCopy(originalExchange, false);
         Message in = exchange.getIn();
         in.setBody(dataSet);
-        in.setHeader("CamelFlatpackCounter", counter);
+        in.setHeader(FlatpackConstants.FLATPACK_COUNTER, counter);
         loadBalancer.process(exchange);
     }
 
