@@ -207,7 +207,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Object name = exchange.getIn().getHeader(Exchange.FILE_NAME);
+        Object name = exchange.getIn().getHeader(FileConstants.FILE_NAME);
         if (name != null) {
             LOG.debug("Received file: {}", name);
         }

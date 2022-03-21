@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.file.FileConstants;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
@@ -152,7 +153,7 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
 
     protected void deleteLocalWorkFile(Exchange exchange) {
         // delete local work file, if it was used (eg by ftp component)
-        File local = exchange.getIn().getHeader(Exchange.FILE_LOCAL_WORK_PATH, File.class);
+        File local = exchange.getIn().getHeader(FileConstants.FILE_LOCAL_WORK_PATH, File.class);
         if (local != null && local.exists()) {
             boolean deleted = FileUtil.deleteFile(local);
             LOG.trace("Local work file: {} was deleted: {}", local, deleted);
