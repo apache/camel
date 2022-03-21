@@ -4059,7 +4059,7 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Will keep the last modified timestamp from the source file (if any).
-         * Will use the Exchange.FILE_LAST_MODIFIED header to located the
+         * Will use the FileConstants.FILE_LAST_MODIFIED header to located the
          * timestamp. This header can contain either a java.util.Date or long
          * with the timestamp. If the timestamp exists and the option is enabled
          * it will set this timestamp on the written file. Note: This option
@@ -4081,7 +4081,7 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Will keep the last modified timestamp from the source file (if any).
-         * Will use the Exchange.FILE_LAST_MODIFIED header to located the
+         * Will use the FileConstants.FILE_LAST_MODIFIED header to located the
          * timestamp. This header can contain either a java.util.Date or long
          * with the timestamp. If the timestamp exists and the option is enabled
          * it will set this timestamp on the written file. Note: This option
