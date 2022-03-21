@@ -25,8 +25,10 @@ import java.util.Properties;
  *
  * This can be used to track all the various sources for configuration that a Camel application uses (properties file,
  * ENV variables, hardcoded in java, spring-boot, quarkus, camel-k modeline, camel-yaml-dsl etc.
+ *
+ * <b>Important:</b> Use the put method that takes location as argument to store location information.
  */
-public class OrderedLocationProperties extends OrderedProperties {
+public final class OrderedLocationProperties extends BaseOrderedProperties {
 
     private final Map<Object, String> locations = new HashMap<>();
 
