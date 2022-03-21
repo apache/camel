@@ -84,7 +84,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == FTPS component default trust store
 
@@ -201,43 +203,6 @@ When moving files using `move` or `preMove` option the files are
 restricted to the FTP_ROOT folder. That prevents you from moving files
 outside the FTP area. If you want to move files to another area you can
 use soft links and move files into a soft linked folder.
-
-== Message Headers
-
-The following message headers can be used to affect the behavior of the
-component
-
-[width="100%",cols="50%,50%",options="header",]
-|=======================================================================
-|Header |Description
-
-|`CamelFileName` |Specifies the output file name (relative to the endpoint directory) to
-be used for the output message when sending to the endpoint. If this is
-not present and no expression either, then a generated message ID is
-used as the filename instead.
-
-|`CamelFileNameProduced` |The actual filepath (path + name) for the output file that was written.
-This header is set by Camel and its purpose is providing end-users the
-name of the file that was written.
-
-|`CamelFileNameConsumed` |The file name of the file consumed
-
-|`CamelFileHost` |The remote hostname.
-
-|`CamelFileLocalWorkPath` |Path to the local work file, if local work directory is used.
-|=======================================================================
-
-In addition the FTP/FTPS consumer and producer will enrich the Camel
-`Message` with the following headers
-
-[width="100%",cols="50%,50%",options="header",]
-|=======================================================================
-|Header |Description
-
-|`CamelFtpReplyCode` |The FTP client reply code (the type is a integer)
-
-|`CamelFtpReplyString` |The FTP client reply string
-|=======================================================================
 
 == Exchange Properties
 

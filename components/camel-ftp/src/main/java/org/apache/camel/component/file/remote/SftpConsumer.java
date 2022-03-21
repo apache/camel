@@ -300,10 +300,10 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
             file.setFileLength(length);
             file.setLastModified(modified);
             if (length >= 0) {
-                message.setHeader(Exchange.FILE_LENGTH, length);
+                message.setHeader(FtpConstants.FILE_LENGTH, length);
             }
             if (modified >= 0) {
-                message.setHeader(Exchange.FILE_LAST_MODIFIED, modified);
+                message.setHeader(FtpConstants.FILE_LAST_MODIFIED, modified);
             }
         }
     }

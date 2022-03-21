@@ -52,7 +52,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     @Override
     public void process(Exchange exchange) throws Exception {
         // store any existing file header which we want to keep and propagate
-        final String existing = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+        final String existing = exchange.getIn().getHeader(FtpConstants.FILE_NAME, String.class);
 
         // create the target file name
         String target = createFileName(exchange);
@@ -64,7 +64,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
             // (by design)
             exchange.getIn().removeHeader(Exchange.OVERRULE_FILE_NAME);
             // and restore existing file name
-            exchange.getIn().setHeader(Exchange.FILE_NAME, existing);
+            exchange.getIn().setHeader(FtpConstants.FILE_NAME, existing);
         }
     }
 

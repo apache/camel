@@ -48,9 +48,9 @@ public class SftpDefaultMoveExistingFileStrategy implements FileMoveExistingStra
         //any leading separator
         String parent = FileUtil.stripLeadingSeparator(FileUtil.onlyPath(fileName));
         String onlyName = FileUtil.stripPath(fileName);
-        dummy.getIn().setHeader(Exchange.FILE_NAME, fileName);
-        dummy.getIn().setHeader(Exchange.FILE_NAME_ONLY, onlyName);
-        dummy.getIn().setHeader(Exchange.FILE_PARENT, parent);
+        dummy.getIn().setHeader(FtpConstants.FILE_NAME, fileName);
+        dummy.getIn().setHeader(FtpConstants.FILE_NAME_ONLY, onlyName);
+        dummy.getIn().setHeader(FtpConstants.FILE_PARENT, parent);
 
         String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
 

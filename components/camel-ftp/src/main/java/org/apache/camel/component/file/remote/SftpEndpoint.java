@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriParam;
  * Upload and download files to/from SFTP servers.
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "sftp", extendsScheme = "file", title = "SFTP",
-             syntax = "sftp:host:port/directoryName", label = "file")
+             syntax = "sftp:host:port/directoryName", label = "file", headersClass = FtpConstants.class)
 @Metadata(excludeProperties = "appendChars,bufferSize,siteCommand,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                               + "startingDirectoryMustHaveAccess,forceWrites,copyAndDeleteOnRenameFail,"

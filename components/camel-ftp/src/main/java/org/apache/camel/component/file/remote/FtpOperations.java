@@ -434,7 +434,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     @Override
     public void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
-        InputStream is = exchange.getIn().getHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, InputStream.class);
+        InputStream is = exchange.getIn().getHeader(FtpConstants.REMOTE_FILE_INPUT_STREAM, InputStream.class);
 
         if (is != null) {
             try {
@@ -480,7 +480,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             if (endpoint.getConfiguration().isStreamDownload()) {
                 InputStream is = client.retrieveFileStream(remoteName);
                 target.setBody(is);
-                exchange.getIn().setHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, is);
+                exchange.getIn().setHeader(FtpConstants.REMOTE_FILE_INPUT_STREAM, is);
                 result = true;
             } else {
                 // read the entire file into memory in the byte array
@@ -568,7 +568,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             os = new FileOutputStream(temp, append);
 
             // set header with the path to the local work file
-            exchange.getIn().setHeader(Exchange.FILE_LOCAL_WORK_PATH, local.getPath());
+            exchange.getIn().setHeader(FtpConstants.FILE_LOCAL_WORK_PATH, local.getPath());
 
         } catch (Exception e) {
             throw new GenericFileOperationFailedException("Cannot create new local work file: " + local);
