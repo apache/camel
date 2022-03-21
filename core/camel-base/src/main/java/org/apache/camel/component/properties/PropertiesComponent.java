@@ -44,6 +44,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,11 +181,11 @@ public class PropertiesComponent extends ServiceSupport
         // this method may be replaced by loadProperties(k -> true) but the underlying sources
         // may have some optimization for bulk load so let's keep it
 
-        Properties prop = new OrderedProperties();
+        OrderedLocationProperties prop = new OrderedLocationProperties();
 
         // use initial properties
         if (initialProperties != null) {
-            prop.putAll(initialProperties);
+            prop.putAll("initial", initialProperties);
         }
 
         if (!sources.isEmpty()) {
@@ -196,7 +197,14 @@ public class PropertiesComponent extends ServiceSupport
                 if (ps instanceof LoadablePropertiesSource) {
                     LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
                     Properties p = lps.loadProperties();
-                    prop.putAll(p);
+                    if (p instanceof OrderedLocationProperties) {
+                        prop.putAll((OrderedLocationProperties) p);
+                    } else if (ps instanceof LocationPropertiesSource) {
+                        String loc = ((LocationPropertiesSource) ps).getLocation().getPath();
+                        prop.putAll(loc, p);
+                    } else {
+                        prop.putAll(lps.getName(), p);
+                    }
                 }
             }
         }
@@ -204,9 +212,9 @@ public class PropertiesComponent extends ServiceSupport
         // use override properties
         if (overrideProperties != null) {
             // make a copy to avoid affecting the original properties
-            Properties override = new OrderedProperties();
+            OrderedLocationProperties override = new OrderedLocationProperties();
             override.putAll(prop);
-            override.putAll(overrideProperties);
+            override.putAll("override", overrideProperties);
             prop = override;
         }
 
@@ -215,13 +223,13 @@ public class PropertiesComponent extends ServiceSupport
 
     @Override
     public Properties loadProperties(Predicate<String> filter) {
-        Properties prop = new OrderedProperties();
+        OrderedLocationProperties prop = new OrderedLocationProperties();
 
         // use initial properties
         if (initialProperties != null) {
             for (String name : initialProperties.stringPropertyNames()) {
                 if (filter.test(name)) {
-                    prop.put(name, initialProperties.get(name));
+                    prop.put("initial", name, initialProperties.get(name));
                 }
             }
         }
@@ -235,7 +243,14 @@ public class PropertiesComponent extends ServiceSupport
                 if (ps instanceof LoadablePropertiesSource) {
                     LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
                     Properties p = lps.loadProperties(filter);
-                    prop.putAll(p);
+                    if (p instanceof OrderedLocationProperties) {
+                        prop.putAll((OrderedLocationProperties) p);
+                    } else if (ps instanceof LocationPropertiesSource) {
+                        String loc = ((LocationPropertiesSource) ps).getLocation().getPath();
+                        prop.putAll(loc, p);
+                    } else {
+                        prop.putAll(lps.getName(), p);
+                    }
                 }
             }
         }
@@ -244,7 +259,7 @@ public class PropertiesComponent extends ServiceSupport
         if (overrideProperties != null) {
             for (String name : overrideProperties.stringPropertyNames()) {
                 if (filter.test(name)) {
-                    prop.put(name, overrideProperties.get(name));
+                    prop.put("override", name, overrideProperties.get(name));
                 }
             }
         }

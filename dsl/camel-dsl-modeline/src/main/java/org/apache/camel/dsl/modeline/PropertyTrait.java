@@ -18,15 +18,17 @@ package org.apache.camel.dsl.modeline;
 
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.CamelContextCustomizer;
-import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesSource;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.util.OrderedProperties;
+import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -34,11 +36,10 @@ import org.apache.camel.util.StringHelper;
  * property values.
  */
 @JdkService("properties-source-factory")
-public class PropertyTrait implements Trait, PropertiesSource, CamelContextAware {
+public class PropertyTrait implements Trait, LoadablePropertiesSource, CamelContextAware {
 
-    private final Properties properties = new OrderedProperties();
+    private final OrderedLocationProperties properties = new OrderedLocationProperties();
     private CamelContext camelContext;
-    private PropertiesComponent pc;
 
     @Override
     public CamelContext getCamelContext() {
@@ -61,11 +62,11 @@ public class PropertyTrait implements Trait, PropertiesSource, CamelContextAware
     }
 
     @Override
-    public CamelContextCustomizer parseTrait(String trait) {
+    public CamelContextCustomizer parseTrait(Resource resource, String trait) {
         if (trait.contains("=")) {
             String key = StringHelper.before(trait, "=").trim();
             String value = StringHelper.after(trait, "=").trim();
-            setProperty(key, value);
+            setProperty(resource, key, value);
         } else {
             if (ResourceHelper.hasScheme(trait)) {
                 // it is a properties file so load resource
@@ -76,7 +77,7 @@ public class PropertyTrait implements Trait, PropertiesSource, CamelContextAware
                         String v = prop.getProperty(k);
                         String key = k.trim();
                         String value = v.trim();
-                        setProperty(key, value);
+                        setProperty(resource, key, value);
                     }
                 } catch (Exception e) {
                     // ignore
@@ -86,12 +87,42 @@ public class PropertyTrait implements Trait, PropertiesSource, CamelContextAware
         return null;
     }
 
-    protected void setProperty(String key, String value) {
-        properties.setProperty(key, value);
+    protected void setProperty(Resource resource, String key, String value) {
+        String loc = resource.getLocation();
+        properties.put(loc, key, value);
+
+        /*
         if (!camelContext.isStarted()) {
             // if we are bootstrapping then also set as initial property, so it can be used there as well
+            // TODO: source location from resource
+            // TODO: loadable properties source
+            String loc = resource.getLocation();
             camelContext.getPropertiesComponent().addInitialProperty(key, value);
         }
+        */
+    }
+
+    @Override
+    public Properties loadProperties() {
+        return properties;
+    }
+
+    @Override
+    public Properties loadProperties(Predicate<String> filter) {
+        OrderedLocationProperties answer = new OrderedLocationProperties();
+
+        for (String name : properties.stringPropertyNames()) {
+            if (filter.test(name)) {
+                answer.put(properties.getLocation(name), name, properties.get(name));
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public void reloadProperties(String location) {
+        // noop
     }
 
     @Override

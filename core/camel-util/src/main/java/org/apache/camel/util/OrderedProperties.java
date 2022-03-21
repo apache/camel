@@ -33,11 +33,15 @@ import java.util.Vector;
  * been designed to provide the needed functionality. The complex logic for loading properties has been kept from the
  * JDK {@link Properties} class.
  */
-public final class OrderedProperties extends Properties {
+public class OrderedProperties extends Properties {
 
-    private final Map<String, String> map = new LinkedHashMap<>();
+    private final Map<String, Object> map = new LinkedHashMap<>();
 
     public OrderedProperties() {
+    }
+
+    public Map<String, Object> asMap() {
+        return map;
     }
 
     @Override
@@ -74,12 +78,12 @@ public final class OrderedProperties extends Properties {
 
     @Override
     public String getProperty(String key) {
-        return map.get(key);
+        return (String) map.get(key);
     }
 
     @Override
     public String getProperty(String key, String defaultValue) {
-        return map.getOrDefault(key, defaultValue);
+        return (String) map.getOrDefault(key, defaultValue);
     }
 
     @Override
