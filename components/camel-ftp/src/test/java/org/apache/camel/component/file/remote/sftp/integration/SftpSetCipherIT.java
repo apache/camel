@@ -31,7 +31,7 @@ public class SftpSetCipherIT extends SftpServerTestSupport {
 
     @Test
     public void testSftpSetCipherName() {
-        String cipher = "blowfish-cbc";
+        String cipher = "aes256-ctr";
         String uri
                 = "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&ciphers="
                   + cipher;
