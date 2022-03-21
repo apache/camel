@@ -22,11 +22,11 @@ import org.apache.camel.spi.Metadata;
 public final class ElsqlConstants {
 
     @Metadata(label = "producer", description = "The number of rows updated for `update` operations, returned as an\n" +
-                            "`Integer` object.",
+                                                "`Integer` object.",
               javaType = "Integer")
     public static final String SQL_UPDATE_COUNT = SqlConstants.SQL_UPDATE_COUNT;
     @Metadata(label = "producer", description = "The number of rows returned for `select` operations, returned as an\n" +
-                            "`Integer` object.",
+                                                "`Integer` object.",
               javaType = "Integer")
     public static final String SQL_ROW_COUNT = SqlConstants.SQL_ROW_COUNT;
 
