@@ -38,6 +38,10 @@
     "useGlobalSslContextParameters": { "kind": "property", "displayName": "Use Global Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Enable usage of global SSL context parameters." },
     "userName": { "kind": "property", "displayName": "User Name", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.etcd.EtcdConfiguration", "configurationField": "configuration", "description": "The user name to use for basic authentication." }
   },
+  "headers": {
+    "CamelEtcdNamespace": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The namespace" },
+    "CamelEtcdPath": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The target path" }
+  },
   "properties": {
     "path": { "kind": "path", "displayName": "Path", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The path the endpoint refers to" },
     "recursive": { "kind": "parameter", "displayName": "Recursive", "group": "common", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.etcd.EtcdConfiguration", "configurationField": "configuration", "description": "To apply an action recursively." },
