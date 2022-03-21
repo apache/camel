@@ -408,25 +408,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
             LOG.info("Auto-configuration summary");
             for (var entry : autoConfiguredProperties.entrySet()) {
-                Object k = entry.getKey();
+                String k = entry.getKey().toString();
                 Object v = entry.getValue();
+                String loc = locationSummary(autoConfiguredProperties, k);
 
-                String loc = autoConfiguredProperties.getLocation(k);
-                if (loc == null) {
-                    loc = "";
-                }
-                // remove scheme to make it shorter
-                if (loc.contains(":")) {
-                    loc = StringHelper.after(loc, ":");
-                }
-                if (loc.length() > 28) {
-                    int pos = loc.length() - 28;
-                    loc = loc.substring(pos);
-                }
-                loc = "[" + loc + "]";
-                loc = String.format("%-30s", loc);
-
-                if (SensitiveUtils.containsSensitive(k.toString())) {
+                if (SensitiveUtils.containsSensitive(k)) {
                     LOG.info("    {} {}=xxxxxx", loc, k);
                 } else {
                     LOG.info("    {} {}={}", loc, k, v);
@@ -1093,8 +1079,6 @@ public abstract class BaseMainSupport extends BaseService {
 
         // and call after all properties are set
         DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
-
-        // TODO: record for each used configuration its source
     }
 
     private void setRouteTemplateProperties(
@@ -1541,8 +1525,6 @@ public abstract class BaseMainSupport extends BaseService {
                 });
             }
         }
-
-        // TODO: summary of location
     }
 
     protected void autowireWildcardProperties(CamelContext camelContext) {
@@ -1592,14 +1574,17 @@ public abstract class BaseMainSupport extends BaseService {
             // log summary of configurations
             if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
                 LOG.info("Auto-configuration component {} summary", name);
-                autoConfiguredProperties.forEach((k, v) -> {
-                    // TOOD: summary
-                    if (SensitiveUtils.containsSensitive(k.toString())) {
-                        LOG.info("    {}=xxxxxx", k);
+                for (var entry : autoConfiguredProperties.entrySet()) {
+                    String k = entry.getKey().toString();
+                    Object v = entry.getValue();
+                    String loc = locationSummary(autoConfiguredProperties, k);
+
+                    if (SensitiveUtils.containsSensitive(k)) {
+                        LOG.info("    {} {}=xxxxxx", loc, k);
                     } else {
-                        LOG.info("    {}={}", k, v);
+                        LOG.info("    {} {}={}", loc, k, v);
                     }
-                });
+                }
             }
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
@@ -1619,6 +1604,24 @@ public abstract class BaseMainSupport extends BaseService {
             camelContext.addService(answer, true, false);
         }
         return answer;
+    }
+
+    private static String locationSummary(OrderedLocationProperties autoConfiguredProperties, String key) {
+        String loc = autoConfiguredProperties.getLocation(key);
+        if (loc == null) {
+            loc = "";
+        }
+        // remove scheme to make it shorter
+        if (loc.contains(":")) {
+            loc = StringHelper.after(loc, ":");
+        }
+        if (loc.length() > 28) {
+            int pos = loc.length() - 28;
+            loc = loc.substring(pos);
+        }
+        loc = "[" + loc + "]";
+        loc = String.format("%-30s", loc);
+        return loc;
     }
 
 }
