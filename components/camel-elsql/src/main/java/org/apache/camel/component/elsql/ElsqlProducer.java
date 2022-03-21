@@ -33,7 +33,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.component.sql.ResultSetIterator;
 import org.apache.camel.component.sql.ResultSetIteratorCompletion;
-import org.apache.camel.component.sql.SqlConstants;
 import org.apache.camel.component.sql.SqlOutputType;
 import org.apache.camel.component.sql.SqlPrepareStatementStrategy;
 import org.apache.camel.support.DefaultProducer;
@@ -131,7 +130,7 @@ public class ElsqlProducer extends DefaultProducer {
                         for (final int count : updateCounts) {
                             total += count;
                         }
-                        exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, total);
+                        exchange.getIn().setHeader(ElsqlConstants.SQL_UPDATE_COUNT, total);
                     } else {
                         isResultSet = ps.execute();
                         if (isResultSet) {
@@ -153,7 +152,7 @@ public class ElsqlProducer extends DefaultProducer {
                                 } else {
                                     exchange.getOut().setBody(data);
                                 }
-                                exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, data.size());
+                                exchange.getOut().setHeader(ElsqlConstants.SQL_ROW_COUNT, data.size());
                             } else if (outputType == SqlOutputType.SelectOne) {
                                 final Object data = getEndpoint().queryForObject(rs);
                                 if (data != null) {
@@ -166,14 +165,14 @@ public class ElsqlProducer extends DefaultProducer {
                                     } else {
                                         exchange.getOut().setBody(data);
                                     }
-                                    exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, 1);
+                                    exchange.getOut().setHeader(ElsqlConstants.SQL_ROW_COUNT, 1);
                                 } else {
                                     if (getEndpoint().isNoop()) {
                                         exchange.getOut().setBody(exchange.getIn().getBody());
                                     } else if (getEndpoint().getOutputHeader() != null) {
                                         exchange.getOut().setBody(exchange.getIn().getBody());
                                     }
-                                    exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, 0);
+                                    exchange.getOut().setHeader(ElsqlConstants.SQL_ROW_COUNT, 0);
                                 }
                             } else {
                                 throw new IllegalArgumentException("Invalid outputType=" + outputType);
@@ -181,7 +180,7 @@ public class ElsqlProducer extends DefaultProducer {
                         } else {
                             // if we are here, there isResultSet is false. This can happen only if we are doing an update operation or there is no result.
                             // we can simply add the updateCount in this case.
-                            exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
+                            exchange.getIn().setHeader(ElsqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
                         }
                     }
                 } finally {
