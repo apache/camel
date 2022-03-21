@@ -59,13 +59,13 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
     protected static final String KNOWN_HOSTS = "known_hosts";
     protected static int port;
 
+    protected Consumer<SshServer> serverConfigurer;
+
     private boolean acceptLocalhostConnections = true;
     private String knownHostsFile;
 
     private boolean setupComplete;
     private SshServer sshd;
-
-    protected Consumer<SshServer> serverConfigurer = null;
 
     protected ScpServerTestSupport() {
         this(true);

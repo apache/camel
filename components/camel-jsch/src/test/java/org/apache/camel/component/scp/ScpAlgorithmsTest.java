@@ -59,13 +59,25 @@ public class ScpAlgorithmsTest extends ScpServerTestSupport {
     @Test
     public void testScpSimpleProduceWithDifferentAlgorithms() throws Exception {
         Config[] configs = new Config[] {
-//                new Config("hostkey-dsa.pem", BuiltinSignatures.dsa, BuiltinDHFactories.dhg14_256, BuiltinCiphers.aes128ctr),
-                new Config("hostkey-rsa.pem", BuiltinSignatures.rsaSHA256, BuiltinDHFactories.dhg16_512, BuiltinCiphers.aes192ctr),
-                new Config("hostkey-rsa.pem", BuiltinSignatures.rsaSHA512, BuiltinDHFactories.dhg16_512, BuiltinCiphers.aes192ctr),
-                new Config("hostkey-ecdsa256.pem", BuiltinSignatures.nistp256, BuiltinDHFactories.ecdhp256, BuiltinCiphers.aes128ctr),
-                new Config("hostkey-ecdsa384.pem", BuiltinSignatures.nistp384, BuiltinDHFactories.ecdhp384, BuiltinCiphers.aes192ctr),
-                new Config("hostkey-ecdsa521.pem", BuiltinSignatures.nistp521, BuiltinDHFactories.ecdhp521, BuiltinCiphers.aes256ctr),
-                new Config("hostkey-ed25519.pem", BuiltinSignatures.ed25519, BuiltinDHFactories.curve25519, BuiltinCiphers.aes256gcm)
+                //                new Config("hostkey-dsa.pem", BuiltinSignatures.dsa, BuiltinDHFactories.dhg14_256, BuiltinCiphers.aes128ctr),
+                new Config(
+                        "hostkey-rsa.pem", BuiltinSignatures.rsaSHA256, BuiltinDHFactories.dhg16_512,
+                        BuiltinCiphers.aes192ctr),
+                new Config(
+                        "hostkey-rsa.pem", BuiltinSignatures.rsaSHA512, BuiltinDHFactories.dhg16_512,
+                        BuiltinCiphers.aes192ctr),
+                new Config(
+                        "hostkey-ecdsa256.pem", BuiltinSignatures.nistp256, BuiltinDHFactories.ecdhp256,
+                        BuiltinCiphers.aes128ctr),
+                new Config(
+                        "hostkey-ecdsa384.pem", BuiltinSignatures.nistp384, BuiltinDHFactories.ecdhp384,
+                        BuiltinCiphers.aes192ctr),
+                new Config(
+                        "hostkey-ecdsa521.pem", BuiltinSignatures.nistp521, BuiltinDHFactories.ecdhp521,
+                        BuiltinCiphers.aes256ctr),
+                new Config(
+                        "hostkey-ed25519.pem", BuiltinSignatures.ed25519, BuiltinDHFactories.curve25519,
+                        BuiltinCiphers.aes256gcm)
         };
 
         for (final Config config : configs) {
@@ -78,7 +90,8 @@ public class ScpAlgorithmsTest extends ScpServerTestSupport {
                 sshd.setSignatureFactories(signatureFactories);
                 List<KeyExchangeFactory> keyExchangeFactories = sshd.getKeyExchangeFactories();
                 keyExchangeFactories.clear();
-                keyExchangeFactories.add(ServerBuilder.DH2KEX.apply(BuiltinDHFactories.resolveFactory(config.kexAlgorithm.getName())));
+                keyExchangeFactories
+                        .add(ServerBuilder.DH2KEX.apply(BuiltinDHFactories.resolveFactory(config.kexAlgorithm.getName())));
                 sshd.setKeyExchangeFactories(keyExchangeFactories);
                 List<NamedFactory<Cipher>> cipherFactories = sshd.getCipherFactories();
                 cipherFactories.clear();
@@ -99,13 +112,14 @@ public class ScpAlgorithmsTest extends ScpServerTestSupport {
         }
     }
 
-    private static class Config {
+    private static final class Config {
         final String privateKeyLocation;
         final BuiltinSignatures signatureAlgorithm;
         final BuiltinDHFactories kexAlgorithm;
         final BuiltinCiphers cipher;
 
-        private Config(String privateKeyLocation, BuiltinSignatures signatureAlgorithm, BuiltinDHFactories kexAlgorithm, BuiltinCiphers cipher) {
+        private Config(String privateKeyLocation, BuiltinSignatures signatureAlgorithm, BuiltinDHFactories kexAlgorithm,
+                       BuiltinCiphers cipher) {
             this.privateKeyLocation = "src/test/resources/keys/" + privateKeyLocation;
             this.signatureAlgorithm = signatureAlgorithm;
             this.kexAlgorithm = kexAlgorithm;
