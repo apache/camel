@@ -666,6 +666,7 @@ public abstract class BaseMainSupport extends BaseService {
         if (failFast != null) {
             mainConfigurationProperties
                     .setAutoConfigurationFailFast(CamelContextHelper.parseBoolean(camelContext, failFast.toString()));
+            autoConfiguredProperties.put("camel.main.auto-configuration-fail-fast", failFast.toString());
         } else {
             failFast = prop.remove("camel.main.autoConfigurationFailFast");
             if (failFast == null) {
@@ -703,7 +704,7 @@ public abstract class BaseMainSupport extends BaseService {
             if (pattern != null) {
                 mainConfigurationProperties.setRoutesIncludePattern(
                         CamelContextHelper.parseText(camelContext, pattern.toString()));
-                autoConfiguredProperties.put("camel.main.auto-configuration-environment-variables-enabled",
+                autoConfiguredProperties.put("camel.main.routes-include-pattern",
                         pattern.toString());
             }
         }
@@ -755,6 +756,7 @@ public abstract class BaseMainSupport extends BaseService {
         if (pattern != null) {
             mainConfigurationProperties
                     .setRoutesIncludePattern(CamelContextHelper.parseText(camelContext, pattern.toString()));
+            autoConfiguredProperties.put("camel.main.routes-include-pattern", pattern.toString());
         } else {
             pattern = prop.remove("camel.main.routesIncludePattern");
             if (pattern == null) {
