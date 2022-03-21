@@ -380,107 +380,18 @@ public class ValidateMojo extends AbstractExecMojo {
         Set<File> xmlFiles = new LinkedHashSet<>();
 
         // find all java route builder classes
-        if (includeJava) {
-            List list = project.getCompileSourceRoots();
-            for (Object obj : list) {
-                String dir = (String) obj;
-                findJavaFiles(new File(dir), javaFiles);
-            }
-            if (includeTest) {
-                list = project.getTestCompileSourceRoots();
-                for (Object obj : list) {
-                    String dir = (String) obj;
-                    findJavaFiles(new File(dir), javaFiles);
-                }
-            }
-        }
+        findJavaRouteBuilderClasses(javaFiles);
         // find all xml routes
-        if (includeXml) {
-            List list = project.getResources();
-            for (Object obj : list) {
-                Resource dir = (Resource) obj;
-                findXmlFiles(new File(dir.getDirectory()), xmlFiles);
-            }
-            if (includeTest) {
-                list = project.getTestResources();
-                for (Object obj : list) {
-                    Resource dir = (Resource) obj;
-                    findXmlFiles(new File(dir.getDirectory()), xmlFiles);
-                }
-            }
-        }
+        findXmlRouters(xmlFiles);
 
         for (File file : javaFiles) {
             if (matchRouteFile(file)) {
-                try {
-                    List<CamelEndpointDetails> fileEndpoints = new ArrayList<>();
-                    List<CamelRouteDetails> fileRouteIds = new ArrayList<>();
-                    List<CamelSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
-                    List<String> unparsable = new ArrayList<>();
-
-                    // parse the java source code and find Camel RouteBuilder classes
-                    String fqn = file.getPath();
-                    String baseDir = ".";
-                    JavaType out = Roaster.parse(file);
-                    // we should only parse java classes (not interfaces and enums etc)
-                    if (out instanceof JavaClassSource) {
-                        JavaClassSource clazz = (JavaClassSource) out;
-                        RouteBuilderParser.parseRouteBuilderEndpoints(clazz, baseDir, fqn, fileEndpoints, unparsable, includeTest);
-                        RouteBuilderParser.parseRouteBuilderSimpleExpressions(clazz, baseDir, fqn, fileSimpleExpressions);
-                        if (duplicateRouteId) {
-                            RouteBuilderParser.parseRouteBuilderRouteIds(clazz, baseDir, fqn, fileRouteIds);
-                        }
-
-                        // add what we found in this file to the total list
-                        endpoints.addAll(fileEndpoints);
-                        simpleExpressions.addAll(fileSimpleExpressions);
-                        routeIds.addAll(fileRouteIds);
-
-                        // was there any unparsable?
-                        if (logUnparseable && !unparsable.isEmpty()) {
-                            for (String uri : unparsable) {
-                                getLog().warn("Cannot parse endpoint uri " + uri + " in java file " + file);
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    getLog().warn("Error parsing java file " + file + " code due " + e.getMessage(), e);
-                }
+                parseJavaRouteFile(endpoints, simpleExpressions, routeIds, file);
             }
         }
         for (File file : xmlFiles) {
             if (matchRouteFile(file)) {
-                try {
-                    List<CamelEndpointDetails> fileEndpoints = new ArrayList<>();
-                    List<CamelSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
-                    List<CamelRouteDetails> fileRouteIds = new ArrayList<>();
-
-                    // parse the xml source code and find Camel routes
-                    String fqn = file.getPath();
-                    String baseDir = ".";
-
-                    InputStream is = new FileInputStream(file);
-                    XmlRouteParser.parseXmlRouteEndpoints(is, baseDir, fqn, fileEndpoints);
-                    is.close();
-                    // need a new stream
-                    is = new FileInputStream(file);
-                    XmlRouteParser.parseXmlRouteSimpleExpressions(is, baseDir, fqn, fileSimpleExpressions);
-                    is.close();
-
-                    if (duplicateRouteId) {
-                        // need a new stream
-                        is = new FileInputStream(file);
-                        XmlRouteParser.parseXmlRouteRouteIds(is, baseDir, fqn, fileRouteIds);
-                        is.close();
-                    }
-
-                    // add what we found in this file to the total list
-                    endpoints.addAll(fileEndpoints);
-                    simpleExpressions.addAll(fileSimpleExpressions);
-                    routeIds.addAll(fileRouteIds);
-                } catch (Exception e) {
-                    getLog().warn("Error parsing xml file " + file + " code due " + e.getMessage(), e);
-                }
+                parseXmlRouteFile(endpoints, simpleExpressions, routeIds, file);
             }
         }
 
@@ -519,76 +430,16 @@ public class ValidateMojo extends AbstractExecMojo {
                     endpointErrors++;
                 }
 
-                StringBuilder sb = new StringBuilder();
-                sb.append("Endpoint validation error at: ");
-                if (detail.getClassName() != null && detail.getLineNumber() != null) {
-                    // this is from java code
-                    sb.append(detail.getClassName());
-                    if (detail.getMethodName() != null) {
-                        sb.append(".").append(detail.getMethodName());
-                    }
-                    sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
-                    sb.append(detail.getLineNumber()).append(")");
-                } else if (detail.getLineNumber() != null) {
-                    // this is from xml
-                    String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
-                    if (fqn.endsWith(".xml")) {
-                        fqn = fqn.substring(0, fqn.length() - 4);
-                        fqn = asPackageName(fqn);
-                    }
-                    sb.append(fqn);
-                    sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
-                    sb.append(detail.getLineNumber()).append(")");
-                } else {
-                    sb.append(detail.getFileName());
-                }
-                sb.append("\n\n");
-                String out = result.summaryErrorMessage(false, ignoreDeprecated, true);
-                sb.append(out);
-                sb.append("\n\n");
+                String msg = buildValidationErrorMessage(detail, result);
 
-                getLog().warn(sb.toString());
+                getLog().warn(msg);
             } else if (showAll) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("Endpoint validation passed at: ");
-                if (detail.getClassName() != null && detail.getLineNumber() != null) {
-                    // this is from java code
-                    sb.append(detail.getClassName());
-                    if (detail.getMethodName() != null) {
-                        sb.append(".").append(detail.getMethodName());
-                    }
-                    sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
-                    sb.append(detail.getLineNumber()).append(")");
-                } else if (detail.getLineNumber() != null) {
-                    // this is from xml
-                    String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
-                    if (fqn.endsWith(".xml")) {
-                        fqn = fqn.substring(0, fqn.length() - 4);
-                        fqn = asPackageName(fqn);
-                    }
-                    sb.append(fqn);
-                    sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
-                    sb.append(detail.getLineNumber()).append(")");
-                } else {
-                    sb.append(detail.getFileName());
-                }
-                sb.append("\n");
-                sb.append("\n\t").append(result.getUri());
-                sb.append("\n\n");
+                String msg = buildValidationPassedMessage(detail, result);
 
-                getLog().info(sb.toString());
+                getLog().info(msg);
             }
         }
-        String endpointSummary;
-        if (endpointErrors == 0) {
-            int ok = endpoints.size() - endpointErrors - incapableErrors - unknownComponents;
-            endpointSummary = String.format("Endpoint validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
-                ok, endpointErrors, incapableErrors, unknownComponents, deprecatedOptions);
-        } else {
-            int ok = endpoints.size() - endpointErrors - incapableErrors - unknownComponents;
-            endpointSummary = String.format("Endpoint validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
-                ok, endpointErrors, incapableErrors, unknownComponents, deprecatedOptions);
-        }
+        String endpointSummary = buildEndpointSummaryMessage(endpoints, endpointErrors, unknownComponents, incapableErrors, deprecatedOptions);
         if (endpointErrors > 0) {
             getLog().warn(endpointSummary);
         } else {
@@ -597,14 +448,7 @@ public class ValidateMojo extends AbstractExecMojo {
 
         // simple
         int simpleErrors = validateSimple(catalog, simpleExpressions);
-        String simpleSummary;
-        if (simpleErrors == 0) {
-            int ok = simpleExpressions.size() - simpleErrors;
-            simpleSummary = String.format("Simple validation success: (%s = passed, %s = invalid)", ok, simpleErrors);
-        } else {
-            int ok = simpleExpressions.size() - simpleErrors;
-            simpleSummary = String.format("Simple validation error: (%s = passed, %s = invalid)", ok, simpleErrors);
-        }
+        String simpleSummary = buildSimpleSummaryMessage(simpleExpressions, simpleErrors);
         if (simpleErrors > 0) {
             getLog().warn(simpleSummary);
         } else {
@@ -647,6 +491,200 @@ public class ValidateMojo extends AbstractExecMojo {
 
         if (failOnError && (endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0) || sedaDirectErrors > 0) {
             throw new MojoExecutionException(endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary + "\n" + sedaDirectSummary);
+        }
+    }
+
+    private String buildSimpleSummaryMessage(List<CamelSimpleExpressionDetails> simpleExpressions, int simpleErrors) {
+        String simpleSummary;
+        if (simpleErrors == 0) {
+            int ok = simpleExpressions.size() - simpleErrors;
+            simpleSummary = String.format("Simple validation success: (%s = passed, %s = invalid)", ok, simpleErrors);
+        } else {
+            int ok = simpleExpressions.size() - simpleErrors;
+            simpleSummary = String.format("Simple validation error: (%s = passed, %s = invalid)", ok, simpleErrors);
+        }
+        return simpleSummary;
+    }
+
+    private String buildEndpointSummaryMessage(List<CamelEndpointDetails> endpoints, int endpointErrors, int unknownComponents, int incapableErrors, int deprecatedOptions) {
+        String endpointSummary;
+        if (endpointErrors == 0) {
+            int ok = endpoints.size() - endpointErrors - incapableErrors - unknownComponents;
+            endpointSummary = String.format("Endpoint validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
+                ok, endpointErrors, incapableErrors, unknownComponents, deprecatedOptions);
+        } else {
+            int ok = endpoints.size() - endpointErrors - incapableErrors - unknownComponents;
+            endpointSummary = String.format("Endpoint validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
+                ok, endpointErrors, incapableErrors, unknownComponents, deprecatedOptions);
+        }
+        return endpointSummary;
+    }
+
+    private String buildValidationPassedMessage(CamelEndpointDetails detail, EndpointValidationResult result) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Endpoint validation passed at: ");
+        if (detail.getClassName() != null && detail.getLineNumber() != null) {
+            // this is from java code
+            sb.append(detail.getClassName());
+            if (detail.getMethodName() != null) {
+                sb.append(".").append(detail.getMethodName());
+            }
+            sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
+            sb.append(detail.getLineNumber()).append(")");
+        } else if (detail.getLineNumber() != null) {
+            // this is from xml
+            String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
+            if (fqn.endsWith(".xml")) {
+                fqn = fqn.substring(0, fqn.length() - 4);
+                fqn = asPackageName(fqn);
+            }
+            sb.append(fqn);
+            sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
+            sb.append(detail.getLineNumber()).append(")");
+        } else {
+            sb.append(detail.getFileName());
+        }
+        sb.append("\n");
+        sb.append("\n\t").append(result.getUri());
+        sb.append("\n\n");
+
+        String msg = sb.toString();
+        return msg;
+    }
+
+    private String buildValidationErrorMessage(CamelEndpointDetails detail, EndpointValidationResult result) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Endpoint validation error at: ");
+        if (detail.getClassName() != null && detail.getLineNumber() != null) {
+            // this is from java code
+            sb.append(detail.getClassName());
+            if (detail.getMethodName() != null) {
+                sb.append(".").append(detail.getMethodName());
+            }
+            sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
+            sb.append(detail.getLineNumber()).append(")");
+        } else if (detail.getLineNumber() != null) {
+            // this is from xml
+            String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
+            if (fqn.endsWith(".xml")) {
+                fqn = fqn.substring(0, fqn.length() - 4);
+                fqn = asPackageName(fqn);
+            }
+            sb.append(fqn);
+            sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
+            sb.append(detail.getLineNumber()).append(")");
+        } else {
+            sb.append(detail.getFileName());
+        }
+        sb.append("\n\n");
+        String out = result.summaryErrorMessage(false, ignoreDeprecated, true);
+        sb.append(out);
+        sb.append("\n\n");
+        return sb.toString();
+    }
+
+    private void parseXmlRouteFile(List<CamelEndpointDetails> endpoints, List<CamelSimpleExpressionDetails> simpleExpressions, List<CamelRouteDetails> routeIds, File file) {
+        try {
+            List<CamelEndpointDetails> fileEndpoints = new ArrayList<>();
+            List<CamelSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
+            List<CamelRouteDetails> fileRouteIds = new ArrayList<>();
+
+            // parse the xml source code and find Camel routes
+            String fqn = file.getPath();
+            String baseDir = ".";
+
+            InputStream is = new FileInputStream(file);
+            XmlRouteParser.parseXmlRouteEndpoints(is, baseDir, fqn, fileEndpoints);
+            is.close();
+            // need a new stream
+            is = new FileInputStream(file);
+            XmlRouteParser.parseXmlRouteSimpleExpressions(is, baseDir, fqn, fileSimpleExpressions);
+            is.close();
+
+            if (duplicateRouteId) {
+                // need a new stream
+                is = new FileInputStream(file);
+                XmlRouteParser.parseXmlRouteRouteIds(is, baseDir, fqn, fileRouteIds);
+                is.close();
+            }
+
+            // add what we found in this file to the total list
+            endpoints.addAll(fileEndpoints);
+            simpleExpressions.addAll(fileSimpleExpressions);
+            routeIds.addAll(fileRouteIds);
+        } catch (Exception e) {
+            getLog().warn("Error parsing xml file " + file + " code due " + e.getMessage(), e);
+        }
+    }
+
+    private void parseJavaRouteFile(List<CamelEndpointDetails> endpoints, List<CamelSimpleExpressionDetails> simpleExpressions, List<CamelRouteDetails> routeIds, File file) {
+        try {
+            List<CamelEndpointDetails> fileEndpoints = new ArrayList<>();
+            List<CamelRouteDetails> fileRouteIds = new ArrayList<>();
+            List<CamelSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
+            List<String> unparsable = new ArrayList<>();
+
+            // parse the java source code and find Camel RouteBuilder classes
+            String fqn = file.getPath();
+            String baseDir = ".";
+            JavaType out = Roaster.parse(file);
+            // we should only parse java classes (not interfaces and enums etc)
+            if (out instanceof JavaClassSource) {
+                JavaClassSource clazz = (JavaClassSource) out;
+                RouteBuilderParser.parseRouteBuilderEndpoints(clazz, baseDir, fqn, fileEndpoints, unparsable, includeTest);
+                RouteBuilderParser.parseRouteBuilderSimpleExpressions(clazz, baseDir, fqn, fileSimpleExpressions);
+                if (duplicateRouteId) {
+                    RouteBuilderParser.parseRouteBuilderRouteIds(clazz, baseDir, fqn, fileRouteIds);
+                }
+
+                // add what we found in this file to the total list
+                endpoints.addAll(fileEndpoints);
+                simpleExpressions.addAll(fileSimpleExpressions);
+                routeIds.addAll(fileRouteIds);
+
+                // was there any unparsable?
+                if (logUnparseable && !unparsable.isEmpty()) {
+                    for (String uri : unparsable) {
+                        getLog().warn("Cannot parse endpoint uri " + uri + " in java file " + file);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            getLog().warn("Error parsing java file " + file + " code due " + e.getMessage(), e);
+        }
+    }
+
+    private void findXmlRouters(Set<File> xmlFiles) {
+        if (includeXml) {
+            List list = project.getResources();
+            for (Object obj : list) {
+                Resource dir = (Resource) obj;
+                findXmlFiles(new File(dir.getDirectory()), xmlFiles);
+            }
+            if (includeTest) {
+                list = project.getTestResources();
+                for (Object obj : list) {
+                    Resource dir = (Resource) obj;
+                    findXmlFiles(new File(dir.getDirectory()), xmlFiles);
+                }
+            }
+        }
+    }
+
+    private void findJavaRouteBuilderClasses(Set<File> javaFiles) {
+        if (includeJava) {
+            List list = project.getCompileSourceRoots();
+            for (Object obj : list) {
+                String dir = (String) obj;
+                findJavaFiles(new File(dir), javaFiles);
+            }
+            if (includeTest) {
+                list = project.getTestCompileSourceRoots();
+                for (Object obj : list) {
+                    String dir = (String) obj;
+                    findJavaFiles(new File(dir), javaFiles);
+                }
+            }
         }
     }
 
@@ -854,67 +892,47 @@ public class ValidateMojo extends AbstractExecMojo {
                 if (count > 1) {
                     duplicateRouteIdErrors++;
 
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("Duplicate route id validation error at: ");
-                    if (detail.getClassName() != null && detail.getLineNumber() != null) {
-                        // this is from java code
-                        sb.append(detail.getClassName());
-                        if (detail.getMethodName() != null) {
-                            sb.append(".").append(detail.getMethodName());
-                        }
-                        sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
-                        sb.append(detail.getLineNumber()).append(")");
-                    } else if (detail.getLineNumber() != null) {
-                        // this is from xml
-                        String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
-                        if (fqn.endsWith(".xml")) {
-                            fqn = fqn.substring(0, fqn.length() - 4);
-                            fqn = asPackageName(fqn);
-                        }
-                        sb.append(fqn);
-                        sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
-                        sb.append(detail.getLineNumber()).append(")");
-                    } else {
-                        sb.append(detail.getFileName());
-                    }
-                    sb.append("\n");
-                    sb.append("\n\t").append(detail.getRouteId());
-                    sb.append("\n\n");
-
-                    getLog().warn(sb.toString());
+                    final String msg = buildRouteIdValidationMessage("Duplicate route id validation error at: ", detail);
+                    getLog().warn(msg);
                 } else if (showAll) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("Duplicate route id validation passed at: ");
-                    if (detail.getClassName() != null && detail.getLineNumber() != null) {
-                        // this is from java code
-                        sb.append(detail.getClassName());
-                        if (detail.getMethodName() != null) {
-                            sb.append(".").append(detail.getMethodName());
-                        }
-                        sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
-                        sb.append(detail.getLineNumber()).append(")");
-                    } else if (detail.getLineNumber() != null) {
-                        // this is from xml
-                        String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
-                        if (fqn.endsWith(".xml")) {
-                            fqn = fqn.substring(0, fqn.length() - 4);
-                            fqn = asPackageName(fqn);
-                        }
-                        sb.append(fqn);
-                        sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
-                        sb.append(detail.getLineNumber()).append(")");
-                    } else {
-                        sb.append(detail.getFileName());
-                    }
-                    sb.append("\n");
-                    sb.append("\n\t").append(detail.getRouteId());
-                    sb.append("\n\n");
-
-                    getLog().info(sb.toString());
+                    final String msg = buildRouteIdValidationMessage("Duplicate route id validation passed at: ", detail);
+                    getLog().info(msg);
                 }
             }
         }
         return duplicateRouteIdErrors;
+    }
+
+    private String buildRouteIdValidationMessage(String str, CamelRouteDetails detail) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(str);
+        if (detail.getClassName() != null && detail.getLineNumber() != null) {
+            // this is from java code
+            sb.append(detail.getClassName());
+            if (detail.getMethodName() != null) {
+                sb.append(".").append(detail.getMethodName());
+            }
+            sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
+            sb.append(detail.getLineNumber()).append(")");
+        } else if (detail.getLineNumber() != null) {
+            // this is from xml
+            String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
+            if (fqn.endsWith(".xml")) {
+                fqn = fqn.substring(0, fqn.length() - 4);
+                fqn = asPackageName(fqn);
+            }
+            sb.append(fqn);
+            sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
+            sb.append(detail.getLineNumber()).append(")");
+        } else {
+            sb.append(detail.getFileName());
+        }
+        sb.append("\n");
+        sb.append("\n\t").append(detail.getRouteId());
+        sb.append("\n\n");
+
+        final String msg = sb.toString();
+        return msg;
     }
     // CHECKSTYLE:ON
 
@@ -1009,34 +1027,33 @@ public class ValidateMojo extends AbstractExecMojo {
 
         // exclude take precedence
         if (excludes != null) {
-            for (String exclude : excludes.split(",")) {
-                exclude = exclude.trim();
-                // try both with and without directory in the name
-                String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
-                boolean match = PatternHelper.matchPattern(fqn, exclude) || PatternHelper.matchPattern(file.getName(), exclude);
-                if (match) {
-                    return false;
-                }
+            if (fileListMatchesPattern(excludes, file)) {
+                return false;
             }
         }
 
         // include
         if (includes != null) {
-            for (String include : includes.split(",")) {
-                include = include.trim();
-                // try both with and without directory in the name
-                String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
-                boolean match = PatternHelper.matchPattern(fqn, include) || PatternHelper.matchPattern(file.getName(), include);
-                if (match) {
-                    return true;
-                }
-            }
+            if (fileListMatchesPattern(includes, file)) return true;
             // did not match any includes
             return false;
         }
 
         // was not excluded nor failed include so its accepted
         return true;
+    }
+
+    private boolean fileListMatchesPattern(String fileList, File file) {
+        for (String exclude : fileList.split(",")) {
+            exclude = exclude.trim();
+            // try both with and without directory in the name
+            String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
+            boolean match = PatternHelper.matchPattern(fqn, exclude) || PatternHelper.matchPattern(file.getName(), exclude);
+            if (match) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String asRelativeFile(String name) {
