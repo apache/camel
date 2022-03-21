@@ -1619,6 +1619,14 @@ public abstract class BaseMainSupport extends BaseService {
             int pos = loc.length() - 28;
             loc = loc.substring(pos);
         }
+        // let us have human friendly locations
+        if ("initial".equals(loc) || "override".equals(loc)) {
+            loc = "camel-main";
+        } else if ("SYS".equals(loc)) {
+            loc = "JVM System Property";
+        } else if ("ENV".equals(loc)) {
+            loc = "OS Environment Variable";
+        }
         loc = "[" + loc + "]";
         loc = String.format("%-30s", loc);
         return loc;
