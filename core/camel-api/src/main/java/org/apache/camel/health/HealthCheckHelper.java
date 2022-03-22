@@ -48,21 +48,23 @@ public final class HealthCheckHelper {
      * Invokes the checks and returns a collection of results.
      */
     public static Collection<HealthCheck.Result> invoke(CamelContext camelContext) {
-        return invoke(camelContext, check -> Collections.emptyMap(), check -> false);
+        return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.ALL), check -> false);
     }
 
     /**
      * Invokes the readiness checks and returns a collection of results.
      */
     public static Collection<HealthCheck.Result> invokeReadiness(CamelContext camelContext) {
-        return invoke(camelContext, check -> Collections.emptyMap(), check -> !check.isReadiness());
+        return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.READINESS),
+                check -> !check.isReadiness());
     }
 
     /**
      * Invokes the liveness checks and returns a collection of results.
      */
     public static Collection<HealthCheck.Result> invokeLiveness(CamelContext camelContext) {
-        return invoke(camelContext, check -> Collections.emptyMap(), check -> !check.isLiveness());
+        return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.LIVENESS),
+                check -> !check.isLiveness());
     }
 
     /**

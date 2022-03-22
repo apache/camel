@@ -55,6 +55,10 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
     public Result call(Map<String, Object> options) {
         final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this);
 
+        // what kind of check is this
+        HealthCheck.Kind kind = (Kind) options.getOrDefault(CHECK_KIND, Kind.ALL);
+        builder.detail(CHECK_KIND, kind.name());
+
         // ensure to sanitize uri, so we do not show sensitive information such as passwords
         builder.detail(ENDPOINT_URI, sanitizedUri);
         builder.detail(FAILURE_ENDPOINT_URI, sanitizedUri);

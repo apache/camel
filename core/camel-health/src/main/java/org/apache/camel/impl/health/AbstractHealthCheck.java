@@ -128,6 +128,10 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
     protected HealthCheckResultBuilder doCall(Map<String, Object> options) {
         final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this);
 
+        // what kind of check is this
+        HealthCheck.Kind kind = (Kind) options.getOrDefault(CHECK_KIND, Kind.ALL);
+        builder.detail(CHECK_KIND, kind.name());
+
         // Extract relevant information from meta data.
         int invocationCount = (Integer) meta.getOrDefault(INVOCATION_COUNT, 0);
         int failureCount = (Integer) meta.getOrDefault(FAILURE_COUNT, 0);
@@ -139,14 +143,14 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
         meta.put(INVOCATION_ATTEMPT_TIME, invocationTime);
 
         if (!isEnabled()) {
-            LOG.debug("health-check {}/{} disabled", getGroup(), getId());
+            LOG.debug("health-check ({}) {}/{} disabled", kind, getGroup(), getId());
             builder.message("Disabled");
             builder.detail(CHECK_ENABLED, false);
             builder.unknown();
             return builder;
         }
 
-        LOG.debug("Invoke health-check {}/{}", getGroup(), getId());
+        LOG.debug("Invoke health-check ({}) {}/{}", kind, getGroup(), getId());
         doCall(builder, options);
 
         if (builder.state() == null) {
