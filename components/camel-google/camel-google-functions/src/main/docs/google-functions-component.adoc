@@ -88,25 +88,9 @@ include::partial$component-endpoint-options.adoc[]
 
 == Usage
 
-=== Message headers evaluated by the Google Functions Producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-|`GoogleCloudFunctionsOperation` |`String` |The operation to perform. Permitted values are listFunctions, getFunction, callFunction, generateDownloadUrl, generateUploadUrl, createFunction, updateFunction, deleteFunction
-|`GoogleCloudFunctionsEntryPoint` |`String` |The name of the function (as defined in source code) that will be executed. Used for createFunction operation.
-|`GoogleCloudFunctionsRuntime` |`String` |The runtime in which to run the function. Possible values are `nodejs10`, `nodejs12`, `nodejs14`, `python37`, `python38`, `python39`, `go111`, `go113`, `java11`, `dotnet3`, `ruby26`, `nodejs6`, `nodejs8`. Used for createFunction operation.
-|`GoogleCloudFunctionsSourceArchiveUrl` |`String` |The Google Cloud Storage URL, starting with `gs://`, pointing to the zip archive which contains the function. Used for createFunction operation.
-
-|=======================================================================
-
-=== Message headers set by the Google Functions Producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-|`GoogleCloudFunctionsResponseObject` |`Object` |The response object resulting from the Google Functions Client invocation
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Google Functions Producer operations
 
