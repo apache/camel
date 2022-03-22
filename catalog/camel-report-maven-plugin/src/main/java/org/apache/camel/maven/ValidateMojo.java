@@ -514,35 +514,9 @@ public class ValidateMojo extends AbstractExecMojo {
     }
 
     private String buildValidationPassedMessage(CamelEndpointDetails detail, EndpointValidationResult result) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Endpoint validation passed at: ");
-        if (detail.getClassName() != null && detail.getLineNumber() != null) {
-            // this is from java code
-            sb.append(detail.getClassName());
-            if (detail.getMethodName() != null) {
-                sb.append(".").append(detail.getMethodName());
-            }
-            sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
-            sb.append(detail.getLineNumber()).append(")");
-        } else if (detail.getLineNumber() != null) {
-            // this is from xml
-            String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
-            if (fqn.endsWith(".xml")) {
-                fqn = fqn.substring(0, fqn.length() - 4);
-                fqn = asPackageName(fqn);
-            }
-            sb.append(fqn);
-            sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
-            sb.append(detail.getLineNumber()).append(")");
-        } else {
-            sb.append(detail.getFileName());
-        }
-        sb.append("\n");
-        sb.append("\n\t").append(result.getUri());
-        sb.append("\n\n");
+        StringBuilder sb = buildValidationSuccessMessage("Endpoint validation passed at: ", detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName(), result.getUri());
 
-        String msg = sb.toString();
-        return msg;
+        return sb.toString();
     }
 
     private String buildValidationErrorMessage(CamelEndpointDetails detail, EndpointValidationResult result) {
@@ -706,64 +680,13 @@ public class ValidateMojo extends AbstractExecMojo {
             if (none) {
                 errors++;
 
-                StringBuilder sb = new StringBuilder();
-                sb.append("Endpoint pair (seda/direct) validation error at: ");
-                if (detail.getClassName() != null && detail.getLineNumber() != null) {
-                    // this is from java code
-                    sb.append(detail.getClassName());
-                    if (detail.getMethodName() != null) {
-                        sb.append(".").append(detail.getMethodName());
-                    }
-                    sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
-                    sb.append(detail.getLineNumber()).append(")");
-                } else if (detail.getLineNumber() != null) {
-                    // this is from xml
-                    String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
-                    if (fqn.endsWith(".xml")) {
-                        fqn = fqn.substring(0, fqn.length() - 4);
-                        fqn = asPackageName(fqn);
-                    }
-                    sb.append(fqn);
-                    sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
-                    sb.append(detail.getLineNumber()).append(")");
-                } else {
-                    sb.append(detail.getFileName());
-                }
-                sb.append("\n");
-                sb.append("\n\t").append(detail.getEndpointUri());
-                sb.append("\n\n\t\t\t\t").append(endpointPathSummaryError(detail));
-                sb.append("\n\n");
-
-                getLog().warn(sb.toString());
+                final String msg = buildEndpointValidationErrorMessage(detail);
+                getLog().warn(msg);
             } else if (showAll) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("Endpoint pair (seda/direct) validation passed at: ");
-                if (detail.getClassName() != null && detail.getLineNumber() != null) {
-                    // this is from java code
-                    sb.append(detail.getClassName());
-                    if (detail.getMethodName() != null) {
-                        sb.append(".").append(detail.getMethodName());
-                    }
-                    sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
-                    sb.append(detail.getLineNumber()).append(")");
-                } else if (detail.getLineNumber() != null) {
-                    // this is from xml
-                    String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
-                    if (fqn.endsWith(".xml")) {
-                        fqn = fqn.substring(0, fqn.length() - 4);
-                        fqn = asPackageName(fqn);
-                    }
-                    sb.append(fqn);
-                    sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
-                    sb.append(detail.getLineNumber()).append(")");
-                } else {
-                    sb.append(detail.getFileName());
-                }
-                sb.append("\n");
-                sb.append("\n\t").append(detail.getEndpointUri());
-                sb.append("\n\n");
+                StringBuilder sb = buildValidationSuccessMessage("Endpoint pair (seda/direct) validation passed at: ", detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName(), detail.getEndpointUri());
 
-                getLog().info(sb.toString());
+                final String msg = sb.toString();
+                getLog().info(msg);
             }
         }
 
@@ -771,6 +694,68 @@ public class ValidateMojo extends AbstractExecMojo {
         // You can have a consumer which you send to from outside a Camel route such as via ProducerTemplate
 
         return errors;
+    }
+
+    private StringBuilder buildValidationSuccessMessage(String str, String className, String lineNumber, String methodName, String fileName, String uri) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(str);
+        if (className != null && lineNumber != null) {
+            // this is from java code
+            sb.append(className);
+            if (methodName != null) {
+                sb.append(".").append(methodName);
+            }
+            sb.append("(").append(asSimpleClassName(className)).append(".java:");
+            sb.append(lineNumber).append(")");
+        } else if (lineNumber != null) {
+            // this is from xml
+            String fqn = stripRootPath(asRelativeFile(fileName));
+            if (fqn.endsWith(".xml")) {
+                fqn = fqn.substring(0, fqn.length() - 4);
+                fqn = asPackageName(fqn);
+            }
+            sb.append(fqn);
+            sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
+            sb.append(lineNumber).append(")");
+        } else {
+            sb.append(fileName);
+        }
+        sb.append("\n");
+        sb.append("\n\t").append(uri);
+        sb.append("\n\n");
+        return sb;
+    }
+
+    private String buildEndpointValidationErrorMessage(CamelEndpointDetails detail) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Endpoint pair (seda/direct) validation error at: ");
+        if (detail.getClassName() != null && detail.getLineNumber() != null) {
+            // this is from java code
+            sb.append(detail.getClassName());
+            if (detail.getMethodName() != null) {
+                sb.append(".").append(detail.getMethodName());
+            }
+            sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
+            sb.append(detail.getLineNumber()).append(")");
+        } else if (detail.getLineNumber() != null) {
+            // this is from xml
+            String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
+            if (fqn.endsWith(".xml")) {
+                fqn = fqn.substring(0, fqn.length() - 4);
+                fqn = asPackageName(fqn);
+            }
+            sb.append(fqn);
+            sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
+            sb.append(detail.getLineNumber()).append(")");
+        } else {
+            sb.append(detail.getFileName());
+        }
+        sb.append("\n");
+        sb.append("\n\t").append(detail.getEndpointUri());
+        sb.append("\n\n\t\t\t\t").append(endpointPathSummaryError(detail));
+        sb.append("\n\n");
+
+        return sb.toString();
     }
 
     private static String endpointPathSummaryError(CamelEndpointDetails detail) {
@@ -835,32 +820,7 @@ public class ValidateMojo extends AbstractExecMojo {
 
                 getLog().warn(sb.toString());
             } else if (showAll) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("Simple validation passed at: ");
-                if (detail.getClassName() != null && detail.getLineNumber() != null) {
-                    // this is from java code
-                    sb.append(detail.getClassName());
-                    if (detail.getMethodName() != null) {
-                        sb.append(".").append(detail.getMethodName());
-                    }
-                    sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
-                    sb.append(detail.getLineNumber()).append(")");
-                } else if (detail.getLineNumber() != null) {
-                    // this is from xml
-                    String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
-                    if (fqn.endsWith(".xml")) {
-                        fqn = fqn.substring(0, fqn.length() - 4);
-                        fqn = asPackageName(fqn);
-                    }
-                    sb.append(fqn);
-                    sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
-                    sb.append(detail.getLineNumber()).append(")");
-                } else {
-                    sb.append(detail.getFileName());
-                }
-                sb.append("\n");
-                sb.append("\n\t").append(result.getText());
-                sb.append("\n\n");
+                StringBuilder sb = buildValidationSuccessMessage("Simple validation passed at: ", detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName(), result.getText());
 
                 getLog().info(sb.toString());
             }
@@ -893,35 +853,9 @@ public class ValidateMojo extends AbstractExecMojo {
     }
 
     private String buildRouteIdValidationMessage(String str, CamelRouteDetails detail) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(str);
-        if (detail.getClassName() != null && detail.getLineNumber() != null) {
-            // this is from java code
-            sb.append(detail.getClassName());
-            if (detail.getMethodName() != null) {
-                sb.append(".").append(detail.getMethodName());
-            }
-            sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
-            sb.append(detail.getLineNumber()).append(")");
-        } else if (detail.getLineNumber() != null) {
-            // this is from xml
-            String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
-            if (fqn.endsWith(".xml")) {
-                fqn = fqn.substring(0, fqn.length() - 4);
-                fqn = asPackageName(fqn);
-            }
-            sb.append(fqn);
-            sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
-            sb.append(detail.getLineNumber()).append(")");
-        } else {
-            sb.append(detail.getFileName());
-        }
-        sb.append("\n");
-        sb.append("\n\t").append(detail.getRouteId());
-        sb.append("\n\n");
+        StringBuilder sb = buildValidationSuccessMessage(str, detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName(), detail.getRouteId());
 
-        final String msg = sb.toString();
-        return msg;
+        return sb.toString();
     }
     // CHECKSTYLE:ON
 
@@ -1022,7 +956,8 @@ public class ValidateMojo extends AbstractExecMojo {
 
         // include
         if (includes != null) {
-            if (fileListMatchesPattern(includes, file)) return true;
+            if (fileListMatchesPattern(includes, file))
+                return true;
             // did not match any includes
             return false;
         }
