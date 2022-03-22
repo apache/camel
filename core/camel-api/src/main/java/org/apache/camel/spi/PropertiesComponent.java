@@ -102,14 +102,10 @@ public interface PropertiesComponent extends StaticService {
 
     /**
      * Loads the properties from the default locations and sources filtering them out according to a predicate.
-     * </p>
      *
      * <pre>
-     * {
-     *     &#64;code
      *     PropertiesComponent pc = getPropertiesComponent();
      *     Properties props = pc.loadProperties(key -> key.startsWith("camel.component.seda"));
-     * }
      * </pre>
      *
      * @param  filter the predicate used to filter out properties based on the key.
@@ -120,13 +116,10 @@ public interface PropertiesComponent extends StaticService {
     /**
      * Loads the properties from the default locations and sources filtering them out according to a predicate, and maps
      * the key using the key mapper.
-     * </p>
      *
      * <pre>
-     *  <code>
-     *     PropertiesComponent pc = getPropertiesComponent();
-     *     Properties props = pc.loadProperties(key -> key.startsWith("camel.component.seda"), StringHelper.dashToCamelCase);
-     * </code>
+     *      PropertiesComponent pc = getPropertiesComponent();
+     *      Properties props = pc.loadProperties(key -> key.startsWith("camel.component.seda"), StringHelper::dashToCamelCase);
      * </pre>
      *
      * @param  filter    the predicate used to filter out properties based on the key.
@@ -137,14 +130,10 @@ public interface PropertiesComponent extends StaticService {
 
     /**
      * Loads the properties from the default locations and sources filtering them out according to a predicate.
-     * </p>
      *
      * <pre>
-     * {
-     *     &#64;code
      *     PropertiesComponent pc = getPropertiesComponent();
-     *     Map<String, Object> props = pc.loadPropertiesAsMap(key -> key.startsWith("camel.component.seda"));
-     * }
+     *     Map props = pc.loadPropertiesAsMap(key -> key.startsWith("camel.component.seda"));
      * </pre>
      *
      * @param  filter the predicate used to filter out properties based on the key.

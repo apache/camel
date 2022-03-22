@@ -672,7 +672,7 @@ public class PropertiesComponent extends ServiceSupport
         CamelContextAware.trySetCamelContext(propertiesSource, getCamelContext());
         synchronized (lock) {
             sources.add(propertiesSource);
-            // resort reverse as we loop and override so last should take precedence
+            // resort after we add a new source
             sources.sort(OrderedComparator.get());
             if (!isNew()) {
                 // if we have already initialized or started then also init the source
@@ -776,7 +776,6 @@ public class PropertiesComponent extends ServiceSupport
             }
         }
 
-        // resort reverse as we loop and override so last should take precedence
         sources.sort(OrderedComparator.get());
         ServiceHelper.initService(sources, functionResolver);
     }
