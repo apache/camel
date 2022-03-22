@@ -218,13 +218,11 @@ public class ValidateMojo extends AbstractExecMojo {
         // TODO: implement me
 
         Set<File> propertiesFiles = new LinkedHashSet<>();
-        List<Resource> list = project.getResources();
-        for (Resource dir : list) {
+        for (Resource dir : project.getResources()) {
             findPropertiesFiles(new File(dir.getDirectory()), propertiesFiles);
         }
         if (includeTest) {
-            list = project.getTestResources();
-            for (Resource dir : list) {
+            for (Resource dir : project.getTestResources()) {
                 findPropertiesFiles(new File(dir.getDirectory()), propertiesFiles);
             }
         }
@@ -623,13 +621,11 @@ public class ValidateMojo extends AbstractExecMojo {
 
     private void findXmlRouters(Set<File> xmlFiles) {
         if (includeXml) {
-            List<Resource> list = project.getResources();
-            for (Resource dir : list) {
+            for (Resource dir : project.getResources()) {
                 findXmlFiles(new File(dir.getDirectory()), xmlFiles);
             }
             if (includeTest) {
-                list = project.getTestResources();
-                for (Resource dir : list) {
+                for (Resource dir : project.getTestResources()) {
                     findXmlFiles(new File(dir.getDirectory()), xmlFiles);
                 }
             }
@@ -638,13 +634,11 @@ public class ValidateMojo extends AbstractExecMojo {
 
     private void findJavaRouteBuilderClasses(Set<File> javaFiles) {
         if (includeJava) {
-            List<String> list = project.getCompileSourceRoots();
-            for (String dir : list) {
+            for (String dir : project.getCompileSourceRoots()) {
                 findJavaFiles(new File(dir), javaFiles);
             }
             if (includeTest) {
-                list = project.getTestCompileSourceRoots();
-                for (String dir : list) {
+                for (String dir : project.getTestCompileSourceRoots()) {
                     findJavaFiles(new File(dir), javaFiles);
                 }
             }
@@ -872,8 +866,7 @@ public class ValidateMojo extends AbstractExecMojo {
     private static String findCamelVersion(MavenProject project) {
         Dependency candidate = null;
 
-        List<Dependency> list = project.getDependencies();
-        for (Dependency dep : list) {
+        for (Dependency dep : project.getDependencies()) {
             if ("org.apache.camel".equals(dep.getGroupId())) {
                 if ("camel-core".equals(dep.getArtifactId())) {
                     // favor camel-core
@@ -996,29 +989,25 @@ public class ValidateMojo extends AbstractExecMojo {
     private String stripRootPath(String name) {
         // strip out any leading source / resource directory
 
-        List<String> list = project.getCompileSourceRoots();
-        for (String dir : list) {
+        for (String dir : project.getCompileSourceRoots()) {
             dir = asRelativeFile(dir);
             if (name.startsWith(dir)) {
                 return name.substring(dir.length() + 1);
             }
         }
-        list = project.getTestCompileSourceRoots();
-        for (String dir : list) {
+        for (String dir : project.getTestCompileSourceRoots()) {
             dir = asRelativeFile(dir);
             if (name.startsWith(dir)) {
                 return name.substring(dir.length() + 1);
             }
         }
-        List<Resource> resources = project.getResources();
-        for (Resource resource : resources) {
+        for (Resource resource : project.getResources()) {
             String dir = asRelativeFile(resource.getDirectory());
             if (name.startsWith(dir)) {
                 return name.substring(dir.length() + 1);
             }
         }
-        resources = project.getTestResources();
-        for (Resource resource : resources) {
+        for (Resource resource : project.getTestResources()) {
             String dir = asRelativeFile(resource.getDirectory());
             if (name.startsWith(dir)) {
                 return name.substring(dir.length() + 1);
