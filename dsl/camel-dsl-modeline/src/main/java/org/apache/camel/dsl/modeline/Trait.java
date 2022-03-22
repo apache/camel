@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.modeline;
 
 import org.apache.camel.spi.CamelContextCustomizer;
+import org.apache.camel.spi.Resource;
 
 /**
  * modeline trait
@@ -27,10 +28,11 @@ public interface Trait {
 
     /**
      * Parses the trait
-     * 
-     * @param  trait the trait
-     * @return       a customizer if the trait is accepted, otherwise null is returned
+     *
+     * @param  resource the source
+     * @param  trait    the trait
+     * @return          a customizer if the trait is accepted, otherwise null is returned
      */
-    CamelContextCustomizer parseTrait(String trait);
+    CamelContextCustomizer parseTrait(Resource resource, String trait);
 
 }

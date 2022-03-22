@@ -19,6 +19,7 @@ package org.apache.camel.dsl.modeline;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.CamelContextCustomizer;
+import org.apache.camel.spi.Resource;
 
 public class NameTrait implements Trait {
 
@@ -28,7 +29,7 @@ public class NameTrait implements Trait {
     }
 
     @Override
-    public CamelContextCustomizer parseTrait(String trait) {
+    public CamelContextCustomizer parseTrait(Resource resource, String trait) {
         return new CamelContextCustomizer() {
             @Override
             public void configure(CamelContext camelContext) {

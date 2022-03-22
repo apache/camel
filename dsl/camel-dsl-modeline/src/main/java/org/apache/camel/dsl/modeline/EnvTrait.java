@@ -18,6 +18,7 @@ package org.apache.camel.dsl.modeline;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelContextCustomizer;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.util.StringHelper;
 
 public class EnvTrait implements Trait {
@@ -28,7 +29,7 @@ public class EnvTrait implements Trait {
     }
 
     @Override
-    public CamelContextCustomizer parseTrait(String trait) {
+    public CamelContextCustomizer parseTrait(Resource resource, String trait) {
         String key = StringHelper.before(trait, "=").trim();
         String value = StringHelper.after(trait, "=").trim();
         return new CamelContextCustomizer() {
