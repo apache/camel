@@ -118,8 +118,8 @@ public interface PropertiesComponent extends StaticService {
     Properties loadProperties(Predicate<String> filter);
 
     /**
-     * Loads the properties from the default locations and sources filtering them out according to a predicate,
-     * and maps the key using the key mapper.
+     * Loads the properties from the default locations and sources filtering them out according to a predicate, and maps
+     * the key using the key mapper.
      * </p>
      *
      * <pre>
@@ -130,9 +130,9 @@ public interface PropertiesComponent extends StaticService {
      * }
      * </pre>
      *
-     * @param  filter     the predicate used to filter out properties based on the key.
-     * @param  keyMapper  to map keys
-     * @return        the properties loaded.
+     * @param  filter    the predicate used to filter out properties based on the key.
+     * @param  keyMapper to map keys
+     * @return           the properties loaded.
      */
     Properties loadProperties(Predicate<String> filter, Function<String, String> keyMapper);
 

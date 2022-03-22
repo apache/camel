@@ -278,9 +278,7 @@ public class PropertiesComponent extends ServiceSupport
                 if (filter.test(name)) {
                     Object value = initialProperties.get(name);
                     name = keyMapper.apply(name);
-                    if (!prop.containsKey(name)) { // TODO: try without this
-                        prop.put("initial", name, value);
-                    }
+                    prop.put("initial", name, value);
                 }
             }
         }
@@ -300,9 +298,7 @@ public class PropertiesComponent extends ServiceSupport
                             String loc = olp.getLocation(name);
                             Object value = olp.getProperty(name);
                             name = keyMapper.apply(name);
-                            if (!prop.containsKey(name)) {
-                                prop.put(loc, name, value);
-                            }
+                            prop.put(loc, name, value);
                         }
                     } else {
                         String loc = lps.getName();
@@ -313,9 +309,7 @@ public class PropertiesComponent extends ServiceSupport
                         for (String name : p.stringPropertyNames()) {
                             Object value = p.getProperty(name);
                             name = keyMapper.apply(name);
-                            if (!prop.containsKey(name)) {
-                                prop.put(loc, name, value);
-                            }
+                            prop.put(loc, name, value);
                         }
                     }
                 }
@@ -328,9 +322,7 @@ public class PropertiesComponent extends ServiceSupport
                 if (filter.test(name)) {
                     Object value = overrideProperties.get(name);
                     name = keyMapper.apply(name);
-                    if (!prop.containsKey(name)) {
-                        prop.put("override", name, value);
-                    }
+                    prop.put("override", name, value);
                 }
             }
         }
