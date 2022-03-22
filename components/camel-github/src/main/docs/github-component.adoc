@@ -63,6 +63,10 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 == Configuring authentication
 
 The github component requires to be configured with an authentication token on either the component or endpoint level.

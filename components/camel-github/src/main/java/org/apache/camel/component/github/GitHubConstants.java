@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.github;
 
+import org.apache.camel.spi.Metadata;
+
 public interface GitHubConstants {
 
     String GITHUB_REPOSITORY_SERVICE = "githubRepositoryService";
@@ -27,24 +29,25 @@ public interface GitHubConstants {
     String GITHUB_PULL_REQUEST_SERVICE = "githubPullRequestService";
 
     String GITHUB_ISSUE_SERVICE = "githbIssueService";
-
+    @Metadata(description = "The pull request", javaType = "PullRequest or Integer")
     String GITHUB_PULLREQUEST = "GitHubPullRequest";
-
+    @Metadata(label = "producer", description = "The id of the comment to reply to", javaType = "Integer")
     String GITHUB_INRESPONSETO = "GitHubInResponseTo";
-
+    @Metadata(description = "The sha of the head of the pull request", javaType = "String")
     String GITHUB_PULLREQUEST_HEAD_COMMIT_SHA = "GitHubPullRequestHeadCommitSHA";
-
+    @Metadata(label = "producer", description = "The title of the issue", javaType = "String")
     String GITHUB_ISSUE_TITLE = "GitHubIssueTitle";
 
     String GITHUB_EVENT_SERVICE = "GitHubEventService";
-
+    @Metadata(label = "consumer", description = "The commit author", javaType = "String")
     String GITHUB_COMMIT_AUTHOR = "CamelGitHubCommitAuthor";
-
+    @Metadata(label = "consumer", description = "The committer name", javaType = "String")
     String GITHUB_COMMIT_COMMITTER = "CamelGitHubCommitCommitter";
-
+    @Metadata(label = "consumer", description = "The commit sha", javaType = "String")
     String GITHUB_COMMIT_SHA = "CamelGitHubCommitSha";
-
+    @Metadata(label = "consumer", description = "The commit URL", javaType = "String")
     String GITHUB_COMMIT_URL = "CamelGitHubCommitUrl";
-
+    @Metadata(label = "consumer", description = "The event payload",
+              javaType = "org.eclipse.egit.github.core.event.EventPayload")
     String GITHUB_EVENT_PAYLOAD = "CamelGitHubEventPayload";
 }

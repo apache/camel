@@ -61,7 +61,7 @@ import org.apache.camel.util.StringHelper;
  * publicly accessible where a webhook would fail
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName",
-             category = { Category.FILE, Category.CLOUD, Category.API })
+             category = { Category.FILE, Category.CLOUD, Category.API }, headersClass = GitHubConstants.class)
 public class GitHubEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
