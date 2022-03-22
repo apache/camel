@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public abstract class AbstractFhirTestSupport extends CamelTestSupport {
 
     @RegisterExtension
-    public static FhirService service = FhirServiceFactory.createService();
+    public static FhirService service = FhirServiceFactory.createSingletonService();
 
     protected Patient patient;
     FhirContext fhirContext;
