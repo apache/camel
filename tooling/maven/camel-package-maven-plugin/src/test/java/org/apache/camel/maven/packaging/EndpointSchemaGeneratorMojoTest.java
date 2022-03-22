@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.camel.maven.packaging.endpoint.SomeEndpoint;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstants;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadHeaders;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithFilter;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithoutHeaders;
@@ -29,6 +30,8 @@ import org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -52,15 +55,16 @@ class EndpointSchemaGeneratorMojoTest {
         mojo.project = new MavenProject();
     }
 
-    @Test
-    void testCanRetrieveMetadataOfHeaders() {
-        mojo.addEndpointHeaders(model, SomeEndpoint.class.getAnnotation(UriEndpoint.class), "some");
+    @ParameterizedTest
+    @ValueSource(classes = { SomeEndpoint.class, SomeEndpointUsingEnumConstants.class })
+    void testCanRetrieveMetadataOfHeaders(Class<?> clazz) {
+        mojo.addEndpointHeaders(model, clazz.getAnnotation(UriEndpoint.class), "some");
         List<EndpointHeaderModel> endpointHeaders = model.getEndpointHeaders();
         assertEquals(2, endpointHeaders.size());
         // Full
         EndpointHeaderModel headerFull = endpointHeaders.get(0);
         assertEquals("header", headerFull.getKind());
-        assertEquals("name-full", headerFull.getName());
+        assertEquals("KEY_FULL", headerFull.getName());
         assertEquals("key full desc", headerFull.getDescription());
         assertEquals("my display name", headerFull.getDisplayName());
         assertEquals("org.apache.camel.maven.packaging.endpoint.SomeEndpoint$MyEnum", headerFull.getJavaType());
@@ -75,7 +79,7 @@ class EndpointSchemaGeneratorMojoTest {
         // Empty
         EndpointHeaderModel headerEmpty = endpointHeaders.get(1);
         assertEquals("header", headerEmpty.getKind());
-        assertEquals("name-empty", headerEmpty.getName());
+        assertEquals("KEY_EMPTY", headerEmpty.getName());
         assertTrue(headerEmpty.getDescription().isEmpty());
         assertTrue(headerEmpty.getDisplayName().isEmpty());
         assertTrue(headerEmpty.getJavaType().isEmpty());

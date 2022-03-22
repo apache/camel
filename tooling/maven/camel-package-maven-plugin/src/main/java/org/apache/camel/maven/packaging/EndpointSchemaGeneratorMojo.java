@@ -316,8 +316,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         // A header class has been defined
         boolean foundHeader = false;
+        final boolean isEnum = headersClass.isEnum();
         for (Field field : headersClass.getDeclaredFields()) {
-            if (isStatic(field.getModifiers()) && field.getType() == String.class
+            if ((isEnum || isStatic(field.getModifiers()) && field.getType() == String.class)
                     && field.isAnnotationPresent(Metadata.class)) {
                 getLog().debug(
                         String.format("Trying to add the constant %s in the class %s as header.", field.getName(),
@@ -381,7 +382,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         try {
             field.trySetAccessible();
-            header.setName((String) field.get(null));
+            // The name of the header is either the name of the field in case of an enum, otherwise it is the value
+            // of the field as we assume that it is a String constant
+            header.setName(field.getType().isEnum() ? field.getName() : (String) field.get(null));
             componentModel.addEndpointHeader(header);
         } catch (IllegalAccessException e) {
             getLog().debug(String.format("The field %s in class %s cannot be accessed", field.getName(),

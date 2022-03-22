@@ -18,15 +18,12 @@ package org.apache.camel.maven.packaging.endpoint;
 
 import org.apache.camel.spi.Metadata;
 
-public final class SomeConstants {
+public enum SomeEnumConstants {
     @Deprecated
     @Metadata(description = "key full desc", label = "my label", displayName = "my display name",
               javaType = "org.apache.camel.maven.packaging.endpoint.SomeEndpoint$MyEnum", required = true,
               defaultValue = "VAL1", deprecationNote = "my deprecated note", secret = true)
-    public static final String KEY_FULL = "KEY_FULL";
+    KEY_FULL,
     @Metadata
-    static final String KEY_EMPTY = "KEY_EMPTY";
-
-    private SomeConstants() {
-    }
+    KEY_EMPTY;
 }
