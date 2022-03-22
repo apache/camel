@@ -55,6 +55,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Producer Endpoints
 
@@ -92,14 +95,6 @@ it will be redelivered immediately.
 To ack/nack the message the component uses Acknowledgement ID stored as header `GooglePubsubConstants.ACK_ID`.
 If the header is removed or tampered with, the ack will fail and the message will be redelivered
 again after the ack deadline.
-
-== Message Headers
-
-Headers set by the consumer endpoints:
-
-* GooglePubsubConstants.MESSAGE_ID
-* GooglePubsubConstants.ATTRIBUTES
-* GooglePubsubConstants.PUBLISH_TIME
 
 == Message Body
 

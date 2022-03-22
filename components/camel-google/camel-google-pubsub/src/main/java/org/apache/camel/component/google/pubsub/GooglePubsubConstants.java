@@ -16,12 +16,23 @@
  */
 package org.apache.camel.component.google.pubsub;
 
+import org.apache.camel.spi.Metadata;
+
 public final class GooglePubsubConstants {
 
+    @Metadata(description = "The ID of the message, assigned by the server when the message is published.", javaType = "String")
     public static final String MESSAGE_ID = "CamelGooglePubsub.MessageId";
+    @Metadata(label = "consumer", description = "The ID used to acknowledge the received message.", javaType = "String")
     public static final String ACK_ID = "CamelGooglePubsub.MsgAckId";
+    @Metadata(label = "consumer", description = "The time at which the message was published",
+              javaType = "com.google.protobuf.Timestamp")
     public static final String PUBLISH_TIME = "CamelGooglePubsub.PublishTime";
+    @Metadata(description = "The attributes of the message.", javaType = "Map<String, String>")
     public static final String ATTRIBUTES = "CamelGooglePubsub.Attributes";
+    @Metadata(label = "producer",
+              description = "If non-empty, identifies related messages for which publish order should be\n" +
+                            " respected.",
+              javaType = "String")
     public static final String ORDERING_KEY = "CamelGooglePubsub.OrderingKey";
     public static final String RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX = "goog";
 
