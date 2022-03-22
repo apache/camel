@@ -16,9 +16,15 @@
  */
 package org.apache.camel.component.google.secret.manager;
 
+import org.apache.camel.spi.Metadata;
+
 public interface GoogleSecretManagerConstants {
+    @Metadata(description = "The operation to perform",
+              javaType = "org.apache.camel.component.google.secret.manager.GoogleSecretManagerOperations")
     String OPERATION = "GoogleSecretManagerOperation";
+    @Metadata(description = "The id of the secret", javaType = "String")
     String SECRET_ID = "CamelGoogleSecretManagerSecretId";
+    @Metadata(description = "The version of the secret", javaType = "String", defaultValue = "latest")
     String VERSION_ID = "CamelGoogleSecretManagerVersionId";
     String REPLICATION = "CamelGoogleSecretManagerReplication";
 }

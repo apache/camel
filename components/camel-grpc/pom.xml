@@ -265,6 +265,19 @@
                     <skipTests>${skipTests}</skipTests>
                 </configuration>
             </plugin>
+            <!-- Force the version of guava to camel-package-maven-plugin to prevent build failure due to the
+             usage of an old/incompatible version of guava -->
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.google.guava</groupId>
+                        <artifactId>guava</artifactId>
+                        <version>${google-guava-version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
     </build>
 </project>

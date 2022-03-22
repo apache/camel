@@ -86,23 +86,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Message Headers
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-|`CamelGoogleBigQueryJobId` |`JobId` |A custom `JobId` to use
-|=======================================================================
-
-== Output Message Headers
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-|`CamelGoogleBigQueryTranslatedQuery` |`String` | Preprocessed query text
-|=======================================================================
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Producer Endpoints
 

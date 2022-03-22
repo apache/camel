@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.google.calendar.stream;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants used in Camel Google Calendar Stream
  */
 public final class GoogleCalendarStreamConstants {
 
+    @Metadata(description = "The calendar event id", javaType = "String")
     public static final String EVENT_ID = "CamelGoogleCalendarEventId";
 
     /**

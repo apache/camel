@@ -20,9 +20,12 @@ import com.google.cloud.bigquery.BigQuery;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+
+import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants.SCHEME_BIGQUERY_SQL;
 
 /**
  * Access Google Cloud BigQuery service using SQL queries.
@@ -36,8 +39,9 @@ import org.apache.camel.support.DefaultEndpoint;
  * Another consideration is that exceptions are not handled within the class. They are expected to bubble up and be
  * handled by Camel.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "google-bigquery-sql", title = "Google BigQuery Standard SQL",
-             syntax = "google-bigquery-sql:projectId:queryString", label = "cloud,messaging", producerOnly = true)
+@UriEndpoint(firstVersion = "2.23.0", scheme = SCHEME_BIGQUERY_SQL, title = "Google BigQuery Standard SQL",
+             syntax = "google-bigquery-sql:projectId:queryString", label = "cloud,messaging", producerOnly = true,
+             headersClass = GoogleBigQueryConstants.class)
 public class GoogleBigQuerySQLEndpoint extends DefaultEndpoint {
 
     @UriParam
