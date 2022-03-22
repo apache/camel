@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -260,6 +261,76 @@ public class PropertiesComponent extends ServiceSupport
             for (String name : overrideProperties.stringPropertyNames()) {
                 if (filter.test(name)) {
                     prop.put("override", name, overrideProperties.get(name));
+                }
+            }
+        }
+
+        return prop;
+    }
+
+    @Override
+    public Properties loadProperties(Predicate<String> filter, Function<String, String> keyMapper) {
+        OrderedLocationProperties prop = new OrderedLocationProperties();
+
+        // use initial properties
+        if (initialProperties != null) {
+            for (String name : initialProperties.stringPropertyNames()) {
+                if (filter.test(name)) {
+                    Object value = initialProperties.get(name);
+                    name = keyMapper.apply(name);
+                    if (!prop.containsKey(name)) { // TODO: try without this
+                        prop.put("initial", name, value);
+                    }
+                }
+            }
+        }
+
+        if (!sources.isEmpty()) {
+            // sources are ordered according to {@link org.apache.camel.support.OrderComparator} so
+            // it is needed to iterate them in reverse order otherwise lower priority sources may
+            // override properties from higher priority ones
+            for (int i = sources.size(); i-- > 0;) {
+                PropertiesSource ps = sources.get(i);
+                if (ps instanceof LoadablePropertiesSource) {
+                    LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
+                    Properties p = lps.loadProperties(filter);
+                    if (p instanceof OrderedLocationProperties) {
+                        OrderedLocationProperties olp = (OrderedLocationProperties) p;
+                        for (String name : olp.stringPropertyNames()) {
+                            String loc = olp.getLocation(name);
+                            Object value = olp.getProperty(name);
+                            name = keyMapper.apply(name);
+                            if (!prop.containsKey(name)) {
+                                prop.put(loc, name, value);
+                            }
+                        }
+                    } else {
+                        String loc = lps.getName();
+                        if (ps instanceof LocationPropertiesSource) {
+                            LocationPropertiesSource olp = (LocationPropertiesSource) ps;
+                            loc = olp.getLocation().getPath();
+                        }
+                        for (String name : p.stringPropertyNames()) {
+                            Object value = p.getProperty(name);
+                            name = keyMapper.apply(name);
+                            if (!prop.containsKey(name)) {
+                                prop.put(loc, name, value);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // use override properties
+        if (overrideProperties != null) {
+            for (String name : overrideProperties.stringPropertyNames()) {
+                if (filter.test(name)) {
+                    Object value = overrideProperties.get(name);
+                    name = keyMapper.apply(name);
+                    if (!prop.containsKey(name)) {
+                        prop.put("override", name, value);
+                    }
                 }
             }
         }
@@ -609,8 +680,10 @@ public class PropertiesComponent extends ServiceSupport
         CamelContextAware.trySetCamelContext(propertiesSource, getCamelContext());
         synchronized (lock) {
             sources.add(propertiesSource);
+            // resort reverse as we loop and override so last should take precedence
+            sources.sort(OrderedComparator.get());
             if (!isNew()) {
-                // if we have already initialized or started then we should also init the source
+                // if we have already initialized or started then also init the source
                 ServiceHelper.initService(propertiesSource);
             }
             if (isStarted()) {
@@ -711,6 +784,7 @@ public class PropertiesComponent extends ServiceSupport
             }
         }
 
+        // resort reverse as we loop and override so last should take precedence
         sources.sort(OrderedComparator.get());
         ServiceHelper.initService(sources, functionResolver);
     }

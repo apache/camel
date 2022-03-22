@@ -22,6 +22,7 @@ import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Ordered;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesSource;
@@ -36,10 +37,15 @@ import org.apache.camel.util.StringHelper;
  * property values.
  */
 @JdkService("properties-source-factory")
-public class PropertyTrait implements Trait, LoadablePropertiesSource, CamelContextAware {
+public class PropertyTrait implements Trait, LoadablePropertiesSource, CamelContextAware, Ordered {
 
     private final OrderedLocationProperties properties = new OrderedLocationProperties();
     private CamelContext camelContext;
+
+    @Override
+    public int getOrder() {
+        return 900;
+    }
 
     @Override
     public CamelContext getCamelContext() {
@@ -90,16 +96,6 @@ public class PropertyTrait implements Trait, LoadablePropertiesSource, CamelCont
     protected void setProperty(Resource resource, String key, String value) {
         String loc = resource.getLocation();
         properties.put(loc, key, value);
-
-        /*
-        if (!camelContext.isStarted()) {
-            // if we are bootstrapping then also set as initial property, so it can be used there as well
-            // TODO: source location from resource
-            // TODO: loadable properties source
-            String loc = resource.getLocation();
-            camelContext.getPropertiesComponent().addInitialProperty(key, value);
-        }
-        */
     }
 
     @Override
@@ -129,4 +125,5 @@ public class PropertyTrait implements Trait, LoadablePropertiesSource, CamelCont
     public String toString() {
         return "camel-dsl-modeline";
     }
+
 }
