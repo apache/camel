@@ -37,4 +37,11 @@ public final class FhirServiceFactory {
                 .addRemoteMapping(FhirRemoteService::new)
                 .build();
     }
+
+    public static FhirService createSingletonService() {
+        return builder()
+                .addLocalMapping(() -> new FhirLocalSingletonContainerService())
+                .addRemoteMapping(FhirRemoteService::new)
+                .build();
+    }
 }
