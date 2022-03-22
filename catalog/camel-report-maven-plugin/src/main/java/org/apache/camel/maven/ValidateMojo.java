@@ -558,19 +558,19 @@ public class ValidateMojo extends AbstractExecMojo {
             String fqn = file.getPath();
             String baseDir = ".";
 
-            InputStream is = new FileInputStream(file);
-            XmlRouteParser.parseXmlRouteEndpoints(is, baseDir, fqn, fileEndpoints);
-            is.close();
+            try (InputStream is = new FileInputStream(file)) {
+                XmlRouteParser.parseXmlRouteEndpoints(is, baseDir, fqn, fileEndpoints);
+            }
             // need a new stream
-            is = new FileInputStream(file);
-            XmlRouteParser.parseXmlRouteSimpleExpressions(is, baseDir, fqn, fileSimpleExpressions);
-            is.close();
+            try (InputStream is = new FileInputStream(file)) {
+                XmlRouteParser.parseXmlRouteSimpleExpressions(is, baseDir, fqn, fileSimpleExpressions);
+            }
 
             if (duplicateRouteId) {
                 // need a new stream
-                is = new FileInputStream(file);
-                XmlRouteParser.parseXmlRouteRouteIds(is, baseDir, fqn, fileRouteIds);
-                is.close();
+                try (InputStream is = new FileInputStream(file)) {
+                    XmlRouteParser.parseXmlRouteRouteIds(is, baseDir, fqn, fileRouteIds);
+                }
             }
 
             // add what we found in this file to the total list
