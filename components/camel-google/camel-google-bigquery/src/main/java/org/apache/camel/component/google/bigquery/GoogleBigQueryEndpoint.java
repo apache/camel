@@ -25,6 +25,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
+import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants.SCHEME_BIGQUERY;
+
 /**
  * Google BigQuery data warehouse for analytics.
  *
@@ -37,9 +39,9 @@ import org.apache.camel.support.DefaultEndpoint;
  * Another consideration is that exceptions are not handled within the class. They are expected to bubble up and be
  * handled by Camel.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "google-bigquery", title = "Google BigQuery",
+@UriEndpoint(firstVersion = "2.20.0", scheme = SCHEME_BIGQUERY, title = "Google BigQuery",
              syntax = "google-bigquery:projectId:datasetId:tableId",
-             category = { Category.CLOUD, Category.BIGDATA }, producerOnly = true)
+             category = { Category.CLOUD, Category.BIGDATA }, producerOnly = true, headersClass = GoogleBigQueryConstants.class)
 public class GoogleBigQueryEndpoint extends DefaultEndpoint {
 
     @UriParam
