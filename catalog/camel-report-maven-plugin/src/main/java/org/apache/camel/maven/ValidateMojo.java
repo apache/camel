@@ -964,10 +964,7 @@ public class ValidateMojo extends AbstractExecMojo {
             exclude = exclude.trim();
             // try both with and without directory in the name
             String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
-            boolean match = PatternHelper.matchPattern(fqn, exclude) || PatternHelper.matchPattern(file.getName(), exclude);
-            if (match) {
-                return true;
-            }
+            return PatternHelper.matchPattern(fqn, exclude) || PatternHelper.matchPattern(file.getName(), exclude);
         }
         return false;
     }
