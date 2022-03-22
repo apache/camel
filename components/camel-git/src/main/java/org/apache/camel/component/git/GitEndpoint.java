@@ -34,7 +34,8 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform operations on git repositories.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "git", title = "Git", syntax = "git:localPath", category = { Category.FILE })
+@UriEndpoint(firstVersion = "2.16.0", scheme = "git", title = "Git", syntax = "git:localPath", category = { Category.FILE },
+             headersClass = GitConstants.class)
 public class GitEndpoint extends DefaultEndpoint {
 
     @UriPath
