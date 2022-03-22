@@ -949,10 +949,7 @@ public class ValidateMojo extends AbstractExecMojo {
 
         // include
         if (includes != null) {
-            if (fileListMatchesPattern(includes, file))
-                return true;
-            // did not match any includes
-            return false;
+            return fileListMatchesPattern(includes, file);
         }
 
         // was not excluded nor failed include so its accepted
