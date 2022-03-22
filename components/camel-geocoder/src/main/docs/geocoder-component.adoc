@@ -55,35 +55,9 @@ include::partial$component-endpoint-options.adoc[]
 
 == Exchange data format
 
-== Message Headers
-
-[width="100%",cols="50%,50%",options="header",]
-|=======================================================================
-|Header |Description
-
-|`CamelGeoCoderStatus` |Mandatory. Status code from the geocoder library. If status is
-`GeocoderStatus.OK` then additional headers is enriched
-
-|`CamelGeoCoderAddress` |The formatted address
-
-|`CamelGeoCoderLat` |The latitude of the location.
-
-|`CamelGeoCoderLng` |The longitude of the location.
-
-|`CamelGeoCoderLatlng` |The latitude and longitude of the location. Separated by comma.
-
-|`CamelGeoCoderCity` |The city long name.
-
-|`CamelGeoCoderRegionCode` |The region code.
-
-|`CamelGeoCoderRegionName` |The region name.
-
-|`CamelGeoCoderCountryLong` |The country long name.
-
-|`CamelGeoCoderCountryShort` |The country short name.
-
-|`CamelGeoCoderPostalCode` |The postal code.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 Notice not all headers may be provided depending on available data and
 mode in use (address vs latlng).
