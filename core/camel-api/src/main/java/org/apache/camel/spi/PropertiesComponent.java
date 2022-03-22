@@ -123,11 +123,10 @@ public interface PropertiesComponent extends StaticService {
      * </p>
      *
      * <pre>
-     * {
-     *     &#64;code
+     *  <code>
      *     PropertiesComponent pc = getPropertiesComponent();
      *     Properties props = pc.loadProperties(key -> key.startsWith("camel.component.seda"), StringHelper.dashToCamelCase);
-     * }
+     * </code>
      * </pre>
      *
      * @param  filter    the predicate used to filter out properties based on the key.
