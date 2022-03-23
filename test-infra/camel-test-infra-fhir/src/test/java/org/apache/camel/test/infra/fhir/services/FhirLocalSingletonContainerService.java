@@ -21,17 +21,12 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class FhirLocalSingletonContainerService extends FhirLocalContainerService
         implements ExtensionContext.Store.CloseableResource {
 
-    private static boolean started;
-
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
-        if (!started) {
-            started = true;
-            // Your "before all tests" startup logic goes here
-            // The following line registers a callback hook when the root test context is shut down
-            extensionContext.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).put("fhir", this);
+        extensionContext.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).getOrComputeIfAbsent("fhir", s -> {
             super.initialize();
-        }
+            return this;
+        });
     }
 
     @Override
