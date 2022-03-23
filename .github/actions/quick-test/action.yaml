@@ -26,7 +26,7 @@ runs:
     - id: quick-test
       run: ${{ github.action_path }}/quick-test.sh ${{ inputs.start-commit }} ${{ inputs.end-commit }}
       shell: bash
-    - uses: actions/github-script@v5
+    - uses: actions/github-script@v6
       env:
         RESULT: ${{ steps.quick-test.outputs.result }}
         COUNT: ${{ steps.quick-test.outputs.count }}
