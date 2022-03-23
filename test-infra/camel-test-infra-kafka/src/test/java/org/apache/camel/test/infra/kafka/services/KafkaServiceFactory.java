@@ -36,4 +36,13 @@ public final class KafkaServiceFactory {
                 .addMapping("local-kafka3-container", ContainerLocalKafkaService::kafka3Container)
                 .build();
     }
+
+    public static KafkaService createSingletonService() {
+        return builder()
+                .addLocalMapping(() -> new ContainerLocalSingletonKafkaService())
+                .addRemoteMapping(RemoteKafkaService::new)
+                .addMapping("local-kafka3-container", ContainerLocalSingletonKafkaService::kafka3Container)
+                .build();
+    }
+
 }
