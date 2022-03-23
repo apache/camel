@@ -35,22 +35,16 @@ include::partial$component-endpoint-options.adoc[]
 == ringbuffer cache producer 
 
 The ringbuffer producer provides 5 operations:
+
 * add
-* readonceHead
-* readonceTail
+* readOnceHead
+* readOnceTail
 * remainingCapacity
 * capacity
 
-Header Variables for the request message:
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-
-|`CamelHazelcastOperationType` |`String` |valid values are: put, get, removevalue, delete
-
-|`CamelHazelcastObjectId` |`String` |the object id to store / find your object inside the cache
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Sample for *put*:
 

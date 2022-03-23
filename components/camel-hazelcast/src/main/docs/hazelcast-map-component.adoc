@@ -54,28 +54,9 @@ The map cache producer provides follow operations specified by *CamelHazelcastOp
 * evict
 * evictAll
 
-All operations are provide the inside the "hazelcast.operation.type" header variable. In Java
-DSL you can use the constants from `org.apache.camel.component.hazelcast.HazelcastOperation`.
-
-Header Variables for the request message:
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-|`CamelHazelcastOperationType` |`String` | as already described. 
-
-|`CamelHazelcastObjectId` |`String` |the object id to store / find your object inside the cache (not needed for the query operation)
-|=======================================================================
-
-*put* and *putIfAbsent* operations provide an eviction mechanism: 
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-|`CamelHazelcastObjectTtlValue` |`Integer` | value of TTL. 
-
-|`CamelHazelcastObjectTtlUnit` |`java.util.concurrent.TimeUnit` | value of time unit ( DAYS / HOURS / MINUTES / ....
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 You can call the samples with:
 
