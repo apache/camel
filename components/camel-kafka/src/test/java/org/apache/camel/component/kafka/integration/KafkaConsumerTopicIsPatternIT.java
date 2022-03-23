@@ -89,11 +89,10 @@ public class KafkaConsumerTopicIsPatternIT extends BaseEmbeddedKafkaTestSupport 
             ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
             producer.send(data);
         }
-
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
-                .count());
+        assertEquals(5, MockConsumerInterceptor.recordsCaptured.stream()
+                .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
     }
 
 }
