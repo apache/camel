@@ -73,9 +73,14 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
         boolean first = consumer.isFirstPollDone();
         Throwable cause = consumer.getLastError();
 
-        // can only be healthy if we have at least one poll done and there are no errors
-        boolean healthy = downBeforeFirstPoll && first && ec == 0 ||
-                !downBeforeFirstPoll && ec == 0;
+        boolean healthy = ec == 0;
+        boolean readiness = kind.equals(Kind.READINESS);
+        if (readiness) {
+            // can only be healthy for readiness-check
+            // if we have at least one poll done and there are no errors
+            healthy = downBeforeFirstPoll && first && ec == 0 ||
+                    !downBeforeFirstPoll && ec == 0;
+        }
         if (healthy) {
             builder.up();
         } else {
@@ -105,9 +110,9 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
     }
 
     /**
-     * Whether the health check starts as DOWN before first poll (default true). This can be set to false for consumers
-     * that should be UP from the start. For example scheduled consumer which may run their first poll after a long
-     * time.
+     * Whether the readiness health check starts as DOWN before first poll (default true). This can be set to false for
+     * consumers that should be UP from the start. For example scheduled consumer which may run their first poll after a
+     * long time.
      */
     public void setDownBeforeFirstPoll(boolean downBeforeFirstPoll) {
         this.downBeforeFirstPoll = downBeforeFirstPoll;

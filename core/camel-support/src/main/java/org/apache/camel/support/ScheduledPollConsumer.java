@@ -545,8 +545,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     }
 
     /**
-     * The initial state of the health check during startup. By default the state is DOWN meaning that the consumer must
-     * run the first poll successfully to have the state regarded as UP.
+     * The initial state of the health check (readiness check) during startup. By default, the state is DOWN meaning
+     * that the consumer must run the first poll successfully to have the readiness state regarded as UP.
+     *
+     * On the other hand the liveness check, would always report its initial state as UP, as a liveness check only
+     * reports DOWN when the consumer failed processing the last messages.
      *
      * Consumers that are internal only such as camel-scheduler uses UP as initial state because the scheduler may be
      * configured to run only very in-frequently and therefore the overall health-check state would be affected and seen

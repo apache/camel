@@ -105,6 +105,24 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     }
 
     /**
+     * Invoke the check as readiness check.
+     *
+     * @see #call(Map)
+     */
+    default Result callReadiness() {
+        return call(Map.of(HealthCheck.CHECK_KIND, Kind.READINESS));
+    }
+
+    /**
+     * Invoke the check as liveness check.
+     *
+     * @see #call(Map)
+     */
+    default Result callLiveness() {
+        return call(Map.of(HealthCheck.CHECK_KIND, Kind.LIVENESS));
+    }
+
+    /**
      * Invoke the check.
      *
      * The implementation is responsible to eventually perform the check according to the limitation of the third party
