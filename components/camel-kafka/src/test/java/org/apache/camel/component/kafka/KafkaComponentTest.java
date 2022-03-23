@@ -155,7 +155,7 @@ public class KafkaComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testAllProducerKeys() throws Exception {
+    public void testAllProducerKeysPlainText() throws Exception {
         Map<String, Object> params = new HashMap<>();
 
         String uri = "kafka:mytopic?brokers=dev1:12345,dev2:12566";
@@ -192,20 +192,55 @@ public class KafkaComponentTest extends CamelTestSupport {
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "false");
         props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "PLAINTEXT");
-        props.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, "TLSv1.2, TLSv1.1, TLSv1");
-        props.put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, "JKS");
-        props.put(SslConfigs.SSL_PROTOCOL_CONFIG, "TLS");
-        props.put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, "JKS");
+
+        return props;
+    }
+
+    private Properties getProducerKeysSASL() {
+        Properties props = getProducerKeys();
+
         props.put(SaslConfigs.SASL_KERBEROS_KINIT_CMD, "/usr/bin/kinit");
         props.put(SaslConfigs.SASL_KERBEROS_MIN_TIME_BEFORE_RELOGIN, "60000");
         props.put(SaslConfigs.SASL_KERBEROS_TICKET_RENEW_JITTER, "0.05");
         props.put(SaslConfigs.SASL_KERBEROS_TICKET_RENEW_WINDOW_FACTOR, "0.8");
         props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
+
+        return props;
+    }
+
+    private Properties getProducerKeysSSL() {
+        Properties props = getProducerKeys();
+
+        props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL");
+        props.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, "TLSv1.2, TLSv1.1, TLSv1");
+        props.put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, "JKS");
+        props.put(SslConfigs.SSL_PROTOCOL_CONFIG, "TLS");
+        props.put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, "JKS");
         props.put(SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, "SunX509");
         props.put(SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, "PKIX");
         props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "https");
 
         return props;
+    }
+
+    @Test
+    public void testAllProducerKeysPlainTextSsl() throws Exception {
+        Map<String, Object> params = new HashMap<>();
+
+        String uri = "kafka:mytopic?brokers=dev1:12345,dev2:12566&securityProtocol=SSL";
+
+        KafkaEndpoint endpoint = (KafkaEndpoint) context.getComponent("kafka").createEndpoint(uri, params);
+        assertEquals(endpoint.getConfiguration().createProducerProperties().keySet(), getProducerKeysSSL().keySet());
+    }
+
+    @Test
+    public void testAllProducerKeysPlainTextSasl() throws Exception {
+        Map<String, Object> params = new HashMap<>();
+
+        String uri = "kafka:mytopic?brokers=dev1:12345,dev2:12566&securityProtocol=SASL_PLAINTEXT";
+
+        KafkaEndpoint endpoint = (KafkaEndpoint) context.getComponent("kafka").createEndpoint(uri, params);
+        assertEquals(endpoint.getConfiguration().createProducerProperties().keySet(), getProducerKeysSASL().keySet());
     }
 
     private void setProducerProperty(Map<String, Object> params) {
@@ -293,5 +328,4 @@ public class KafkaComponentTest extends CamelTestSupport {
         assertEquals("my-password", props.getProperty("ssl.truststore.password"));
         assertNull(props.getProperty("ssl.keystore.password"));
     }
-
 }
