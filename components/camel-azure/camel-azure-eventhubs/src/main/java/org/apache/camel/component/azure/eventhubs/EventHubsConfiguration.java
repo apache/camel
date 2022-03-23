@@ -66,6 +66,10 @@ public class EventHubsConfiguration implements Cloneable {
     private StorageSharedKeyCredential blobStorageSharedKeyCredential;
     @UriParam(label = "consumer")
     private Map<String, EventPosition> eventPosition = new HashMap<>();
+    @UriParam(label = "consumer", defaultValue = "500")
+    private int checkpointBatchSize = 500;
+    @UriParam(label = "consumer", defaultValue = "5000")
+    private int checkpointBatchTimeout = 5000;
     @UriParam(label = "producer")
     @Metadata(autowired = true)
     private EventHubProducerAsyncClient producerAsyncClient;
@@ -311,6 +315,21 @@ public class EventHubsConfiguration implements Cloneable {
         this.eventPosition = eventPosition;
     }
 
+    public int getCheckpointBatchSize() {
+        return checkpointBatchSize;
+    }
+
+    public void setCheckpointBatchSize(int checkpointBatchSize) {
+        this.checkpointBatchSize = checkpointBatchSize;
+    }
+
+    public int getCheckpointBatchTimeout() {
+        return checkpointBatchTimeout;
+    }
+
+    public void setCheckpointBatchTimeout(int checkpointBatchTimeout) {
+        this.checkpointBatchTimeout = checkpointBatchTimeout;
+    }
     // *************************************************
     //
     // *************************************************

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.eventhubs;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.azure.messaging.eventhubs.EventProcessorClient;
 import com.azure.messaging.eventhubs.models.ErrorContext;
 import com.azure.messaging.eventhubs.models.EventContext;
@@ -34,8 +36,15 @@ public class EventHubsConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventHubsConsumer.class);
 
+    private static final String COMPLETED_BY_SIZE = "size";
+    private static final String COMPLETED_BY_TIMEOUT = "timeout";
+
     // we use the EventProcessorClient as recommended by Azure docs to consume from all partitions
     private EventProcessorClient processorClient;
+
+    private AtomicInteger processedEvents;
+
+    private Long checkpointCompletionTimeout;
 
     public EventHubsConsumer(final EventHubsEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -44,6 +53,9 @@ public class EventHubsConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        checkpointCompletionTimeout = System.currentTimeMillis();
+        processedEvents = new AtomicInteger(0);
 
         // create the client
         processorClient = EventHubsClientFactory.createEventProcessorClient(getConfiguration(),
@@ -146,7 +158,12 @@ public class EventHubsConsumer extends DefaultConsumer {
      */
     private void processCommit(final Exchange exchange, final EventContext eventContext) {
         try {
-            eventContext.updateCheckpoint();
+            if (processCheckpoint(exchange, eventContext)) {
+                eventContext.updateCheckpoint();
+                processedEvents.set(0);
+            } else {
+                processedEvents.incrementAndGet();
+            }
         } catch (Exception ex) {
             getExceptionHandler().handleException("Error occurred during updating the checkpoint. This exception is ignored.",
                     exchange, ex);
@@ -163,5 +180,32 @@ public class EventHubsConsumer extends DefaultConsumer {
         if (cause != null) {
             getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
         }
+    }
+
+    /**
+     * Checks whether we need to update the checkpoint or not
+     *
+     * @param  exchange the exchange
+     *
+     * @return          true if at least one of the two conditions (batch size or batch timeout) are met, else false
+     */
+    private boolean processCheckpoint(Exchange exchange, EventContext eventContext) {
+        var checkpointByBatchSize = processedEvents.get() % getEndpoint().getConfiguration().getCheckpointBatchSize() == 0;
+        if (checkpointByBatchSize) {
+            exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_SIZE);
+        }
+
+        var now = System.currentTimeMillis();
+        var checkpointByBatchTimeout = false;
+        if (now >= checkpointCompletionTimeout + getEndpoint().getConfiguration().getCheckpointBatchTimeout()) {
+            checkpointCompletionTimeout = now;
+            checkpointByBatchTimeout = true;
+        }
+
+        if (checkpointByBatchTimeout) {
+            exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_TIMEOUT);
+        }
+
+        return checkpointByBatchSize || checkpointByBatchTimeout;
     }
 }
