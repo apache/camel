@@ -23,7 +23,6 @@ import org.testcontainers.utility.DockerImageName;
 
 public class ContainerLocalSingletonKafkaService extends ContainerLocalKafkaService
         implements ExtensionContext.Store.CloseableResource {
-    private static boolean started;
 
     public ContainerLocalSingletonKafkaService(KafkaContainer container) {
         super(container);
@@ -35,11 +34,10 @@ public class ContainerLocalSingletonKafkaService extends ContainerLocalKafkaServ
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
-        if (!started) {
-            started = true;
-            extensionContext.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).put("kafka", this);
+        extensionContext.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).getOrComputeIfAbsent("kafka", s -> {
             super.initialize();
-        }
+            return this;
+        });
     }
 
     @Override
@@ -53,9 +51,8 @@ public class ContainerLocalSingletonKafkaService extends ContainerLocalKafkaServ
     }
 
     public static ContainerLocalSingletonKafkaService kafka3Container() {
-        KafkaContainer container = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.0.1"));
-        container = container.withEmbeddedZookeeper();
-
+        KafkaContainer container
+                = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.0.1")).withEmbeddedZookeeper();
         return new ContainerLocalSingletonKafkaService(container);
     }
 }
