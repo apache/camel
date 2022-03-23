@@ -13,7 +13,7 @@
 
 *{component-header}*
 
-This component provides an idemptotent repository, producers and
+This component provides an idempotent repository, producers and
 consumers for http://hbase.apache.org/[Apache HBase].
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -39,8 +39,8 @@ http://hbase.apache.org[Apache HBase].
 
 == Camel and HBase
 
-When using a datasotre inside a camel route, there is always the
-chalenge of specifying how the camel message will stored to the
+When using a datastore inside a camel route, there is always the
+challenge of specifying how the camel message will store to the
 datastore. In document based stores things are more easy as the message
 body can be directly mapped to a document. In relational databases an
 ORM solution can be used to map properties to columns etc. In column
@@ -88,7 +88,7 @@ client configuration and dependencies]
 
 == HBase Producer
 
-As mentioned above camel provides produers endpoints for HBase. This
+As mentioned above camel provides producers endpoints for HBase. This
 allows you to store, delete, retrieve or query data from HBase using
 your camel routes.
 
@@ -118,7 +118,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Put Operations.
 

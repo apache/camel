@@ -97,7 +97,7 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
             int exchangeCount = 0;
             // The next three statements are used just to get a reference to the BodyCellMappingStrategy instance.
             Exchange exchange = new DefaultExchange(endpoint);
-            exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY, CellMappingStrategyFactory.BODY);
+            exchange.getIn().setHeader(HBaseConstants.STRATEGY, CellMappingStrategyFactory.BODY);
             CellMappingStrategy mappingStrategy = endpoint.getCellMappingStrategyFactory().getStrategy(exchange.getIn());
             for (Result result = scanner.next();
                  (exchangeCount < maxMessagesPerPoll || maxMessagesPerPoll <= 0) && result != null;
@@ -141,10 +141,10 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
                     data.getRows().add(resultRow);
                     exchange = createExchange(true);
                     // Probably overkill but kept it here for consistency.
-                    exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY, CellMappingStrategyFactory.BODY);
+                    exchange.getIn().setHeader(HBaseConstants.STRATEGY, CellMappingStrategyFactory.BODY);
                     mappingStrategy.applyScanResults(exchange.getIn(), data);
                     //Make sure that there is a header containing the marked row ids, so that they can be deleted.
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_MARKED_ROW_ID.asHeader(), result.getRow());
+                    exchange.getIn().setHeader(HBaseConstants.HBASE_MARKED_ROW_ID, result.getRow());
                     queue.add(exchange);
                     exchangeCount++;
                 }
@@ -184,7 +184,7 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
             }
 
             if (endpoint.isRemove()) {
-                remove((byte[]) exchange.getIn().getHeader(HBaseAttribute.HBASE_MARKED_ROW_ID.asHeader()));
+                remove((byte[]) exchange.getIn().getHeader(HBaseConstants.HBASE_MARKED_ROW_ID));
             }
         }
 
