@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-knative",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "knative",
     "extendsScheme": "",
     "syntax": "knative:type\/typeId",
