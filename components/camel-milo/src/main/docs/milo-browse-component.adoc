@@ -4,7 +4,7 @@
 :artifactid: camel-milo
 :description: Connect to OPC UA servers using the binary protocol for browsing the node tree.
 :since: 3.15
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: milo
