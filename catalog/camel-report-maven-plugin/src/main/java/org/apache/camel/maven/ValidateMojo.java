@@ -55,6 +55,13 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
+import static org.apache.camel.maven.ReportPluginCommon.asRelativeFile;
+import static org.apache.camel.maven.ReportPluginCommon.findJavaFiles;
+import static org.apache.camel.maven.ReportPluginCommon.findJavaRouteBuilderClasses;
+import static org.apache.camel.maven.ReportPluginCommon.findXmlRouters;
+import static org.apache.camel.maven.ReportPluginCommon.matchRouteFile;
+import static org.apache.camel.maven.ReportPluginCommon.stripRootPath;
+
 /**
  * Parses the source code and validates the Camel routes has valid endpoint uris and simple expressions, and validates
  * configuration files such as application.properties.
@@ -371,17 +378,17 @@ public class ValidateMojo extends AbstractExecMojo {
         Set<File> xmlFiles = new LinkedHashSet<>();
 
         // find all java route builder classes
-        findJavaRouteBuilderClasses(javaFiles);
+        findJavaRouteBuilderClasses(javaFiles, includeJava, includeTest, project);
         // find all xml routes
-        findXmlRouters(xmlFiles);
+        findXmlRouters(xmlFiles, includeXml, includeTest, project);
 
         for (File file : javaFiles) {
-            if (matchRouteFile(file)) {
+            if (matchFile(file)) {
                 parseJavaRouteFile(endpoints, simpleExpressions, routeIds, file);
             }
         }
         for (File file : xmlFiles) {
-            if (matchRouteFile(file)) {
+            if (matchFile(file)) {
                 parseXmlRouteFile(endpoints, simpleExpressions, routeIds, file);
             }
         }
@@ -530,7 +537,7 @@ public class ValidateMojo extends AbstractExecMojo {
             sb.append(detail.getLineNumber()).append(")");
         } else if (detail.getLineNumber() != null) {
             // this is from xml
-            String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
+            String fqn = stripRootPath(asRelativeFile(detail.getFileName(), project), project);
             if (fqn.endsWith(".xml")) {
                 fqn = fqn.substring(0, fqn.length() - 4);
                 fqn = asPackageName(fqn);
@@ -619,31 +626,6 @@ public class ValidateMojo extends AbstractExecMojo {
         }
     }
 
-    private void findXmlRouters(Set<File> xmlFiles) {
-        if (includeXml) {
-            for (Resource dir : project.getResources()) {
-                findXmlFiles(new File(dir.getDirectory()), xmlFiles);
-            }
-            if (includeTest) {
-                for (Resource dir : project.getTestResources()) {
-                    findXmlFiles(new File(dir.getDirectory()), xmlFiles);
-                }
-            }
-        }
-    }
-
-    private void findJavaRouteBuilderClasses(Set<File> javaFiles) {
-        if (includeJava) {
-            for (String dir : project.getCompileSourceRoots()) {
-                findJavaFiles(new File(dir), javaFiles);
-            }
-            if (includeTest) {
-                for (String dir : project.getTestCompileSourceRoots()) {
-                    findJavaFiles(new File(dir), javaFiles);
-                }
-            }
-        }
-    }
 
     private int countEndpointPairs(List<CamelEndpointDetails> endpoints, String scheme) {
         int pairs = 0;
@@ -703,7 +685,7 @@ public class ValidateMojo extends AbstractExecMojo {
             sb.append(lineNumber).append(")");
         } else if (lineNumber != null) {
             // this is from xml
-            String fqn = stripRootPath(asRelativeFile(fileName));
+            String fqn = stripRootPath(asRelativeFile(fileName, project), project);
             if (fqn.endsWith(".xml")) {
                 fqn = fqn.substring(0, fqn.length() - 4);
                 fqn = asPackageName(fqn);
@@ -733,7 +715,7 @@ public class ValidateMojo extends AbstractExecMojo {
             sb.append(detail.getLineNumber()).append(")");
         } else if (detail.getLineNumber() != null) {
             // this is from xml
-            String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
+            String fqn = stripRootPath(asRelativeFile(detail.getFileName(), project), project);
             if (fqn.endsWith(".xml")) {
                 fqn = fqn.substring(0, fqn.length() - 4);
                 fqn = asPackageName(fqn);
@@ -794,7 +776,7 @@ public class ValidateMojo extends AbstractExecMojo {
                     sb.append(detail.getLineNumber()).append(")");
                 } else if (detail.getLineNumber() != null) {
                     // this is from xml
-                    String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
+                    String fqn = stripRootPath(asRelativeFile(detail.getFileName(), project), project);
                     if (fqn.endsWith(".xml")) {
                         fqn = fqn.substring(0, fqn.length() - 4);
                         fqn = asPackageName(fqn);
@@ -897,36 +879,10 @@ public class ValidateMojo extends AbstractExecMojo {
         }
     }
 
-    private void findJavaFiles(File dir, Set<File> javaFiles) {
-        File[] files = dir.isDirectory() ? dir.listFiles() : null;
-        if (files != null) {
-            for (File file : files) {
-                if (file.getName().endsWith(".java")) {
-                    javaFiles.add(file);
-                } else if (file.isDirectory()) {
-                    findJavaFiles(file, javaFiles);
-                }
-            }
-        }
-    }
-
-    private void findXmlFiles(File dir, Set<File> xmlFiles) {
-        File[] files = dir.isDirectory() ? dir.listFiles() : null;
-        if (files != null) {
-            for (File file : files) {
-                if (file.getName().endsWith(".xml")) {
-                    xmlFiles.add(file);
-                } else if (file.isDirectory()) {
-                    findXmlFiles(file, xmlFiles);
-                }
-            }
-        }
-    }
-
     private boolean matchPropertiesFile(File file) {
         for (String part : configurationFiles.split(",")) {
             part = part.trim();
-            String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
+            String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath(), project), project);
             boolean match = PatternHelper.matchPattern(fqn, part);
             if (match) {
                 return true;
@@ -935,80 +891,8 @@ public class ValidateMojo extends AbstractExecMojo {
         return false;
     }
 
-    private boolean matchRouteFile(File file) {
-        if (excludes == null && includes == null) {
-            return true;
-        }
-
-        // exclude take precedence
-        if (excludes != null) {
-            if (fileListMatchesPattern(excludes, file)) {
-                return false;
-            }
-        }
-
-        // include
-        if (includes != null) {
-            return fileListMatchesPattern(includes, file);
-        }
-
-        // was not excluded nor failed include so its accepted
-        return true;
-    }
-
-    private boolean fileListMatchesPattern(String fileList, File file) {
-        for (String exclude : fileList.split(",")) {
-            exclude = exclude.trim();
-            // try both with and without directory in the name
-            String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
-            return PatternHelper.matchPattern(fqn, exclude) || PatternHelper.matchPattern(file.getName(), exclude);
-        }
-        return false;
-    }
-
-    private String asRelativeFile(String name) {
-        String answer = name;
-
-        String base = project.getBasedir().getAbsolutePath();
-        if (name.startsWith(base)) {
-            answer = name.substring(base.length());
-            // skip leading slash for relative path
-            if (answer.startsWith(File.separator)) {
-                answer = answer.substring(1);
-            }
-        }
-        return answer;
-    }
-
-    private String stripRootPath(String name) {
-        // strip out any leading source / resource directory
-
-        for (String dir : project.getCompileSourceRoots()) {
-            dir = asRelativeFile(dir);
-            if (name.startsWith(dir)) {
-                return name.substring(dir.length() + 1);
-            }
-        }
-        for (String dir : project.getTestCompileSourceRoots()) {
-            dir = asRelativeFile(dir);
-            if (name.startsWith(dir)) {
-                return name.substring(dir.length() + 1);
-            }
-        }
-        for (Resource resource : project.getResources()) {
-            String dir = asRelativeFile(resource.getDirectory());
-            if (name.startsWith(dir)) {
-                return name.substring(dir.length() + 1);
-            }
-        }
-        for (Resource resource : project.getTestResources()) {
-            String dir = asRelativeFile(resource.getDirectory());
-            if (name.startsWith(dir)) {
-                return name.substring(dir.length() + 1);
-            }
-        }
-
-        return name;
+    private boolean matchFile(File file) {
+        return matchRouteFile(file, excludes, includes, project);
     }
 
     private static String asPackageName(String name) {
