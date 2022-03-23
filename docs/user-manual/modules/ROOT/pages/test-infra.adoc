@@ -217,4 +217,13 @@ export DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock
 
 Running the test-infra with Podman on OS X and Windows should work on many cases. However, it requires additional steps and has a few issues. Therefore, it is not recommended at this time.
 
+== Known Issues and/or Tips
+
+=== Multi-architecture support: ARM
+
+Some containers don't have images available for ARM. In this case, it is recommended to use an alternative image or build your own. The list below contains some tips for specific components:
+
+* camel-test-infra-kafka: use the Strimzi images `-Dkafka.instance.type=local-strimzi-container`
+
+
 

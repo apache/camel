@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BaseEmbeddedKafkaTestSupport extends CamelTestSupport {
+    // Note: you must use Strimzi on MacOS with Apple Silicon (and possibly other ARM-based architectures)
     @RegisterExtension
     public static KafkaService service = KafkaServiceFactory.createService();
 
