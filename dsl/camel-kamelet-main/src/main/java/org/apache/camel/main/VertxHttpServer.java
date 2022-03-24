@@ -207,6 +207,7 @@ public final class VertxHttpServer {
 
                 boolean all = ctx.currentRoute() == health;
                 boolean liv = ctx.currentRoute() == live;
+                boolean rdy = ctx.currentRoute() == ready;
 
                 Collection<HealthCheck.Result> res;
                 if (all) {
@@ -221,13 +222,33 @@ public final class VertxHttpServer {
                 sb.append("{\n");
 
                 HealthCheckRegistry registry = HealthCheckRegistry.get(context);
-                String level = registry.getExposureLevel();
-                if ("oneline".equals(level)) {
-                    healthCheckOneline(sb, res);
-                } else if ("full".equals(level)) {
-                    healthCheckFull(sb, res);
+                String level = ctx.request().getParam("exposureLevel");
+                if (level == null) {
+                    level = registry.getExposureLevel();
+                }
+
+                // are we UP
+                boolean up;
+                if (rdy) {
+                    // readiness requires that all are UP
+                    up = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
                 } else {
-                    healthCheckDefault(sb, res);
+                    // liveness will fail if there is any down
+                    up = res.stream().noneMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
+                }
+
+                if ("oneline".equals(level)) {
+                    // only brief status
+                    healthCheckStatus(sb, up);
+                } else if ("full".equals(level)) {
+                    // include all details
+                    List<HealthCheck.Result> list = new ArrayList<>(res);
+                    healthCheckDetails(sb, list, up);
+                } else {
+                    // include only DOWN details
+                    List<HealthCheck.Result> downs = res.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN))
+                            .collect(Collectors.toList());
+                    healthCheckDetails(sb, downs, up);
                 }
                 sb.append("}\n");
                 ctx.end(sb.toString());
@@ -240,8 +261,7 @@ public final class VertxHttpServer {
         phc.addHttpEndpoint("/q/health");
     }
 
-    private static void healthCheckOneline(StringBuilder sb, Collection<HealthCheck.Result> res) {
-        boolean up = res.stream().noneMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
+    private static void healthCheckStatus(StringBuilder sb, boolean up) {
         if (up) {
             sb.append("    \"status\": \"UP\"\n");
         } else {
@@ -249,15 +269,9 @@ public final class VertxHttpServer {
         }
     }
 
-    private static void healthCheckFull(StringBuilder sb, Collection<HealthCheck.Result> res) {
-        // we just want a brief summary or either UP or DOWN
-        boolean up = res.stream().noneMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-        if (up) {
-            sb.append("    \"status\": \"UP\"");
-        } else {
-            sb.append("    \"status\": \"DOWN\"");
-        }
-        List<HealthCheck.Result> checks = new ArrayList<>(res);
+    private static void healthCheckDetails(StringBuilder sb, List<HealthCheck.Result> checks, boolean up) {
+        healthCheckStatus(sb, up);
+
         if (!checks.isEmpty()) {
             sb.append(",\n");
             sb.append("    \"checks\": [\n");
@@ -274,31 +288,6 @@ public final class VertxHttpServer {
             sb.append("    ]\n");
         } else {
             sb.append("\n");
-        }
-    }
-
-    private static void healthCheckDefault(StringBuilder sb, Collection<HealthCheck.Result> res) {
-        // we just want a brief summary or either UP or DOWN
-        boolean up = res.stream().noneMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-        if (up) {
-            sb.append("    \"status\": \"UP\"\n");
-        } else {
-            // when we are DOWN then grab the only downs
-            List<HealthCheck.Result> down
-                    = res.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN)).collect(Collectors.toList());
-            sb.append("    \"status\": \"DOWN\",\n");
-            sb.append("    \"checks\": [\n");
-            for (int i = 0; i < down.size(); i++) {
-                HealthCheck.Result d = down.get(i);
-                sb.append("        {\n");
-                reportHealthCheck(sb, d);
-                if (i < down.size() - 1) {
-                    sb.append("        },\n");
-                } else {
-                    sb.append("        }\n");
-                }
-            }
-            sb.append("    ]\n");
         }
     }
 
