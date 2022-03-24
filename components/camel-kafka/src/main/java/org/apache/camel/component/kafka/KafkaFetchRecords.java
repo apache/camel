@@ -106,31 +106,10 @@ class KafkaFetchRecords implements Runnable {
                                 .withInterval(Duration.ofMillis(currentBackoffInterval))
                                 .build())
                         .build();
-                boolean success = task.run(() -> {
-                    try {
-                        createConsumer();
-                        commitManager
-                                = CommitManagers.createCommitManager(consumer, kafkaConsumer, threadId, getPrintableTopic());
-
-                    } catch (Exception e) {
-                        setConnected(false);
-                        // ensure this is logged so users can see the problem
-                        LOG.warn("Error creating org.apache.kafka.clients.consumer.KafkaConsumer due to: {}", e.getMessage(),
-                                e);
-                        lastError = e;
-                        return false;
-                    }
-
-                    return true;
-                });
+                boolean success = task.run(this::createConsumerTask);
                 if (!success) {
                     int max = kafkaConsumer.getEndpoint().getComponent().getCreateConsumerBackoffMaxAttempts();
-                    String time = TimeUtils.printDuration(task.elapsed());
-                    String topic = getPrintableTopic();
-                    String msg = "Gave up creating org.apache.kafka.clients.consumer.KafkaConsumer "
-                                 + threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
-                    LOG.warn(msg);
-                    lastError = new KafkaConsumerFatalException(msg, lastError);
+                    setupCreateConsumerException(task, max);
                     // give up and terminate this consumer
                     terminated = true;
                     break;
@@ -147,28 +126,10 @@ class KafkaFetchRecords implements Runnable {
                                 .withInterval(Duration.ofMillis(currentBackoffInterval))
                                 .build())
                         .build();
-                success = task.run(() -> {
-                    try {
-                        initializeConsumer();
-                    } catch (Exception e) {
-                        setConnected(false);
-                        // ensure this is logged so users can see the problem
-                        LOG.warn("Error subscribing org.apache.kafka.clients.consumer.KafkaConsumer due to: {}", e.getMessage(),
-                                e);
-                        lastError = e;
-                        return false;
-                    }
-
-                    return true;
-                });
+                success = task.run(this::initializeConsumerTask);
                 if (!success) {
                     int max = kafkaConsumer.getEndpoint().getComponent().getCreateConsumerBackoffMaxAttempts();
-                    String time = TimeUtils.printDuration(task.elapsed());
-                    String topic = getPrintableTopic();
-                    String msg = "Gave up subscribing org.apache.kafka.clients.consumer.KafkaConsumer " +
-                                 threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
-                    LOG.warn(msg);
-                    lastError = new KafkaConsumerFatalException(msg, lastError);
+                    setupInitializeErrorException(task, max);
                     // give up and terminate this consumer
                     terminated = true;
                     break;
@@ -187,6 +148,56 @@ class KafkaFetchRecords implements Runnable {
 
         safeUnsubscribe();
         IOHelper.close(consumer);
+    }
+
+    private void setupInitializeErrorException(ForegroundTask task, int max) {
+        String time = TimeUtils.printDuration(task.elapsed());
+        String topic = getPrintableTopic();
+        String msg = "Gave up subscribing org.apache.kafka.clients.consumer.KafkaConsumer " +
+                     threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
+        LOG.warn(msg);
+        lastError = new KafkaConsumerFatalException(msg, lastError);
+    }
+
+    private void setupCreateConsumerException(ForegroundTask task, int max) {
+        String time = TimeUtils.printDuration(task.elapsed());
+        String topic = getPrintableTopic();
+        String msg = "Gave up creating org.apache.kafka.clients.consumer.KafkaConsumer "
+                     + threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
+        lastError = new KafkaConsumerFatalException(msg, lastError);
+    }
+
+    private boolean initializeConsumerTask() {
+        try {
+            initializeConsumer();
+        } catch (Exception e) {
+            setConnected(false);
+            // ensure this is logged so users can see the problem
+            LOG.warn("Error subscribing org.apache.kafka.clients.consumer.KafkaConsumer due to: {}", e.getMessage(),
+                    e);
+            lastError = e;
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean createConsumerTask() {
+        try {
+            createConsumer();
+            commitManager
+                    = CommitManagers.createCommitManager(consumer, kafkaConsumer, threadId, getPrintableTopic());
+
+        } catch (Exception e) {
+            setConnected(false);
+            // ensure this is logged so users can see the problem
+            LOG.warn("Error creating org.apache.kafka.clients.consumer.KafkaConsumer due to: {}", e.getMessage(),
+                    e);
+            lastError = e;
+            return false;
+        }
+
+        return true;
     }
 
     protected void createConsumer() {
