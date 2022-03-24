@@ -319,6 +319,9 @@ public class EventHubsConfiguration implements Cloneable {
         return checkpointBatchSize;
     }
 
+    /**
+     * Sets the batch size between each checkpoint updates. Works jointly with {@link #checkpointBatchTimeout}
+     */
     public void setCheckpointBatchSize(int checkpointBatchSize) {
         this.checkpointBatchSize = checkpointBatchSize;
     }
@@ -327,6 +330,9 @@ public class EventHubsConfiguration implements Cloneable {
         return checkpointBatchTimeout;
     }
 
+    /**
+     * Sets the batch timeout between each checkpoint updates. Works jointly with {@link #checkpointBatchSize}
+     */
     public void setCheckpointBatchTimeout(int checkpointBatchTimeout) {
         this.checkpointBatchTimeout = checkpointBatchTimeout;
     }
