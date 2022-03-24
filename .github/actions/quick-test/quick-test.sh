@@ -81,6 +81,13 @@ function main() {
     echo "::set-output name=component-count::0"
     echo "::set-output name=failures-count::0"
     exit 0
+  else
+    if [[ ${total} -gt 10 ]]; then
+      echo "::set-output name=result:: :camel: There are too many components to be tested in this PR"
+      echo "::set-output name=component-count::0"
+      echo "::set-output name=failures-count::0"
+      exit 0
+    fi
   fi
 
   echo "It will test the following ${total} components:"
