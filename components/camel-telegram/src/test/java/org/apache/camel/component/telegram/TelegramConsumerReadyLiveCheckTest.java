@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.telegram;
 
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
@@ -29,9 +32,6 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
 public class TelegramConsumerReadyLiveCheckTest extends TelegramTestSupport {
 
