@@ -40,6 +40,8 @@ jobs:
     - name: mvn checkstyle
       run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress  -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
   build:
+    permissions:
+      issues: write
     runs-on: ubuntu-latest
     strategy:
       matrix:
