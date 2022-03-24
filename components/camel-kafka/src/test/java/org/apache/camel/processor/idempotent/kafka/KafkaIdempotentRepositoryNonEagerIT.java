@@ -18,7 +18,6 @@ package org.apache.camel.processor.idempotent.kafka;
 
 import java.util.UUID;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
@@ -26,20 +25,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test for non-eager idempotentRepository usage.
  */
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class KafkaIdempotentRepositoryNonEagerIT extends BaseEmbeddedKafkaTestSupport {
 
     // Every instance of the repository must use a different topic to guarantee isolation between tests
-    @BindToRegistry("kafkaIdempotentRepository")
-    private KafkaIdempotentRepository kafkaIdempotentRepository
-            = new KafkaIdempotentRepository(
-                    "TEST_NON_EAGER_" + UUID.randomUUID().toString(),
-                    getBootstrapServers());
+    private KafkaIdempotentRepository kafkaIdempotentRepository;
 
     @EndpointInject("mock:out")
     private MockEndpoint mockOut;
@@ -49,6 +46,9 @@ public class KafkaIdempotentRepositoryNonEagerIT extends BaseEmbeddedKafkaTestSu
 
     @Override
     protected RoutesBuilder createRouteBuilder() {
+        kafkaIdempotentRepository = new KafkaIdempotentRepository("TEST_NON_EAGER_" + UUID.randomUUID(), getBootstrapServers());
+        context.getRegistry().bind("kafkaIdempotentRepository", kafkaIdempotentRepository);
+
         return new RouteBuilder() {
             @Override
             public void configure() {

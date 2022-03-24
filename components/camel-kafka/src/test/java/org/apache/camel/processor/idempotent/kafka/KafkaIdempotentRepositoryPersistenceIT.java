@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,6 +30,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -48,11 +48,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * annotations.
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTestSupport {
 
-    @BindToRegistry("kafkaIdempotentRepository")
-    private final KafkaIdempotentRepository kafkaIdempotentRepository
-            = new KafkaIdempotentRepository("TEST_PERSISTENCE", getBootstrapServers());
+    private KafkaIdempotentRepository kafkaIdempotentRepository;
 
     @EndpointInject("mock:out")
     private MockEndpoint mockOut;
@@ -66,6 +65,9 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
 
     @Override
     protected RoutesBuilder createRouteBuilder() {
+        kafkaIdempotentRepository = new KafkaIdempotentRepository("TEST_PERSISTENCE", getBootstrapServers());
+        context.getRegistry().bind("kafkaIdempotentRepository", kafkaIdempotentRepository);
+
         return new RouteBuilder() {
             @Override
             public void configure() {
