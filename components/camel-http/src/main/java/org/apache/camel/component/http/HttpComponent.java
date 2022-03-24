@@ -717,8 +717,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * The timeout in milliseconds used when requesting a connection from the connection manager. A timeout value of
-     * zero is interpreted as an infinite timeout.
+     * The timeout in milliseconds used when requesting a connection from the connection manager.
      * <p>
      * A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined
      * (system default).
