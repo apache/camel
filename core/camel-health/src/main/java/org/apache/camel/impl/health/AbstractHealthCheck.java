@@ -134,9 +134,15 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
         builder.state(registry.getInitialState());
 
         // what kind of check is this
-        HealthCheck.Kind kind = (Kind) options.getOrDefault(CHECK_KIND, Kind.ALL);
-        builder.detail(CHECK_KIND, kind.name());
-
+        HealthCheck.Kind kind;
+        if (isLiveness() && isReadiness()) {
+            // if we can do both then use kind from what type we were invoked as
+            kind = (Kind) options.getOrDefault(CHECK_KIND, Kind.ALL);
+        } else {
+            // we can only be either live or ready so report that
+            kind = isLiveness() ? Kind.LIVENESS : Kind.READINESS;
+        }
+        builder.detail(CHECK_KIND, kind);
         // Extract relevant information from meta data.
         int invocationCount = (Integer) meta.getOrDefault(INVOCATION_COUNT, 0);
         int failureCount = (Integer) meta.getOrDefault(FAILURE_COUNT, 0);
