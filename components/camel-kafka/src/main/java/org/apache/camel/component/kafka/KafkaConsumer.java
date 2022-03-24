@@ -156,7 +156,11 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
 
     @Override
     protected void doStop() throws Exception {
-        LOG.info("Stopping Kafka consumer on topic: {}", endpoint.getConfiguration().getTopic());
+        if (endpoint.getConfiguration().isTopicIsPattern()) {
+            LOG.info("Stopping Kafka consumer on topic pattern: {}", endpoint.getConfiguration().getTopic());
+        } else {
+            LOG.info("Stopping Kafka consumer on topic: {}", endpoint.getConfiguration().getTopic());
+        }
 
         if (healthCheckRepository != null && consumerHealthCheck != null) {
             healthCheckRepository.removeHealthCheck(consumerHealthCheck);
