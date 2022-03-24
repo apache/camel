@@ -52,7 +52,8 @@ public class ContainerLocalSingletonKafkaService extends ContainerLocalKafkaServ
 
     public static ContainerLocalSingletonKafkaService kafka3Container() {
         KafkaContainer container
-                = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.0.1")).withEmbeddedZookeeper();
+                = new KafkaContainer(DockerImageName.parse(ContainerLocalKafkaService.KAFKA3_IMAGE_NAME))
+                        .withEmbeddedZookeeper();
         return new ContainerLocalSingletonKafkaService(container);
     }
 }
