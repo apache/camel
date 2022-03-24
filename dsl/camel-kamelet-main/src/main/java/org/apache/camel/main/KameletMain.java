@@ -157,8 +157,16 @@ public class KameletMain extends MainCommandLineSupport {
     protected CamelContext createCamelContext() {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
+
+        // any additional files to add to classpath
+        ClassLoader parentCL = KameletMain.class.getClassLoader();
+        String cpFiles = getInitialProperties().getProperty("camel.jbang.classpathFiles");
+        if (cpFiles != null) {
+            parentCL = new ExtraFilesClassLoader(parentCL, cpFiles.split(","));
+            LOG.info("Additional files added to classpath: {}", cpFiles);
+        }
         if (kameletClassLoader == null) {
-            kameletClassLoader = new GroovyClassLoader(KameletMain.class.getClassLoader());
+            kameletClassLoader = new GroovyClassLoader(parentCL);
         }
         answer.setApplicationContextClassLoader(kameletClassLoader);
         answer.setRegistry(registry);

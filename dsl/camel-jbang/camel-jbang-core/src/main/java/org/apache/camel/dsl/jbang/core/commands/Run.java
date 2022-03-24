@@ -229,11 +229,17 @@ class Run implements Callable<Integer> {
 
         StringJoiner js = new StringJoiner(",");
         StringJoiner sjReload = new StringJoiner(",");
+        StringJoiner sjClasspathFiles = new StringJoiner(",");
+
         for (String file : files) {
 
-            if (!acceptFile(file)) {
+            if (!knownFile(file)) {
+                // non known files to be added on classpath
+                sjClasspathFiles.add(file);
                 continue;
             }
+
+            // process known files as its likely DSLs or configuration files
 
             // check for properties files
             if (file.endsWith(".properties")) {
@@ -303,6 +309,9 @@ class Run implements Callable<Integer> {
             }
         }
         main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
+        if (sjClasspathFiles.length() > 0) {
+            main.addInitialProperty("camel.jbang.classpathFiles", sjClasspathFiles.toString());
+        }
 
         // we can only reload if file based
         if (reload && sjReload.length() > 0) {
@@ -454,7 +463,7 @@ class Run implements Callable<Integer> {
         }
     }
 
-    private boolean acceptFile(String file) {
+    private boolean knownFile(String file) {
         String ext = FileUtil.onlyExt(file, true);
         return Arrays.stream(ACCEPTED_FILE_EXT).anyMatch(e -> e.equalsIgnoreCase(ext));
     }
