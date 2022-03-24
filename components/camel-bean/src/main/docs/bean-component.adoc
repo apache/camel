@@ -118,6 +118,18 @@ from("direct:start").bean(new ExampleBean(), "methodName");
 from("direct:start").bean(ExampleBean.class);
 ---------------------------------------------------------------
 
+This bean could be a lambda if you cast the lambda to a `@FunctionalInterface`
+
+[source,java]
+---------------------------------------------------------------
+@FunctionalInterface
+public interface ExampleInterface() {
+    @Handler String methodName();
+}
+/* - - - - - - - - - - - */
+from("direct:start").bean((ExampleInterface) () -> ""))
+---------------------------------------------------------------
+
 == Bean Binding
 
 How bean methods to be invoked are chosen (if they are not specified
