@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.health.HealthCheckResultStrategy;
 import org.apache.camel.util.ObjectHelper;
@@ -127,6 +128,10 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
 
     protected HealthCheckResultBuilder doCall(Map<String, Object> options) {
         final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this);
+
+        // set initial state
+        final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
+        builder.state(registry.getInitialState());
 
         // what kind of check is this
         HealthCheck.Kind kind = (Kind) options.getOrDefault(CHECK_KIND, Kind.ALL);

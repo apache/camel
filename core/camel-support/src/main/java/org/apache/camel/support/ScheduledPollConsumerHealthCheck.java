@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import java.util.Map;
 
 import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.util.URISupport;
 
@@ -27,14 +28,17 @@ import org.apache.camel.util.URISupport;
  */
 public class ScheduledPollConsumerHealthCheck implements HealthCheck {
 
+    private final HealthCheckRegistry registry;
+    private HealthCheck.State initialState;
     private final ScheduledPollConsumer consumer;
     private final String id;
     private final String sanitizedBaseUri;
     private final String sanitizedUri;
     private boolean enabled = true;
-    private boolean downBeforeFirstPoll = true;
 
     public ScheduledPollConsumerHealthCheck(ScheduledPollConsumer consumer, String id) {
+        this.registry = HealthCheckRegistry.get(consumer.getEndpoint().getCamelContext());
+        this.initialState = registry.getInitialState();
         this.consumer = consumer;
         this.id = id;
         this.sanitizedBaseUri = URISupport.sanitizeUri(consumer.getEndpoint().getEndpointBaseUri());
@@ -55,13 +59,16 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
     public Result call(Map<String, Object> options) {
         final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this);
 
-        // what kind of check is this
-        HealthCheck.Kind kind = (Kind) options.getOrDefault(CHECK_KIND, Kind.ALL);
-        builder.detail(CHECK_KIND, kind.name());
+        // set initial state
+        builder.state(registry.getInitialState());
 
         // ensure to sanitize uri, so we do not show sensitive information such as passwords
         builder.detail(ENDPOINT_URI, sanitizedUri);
         builder.detail(FAILURE_ENDPOINT_URI, sanitizedUri);
+
+        // what kind of check is this
+        HealthCheck.Kind kind = (Kind) options.getOrDefault(CHECK_KIND, Kind.ALL);
+        builder.detail(CHECK_KIND, kind.name());
 
         if (!isEnabled()) {
             builder.message("Disabled");
@@ -75,12 +82,18 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
 
         boolean healthy = ec == 0;
         boolean readiness = kind.equals(Kind.READINESS);
-        if (readiness) {
-            // can only be healthy for readiness-check
-            // if we have at least one poll done and there are no errors
-            healthy = downBeforeFirstPoll && first && ec == 0 ||
-                    !downBeforeFirstPoll && ec == 0;
+        if (readiness && !first) {
+            // special for readiness check before first poll is done
+            // if initial state is UP or UNKNOWN then return that
+            // otherwise we are DOWN
+            boolean down = builder.state().equals(State.DOWN);
+            if (!down) {
+                return builder.build();
+            } else {
+                healthy = false;
+            }
         }
+
         if (healthy) {
             builder.up();
         } else {
@@ -105,17 +118,20 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
         return builder.build();
     }
 
-    public boolean isDownBeforeFirstPoll() {
-        return downBeforeFirstPoll;
+    public State getInitialState() {
+        return initialState;
     }
 
     /**
-     * Whether the readiness health check starts as DOWN before first poll (default true). This can be set to false for
-     * consumers that should be UP from the start. For example scheduled consumer which may run their first poll after a
-     * long time.
+     * Used to allow special consumers to override the initial state of the health check (readiness check) during
+     * startup.
+     *
+     * Consumers that are internal only such as camel-scheduler uses UP as initial state because the scheduler may be
+     * configured to run only very in-frequently and therefore the overall health-check state would be affected and seen
+     * as DOWN.
      */
-    public void setDownBeforeFirstPoll(boolean downBeforeFirstPoll) {
-        this.downBeforeFirstPoll = downBeforeFirstPoll;
+    public void setInitialState(State initialState) {
+        this.initialState = initialState;
     }
 
     @Override

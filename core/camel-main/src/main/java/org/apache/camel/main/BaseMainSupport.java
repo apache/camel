@@ -1104,6 +1104,9 @@ public abstract class BaseMainSupport extends BaseService {
         if (health.getExposureLevel() != null) {
             hcr.setExposureLevel(health.getExposureLevel());
         }
+        if (health.getInitialState() != null) {
+            hcr.setInitialState(camelContext.getTypeConverter().convertTo(HealthCheck.State.class, health.getInitialState()));
+        }
 
         // context is enabled by default
         if (hcr.isEnabled()) {

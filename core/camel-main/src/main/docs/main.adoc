@@ -151,7 +151,7 @@ The camel.threadpool supports 8 options, which are listed below.
 |===
 
 === Camel Health Check configurations
-The camel.health supports 6 options, which are listed below.
+The camel.health supports 7 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -160,6 +160,7 @@ The camel.health supports 6 options, which are listed below.
 | *camel.health.enabled* | Whether health check is enabled globally | true | Boolean
 | *camel.health.excludePattern* | Pattern to exclude health checks from being invoked by Camel when checking healths. Multiple patterns can be separated by comma. |  | String
 | *camel.health.exposureLevel* | Sets the level of details to exposure as result of invoking health checks. There are the following levels: full, default, oneline The full level will include all details and status from all the invoked health checks. The default level will report UP if everything is okay, and only include detailed information for health checks that was DOWN. The oneline level will only report either UP or DOWN. | default | String
+| *camel.health.initialState* | The initial state of health-checks (readiness). There are the following states: UP, DOWN, UNKNOWN. By default, the state is DOWN, is regarded as being pessimistic/careful. This means that the overall health checks may report as DOWN during startup and then only if everything is up and running flip to being UP. Setting the initial state to UP, is regarded as being optimistic. This means that the overall health checks may report as UP during startup and then if a consumer or other service is in fact un-healthy, then the health-checks can flip being DOWN. Setting the state to UNKNOWN means that some health-check would be reported in unknown state, especially during early bootstrap where a consumer may not be fully initialized or validated a connection to a remote system. This option allows to pre-configure the state for different modes. | down | String
 | *camel.health.registryEnabled* | Whether registry health check is enabled | true | Boolean
 | *camel.health.routesEnabled* | Whether routes health check is enabled | true | Boolean
 |===
