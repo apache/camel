@@ -38,7 +38,7 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
 
     public ScheduledPollConsumerHealthCheck(ScheduledPollConsumer consumer, String id) {
         this.registry = HealthCheckRegistry.get(consumer.getEndpoint().getCamelContext());
-        this.initialState = registry.getInitialState();
+        this.initialState = registry != null ? registry.getInitialState() : State.DOWN;
         this.consumer = consumer;
         this.id = id;
         this.sanitizedBaseUri = URISupport.sanitizeUri(consumer.getEndpoint().getEndpointBaseUri());
