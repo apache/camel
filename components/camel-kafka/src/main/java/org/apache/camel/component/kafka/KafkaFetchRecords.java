@@ -501,7 +501,9 @@ class KafkaFetchRecords implements Runnable {
             consumer.wakeup();
             Thread.currentThread().interrupt();
         } finally {
-            lock.unlock();
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
     }
 
