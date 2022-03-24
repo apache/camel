@@ -839,6 +839,24 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * If true, streams SOQL query result and transparently handles
+         * subsequent requests if there are multiple pages. Otherwise, results
+         * are returned one page at a time.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamQueryResult the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder streamQueryResult(
+                java.lang.Boolean streamQueryResult) {
+            doSetProperty("streamQueryResult", streamQueryResult);
+            return this;
+        }
+        /**
          * Whether to update an existing Push Topic when using the Streaming
          * API, defaults to false.
          * 
@@ -1604,6 +1622,7 @@ public interface SalesforceComponentBuilderFactory {
             case "sObjectName": getOrCreateConfiguration((SalesforceComponent) component).setSObjectName((java.lang.String) value); return true;
             case "sObjectQuery": getOrCreateConfiguration((SalesforceComponent) component).setSObjectQuery((java.lang.String) value); return true;
             case "sObjectSearch": getOrCreateConfiguration((SalesforceComponent) component).setSObjectSearch((java.lang.String) value); return true;
+            case "streamQueryResult": getOrCreateConfiguration((SalesforceComponent) component).setStreamQueryResult((java.lang.Boolean) value); return true;
             case "updateTopic": getOrCreateConfiguration((SalesforceComponent) component).setUpdateTopic((boolean) value); return true;
             case "config": ((SalesforceComponent) component).setConfig((org.apache.camel.component.salesforce.SalesforceEndpointConfig) value); return true;
             case "httpClientProperties": ((SalesforceComponent) component).setHttpClientProperties((java.util.Map) value); return true;
