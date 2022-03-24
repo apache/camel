@@ -18,8 +18,31 @@
 package org.apache.camel.test.infra.kafka.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class KafkaServiceFactory {
+    static class SingletonKafkaService extends SingletonService<KafkaService> implements KafkaService {
+        public SingletonKafkaService(KafkaService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String getBootstrapServers() {
+            return getService().getBootstrapServers();
+        }
+
+        @Override
+        public void beforeAll(ExtensionContext extensionContext) {
+            addToStore(extensionContext);
+        }
+
+        @Override
+        public void afterAll(ExtensionContext extensionContext) {
+            // NO-OP
+        }
+    }
+
     private KafkaServiceFactory() {
 
     }
@@ -39,9 +62,11 @@ public final class KafkaServiceFactory {
 
     public static KafkaService createSingletonService() {
         return builder()
-                .addLocalMapping(() -> new ContainerLocalSingletonKafkaService())
+                .addLocalMapping(() -> new SingletonKafkaService(new ContainerLocalKafkaService(), "kafka"))
                 .addRemoteMapping(RemoteKafkaService::new)
-                .addMapping("local-kafka3-container", ContainerLocalSingletonKafkaService::kafka3Container)
+                .addMapping("local-kafka3-container",
+                        () -> new SingletonKafkaService(ContainerLocalKafkaService.kafka3Container(), "kafka3"))
+                .addMapping("local-strimzi-container", () -> new SingletonKafkaService(new StrimziService(), "strimzi"))
                 .build();
     }
 
