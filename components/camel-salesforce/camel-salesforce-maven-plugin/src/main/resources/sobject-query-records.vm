@@ -30,15 +30,5 @@ import javax.annotation.Generated;
  */
 #set( $descName = $desc.Name )
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
-public class QueryRecords$descName extends AbstractQueryRecordsBase {
-
-    private List<$descName> records;
-
-    public List<$descName> getRecords() {
-        return records;
-    }
-
-    public void setRecords(List<$descName> records) {
-        this.records = records;
-    }
+public class QueryRecords$descName extends AbstractQueryRecordsBase<$descName> {
 }

@@ -20,7 +20,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -30,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -128,9 +131,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         template.request("salesforce:deleteSObject?sObjectName=Merchandise__c&sObjectId=" + merchandiseId, (Processor) e -> {
             // NOOP
         });
-        template.request("direct:deleteLineItems", (Processor) e -> {
-            // NOOP
-        });
+        template.requestBody("direct:deleteLineItems", "");
     }
 
     @BeforeEach
@@ -151,6 +152,17 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         final String lineItemId = String.valueOf(TEST_LINE_ITEM_ID.incrementAndGet());
         lineItem.setName(lineItemId);
         CreateSObjectResult result = template().requestBody("direct:createLineItem", lineItem, CreateSObjectResult.class);
+    }
+
+    private void createLineItems(int count) {
+        List<Line_Item__c> lineItems = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            Line_Item__c lineItem = new Line_Item__c();
+            final String lineItemId = String.valueOf(TEST_LINE_ITEM_ID.incrementAndGet());
+            lineItem.setName(lineItemId);
+            lineItems.add(lineItem);
+        }
+        template().requestBody("direct:createLineItems", lineItems);
     }
 
     private void createAccountAndContact() {
@@ -500,6 +512,20 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
+    public void testQueryStreamResults() throws Exception {
+        final int createCount = 300;
+        createLineItems(createCount);
+        final Iterator<Line_Item__c> queryRecords
+                = template().requestBody("direct:queryStreamResult", "", Iterator.class);
+        int count = 0;
+        while (queryRecords.hasNext()) {
+            count = count + 1;
+            queryRecords.next();
+        }
+        assertTrue(count >= createCount);
+    }
+
+    @Test
     public void querySyncAsyncDoesntTimeout() throws Exception {
         final Object result = template.requestBody("direct:querySyncAsync", "");
         assertNotNull(result);
@@ -538,6 +564,20 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         final QueryRecordsLine_Item__c queryRecords
                 = template().requestBody("direct:queryAll", null, QueryRecordsLine_Item__c.class);
         assertNotNull(queryRecords);
+    }
+
+    @Test
+    public void testQueryAllStreamResults() throws Exception {
+        final int createCount = 300;
+        createLineItems(createCount);
+        final Iterator<Line_Item__c> queryRecords
+                = template().requestBody("direct:queryAllStreamResult", "", Iterator.class);
+        int count = 0;
+        while (queryRecords.hasNext()) {
+            count = count + 1;
+            queryRecords.next();
+        }
+        assertTrue(count >= createCount);
     }
 
     @Test
@@ -737,14 +777,23 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                 from("direct:getSObject")
                         .to("salesforce:getSObject?sObjectName=Merchandise__c&sObjectFields=Description__c,Price__c");
 
-                // testUpsertSObject
                 from("direct:deleteLineItems")
                         .to("salesforce:query?sObjectQuery=SELECT Id FROM Line_Item__C&sObjectClass="
                             + QueryRecordsLine_Item__c.class.getName())
-                        .transform(simple("${body.records}")).split(body()).transform(simple("${body.id}"))
-                        .to("salesforce:deleteSObject?sObjectName=Line_Item__c");
+                        .filter(simple("${body.records.size} > 0"))
+                        .split(simple("${body.records}"),
+                                AggregationStrategies.flexible().accumulateInCollection(ArrayList.class))
+                            .transform(simple("${body.id}"))
+                        .end()
+                        .split(simple("${collate(200)}"))
+                            .to("salesforce:compositeDeleteSObjectCollections")
+                        .end();
 
                 from("direct:createLineItem").to("salesforce:createSObject?sObjectName=Line_Item__c");
+
+                from("direct:createLineItems")
+                        .split(simple("${collate(200)}"))
+                        .to("salesforce:compositeCreateSObjectCollections");
 
                 from("direct:upsertSObject")
                         .to("salesforce:upsertSObject?sObjectName=Line_Item__c&sObjectIdName=Name");
@@ -760,7 +809,21 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                 // testQuery
                 from("direct:query")
                         .to("salesforce:query?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name from Line_Item__c&sObjectClass="
-                            + QueryRecordsLine_Item__c.class.getName() + "");
+                            + QueryRecordsLine_Item__c.class.getName());
+
+                // testQuery
+                from("direct:queryStreamResult")
+                        .setHeader("sObjectClass", constant(QueryRecordsLine_Item__c.class.getName()))
+                        .setHeader("Sforce-Query-Options", constant("batchSize=200"))
+                        .to("salesforce:query?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name from Line_Item__c Order By Name"
+                            + "&streamQueryResult=true");
+
+                // testQuery
+                from("direct:queryAllStreamResult")
+                        .setHeader("sObjectClass", constant(QueryRecordsLine_Item__c.class.getName()))
+                        .setHeader("Sforce-Query-Options", constant("batchSize=200"))
+                        .to("salesforce:queryAll?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name from Line_Item__c Order By Name"
+                            + "&streamQueryResult=true");
 
                 // testParentRelationshipQuery
                 from("direct:parentRelationshipQuery")

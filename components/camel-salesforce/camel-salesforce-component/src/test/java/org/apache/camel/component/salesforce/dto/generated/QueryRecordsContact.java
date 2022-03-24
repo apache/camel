@@ -16,18 +16,7 @@
  */
 package org.apache.camel.component.salesforce.dto.generated;
 
-import java.util.List;
-
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 
-public class QueryRecordsContact extends AbstractQueryRecordsBase {
-    private List<Contact> records;
-
-    public List<Contact> getRecords() {
-        return records;
-    }
-
-    public void setRecords(List<Contact> records) {
-        this.records = records;
-    }
+public class QueryRecordsContact extends AbstractQueryRecordsBase<Contact> {
 }

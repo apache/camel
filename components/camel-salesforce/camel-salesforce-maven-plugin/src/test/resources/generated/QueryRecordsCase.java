@@ -12,15 +12,5 @@ import javax.annotation.Generated;
  * Salesforce QueryRecords DTO for type Case
  */
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
-public class QueryRecordsCase extends AbstractQueryRecordsBase {
-
-    private List<Case> records;
-
-    public List<Case> getRecords() {
-        return records;
-    }
-
-    public void setRecords(List<Case> records) {
-        this.records = records;
-    }
+public class QueryRecordsCase extends AbstractQueryRecordsBase<Case> {
 }

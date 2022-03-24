@@ -191,6 +191,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "sObjectSearch": getOrCreateConfig(target).setSObjectSearch(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "streamqueryresult":
+        case "streamQueryResult": getOrCreateConfig(target).setStreamQueryResult(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "updatetopic":
         case "updateTopic": getOrCreateConfig(target).setUpdateTopic(property(camelContext, boolean.class, value)); return true;
         case "useglobalsslcontextparameters":
@@ -371,6 +373,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "sObjectSearch": return java.lang.String.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "streamqueryresult":
+        case "streamQueryResult": return java.lang.Boolean.class;
         case "updatetopic":
         case "updateTopic": return boolean.class;
         case "useglobalsslcontextparameters":
@@ -552,6 +556,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "sObjectSearch": return getOrCreateConfig(target).getSObjectSearch();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
+        case "streamqueryresult":
+        case "streamQueryResult": return getOrCreateConfig(target).getStreamQueryResult();
         case "updatetopic":
         case "updateTopic": return getOrCreateConfig(target).isUpdateTopic();
         case "useglobalsslcontextparameters":

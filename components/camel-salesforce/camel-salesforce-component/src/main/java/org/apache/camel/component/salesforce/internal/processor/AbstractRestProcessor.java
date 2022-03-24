@@ -58,13 +58,16 @@ import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOB
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_NAME;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_QUERY;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_SEARCH;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.STREAM_QUERY_RESULT;
 
 public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor {
 
     protected static final String RESPONSE_CLASS = AbstractRestProcessor.class.getName() + ".responseClass";
+    protected static final String RESPONSE_TYPE = JsonRestProcessor.class.getName() + ".responseType";
+
     private static final Pattern URL_TEMPLATE = Pattern.compile("\\{([^\\{\\}]+)\\}");
 
-    private RestClient restClient;
+    protected RestClient restClient;
     private NotFoundBehaviour notFoundBehaviour;
 
     // used in unit tests
@@ -488,11 +491,16 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
     private void processQuery(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         final String sObjectQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
+        final boolean streamQueryResults = getParameter(STREAM_QUERY_RESULT, exchange, IGNORE_BODY, IS_OPTIONAL, Boolean.class);
 
         // use custom response class property
         setResponseClass(exchange, null);
 
-        restClient.query(sObjectQuery, determineHeaders(exchange), processWithResponseCallback(exchange, callback));
+        if (streamQueryResults) {
+            restClient.query(sObjectQuery, determineHeaders(exchange), processWithStreamResultCallback(exchange, callback));
+        } else {
+            restClient.query(sObjectQuery, determineHeaders(exchange), processWithResponseCallback(exchange, callback));
+        }
     }
 
     private void processQueryMore(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -507,11 +515,16 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
     private void processQueryAll(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         final String sObjectQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
+        final boolean streamQueryResults = getParameter(STREAM_QUERY_RESULT, exchange, IGNORE_BODY, IS_OPTIONAL, Boolean.class);
 
         // use custom response class property
         setResponseClass(exchange, null);
 
-        restClient.queryAll(sObjectQuery, determineHeaders(exchange), processWithResponseCallback(exchange, callback));
+        if (streamQueryResults) {
+            restClient.queryAll(sObjectQuery, determineHeaders(exchange), processWithStreamResultCallback(exchange, callback));
+        } else {
+            restClient.queryAll(sObjectQuery, determineHeaders(exchange), processWithResponseCallback(exchange, callback));
+        }
     }
 
     private void processSearch(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -730,13 +743,20 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         return (response, headers, exception) -> processResponse(exchange, response, headers, exception, callback);
     }
 
+    final ResponseCallback processWithStreamResultCallback(final Exchange exchange, final AsyncCallback callback) {
+        return (response, headers, exception) -> processStreamResultResponse(exchange, response, headers, exception, callback);
+    }
+
     // process response entity and set out message in exchange
     protected abstract void processResponse(
+            Exchange exchange, InputStream responseEntity, Map<String, String> headers, SalesforceException ex,
+            AsyncCallback callback);
+
+    protected abstract void processStreamResultResponse(
             Exchange exchange, InputStream responseEntity, Map<String, String> headers, SalesforceException ex,
             AsyncCallback callback);
 
     final boolean shouldReport(SalesforceException ex) {
         return !(ex instanceof NoSuchSObjectException && notFoundBehaviour == NotFoundBehaviour.NULL);
     }
-
 }

@@ -526,12 +526,13 @@ Runs a Salesforce SOQL query
 | Parameter | Type | Description | Default | Required
 
 | Body or `sObjectQuery` | `String`  | SOQL query | | x
+| streamQueryResult | `Boolean` | If true, returns a streaming `Iterator` and transparently retrieves all pages as needed. The `sObjectClass` option must reference an `AbstractQueryRecordsBase` subclass. | false |
 | `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |x
 |===
 
 *Output*
 
-Type: Instance of class supplied in `sObjectClass`
+Type: Instance of class supplied in `sObjectClass`, or `Iterator<SomeSObject>` if `streamQueryResult` is true.
 
 [[queryMore]]
 ==== Query More
@@ -562,12 +563,13 @@ Executes the specified SOQL query. Unlike the `query` operation , `queryAll` ret
 | Parameter | Type | Description | Default | Required
 
 | Body or `sObjectQuery` | `String`  | SOQL query | | x
+| streamQueryResult | `Boolean` | If true, returns a streaming `Iterable` and transparently retrieves all pages as needed. The `sObjectClass` option must reference an `AbstractQueryRecordsBase` subclass. | false |
 | `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |x
 |===
 
 *Output*
 
-Type: Instance of class supplied in `sObjectClass`
+Type: Instance of class supplied in `sObjectClass`, or `Iterator<SomeSObject>` if `streamQueryResult` is true.
 
 [[sosl_search]]
 ==== Search

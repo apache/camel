@@ -46,17 +46,7 @@ import org.junit.jupiter.api.BeforeEach;
 @Parameterized
 public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
 
-    public static class Accounts extends AbstractQueryRecordsBase {
-        private List<Account> records;
-
-        public List<Account> getRecords() {
-            return records;
-        }
-
-        public void setRecords(final List<Account> records) {
-            this.records = records;
-        }
-
+    public static class Accounts extends AbstractQueryRecordsBase<Account> {
     }
 
     private static final Set<String> VERSIONS = new HashSet<>(Arrays.asList("38.0", "50.0"));
