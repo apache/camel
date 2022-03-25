@@ -247,7 +247,7 @@ from("direct:start")
     .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.GET)
     .setHeader(InfinispanConstants.KEY).constant("123")
     .setHeader(InfinispanConstants.LIFESPAN_TIME).constant(100L) // <1>
-    .setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT.constant(TimeUnit.MILLISECONDS.toString()) // <2>
+    .setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT).constant(TimeUnit.MILLISECONDS.toString()) // <2>
     .to("infinispan:myCacheName");
 ----
 <1> Set the lifespan of the entry
