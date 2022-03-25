@@ -38,7 +38,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class CamelHBaseTestSupport extends CamelTestSupport {
     @RegisterExtension
-    public static HBaseService service = HBaseServiceFactory.createService();
+    public static HBaseService service = HBaseServiceFactory.createSingletonService();
 
     protected static final String PERSON_TABLE = "person";
     protected static final String INFO_FAMILY = "info";

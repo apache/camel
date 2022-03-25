@@ -17,8 +17,32 @@
 package org.apache.camel.test.infra.hbase.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
+import org.apache.hadoop.conf.Configuration;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class HBaseServiceFactory {
+    static class SingletonHBaseService extends SingletonService<HBaseService> implements HBaseService {
+        public SingletonHBaseService(HBaseService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public Configuration getConfiguration() {
+            return getService().getConfiguration();
+        }
+
+        @Override
+        public void beforeAll(ExtensionContext extensionContext) {
+            addToStore(extensionContext);
+        }
+
+        @Override
+        public void afterAll(ExtensionContext extensionContext) {
+            // NO-OP
+        }
+    }
+
     private HBaseServiceFactory() {
 
     }
@@ -30,7 +54,12 @@ public final class HBaseServiceFactory {
     public static HBaseService createService() {
         return builder()
                 .addLocalMapping(HBaseLocalContainerService::new)
-                .addRemoteMapping(HBaseLocalContainerService::new)
+                .build();
+    }
+
+    public static HBaseService createSingletonService() {
+        return builder()
+                .addLocalMapping(() -> new SingletonHBaseService(new HBaseLocalContainerService(), "hbase"))
                 .build();
     }
 }
