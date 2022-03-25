@@ -17,8 +17,36 @@
 package org.apache.camel.test.infra.arangodb.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class ArangoDBServiceFactory {
+    private static class SingletonArangoDBService extends SingletonService<ArangoDBService> implements ArangoDBService {
+        public SingletonArangoDBService(ArangoDBService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public void beforeAll(ExtensionContext extensionContext) {
+            addToStore(extensionContext);
+        }
+
+        @Override
+        public void afterAll(ExtensionContext extensionContext) {
+            // NO-OP
+        }
+
+        @Override
+        public int getPort() {
+            return getService().getPort();
+        }
+
+        @Override
+        public String getHost() {
+            return getService().getHost();
+        }
+    }
+
     private ArangoDBServiceFactory() {
 
     }
@@ -30,6 +58,13 @@ public final class ArangoDBServiceFactory {
     public static ArangoDBService createService() {
         return builder()
                 .addLocalMapping(ArangoDBLocalContainerService::new)
+                .addRemoteMapping(ArangoDBRemoteService::new)
+                .build();
+    }
+
+    public static ArangoDBService createSingletonService() {
+        return builder()
+                .addLocalMapping(() -> new SingletonArangoDBService(new ArangoDBLocalContainerService(), "arangoDB"))
                 .addRemoteMapping(ArangoDBRemoteService::new)
                 .build();
     }
