@@ -258,8 +258,8 @@
     <hazelcast-version>5.1</hazelcast-version>
     <hbase-version>2.4.10</hbase-version>
     <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
-    <hibernate-validator-version>6.2.0.Final</hibernate-validator-version>
-    <hibernate-version>5.4.32.Final</hibernate-version>
+    <hibernate-validator-version>6.2.3.Final</hibernate-validator-version>
+    <hibernate-version>5.6.7.Final</hibernate-version>
     <hk2-version>2.6.1</hk2-version>
     <hsqldb-version>2.6.1</hsqldb-version>
     <httpasyncclient-version>4.1.5</httpasyncclient-version>
@@ -384,7 +384,7 @@
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <lightcouch-version>0.2.0</lightcouch-version>
     <log4j2-version>2.17.2</log4j2-version>
-    <logback-version>1.2.10</logback-version>
+    <logback-version>1.2.11</logback-version>
     <lucene-version>8.11.1</lucene-version>
     <lucene-version-range>[8,9)</lucene-version-range>
     <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
@@ -408,8 +408,8 @@
     <maven-shade-plugin-version>3.2.3</maven-shade-plugin-version>
     <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
-    <metrics-version>4.2.7</metrics-version>
-    <micrometer-version>1.8.3</micrometer-version>
+    <metrics-version>4.2.9</metrics-version>
+    <micrometer-version>1.8.4</micrometer-version>
     <microprofile-config-version>2.0.1</microprofile-config-version>
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
     <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
