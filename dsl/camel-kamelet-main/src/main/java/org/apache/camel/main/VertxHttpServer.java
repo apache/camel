@@ -228,14 +228,7 @@ public final class VertxHttpServer {
                 }
 
                 // are we UP
-                boolean up;
-                if (rdy) {
-                    // readiness requires that all are UP
-                    up = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
-                } else {
-                    // liveness will fail if there is any down
-                    up = res.stream().noneMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-                }
+                boolean up = HealthCheckHelper.isResultsUp(res, rdy);
 
                 if ("oneline".equals(level)) {
                     // only brief status

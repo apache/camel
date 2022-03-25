@@ -265,6 +265,25 @@ public final class HealthCheckHelper {
     }
 
     /**
+     * Checks the overall status of the results.
+     *
+     * @param  results   the results from the invoked health checks
+     * @param  readiness readiness or liveness mode
+     * @return           true if up, or false if down
+     */
+    public static boolean isResultsUp(Collection<HealthCheck.Result> results, boolean readiness) {
+        boolean up;
+        if (readiness) {
+            // readiness requires that all are UP
+            up = results.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
+        } else {
+            // liveness will fail if there is any down
+            up = results.stream().noneMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
+        }
+        return up;
+    }
+
+    /**
      * Get the group of the given check or an empty string if the group is not set.
      *
      * @param  check the health check
