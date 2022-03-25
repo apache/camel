@@ -277,6 +277,22 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Timeout value for HTTP requests.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 60000
+         * Group: common
+         * 
+         * @param httpRequestTimeout the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder httpRequestTimeout(
+                long httpRequestTimeout) {
+            doSetProperty("httpRequestTimeout", httpRequestTimeout);
+            return this;
+        }
+        /**
          * Include details in Salesforce1 Analytics report, defaults to false.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -1587,6 +1603,7 @@ public interface SalesforceComponentBuilderFactory {
             case "httpClientIdleTimeout": ((SalesforceComponent) component).setHttpClientIdleTimeout((long) value); return true;
             case "httpMaxContentLength": ((SalesforceComponent) component).setHttpMaxContentLength((java.lang.Integer) value); return true;
             case "httpRequestBufferSize": ((SalesforceComponent) component).setHttpRequestBufferSize((java.lang.Integer) value); return true;
+            case "httpRequestTimeout": ((SalesforceComponent) component).setHttpRequestTimeout((long) value); return true;
             case "includeDetails": getOrCreateConfiguration((SalesforceComponent) component).setIncludeDetails((java.lang.Boolean) value); return true;
             case "initialReplayIdMap": getOrCreateConfiguration((SalesforceComponent) component).setInitialReplayIdMap((java.util.Map) value); return true;
             case "instanceId": getOrCreateConfiguration((SalesforceComponent) component).setInstanceId((java.lang.String) value); return true;
