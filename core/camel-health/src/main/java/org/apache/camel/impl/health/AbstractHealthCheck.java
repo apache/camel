@@ -131,7 +131,9 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
 
         // set initial state
         final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
-        builder.state(registry.getInitialState());
+        if (registry != null) {
+            builder.state(registry.getInitialState());
+        }
 
         // what kind of check is this
         HealthCheck.Kind kind;
