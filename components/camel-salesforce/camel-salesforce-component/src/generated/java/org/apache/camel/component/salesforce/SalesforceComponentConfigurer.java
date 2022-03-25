@@ -96,6 +96,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "httpProxyUsername": target.setHttpProxyUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "httprequestbuffersize":
         case "httpRequestBufferSize": target.setHttpRequestBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "httprequesttimeout":
+        case "httpRequestTimeout": target.setHttpRequestTimeout(property(camelContext, long.class, value)); return true;
         case "includedetails":
         case "includeDetails": getOrCreateConfig(target).setIncludeDetails(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "initialreplayidmap":
@@ -278,6 +280,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "httpProxyUsername": return java.lang.String.class;
         case "httprequestbuffersize":
         case "httpRequestBufferSize": return java.lang.Integer.class;
+        case "httprequesttimeout":
+        case "httpRequestTimeout": return long.class;
         case "includedetails":
         case "includeDetails": return java.lang.Boolean.class;
         case "initialreplayidmap":
@@ -461,6 +465,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "httpProxyUsername": return target.getHttpProxyUsername();
         case "httprequestbuffersize":
         case "httpRequestBufferSize": return target.getHttpRequestBufferSize();
+        case "httprequesttimeout":
+        case "httpRequestTimeout": return target.getHttpRequestTimeout();
         case "includedetails":
         case "includeDetails": return getOrCreateConfig(target).getIncludeDetails();
         case "initialreplayidmap":
