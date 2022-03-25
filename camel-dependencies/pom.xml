@@ -426,9 +426,9 @@
     <mongo-java-driver-version>4.5.0</mongo-java-driver-version>
     <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.9.10</mustache-java-version>
-    <mvel-version>2.4.13.Final</mvel-version>
+    <mvel-version>2.4.14.Final</mvel-version>
     <mybatis-version>3.5.9</mybatis-version>
-    <narayana-version>5.12.1.Final</narayana-version>
+    <narayana-version>5.12.5.Final</narayana-version>
     <neoscada-version>0.4.0</neoscada-version>
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
     <nessus-weka-version>1.0.1</nessus-weka-version>
