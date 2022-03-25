@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public abstract class AbstractMongoDbITSupport extends CamelTestSupport {
 
     @RegisterExtension
-    public static MongoDBService service = MongoDBServiceFactory.createService();
+    public static MongoDBService service = MongoDBServiceFactory.createSingletonService();
 
     protected static final String SCHEME = "mongodb";
     protected static final String USER = "test-user";
