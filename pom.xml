@@ -118,7 +118,7 @@
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>1</project.build.outputTimestamp>
 
-        <maven-compiler-plugin-version>3.10.0</maven-compiler-plugin-version>
+        <maven-compiler-plugin-version>3.10.1</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
         <maven-surefire-plugin-version>3.0.0-M5</maven-surefire-plugin-version>
         <!-- For now, use 3.0.0-M4 due to SUREFIRE-1831 affecting M5 and causing integration tests (w/ failsafe) to misbehave -->
