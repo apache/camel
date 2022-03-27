@@ -64,6 +64,7 @@ public class ServiceBusConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private ServiceBusReceiverAsyncClient receiverAsyncClient;
     @UriParam(label = "consumer")
+    @Metadata(required = true)
     private String subscriptionName;
     @UriParam(label = "consumer")
     private boolean disableAutoComplete;

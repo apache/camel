@@ -572,6 +572,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: consumer
          * 
          * @param subscriptionName the value to set
