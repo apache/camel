@@ -35,6 +35,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -77,6 +78,11 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
         LOG.debug("Compiling unit: {}", unit);
         CompilationUnit.Result result = MultiCompile.compileUnit(unit);
+
+        // remember the last loaded resource-set if route reloading is enabled
+        if (getCamelContext().hasService(RouteWatcherReloadStrategy.class) != null) {
+            getCamelContext().getRegistry().bind(RouteWatcherReloadStrategy.RELOAD_RESOURCES, nameToResource.values());
+        }
 
         for (String className : result.getClassNames()) {
             Class<?> clazz = result.getClass(className);
