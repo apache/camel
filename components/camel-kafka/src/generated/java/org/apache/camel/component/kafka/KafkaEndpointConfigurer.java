@@ -29,8 +29,6 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "autoCommitEnable": target.getConfiguration().setAutoCommitEnable(property(camelContext, boolean.class, value)); return true;
         case "autocommitintervalms":
         case "autoCommitIntervalMs": target.getConfiguration().setAutoCommitIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "autocommitonstop":
-        case "autoCommitOnStop": target.getConfiguration().setAutoCommitOnStop(property(camelContext, java.lang.String.class, value)); return true;
         case "autooffsetreset":
         case "autoOffsetReset": target.getConfiguration().setAutoOffsetReset(property(camelContext, java.lang.String.class, value)); return true;
         case "breakonfirsterror":
@@ -233,8 +231,6 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "autoCommitEnable": return boolean.class;
         case "autocommitintervalms":
         case "autoCommitIntervalMs": return java.lang.Integer.class;
-        case "autocommitonstop":
-        case "autoCommitOnStop": return java.lang.String.class;
         case "autooffsetreset":
         case "autoOffsetReset": return java.lang.String.class;
         case "breakonfirsterror":
@@ -438,8 +434,6 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "autoCommitEnable": return target.getConfiguration().isAutoCommitEnable();
         case "autocommitintervalms":
         case "autoCommitIntervalMs": return target.getConfiguration().getAutoCommitIntervalMs();
-        case "autocommitonstop":
-        case "autoCommitOnStop": return target.getConfiguration().getAutoCommitOnStop();
         case "autooffsetreset":
         case "autoOffsetReset": return target.getConfiguration().getAutoOffsetReset();
         case "breakonfirsterror":

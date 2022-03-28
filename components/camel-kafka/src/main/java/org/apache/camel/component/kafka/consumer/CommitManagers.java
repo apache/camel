@@ -34,13 +34,7 @@ public final class CommitManagers {
         }
 
         if (configuration.isAutoCommitEnable()) {
-            if ("async".equals(configuration.getAutoCommitOnStop())) {
-                return new AsyncCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
-            } else if ("sync".equals(configuration.getAutoCommitOnStop())) {
-                return new SyncCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
-            } else if ("none".equals(configuration.getAutoCommitOnStop())) {
-                return new NoopCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
-            }
+            return new AsyncCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
         }
 
         KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
