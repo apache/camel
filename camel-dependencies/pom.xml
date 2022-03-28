@@ -392,7 +392,7 @@
     <maven-archetype-plugin-version>3.2.0</maven-archetype-plugin-version>
     <maven-assembly-plugin-version>3.3.0</maven-assembly-plugin-version>
     <maven-checkstyle-plugin-version>3.1.2</maven-checkstyle-plugin-version>
-    <maven-checkstyle-version>8.43</maven-checkstyle-version>
+    <maven-checkstyle-version>8.45.1</maven-checkstyle-version>
     <maven-jar-plugin-version>3.2.0</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
