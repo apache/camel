@@ -42,6 +42,7 @@ public final class ServiceBusClientFactory {
                 .subQueue(configuration.getSubQueue())
                 .maxAutoLockRenewDuration(configuration.getMaxAutoLockRenewDuration())
                 .subscriptionName(configuration.getSubscriptionName())
+                .disableAutoComplete()
                 .buildAsyncClient();
     }
 

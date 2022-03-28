@@ -30,6 +30,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusReceiverAsyncClientWrapper;
 import org.apache.camel.component.azure.servicebus.operations.ServiceBusReceiverOperations;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -37,16 +38,12 @@ import org.apache.camel.util.ObjectHelper;
 
 public class ServiceBusConsumer extends DefaultConsumer {
 
+    private static final String SERVICE_BUS_RECEIVED_MESSAGE = "ServiceBusReceivedMessage";
     private Synchronization onCompletion;
     private ServiceBusReceiverAsyncClientWrapper clientWrapper;
     private ServiceBusReceiverOperations operations;
 
     private final Map<ServiceBusConsumerOperationDefinition, Runnable> operationsToExecute = new HashMap<>();
-
-    {
-        bind(ServiceBusConsumerOperationDefinition.peekMessages, this::peekMessages);
-        bind(ServiceBusConsumerOperationDefinition.receiveMessages, this::receiveMessages);
-    }
 
     public ServiceBusConsumer(final ServiceBusEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -55,6 +52,12 @@ public class ServiceBusConsumer extends DefaultConsumer {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+        this.bind(ServiceBusConsumerOperationDefinition.peekMessages, this::peekMessages);
+        this.bind(ServiceBusConsumerOperationDefinition.receiveMessages, this::receiveMessages);
+        // if autocomplete is on, add exception handler to abandon messages
+        if (!this.getConfiguration().isDisableAutoComplete()) {
+            this.setExceptionHandler(new ServiceBusExceptionHandler());
+        }
         onCompletion = new ConsumerOnCompletion();
     }
 
@@ -178,6 +181,7 @@ public class ServiceBusConsumer extends DefaultConsumer {
         message.setHeader(ServiceBusConstants.SUBJECT, receivedMessage.getSubject());
         message.setHeader(ServiceBusConstants.TIME_TO_LIVE, receivedMessage.getTimeToLive());
         message.setHeader(ServiceBusConstants.TO, receivedMessage.getTo());
+        exchange.setProperty(SERVICE_BUS_RECEIVED_MESSAGE, receivedMessage);
 
         return exchange;
     }
@@ -204,11 +208,41 @@ public class ServiceBusConsumer extends DefaultConsumer {
     private class ConsumerOnCompletion extends SynchronizationAdapter {
 
         @Override
+        public void onComplete(Exchange exchange) {
+            ServiceBusReceivedMessage message = exchange.getProperty(SERVICE_BUS_RECEIVED_MESSAGE, ServiceBusReceivedMessage.class);
+            if (message != null && !getConfiguration().isDisableAutoComplete()) {
+                clientWrapper.complete(message).subscribe();
+            }
+        }
+
+        @Override
         public void onFailure(Exchange exchange) {
             final Exception cause = exchange.getException();
             if (cause != null) {
                 getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
             }
+        }
+    }
+
+    private class ServiceBusExceptionHandler implements ExceptionHandler {
+        @Override
+        public void handleException(Throwable exception) {
+            this.handleException("Error processing exchange", exception);
+        }
+
+        @Override
+        public void handleException(String message, Throwable exception) {
+            this.handleException(message, createServiceBusExchange(exception), exception);
+        }
+
+        @Override
+        public void handleException(String message, Exchange exchange, Throwable exception) {
+            ServiceBusReceivedMessage receivedMessage
+                    = exchange.getProperty(SERVICE_BUS_RECEIVED_MESSAGE, ServiceBusReceivedMessage.class);
+            if (receivedMessage != null) {
+                clientWrapper.abandon(receivedMessage).subscribe();
+            }
+
         }
     }
 }
