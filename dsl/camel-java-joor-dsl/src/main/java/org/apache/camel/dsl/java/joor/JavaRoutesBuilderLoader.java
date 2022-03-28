@@ -36,13 +36,18 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.joor.Reflect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Managed JavaRoutesBuilderLoader")
 @RoutesLoader(JavaRoutesBuilderLoader.EXTENSION)
 public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
+
     public static final String EXTENSION = "java";
     public static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][\\.\\w]*)\\s*;.*$", Pattern.MULTILINE);
+
+    private static final Logger LOG = LoggerFactory.getLogger(JavaRoutesBuilderLoader.class);
 
     public JavaRoutesBuilderLoader() {
         super(EXTENSION);
@@ -52,7 +57,10 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
     protected Collection<RoutesBuilder> doLoadRoutesBuilders(Collection<Resource> resources) throws Exception {
         Collection<RoutesBuilder> answer = new ArrayList<>();
 
-        // TODO: when joor supports compiling in one unit
+        LOG.debug("Loading .java resources from: {}", resources);
+
+        // CAMEL-17784: joor to support compiling in one unit, then we can compile all resources at once
+
         for (Resource resource : resources) {
             try (InputStream is = resource.getInputStream()) {
                 if (is == null) {
@@ -61,9 +69,11 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
                 String content = IOHelper.loadText(is);
                 String name = determineName(resource, content);
 
+                LOG.debug("Compiling: {}", name);
                 Reflect ref = Reflect.compile(name, content).create();
                 Class<?> clazz = ref.type();
                 Object obj = ref.get();
+                LOG.debug("Compiled: {} -> {}", name, obj);
 
                 // inject context and resource
                 CamelContextAware.trySetCamelContext(obj, getCamelContext());

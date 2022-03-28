@@ -140,45 +140,45 @@ public class DefaultRoutesCollector implements RoutesCollector {
         final String[] includes = includePattern != null ? includePattern.split(",") : null;
         final String[] excludes = excludePattern != null ? excludePattern.split(",") : null;
 
-        if (includes == null) {
-            log.debug("Include patter is empty, no routes will be discovered from resources");
+        if (includes == null || ObjectHelper.equal("false", includePattern)) {
+            log.debug("Include pattern is empty/false, no routes will be discovered from resources");
             return answer;
         }
 
         StopWatch watch = new StopWatch();
-
-        if (ObjectHelper.equal("false", includePattern)) {
-            return answer;
-        }
-
+        Collection<Resource> accepted = new ArrayList<>();
         for (String include : includes) {
             log.debug("Loading additional RoutesBuilder from: {}", include);
             try {
                 for (Resource resource : resolver.findResources(include)) {
+                    // filter unwanted resources
                     if (!"false".equals(excludePattern) && AntPathMatcher.INSTANCE.anyMatch(excludes, resource.getLocation())) {
                         continue;
                     }
-
-                    Collection<RoutesBuilder> builders = ecc.getRoutesLoader().findRoutesBuilders(resource);
-                    if (builders.isEmpty()) {
-                        continue;
-                    }
-
-                    log.debug("Found {} route builder from location: {}", builders.size(), include);
-                    answer.addAll(builders);
+                    accepted.add(resource);
                 }
-            } catch (FileNotFoundException e) {
-                log.debug("No RoutesBuilder found in {}. Skipping detection.", include);
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
-            if (!answer.isEmpty()) {
-                log.debug("Loaded {} ({} millis) additional RoutesBuilder from: {}, pattern: {}", answer.size(), watch.taken(),
-                        include,
-                        includePattern);
-            } else {
-                log.debug("No additional RoutesBuilder discovered from: {}", includePattern);
+        }
+
+        try {
+            Collection<RoutesBuilder> builders = ecc.getRoutesLoader().findRoutesBuilders(accepted);
+            if (!builders.isEmpty()) {
+                log.debug("Found {} route builder from locations: {}", builders.size(), includes);
+                answer.addAll(builders);
             }
+        } catch (FileNotFoundException e) {
+            log.debug("No RoutesBuilder found in {}. Skipping detection.", includes);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
+        if (!answer.isEmpty()) {
+            log.debug("Loaded {} ({} millis) additional RoutesBuilder from: {}, pattern: {}", answer.size(), watch.taken(),
+                    includes,
+                    includePattern);
+        } else {
+            log.debug("No additional RoutesBuilder discovered from: {}", includePattern);
         }
 
         return answer;
