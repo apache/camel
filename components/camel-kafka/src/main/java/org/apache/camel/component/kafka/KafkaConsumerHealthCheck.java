@@ -82,5 +82,6 @@ public class KafkaConsumerHealthCheck extends AbstractHealthCheck {
                 return; // break on first DOWN
             }
         }
+        builder.up();
     }
 }
