@@ -137,8 +137,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private boolean autoCommitEnable = true;
     @UriParam(label = "consumer")
     private boolean allowManualCommit;
-    @UriParam(label = "consumer", defaultValue = "sync", enums = "sync,async,none")
-    private String autoCommitOnStop = "sync";
     @UriParam(label = "consumer")
     private boolean breakOnFirstError;
     @UriParam(label = "consumer")
@@ -803,19 +801,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setAutoOffsetReset(String autoOffsetReset) {
         this.autoOffsetReset = autoOffsetReset;
-    }
-
-    public String getAutoCommitOnStop() {
-        return autoCommitOnStop;
-    }
-
-    /**
-     * Whether to perform an explicit auto commit when the consumer stops to ensure the broker has a commit from the
-     * last consumed message. This requires the option autoCommitEnable is turned on. The possible values are: sync,
-     * async, or none. And sync is the default value.
-     */
-    public void setAutoCommitOnStop(String autoCommitOnStop) {
-        this.autoCommitOnStop = autoCommitOnStop;
     }
 
     public boolean isBreakOnFirstError() {
