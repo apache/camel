@@ -18,6 +18,7 @@ package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StaticService;
+import org.apache.camel.spi.ExtendedRoutesBuilderLoader;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.Resource;
@@ -86,20 +88,44 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
     public Collection<RoutesBuilder> findRoutesBuilders(Collection<Resource> resources) throws Exception {
         List<RoutesBuilder> answer = new ArrayList<>(resources.size());
 
-        for (Resource resource : resources) {
-            RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource);
-
-            if (camelContext.isModeline()) {
-                ModelineFactory factory = camelContext.adapt(ExtendedCamelContext.class).getModelineFactory();
+        // first we need to parse for modeline to gather all the configurations
+        if (camelContext.isModeline()) {
+            ModelineFactory factory = camelContext.adapt(ExtendedCamelContext.class).getModelineFactory();
+            for (Resource resource : resources) {
+                RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource);
                 // gather resources for modeline
                 factory.parseModeline(resource);
                 // pre-parse before loading
                 loader.preParseRoute(resource);
             }
+        }
 
-            RoutesBuilder builder = loader.loadRoutesBuilder(resource);
-            if (builder != null) {
-                answer.add(builder);
+        // now group resources by loader
+        Map<RoutesBuilderLoader, List<Resource>> groups = new LinkedHashMap<>();
+        for (Resource resource : resources) {
+            RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource);
+            List<Resource> list = groups.getOrDefault(loader, new ArrayList<Resource>());
+            list.add(resource);
+            groups.put(loader, list);
+        }
+
+        // now load all the same resources for each loader
+        for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
+            RoutesBuilderLoader loader = entry.getKey();
+            if (loader instanceof ExtendedRoutesBuilderLoader) {
+                // extended loader can load all resources ine one unit
+                ExtendedRoutesBuilderLoader extLoader = (ExtendedRoutesBuilderLoader) loader;
+                Collection<RoutesBuilder> builders = extLoader.loadRoutesBuilders(entry.getValue());
+                if (builders != null) {
+                    answer.addAll(builders);
+                }
+            } else {
+                for (Resource resource : entry.getValue()) {
+                    RoutesBuilder builder = loader.loadRoutesBuilder(resource);
+                    if (builder != null) {
+                        answer.add(builder);
+                    }
+                }
             }
         }
 
@@ -155,14 +181,6 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
     public Set<String> updateRoutes(Collection<Resource> resources) throws Exception {
         Set<String> answer = new LinkedHashSet<>();
         Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
-
-        if (camelContext.isModeline()) {
-            ModelineFactory factory = camelContext.adapt(ExtendedCamelContext.class).getModelineFactory();
-            // gather resources for modeline
-            for (Resource resource : resources) {
-                factory.parseModeline(resource);
-            }
-        }
 
         for (RoutesBuilder builder : builders) {
             // update any existing routes

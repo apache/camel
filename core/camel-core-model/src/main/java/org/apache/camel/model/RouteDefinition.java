@@ -48,6 +48,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.RoutePolicy;
 
 /**
@@ -58,7 +59,8 @@ import org.apache.camel.spi.RoutePolicy;
 @XmlType(propOrder = { "input", "inputType", "outputType", "outputs", "routeProperties" })
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
-public class RouteDefinition extends OutputDefinition<RouteDefinition> implements NamedRoute, PreconditionContainer {
+public class RouteDefinition extends OutputDefinition<RouteDefinition>
+        implements NamedRoute, PreconditionContainer, ResourceAware {
     private final AtomicBoolean prepared = new AtomicBoolean();
     private FromDefinition input;
     private String routeConfigurationId;

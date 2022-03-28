@@ -18,14 +18,19 @@ package org.apache.camel.dsl.java.joor;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.support.CompilePostProcessor;
-import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
+import org.apache.camel.dsl.support.ExtendedRouteBuilderLoaderSupport;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
@@ -34,7 +39,7 @@ import org.joor.Reflect;
 
 @ManagedResource(description = "Managed JavaRoutesBuilderLoader")
 @RoutesLoader(JavaRoutesBuilderLoader.EXTENSION)
-public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
+public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
     public static final String EXTENSION = "java";
     public static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][\\.\\w]*)\\s*;.*$", Pattern.MULTILINE);
@@ -44,29 +49,40 @@ public class JavaRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     }
 
     @Override
-    public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
-        try (InputStream is = resource.getInputStream()) {
-            if (is == null) {
-                throw new FileNotFoundException(resource.getLocation());
-            }
-            String content = IOHelper.loadText(is);
-            String name = determineName(resource, content);
+    protected Collection<RoutesBuilder> doLoadRoutesBuilders(Collection<Resource> resources) throws Exception {
+        Collection<RoutesBuilder> answer = new ArrayList<>();
 
-            Reflect ref = Reflect.compile(name, content).create();
-            Class<?> clazz = ref.type();
-            Object obj = ref.get();
+        // TODO: when joor supports compiling in one unit
+        for (Resource resource : resources) {
+            try (InputStream is = resource.getInputStream()) {
+                if (is == null) {
+                    throw new FileNotFoundException(resource.getLocation());
+                }
+                String content = IOHelper.loadText(is);
+                String name = determineName(resource, content);
 
-            // support custom annotation scanning post compilation
-            // such as to register custom beans, type converters, etc.
-            for (CompilePostProcessor pre : getCompilePostProcessors()) {
-                pre.postCompile(getCamelContext(), name, clazz, obj);
-            }
+                Reflect ref = Reflect.compile(name, content).create();
+                Class<?> clazz = ref.type();
+                Object obj = ref.get();
 
-            if (obj instanceof RouteBuilder) {
-                return (RouteBuilder) obj;
+                // inject context and resource
+                CamelContextAware.trySetCamelContext(obj, getCamelContext());
+                ResourceAware.trySetResource(obj, resource);
+
+                // support custom annotation scanning post compilation
+                // such as to register custom beans, type converters, etc.
+                for (CompilePostProcessor pre : getCompilePostProcessors()) {
+                    pre.postCompile(getCamelContext(), name, clazz, obj);
+                }
+
+                if (obj instanceof RouteBuilder) {
+                    RouteBuilder builder = (RouteBuilder) obj;
+                    answer.add(builder);
+                }
             }
-            return null;
         }
+
+        return answer;
     }
 
     private static String determineName(Resource resource, String content) {
