@@ -21,9 +21,7 @@
 
 name: components
 title: Camel Components
-version: next
-prerelease: true
-display-version: Next (Pre-release)
+version: 3.16.x
 
 nav:
   - modules/ROOT/nav.adoc
