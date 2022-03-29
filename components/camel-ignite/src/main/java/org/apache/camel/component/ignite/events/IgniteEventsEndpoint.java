@@ -40,6 +40,8 @@ import org.apache.ignite.events.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_EVENTS;
+
 /**
  * <a href="https://apacheignite.readme.io/docs/events">Receive events</a> from an Ignite cluster by creating a local
  * event listener.
@@ -47,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * This endpoint only supports consumers. The Exchanges created by this consumer put the received Event object into the
  * body of the IN message.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-events", title = "Ignite Events", syntax = "ignite-events:endpointId",
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_EVENTS, title = "Ignite Events", syntax = "ignite-events:endpointId",
              category = { Category.MESSAGING, Category.EVENTBUS },
              consumerOnly = true)
 public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {

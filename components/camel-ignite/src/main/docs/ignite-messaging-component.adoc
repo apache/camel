@@ -29,20 +29,8 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Headers used
-
-This endpoint uses the following headers:
-[width="100%",cols="1,1,1,4",options="header"]
-|=======================================================================
-| Header name | Constant | Expected type | Description
-| CamelIgniteMessagingTopic | IgniteConstants.IGNITE_MESSAGING_TOPIC | String |
-Allows you to dynamically change the topic to send messages to (producer). 
-It also carries the topic on which a message was received (consumer).
-
-| CamelIgniteMessagingUUID | IgniteConstants.IGNITE_MESSAGING_UUID | UUID |
-This header is filled in with the UUID of the subscription when a message arrives (consumer).
-|=======================================================================
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 include::spring-boot:partial$starter.adoc[]

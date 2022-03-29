@@ -29,15 +29,8 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-== Headers used
-
-This endpoint uses the following headers:
-[width="100%",cols="1,1,1,4",options="header"]
-|=======================================================================
-| Header name | Constant | Expected type | Description
-| CamelIgniteSetsOperation | IgniteConstants.IGNITE_SETS_OPERATION | IgniteSetOperation enum |
-Allows you to dynamically change the set operation.
-|=======================================================================
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 include::spring-boot:partial$starter.adoc[]
