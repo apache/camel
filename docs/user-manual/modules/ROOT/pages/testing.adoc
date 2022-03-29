@@ -26,19 +26,12 @@ class for all your configuration and routing without.
 |xref:components:others:test-junit5.adoc[camel-test-junit5] |*JUnit 5*: Is a standalone Java
 library letting you easily create Camel test cases using a single Java
 class for all your configuration and routing without.
-// Un-comment me once 3.16.x is out -- START
-//|xref:components:others:test-main-junit5.adoc[camel-test-main-junit5] | *JUnit 5*: Used for testing Camel in Camel Main mode
-// Un-comment me once 3.16.x is out -- STOP
+|xref:components:others:test-main-junit5.adoc[camel-test-main-junit5] | *JUnit 5*: Used for testing Camel in Camel Main mode
 
 |xref:components:others:test-spring.adoc[camel-test-spring] | *JUnit 4 (deprecated)*: Used for testing Camel with Spring / Spring Boot
 |xref:components:others:test-spring-junit5.adoc[camel-test-spring-junit5] | *JUnit 5*: Used for testing Camel with Spring / Spring Boot
-// Remove me once 3.16.x is out -- START
-|xref:components:others:test-cdi.adoc[camel-test-cdi] | Used for testing Camel on xref:components:others:cdi.adoc[CDI]
-// Remove me once 3.16.x is out -- STOP
-// Un-comment me once 3.16.x is out -- START
-//|xref:components:others:test-cdi.adoc[camel-test-cdi] | *JUnit 4 (deprecated)*: Used for testing Camel on xref:components:others:cdi.adoc[CDI]
-//|xref:components:others:test-cdi-junit5.adoc[camel-test-cdi-junit5] | *JUnit 5*: Used for testing Camel on xref:components:others:cdi.adoc[CDI]
-// Un-comment me once 3.16.x is out -- STOP
+|xref:components:others:test-cdi.adoc[camel-test-cdi] | *JUnit 4 (deprecated)*: Used for testing Camel on xref:components:others:cdi.adoc[CDI]
+|xref:components:others:test-cdi-junit5.adoc[camel-test-cdi-junit5] | *JUnit 5*: Used for testing Camel on xref:components:others:cdi.adoc[CDI]
 
 |xref:test-infra.adoc[camel-test-infra] | *Camel Test Infra*: Camel Test Infra is a set of modules that leverage Test Containers and abstract the provisioning and execution of test infrastructure. It is the successor of the camel-testcontainers components.
 
