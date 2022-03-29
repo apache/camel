@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.3.0", scheme = "http,https", title = "HTTP,HTTPS", syntax = "http://httpUri",
              producerOnly = true, category = { Category.HTTP }, lenientProperties = true)
+@Metadata(excludeProperties = "httpBinding,matchOnUriPrefix,chunked,disableStreamCache,transferException")
 @ManagedResource(description = "Managed HttpEndpoint")
 public class HttpEndpoint extends HttpCommonEndpoint {
 
