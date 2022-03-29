@@ -41,6 +41,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.rest.RestParamType;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -448,6 +449,46 @@ public class VertxPlatformHttpEngineTest {
                     .then()
                     .statusCode(200)
                     .body(is(payload));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testRestCORSWitchConsumes() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+
+                @Override
+                public void configure() {
+                    restConfiguration().component("platform-http").enableCORS(true);
+
+                    rest("/rest")
+                            .post()
+                            .consumes("application/json")
+                            .to("direct:rest");
+
+                    from("direct:rest")
+                            .setBody(simple("Hello ${body}"));
+                }
+            });
+
+            context.start();
+
+            final String origin = "http://custom.origin.quarkus";
+
+            given()
+                    .header("Origin", origin)
+                    .when()
+                    .options("/rest")
+                    .then()
+                    .statusCode(204)
+                    .header("Access-Control-Allow-Origin", RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN)
+                    .header("Access-Control-Allow-Methods", RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS)
+                    .header("Access-Control-Allow-Headers", RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS)
+                    .header("Access-Control-Max-Age", RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE);
         } finally {
             context.stop();
         }
