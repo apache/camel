@@ -89,6 +89,9 @@ public class SmppProducer extends DefaultProducer {
                 } finally {
                     connectLock.unlock();
                 }
+            } else {
+                LOG.warn("Thread {} could not acquire a lock for creating the session during producer start",
+                        Thread.currentThread().getId());
             }
         }
     }
@@ -154,6 +157,9 @@ public class SmppProducer extends DefaultProducer {
                     } finally {
                         connectLock.unlock();
                     }
+                } else {
+                    LOG.warn("Thread {} could not acquire a lock for creating the session during lazy initialization",
+                            Thread.currentThread().getId());
                 }
             }
         }
@@ -198,6 +204,9 @@ public class SmppProducer extends DefaultProducer {
             } finally {
                 connectLock.unlock();
             }
+        } else {
+            LOG.warn("Thread {} could not acquire a lock for creating the session during producer reconnection",
+                    Thread.currentThread().getId());
         }
     }
 
