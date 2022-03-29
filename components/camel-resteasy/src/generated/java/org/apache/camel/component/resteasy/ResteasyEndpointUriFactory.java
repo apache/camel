@@ -21,7 +21,7 @@ public class ResteasyEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(44);
+        Set<String> props = new HashSet<>(40);
         props.add("getWithBody");
         props.add("ignoreResponseBody");
         props.add("mapHttpMessageBody");
@@ -33,7 +33,6 @@ public class ResteasyEndpointUriFactory extends org.apache.camel.support.compone
         props.add("bridgeErrorHandler");
         props.add("deleteWithBody");
         props.add("httpUri");
-        props.add("transferException");
         props.add("headerFilterStrategy");
         props.add("copyHeaders");
         props.add("customHostHeader");
@@ -45,9 +44,7 @@ public class ResteasyEndpointUriFactory extends org.apache.camel.support.compone
         props.add("throwExceptionOnFailure");
         props.add("httpMethodRestrict");
         props.add("eagerCheckContentAvailable");
-        props.add("matchOnUriPrefix");
         props.add("exchangePattern");
-        props.add("chunked");
         props.add("userAgent");
         props.add("connectionClose");
         props.add("useSystemProperties");
@@ -58,7 +55,6 @@ public class ResteasyEndpointUriFactory extends org.apache.camel.support.compone
         props.add("responseBufferSize");
         props.add("lazyStartProducer");
         props.add("preserveHostHeader");
-        props.add("disableStreamCache");
         props.add("resteasyMethod");
         props.add("mapHttpMessageHeaders");
         props.add("optionsEnabled");

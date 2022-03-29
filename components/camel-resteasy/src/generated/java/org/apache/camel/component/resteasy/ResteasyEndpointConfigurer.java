@@ -38,8 +38,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         case "mapHttpMessageFormUrlEncodedBody": target.setMapHttpMessageFormUrlEncodedBody(property(camelContext, boolean.class, value)); return true;
         case "maphttpmessageheaders":
         case "mapHttpMessageHeaders": target.setMapHttpMessageHeaders(property(camelContext, boolean.class, value)); return true;
-        case "matchonuriprefix":
-        case "matchOnUriPrefix": target.setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
         case "muteexception":
         case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "optionsenabled":
@@ -84,8 +82,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         case "mapHttpMessageFormUrlEncodedBody": return boolean.class;
         case "maphttpmessageheaders":
         case "mapHttpMessageHeaders": return boolean.class;
-        case "matchonuriprefix":
-        case "matchOnUriPrefix": return boolean.class;
         case "muteexception":
         case "muteException": return boolean.class;
         case "optionsenabled":
@@ -131,8 +127,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         case "mapHttpMessageFormUrlEncodedBody": return target.isMapHttpMessageFormUrlEncodedBody();
         case "maphttpmessageheaders":
         case "mapHttpMessageHeaders": return target.isMapHttpMessageHeaders();
-        case "matchonuriprefix":
-        case "matchOnUriPrefix": return target.isMatchOnUriPrefix();
         case "muteexception":
         case "muteException": return target.isMuteException();
         case "optionsenabled":
