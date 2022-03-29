@@ -33,7 +33,7 @@ import org.iota.jota.IotaAPI;
  * Manage financial transactions using IOTA distributed ledger.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "iota", title = "IOTA", syntax = "iota:name",
-             category = { Category.LEDGER, Category.API }, producerOnly = true)
+             category = { Category.LEDGER, Category.API }, producerOnly = true, headersClass = IOTAConstants.class)
 public class IOTAEndpoint extends DefaultEndpoint {
 
     private volatile IotaAPI apiClient;

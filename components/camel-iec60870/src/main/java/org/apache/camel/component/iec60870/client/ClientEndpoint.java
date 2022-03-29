@@ -21,17 +21,19 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.iec60870.AbstractIecEndpoint;
+import org.apache.camel.component.iec60870.Constants;
 import org.apache.camel.component.iec60870.ObjectAddress;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.support.DefaultComponent;
 
 import static java.util.Objects.requireNonNull;
+import static org.apache.camel.component.iec60870.Constants.SCHEME_CLIENT;
 
 /**
  * IEC 60870 supervisory control and data acquisition (SCADA) client using NeoSCADA implementation.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "iec60870-client", syntax = "iec60870-client:uriPath",
-             title = "IEC 60870 Client", category = { Category.IOT })
+@UriEndpoint(firstVersion = "2.20.0", scheme = SCHEME_CLIENT, syntax = "iec60870-client:uriPath",
+             title = "IEC 60870 Client", category = { Category.IOT }, headersClass = Constants.class)
 public class ClientEndpoint extends AbstractIecEndpoint<ClientConnectionMultiplexor> {
 
     public ClientEndpoint(final String uri, final DefaultComponent component, final ClientConnectionMultiplexor connection,

@@ -65,7 +65,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == KeyType and ValueType
 
@@ -121,22 +123,6 @@ it means: a new file is created either when it has been idle for more
 than 1 second or if more than 5 bytes have been written. So, running
 `hadoop fs -ls /tmp/simple-file` you'll see that multiple files have
 been created.
-
-== Message Headers
-
-The following headers are supported by this component:
-
-=== Producer only
-
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Header |Description
-
-|`CamelFileName` |Specifies the name of the file to write (relative to the
-endpoint path). The name can be a `String` or an
-Expression object. Only relevant when not using a
-split strategy.
-|=======================================================================
 
 == Controlling to close file stream
 

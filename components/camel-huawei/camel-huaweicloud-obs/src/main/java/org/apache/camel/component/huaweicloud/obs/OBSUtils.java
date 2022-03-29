@@ -65,12 +65,12 @@ public final class OBSUtils {
         message.setHeader(OBSHeaders.BUCKET_NAME, obsObject.getBucketName());
         message.setHeader(OBSHeaders.OBJECT_KEY, obsObject.getObjectKey());
         message.setHeader(OBSHeaders.LAST_MODIFIED, obsObject.getMetadata().getLastModified());
-        message.setHeader(Exchange.CONTENT_LENGTH, obsObject.getMetadata().getContentLength());
-        message.setHeader(Exchange.CONTENT_TYPE, obsObject.getMetadata().getContentType());
+        message.setHeader(OBSHeaders.CONTENT_LENGTH, obsObject.getMetadata().getContentLength());
+        message.setHeader(OBSHeaders.CONTENT_TYPE, obsObject.getMetadata().getContentType());
         message.setHeader(OBSHeaders.ETAG, obsObject.getMetadata().getEtag());
         message.setHeader(OBSHeaders.CONTENT_MD5, obsObject.getMetadata().getContentMd5());
 
-        message.setHeader(Exchange.FILE_NAME, obsObject.getObjectKey());
+        message.setHeader(OBSHeaders.FILE_NAME, obsObject.getObjectKey());
 
         if (obsObject.getObjectKey().endsWith("/")) {
             message.setHeader(OBSHeaders.OBJECT_TYPE, OBSConstants.FOLDER);

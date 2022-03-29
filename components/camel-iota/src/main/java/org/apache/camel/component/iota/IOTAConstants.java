@@ -16,15 +16,22 @@
  */
 package org.apache.camel.component.iota;
 
+import org.apache.camel.spi.Metadata;
 import org.iota.jota.utils.Constants;
 
 public final class IOTAConstants {
 
+    @Metadata(description = "The tryte-encoded seed.", javaType = "String")
     public static final String SEED_HEADER = "CamelIOTASeed";
+    @Metadata(description = "The value to transfer", javaType = "Integer")
     public static final String VALUE_HEADER = "CamelIOTAValue";
+    @Metadata(description = "The address of the recipient", javaType = "String")
     public static final String TO_ADDRESS_HEADER = "CamelIOTAToAddress";
+    @Metadata(description = "The key index to start search from", javaType = "Integer")
     public static final String ADDRESS_INDEX_HEADER = "CamelIOTAAddressIndex";
+    @Metadata(description = "The starting key index, must be at least 0.", javaType = "Integer")
     public static final String ADDRESS_START_INDEX_HEADER = "CamelIOTAAddressStartIndex";
+    @Metadata(description = "The ending key index, must be bigger then start", javaType = "Integer")
     public static final String ADDRESS_END_INDEX_HEADER = "CamelIOTAAddressEndIndex";
 
     protected static final int MIN_WEIGHT_MAGNITUDE = 14;

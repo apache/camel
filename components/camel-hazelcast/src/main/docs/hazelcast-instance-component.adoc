@@ -50,25 +50,8 @@ fromF("hazelcast-%sfoo", HazelcastConstants.INSTANCE_PREFIX)
         .to("mock:removed");
 -----------------------------------------------------------------------------------------
 
-Each event provides the following information inside the message header:
-
-Header Variables inside the response message:
-
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-
-|`CamelHazelcastListenerTime` |`Long` |time of the event in millis
-
-|`CamelHazelcastListenerType` |`String` |the map consumer sets here "instancelistener"
-
-|`CamelHazelcastListenerAction` |`String` |type of event - here *added* or *removed*.
-
-|`CamelHazelcastInstanceHost` |`String` | host name of the instance
-
-|`CamelHazelcastInstancePort` |`Integer` |port number of the instance
-|=======================================================================
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 include::spring-boot:partial$starter.adoc[]

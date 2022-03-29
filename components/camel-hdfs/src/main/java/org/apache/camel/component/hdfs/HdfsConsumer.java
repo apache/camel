@@ -184,15 +184,15 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         try {
             Message message = exchange.getIn();
             String fileName = StringUtils.substringAfterLast(hdfsFile.getActualPath(), "/");
-            message.setHeader(Exchange.FILE_NAME, fileName);
-            message.setHeader(Exchange.FILE_NAME_CONSUMED, fileName);
-            message.setHeader("CamelFileAbsolutePath", hdfsFile.getActualPath());
+            message.setHeader(HdfsConstants.FILE_NAME, fileName);
+            message.setHeader(HdfsConstants.FILE_NAME_CONSUMED, fileName);
+            message.setHeader(HdfsConstants.FILE_ABSOLUTE_PATH, hdfsFile.getActualPath());
             if (key.getValue() != null) {
-                message.setHeader(HdfsHeader.KEY.name(), key.getValue());
+                message.setHeader(HdfsConstants.KEY, key.getValue());
             }
 
             if (hdfsFile.getNumOfReadBytes() >= 0) {
-                message.setHeader(Exchange.FILE_LENGTH, hdfsFile.getNumOfReadBytes());
+                message.setHeader(HdfsConstants.FILE_LENGTH, hdfsFile.getNumOfReadBytes());
             }
 
             message.setBody(value.getValue());

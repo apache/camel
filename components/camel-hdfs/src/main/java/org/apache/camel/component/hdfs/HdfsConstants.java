@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.hdfs;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.Metadata;
 import org.apache.hadoop.io.SequenceFile;
 
 public final class HdfsConstants {
@@ -43,10 +45,24 @@ public final class HdfsConstants {
     public static final String DEFAULT_PATTERN = "*";
 
     public static final int DEFAULT_CHECK_IDLE_INTERVAL = 500;
-
+    @Metadata(label = "producer", description = "Indicates to close the stream", javaType = "Boolean")
     public static final String HDFS_CLOSE = "CamelHdfsClose";
 
     public static final int DEFAULT_MAX_MESSAGES_PER_POLL = 100;
+    @Metadata(description = "(producer) Specifies the name of the file to write (relative to the\n" +
+                            "endpoint path). The name can be a `String` or an\n" +
+                            "Expression object. Only relevant when not using a\n" +
+                            "split strategy. (consumer) Specifies the name of the file to read",
+              javaType = "String")
+    public static final String FILE_NAME = Exchange.FILE_NAME;
+    @Metadata(label = "consumer", description = "The name of the file consumed", javaType = "String")
+    public static final String FILE_NAME_CONSUMED = Exchange.FILE_NAME_CONSUMED;
+    @Metadata(label = "consumer", description = "The absolute path of the file", javaType = "String")
+    public static final String FILE_ABSOLUTE_PATH = "CamelFileAbsolutePath";
+    @Metadata(description = "The HDFS key", javaType = "Object")
+    public static final String KEY = HdfsHeader.KEY.name();
+    @Metadata(label = "consumer", description = "The size of the file", javaType = "Long")
+    public static final String FILE_LENGTH = Exchange.FILE_LENGTH;
 
     private HdfsConstants() {
     }

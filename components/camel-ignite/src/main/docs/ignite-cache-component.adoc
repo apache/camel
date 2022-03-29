@@ -34,36 +34,8 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-
-== Headers used
-
-This endpoint uses the following headers:
-[width="100%",cols="1,1,1,4",options="header"]
-|=======================================================================
-| Header name | Constant | Expected type | Description
-| CamelIgniteCacheKey | IgniteConstants.IGNITE_CACHE_KEY | String |
-The cache key for the entry value in the message body.
-
-| CamelIgniteCacheQuery | IgniteConstants.IGNITE_CACHE_QUERY | Query |
-The query to run (producer) when invoking the QUERY operation.
-
-| CamelIgniteCacheOperation | IgniteConstants.IGNITE_CACHE_OPERATION | IgniteCacheOperation enum |
-Allows you to dynamically change the cache operation to execute (producer).
-
-| CamelIgniteCachePeekMode | IgniteConstants.IGNITE_CACHE_PEEK_MODE | CachePeekMode enum |
-Allows you to dynamically change the cache peek mode when running the SIZE operation.
-
-| CamelIgniteCacheEventType | IgniteConstants.IGNITE_CACHE_EVENT_TYPE | int (EventType constants) |
-This header carries the received event type when using the continuous query consumer.
-
-| CamelIgniteCacheName | IgniteConstants.IGNITE_CACHE_NAME | String |
-This header carries the cache name for which a continuous query event was received (consumer).
-It does not allow you to dynamically change the cache against which a producer operation is performed. Use EIPs for that (e.g. recipient list, dynamic router).
-
-| CamelIgniteCacheOldValue | IgniteConstants.IGNITE_CACHE_OLD_VALUE | Object |
-This header carries the old cache value when passed in the incoming cache event (consumer).
-|=======================================================================
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 include::spring-boot:partial$starter.adoc[]

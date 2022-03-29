@@ -33,6 +33,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Expected payload types
 
@@ -48,28 +51,5 @@ Each operation expects the indicated types:
 | AFFINITY_CALL | IgniteCallable.
 | AFFINITY_RUN | IgniteRunnable.
 |=======================================================================
-
-=== Headers used
-
-This endpoint uses the following headers:
-[width="100%",cols="1,1,1,4",options="header"]
-|=======================================================================
-| Header name | Constant | Expected type | Description
-| CamelIgniteComputeExecutionType | IgniteConstants.IGNITE_COMPUTE_EXECUTION_TYPE | IgniteComputeExecutionType enum |
- Allows you to dynamically change the compute operation to perform.
-
-| CamelIgniteComputeParameters | IgniteConstants.IGNITE_COMPUTE_PARAMS | Any object or Collection of objects. |
-Parameters for APPLY, BROADCAST and EXECUTE operations.
-
-| CamelIgniteComputeReducer | IgniteConstants.IGNITE_COMPUTE_REDUCER | IgniteReducer |
-Reducer for the APPLY and CALL operations.
-
-| CamelIgniteComputeAffinityCacheName | IgniteConstants.IGNITE_COMPUTE_AFFINITY_CACHE_NAME | String |
-Affinity cache name for the AFFINITY_CALL and AFFINITY_RUN operations.
-
-| CamelIgniteComputeAffinityKey | IgniteConstants.IGNITE_COMPUTE_AFFINITY_KEY | Object |
-Affinity key for the AFFINITY_CALL and AFFINITY_RUN operations.
-|=======================================================================
-
 
 include::spring-boot:partial$starter.adoc[]

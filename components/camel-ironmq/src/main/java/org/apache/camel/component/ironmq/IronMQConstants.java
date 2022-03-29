@@ -16,11 +16,22 @@
  */
 package org.apache.camel.component.ironmq;
 
+import org.apache.camel.spi.Metadata;
+
 public interface IronMQConstants {
 
+    @Metadata(description = "(producer) The id of the IronMQ message as a String when sending a single message, or a Ids object when sending a array of strings."
+                            +
+                            " (consumer) The id of the message.",
+              javaType = "String or io.iron.ironmq.Ids")
     String MESSAGE_ID = "CamelIronMQMessageId";
+    @Metadata(label = "consumer", description = "The reservation id of the message.", javaType = "String")
     String MESSAGE_RESERVATION_ID = "CamelIronMQReservationId";
+    @Metadata(label = "consumer", description = "The number of times this message has been reserved.", javaType = "long")
     String MESSAGE_RESERVED_COUNT = "CamelIronMQReservedCount";
+    @Metadata(label = "producer",
+              description = "If value set to 'CamelIronMQClearQueue' the queue is cleared of unconsumed  messages.",
+              javaType = "String")
     String OPERATION = "CamelIronMQOperation";
     String CLEARQUEUE = "CamelIronMQClearQueue";
 

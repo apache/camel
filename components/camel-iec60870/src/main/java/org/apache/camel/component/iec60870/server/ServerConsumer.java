@@ -22,6 +22,7 @@ import java.util.concurrent.CompletionStage;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.iec60870.Constants;
 import org.apache.camel.component.iec60870.ObjectAddress;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultMessage;
@@ -98,12 +99,12 @@ public class ServerConsumer extends DefaultConsumer {
 
         message.setBody(request);
 
-        message.setHeader("address", ObjectAddress.valueOf(request.getHeader().getAsduAddress(), request.getAddress()));
-        message.setHeader("value", request.getValue());
-        message.setHeader("informationObjectAddress", request.getAddress());
-        message.setHeader("asduHeader", request.getHeader());
-        message.setHeader("type", request.getType());
-        message.setHeader("execute", request.isExecute());
+        message.setHeader(Constants.ADDRESS, ObjectAddress.valueOf(request.getHeader().getAsduAddress(), request.getAddress()));
+        message.setHeader(Constants.VALUE, request.getValue());
+        message.setHeader(Constants.INFORMATION_OBJECT_ADDRESS, request.getAddress());
+        message.setHeader(Constants.ASDU_HEADER, request.getHeader());
+        message.setHeader(Constants.TYPE, request.getType());
+        message.setHeader(Constants.EXECUTE, request.isExecute());
 
         return message;
     }
