@@ -35,6 +35,7 @@ import io.vertx.ext.auth.User;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.impl.RouteImpl;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
@@ -97,6 +98,10 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         super.doStart();
 
         final Route newRoute = router.route(path);
+
+        if (getEndpoint().getCamelContext().getRestConfiguration().isEnableCORS() && getEndpoint().getConsumes() != null) {
+            ((RouteImpl) newRoute).setEmptyBodyPermittedWithConsumes(true);
+        }
 
         if (!methods.equals(Method.getAll())) {
             methods.forEach(m -> newRoute.method(HttpMethod.valueOf(m.name())));
