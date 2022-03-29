@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.common.services;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -26,6 +27,8 @@ import org.slf4j.LoggerFactory;
  * @param <T> The type of the service to be wrapped
  */
 public class SingletonService<T extends TestService> implements ExtensionContext.Store.CloseableResource, TestService {
+    private static final Logger LOG = LoggerFactory.getLogger(SingletonService.class);
+
     private final T service;
     private final String name;
 
@@ -36,7 +39,7 @@ public class SingletonService<T extends TestService> implements ExtensionContext
 
     protected void addToStore(ExtensionContext extensionContext) {
         extensionContext.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).getOrComputeIfAbsent(name, s -> {
-            LoggerFactory.getLogger(SingletonService.class).debug("Registering singleton service {}", name);
+            LOG.debug("Registering singleton service {}", name);
             service.initialize();
             return this;
         });
