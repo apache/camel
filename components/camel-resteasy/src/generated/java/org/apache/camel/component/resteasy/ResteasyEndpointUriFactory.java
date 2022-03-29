@@ -21,7 +21,7 @@ public class ResteasyEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(40);
+        Set<String> props = new HashSet<>(41);
         props.add("async");
         props.add("bridgeEndpoint");
         props.add("bridgeErrorHandler");
@@ -31,6 +31,7 @@ public class ResteasyEndpointUriFactory extends org.apache.camel.support.compone
         props.add("copyHeaders");
         props.add("customHostHeader");
         props.add("deleteWithBody");
+        props.add("disableStreamCache");
         props.add("eagerCheckContentAvailable");
         props.add("exceptionHandler");
         props.add("exchangePattern");
