@@ -151,23 +151,6 @@ The following algorithm is used to determine what HTTP method should be used: +
  5. `POST` if there is data to send (body is not `null`). +
  6. `GET` otherwise.
 
-== How to get access to HttpServletRequest and HttpServletResponse
-
-You can get access to these two using the Camel type converter system
-using 
-
-[NOTE]
-====
-You can get the request and response not just from the processor
-after the camel-jetty or camel-cxf endpoint.
-====
-
-[source,java]
-----------------------------------------------------------------------------------
-HttpServletRequest request = exchange.getIn().getBody(HttpServletRequest.class);
-HttpServletRequest response = exchange.getIn().getBody(HttpServletResponse.class);
-----------------------------------------------------------------------------------
-
 == Configuring URI to call
 
 You can set the HTTP producer's URI directly form the endpoint URI. In
