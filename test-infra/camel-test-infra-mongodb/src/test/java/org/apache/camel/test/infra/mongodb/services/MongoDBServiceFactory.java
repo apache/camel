@@ -47,6 +47,7 @@ public final class MongoDBServiceFactory {
             return getService().getConnectionAddress();
         }
     }
+
     private MongoDBServiceFactory() {
 
     }
