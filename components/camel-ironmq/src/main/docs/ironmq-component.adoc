@@ -54,31 +54,13 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Message Body
 
-Should be either a String or a array of Strings. In the latter case the batch of strings will be send to IronMQ as one request, creating one message pr. element in the array.
-
-== Producer message headers
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type | Description
-|CamelIronMQOperation |String|If value set to 'CamelIronMQClearQueue' the queue is cleared of unconsumed  messages.
-|CamelIronMQMessageId |String or io.iron.ironmq.Ids|The id of the IronMQ message as a String when sending a single message, or a Ids object when sending a array of strings.
-|=======================================================================
-
-== Consumer message headers
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type | Description
-|CamelIronMQMessageId    |String|The id of the message.
-|CamelIronMQReservationId|String|The reservation id of the message.
-|CamelIronMQReservedCount|String|The number of times this message has been reserved.
-|=======================================================================
-
+Should be either a String or a array of Strings. In the latter case the batch of strings will be sent to IronMQ as one request, creating one message pr. element in the array.
 
 == Consumer example
 

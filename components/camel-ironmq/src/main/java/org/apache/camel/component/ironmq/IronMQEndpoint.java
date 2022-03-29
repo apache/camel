@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * queue as a service.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "ironmq", syntax = "ironmq:queueName", title = "IronMQ",
-             category = { Category.CLOUD, Category.MESSAGING })
+             category = { Category.CLOUD, Category.MESSAGING }, headersClass = IronMQConstants.class)
 public class IronMQEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IronMQEndpoint.class);
