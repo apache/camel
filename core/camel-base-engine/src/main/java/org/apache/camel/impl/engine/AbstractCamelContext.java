@@ -1217,6 +1217,12 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public void stopAllRoutes() throws Exception {
+        RouteController controller = getRouteController();
+        if (controller == null) {
+            // in case we are called during shutdown and controller is null
+            return;
+        }
+
         // stop all routes in reverse order that they were started
         Comparator<RouteStartupOrder> comparator = Comparator.comparingInt(RouteStartupOrder::getStartupOrder);
         if (shutdownStrategy == null || shutdownStrategy.isShutdownRoutesInReverseOrder()) {
@@ -1226,14 +1232,14 @@ public abstract class AbstractCamelContext extends BaseService
         routesOrdered.sort(comparator);
         for (RouteStartupOrder order : routesOrdered) {
             Route route = order.getRoute();
-            boolean stopped = getRouteController().getRouteStatus(route.getRouteId()).isStopped();
+            boolean stopped = controller.getRouteStatus(route.getRouteId()).isStopped();
             if (!stopped) {
                 stopRoute(route.getRouteId(), LoggingLevel.DEBUG);
             }
         }
         // stop any remainder routes
         for (Route route : getRoutes()) {
-            boolean stopped = getRouteController().getRouteStatus(route.getRouteId()).isStopped();
+            boolean stopped = controller.getRouteStatus(route.getRouteId()).isStopped();
             if (!stopped) {
                 stopRoute(route.getRouteId(), LoggingLevel.DEBUG);
             }
