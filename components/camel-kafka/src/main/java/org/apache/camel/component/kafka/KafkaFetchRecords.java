@@ -333,14 +333,14 @@ class KafkaFetchRecords implements Runnable {
 
             handleAccordingToStrategy(partitionLastOffset, e);
         } finally {
-            lock.unlock();
-
             // only close if not retry
             if (!isRetrying()) {
                 LOG.debug("Closing consumer {}", threadId);
                 safeUnsubscribe();
                 IOHelper.close(consumer);
             }
+
+            lock.unlock();
         }
     }
 
