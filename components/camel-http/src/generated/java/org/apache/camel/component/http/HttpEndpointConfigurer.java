@@ -57,6 +57,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "customHostHeader": target.setCustomHostHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "deletewithbody":
         case "deleteWithBody": target.setDeleteWithBody(property(camelContext, boolean.class, value)); return true;
+        case "disablestreamcache":
+        case "disableStreamCache": target.setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
         case "getwithbody":
         case "getWithBody": target.setGetWithBody(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
@@ -158,6 +160,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "customHostHeader": return java.lang.String.class;
         case "deletewithbody":
         case "deleteWithBody": return boolean.class;
+        case "disablestreamcache":
+        case "disableStreamCache": return boolean.class;
         case "getwithbody":
         case "getWithBody": return boolean.class;
         case "headerfilterstrategy":
@@ -260,6 +264,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "customHostHeader": return target.getCustomHostHeader();
         case "deletewithbody":
         case "deleteWithBody": return target.isDeleteWithBody();
+        case "disablestreamcache":
+        case "disableStreamCache": return target.isDisableStreamCache();
         case "getwithbody":
         case "getWithBody": return target.isGetWithBody();
         case "headerfilterstrategy":
