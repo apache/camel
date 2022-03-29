@@ -26,18 +26,3 @@ runs:
     - id: quick-test
       run: ${{ github.action_path }}/quick-test.sh ${{ inputs.start-commit }} ${{ inputs.end-commit }}
       shell: bash
-    - uses: actions/github-script@v6
-      env:
-        RESULT: ${{ steps.quick-test.outputs.result }}
-        COUNT: ${{ steps.quick-test.outputs.count }}
-      with:
-        github-token: ${{inputs.github-token}}
-        script: |
-          const { RESULT, COUNT } = process.env
-          
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: `${RESULT}`
-          })
