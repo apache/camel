@@ -20,6 +20,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,9 +35,9 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.joor.Reflect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +61,9 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
         LOG.debug("Loading .java resources from: {}", resources);
 
-        // CAMEL-17784: joor to support compiling in one unit, then we can compile all resources at once
+        CompilationUnit unit = CompilationUnit.input();
 
+        Map<String, Resource> nameToResource = new HashMap<>();
         for (Resource resource : resources) {
             try (InputStream is = resource.getInputStream()) {
                 if (is == null) {
@@ -68,27 +71,44 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
                 }
                 String content = IOHelper.loadText(is);
                 String name = determineName(resource, content);
+                unit.addClass(name, content);
+                nameToResource.put(name, resource);
+            }
+        }
 
-                LOG.debug("Compiling: {}", name);
-                Reflect ref = Reflect.compile(name, content).create();
-                Class<?> clazz = ref.type();
-                Object obj = ref.get();
-                LOG.debug("Compiled: {} -> {}", name, obj);
+        LOG.debug("Compiling unit: {}", unit);
+        CompilationUnit.Result result = MultiCompile.compileUnit(unit);
 
-                // inject context and resource
-                CamelContextAware.trySetCamelContext(obj, getCamelContext());
-                ResourceAware.trySetResource(obj, resource);
+        // remember the last loaded resource-set if route reloading is enabled
+        if (getCamelContext().hasService(RouteWatcherReloadStrategy.class) != null) {
+            getCamelContext().getRegistry().bind(RouteWatcherReloadStrategy.RELOAD_RESOURCES, nameToResource.values());
+        }
 
-                // support custom annotation scanning post compilation
-                // such as to register custom beans, type converters, etc.
-                for (CompilePostProcessor pre : getCompilePostProcessors()) {
-                    pre.postCompile(getCamelContext(), name, clazz, obj);
-                }
+        for (String className : result.getClassNames()) {
+            Class<?> clazz = result.getClass(className);
+            Object obj;
+            try {
+                // requires a default no-arg constructor otherwise we skip the class
+                obj = getCamelContext().getInjector().newInstance(clazz);
+            } catch (Exception e) {
+                LOG.debug("Compiled class: " + className + " must have a default no-arg constructor. Skipping.");
+                continue;
+            }
+            LOG.debug("Compiled: {} -> {}", className, obj);
 
-                if (obj instanceof RouteBuilder) {
-                    RouteBuilder builder = (RouteBuilder) obj;
-                    answer.add(builder);
-                }
+            // inject context and resource
+            CamelContextAware.trySetCamelContext(obj, getCamelContext());
+            ResourceAware.trySetResource(obj, nameToResource.get(className));
+
+            // support custom annotation scanning post compilation
+            // such as to register custom beans, type converters, etc.
+            for (CompilePostProcessor pre : getCompilePostProcessors()) {
+                pre.postCompile(getCamelContext(), className, clazz, obj);
+            }
+
+            if (obj instanceof RouteBuilder) {
+                RouteBuilder builder = (RouteBuilder) obj;
+                answer.add(builder);
             }
         }
 
