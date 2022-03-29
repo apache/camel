@@ -44,11 +44,11 @@ public class DefaultKafkaManualSyncCommit extends DefaultKafkaManualCommit imple
             if (offsetRepository != null) {
                 offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(recordOffset));
             } else {
-                LOG.debug("CommitSync {} from topic {} with offset: {}", getThreadId(), getTopicName(), recordOffset);
+                LOG.debug("Commit sync {} from topic {} with offset: {}", getThreadId(), getTopicName(), recordOffset);
                 camelExchangePayload.consumer.commitSync(
                         Collections.singletonMap(partition, new OffsetAndMetadata(recordOffset + 1)),
                         Duration.ofMillis(getCommitTimeout()));
-                LOG.debug("CommitSync done for {} from topic {} with offset: {}", getThreadId(), getTopicName(), recordOffset);
+                LOG.debug("Commit sync done for {} from topic {} with offset: {}", getThreadId(), getTopicName(), recordOffset);
             }
         }
     }
