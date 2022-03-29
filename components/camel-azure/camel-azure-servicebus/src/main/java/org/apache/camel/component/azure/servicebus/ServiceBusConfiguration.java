@@ -124,7 +124,7 @@ public class ServiceBusConfiguration implements Cloneable {
 
     /**
      * Sets the name of the subscription in the topic to listen to. topicOrQueueName and serviceBusType=topic must also
-     * be set.
+     * be set. This property is required if serviceBusType=topic and the consumer is in use.
      */
     public String getSubscriptionName() {
         return subscriptionName;
@@ -183,7 +183,7 @@ public class ServiceBusConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the receiverAsyncClient in order to consume messages in the Consumer
+     * Sets the receiverAsyncClient in order to consume messages by the consumer
      */
     public ServiceBusReceiverAsyncClient getReceiverAsyncClient() {
         return receiverAsyncClient;
