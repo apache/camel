@@ -226,7 +226,7 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         if (kafkaClientFactory == null) {
             kafkaClientFactory = new DefaultKafkaClientFactory();
         }
-        if (kafkaManualCommitFactory == null) {
+        if (configuration.isAllowManualCommit() && kafkaManualCommitFactory == null) {
             kafkaManualCommitFactory = new DefaultKafkaManualCommitFactory();
         }
     }

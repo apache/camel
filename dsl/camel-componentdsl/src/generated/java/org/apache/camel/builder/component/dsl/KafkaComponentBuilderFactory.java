@@ -228,25 +228,6 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether to perform an explicit auto commit when the consumer stops to
-         * ensure the broker has a commit from the last consumed message. This
-         * requires the option autoCommitEnable is turned on. The possible
-         * values are: sync, async, or none. And sync is the default value.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: sync
-         * Group: consumer
-         * 
-         * @param autoCommitOnStop the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder autoCommitOnStop(
-                java.lang.String autoCommitOnStop) {
-            doSetProperty("autoCommitOnStop", autoCommitOnStop);
-            return this;
-        }
-        /**
          * What to do when there is no initial offset in ZooKeeper or if an
          * offset is out of range: earliest : automatically reset the offset to
          * the earliest offset latest : automatically reset the offset to the
@@ -2076,7 +2057,6 @@ public interface KafkaComponentBuilderFactory {
             case "allowManualCommit": getOrCreateConfiguration((KafkaComponent) component).setAllowManualCommit((boolean) value); return true;
             case "autoCommitEnable": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitEnable((boolean) value); return true;
             case "autoCommitIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitIntervalMs((java.lang.Integer) value); return true;
-            case "autoCommitOnStop": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitOnStop((java.lang.String) value); return true;
             case "autoOffsetReset": getOrCreateConfiguration((KafkaComponent) component).setAutoOffsetReset((java.lang.String) value); return true;
             case "breakOnFirstError": getOrCreateConfiguration((KafkaComponent) component).setBreakOnFirstError((boolean) value); return true;
             case "bridgeErrorHandler": ((KafkaComponent) component).setBridgeErrorHandler((boolean) value); return true;
