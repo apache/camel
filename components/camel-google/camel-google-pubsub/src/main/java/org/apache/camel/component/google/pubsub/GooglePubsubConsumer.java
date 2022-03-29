@@ -201,7 +201,7 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                         }
                     }
                 } catch (CancellationException e) {
-                    localLog.info("PubSub synchronous pull request cancelled", e);
+                    localLog.debug("PubSub synchronous pull request cancelled", e);
                 } catch (IOException e) {
                     localLog.error("I/O exception while getting messages from PubSub. Reconnecting.", e);
                 } catch (ExecutionException e) {
