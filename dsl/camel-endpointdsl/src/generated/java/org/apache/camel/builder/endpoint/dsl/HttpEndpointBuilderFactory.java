@@ -43,6 +43,68 @@ public interface HttpEndpointBuilderFactory {
             return (AdvancedHttpEndpointBuilder) this;
         }
         /**
+         * Determines whether or not the raw input stream from Servlet is cached
+         * or not (Camel will read the stream into a in memory/overflow to file,
+         * Stream caching) cache. By default Camel will cache the Servlet input
+         * stream to support reading it multiple times to ensure it Camel can
+         * retrieve all data from the stream. However you can set this option to
+         * true when you for example need to access the raw stream, such as
+         * streaming it directly to a file or other persistent store.
+         * DefaultHttpBinding will copy the request input stream into a stream
+         * cache and put it into message body if this option is false to support
+         * reading the stream multiple times. If you use Servlet to bridge/proxy
+         * an endpoint then consider enabling this option to improve
+         * performance, in case you do not need to read the message payload
+         * multiple times. The http producer will by default cache the response
+         * body stream. If setting this option to true, then the producers will
+         * not cache the response body stream but use the response stream as-is
+         * as the message body.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param disableStreamCache the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder disableStreamCache(
+                boolean disableStreamCache) {
+            doSetProperty("disableStreamCache", disableStreamCache);
+            return this;
+        }
+        /**
+         * Determines whether or not the raw input stream from Servlet is cached
+         * or not (Camel will read the stream into a in memory/overflow to file,
+         * Stream caching) cache. By default Camel will cache the Servlet input
+         * stream to support reading it multiple times to ensure it Camel can
+         * retrieve all data from the stream. However you can set this option to
+         * true when you for example need to access the raw stream, such as
+         * streaming it directly to a file or other persistent store.
+         * DefaultHttpBinding will copy the request input stream into a stream
+         * cache and put it into message body if this option is false to support
+         * reading the stream multiple times. If you use Servlet to bridge/proxy
+         * an endpoint then consider enabling this option to improve
+         * performance, in case you do not need to read the message payload
+         * multiple times. The http producer will by default cache the response
+         * body stream. If setting this option to true, then the producers will
+         * not cache the response body stream but use the response stream as-is
+         * as the message body.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param disableStreamCache the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder disableStreamCache(String disableStreamCache) {
+            doSetProperty("disableStreamCache", disableStreamCache);
+            return this;
+        }
+        /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
          * 

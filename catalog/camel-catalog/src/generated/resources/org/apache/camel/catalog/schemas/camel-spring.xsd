@@ -7445,8 +7445,8 @@ Default value: true
         <xs:attribute name="autoDiscoverObjectMapper" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-If set to true then Jackson will lookup for an objectMapper into the registry.
-Default value: false
+If set to true then Jackson will look for an objectMapper to use from the
+registry. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7502,7 +7502,7 @@ FQN classname to use to unmarshal to. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to a custom collection type to lookup in the registry to use. This option
-should rarely be used, but allows to use different collection types than
+should rarely be used, but allows using different collection types than
 java.util.Collection based as default.
             ]]></xs:documentation>
           </xs:annotation>
