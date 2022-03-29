@@ -22,25 +22,25 @@ public class KinesisFirehose2EndpointUriFactory extends org.apache.camel.support
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(15);
+        props.add("accessKey");
         props.add("amazonKinesisFirehoseClient");
+        props.add("cborEnabled");
+        props.add("lazyStartProducer");
+        props.add("operation");
+        props.add("overrideEndpoint");
+        props.add("proxyHost");
+        props.add("proxyPort");
         props.add("proxyProtocol");
+        props.add("region");
         props.add("secretKey");
+        props.add("streamName");
+        props.add("trustAllCertificates");
         props.add("uriEndpointOverride");
         props.add("useDefaultCredentialsProvider");
-        props.add("streamName");
-        props.add("proxyHost");
-        props.add("trustAllCertificates");
-        props.add("proxyPort");
-        props.add("lazyStartProducer");
-        props.add("accessKey");
-        props.add("cborEnabled");
-        props.add("overrideEndpoint");
-        props.add("region");
-        props.add("operation");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("secretKey");
         secretProps.add("accessKey");
+        secretProps.add("secretKey");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptySet();
     }

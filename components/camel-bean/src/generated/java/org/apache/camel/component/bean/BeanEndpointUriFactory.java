@@ -22,12 +22,12 @@ public class BeanEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(6);
+        props.add("beanName");
         props.add("cache");
         props.add("lazyStartProducer");
         props.add("method");
-        props.add("scope");
-        props.add("beanName");
         props.add("parameters");
+        props.add("scope");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         Set<String> prefixes = new HashSet<>(1);

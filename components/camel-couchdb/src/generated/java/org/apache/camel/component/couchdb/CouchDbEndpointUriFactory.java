@@ -22,20 +22,20 @@ public class CouchDbEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(15);
-        props.add("deletes");
-        props.add("heartbeat");
-        props.add("exchangePattern");
-        props.add("updates");
+        props.add("bridgeErrorHandler");
         props.add("createDatabase");
-        props.add("protocol");
-        props.add("hostname");
         props.add("database");
+        props.add("deletes");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("heartbeat");
+        props.add("hostname");
         props.add("lazyStartProducer");
         props.add("password");
-        props.add("bridgeErrorHandler");
         props.add("port");
+        props.add("protocol");
         props.add("style");
-        props.add("exceptionHandler");
+        props.add("updates");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);

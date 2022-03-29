@@ -22,14 +22,14 @@ public class SpringIntegrationEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(8);
-        props.add("lazyStartProducer");
-        props.add("inOut");
         props.add("bridgeErrorHandler");
-        props.add("outputChannel");
-        props.add("exchangePattern");
         props.add("defaultChannel");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("inOut");
         props.add("inputChannel");
+        props.add("lazyStartProducer");
+        props.add("outputChannel");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

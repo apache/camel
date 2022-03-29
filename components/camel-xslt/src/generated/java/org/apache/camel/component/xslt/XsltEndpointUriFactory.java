@@ -23,18 +23,18 @@ public class XsltEndpointUriFactory extends org.apache.camel.support.component.E
     static {
         Set<String> props = new HashSet<>(14);
         props.add("contentCache");
-        props.add("resourceUri");
         props.add("deleteOutputFile");
-        props.add("output");
-        props.add("errorListener");
-        props.add("lazyStartProducer");
         props.add("entityResolver");
-        props.add("transformerFactoryConfigurationStrategy");
+        props.add("errorListener");
         props.add("failOnNullBody");
-        props.add("transformerCacheSize");
+        props.add("lazyStartProducer");
+        props.add("output");
+        props.add("resourceUri");
         props.add("resultHandlerFactory");
-        props.add("transformerFactoryClass");
+        props.add("transformerCacheSize");
         props.add("transformerFactory");
+        props.add("transformerFactoryClass");
+        props.add("transformerFactoryConfigurationStrategy");
         props.add("uriResolver");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

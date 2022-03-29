@@ -22,20 +22,20 @@ public class WordpressEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(14);
-        props.add("searchCriteria");
-        props.add("criteria");
-        props.add("exchangePattern");
-        props.add("url");
-        props.add("operationDetail");
-        props.add("password");
-        props.add("lazyStartProducer");
         props.add("apiVersion");
         props.add("bridgeErrorHandler");
+        props.add("criteria");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
         props.add("force");
         props.add("id");
+        props.add("lazyStartProducer");
         props.add("operation");
+        props.add("operationDetail");
+        props.add("password");
+        props.add("searchCriteria");
+        props.add("url");
         props.add("user");
-        props.add("exceptionHandler");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         Set<String> prefixes = new HashSet<>(1);

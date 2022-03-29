@@ -22,14 +22,14 @@ public class GlanceEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(9);
-        props.add("lazyStartProducer");
-        props.add("password");
         props.add("apiVersion");
+        props.add("config");
         props.add("domain");
         props.add("host");
-        props.add("project");
-        props.add("config");
+        props.add("lazyStartProducer");
         props.add("operation");
+        props.add("password");
+        props.add("project");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);

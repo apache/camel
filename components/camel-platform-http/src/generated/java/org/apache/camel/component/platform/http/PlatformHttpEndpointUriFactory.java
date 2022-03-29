@@ -22,18 +22,18 @@ public class PlatformHttpEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(12);
-        props.add("muteException");
-        props.add("fileNameExtWhitelist");
-        props.add("path");
         props.add("bridgeErrorHandler");
-        props.add("httpMethodRestrict");
-        props.add("headerFilterStrategy");
-        props.add("matchOnUriPrefix");
-        props.add("produces");
-        props.add("exchangePattern");
-        props.add("exceptionHandler");
-        props.add("platformHttpEngine");
         props.add("consumes");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("fileNameExtWhitelist");
+        props.add("headerFilterStrategy");
+        props.add("httpMethodRestrict");
+        props.add("matchOnUriPrefix");
+        props.add("muteException");
+        props.add("path");
+        props.add("platformHttpEngine");
+        props.add("produces");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

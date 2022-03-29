@@ -22,13 +22,13 @@ public class NagiosEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(8);
+        props.add("connectionTimeout");
+        props.add("encryption");
+        props.add("host");
         props.add("lazyStartProducer");
         props.add("password");
-        props.add("encryption");
         props.add("port");
-        props.add("host");
         props.add("sendSync");
-        props.add("connectionTimeout");
         props.add("timeout");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(1);

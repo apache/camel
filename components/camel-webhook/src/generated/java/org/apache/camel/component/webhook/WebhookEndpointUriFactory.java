@@ -22,15 +22,15 @@ public class WebhookEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(9);
-        props.add("webhookPath");
         props.add("bridgeErrorHandler");
-        props.add("webhookComponentName");
-        props.add("webhookExternalUrl");
-        props.add("webhookBasePath");
-        props.add("exchangePattern");
         props.add("endpointUri");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
         props.add("webhookAutoRegister");
+        props.add("webhookBasePath");
+        props.add("webhookComponentName");
+        props.add("webhookExternalUrl");
+        props.add("webhookPath");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

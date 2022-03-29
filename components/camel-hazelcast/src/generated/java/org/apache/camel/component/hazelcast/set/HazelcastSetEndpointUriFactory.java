@@ -22,14 +22,14 @@ public class HazelcastSetEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(8);
-        props.add("lazyStartProducer");
-        props.add("cacheName");
         props.add("bridgeErrorHandler");
-        props.add("hazelcastInstance");
-        props.add("exchangePattern");
+        props.add("cacheName");
         props.add("defaultOperation");
-        props.add("hazelcastInstanceName");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("hazelcastInstance");
+        props.add("hazelcastInstanceName");
+        props.add("lazyStartProducer");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

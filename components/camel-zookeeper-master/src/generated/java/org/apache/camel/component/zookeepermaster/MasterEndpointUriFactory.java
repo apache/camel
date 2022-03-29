@@ -22,11 +22,11 @@ public class MasterEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(5);
-        props.add("groupName");
-        props.add("consumerEndpointUri");
         props.add("bridgeErrorHandler");
-        props.add("exchangePattern");
+        props.add("consumerEndpointUri");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("groupName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

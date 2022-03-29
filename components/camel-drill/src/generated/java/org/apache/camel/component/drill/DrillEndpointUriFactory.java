@@ -22,12 +22,12 @@ public class DrillEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(6);
-        props.add("mode");
-        props.add("lazyStartProducer");
-        props.add("port");
-        props.add("host");
         props.add("clusterId");
         props.add("directory");
+        props.add("host");
+        props.add("lazyStartProducer");
+        props.add("mode");
+        props.add("port");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

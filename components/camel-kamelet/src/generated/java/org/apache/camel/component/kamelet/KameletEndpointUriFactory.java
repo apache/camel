@@ -22,15 +22,15 @@ public class KameletEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(10);
-        props.add("lazyStartProducer");
-        props.add("routeId");
+        props.add("block");
         props.add("bridgeErrorHandler");
+        props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("failIfNoConsumers");
+        props.add("lazyStartProducer");
         props.add("location");
-        props.add("block");
+        props.add("routeId");
         props.add("templateId");
-        props.add("exceptionHandler");
         props.add("timeout");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

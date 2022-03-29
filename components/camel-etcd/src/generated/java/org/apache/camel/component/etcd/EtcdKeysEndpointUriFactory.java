@@ -22,16 +22,16 @@ public class EtcdKeysEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(10);
-        props.add("path");
-        props.add("uris");
-        props.add("timeToLive");
         props.add("lazyStartProducer");
         props.add("password");
+        props.add("path");
+        props.add("recursive");
         props.add("servicePath");
         props.add("sslContextParameters");
-        props.add("userName");
-        props.add("recursive");
+        props.add("timeToLive");
         props.add("timeout");
+        props.add("uris");
+        props.add("userName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("password");

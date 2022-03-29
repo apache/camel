@@ -22,15 +22,15 @@ public class SqlStoredEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(9);
-        props.add("template");
-        props.add("noop");
-        props.add("lazyStartProducer");
-        props.add("useMessageBodyForTemplate");
-        props.add("templateOptions");
-        props.add("outputHeader");
-        props.add("function");
         props.add("batch");
         props.add("dataSource");
+        props.add("function");
+        props.add("lazyStartProducer");
+        props.add("noop");
+        props.add("outputHeader");
+        props.add("template");
+        props.add("templateOptions");
+        props.add("useMessageBodyForTemplate");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         Set<String> prefixes = new HashSet<>(1);

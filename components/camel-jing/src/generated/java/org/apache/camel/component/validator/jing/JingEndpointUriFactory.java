@@ -22,9 +22,9 @@ public class JingEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(3);
+        props.add("compactSyntax");
         props.add("lazyStartProducer");
         props.add("resourceUri");
-        props.add("compactSyntax");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

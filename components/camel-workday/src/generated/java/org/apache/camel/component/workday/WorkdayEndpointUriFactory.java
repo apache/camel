@@ -22,21 +22,21 @@ public class WorkdayEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(10);
-        props.add("path");
-        props.add("lazyStartProducer");
         props.add("clientId");
-        props.add("tokenRefresh");
-        props.add("host");
-        props.add("reportFormat");
         props.add("clientSecret");
-        props.add("httpConnectionManager");
         props.add("entity");
+        props.add("host");
+        props.add("httpConnectionManager");
+        props.add("lazyStartProducer");
+        props.add("path");
+        props.add("reportFormat");
         props.add("tenant");
+        props.add("tokenRefresh");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);
         secretProps.add("clientId");
-        secretProps.add("tokenRefresh");
         secretProps.add("clientSecret");
+        secretProps.add("tokenRefresh");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptySet();
     }

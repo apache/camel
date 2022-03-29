@@ -22,14 +22,14 @@ public class JoltEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(8);
-        props.add("allowTemplateFromHeader");
-        props.add("lazyStartProducer");
-        props.add("transformDsl");
-        props.add("contentCache");
         props.add("allowContextMapAll");
-        props.add("outputType");
+        props.add("allowTemplateFromHeader");
+        props.add("contentCache");
         props.add("inputType");
+        props.add("lazyStartProducer");
+        props.add("outputType");
         props.add("resourceUri");
+        props.add("transformDsl");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

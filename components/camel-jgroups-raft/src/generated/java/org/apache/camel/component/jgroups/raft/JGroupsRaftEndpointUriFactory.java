@@ -22,12 +22,12 @@ public class JGroupsRaftEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(6);
-        props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
-        props.add("enableRoleChangeEvents");
         props.add("clusterName");
-        props.add("exchangePattern");
+        props.add("enableRoleChangeEvents");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("lazyStartProducer");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

@@ -23,14 +23,14 @@ public class IgniteComputeEndpointUriFactory extends org.apache.camel.support.co
     static {
         Set<String> props = new HashSet<>(9);
         props.add("clusterGroupExpression");
-        props.add("lazyStartProducer");
-        props.add("propagateIncomingBodyIfNoReturnValue");
-        props.add("treatCollectionsAsCacheObjects");
+        props.add("computeName");
         props.add("endpointId");
         props.add("executionType");
+        props.add("lazyStartProducer");
+        props.add("propagateIncomingBodyIfNoReturnValue");
         props.add("taskName");
         props.add("timeoutMillis");
-        props.add("computeName");
+        props.add("treatCollectionsAsCacheObjects");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

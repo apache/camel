@@ -22,19 +22,19 @@ public class MockEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(13);
-        props.add("log");
-        props.add("expectedCount");
-        props.add("retainLast");
         props.add("assertPeriod");
-        props.add("failFast");
-        props.add("resultMinimumWaitTime");
-        props.add("reportGroup");
-        props.add("sleepForEmptyTest");
-        props.add("lazyStartProducer");
-        props.add("name");
         props.add("copyOnExchange");
+        props.add("expectedCount");
+        props.add("failFast");
+        props.add("lazyStartProducer");
+        props.add("log");
+        props.add("name");
+        props.add("reportGroup");
+        props.add("resultMinimumWaitTime");
         props.add("resultWaitTime");
         props.add("retainFirst");
+        props.add("retainLast");
+        props.add("sleepForEmptyTest");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

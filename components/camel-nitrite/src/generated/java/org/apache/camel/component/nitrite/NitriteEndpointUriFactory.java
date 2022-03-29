@@ -22,15 +22,15 @@ public class NitriteEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(10);
+        props.add("bridgeErrorHandler");
+        props.add("collection");
         props.add("database");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
         props.add("lazyStartProducer");
         props.add("password");
-        props.add("bridgeErrorHandler");
-        props.add("exchangePattern");
-        props.add("collection");
-        props.add("repositoryName");
         props.add("repositoryClass");
-        props.add("exceptionHandler");
+        props.add("repositoryName");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

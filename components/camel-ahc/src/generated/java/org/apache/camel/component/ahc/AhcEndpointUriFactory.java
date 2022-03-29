@@ -22,25 +22,25 @@ public class AhcEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(14);
-        props.add("clientConfigOptions");
-        props.add("throwExceptionOnFailure");
-        props.add("sslContextParameters");
         props.add("binding");
-        props.add("connectionClose");
-        props.add("clientConfig");
-        props.add("lazyStartProducer");
-        props.add("httpUri");
-        props.add("headerFilterStrategy");
-        props.add("transferException");
-        props.add("clientConfigRealmOptions");
-        props.add("cookieHandler");
         props.add("bridgeEndpoint");
         props.add("bufferSize");
+        props.add("clientConfig");
+        props.add("clientConfigOptions");
+        props.add("clientConfigRealmOptions");
+        props.add("connectionClose");
+        props.add("cookieHandler");
+        props.add("headerFilterStrategy");
+        props.add("httpUri");
+        props.add("lazyStartProducer");
+        props.add("sslContextParameters");
+        props.add("throwExceptionOnFailure");
+        props.add("transferException");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         Set<String> prefixes = new HashSet<>(2);
-        prefixes.add("clientConfig.realm.");
         prefixes.add("clientConfig.");
+        prefixes.add("clientConfig.realm.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 

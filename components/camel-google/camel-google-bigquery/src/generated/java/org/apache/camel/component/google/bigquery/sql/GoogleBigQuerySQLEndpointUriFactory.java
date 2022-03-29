@@ -22,10 +22,10 @@ public class GoogleBigQuerySQLEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(4);
-        props.add("lazyStartProducer");
         props.add("connectionFactory");
-        props.add("queryString");
+        props.add("lazyStartProducer");
         props.add("projectId");
+        props.add("queryString");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

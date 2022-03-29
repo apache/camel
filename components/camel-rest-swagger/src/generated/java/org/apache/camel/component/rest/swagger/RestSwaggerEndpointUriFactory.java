@@ -22,16 +22,16 @@ public class RestSwaggerEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(10);
-        props.add("lazyStartProducer");
         props.add("basePath");
-        props.add("host");
-        props.add("produces");
-        props.add("sslContextParameters");
-        props.add("operationId");
-        props.add("resolveReferences");
         props.add("componentName");
-        props.add("specificationUri");
         props.add("consumes");
+        props.add("host");
+        props.add("lazyStartProducer");
+        props.add("operationId");
+        props.add("produces");
+        props.add("resolveReferences");
+        props.add("specificationUri");
+        props.add("sslContextParameters");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

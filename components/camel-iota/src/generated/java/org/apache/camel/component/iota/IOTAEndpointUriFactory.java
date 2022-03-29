@@ -22,13 +22,13 @@ public class IOTAEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(8);
-        props.add("securityLevel");
-        props.add("lazyStartProducer");
         props.add("depth");
-        props.add("name");
-        props.add("tag");
+        props.add("lazyStartProducer");
         props.add("minWeightMagnitude");
+        props.add("name");
         props.add("operation");
+        props.add("securityLevel");
+        props.add("tag");
         props.add("url");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

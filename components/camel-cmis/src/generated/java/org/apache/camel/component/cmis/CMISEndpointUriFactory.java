@@ -22,18 +22,18 @@ public class CMISEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(14);
-        props.add("queryMode");
-        props.add("cmsUrl");
-        props.add("readContent");
-        props.add("query");
-        props.add("exchangePattern");
-        props.add("pageSize");
-        props.add("readCount");
-        props.add("lazyStartProducer");
-        props.add("password");
         props.add("bridgeErrorHandler");
-        props.add("repositoryId");
+        props.add("cmsUrl");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("lazyStartProducer");
+        props.add("pageSize");
+        props.add("password");
+        props.add("query");
+        props.add("queryMode");
+        props.add("readContent");
+        props.add("readCount");
+        props.add("repositoryId");
         props.add("sessionFacadeFactory");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

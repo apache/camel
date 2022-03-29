@@ -23,30 +23,30 @@ public class WsEndpointUriFactory extends org.apache.camel.support.component.End
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(19);
-        props.add("clientConfigOptions");
-        props.add("throwExceptionOnFailure");
-        props.add("exchangePattern");
-        props.add("sslContextParameters");
         props.add("binding");
-        props.add("connectionClose");
-        props.add("clientConfig");
-        props.add("lazyStartProducer");
-        props.add("bridgeErrorHandler");
-        props.add("useStreaming");
-        props.add("httpUri");
-        props.add("headerFilterStrategy");
-        props.add("transferException");
-        props.add("clientConfigRealmOptions");
-        props.add("cookieHandler");
-        props.add("sendMessageOnError");
-        props.add("exceptionHandler");
         props.add("bridgeEndpoint");
+        props.add("bridgeErrorHandler");
         props.add("bufferSize");
+        props.add("clientConfig");
+        props.add("clientConfigOptions");
+        props.add("clientConfigRealmOptions");
+        props.add("connectionClose");
+        props.add("cookieHandler");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("headerFilterStrategy");
+        props.add("httpUri");
+        props.add("lazyStartProducer");
+        props.add("sendMessageOnError");
+        props.add("sslContextParameters");
+        props.add("throwExceptionOnFailure");
+        props.add("transferException");
+        props.add("useStreaming");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         Set<String> prefixes = new HashSet<>(2);
-        prefixes.add("clientConfig.realm.");
         prefixes.add("clientConfig.");
+        prefixes.add("clientConfig.realm.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 

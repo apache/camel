@@ -22,11 +22,11 @@ public class ChatScriptEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(6);
+        props.add("botName");
+        props.add("chatUserName");
+        props.add("host");
         props.add("lazyStartProducer");
         props.add("port");
-        props.add("botName");
-        props.add("host");
-        props.add("chatUserName");
         props.add("resetChat");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

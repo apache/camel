@@ -22,16 +22,16 @@ public class PdfEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(10);
-        props.add("marginRight");
-        props.add("lazyStartProducer");
-        props.add("textProcessingFactory");
-        props.add("pageSize");
-        props.add("fontSize");
-        props.add("marginBottom");
-        props.add("operation");
-        props.add("marginTop");
         props.add("font");
+        props.add("fontSize");
+        props.add("lazyStartProducer");
+        props.add("marginBottom");
         props.add("marginLeft");
+        props.add("marginRight");
+        props.add("marginTop");
+        props.add("operation");
+        props.add("pageSize");
+        props.add("textProcessingFactory");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

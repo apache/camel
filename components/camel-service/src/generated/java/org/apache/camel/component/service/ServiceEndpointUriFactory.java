@@ -23,9 +23,9 @@ public class ServiceEndpointUriFactory extends org.apache.camel.support.componen
     static {
         Set<String> props = new HashSet<>(4);
         props.add("bridgeErrorHandler");
-        props.add("exchangePattern");
         props.add("delegateUri");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();
