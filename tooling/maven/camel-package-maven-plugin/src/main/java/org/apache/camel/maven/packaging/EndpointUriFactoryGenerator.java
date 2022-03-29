@@ -16,9 +16,9 @@
  */
 package org.apache.camel.maven.packaging;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.TreeSet;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -120,7 +120,7 @@ public final class EndpointUriFactoryGenerator {
     }
 
     private static String generatePropertyNames(ComponentModel model) {
-        Set<String> properties = new HashSet<>();
+        Set<String> properties = new TreeSet<>();
         model.getEndpointOptions().stream()
                 .map(ComponentModel.EndpointOptionModel::getName)
                 .forEach(properties::add);
@@ -147,7 +147,7 @@ public final class EndpointUriFactoryGenerator {
     }
 
     private static String generateSecretPropertyNames(ComponentModel model) {
-        Set<String> properties = new HashSet<>();
+        Set<String> properties = new TreeSet<>();
         model.getEndpointOptions().stream()
                 .filter(ComponentModel.EndpointOptionModel::isSecret)
                 .map(ComponentModel.EndpointOptionModel::getName)
@@ -176,7 +176,7 @@ public final class EndpointUriFactoryGenerator {
     }
 
     private static String generateMultiValuePrefixes(ComponentModel model) {
-        Set<String> prefixes = new HashSet<>();
+        Set<String> prefixes = new TreeSet<>();
         model.getEndpointOptions().stream()
                 .filter(ComponentModel.EndpointOptionModel::isMultiValue)
                 .map(ComponentModel.EndpointOptionModel::getPrefix)
