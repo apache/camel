@@ -194,6 +194,9 @@ public class SmppConsumer extends DefaultConsumer {
             } finally {
                 reconnectLock.unlock();
             }
+        } else {
+            LOG.warn("Thread {} could not acquire a lock for creating the session during consumer reconnection",
+                    Thread.currentThread().getId());
         }
     }
 
