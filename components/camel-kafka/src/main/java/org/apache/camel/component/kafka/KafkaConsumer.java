@@ -50,7 +50,6 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
     // This list helps to work around the infinite loop of KAFKA-1894
     private final List<KafkaFetchRecords> tasks = new ArrayList<>();
     private volatile boolean stopOffsetRepo;
-    private PollExceptionStrategy pollExceptionStrategy;
     private KafkaConsumerResumeStrategy resumeStrategy;
 
     public KafkaConsumer(KafkaEndpoint endpoint, Processor processor) {
@@ -71,12 +70,6 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
-
-        if (endpoint.getComponent().getPollExceptionStrategy() != null) {
-            pollExceptionStrategy = endpoint.getComponent().getPollExceptionStrategy();
-        } else {
-            pollExceptionStrategy = new DefaultPollExceptionStrategy(endpoint.getConfiguration().getPollOnError());
-        }
     }
 
     @Override
@@ -147,7 +140,7 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
         for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
             KafkaFetchRecords task = new KafkaFetchRecords(
-                    this, pollExceptionStrategy, bridge, topic, pattern, i + "", getProps());
+                    this, bridge, topic, pattern, i + "", getProps());
             executor.submit(task);
 
             tasks.add(task);
