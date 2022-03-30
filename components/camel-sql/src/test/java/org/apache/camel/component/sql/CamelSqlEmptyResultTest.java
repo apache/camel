@@ -27,6 +27,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 public class CamelSqlEmptyResultTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
@@ -62,6 +64,8 @@ public class CamelSqlEmptyResultTest extends CamelTestSupport {
         template.sendBody("seda:in", "");
 
         assertMockEndpointsSatisfied();
+        Object header = out.getReceivedExchanges().get(0).getIn().getHeader("PersonID");
+        assertNull(header, "PersonID header should be null");
     }
 
     @Override
