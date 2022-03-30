@@ -108,20 +108,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Message Headers
-
-Camel adds the following message headers to the exchange:
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelEntityManager` |`EntityManager` |The JPA `EntityManager` object being used by `JpaConsumer` or `JpaProducer`.
-
-|`CamelJpaParameters` |`Map<String, Object>` |Alternative way for passing query parameters as an Exchange header.
-
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Configuring EntityManagerFactory
 
