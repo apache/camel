@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * Exchange messages with JGroups-raft clusters.
  */
 @UriEndpoint(firstVersion = "2.24.0", scheme = "jgroups-raft", title = "JGroups raft", syntax = "jgroup-raft:clusterName",
-             category = { Category.CLUSTERING, Category.MESSAGING })
+             category = { Category.CLUSTERING, Category.MESSAGING }, headersClass = JGroupsRaftConstants.class)
 public class JGroupsRaftEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftEndpoint.class);
 
