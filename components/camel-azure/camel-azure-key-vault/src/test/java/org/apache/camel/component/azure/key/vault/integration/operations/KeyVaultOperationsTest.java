@@ -22,6 +22,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.azure.key.vault.KeyVaultConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -39,19 +40,34 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KeyVaultOperationsTest extends CamelTestSupport {
 
-    @EndpointInject("direct:start")
+    @EndpointInject("direct:createSecret")
     private ProducerTemplate template;
 
-    @EndpointInject("mock:result")
-    private MockEndpoint result;
+    @EndpointInject("direct:getSecret")
+    private ProducerTemplate getTemplate;
+
+    @EndpointInject("mock:createSecret")
+    private MockEndpoint createResult;
+
+    @EndpointInject("mock:getSecret")
+    private MockEndpoint getResult;
 
     @Test
     public void sendInOnly() throws Exception {
-        result.expectedMessageCount(1);
+        createResult.expectedMessageCount(1);
+        getResult.expectedMessageCount(1);
+        getResult.expectedBodiesReceived("TestValue");
 
-        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+        template.send("direct:createSecret", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) {
-                exchange.getIn().setBody("Test");
+                exchange.getMessage().setHeader(KeyVaultConstants.SECRET_NAME, "Test");
+                exchange.getIn().setBody("TestValue");
+            }
+        });
+
+        template.send("direct:getSecret", ExchangePattern.InOnly, new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getMessage().setHeader(KeyVaultConstants.SECRET_NAME, "Test");
             }
         });
 
@@ -64,10 +80,13 @@ public class KeyVaultOperationsTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").startupOrder(1)
+                from("direct:createSecret")
                         .to("azure-key-vault://{{vaultName}}?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})")
-                        .to("mock:result");
+                        .to("mock:createSecret");
 
+                from("direct:getSecret")
+                        .to("azure-key-vault://{{vaultName}}?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=getSecret")
+                        .to("mock:getSecret");
             }
         };
     }

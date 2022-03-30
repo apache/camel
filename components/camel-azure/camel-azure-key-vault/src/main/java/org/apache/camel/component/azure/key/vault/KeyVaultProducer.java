@@ -51,6 +51,9 @@ public class KeyVaultProducer extends DefaultProducer {
             case createSecret:
                 createSecret(exchange);
                 break;
+            case getSecret:
+                getSecret(exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -65,6 +68,17 @@ public class KeyVaultProducer extends DefaultProducer {
                 .setSecret(new KeyVaultSecret(secretName, exchange.getMessage().getMandatoryBody(String.class)));
         Message message = getMessageForResponse(exchange);
         message.setBody(p);
+    }
+
+    private void getSecret(Exchange exchange) throws InvalidPayloadException {
+        final String secretName = exchange.getMessage().getHeader(KeyVaultConstants.SECRET_NAME, String.class);
+        if (ObjectHelper.isEmpty(secretName)) {
+            throw new IllegalArgumentException("Secret Name must be specified for createSecret Operation");
+        }
+        KeyVaultSecret p = getEndpoint().getSecretClient()
+                .getSecret(secretName);
+        Message message = getMessageForResponse(exchange);
+        message.setBody(p.getValue());
     }
 
     @Override
