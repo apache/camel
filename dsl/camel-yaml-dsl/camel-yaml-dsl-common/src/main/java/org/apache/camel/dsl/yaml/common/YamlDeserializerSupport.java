@@ -326,7 +326,7 @@ public class YamlDeserializerSupport {
 
         YamlDeserializationContext dc = getDeserializationContext(node);
         if (dc == null) {
-            throw new IllegalArgumentException("Unable to find YamlConstructor");
+            throw new YamlDeserializationException("Unable to find YamlConstructor");
         }
 
         for (Node element : asSequenceNode(node).getValue()) {

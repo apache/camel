@@ -30,7 +30,6 @@ import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.DependencyStrategy;
-import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
@@ -44,6 +43,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeseri
 @ManagedResource(description = "Managed Kamelet RoutesBuilderLoader")
 @RoutesLoader(KameletRoutesBuilderLoader.EXTENSION)
 public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
+
     public static final String EXTENSION = "kamelet.yaml";
 
     public KameletRoutesBuilderLoader() {
@@ -51,9 +51,8 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     }
 
     @Override
-    protected RouteBuilder builder(final Node root, final Resource resource) {
-        getDeserializationContext().setResource(resource);
-        setDeserializationContext(root, getDeserializationContext());
+    protected RouteBuilder builder(final YamlDeserializationContext ctx, final Node root) {
+        setDeserializationContext(root, ctx);
 
         Node template = nodeAt(root, "/spec/template");
         if (template == null) {
@@ -73,16 +72,12 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             required = Collections.emptySet();
         }
 
-        final YamlDeserializationContext context = this.getDeserializationContext();
-        final RouteTemplateDefinition rtd = context.construct(template, RouteTemplateDefinition.class);
-
+        final RouteTemplateDefinition rtd = ctx.construct(template, RouteTemplateDefinition.class);
         rtd.id(asText(nodeAt(root, "/metadata/name")));
 
         Node properties = nodeAt(root, "/spec/definition/properties");
         if (properties != null) {
-
             rtd.setTemplateParameters(new ArrayList<>());
-
             for (NodeTuple p : asMappingNode(properties).getValue()) {
                 final String key = asText(p.getKeyNode());
                 final Node def = nodeAt(p.getValueNode(), "/default");

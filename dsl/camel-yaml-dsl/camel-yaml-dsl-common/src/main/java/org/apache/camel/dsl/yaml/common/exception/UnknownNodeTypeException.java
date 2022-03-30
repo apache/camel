@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.yaml.common.exception;
 
 public class UnknownNodeTypeException extends IllegalArgumentException {
+
     public UnknownNodeTypeException(String nodeId) {
         super("Unknown type for node with id: " + nodeId);
     }

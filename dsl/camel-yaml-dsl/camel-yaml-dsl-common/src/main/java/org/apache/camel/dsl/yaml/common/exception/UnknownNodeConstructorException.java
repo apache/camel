@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.yaml.common.exception;
 
 public class UnknownNodeConstructorException extends IllegalArgumentException {
+
     public UnknownNodeConstructorException(Class<?> nodeType) {
         super("Unknown constructor for node with type: " + nodeType.getName());
     }

@@ -55,7 +55,6 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.DependencyStrategy;
-import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ObjectHelper;
@@ -64,6 +63,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.YamlUnicodeReader;
 import org.snakeyaml.engine.v2.composer.Composer;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
@@ -103,7 +103,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         super(EXTENSION);
     }
 
-    protected RouteBuilder builder(final Node root, final Resource resource) {
+    protected RouteBuilder builder(final YamlDeserializationContext ctx, final Node root) {
 
         // we need to keep track of already configured items as the yaml-dsl returns a
         // RouteConfigurationBuilder that is capable of both route and route configurations
@@ -113,8 +113,6 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         return new RouteConfigurationBuilder() {
             @Override
             public void configure() throws Exception {
-                YamlDeserializationContext ctx = getDeserializationContext();
-                ctx.setResource(resource);
                 setDeserializationContext(root, ctx);
 
                 Object target = preConfigureNode(root, ctx, false);
@@ -205,8 +203,6 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
             @Override
             public void configuration() throws Exception {
-                YamlDeserializationContext ctx = getDeserializationContext();
-                ctx.setResource(resource);
                 setDeserializationContext(root, ctx);
 
                 Object target = preConfigureNode(root, ctx, false);
@@ -660,20 +656,20 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         }
 
         try (InputStream is = resource.getInputStream()) {
-            final StreamReader reader = new StreamReader(settings, new YamlUnicodeReader(is));
-            final Parser parser = new ParserImpl(settings, reader);
-            final Composer composer = new Composer(settings, parser);
+            LoadSettings local = LoadSettings.builder().setLabel(resource.getLocation()).build();
+            final YamlDeserializationContext ctx = newYamlDeserializationContext(local, resource);
+            final StreamReader reader = new StreamReader(local, new YamlUnicodeReader(is));
+            final Parser parser = new ParserImpl(local, reader);
+            final Composer composer = new Composer(local, parser);
 
             composer.getSingleNode()
-                    .map(node -> preParseNode(node, resource));
+                    .map(node -> preParseNode(ctx, node));
         }
     }
 
-    private Object preParseNode(Node root, Resource resource) {
+    private Object preParseNode(final YamlDeserializationContext ctx, final Node root) {
         LOG.trace("Pre-parsing node: {}", root);
 
-        YamlDeserializationContext ctx = getDeserializationContext();
-        ctx.setResource(resource);
         setDeserializationContext(root, ctx);
 
         try {
@@ -687,7 +683,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeCamelException("Error pre-parsing resource: " + resource.getLocation(), e);
+            throw new RuntimeCamelException("Error pre-parsing resource: " + ctx.getResource().getLocation(), e);
         }
 
         return null;

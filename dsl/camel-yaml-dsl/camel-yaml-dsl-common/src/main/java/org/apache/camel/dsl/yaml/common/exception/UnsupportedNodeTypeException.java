@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml.common.exception;
 import org.snakeyaml.engine.v2.nodes.Node;
 
 public class UnsupportedNodeTypeException extends IllegalArgumentException {
+
     public UnsupportedNodeTypeException(int nodeType) {
         super("Unsupported type (" + nodeType + ")");
     }

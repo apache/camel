@@ -19,6 +19,8 @@ package org.apache.camel.dsl.yaml.common;
 import java.util.Locale;
 
 import org.apache.camel.LineNumberAware;
+import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
+import org.apache.camel.dsl.yaml.common.exception.UnsupportedNodeTypeException;
 import org.apache.camel.util.StringHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
@@ -59,7 +61,7 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
             target = newInstance();
             setProperties(target, mn);
         } else {
-            throw new IllegalArgumentException("Unsupported node type: " + node);
+            throw new UnsupportedNodeTypeException(node);
         }
 
         // enrich model with source location:line number
@@ -127,6 +129,6 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
     }
 
     protected void handleUnknownProperty(T target, String propertyKey, String propertyName, Node value) {
-        throw new IllegalArgumentException("Unsupported field: " + propertyName + " on " + target.getClass().getName());
+        throw new UnsupportedFieldException(value, propertyName);
     }
 }
