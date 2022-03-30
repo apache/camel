@@ -51,7 +51,12 @@ public class KeyVaultEndpoint extends DefaultEndpoint {
     @Override
     public void doInit() throws Exception {
         super.doInit();
+        secretClient = configuration.getSecretClient() != null
+                ? configuration.getSecretClient() : createSecretClient();
+    }
 
+    private SecretClient createSecretClient() {
+        SecretClient localClient;
         // Build key vault URI
         String keyVaultUri = "https://" + getConfiguration().getVaultName() + ".vault.azure.net";
 
@@ -63,10 +68,12 @@ public class KeyVaultEndpoint extends DefaultEndpoint {
                 .build();
 
         // Build Client
-        secretClient = new SecretClientBuilder()
+        localClient = new SecretClientBuilder()
                 .vaultUrl(keyVaultUri)
                 .credential(credential)
                 .buildClient();
+
+        return localClient;
     }
 
     @Override
