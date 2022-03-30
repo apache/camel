@@ -266,9 +266,12 @@ Message:
 [source,java]
 ---------------------------------------------------------
 Map headers = new HashMap();
-map.put("To", "Claus Ibsen <davsclaus@apache.org>");
-map.put("From", "James Strachan <jstrachan@apache.org>");
 map.put("Subject", "Camel is cool");
+map.put("From", "James Strachan <jstrachan@apache.org>");
+map.put("To", "Claus Ibsen <davsclaus@apache.org>");
+map.put("Cc", "An Other <another@example.com>");
+map.put("Bcc", "An Other <another@example.com>");
+map.put("Reply-To", "An Other <another@example.com>");
 ---------------------------------------------------------
 
 == JavaMail API (ex SUN JavaMail)
