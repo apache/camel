@@ -24,11 +24,6 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "atmos":
             case "atmosphere-websocket":
             case "atom":
-            case "atomix-map":
-            case "atomix-messaging":
-            case "atomix-queue":
-            case "atomix-set":
-            case "atomix-value":
             case "avro":
             case "aws2-ddbstream":
             case "aws2-kinesis":

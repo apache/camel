@@ -26,12 +26,6 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "atlasmap":
             case "atmos":
             case "atmosphere-websocket":
-            case "atomix-map":
-            case "atomix-messaging":
-            case "atomix-multimap":
-            case "atomix-queue":
-            case "atomix-set":
-            case "atomix-value":
             case "avro":
             case "aws-secrets-manager":
             case "aws2-athena":

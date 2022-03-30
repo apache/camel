@@ -1,1 +1,0 @@
-../../../../../components/camel-atomix/src/main/docs/atomix-map-component.adoc
