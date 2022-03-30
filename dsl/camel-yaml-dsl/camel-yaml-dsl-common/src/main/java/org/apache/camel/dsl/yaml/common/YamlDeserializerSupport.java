@@ -272,37 +272,9 @@ public class YamlDeserializerSupport {
         return node.getNodeType() == NodeType.SEQUENCE;
     }
 
-    public static Node getNamedNode(MappingNode node, String name) throws YamlDeserializationException {
-        if (node == null) {
-            return null;
-        }
-
-        for (NodeTuple tuple : node.getValue()) {
-            if (name.equals(asText(tuple.getKeyNode()))) {
-                return tuple.getValueNode();
-            }
-        }
-
-        return null;
-    }
-
-    public static <T> List<T> asNestedList(Node node, Class<T> type) throws YamlDeserializationException {
-        List<T> answer = new ArrayList<>();
-        asNestedCollection(node, type, answer);
-
-        return answer;
-    }
-
     public static <T> List<T> asFlatList(Node node, Class<T> type) throws YamlDeserializationException {
         List<T> answer = new ArrayList<>();
         asFlatCollection(node, type, answer);
-
-        return answer;
-    }
-
-    public static <T> Set<T> asNestedSet(Node node, Class<T> type) throws YamlDeserializationException {
-        Set<T> answer = new HashSet<>();
-        asNestedCollection(node, type, answer);
 
         return answer;
     }
@@ -312,11 +284,6 @@ public class YamlDeserializerSupport {
         asFlatCollection(node, type, answer);
 
         return answer;
-    }
-
-    public static <T> void asNestedCollection(Node node, Class<T> type, Collection<T> collection)
-            throws YamlDeserializationException {
-        asCollection(node, type, collection, false);
     }
 
     public static <T> void asFlatCollection(Node node, Class<T> type, Collection<T> collection)

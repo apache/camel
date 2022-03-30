@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.yaml.common;
 
 public enum YamlDeserializationMode {
+
     /**
      * This option configure the deserialization engine to strictly respect the model definition.
      *

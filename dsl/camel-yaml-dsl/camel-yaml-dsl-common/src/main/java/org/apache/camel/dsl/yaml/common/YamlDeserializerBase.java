@@ -30,6 +30,7 @@ import org.snakeyaml.engine.v2.nodes.NodeType;
 import org.snakeyaml.engine.v2.nodes.ScalarNode;
 
 public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport implements ConstructNode {
+
     private final Class<T> type;
 
     public YamlDeserializerBase(Class<T> type) {

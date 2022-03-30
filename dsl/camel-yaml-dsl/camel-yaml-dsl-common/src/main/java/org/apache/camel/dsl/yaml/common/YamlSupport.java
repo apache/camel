@@ -54,6 +54,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeseri
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setSteps;
 
 public final class YamlSupport {
+
     private YamlSupport() {
     }
 

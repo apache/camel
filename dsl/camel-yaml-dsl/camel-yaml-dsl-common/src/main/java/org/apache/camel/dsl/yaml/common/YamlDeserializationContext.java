@@ -44,16 +44,15 @@ import org.snakeyaml.engine.v2.nodes.NodeType;
 import org.snakeyaml.engine.v2.nodes.ScalarNode;
 
 public class YamlDeserializationContext extends StandardConstructor implements CamelContextAware, Service {
+
     private final Set<YamlDeserializerResolver> resolvers;
     private final Map<String, ConstructNode> constructors;
-
     private YamlDeserializationMode deserializationMode;
     private ExtendedCamelContext camelContext;
     private Resource resource;
 
     public YamlDeserializationContext(LoadSettings settings) {
         super(settings);
-
         this.resolvers = new TreeSet<>(Comparator.comparing(Ordered::getOrder));
         this.constructors = new HashMap<>();
         this.deserializationMode = YamlDeserializationMode.FLOW;
@@ -95,10 +94,6 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext.adapt(ExtendedCamelContext.class);
-    }
-
-    public Object constructDocument(Node node) {
-        return super.construct(node);
     }
 
     @Override
@@ -219,15 +214,6 @@ public class YamlDeserializationContext extends StandardConstructor implements C
                     }
                 },
                 camelContext);
-    }
-
-    public ConstructNode mandatoryResolve(Node node, String id) {
-        ConstructNode constructor = resolve(node, id);
-        if (constructor == null) {
-            throw new YamlDeserializationException(node, "Unable to find constructor for id: " + id);
-        }
-
-        return constructor;
     }
 
     public ConstructNode resolve(Node node, String id) {
