@@ -16,9 +16,19 @@
  */
 package org.apache.camel.dsl.yaml.common.exception;
 
-public class UnknownNodeConstructorException extends IllegalArgumentException {
+import java.util.Optional;
 
-    public UnknownNodeConstructorException(Class<?> nodeType) {
-        super("Unknown constructor for node with type: " + nodeType.getName());
+import org.snakeyaml.engine.v2.exceptions.MarkedYamlEngineException;
+import org.snakeyaml.engine.v2.nodes.Node;
+
+public class InvalidEndpointException extends MarkedYamlEngineException {
+
+    public InvalidEndpointException(Node node, String message) {
+        super(null, Optional.empty(), message, node != null ? node.getStartMark() : Optional.empty());
     }
+
+    public InvalidEndpointException(Node node, String message, Throwable cause) {
+        super(null, Optional.empty(), message, node != null ? node.getStartMark() : Optional.empty(), cause);
+    }
+
 }

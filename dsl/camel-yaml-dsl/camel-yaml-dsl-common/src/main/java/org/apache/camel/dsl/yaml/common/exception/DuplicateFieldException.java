@@ -16,12 +16,15 @@
  */
 package org.apache.camel.dsl.yaml.common.exception;
 
-public class UnknownPropertyException extends YamlDeserializationException {
-    public UnknownPropertyException(String property) {
-        super("Unsupported property: " + property);
+import java.util.Optional;
+
+import org.snakeyaml.engine.v2.exceptions.MarkedYamlEngineException;
+import org.snakeyaml.engine.v2.nodes.Node;
+
+public class DuplicateFieldException extends MarkedYamlEngineException {
+
+    public DuplicateFieldException(Node node, String field, String message) {
+        super(null, Optional.empty(), "Field: " + field + " has already been configured " + message, node.getStartMark());
     }
 
-    public UnknownPropertyException(String property, Throwable rootCause) {
-        super("Unsupported property: " + property, rootCause);
-    }
 }

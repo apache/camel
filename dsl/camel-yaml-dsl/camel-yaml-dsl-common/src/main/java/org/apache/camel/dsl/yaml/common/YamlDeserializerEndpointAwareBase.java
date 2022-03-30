@@ -63,9 +63,9 @@ public abstract class YamlDeserializerEndpointAwareBase<T> extends YamlDeseriali
         }
 
         if (parameters != null) {
-            setEndpointUri(dc.getCamelContext(), target, parameters);
+            setEndpointUri(dc.getCamelContext(), node, target, parameters);
         }
     }
 
-    protected abstract void setEndpointUri(CamelContext context, T target, Map<String, Object> parameters);
+    protected abstract void setEndpointUri(CamelContext context, Node node, T target, Map<String, Object> parameters);
 }

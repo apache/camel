@@ -89,7 +89,7 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
 
             return composer.getSingleNode()
                     .map(node -> builder(ctx, node))
-                    .orElseThrow(() -> new YamlDeserializationException("Unable to deserialize resource"));
+                    .orElseThrow(() -> new YamlDeserializationException("Unable to parse resource: " + resource.getLocation()));
         }
     }
 

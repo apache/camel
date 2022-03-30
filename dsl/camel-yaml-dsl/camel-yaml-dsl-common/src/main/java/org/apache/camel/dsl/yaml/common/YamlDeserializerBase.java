@@ -91,7 +91,7 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
      * @return the instance.
      */
     protected T newInstance(String value) {
-        throw new IllegalArgumentException("Unsupported " + value);
+        throw new UnsupportedOperationException();
     }
 
     /**

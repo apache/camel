@@ -28,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
+import org.apache.camel.dsl.yaml.common.exception.InvalidEndpointException;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedNodeTypeException;
 import org.apache.camel.model.RouteDefinition;
@@ -122,7 +123,7 @@ public final class YamlSupport {
         };
     }
 
-    public static String createEndpointUri(CamelContext context, String uri, Map<String, Object> parameters) {
+    public static String createEndpointUri(CamelContext context, Node node, String uri, Map<String, Object> parameters) {
         String answer = uri;
 
         if (parameters == null || parameters.isEmpty()) {
@@ -142,9 +143,9 @@ public final class YamlSupport {
             //     parameters:
             //         option2: value2
             //
-            // is not supported and leads to an IllegalArgumentException being thrown.
+            // is not supported and leads to an InvalidEndpointException being thrown.
             //
-            throw new IllegalArgumentException("Uri should not contains query params (uri: " + uri + ")");
+            throw new InvalidEndpointException(node, "Uri should not contains query parameters (uri: " + uri + ")");
         }
 
         final String scheme = uri.contains(":") ? StringHelper.before(uri, ":") : uri;
@@ -181,7 +182,7 @@ public final class YamlSupport {
                 answer += "?" + URISupport.createQueryString(parameters, false);
             }
         } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(e);
+            throw new InvalidEndpointException(node, "Error creating query", e);
         }
 
         return answer;
@@ -224,18 +225,16 @@ public final class YamlSupport {
                 switch (key) {
                     case "uri":
                         if (answer != null) {
-                            throw new IllegalArgumentException(
-                                    "uri and properties are not supported when using Endpoint DSL ");
+                            throw new InvalidEndpointException(
+                                    node, "Uri and parameters are not supported when using Endpoint DSL");
                         }
-
                         uri = asText(val);
                         break;
                     case "parameters":
                         if (answer != null) {
-                            throw new IllegalArgumentException(
-                                    "uri and properties are not supported when using Endpoint DSL ");
+                            throw new InvalidEndpointException(
+                                    node, "Uri and parameters are not supported when using Endpoint DSL");
                         }
-
                         parameters = asScalarMap(tuple.getValueNode());
                         break;
                     case "steps":
@@ -246,8 +245,8 @@ public final class YamlSupport {
                         String endpointUri = endpointResolver.apply(key, val);
                         if (endpointUri != null) {
                             if (uri != null || parameters != null) {
-                                throw new IllegalArgumentException(
-                                        "Uri and parameters are not supported when using Endpoint DSL");
+                                throw new InvalidEndpointException(
+                                        node, "Uri and parameters are not supported when using Endpoint DSL");
                             }
                             answer = endpointUri;
                         } else {
@@ -258,7 +257,7 @@ public final class YamlSupport {
 
             if (answer == null) {
                 ObjectHelper.notNull(uri, "The uri must set");
-                answer = YamlSupport.createEndpointUri(dc.getCamelContext(), uri, parameters);
+                answer = YamlSupport.createEndpointUri(dc.getCamelContext(), node, uri, parameters);
             }
         }
 
@@ -285,7 +284,7 @@ public final class YamlSupport {
                     }
                 }
 
-                return YamlSupport.createEndpointUri(dc.getCamelContext(), scheme, parameters);
+                return YamlSupport.createEndpointUri(dc.getCamelContext(), node, scheme, parameters);
             default:
                 throw new UnsupportedNodeTypeException(node);
         }

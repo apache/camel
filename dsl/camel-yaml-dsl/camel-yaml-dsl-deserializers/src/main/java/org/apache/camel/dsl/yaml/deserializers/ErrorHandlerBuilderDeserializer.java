@@ -90,6 +90,6 @@ public class ErrorHandlerBuilderDeserializer implements ConstructNode {
             }
         }
 
-        throw new YamlDeserializationException("Unable to determine the error handler type");
+        throw new YamlDeserializationException(node, "Unable to determine the error handler type for the node");
     }
 }

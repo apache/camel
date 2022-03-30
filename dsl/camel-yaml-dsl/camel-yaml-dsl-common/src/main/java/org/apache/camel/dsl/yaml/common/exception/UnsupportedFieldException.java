@@ -27,8 +27,4 @@ public class UnsupportedFieldException extends MarkedYamlEngineException {
         super(null, Optional.empty(), "Unsupported field: " + field, node.getStartMark());
     }
 
-    @Deprecated
-    public UnsupportedFieldException(String field, String message) {
-        super(null, Optional.empty(), message + " on field: " + field, Optional.empty());
-    }
 }

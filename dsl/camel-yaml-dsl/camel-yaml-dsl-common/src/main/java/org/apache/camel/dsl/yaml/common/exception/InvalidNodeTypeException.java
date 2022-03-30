@@ -20,11 +20,13 @@ import java.util.Optional;
 
 import org.snakeyaml.engine.v2.exceptions.MarkedYamlEngineException;
 import org.snakeyaml.engine.v2.nodes.Node;
+import org.snakeyaml.engine.v2.nodes.NodeType;
 
-public class UnknownNodeTypeException extends MarkedYamlEngineException {
+public class InvalidNodeTypeException extends MarkedYamlEngineException {
 
-    public UnknownNodeTypeException(Node node, String nodeId) {
-        super(null, Optional.empty(), "Unknown type for node with id: " + nodeId, node.getStartMark());
+    public InvalidNodeTypeException(Node node, NodeType expected) {
+        super(null, Optional.empty(), "NodeType: " + node.getNodeType() + " is invalid, expected " + expected,
+              node.getStartMark());
     }
 
 }

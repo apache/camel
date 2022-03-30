@@ -21,10 +21,11 @@ import java.util.Optional;
 import org.snakeyaml.engine.v2.exceptions.MarkedYamlEngineException;
 import org.snakeyaml.engine.v2.nodes.Node;
 
-public class UnknownNodeTypeException extends MarkedYamlEngineException {
+public class InvalidEnumException extends MarkedYamlEngineException {
 
-    public UnknownNodeTypeException(Node node, String nodeId) {
-        super(null, Optional.empty(), "Unknown type for node with id: " + nodeId, node.getStartMark());
+    public InvalidEnumException(Node node, Class<?> type, String value) {
+        super(null, Optional.empty(), "Enum: " + type + " does not have any constant with value: " + value,
+              node.getStartMark());
     }
 
 }

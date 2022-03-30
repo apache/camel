@@ -1486,7 +1486,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -2161,7 +2161,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -3818,7 +3818,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -4113,7 +4113,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -4431,7 +4431,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -4646,7 +4646,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -4837,7 +4837,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -5318,7 +5318,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -5788,7 +5788,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -6058,7 +6058,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -6164,7 +6164,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -6530,7 +6530,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -6576,9 +6576,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
 
         @Override
-        protected void setEndpointUri(CamelContext camelContext, InOnlyDefinition target,
+        protected void setEndpointUri(CamelContext camelContext, Node node, InOnlyDefinition target,
                 Map<String, Object> parameters) {
-            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, target.getUri(), parameters));
+            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, node, target.getUri(), parameters));
         }
 
         @Override
@@ -6652,9 +6652,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
 
         @Override
-        protected void setEndpointUri(CamelContext camelContext, InOutDefinition target,
+        protected void setEndpointUri(CamelContext camelContext, Node node, InOutDefinition target,
                 Map<String, Object> parameters) {
-            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, target.getUri(), parameters));
+            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, node, target.getUri(), parameters));
         }
 
         @Override
@@ -7299,7 +7299,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -7624,7 +7624,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -7885,7 +7885,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -8156,7 +8156,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -8534,7 +8534,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -8826,7 +8826,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -8984,7 +8984,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -10190,7 +10190,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -10979,7 +10979,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -11217,7 +11217,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -11562,7 +11562,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -13067,7 +13067,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -13142,9 +13142,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
 
         @Override
-        protected void setEndpointUri(CamelContext camelContext, SagaActionUriDefinition target,
-                Map<String, Object> parameters) {
-            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, target.getUri(), parameters));
+        protected void setEndpointUri(CamelContext camelContext, Node node,
+                SagaActionUriDefinition target, Map<String, Object> parameters) {
+            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, node, target.getUri(), parameters));
         }
 
         @Override
@@ -13394,7 +13394,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -14163,7 +14163,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -14297,7 +14297,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -14369,7 +14369,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -14437,7 +14437,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -14583,7 +14583,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -14645,7 +14645,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -14785,7 +14785,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -15536,7 +15536,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -15698,9 +15698,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
 
         @Override
-        protected void setEndpointUri(CamelContext camelContext, ToDefinition target,
+        protected void setEndpointUri(CamelContext camelContext, Node node, ToDefinition target,
                 Map<String, Object> parameters) {
-            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, target.getUri(), parameters));
+            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, node, target.getUri(), parameters));
         }
 
         @Override
@@ -15784,9 +15784,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
 
         @Override
-        protected void setEndpointUri(CamelContext camelContext, ToDynamicDefinition target,
-                Map<String, Object> parameters) {
-            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, target.getUri(), parameters));
+        protected void setEndpointUri(CamelContext camelContext, Node node,
+                ToDynamicDefinition target, Map<String, Object> parameters) {
+            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, node, target.getUri(), parameters));
         }
 
         @Override
@@ -15961,7 +15961,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -16115,7 +16115,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -17074,7 +17074,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -17262,7 +17262,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -17333,7 +17333,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -17382,9 +17382,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
 
         @Override
-        protected void setEndpointUri(CamelContext camelContext, WireTapDefinition target,
-                Map<String, Object> parameters) {
-            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, target.getUri(), parameters));
+        protected void setEndpointUri(CamelContext camelContext, Node node,
+                WireTapDefinition target, Map<String, Object> parameters) {
+            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, node, target.getUri(), parameters));
         }
 
         @Override
@@ -17647,7 +17647,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -17763,7 +17763,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
@@ -17843,7 +17843,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 default: {
                     ExpressionDefinition ed = target.getExpressionType();
                     if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, "an expression has already been configured (" + ed + ")");
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
                     }
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {

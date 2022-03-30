@@ -16,16 +16,27 @@
  */
 package org.apache.camel.dsl.yaml.common.exception;
 
-public class YamlDeserializationException extends IllegalStateException {
+import java.util.Optional;
+
+import org.snakeyaml.engine.v2.exceptions.MarkedYamlEngineException;
+import org.snakeyaml.engine.v2.nodes.Node;
+
+public class YamlDeserializationException extends MarkedYamlEngineException {
+
     public YamlDeserializationException(String message) {
-        super(message);
+        super(null, Optional.empty(), message, Optional.empty());
     }
 
-    public YamlDeserializationException(Throwable rootCause) {
-        super(rootCause);
+    public YamlDeserializationException(Node node, String message) {
+        super(null, Optional.empty(), message, node.getStartMark());
     }
 
-    public YamlDeserializationException(String message, Throwable rootCause) {
-        super(message, rootCause);
+    public YamlDeserializationException(String message, Throwable cause) {
+        super(null, Optional.empty(), message, Optional.empty(), cause);
     }
+
+    public YamlDeserializationException(Node node, String message, Throwable cause) {
+        super(null, Optional.empty(), message, node.getStartMark(), cause);
+    }
+
 }

@@ -22,6 +22,8 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlSupport;
+import org.apache.camel.dsl.yaml.common.exception.InvalidEndpointException;
+import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
@@ -85,7 +87,8 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
                     String endpointUri = EndpointConsumerDeserializersResolver.resolveEndpointUri(key, val);
                     if (endpointUri != null) {
                         if (uri != null || properties != null) {
-                            throw new IllegalArgumentException("uri and properties are not supported when using Endpoint DSL ");
+                            throw new InvalidEndpointException(
+                                    node, "Uri and parameters are not supported when using Endpoint DSL");
                         }
                         FromDefinition from = new FromDefinition(endpointUri);
                         // enrich model with line number
@@ -95,14 +98,15 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
                         }
                         target.setDelegate(from);
                     } else {
-                        throw new IllegalArgumentException("Unsupported field: " + key);
+                        throw new UnsupportedFieldException(node, key);
                     }
             }
         }
 
         if (target.getDelegate() == null) {
             ObjectHelper.notNull("uri", "The uri must set");
-            FromDefinition from = new FromDefinition(YamlSupport.createEndpointUri(dc.getCamelContext(), uri, properties));
+            FromDefinition from
+                    = new FromDefinition(YamlSupport.createEndpointUri(dc.getCamelContext(), node, uri, properties));
             // enrich model with line number
             if (line != -1) {
                 from.setLineNumber(line);

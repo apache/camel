@@ -596,6 +596,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 .addAnnotation(AnnotationSpec.builder(Override.class).build())
                 .addModifiers(Modifier.PROTECTED)
                 .addParameter(CamelContext.class, "camelContext")
+                .addParameter(Node.class, "node")
                 .addParameter(targetType, "target")
                 .addParameter(
                     ParameterizedTypeName.get(
@@ -605,14 +606,14 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     "parameters")
                 .addCode(
                     CodeBlock.builder()
-                        .addStatement("target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, target.getUri(), parameters))")
+                        .addStatement("target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, node, target.getUri(), parameters))")
                         .build())
                 .build());
         } else if (implementType(info, HAS_EXPRESSION_TYPE_CLASS)) {
             setProperty.beginControlFlow("default:");
             setProperty.addStatement("$T ed = target.getExpressionType()", CN_EXPRESSION_DEFINITION);
             setProperty.beginControlFlow("if (ed != null)");
-            setProperty.addStatement("throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, \"an expression has already been configured (\" + ed + \")\")");
+            setProperty.addStatement("throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, \"as an expression\")");
             setProperty.endControlFlow();
             setProperty.addStatement("ed = ExpressionDeserializers.constructExpressionType(propertyKey, node)");
             setProperty.beginControlFlow("if (ed != null)");

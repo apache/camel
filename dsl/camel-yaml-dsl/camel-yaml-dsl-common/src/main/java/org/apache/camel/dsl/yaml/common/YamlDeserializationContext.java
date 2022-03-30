@@ -129,19 +129,6 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     //
     // *********************************
 
-    public Object construct(String key, Node val) {
-        return mandatoryResolve(key).construct(val);
-    }
-
-    public <T> T construct(String key, Node val, Class<T> type) {
-        Object result = construct(key, val);
-        if (result == null) {
-            return null;
-        }
-
-        return type.cast(result);
-    }
-
     public Object construct(Node key, Node val) {
         return mandatoryResolve(key).construct(val);
     }
@@ -158,7 +145,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     public <T> T construct(Node node, Class<T> type) {
         ConstructNode constructor = resolve(type);
         if (constructor == null) {
-            throw new YamlDeserializationException("Unable to find constructor for node: " + node);
+            throw new YamlDeserializationException(node, "Unable to find constructor for node");
         }
         Object result = constructor.construct(node);
         if (result == null) {
@@ -175,8 +162,6 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     // *********************************
 
     public ConstructNode resolve(Class<?> type) {
-        final ConstructNode answer = resolve(type.getName());
-
         return CamelContextAware.trySetCamelContext(
                 new ConstructNode() {
                     @Override
@@ -186,6 +171,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
                                 YamlDeserializationContext.class.getName(),
                                 YamlDeserializationContext.this);
 
+                        final ConstructNode answer = resolve(node, type.getName());
                         return answer.construct(n);
                     }
                 },
@@ -195,7 +181,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     public ConstructNode mandatoryResolve(Node node) {
         ConstructNode constructor = resolve(node);
         if (constructor == null) {
-            throw new YamlDeserializationException("Unable to find constructor for node: " + node);
+            throw new YamlDeserializationException(node, "Unable to find constructor for node");
         }
 
         return constructor;
@@ -217,7 +203,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         }
 
         final String id = ((ScalarNode) key).getValue();
-        final ConstructNode answer = resolve(id);
+        final ConstructNode answer = resolve(node, id);
 
         return CamelContextAware.trySetCamelContext(
                 new ConstructNode() {
@@ -235,16 +221,16 @@ public class YamlDeserializationContext extends StandardConstructor implements C
                 camelContext);
     }
 
-    public ConstructNode mandatoryResolve(String id) {
-        ConstructNode constructor = resolve(id);
+    public ConstructNode mandatoryResolve(Node node, String id) {
+        ConstructNode constructor = resolve(node, id);
         if (constructor == null) {
-            throw new YamlDeserializationException("Unable to find constructor for id: " + id);
+            throw new YamlDeserializationException(node, "Unable to find constructor for id: " + id);
         }
 
         return constructor;
     }
 
-    public ConstructNode resolve(String id) {
+    public ConstructNode resolve(Node node, String id) {
         return constructors.computeIfAbsent(id, new Function<String, ConstructNode>() {
             @Override
             public ConstructNode apply(String s) {
@@ -258,7 +244,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
                 }
 
                 if (answer == null) {
-                    throw new UnknownNodeTypeException(id);
+                    throw new UnknownNodeTypeException(node, id);
                 }
 
                 return answer;
