@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "azure-key-vault",
     "title": "Azure Key Vault",
-    "description": "Send and receive messages to\/from Azure Event Bus.",
+    "description": "Manage secrets and keys in Azure Key Vault Service",
     "deprecated": false,
     "firstVersion": "3.17.0",
     "label": "cloud,cloud",
