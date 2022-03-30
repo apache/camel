@@ -258,6 +258,14 @@ public class YamlDeserializerSupport {
         return (SequenceNode) node;
     }
 
+    public static boolean isSequenceNode(Node node) {
+        if (node == null) {
+            return false;
+        }
+
+        return node.getNodeType() == NodeType.SEQUENCE;
+    }
+
     public static Node getNamedNode(MappingNode node, String name) throws YamlDeserializationException {
         if (node == null) {
             return null;

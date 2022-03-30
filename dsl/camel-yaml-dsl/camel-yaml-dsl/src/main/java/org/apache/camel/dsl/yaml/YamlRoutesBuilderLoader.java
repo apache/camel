@@ -79,6 +79,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMapping
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asSequenceNode;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asStringList;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.isSequenceNode;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
 
@@ -123,7 +124,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 Iterator<?> it = ObjectHelper.createIterator(target);
                 while (it.hasNext()) {
                     target = it.next();
-                    if (target instanceof Node) {
+                    if (target instanceof Node && isSequenceNode((Node) target)) {
                         SequenceNode seq = asSequenceNode((Node) target);
                         for (Node node : seq.getValue()) {
                             int idx = -1;
@@ -215,7 +216,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 Iterator<?> it = ObjectHelper.createIterator(target);
                 while (it.hasNext()) {
                     target = it.next();
-                    if (target instanceof Node) {
+                    if (target instanceof Node && isSequenceNode((Node) target)) {
                         SequenceNode seq = asSequenceNode((Node) target);
                         for (Node node : seq.getValue()) {
                             int idx = -1;
