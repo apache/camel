@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.key.vault;
 
+import com.azure.core.util.polling.SyncPoller;
+import com.azure.security.keyvault.secrets.models.DeletedSecret;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -54,6 +56,9 @@ public class KeyVaultProducer extends DefaultProducer {
             case getSecret:
                 getSecret(exchange);
                 break;
+            case deleteSecret:
+                deleteSecret(exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -79,6 +84,18 @@ public class KeyVaultProducer extends DefaultProducer {
                 .getSecret(secretName);
         Message message = getMessageForResponse(exchange);
         message.setBody(p.getValue());
+    }
+
+    private void deleteSecret(Exchange exchange) throws InvalidPayloadException {
+        final String secretName = exchange.getMessage().getHeader(KeyVaultConstants.SECRET_NAME, String.class);
+        if (ObjectHelper.isEmpty(secretName)) {
+            throw new IllegalArgumentException("Secret Name must be specified for createSecret Operation");
+        }
+        SyncPoller<DeletedSecret, Void> p = getEndpoint().getSecretClient()
+                .beginDeleteSecret(secretName);
+        p.waitForCompletion();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(p.getFinalResult());
     }
 
     @Override

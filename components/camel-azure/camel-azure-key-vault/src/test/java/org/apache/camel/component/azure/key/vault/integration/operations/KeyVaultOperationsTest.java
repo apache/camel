@@ -46,28 +46,41 @@ public class KeyVaultOperationsTest extends CamelTestSupport {
     @EndpointInject("direct:getSecret")
     private ProducerTemplate getTemplate;
 
+    @EndpointInject("direct:deleteSecret")
+    private ProducerTemplate deleteTemplate;
+
     @EndpointInject("mock:createSecret")
     private MockEndpoint createResult;
 
     @EndpointInject("mock:getSecret")
     private MockEndpoint getResult;
 
+    @EndpointInject("mock:deleteSecret")
+    private MockEndpoint deleteResult;
+
     @Test
     public void sendInOnly() throws Exception {
         createResult.expectedMessageCount(1);
         getResult.expectedMessageCount(1);
         getResult.expectedBodiesReceived("TestValue");
+        deleteResult.expectedMessageCount(1);
 
         template.send("direct:createSecret", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) {
-                exchange.getMessage().setHeader(KeyVaultConstants.SECRET_NAME, "Test");
+                exchange.getMessage().setHeader(KeyVaultConstants.SECRET_NAME, "Test1");
                 exchange.getIn().setBody("TestValue");
             }
         });
 
         template.send("direct:getSecret", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) {
-                exchange.getMessage().setHeader(KeyVaultConstants.SECRET_NAME, "Test");
+                exchange.getMessage().setHeader(KeyVaultConstants.SECRET_NAME, "Test1");
+            }
+        });
+
+        template.send("direct:deleteSecret", ExchangePattern.InOnly, new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getMessage().setHeader(KeyVaultConstants.SECRET_NAME, "Test1");
             }
         });
 
@@ -87,6 +100,10 @@ public class KeyVaultOperationsTest extends CamelTestSupport {
                 from("direct:getSecret")
                         .to("azure-key-vault://{{vaultName}}?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=getSecret")
                         .to("mock:getSecret");
+
+                from("direct:deleteSecret")
+                        .to("azure-key-vault://{{vaultName}}?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=deleteSecret")
+                        .to("mock:deleteSecret");
             }
         };
     }
