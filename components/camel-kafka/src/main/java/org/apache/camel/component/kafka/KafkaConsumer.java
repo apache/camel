@@ -24,8 +24,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import org.apache.camel.ConsumerListenerAware;
 import org.apache.camel.Processor;
 import org.apache.camel.ResumeAware;
+import org.apache.camel.Suspendable;
+import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
 import org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy;
 import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.health.HealthCheckHelper;
@@ -39,7 +42,9 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaConsumerResumeStrategy>, HealthCheckAware {
+public class KafkaConsumer extends DefaultConsumer
+        implements ResumeAware<KafkaConsumerResumeStrategy>, HealthCheckAware, ConsumerListenerAware<KafkaConsumerListener>,
+        Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumer.class);
 
@@ -51,6 +56,7 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
     private final List<KafkaFetchRecords> tasks = new ArrayList<>();
     private volatile boolean stopOffsetRepo;
     private KafkaConsumerResumeStrategy resumeStrategy;
+    private KafkaConsumerListener consumerListener;
 
     public KafkaConsumer(KafkaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -65,6 +71,16 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
     @Override
     public KafkaConsumerResumeStrategy getResumeStrategy() {
         return resumeStrategy;
+    }
+
+    @Override
+    public KafkaConsumerListener getConsumerListener() {
+        return consumerListener;
+    }
+
+    @Override
+    public void setConsumerListener(KafkaConsumerListener consumerListener) {
+        this.consumerListener = consumerListener;
     }
 
     @Override
@@ -140,7 +156,8 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
         for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
             KafkaFetchRecords task = new KafkaFetchRecords(
-                    this, bridge, topic, pattern, i + "", getProps());
+                    this, bridge, topic, pattern, i + "", getProps(), consumerListener);
+
             executor.submit(task);
 
             tasks.add(task);
@@ -195,5 +212,25 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
         }
 
         super.doStop();
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        for (KafkaFetchRecords task : tasks) {
+            LOG.info("Pausing Kafka record fetcher task running client ID {}", task.getClientId());
+            task.pause();
+        }
+
+        super.doSuspend();
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        for (KafkaFetchRecords task : tasks) {
+            LOG.info("Resuming Kafka record fetcher task running client ID {}", task.getClientId());
+            task.resume();
+        }
+
+        super.doResume();
     }
 }

@@ -26,8 +26,20 @@ public class ReconnectErrorStrategy implements PollExceptionStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(ReconnectErrorStrategy.class);
     private KafkaFetchRecords recordFetcher;
 
+    private boolean retry = true;
+
     public ReconnectErrorStrategy(KafkaFetchRecords recordFetcher) {
         this.recordFetcher = recordFetcher;
+    }
+
+    @Override
+    public void reset() {
+        retry = true;
+    }
+
+    @Override
+    public boolean canContinue() {
+        return retry;
     }
 
     @Override
@@ -39,6 +51,6 @@ public class ReconnectErrorStrategy implements PollExceptionStrategy {
         recordFetcher.setConnected(false);
 
         // to close the current consumer
-        recordFetcher.setRetry(false);
+        retry = false;
     }
 }

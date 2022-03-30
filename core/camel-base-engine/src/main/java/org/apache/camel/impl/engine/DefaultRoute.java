@@ -28,6 +28,8 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
+import org.apache.camel.ConsumerListener;
+import org.apache.camel.ConsumerListenerAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
@@ -90,6 +92,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private final Map<String, Processor> onCompletions = new HashMap<>();
     private final Map<String, Processor> onExceptions = new HashMap<>();
     private ResumeStrategy resumeStrategy;
+    private ConsumerListener<?, ?> consumerListener;
 
     // camel-core-model
     @Deprecated
@@ -634,6 +637,10 @@ public class DefaultRoute extends ServiceSupport implements Route {
             if (consumer instanceof ResumeAware) {
                 ((ResumeAware) consumer).setResumeStrategy(resumeStrategy);
             }
+
+            if (consumer instanceof ConsumerListenerAware) {
+                ((ConsumerListenerAware) consumer).setConsumerListener(consumerListener);
+            }
         }
         if (processor instanceof Service) {
             services.add((Service) processor);
@@ -710,5 +717,10 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public void setResumeStrategy(ResumeStrategy resumeStrategy) {
         this.resumeStrategy = resumeStrategy;
+    }
+
+    @Override
+    public void setConsumerListener(ConsumerListener<?, ?> consumerListener) {
+        this.consumerListener = consumerListener;
     }
 }

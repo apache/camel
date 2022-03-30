@@ -286,6 +286,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration": return new ModelDeserializers.PassThroughServiceCallServiceFilterConfigurationDeserializer();
             case "patch": return new ModelDeserializers.PatchDefinitionDeserializer();
             case "org.apache.camel.model.rest.PatchDefinition": return new ModelDeserializers.PatchDefinitionDeserializer();
+            case "pausable": return new ModelDeserializers.PausableDefinitionDeserializer();
+            case "org.apache.camel.model.PausableDefinition": return new ModelDeserializers.PausableDefinitionDeserializer();
             case "pipeline": return new ModelDeserializers.PipelineDefinitionDeserializer();
             case "org.apache.camel.model.PipelineDefinition": return new ModelDeserializers.PipelineDefinitionDeserializer();
             case "policy": return new ModelDeserializers.PolicyDefinitionDeserializer();

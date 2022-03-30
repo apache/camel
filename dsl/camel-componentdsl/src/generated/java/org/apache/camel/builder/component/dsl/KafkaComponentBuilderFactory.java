@@ -655,17 +655,20 @@ public interface KafkaComponentBuilderFactory {
         }
         /**
          * Set if KafkaConsumer will read from beginning or end on startup:
-         * beginning : read from beginning end : read from end This is replacing
-         * the earlier property seekToBeginning.
+         * SeekPolicy.BEGINNING: read from beginning. SeekPolicy.END: read from
+         * end.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.SeekPolicy&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
          * 
          * @param seekTo the value to set
          * @return the dsl builder
          */
-        default KafkaComponentBuilder seekTo(java.lang.String seekTo) {
+        default KafkaComponentBuilder seekTo(
+                org.apache.camel.component.kafka.SeekPolicy seekTo) {
             doSetProperty("seekTo", seekTo);
             return this;
         }
@@ -2079,7 +2082,7 @@ public interface KafkaComponentBuilderFactory {
             case "partitionAssignor": getOrCreateConfiguration((KafkaComponent) component).setPartitionAssignor((java.lang.String) value); return true;
             case "pollOnError": getOrCreateConfiguration((KafkaComponent) component).setPollOnError((org.apache.camel.component.kafka.PollOnError) value); return true;
             case "pollTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setPollTimeoutMs((java.lang.Long) value); return true;
-            case "seekTo": getOrCreateConfiguration((KafkaComponent) component).setSeekTo((java.lang.String) value); return true;
+            case "seekTo": getOrCreateConfiguration((KafkaComponent) component).setSeekTo((org.apache.camel.component.kafka.SeekPolicy) value); return true;
             case "sessionTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setSessionTimeoutMs((java.lang.Integer) value); return true;
             case "specificAvroReader": getOrCreateConfiguration((KafkaComponent) component).setSpecificAvroReader((boolean) value); return true;
             case "topicIsPattern": getOrCreateConfiguration((KafkaComponent) component).setTopicIsPattern((boolean) value); return true;

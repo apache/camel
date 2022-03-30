@@ -20,14 +20,17 @@ package org.apache.camel.component.kafka.consumer.support;
 import org.apache.camel.component.kafka.consumer.AbstractCommitManager;
 
 public final class ProcessingResult {
-    private static final ProcessingResult UNPROCESSED_RESULT = new ProcessingResult(false, AbstractCommitManager.START_OFFSET);
+    private static final ProcessingResult UNPROCESSED_RESULT
+            = new ProcessingResult(false, AbstractCommitManager.START_OFFSET, false);
 
     private final boolean breakOnErrorHit;
     private final long partitionLastOffset;
+    private final boolean failed;
 
-    ProcessingResult(boolean breakOnErrorHit, long partitionLastOffset) {
+    ProcessingResult(boolean breakOnErrorHit, long partitionLastOffset, boolean failed) {
         this.breakOnErrorHit = breakOnErrorHit;
         this.partitionLastOffset = partitionLastOffset;
+        this.failed = failed;
     }
 
     public boolean isBreakOnErrorHit() {
@@ -36,6 +39,10 @@ public final class ProcessingResult {
 
     public long getPartitionLastOffset() {
         return partitionLastOffset;
+    }
+
+    public boolean isFailed() {
+        return failed;
     }
 
     public static ProcessingResult newUnprocessed() {

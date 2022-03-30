@@ -41,7 +41,7 @@ public final class KafkaErrorStrategies {
 
         switch (onError) {
             case RETRY:
-                return new RetryErrorStrategy(recordFetcher);
+                return new RetryErrorStrategy();
             case RECONNECT:
                 return new ReconnectErrorStrategy(recordFetcher);
             case ERROR_HANDLER:

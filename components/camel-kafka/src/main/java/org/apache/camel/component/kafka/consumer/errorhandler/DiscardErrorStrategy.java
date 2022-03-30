@@ -31,6 +31,11 @@ public class DiscardErrorStrategy implements PollExceptionStrategy {
     }
 
     @Override
+    public boolean canContinue() {
+        return true;
+    }
+
+    @Override
     public void handle(long partitionLastOffset, Exception exception) {
         LOG.warn("Requesting the consumer to discard the message and continue to the next based on polling exception strategy");
 

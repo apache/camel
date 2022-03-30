@@ -15,22 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kafka.consumer.errorhandler;
+package org.apache.camel.component.kafka;
 
-import org.apache.camel.component.kafka.PollExceptionStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class RetryErrorStrategy implements PollExceptionStrategy {
-    private static final Logger LOG = LoggerFactory.getLogger(RetryErrorStrategy.class);
-
-    @Override
-    public boolean canContinue() {
-        return true;
-    }
-
-    @Override
-    public void handle(long partitionLastOffset, Exception exception) {
-        LOG.warn("Requesting the consumer to retry polling the same message based on polling exception strategy");
-    }
+/**
+ * BEGINNING configures the consumer to consume from the beginning of the topic/partition. END configures the consumer
+ * to consume from the end of the topic/partition
+ */
+public enum SeekPolicy {
+    BEGINNING,
+    END
 }

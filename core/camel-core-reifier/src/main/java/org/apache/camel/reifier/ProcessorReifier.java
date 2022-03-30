@@ -66,6 +66,7 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.OnFallbackDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.OtherwiseDefinition;
+import org.apache.camel.model.PausableDefinition;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.PollEnrichDefinition;
@@ -310,6 +311,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new WhenReifier(route, definition);
         } else if (definition instanceof ResumableDefinition) {
             return new ResumableReifier(route, definition);
+        } else if (definition instanceof PausableDefinition) {
+            return new PausableReifier(route, definition);
         }
         return null;
     }

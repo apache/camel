@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka.consumer.support;
 
+import org.apache.camel.component.kafka.SeekPolicy;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +28,10 @@ public class SeekPolicyKafkaConsumerResumeStrategy implements KafkaConsumerResum
 
     private static final Logger LOG = LoggerFactory.getLogger(SeekPolicyKafkaConsumerResumeStrategy.class);
 
-    private final String seekPolicy;
+    private final SeekPolicy seekPolicy;
     private Consumer<?, ?> consumer;
 
-    public SeekPolicyKafkaConsumerResumeStrategy(String seekPolicy) {
+    public SeekPolicyKafkaConsumerResumeStrategy(SeekPolicy seekPolicy) {
         this.seekPolicy = seekPolicy;
     }
 
@@ -41,10 +42,10 @@ public class SeekPolicyKafkaConsumerResumeStrategy implements KafkaConsumerResum
 
     @Override
     public void resume() {
-        if (seekPolicy.equals("beginning")) {
+        if (seekPolicy == SeekPolicy.BEGINNING) {
             LOG.debug("Seeking from the beginning of topic");
             consumer.seekToBeginning(consumer.assignment());
-        } else if (seekPolicy.equals("end")) {
+        } else if (seekPolicy == SeekPolicy.END) {
             LOG.debug("Seeking from the end off the topic");
             consumer.seekToEnd(consumer.assignment());
         }

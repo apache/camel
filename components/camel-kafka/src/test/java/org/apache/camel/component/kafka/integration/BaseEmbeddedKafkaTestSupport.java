@@ -57,7 +57,7 @@ public abstract class BaseEmbeddedKafkaTestSupport extends CamelTestSupport {
         }
     }
 
-    protected Properties getDefaultProperties() {
+    public static Properties getDefaultProperties(KafkaService service) {
         LOG.info("Connecting to Kafka {}", service.getBootstrapServers());
 
         Properties props = new Properties();
@@ -67,6 +67,10 @@ public abstract class BaseEmbeddedKafkaTestSupport extends CamelTestSupport {
         props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_PARTITIONER);
         props.put(ProducerConfig.ACKS_CONFIG, "1");
         return props;
+    }
+
+    protected Properties getDefaultProperties() {
+        return getDefaultProperties(service);
     }
 
     @Override
@@ -87,6 +91,10 @@ public abstract class BaseEmbeddedKafkaTestSupport extends CamelTestSupport {
     }
 
     private static AdminClient createAdminClient() {
+        return createAdminClient(service);
+    }
+
+    public static AdminClient createAdminClient(KafkaService service) {
         final Properties properties = new Properties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, service.getBootstrapServers());
 

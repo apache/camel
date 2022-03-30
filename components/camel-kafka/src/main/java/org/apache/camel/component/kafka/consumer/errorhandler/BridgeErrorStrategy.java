@@ -34,6 +34,11 @@ public class BridgeErrorStrategy implements PollExceptionStrategy {
     }
 
     @Override
+    public boolean canContinue() {
+        return true;
+    }
+
+    @Override
     public void handle(long partitionLastOffset, Exception exception) {
         LOG.warn("Deferring processing to the exception handler based on polling exception strategy");
 

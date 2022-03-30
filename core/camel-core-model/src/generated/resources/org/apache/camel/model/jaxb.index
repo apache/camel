@@ -45,6 +45,7 @@ OtherwiseDefinition
 OutputDefinition
 OutputTypeDefinition
 PackageScanDefinition
+PausableDefinition
 PipelineDefinition
 PolicyDefinition
 PollEnrichDefinition
