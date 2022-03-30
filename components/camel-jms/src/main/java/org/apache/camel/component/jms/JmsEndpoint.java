@@ -68,7 +68,7 @@ import org.springframework.util.ErrorHandler;
  */
 @ManagedResource(description = "Managed JMS Endpoint")
 @UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName",
-             category = { Category.MESSAGING })
+             category = { Category.MESSAGING }, headersClass = JmsConstants.class)
 @Metadata(excludeProperties = "bridgeErrorHandler")
 public class JmsEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
