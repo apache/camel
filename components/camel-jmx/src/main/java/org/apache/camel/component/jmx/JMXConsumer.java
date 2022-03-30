@@ -308,8 +308,8 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     }
 
     /**
-     * Processes the Notification received. The handback will be set as the header "jmx.handback" while the Notification
-     * will be set as the body.
+     * Processes the Notification received. The handback will be set as the header {@link JMXConstants#JMX_HANDBACK}
+     * while the Notification will be set as the body.
      * <p/>
      * If the format is set to "xml" then the Notification will be converted to XML first using
      * {@link NotificationXmlFormatter}
@@ -321,7 +321,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
         JMXEndpoint ep = getEndpoint();
         Exchange exchange = createExchange(true);
         Message message = exchange.getIn();
-        message.setHeader("jmx.handback", aHandback);
+        message.setHeader(JMXConstants.JMX_HANDBACK, aHandback);
         try {
             if (ep.isXML()) {
                 message.setBody(getFormatter().format(aNotification));
