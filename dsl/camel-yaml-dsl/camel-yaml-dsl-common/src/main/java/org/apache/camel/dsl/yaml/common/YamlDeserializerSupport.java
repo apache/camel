@@ -217,7 +217,7 @@ public class YamlDeserializerSupport {
                     answer.put(StringHelper.dashToCamelCase(key), asText(val));
                     break;
                 default:
-                    throw new UnsupportedNodeTypeException(node);
+                    throw new InvalidNodeTypeException(node, NodeType.SCALAR);
             }
         }
 
@@ -294,7 +294,7 @@ public class YamlDeserializerSupport {
     private static <T> void asCollection(Node node, Class<T> type, Collection<T> collection, boolean flat)
             throws YamlDeserializationException {
         if (node.getNodeType() != NodeType.SEQUENCE) {
-            throw new UnsupportedOperationException("Unable to parse no array node");
+            throw new InvalidNodeTypeException(node, NodeType.SEQUENCE);
         }
 
         YamlDeserializationContext dc = getDeserializationContext(node);

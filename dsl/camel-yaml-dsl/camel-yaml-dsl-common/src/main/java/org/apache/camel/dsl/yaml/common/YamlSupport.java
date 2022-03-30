@@ -29,6 +29,7 @@ import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.dsl.yaml.common.exception.InvalidEndpointException;
+import org.apache.camel.dsl.yaml.common.exception.InvalidNodeTypeException;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedNodeTypeException;
 import org.apache.camel.model.RouteDefinition;
@@ -281,7 +282,7 @@ public final class YamlSupport {
                     if (val.getNodeType() == NodeType.SCALAR) {
                         parameters.put(StringHelper.dashToCamelCase(key), YamlDeserializerSupport.asText(val));
                     } else {
-                        throw new UnsupportedNodeTypeException(node);
+                        throw new InvalidNodeTypeException(node, NodeType.SCALAR);
                     }
                 }
 
