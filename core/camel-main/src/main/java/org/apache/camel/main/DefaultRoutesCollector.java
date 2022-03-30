@@ -135,33 +135,11 @@ public class DefaultRoutesCollector implements RoutesCollector {
             String includePattern) {
 
         final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-        final PackageScanResourceResolver resolver = ecc.getPackageScanResourceResolver();
         final List<RoutesBuilder> answer = new ArrayList<>();
         final String[] includes = includePattern != null ? includePattern.split(",") : null;
-        final String[] excludes = excludePattern != null ? excludePattern.split(",") : null;
-
-        if (includes == null || ObjectHelper.equal("false", includePattern)) {
-            log.debug("Include pattern is empty/false, no routes will be discovered from resources");
-            return answer;
-        }
 
         StopWatch watch = new StopWatch();
-        Collection<Resource> accepted = new ArrayList<>();
-        for (String include : includes) {
-            log.debug("Loading additional RoutesBuilder from: {}", include);
-            try {
-                for (Resource resource : resolver.findResources(include)) {
-                    // filter unwanted resources
-                    if (!"false".equals(excludePattern) && AntPathMatcher.INSTANCE.anyMatch(excludes, resource.getLocation())) {
-                        continue;
-                    }
-                    accepted.add(resource);
-                }
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
-        }
-
+        Collection<Resource> accepted = findRouteResourcesFromDirectory(camelContext, excludePattern, includePattern);
         try {
             Collection<RoutesBuilder> builders = ecc.getRoutesLoader().findRoutesBuilders(accepted);
             if (!builders.isEmpty()) {
@@ -182,5 +160,39 @@ public class DefaultRoutesCollector implements RoutesCollector {
         }
 
         return answer;
+    }
+
+    @Override
+    public Collection<Resource> findRouteResourcesFromDirectory(
+            CamelContext camelContext,
+            String excludePattern,
+            String includePattern) {
+        final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        final PackageScanResourceResolver resolver = ecc.getPackageScanResourceResolver();
+        final String[] includes = includePattern != null ? includePattern.split(",") : null;
+        final String[] excludes = excludePattern != null ? excludePattern.split(",") : null;
+
+        if (includes == null || ObjectHelper.equal("false", includePattern)) {
+            log.debug("Include pattern is empty/false, no routes will be discovered from resources");
+            return new ArrayList<>();
+        }
+
+        Collection<Resource> accepted = new ArrayList<>();
+        for (String include : includes) {
+            log.debug("Finding additional routes from: {}", include);
+            try {
+                for (Resource resource : resolver.findResources(include)) {
+                    // filter unwanted resources
+                    if (!"false".equals(excludePattern) && AntPathMatcher.INSTANCE.anyMatch(excludes, resource.getLocation())) {
+                        continue;
+                    }
+                    accepted.add(resource);
+                }
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
+
+        return accepted;
     }
 }

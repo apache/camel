@@ -26,7 +26,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.Resource;
@@ -246,38 +245,27 @@ public class RoutesConfigurer {
      * @param camelContext the Camel context
      */
     public void configureModeline(CamelContext camelContext) throws Exception {
-        final List<RoutesBuilder> routes = new ArrayList<>();
-
-        if (getRoutesCollector() != null) {
-            try {
-                LOG.debug("RoutesCollectorEnabled: {}", getRoutesCollector());
-
-                // we can only scan for modeline for routes that we can load from directory as modelines
-                // are comments in the source files
-                Collection<RoutesBuilder> routesFromDirectory = getRoutesCollector().collectRoutesFromDirectory(
-                        camelContext,
-                        getRoutesExcludePattern(),
-                        getRoutesIncludePattern());
-                routes.addAll(routesFromDirectory);
-
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
+        if (getRoutesCollector() == null) {
+            return;
         }
 
-        // sort routes according to ordered
-        routes.sort(OrderedComparator.get());
+        Collection<Resource> resources;
+        try {
+            LOG.debug("RoutesCollectorEnabled: {}", getRoutesCollector());
+
+            // we can only scan for modeline for routes that we can load from directory as modelines
+            // are comments in the source files
+            resources = getRoutesCollector().findRouteResourcesFromDirectory(
+                    camelContext,
+                    getRoutesExcludePattern(),
+                    getRoutesIncludePattern());
+
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
 
         ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
         ModelineFactory factory = ecc.getModelineFactory();
-        List<Resource> resources = new ArrayList<>();
-        // gather resources for modeline
-        for (RoutesBuilder builder : routes) {
-            if (builder instanceof RouteBuilder) {
-                resources.add(((RouteBuilder) builder).getResource());
-            }
-        }
-        LOG.debug("Discovered {} resources with potential modeline", resources.size());
 
         for (Resource resource : resources) {
             LOG.debug("Parsing modeline: {}", resource);
