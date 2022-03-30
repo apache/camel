@@ -90,7 +90,7 @@ Inquiry messages or messages requiring a message ID are not supported.
 
 == Connection pool
 
-You can explicit configure a connection pool on the Jt400Component, or as an uri option
+You can explicitly configure a connection pool on the Jt400Component, or as an uri option
 on the endpoint.
 
 == Program call
@@ -107,41 +107,9 @@ objects representing the values as they were returned by the program. Input
 only parameters will contain the same data as the beginning of the invocation.
 This endpoint does not implement a provider endpoint!
 
-== Message headers
-
-=== Consumer headers when consuming from data queues
-
-The following headers are potentially available. If the values could not
-be determined, the headers will not be set
-[width="100%",cols="2m,2m,1m,5",options="header"]
-|===
-| Header constant                          | Header value                      | Type    | Description
-| Jt400Endpoint.SENDER_INFORMATION         | "SENDER_INFORMATION"              | String  | Returns the sender information for this data queue entry, or an empty string if not available
-|===
-
-=== Consumer headers when consuming from message queues
-
-The following headers are potentially available. If the values could not
-be determined, the headers will not be set
-[width="100%",cols="2m,2m,1m,5",options="header"]
-|===
-| Header constant                          | Header value                      | Type           | Description
-| Jt400Constants.MESSAGE                   | "CamelJt400Message"               | QueuedMessage  | The message received
-| Jt400Constants.MESSAGE_ID                | "CamelJt400MessageID"             | String         | The message identifier
-| Jt400Constants.MESSAGE_FILE              | "CamelJt400MessageFile"           | String         | The message file name
-| Jt400Constants.MESSAGE_TYPE              | "CamelJt400MessageType"           | Integer        | The message type (corresponds to constants defined in the AS400Message class)
-| Jt400Constants.MESSAGE_SEVERITY          | "CamelJt400MessageSeverity"       | Integer        | The message severity (Valid values are between 0 and 99, or -1 if it is not set)
-| Jt400Constants.MESSAGE_DFT_RPY           | "CamelJt400MessageDefaultReply"   | String         | The default message reply, when the message is an inquiry message
-| Jt400Constants.MESSAGE_REPLYTO_KEY       | "CamelJt400MessageReplyToKey"     | byte[]         | The key of the message that will be replied to (if the `sendingReply` parameter is set to `true`)
-| Jt400Constants.SENDER_INFORMATION        | "SENDER_INFORMATION"              | String         | The job identifier of the sending job
-|===
-
-=== Producer headers when sending to message queues
-
-[width="100%",cols="2m,2m,1m,5",options="header"]
-|===
-| Jt400Constants.MESSAGE_REPLYTO_KEY        | "CamelJt400MessageReplyToKey"     | byte[]  | If set, and if the message body is not empty, a new message will not be sent to the provided message queue. Instead, a response will be sent to the message identified by the given key. This is set automatically when reading from the message queue if the `sendingReply` parameter is set to `true`.
-|===
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Example
 
