@@ -22,20 +22,20 @@ public class KeyVaultEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(9);
-        props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
         props.add("clientId");
-        props.add("vaultName");
-        props.add("exchangePattern");
-        props.add("tenantId");
         props.add("clientSecret");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("lazyStartProducer");
         props.add("operation");
+        props.add("tenantId");
+        props.add("vaultName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);
         secretProps.add("clientId");
-        secretProps.add("tenantId");
         secretProps.add("clientSecret");
+        secretProps.add("tenantId");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptySet();
     }

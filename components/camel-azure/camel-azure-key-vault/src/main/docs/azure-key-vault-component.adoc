@@ -2,9 +2,9 @@
 :doctitle: Azure Key Vault
 :shortname: azure-key-vault
 :artifactid: camel-azure-key-vault
-:description: Manage secrets/keys on Azure Key Vault.
+:description: Send and receive messages to/from Azure Event Bus.
 :since: 3.17
-:supportlevel: Stable
+:supportlevel: Preview
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Azure
