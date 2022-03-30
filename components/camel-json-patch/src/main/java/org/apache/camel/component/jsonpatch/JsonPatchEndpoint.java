@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriEndpoint;
  */
 @UriEndpoint(firstVersion = "3.12.0", scheme = "json-patch", title = "JsonPatch", syntax = "json-patch:resourceUri",
              producerOnly = true,
-             category = { Category.TRANSFORMATION })
+             category = { Category.TRANSFORMATION }, headersClass = JsonPatchConstants.class)
 public class JsonPatchEndpoint extends ResourceEndpoint {
 
     public JsonPatchEndpoint() {
