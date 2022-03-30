@@ -51,18 +51,20 @@ public class KeyVaultComponent extends DefaultComponent {
             throw new IllegalArgumentException("A vault name must be specified.");
         }
 
-        final KeyVaultConfiguration configuration
+        final KeyVaultConfiguration epConfiguration
                 = this.configuration != null ? this.configuration.copy() : new KeyVaultConfiguration();
 
         // set account or topic name
-        configuration.setVaultName(remaining);
+        epConfiguration.setVaultName(remaining);
 
-        final KeyVaultEndpoint endpoint = new KeyVaultEndpoint(uri, this, configuration);
+        final KeyVaultEndpoint endpoint = new KeyVaultEndpoint(uri, this, epConfiguration);
         setProperties(endpoint, parameters);
 
-        if (configuration.getSecretClient() == null
-                && (configuration.getClientId() == null || configuration.getClientSecret() == null || configuration.getTenantId() == null)) {
-            throw new IllegalArgumentException("Azure Secret Client or client Id, client secret and tenant Id must be specified");
+        if (epConfiguration.getSecretClient() == null
+                && (epConfiguration.getClientId() == null || epConfiguration.getClientSecret() == null
+                        || epConfiguration.getTenantId() == null)) {
+            throw new IllegalArgumentException(
+                    "Azure Secret Client or client Id, client secret and tenant Id must be specified");
         }
 
         return endpoint;

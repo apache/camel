@@ -21,7 +21,7 @@ public class KeyVaultEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(9);
+        Set<String> props = new HashSet<>(10);
         props.add("bridgeErrorHandler");
         props.add("clientId");
         props.add("clientSecret");
@@ -29,6 +29,7 @@ public class KeyVaultEndpointUriFactory extends org.apache.camel.support.compone
         props.add("exchangePattern");
         props.add("lazyStartProducer");
         props.add("operation");
+        props.add("secretClient");
         props.add("tenantId");
         props.add("vaultName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

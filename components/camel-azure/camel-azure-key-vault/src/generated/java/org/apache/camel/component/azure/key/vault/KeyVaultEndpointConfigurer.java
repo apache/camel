@@ -34,10 +34,17 @@ public class KeyVaultEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.key.vault.KeyVaultOperation.class, value)); return true;
+        case "secretclient":
+        case "secretClient": target.getConfiguration().setSecretClient(property(camelContext, com.azure.security.keyvault.secrets.SecretClient.class, value)); return true;
         case "tenantid":
         case "tenantId": target.getConfiguration().setTenantId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"secretClient"};
     }
 
     @Override
@@ -56,6 +63,8 @@ public class KeyVaultEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.azure.key.vault.KeyVaultOperation.class;
+        case "secretclient":
+        case "secretClient": return com.azure.security.keyvault.secrets.SecretClient.class;
         case "tenantid":
         case "tenantId": return java.lang.String.class;
         default: return null;
@@ -79,6 +88,8 @@ public class KeyVaultEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();
+        case "secretclient":
+        case "secretClient": return target.getConfiguration().getSecretClient();
         case "tenantid":
         case "tenantId": return target.getConfiguration().getTenantId();
         default: return null;
