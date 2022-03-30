@@ -23,7 +23,7 @@ on:
       - opened
       - reopened
     paths:
-      - 'components/*'
+      - 'components/**'
 
 jobs:
   process:
