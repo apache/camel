@@ -33,7 +33,7 @@ jobs:
           RESULT: ${{ steps.quick-test.outputs.result }}
           COUNT: ${{ steps.quick-test.outputs.count }}
         with:
-          github-token: ${{inputs.github-token}}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { RESULT, COUNT } = process.env
             
