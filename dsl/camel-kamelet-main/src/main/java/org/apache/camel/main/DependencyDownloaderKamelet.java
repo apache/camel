@@ -27,6 +27,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kamelet.KameletComponent;
 import org.apache.camel.dsl.yaml.YamlRoutesBuilderLoaderSupport;
+import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.support.service.ServiceHelper;
@@ -117,7 +118,7 @@ final class DependencyDownloaderKamelet extends ServiceSupport implements CamelC
         }
 
         @Override
-        protected RouteBuilder builder(Node node, Resource resource) {
+        protected RouteBuilder builder(YamlDeserializationContext ctx, Node node) {
             final List<String> dependencies = new ArrayList<>();
 
             Node deps = nodeAt(node, "/spec/dependencies");
