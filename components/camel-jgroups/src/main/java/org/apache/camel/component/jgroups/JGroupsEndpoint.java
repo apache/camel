@@ -39,13 +39,8 @@ import org.slf4j.LoggerFactory;
  * Exchange messages with JGroups clusters.
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName",
-             category = { Category.CLUSTERING, Category.MESSAGING })
+             category = { Category.CLUSTERING, Category.MESSAGING }, headersClass = JGroupsConstants.class)
 public class JGroupsEndpoint extends DefaultEndpoint {
-
-    public static final String HEADER_JGROUPS_ORIGINAL_MESSAGE = "JGROUPS_ORIGINAL_MESSAGE";
-    public static final String HEADER_JGROUPS_SRC = "JGROUPS_SRC";
-    public static final String HEADER_JGROUPS_DEST = "JGROUPS_DEST";
-    public static final String HEADER_JGROUPS_CHANNEL_ADDRESS = "JGROUPS_CHANNEL_ADDRESS";
 
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsEndpoint.class);
     private AtomicInteger connectCount = new AtomicInteger();
@@ -84,9 +79,9 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     public Exchange createExchange(Message message) {
         Exchange exchange = createExchange();
-        exchange.getIn().setHeader(HEADER_JGROUPS_ORIGINAL_MESSAGE, message);
-        exchange.getIn().setHeader(HEADER_JGROUPS_SRC, message.getSrc());
-        exchange.getIn().setHeader(HEADER_JGROUPS_DEST, message.getDest());
+        exchange.getIn().setHeader(JGroupsConstants.HEADER_JGROUPS_ORIGINAL_MESSAGE, message);
+        exchange.getIn().setHeader(JGroupsConstants.HEADER_JGROUPS_SRC, message.getSrc());
+        exchange.getIn().setHeader(JGroupsConstants.HEADER_JGROUPS_DEST, message.getDest());
         exchange.getIn().setBody(message.getObject());
         return exchange;
     }
@@ -100,7 +95,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     @Override
     public Exchange createExchange() {
         Exchange exchange = super.createExchange();
-        exchange.getIn().setHeader(HEADER_JGROUPS_CHANNEL_ADDRESS, resolvedChannel.getAddress());
+        exchange.getIn().setHeader(JGroupsConstants.HEADER_JGROUPS_CHANNEL_ADDRESS, resolvedChannel.getAddress());
         return exchange;
     }
 
