@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.jslt;
 
+import org.apache.camel.spi.Metadata;
+
 public final class JsltConstants {
 
+    @Metadata(description = "The JSLT Template as String", javaType = "String")
     public static final String HEADER_JSLT_STRING = "CamelJsltString";
+    @Metadata(description = "The resource URI", javaType = "String")
     public static final String HEADER_JSLT_RESOURCE_URI = "CamelJsltResourceUri";
 
     private JsltConstants() {
