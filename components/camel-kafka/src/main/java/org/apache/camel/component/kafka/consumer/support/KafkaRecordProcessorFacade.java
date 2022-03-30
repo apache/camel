@@ -25,6 +25,8 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kafka.KafkaConsumer;
 import org.apache.camel.component.kafka.consumer.CommitManager;
+import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.TopicPartition;
@@ -41,23 +43,24 @@ public class KafkaRecordProcessorFacade {
     private final String threadId;
     private final KafkaRecordProcessor kafkaRecordProcessor;
     private final CommitManager commitManager;
+    private final KafkaConsumerListener consumerListener;
 
     public KafkaRecordProcessorFacade(KafkaConsumer camelKafkaConsumer, Map<String, Long> lastProcessedOffset, String threadId,
-                                      CommitManager commitManager) {
+                                      CommitManager commitManager, KafkaConsumerListener consumerListener) {
         this.camelKafkaConsumer = camelKafkaConsumer;
         this.lastProcessedOffset = lastProcessedOffset;
         this.threadId = threadId;
         this.commitManager = commitManager;
 
         kafkaRecordProcessor = buildKafkaRecordProcessor(commitManager);
-
+        this.consumerListener = consumerListener;
     }
 
     private boolean isStopping() {
         return camelKafkaConsumer.isStopping();
     }
 
-    public ProcessingResult processPolledRecords(ConsumerRecords<Object, Object> allRecords) {
+    public ProcessingResult processPolledRecords(ConsumerRecords<Object, Object> allRecords, Consumer<?, ?> consumer) {
         logRecords(allRecords);
 
         Set<TopicPartition> partitions = allRecords.partitions();
@@ -79,6 +82,12 @@ public class KafkaRecordProcessorFacade {
 
                 lastResult = processRecord(partition, partitionIterator.hasNext(), recordIterator.hasNext(), lastResult,
                         kafkaRecordProcessor, record);
+
+                if (consumerListener != null) {
+                    if (!consumerListener.afterProcess(lastResult)) {
+                        return lastResult;
+                    }
+                }
             }
 
             if (!lastResult.isBreakOnErrorHit()) {

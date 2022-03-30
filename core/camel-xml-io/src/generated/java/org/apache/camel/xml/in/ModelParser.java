@@ -718,6 +718,16 @@ public class ModelParser extends BaseParser {
             return true;
         }, noValueHandler());
     }
+    protected PausableDefinition doParsePausableDefinition() throws IOException, XmlPullParserException {
+        return doParse(new PausableDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "consumerListener": def.setConsumerListener(val); break;
+                case "untilCheck": def.setUntilCheck(val); break;
+                default: return processorDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
     protected PipelineDefinition doParsePipelineDefinition() throws IOException, XmlPullParserException {
         return doParse(new PipelineDefinition(),
             processorDefinitionAttributeHandler(), outputDefinitionElementHandler(), noValueHandler());
@@ -3237,6 +3247,7 @@ public class ModelParser extends BaseParser {
             case "onCompletion": return doParseOnCompletionDefinition();
             case "onException": return doParseOnExceptionDefinition();
             case "onFallback": return doParseOnFallbackDefinition();
+            case "pausable": return doParsePausableDefinition();
             case "pipeline": return doParsePipelineDefinition();
             case "policy": return doParsePolicyDefinition();
             case "pollEnrich": return doParsePollEnrichDefinition();

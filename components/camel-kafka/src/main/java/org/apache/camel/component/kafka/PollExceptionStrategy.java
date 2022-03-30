@@ -25,6 +25,21 @@ package org.apache.camel.component.kafka;
 public interface PollExceptionStrategy {
 
     /**
+     * Reset any error flags set by a previous error condition
+     */
+    default void reset() {
+
+    }
+
+    /**
+     * This method provides an "answer" to whether the consumer can continue polling or not. This is specific to each
+     * polling exception strategy and must be implemented accordingly
+     * 
+     * @return true if polling should continue or false otherwise
+     */
+    boolean canContinue();
+
+    /**
      * Controls how to handle the exception while polling from Kafka.
      *
      * @param  exception the caused exception which typically would be a {@link org.apache.kafka.common.KafkaException}

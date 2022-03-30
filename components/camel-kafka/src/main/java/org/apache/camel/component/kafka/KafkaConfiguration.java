@@ -129,8 +129,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // fetch.max.wait.ms
     @UriParam(label = "consumer", defaultValue = "500")
     private Integer fetchWaitMaxMs = 500;
-    @UriParam(label = "consumer", enums = "beginning,end")
-    private String seekTo;
+    @UriParam(label = "consumer")
+    private SeekPolicy seekTo;
 
     // Consumer configuration properties
     @UriParam(label = "consumer", defaultValue = "true")
@@ -1612,15 +1612,15 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.valueDeserializer = valueDeserializer;
     }
 
-    public String getSeekTo() {
+    public SeekPolicy getSeekTo() {
         return seekTo;
     }
 
     /**
-     * Set if KafkaConsumer will read from beginning or end on startup: beginning : read from beginning end : read from
-     * end This is replacing the earlier property seekToBeginning
+     * Set if KafkaConsumer will read from beginning or end on startup: SeekPolicy.BEGINNING: read from beginning.
+     * SeekPolicy.END: read from end.
      */
-    public void setSeekTo(String seekTo) {
+    public void setSeekTo(SeekPolicy seekTo) {
         this.seekTo = seekTo;
     }
 

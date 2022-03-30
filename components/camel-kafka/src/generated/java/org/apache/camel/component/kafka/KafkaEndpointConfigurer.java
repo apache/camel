@@ -164,7 +164,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "securityprotocol":
         case "securityProtocol": target.getConfiguration().setSecurityProtocol(property(camelContext, java.lang.String.class, value)); return true;
         case "seekto":
-        case "seekTo": target.getConfiguration().setSeekTo(property(camelContext, java.lang.String.class, value)); return true;
+        case "seekTo": target.getConfiguration().setSeekTo(property(camelContext, org.apache.camel.component.kafka.SeekPolicy.class, value)); return true;
         case "sendbufferbytes":
         case "sendBufferBytes": target.getConfiguration().setSendBufferBytes(property(camelContext, java.lang.Integer.class, value)); return true;
         case "sessiontimeoutms":
@@ -366,7 +366,7 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "securityprotocol":
         case "securityProtocol": return java.lang.String.class;
         case "seekto":
-        case "seekTo": return java.lang.String.class;
+        case "seekTo": return org.apache.camel.component.kafka.SeekPolicy.class;
         case "sendbufferbytes":
         case "sendBufferBytes": return java.lang.Integer.class;
         case "sessiontimeoutms":

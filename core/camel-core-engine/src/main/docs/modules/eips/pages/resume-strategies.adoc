@@ -2,7 +2,7 @@
 :doctitle: Resume Strategies
 :shortname: resume
 :description: Provide strategies to allow consuming data from specific offsets
-:since:
+:since: 3.16.0
 :supportlevel: Experimental
 
 The resume strategies allow users to implement strategies that point the consumer part of the routes to the last point of consumption. This allows Camel to skip reading and processing data that has already been consumed.
@@ -191,3 +191,29 @@ from("file:{{input.dir}}?noop=true&fileName={{input.file}}")
 ----
 
 *Reason*: the `skip` method in the Reader will skip characters, whereas the same method on the InputStream will skip bytes.
+
+
+== Pausable Consumers API
+
+The Pausable consumers API is a subset of the resume API that provides pause and resume features for supported components.
+With this API it is possible to implement logic that controls the behavior of the consumer based on conditions that are
+external to the component. For instance, it makes it possible to pause the consumer if an external system becomes unavailable.
+
+Currently, support for pausable consumers is available for the following components:
+
+* xref:components::kafka-component.adoc[camel-kafka]
+
+To use the API, it needs an instance of a Consumer listener along with a predicate that tests whether to continue.
+
+* `org.apache.camel.ConsumerListener` - the consumer listener interface. Camel already comes with pre-built consumer listeners, but users in need of more complex behaviors can create their own listeners.
+* a predicate that returns true if data consumption should resume or false if consumption should be put on pause
+
+Usage example:
+
+[source,java]
+----
+from(from)
+    .pausable(new KafkaConsumerListener(), o -> canContinue())
+    .process(exchange -> LOG.info("Received an exchange: {}", exchange.getMessage().getBody()))
+    .to(destination);
+----

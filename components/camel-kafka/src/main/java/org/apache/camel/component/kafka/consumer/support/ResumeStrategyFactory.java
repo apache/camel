@@ -18,6 +18,7 @@ package org.apache.camel.component.kafka.consumer.support;
 
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConsumer;
+import org.apache.camel.component.kafka.SeekPolicy;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.slf4j.Logger;
@@ -65,7 +66,7 @@ public final class ResumeStrategyFactory {
     private static KafkaConsumerResumeStrategy builtinResumeStrategies(KafkaConfiguration configuration) {
         LOG.debug("No resume strategy was provided ... checking for built-ins ...");
         StateRepository<String, String> offsetRepository = configuration.getOffsetRepository();
-        String seekTo = configuration.getSeekTo();
+        SeekPolicy seekTo = configuration.getSeekTo();
 
         if (offsetRepository != null) {
             LOG.info("Using resume from offset strategy");

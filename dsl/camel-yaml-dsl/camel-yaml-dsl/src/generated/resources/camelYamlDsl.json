@@ -89,6 +89,9 @@
           "otherwise" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.OtherwiseDefinition"
           },
+          "pausable" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.PausableDefinition"
+          },
           "pipeline" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.PipelineDefinition"
           },
@@ -1669,6 +1672,27 @@
             }
           }
         }
+      },
+      "org.apache.camel.model.PausableDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "consumerListener" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "untilCheck" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "consumerListener", "untilCheck" ]
       },
       "org.apache.camel.model.PipelineDefinition" : {
         "type" : "object",

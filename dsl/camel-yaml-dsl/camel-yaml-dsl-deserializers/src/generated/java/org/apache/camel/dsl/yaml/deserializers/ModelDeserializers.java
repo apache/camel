@@ -48,6 +48,7 @@ import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.OutputDefinition;
 import org.apache.camel.model.OutputTypeDefinition;
 import org.apache.camel.model.PackageScanDefinition;
+import org.apache.camel.model.PausableDefinition;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.PollEnrichDefinition;
@@ -9778,6 +9779,65 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "type": {
                     String val = asText(node);
                     target.setType(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    org.apache.camel.model.DescriptionDefinition val = asType(node, org.apache.camel.model.DescriptionDefinition.class);
+                    target.setDescription(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "pausable",
+            types = org.apache.camel.model.PausableDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "consumer-listener", type = "string", required = true),
+                    @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "inherit-error-handler", type = "boolean"),
+                    @YamlProperty(name = "until-check", type = "string", required = true)
+            }
+    )
+    public static class PausableDefinitionDeserializer extends YamlDeserializerBase<PausableDefinition> {
+        public PausableDefinitionDeserializer() {
+            super(PausableDefinition.class);
+        }
+
+        @Override
+        protected PausableDefinition newInstance() {
+            return new PausableDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(PausableDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "consumer-listener": {
+                    String val = asText(node);
+                    target.setConsumerListener(val);
+                    break;
+                }
+                case "inherit-error-handler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "until-check": {
+                    String val = asText(node);
+                    target.setUntilCheck(val);
                     break;
                 }
                 case "id": {

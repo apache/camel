@@ -1,0 +1,20 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "pausable",
+    "title": "Pausable",
+    "description": "Pausable EIP to support resuming processing from last known offset.",
+    "deprecated": false,
+    "label": "eip,routing",
+    "javaType": "org.apache.camel.model.PausableDefinition",
+    "abstract": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "consumerListener": { "kind": "attribute", "displayName": "Consumer Listener", "required": true, "type": "object", "javaType": "org.apache.camel.ConsumerListener", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the consumer listener to use" },
+    "untilCheck": { "kind": "attribute", "displayName": "Until Check", "required": true, "type": "object", "javaType": "java.util.function.Predicate", "deprecated": false, "autowired": false, "secret": false },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

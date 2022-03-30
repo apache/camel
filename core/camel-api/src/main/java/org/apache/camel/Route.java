@@ -378,4 +378,9 @@ public interface Route extends RuntimeConfiguration {
      */
     void setResumeStrategy(ResumeStrategy resumeStrategy);
 
+    /**
+     * Sets the consumer listener for the route
+     */
+    void setConsumerListener(ConsumerListener<?, ?> consumerListener);
+
 }

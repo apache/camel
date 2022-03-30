@@ -957,6 +957,14 @@ Rest PATCH command
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="pausable" type="tns:pausableDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Pausable EIP to support resuming processing from last known offset.
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="pgp" type="tns:pgpDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -3034,6 +3042,7 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -3538,6 +3547,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -3638,6 +3648,7 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -3735,6 +3746,7 @@ the branch that matched. Default value: false
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -3814,6 +3826,7 @@ the branch that matched. Default value: false
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -5011,6 +5024,7 @@ default WARN. Default value: WARN
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -5096,6 +5110,7 @@ Setting this allows to know if the filter predicate evaluated as true or false.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -5235,6 +5250,7 @@ Global option value.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -5414,6 +5430,7 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -5507,6 +5524,7 @@ configured, then all incoming messages is intercepted.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -5607,6 +5625,7 @@ process its result.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -5701,6 +5720,7 @@ specified using uri syntax, eg mynamecount=4&type=gold.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -5995,6 +6015,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -8957,6 +8978,7 @@ decompressed size. Default value: 1073741824
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -9158,6 +9180,7 @@ should be invoked or not.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -9326,6 +9349,7 @@ failure. If this option is enabled then its considered handled as well.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -9498,6 +9522,7 @@ Default value: false
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -9601,6 +9626,22 @@ Include finding route builder from these java package names.
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="pausableDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:noOutputDefinition">
+        <xs:sequence/>
+        <xs:attribute name="consumerListener" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the consumer listener to use.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="untilCheck" type="xs:string" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="pipelineDefinition">
     <xs:complexContent>
       <xs:extension base="tns:output">
@@ -9635,6 +9676,7 @@ Include finding route builder from these java package names.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -9712,6 +9754,7 @@ Include finding route builder from these java package names.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -10256,6 +10299,7 @@ Name of property to remove.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -10563,6 +10607,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -10921,6 +10966,7 @@ compensation/completion exchange.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -11272,6 +11318,7 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -11481,6 +11528,7 @@ individual unit of work. Default value: false
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -11974,6 +12022,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>
@@ -12088,6 +12137,7 @@ Sets a reference to use for lookup the policy in the registry.
             <xs:element ref="tns:onCompletion"/>
             <xs:element ref="tns:onException"/>
             <xs:element ref="tns:onFallback"/>
+            <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
             <xs:element ref="tns:pollEnrich"/>

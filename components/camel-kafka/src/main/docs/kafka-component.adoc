@@ -376,6 +376,22 @@ This is mostly useful with aggregation's completion timeout strategies.
 If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
 on the `KafkaComponent` that creates instances of your custom implementation.
 
+== Pausable Consumers
+
+The Kafka component supports pausable consumers. This type of consumer can pause consuming data based on
+conditions external to the component itself (such as an external system being unavailable).
+
+[source,java]
+----
+from("kafka:topic")
+    .pausable(new KafkaConsumerListener(), () -> canContinue())
+    .routeId("pausable-route")
+    .process(exchange -> LOG.info("Got record from Kafka: {}", exchange.getMessage().getBody()))
+    .to("some:destination");
+----
+
+In this example, consuming messages can pause (by calling the Kafka's Consumer pause method) if the result from `canContinue` is false.
+
 == Kafka Headers propagation
 
 When consuming messages from Kafka, headers will be propagated to camel exchange headers automatically.

@@ -25,9 +25,20 @@ import org.slf4j.LoggerFactory;
 public class StopErrorStrategy implements PollExceptionStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(StopErrorStrategy.class);
     private KafkaFetchRecords recordFetcher;
+    private boolean retry = true;
 
     public StopErrorStrategy(KafkaFetchRecords recordFetcher) {
         this.recordFetcher = recordFetcher;
+    }
+
+    @Override
+    public void reset() {
+        retry = true;
+    }
+
+    @Override
+    public boolean canContinue() {
+        return retry;
     }
 
     @Override
@@ -35,7 +46,7 @@ public class StopErrorStrategy implements PollExceptionStrategy {
         // stop and terminate consumer
         LOG.warn("Requesting the consumer to stop based on polling exception strategy");
 
-        recordFetcher.setRetry(false);
+        retry = false;
         recordFetcher.setConnected(false);
     }
 }

@@ -28,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.KafkaEndpoint;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
+import org.apache.camel.component.kafka.SeekPolicy;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -165,7 +166,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
         context.getRouteController().stopRoute("full-it");
 
         KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
-        kafkaEndpoint.getConfiguration().setSeekTo("beginning");
+        kafkaEndpoint.getConfiguration().setSeekTo(SeekPolicy.BEGINNING);
 
         context.getRouteController().startRoute("full-it");
 
@@ -193,7 +194,7 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
         context.getRouteController().stopRoute("full-it");
 
         KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
-        kafkaEndpoint.getConfiguration().setSeekTo("end");
+        kafkaEndpoint.getConfiguration().setSeekTo(SeekPolicy.END);
 
         context.getRouteController().startRoute("full-it");
 

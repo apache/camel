@@ -37,6 +37,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ConsumerListener;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -3837,6 +3838,63 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type resumable(String resumeStrategy) {
         ResumableDefinition answer = new ResumableDefinition();
         answer.setResumeStrategy(resumeStrategy);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * This enables pausable consumers, which allows the consumer to pause work until a certain condition allows it to
+     * resume operation
+     *
+     * @return the builder
+     */
+    public PausableDefinition pausable() {
+        PausableDefinition answer = new PausableDefinition();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * This enables pausable consumers, which allows the consumer to pause work until a certain condition allows it to
+     * resume operation
+     *
+     * @param  consumerListener the consumer listener to use for consumer events
+     * @return                  the builder
+     */
+    public Type pausable(ConsumerListener consumerListener, java.util.function.Predicate<?> untilCheck) {
+        PausableDefinition answer = new PausableDefinition();
+        answer.setConsumerListener(consumerListener);
+        answer.setUntilCheck(untilCheck);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * This enables pausable consumers, which allows the consumer to pause work until a certain condition allows it to
+     * resume operation
+     *
+     * @param  consumerListenerRef the resume strategy
+     * @return                     the builder
+     */
+    public Type pausable(String consumerListenerRef, java.util.function.Predicate<?> untilCheck) {
+        PausableDefinition answer = new PausableDefinition();
+        answer.setConsumerListener(consumerListenerRef);
+        answer.setUntilCheck(untilCheck);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * This enables pausable consumers, which allows the consumer to pause work until a certain condition allows it to
+     * resume operation
+     *
+     * @param  consumerListenerRef the resume strategy
+     * @return                     the builder
+     */
+    public Type pausable(String consumerListenerRef, String untilCheck) {
+        PausableDefinition answer = new PausableDefinition();
+        answer.setConsumerListener(consumerListenerRef);
+        answer.setUntilCheck(untilCheck);
         addOutput(answer);
         return asType();
     }

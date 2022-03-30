@@ -1119,10 +1119,31 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * Set if KafkaConsumer will read from beginning or end on startup:
-         * beginning : read from beginning end : read from end This is replacing
-         * the earlier property seekToBeginning.
+         * SeekPolicy.BEGINNING: read from beginning. SeekPolicy.END: read from
+         * end.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.SeekPolicy&lt;/code&gt;
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @param seekTo the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder seekTo(
+                org.apache.camel.component.kafka.SeekPolicy seekTo) {
+            doSetProperty("seekTo", seekTo);
+            return this;
+        }
+        /**
+         * Set if KafkaConsumer will read from beginning or end on startup:
+         * SeekPolicy.BEGINNING: read from beginning. SeekPolicy.END: read from
+         * end.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.kafka.SeekPolicy&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
          * 
