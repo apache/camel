@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.azure.key.vault;
 
-import com.azure.identity.ClientSecretCredential;
-import com.azure.identity.ClientSecretCredentialBuilder;
-import com.azure.security.keyvault.secrets.SecretClient;
-import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -61,11 +57,12 @@ public class KeyVaultProducer extends DefaultProducer {
     }
 
     private void createSecret(Exchange exchange) throws InvalidPayloadException {
-        final String secretName =  exchange.getMessage().getHeader(KeyVaultConstants.SECRET_NAME, String.class);
+        final String secretName = exchange.getMessage().getHeader(KeyVaultConstants.SECRET_NAME, String.class);
         if (ObjectHelper.isEmpty(secretName)) {
             throw new IllegalArgumentException("Secret Name must be specified for createSecret Operation");
         }
-        KeyVaultSecret p = getEndpoint().getSecretClient().setSecret(new KeyVaultSecret(secretName, exchange.getMessage().getMandatoryBody(String.class)));
+        KeyVaultSecret p = getEndpoint().getSecretClient()
+                .setSecret(new KeyVaultSecret(secretName, exchange.getMessage().getMandatoryBody(String.class)));
         Message message = getMessageForResponse(exchange);
         message.setBody(p);
     }

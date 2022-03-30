@@ -950,6 +950,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "AzureKeyVaultComponentBuilderFactory": {
+    "kind": "component",
+    "name": "azure-key-vault",
+    "title": "Azure Key Vault",
+    "description": "Manage secrets and keys in Azure Key Vault Service",
+    "deprecated": false,
+    "firstVersion": "3.17.0",
+    "label": "cloud,cloud",
+    "javaType": "org.apache.camel.component.azure.key.vault.KeyVaultComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-azure-key-vault",
+    "version": "3.17.0-SNAPSHOT",
+    "scheme": "azure-key-vault",
+    "extendsScheme": "",
+    "syntax": "azure-key-vault:vaultName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "AzureServicebusComponentBuilderFactory": {
     "kind": "component",
     "name": "azure-servicebus",

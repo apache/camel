@@ -27,7 +27,7 @@ public final class KeyVaultConstants {
     public static final String OPERATION = HEADER_PREFIX + "ProducerOperation";
     // headers set by the producer only
     @Metadata(label = "producer", description = "The secret name to be used in Key Vault",
-            javaType = "String")
+              javaType = "String")
     public static final String SECRET_NAME = HEADER_PREFIX + "SecretName";
 
     private KeyVaultConstants() {

@@ -621,6 +621,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AzureEventhubsComponentBuilderFactory.azureEventhubs();
     }
     /**
+     * Azure Key Vault (camel-azure-key-vault)
+     * Manage secrets and keys in Azure Key Vault Service
+     * 
+     * Category: cloud,cloud
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-azure-key-vault
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AzureKeyVaultComponentBuilderFactory.AzureKeyVaultComponentBuilder azureKeyVault() {
+        return org.apache.camel.builder.component.dsl.AzureKeyVaultComponentBuilderFactory.azureKeyVault();
+    }
+    /**
      * Azure ServiceBus (camel-azure-servicebus)
      * Send and receive messages to/from Azure Event Bus.
      * 

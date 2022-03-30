@@ -1956,6 +1956,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Azure Key Vault (camel-azure-key-vault)
+     * Manage secrets and keys in Azure Key Vault Service
+     * 
+     * Category: cloud,cloud
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-azure-key-vault
+     * 
+     * Syntax: <code>azure-key-vault:vaultName</code>
+     * 
+     * Path parameter: vaultName
+     * Vault Name to be used
+     * 
+     * @param path vaultName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KeyVaultEndpointBuilderFactory.KeyVaultEndpointBuilder azureKeyVault(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KeyVaultEndpointBuilderFactory.endpointBuilder("azure-key-vault", path);
+    }
+    /**
+     * Azure Key Vault (camel-azure-key-vault)
+     * Manage secrets and keys in Azure Key Vault Service
+     * 
+     * Category: cloud,cloud
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-azure-key-vault
+     * 
+     * Syntax: <code>azure-key-vault:vaultName</code>
+     * 
+     * Path parameter: vaultName
+     * Vault Name to be used
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path vaultName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KeyVaultEndpointBuilderFactory.KeyVaultEndpointBuilder azureKeyVault(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KeyVaultEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Azure ServiceBus (camel-azure-servicebus)
      * Send and receive messages to/from Azure Event Bus.
      * 
