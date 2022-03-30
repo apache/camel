@@ -58,6 +58,9 @@ public class KeyVaultOperationsTest extends CamelTestSupport {
     @EndpointInject("mock:deleteSecret")
     private MockEndpoint deleteResult;
 
+    @EndpointInject("mock:purgeDeletedSecret")
+    private MockEndpoint purgeDeletedSecretResult;
+
     @Test
     public void sendInOnly() throws Exception {
         createResult.expectedMessageCount(1);
@@ -84,6 +87,12 @@ public class KeyVaultOperationsTest extends CamelTestSupport {
             }
         });
 
+        template.send("direct:purgeDeletedSecret", ExchangePattern.InOnly, new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getMessage().setHeader(KeyVaultConstants.SECRET_NAME, "Test1");
+            }
+        });
+
         assertMockEndpointsSatisfied();
     }
 
@@ -104,6 +113,10 @@ public class KeyVaultOperationsTest extends CamelTestSupport {
                 from("direct:deleteSecret")
                         .to("azure-key-vault://{{vaultName}}?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=deleteSecret")
                         .to("mock:deleteSecret");
+
+                from("direct:purgeDeletedSecret")
+                        .to("azure-key-vault://{{vaultName}}?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=purgeDeletedSecret")
+                        .to("mock:purgeDeletedSecret");
             }
         };
     }

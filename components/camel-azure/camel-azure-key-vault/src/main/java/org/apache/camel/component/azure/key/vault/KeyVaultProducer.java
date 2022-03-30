@@ -59,6 +59,9 @@ public class KeyVaultProducer extends DefaultProducer {
             case deleteSecret:
                 deleteSecret(exchange);
                 break;
+            case purgeDeletedSecret:
+                purgeDeletedSecret(exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -96,6 +99,15 @@ public class KeyVaultProducer extends DefaultProducer {
         p.waitForCompletion();
         Message message = getMessageForResponse(exchange);
         message.setBody(p.getFinalResult());
+    }
+
+    private void purgeDeletedSecret(Exchange exchange) throws InvalidPayloadException {
+        final String secretName = exchange.getMessage().getHeader(KeyVaultConstants.SECRET_NAME, String.class);
+        if (ObjectHelper.isEmpty(secretName)) {
+            throw new IllegalArgumentException("Secret Name must be specified for createSecret Operation");
+        }
+        getEndpoint().getSecretClient()
+                .purgeDeletedSecret(secretName);
     }
 
     @Override
