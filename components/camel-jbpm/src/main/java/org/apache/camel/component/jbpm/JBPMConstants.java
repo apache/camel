@@ -16,26 +16,57 @@
  */
 package org.apache.camel.component.jbpm;
 
+import org.apache.camel.spi.Metadata;
+
 public interface JBPMConstants {
+    @Metadata(label = "producer", description = "The value to assign to the global identifier", javaType = "Object")
     String VALUE = "CamelJBPMValue";
+    @Metadata(label = "producer", description = "The operation to perform. The operation name must be prefixed with\n" +
+                                                "CamelJBPMOperation and the name of the operation. See the full list\n" +
+                                                "above. It is case-insensitive.",
+              javaType = "String", defaultValue = "PUT")
     String OPERATION = "CamelJBPMOperation";
+    @Metadata(label = "producer", description = "The id of the process that should be acted upon", javaType = "String")
     String PROCESS_ID = "CamelJBPMProcessId";
+    @Metadata(label = "producer", description = "The id of the process instance", javaType = "Long")
     String PROCESS_INSTANCE_ID = "CamelJBPMProcessInstanceId";
+    @Metadata(label = "producer", description = "The variables that should be set for various operations",
+              javaType = "Map<String, Object>")
     String PARAMETERS = "CamelJBPMParameters";
+    @Metadata(label = "producer", description = "The type of event to use when signalEvent operation is performed",
+              javaType = "String")
     String EVENT_TYPE = "CamelJBPMEventType";
+    @Metadata(label = "producer", description = "The type of the received event. Possible values defined here\n" +
+                                                "org.infinispan.notifications.cachelistener.event.Event.Type",
+              javaType = "Object")
     String EVENT = "CamelJBPMEvent";
+    @Metadata(label = "producer", description = "The maximum number of rules that should be fired", javaType = "Integer")
     String MAX_NUMBER = "CamelJBPMMaxNumber";
+    @Metadata(label = "producer", description = "The global identifier", javaType = "String")
     String IDENTIFIER = "CamelJBPMIdentifier";
+    @Metadata(label = "producer", description = "The id of the work item", javaType = "Long")
     String WORK_ITEM_ID = "CamelJBPMWorkItemId";
+    @Metadata(label = "producer", description = "The id of the task", javaType = "Long")
     String TASK_ID = "CamelJBPMTaskId";
+    @Metadata(label = "producer", description = "The task instance to use with task operations",
+              javaType = "org.kie.api.task.model.Task")
     String TASK = "CamelJBPMTask";
+    @Metadata(label = "producer", description = "The userId to use with task operations", javaType = "String")
     String USER_ID = "CamelJBPMUserId";
+    @Metadata(label = "producer", description = "The targetUserId used when delegating a task", javaType = "String")
     String TARGET_USER_ID = "CamelJBPMTargetUserId";
+    @Metadata(label = "producer", description = "The attachId to use when retrieving attachments", javaType = "Long")
     String ATTACHMENT_ID = "CamelJBPMAttachmentId";
+    @Metadata(label = "producer", description = "The contentId to use when retrieving attachments", javaType = "Long")
     String CONTENT_ID = "CamelJBPMContentId";
+    @Metadata(label = "producer", description = "The potentialOwners when nominateTask operation is performed",
+              javaType = "List<String>")
     String ENTITY_LIST = "CamelJBPMEntityList";
+    @Metadata(label = "producer", description = "The list of status to use when filtering tasks.", javaType = "List<String>")
     String STATUS_LIST = "CamelJBPMStatusList";
+    @Metadata(label = "producer", description = "The page to use when retrieving user tasks", javaType = "Integer")
     String RESULT_PAGE = "CamelJBPMResultPage";
+    @Metadata(label = "producer", description = "The page size to use when retrieving user tasks", javaType = "Integer")
     String RESULT_PAGE_SIZE = "CamelJBPMResultPageSize";
 
     String JBPM_PROCESS_EVENT_LISTENER = "process";

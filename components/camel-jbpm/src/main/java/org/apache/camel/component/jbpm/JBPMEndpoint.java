@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * Interact with jBPM workflow engine over REST.
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "jbpm", title = "JBPM", syntax = "jbpm:connectionURL",
-             category = { Category.API, Category.WORKFLOW })
+             category = { Category.API, Category.WORKFLOW }, headersClass = JBPMConstants.class)
 public class JBPMEndpoint extends DefaultEndpoint {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(JBPMEndpoint.class);
 
