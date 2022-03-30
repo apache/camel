@@ -56,7 +56,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
 
         this.resolvers = new TreeSet<>(Comparator.comparing(Ordered::getOrder));
         this.constructors = new HashMap<>();
-        this.deserializationMode = YamlDeserializationMode.CLASSIC;
+        this.deserializationMode = YamlDeserializationMode.FLOW;
     }
 
     public void addResolver(YamlDeserializerResolver resolver) {
