@@ -44,6 +44,37 @@ public interface KeyVaultEndpointBuilderFactory {
             return (AdvancedKeyVaultEndpointConsumerBuilder) this;
         }
         /**
+         * Instance of Secret client.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param secretClient the value to set
+         * @return the dsl builder
+         */
+        default KeyVaultEndpointConsumerBuilder secretClient(
+                com.azure.security.keyvault.secrets.SecretClient secretClient) {
+            doSetProperty("secretClient", secretClient);
+            return this;
+        }
+        /**
+         * Instance of Secret client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param secretClient the value to set
+         * @return the dsl builder
+         */
+        default KeyVaultEndpointConsumerBuilder secretClient(String secretClient) {
+            doSetProperty("secretClient", secretClient);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -93,7 +124,6 @@ public interface KeyVaultEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param clientId the value to set
@@ -108,7 +138,6 @@ public interface KeyVaultEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param clientSecret the value to set
@@ -123,7 +152,6 @@ public interface KeyVaultEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param tenantId the value to set
@@ -227,6 +255,37 @@ public interface KeyVaultEndpointBuilderFactory {
             return (AdvancedKeyVaultEndpointProducerBuilder) this;
         }
         /**
+         * Instance of Secret client.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param secretClient the value to set
+         * @return the dsl builder
+         */
+        default KeyVaultEndpointProducerBuilder secretClient(
+                com.azure.security.keyvault.secrets.SecretClient secretClient) {
+            doSetProperty("secretClient", secretClient);
+            return this;
+        }
+        /**
+         * Instance of Secret client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param secretClient the value to set
+         * @return the dsl builder
+         */
+        default KeyVaultEndpointProducerBuilder secretClient(String secretClient) {
+            doSetProperty("secretClient", secretClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -311,7 +370,6 @@ public interface KeyVaultEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param clientId the value to set
@@ -326,7 +384,6 @@ public interface KeyVaultEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param clientSecret the value to set
@@ -341,7 +398,6 @@ public interface KeyVaultEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param tenantId the value to set
@@ -376,11 +432,41 @@ public interface KeyVaultEndpointBuilderFactory {
             return (AdvancedKeyVaultEndpointBuilder) this;
         }
         /**
+         * Instance of Secret client.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param secretClient the value to set
+         * @return the dsl builder
+         */
+        default KeyVaultEndpointBuilder secretClient(
+                com.azure.security.keyvault.secrets.SecretClient secretClient) {
+            doSetProperty("secretClient", secretClient);
+            return this;
+        }
+        /**
+         * Instance of Secret client.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param secretClient the value to set
+         * @return the dsl builder
+         */
+        default KeyVaultEndpointBuilder secretClient(String secretClient) {
+            doSetProperty("secretClient", secretClient);
+            return this;
+        }
+        /**
          * Client Id to be used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param clientId the value to set
@@ -395,7 +481,6 @@ public interface KeyVaultEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param clientSecret the value to set
@@ -410,7 +495,6 @@ public interface KeyVaultEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: security
          * 
          * @param tenantId the value to set
