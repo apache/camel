@@ -31,6 +31,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Service;
+import org.apache.camel.dsl.yaml.common.exception.DuplicateKeyException;
 import org.apache.camel.dsl.yaml.common.exception.UnknownNodeTypeException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.spi.Resource;
@@ -188,7 +189,9 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         }
 
         MappingNode mn = (MappingNode) node;
-        if (mn.getValue().size() != 1) {
+        if (mn.getValue().size() > 1) {
+            throw new DuplicateKeyException(node, mn.getValue());
+        } else if (mn.getValue().size() != 1) {
             return null;
         }
 
