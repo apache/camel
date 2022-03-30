@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.key.vault;
 
+import com.azure.security.keyvault.secrets.SecretClient;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -27,17 +28,28 @@ public class KeyVaultConfiguration implements Cloneable {
 
     @UriPath
     private String vaultName;
+    @UriParam
+    @Metadata(autowired = true)
+    private SecretClient secretClient;
     @UriParam(label = "security", secret = true)
-    @Metadata(required = true)
     private String clientId;
     @UriParam(label = "security", secret = true)
-    @Metadata(required = true)
     private String clientSecret;
     @UriParam(label = "security", secret = true)
-    @Metadata(required = true)
     private String tenantId;
     @UriParam(label = "producer")
     private KeyVaultOperation operation = KeyVaultOperation.createSecret;
+
+    /**
+     * Instance of Secret client
+     */
+    public SecretClient getSecretClient() {
+        return secretClient;
+    }
+
+    public void setSecretClient(SecretClient secretClient) {
+        this.secretClient = secretClient;
+    }
 
     /**
      * Vault Name to be used

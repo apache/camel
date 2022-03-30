@@ -60,6 +60,11 @@ public class KeyVaultComponent extends DefaultComponent {
         final KeyVaultEndpoint endpoint = new KeyVaultEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
+        if (configuration.getSecretClient() == null
+                && (configuration.getClientId() == null || configuration.getClientSecret() == null || configuration.getTenantId() == null)) {
+            throw new IllegalArgumentException("Azure Secret Client or client Id, client secret and tenant Id must be specified");
+        }
+
         return endpoint;
     }
 }
