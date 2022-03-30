@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.azure.key.vault;
 
+import com.azure.identity.ClientSecretCredential;
+import com.azure.identity.ClientSecretCredentialBuilder;
+import com.azure.security.keyvault.secrets.SecretClient;
+import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -34,12 +38,35 @@ import org.apache.camel.support.DefaultEndpoint;
              headersClass = KeyVaultConstants.class)
 public class KeyVaultEndpoint extends DefaultEndpoint {
 
+    private SecretClient secretClient;
+
     @UriParam
     private KeyVaultConfiguration configuration;
 
     public KeyVaultEndpoint(final String uri, final Component component, final KeyVaultConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    public void doInit() throws Exception {
+        super.doInit();
+
+        // Build key vault URI
+        String keyVaultUri = "https://" + getConfiguration().getVaultName() + ".vault.azure.net";
+
+        // Credential
+        ClientSecretCredential credential = new ClientSecretCredentialBuilder()
+                .tenantId(getConfiguration().getTenantId())
+                .clientId(getConfiguration().getClientId())
+                .clientSecret(getConfiguration().getClientSecret())
+                .build();
+
+        // Build Client
+        secretClient = new SecretClientBuilder()
+                .vaultUrl(keyVaultUri)
+                .credential(credential)
+                .buildClient();
     }
 
     @Override
@@ -61,5 +88,16 @@ public class KeyVaultEndpoint extends DefaultEndpoint {
 
     public void setConfiguration(KeyVaultConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    /**
+     * The secret Client
+     */
+    public SecretClient getSecretClient() {
+        return secretClient;
+    }
+
+    public void setSecretClient(SecretClient secretClient) {
+        this.secretClient = secretClient;
     }
 }

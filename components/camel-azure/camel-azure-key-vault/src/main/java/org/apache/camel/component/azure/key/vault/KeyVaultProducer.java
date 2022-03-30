@@ -23,16 +23,16 @@ import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class KeyVaultProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeyVaultProducer.class);
-
-    protected SecretClient secretClient;
 
     public KeyVaultProducer(final Endpoint endpoint) {
         super(endpoint);
@@ -46,22 +46,6 @@ public class KeyVaultProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        // Build key vault URI
-        String keyVaultUri = "https://" + getConfiguration().getVaultName() + ".vault.azure.net";
-
-        // Credential
-        ClientSecretCredential credential = new ClientSecretCredentialBuilder()
-                .tenantId(getConfiguration().getTenantId())
-                .clientId(getConfiguration().getClientId())
-                .clientSecret(getConfiguration().getClientSecret())
-                .build();
-
-        // Build Client
-        secretClient = new SecretClientBuilder()
-                .vaultUrl(keyVaultUri)
-                .credential(credential)
-                .buildClient();
     }
 
     @Override
@@ -76,8 +60,12 @@ public class KeyVaultProducer extends DefaultProducer {
         }
     }
 
-    private void createSecret(Exchange exchange) {
-        KeyVaultSecret p = secretClient.setSecret(new KeyVaultSecret("pippo", "peppe"));
+    private void createSecret(Exchange exchange) throws InvalidPayloadException {
+        final String secretName =  exchange.getMessage().getHeader(KeyVaultConstants.SECRET_NAME, String.class);
+        if (ObjectHelper.isEmpty(secretName)) {
+            throw new IllegalArgumentException("Secret Name must be specified for createSecret Operation");
+        }
+        KeyVaultSecret p = getEndpoint().getSecretClient().setSecret(new KeyVaultSecret(secretName, exchange.getMessage().getMandatoryBody(String.class)));
         Message message = getMessageForResponse(exchange);
         message.setBody(p);
     }
