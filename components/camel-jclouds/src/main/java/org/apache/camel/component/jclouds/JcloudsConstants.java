@@ -16,16 +16,25 @@
  */
 package org.apache.camel.component.jclouds;
 
+import org.apache.camel.spi.Metadata;
+
 public final class JcloudsConstants {
     public static final String DELIMETER = ":";
     public static final String BLOBSTORE = "blobstore";
     public static final String COMPUTE = "compute";
+    @Metadata(label = "producer blobstore", description = "The name of the blob.", javaType = "String")
     public static final String BLOB_NAME = "CamelJcloudsBlobName";
+    @Metadata(label = "producer blobstore", description = "The name of the blob container.", javaType = "String")
     public static final String CONTAINER_NAME = "CamelJcloudsContainerName";
+    @Metadata(label = "producer blobstore", description = "The blob name list.", javaType = "List")
     public static final String BLOB_NAME_LIST = "CamelJcloudsBlobNameList";
 
+    @Metadata(label = "producer compute", description = "The node state", javaType = "Object")
     public static final String NODE_STATE = "CamelJcloudsNodeState";
 
+    @Metadata(label = "producer",
+              description = "The operation to be performed on the blob.\n\nThe valid options are:\n\n* PUT\n* GET",
+              javaType = "String")
     public static final String OPERATION = "CamelJcloudsOperation";
     public static final String PUT = "CamelJcloudsPut";
     public static final String GET = "CamelJcloudsGet";
@@ -49,11 +58,27 @@ public final class JcloudsConstants {
     public static final String CONTENT_DISPOSITION = "CamelJcloudsContentDisposition";
     public static final String PAYLOAD_EXPIRES = "CamelJcloudsPayloadExpires";
 
+    @Metadata(label = "producer compute",
+              description = "The imageId that will be used for creating a node. Values depend on the actual cloud provider.",
+              javaType = "String")
     public static final String IMAGE_ID = "CamelJcloudsImageId";
+    @Metadata(label = "producer",
+              description = "The location that will be used for creating a node. Values depend on the actual cloud provider.",
+              javaType = "String")
     public static final String LOCATION_ID = "CamelJcloudsLocationId";
+    @Metadata(label = "producer compute",
+              description = "The hardware that will be used for creating a node. Values depend on the actual cloud provider.",
+              javaType = "String")
     public static final String HARDWARE_ID = "CamelJcloudsHardwareId";
+    @Metadata(label = "producer compute",
+              description = "The group that will be assigned to the newly created node. Values depend on the actual cloud provider.",
+              javaType = "String")
     public static final String GROUP = "CamelJcloudsGroup";
+    @Metadata(label = "producer compute", description = "The id of the node that will run the script or destroyed.",
+              javaType = "String")
     public static final String NODE_ID = "CamelJcloudsNodeId";
+    @Metadata(label = "producer compute", description = "The user on the target node that will run the script.",
+              javaType = "String")
     public static final String USER = "CamelJcloudsUser";
 
     public static final String RUN_SCRIPT_ERROR = "CamelJcloudsRunScriptError";
