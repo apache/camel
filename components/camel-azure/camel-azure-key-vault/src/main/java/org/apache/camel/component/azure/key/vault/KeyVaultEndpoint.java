@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Send and receive messages to/from Azure Event Bus.
+ * Manage secrets and keys in Azure Key Vault Service
  */
 @UriEndpoint(firstVersion = "3.17.0", scheme = "azure-key-vault", title = "Azure Key Vault",
              syntax = "azure-key-vault:vaultName", category = {
