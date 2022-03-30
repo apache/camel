@@ -19,5 +19,6 @@ package org.apache.camel.component.azure.key.vault;
 public enum KeyVaultOperation {
     createSecret,
     getSecret,
-    deleteSecret
+    deleteSecret,
+    purgeDeletedSecret
 }
