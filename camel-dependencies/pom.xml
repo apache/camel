@@ -59,8 +59,6 @@
     <atmos-client-version>3.2.1</atmos-client-version>
     <atmosphere-version>2.6.4</atmosphere-version>
     <atmosphere-version-range>[2.6,3.0)</atmosphere-version-range>
-    <atomix-catalyst-version>1.2.1</atomix-catalyst-version>
-    <atomix-version>1.0.8</atomix-version>
     <avro-ipc-jetty-version>1.11.0</avro-ipc-jetty-version>
     <avro-ipc-netty-version>1.11.0</avro-ipc-netty-version>
     <avro-version>1.11.0</avro-version>
