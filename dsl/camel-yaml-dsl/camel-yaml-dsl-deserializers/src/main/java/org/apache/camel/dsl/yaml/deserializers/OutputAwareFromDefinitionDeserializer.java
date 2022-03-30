@@ -65,7 +65,7 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
         }
 
         String uri = null;
-        Map<String, Object> properties = null;
+        Map<String, Object> parameters = null;
 
         for (NodeTuple tuple : node.getValue()) {
             final String key = asText(tuple.getKeyNode());
@@ -81,12 +81,12 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
                     uri = asText(val);
                     break;
                 case "parameters":
-                    properties = asScalarMap(tuple.getValueNode());
+                    parameters = parseParameters(target, tuple);
                     break;
                 default:
                     String endpointUri = EndpointConsumerDeserializersResolver.resolveEndpointUri(key, val);
                     if (endpointUri != null) {
-                        if (uri != null || properties != null) {
+                        if (uri != null || parameters != null) {
                             throw new InvalidEndpointException(
                                     node, "Uri and parameters are not supported when using Endpoint DSL");
                         }
@@ -106,7 +106,7 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
         if (target.getDelegate() == null) {
             ObjectHelper.notNull("uri", "The uri must set");
             FromDefinition from
-                    = new FromDefinition(YamlSupport.createEndpointUri(dc.getCamelContext(), node, uri, properties));
+                    = new FromDefinition(YamlSupport.createEndpointUri(dc.getCamelContext(), node, uri, parameters));
             // enrich model with line number
             if (line != -1) {
                 from.setLineNumber(line);

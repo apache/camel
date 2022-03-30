@@ -48,9 +48,9 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
 import org.snakeyaml.engine.v2.nodes.NodeType;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
 
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asScalarMap;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.parseParameters;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setSteps;
 
@@ -237,7 +237,7 @@ public final class YamlSupport {
                             throw new InvalidEndpointException(
                                     node, "Uri and parameters are not supported when using Endpoint DSL");
                         }
-                        parameters = asScalarMap(tuple.getValueNode());
+                        parameters = parseParameters(route, tuple);
                         break;
                     case "steps":
                         // steps must be set on the route
