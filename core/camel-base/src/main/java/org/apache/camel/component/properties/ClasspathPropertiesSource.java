@@ -41,7 +41,7 @@ public class ClasspathPropertiesSource extends AbstractLocationPropertiesSource 
     }
 
     @Override
-    protected Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location) {
+    public Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location) {
         Properties answer = new OrderedProperties();
         String path = location.getPath();
 
@@ -71,6 +71,6 @@ public class ClasspathPropertiesSource extends AbstractLocationPropertiesSource 
 
     @Override
     public int getOrder() {
-        return 200;
+        return 300;
     }
 }

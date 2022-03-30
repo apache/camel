@@ -21,21 +21,26 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Ordered;
+import org.apache.camel.component.properties.AbstractLocationPropertiesSource;
+import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 
 /**
  * {@link PropertiesSource} for camel-k integration spec/configuration values.
  */
-public class IntegrationConfigurationPropertiesSource implements PropertiesSource, CamelContextAware {
+public class IntegrationConfigurationPropertiesSource extends AbstractLocationPropertiesSource
+        implements CamelContextAware, Ordered {
 
     private final String name;
-    private final Properties properties = new OrderedProperties();
     private CamelContext camelContext;
 
-    public IntegrationConfigurationPropertiesSource(String name) {
+    public IntegrationConfigurationPropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location,
+                                                    String name) {
+        super(propertiesComponent, location);
         this.name = name;
     }
 
@@ -55,8 +60,14 @@ public class IntegrationConfigurationPropertiesSource implements PropertiesSourc
     }
 
     @Override
-    public String getProperty(String name) {
-        return properties.getProperty(name);
+    public Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location) {
+        // properties are "loaded" in the parseConfigurationValue
+        return null;
+    }
+
+    @Override
+    public int getOrder() {
+        return 300;
     }
 
     public void parseConfigurationValue(String line) {
@@ -80,14 +91,6 @@ public class IntegrationConfigurationPropertiesSource implements PropertiesSourc
                     // ignore
                 }
             }
-        }
-    }
-
-    protected void setProperty(String key, String value) {
-        properties.setProperty(key, value);
-        if (!camelContext.isStarted()) {
-            // if we are bootstrapping then also set as initial property, so it can be used there as well
-            camelContext.getPropertiesComponent().addInitialProperty(key, value);
         }
     }
 

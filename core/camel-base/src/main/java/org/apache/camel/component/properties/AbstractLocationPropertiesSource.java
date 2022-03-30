@@ -41,7 +41,7 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
         this.location = location;
     }
 
-    abstract Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location);
+    public abstract Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location);
 
     @Override
     public PropertiesLocation getLocation() {
@@ -86,6 +86,16 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
     @Override
     public String getProperty(String name) {
         return properties.getProperty(name);
+    }
+
+    /**
+     * Sets a property
+     *
+     * @param key   the key
+     * @param value the value
+     */
+    public void setProperty(String key, String value) {
+        properties.setProperty(key, value);
     }
 
     @Override

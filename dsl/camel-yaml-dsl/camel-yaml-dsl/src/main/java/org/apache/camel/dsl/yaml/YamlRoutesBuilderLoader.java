@@ -37,6 +37,7 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
+import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
@@ -289,19 +290,19 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         // if there are configurations then include them early
         Node configuration = nodeAt(root, "/spec/configuration");
         if (configuration != null) {
-            var list = preConfigureConfiguration(configuration);
+            var list = preConfigureConfiguration(ctx.getResource(), configuration);
             answer.addAll(list);
         }
         // if there are trait configuration then include them early
         configuration = nodeAt(root, "/spec/traits/camel");
         if (configuration != null) {
-            var list = preConfigureTraitConfiguration(configuration);
+            var list = preConfigureTraitConfiguration(ctx.getResource(), configuration);
             answer.addAll(list);
         }
         // if there are trait environment then include them early
         configuration = nodeAt(root, "/spec/traits/environment");
         if (configuration != null) {
-            var list = preConfigureTraitEnvironment(configuration);
+            var list = preConfigureTraitEnvironment(ctx.getResource(), configuration);
             answer.addAll(list);
         }
 
@@ -344,7 +345,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         };
     }
 
-    private List<CamelContextCustomizer> preConfigureConfiguration(Node node) {
+    private List<CamelContextCustomizer> preConfigureConfiguration(Resource resource, Node node) {
         List<CamelContextCustomizer> answer = new ArrayList<>();
 
         final List<String> lines = new ArrayList<>();
@@ -363,11 +364,13 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             @Override
             public void configure(CamelContext camelContext) {
                 try {
-                    PropertiesComponent pc = camelContext.getPropertiesComponent();
+                    org.apache.camel.component.properties.PropertiesComponent pc
+                            = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
                     IntegrationConfigurationPropertiesSource ps
                             = (IntegrationConfigurationPropertiesSource) pc.getPropertiesSource("integration-configuration");
                     if (ps == null) {
-                        ps = new IntegrationConfigurationPropertiesSource("integration-configuration");
+                        ps = new IntegrationConfigurationPropertiesSource(
+                                pc, new PropertiesLocation(resource.getLocation()), "integration-configuration");
                         pc.addPropertiesSource(ps);
                     }
                     lines.forEach(ps::parseConfigurationValue);
@@ -380,7 +383,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         return answer;
     }
 
-    private List<CamelContextCustomizer> preConfigureTraitConfiguration(Node node) {
+    private List<CamelContextCustomizer> preConfigureTraitConfiguration(Resource resource, Node node) {
         List<CamelContextCustomizer> answer = new ArrayList<>();
 
         Node target = nodeAt(node, "configuration/properties/");
@@ -393,12 +396,14 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             @Override
             public void configure(CamelContext camelContext) {
                 try {
-                    PropertiesComponent pc = camelContext.getPropertiesComponent();
+                    org.apache.camel.component.properties.PropertiesComponent pc
+                            = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
                     IntegrationConfigurationPropertiesSource ps
                             = (IntegrationConfigurationPropertiesSource) pc
                                     .getPropertiesSource("integration-trait-configuration");
                     if (ps == null) {
-                        ps = new IntegrationConfigurationPropertiesSource("integration-trait-configuration");
+                        ps = new IntegrationConfigurationPropertiesSource(
+                                pc, new PropertiesLocation(resource.getLocation()), "integration-trait-configuration");
                         pc.addPropertiesSource(ps);
                     }
                     lines.forEach(ps::parseConfigurationValue);
@@ -411,7 +416,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         return answer;
     }
 
-    private List<CamelContextCustomizer> preConfigureTraitEnvironment(Node node) {
+    private List<CamelContextCustomizer> preConfigureTraitEnvironment(Resource resource, Node node) {
         List<CamelContextCustomizer> answer = new ArrayList<>();
 
         Node target = nodeAt(node, "configuration/vars/");
@@ -424,12 +429,14 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             @Override
             public void configure(CamelContext camelContext) {
                 try {
-                    PropertiesComponent pc = camelContext.getPropertiesComponent();
+                    org.apache.camel.component.properties.PropertiesComponent pc
+                            = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
                     IntegrationConfigurationPropertiesSource ps
                             = (IntegrationConfigurationPropertiesSource) pc
                                     .getPropertiesSource("environment-trait-configuration");
                     if (ps == null) {
-                        ps = new IntegrationConfigurationPropertiesSource("environment-trait-configuration");
+                        ps = new IntegrationConfigurationPropertiesSource(
+                                pc, new PropertiesLocation(resource.getLocation()), "environment-trait-configuration");
                         pc.addPropertiesSource(ps);
                     }
                     lines.forEach(ps::parseConfigurationValue);

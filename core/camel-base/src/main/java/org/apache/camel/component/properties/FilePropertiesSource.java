@@ -42,7 +42,7 @@ public class FilePropertiesSource extends AbstractLocationPropertiesSource imple
     }
 
     @Override
-    protected Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location) {
+    public Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location) {
         Properties answer = new OrderedProperties();
         String path = location.getPath();
 
