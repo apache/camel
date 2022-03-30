@@ -14,31 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
 
-import org.apache.kafka.common.errors.RetriableException;
-import org.apache.kafka.common.errors.WakeupException;
+package org.apache.camel.component.kafka.consumer.errorhandler;
 
-public class DefaultPollExceptionStrategy implements PollExceptionStrategy {
+import org.apache.camel.component.kafka.KafkaFetchRecords;
+import org.apache.camel.component.kafka.PollExceptionStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    private PollOnError pollOnError;
+public class RetryErrorStrategy implements PollExceptionStrategy {
+    private static final Logger LOG = LoggerFactory.getLogger(RetryErrorStrategy.class);
+    private KafkaFetchRecords recordFetcher;
 
-    public DefaultPollExceptionStrategy() {
-    }
-
-    public DefaultPollExceptionStrategy(PollOnError pollOnError) {
-        this.pollOnError = pollOnError;
+    public RetryErrorStrategy(KafkaFetchRecords recordFetcher) {
+        this.recordFetcher = recordFetcher;
     }
 
     @Override
-    public PollOnError handleException(Exception exception) {
-        if (exception instanceof RetriableException) {
-            return PollOnError.RETRY;
-        } else if (exception instanceof WakeupException) {
-            // waking up to stop
-            return PollOnError.STOP;
-        }
+    public void handle(long partitionLastOffset, Exception exception) {
+        LOG.warn("Requesting the consumer to retry polling the same message based on polling exception strategy");
 
-        return pollOnError;
+        // consumer retry the same message again
+        recordFetcher.setRetry(true);
     }
 }

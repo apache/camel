@@ -21,13 +21,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import org.apache.camel.component.kafka.consumer.CommitManager;
 import org.apache.camel.component.kafka.consumer.CommitManagers;
+import org.apache.camel.component.kafka.consumer.errorhandler.KafkaErrorStrategies;
 import org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessorFacade;
 import org.apache.camel.component.kafka.consumer.support.PartitionAssignmentListener;
@@ -43,13 +43,12 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient;
-import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class KafkaFetchRecords implements Runnable {
+public class KafkaFetchRecords implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaFetchRecords.class);
 
     private final KafkaConsumer kafkaConsumer;
@@ -72,16 +71,17 @@ class KafkaFetchRecords implements Runnable {
     private boolean reconnect; // must be false at init (this is the policy whether to reconnect)
     private boolean connected; // this is the state (connected or not)
 
-    KafkaFetchRecords(KafkaConsumer kafkaConsumer, PollExceptionStrategy pollExceptionStrategy,
+    KafkaFetchRecords(KafkaConsumer kafkaConsumer,
                       BridgeExceptionHandlerToErrorHandler bridge, String topicName, Pattern topicPattern, String id,
                       Properties kafkaProps) {
         this.kafkaConsumer = kafkaConsumer;
-        this.pollExceptionStrategy = pollExceptionStrategy;
         this.bridge = bridge;
         this.topicName = topicName;
         this.topicPattern = topicPattern;
         this.threadId = topicName + "-" + "Thread " + id;
         this.kafkaProps = kafkaProps;
+
+        this.pollExceptionStrategy = KafkaErrorStrategies.strategies(this, kafkaConsumer.getEndpoint(), consumer);
     }
 
     @Override
@@ -331,7 +331,7 @@ class KafkaFetchRecords implements Runnable {
                         e.getClass().getName(), threadId, getPrintableTopic(), lastProcessedOffset, e.getMessage());
             }
 
-            handleAccordingToStrategy(partitionLastOffset, e);
+            pollExceptionStrategy.handle(partitionLastOffset, e);
         } finally {
             // only close if not retry
             if (!isRetrying()) {
@@ -341,21 +341,6 @@ class KafkaFetchRecords implements Runnable {
             }
 
             lock.unlock();
-        }
-    }
-
-    private void handleAccordingToStrategy(long partitionLastOffset, Exception e) {
-        PollOnError onError = pollExceptionStrategy.handleException(e);
-        if (PollOnError.RETRY == onError) {
-            handlePollRetry();
-        } else if (PollOnError.RECONNECT == onError) {
-            handlePollReconnect();
-        } else if (PollOnError.ERROR_HANDLER == onError) {
-            handlePollErrorHandler(partitionLastOffset, e);
-        } else if (PollOnError.DISCARD == onError) {
-            handlePollDiscard(partitionLastOffset);
-        } else if (PollOnError.STOP == onError) {
-            handlePollStop();
         }
     }
 
@@ -388,48 +373,6 @@ class KafkaFetchRecords implements Runnable {
         }
     }
 
-    private void handlePollStop() {
-        // stop and terminate consumer
-        LOG.warn("Requesting the consumer to stop based on polling exception strategy");
-
-        setRetry(false);
-        setConnected(false);
-    }
-
-    private void handlePollDiscard(long partitionLastOffset) {
-        LOG.warn("Requesting the consumer to discard the message and continue to the next based on polling exception strategy");
-
-        // skip this poison message and seek to next message
-        seekToNextOffset(partitionLastOffset);
-    }
-
-    private void handlePollErrorHandler(long partitionLastOffset, Exception e) {
-        LOG.warn("Deferring processing to the exception handler based on polling exception strategy");
-
-        // use bridge error handler to route with exception
-        bridge.handleException(e);
-        // skip this poison message and seek to next message
-        seekToNextOffset(partitionLastOffset);
-    }
-
-    private void handlePollReconnect() {
-        LOG.warn("Requesting the consumer to re-connect on the next run based on polling exception strategy");
-
-        // re-connect so the consumer can try the same message again
-        setReconnect(true);
-        setConnected(false);
-
-        // to close the current consumer
-        setRetry(false);
-    }
-
-    private void handlePollRetry() {
-        LOG.warn("Requesting the consumer to retry polling the same message based on polling exception strategy");
-
-        // consumer retry the same message again
-        setRetry(true);
-    }
-
     private boolean isKafkaConsumerRunnable() {
         return kafkaConsumer.isRunAllowed() && !kafkaConsumer.isStoppingOrStopped()
                 && !kafkaConsumer.isSuspendingOrSuspended();
@@ -439,38 +382,11 @@ class KafkaFetchRecords implements Runnable {
         return kafkaConsumer.getEndpoint().getCamelContext().isStopping() && !kafkaConsumer.isRunAllowed();
     }
 
-    private void seekToNextOffset(long partitionLastOffset) {
-        boolean logged = false;
-        Set<TopicPartition> tps = consumer.assignment();
-        if (tps != null && partitionLastOffset != -1) {
-            long next = partitionLastOffset + 1;
-
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Consumer seeking to next offset {} to continue polling next message from {}", next,
-                        getPrintableTopic());
-            }
-
-            for (TopicPartition tp : tps) {
-                consumer.seek(tp, next);
-            }
-        } else if (tps != null) {
-            for (TopicPartition tp : tps) {
-                long next = consumer.position(tp) + 1;
-                if (!logged) {
-                    LOG.info("Consumer seeking to next offset {} to continue polling next message from {}", next,
-                            getPrintableTopic());
-                    logged = true;
-                }
-                consumer.seek(tp, next);
-            }
-        }
-    }
-
     private boolean isRetrying() {
         return retry;
     }
 
-    private void setRetry(boolean value) {
+    public void setRetry(boolean value) {
         retry = value;
     }
 
@@ -478,7 +394,7 @@ class KafkaFetchRecords implements Runnable {
         return reconnect;
     }
 
-    private void setReconnect(boolean value) {
+    public void setReconnect(boolean value) {
         reconnect = value;
     }
 
@@ -578,5 +494,9 @@ class KafkaFetchRecords implements Runnable {
 
     long getCurrentRecoveryInterval() {
         return currentBackoffInterval;
+    }
+
+    public BridgeExceptionHandlerToErrorHandler getBridge() {
+        return bridge;
     }
 }
