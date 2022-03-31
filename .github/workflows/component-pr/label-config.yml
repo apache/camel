@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 ci:
   - Jenkinsfile
   - Jenkinsfile.*
@@ -41,8 +42,8 @@ components-jms:
 
 docs:
   - docs/**/*
-  - **/*.adoc
-  - **/*.md
+  - '**.adoc'
+  - '**.md'
 
 dsl:
   - dsl/**/*
@@ -52,7 +53,7 @@ test-infra:
 
 tests:
   - tests/**/*
-  - **/src/tests/**/*
+  - '**/src/tests/**/*'
 
 tooling:
   - tooling/**/*
