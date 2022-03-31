@@ -35,7 +35,8 @@ import org.apache.camel.support.DefaultEndpoint;
  * Collect various metrics directly from Camel routes using the Micrometer library.
  */
 @UriEndpoint(firstVersion = "2.22.0", scheme = "micrometer", title = "Micrometer",
-             syntax = "micrometer:metricsType:metricsName", producerOnly = true, category = { Category.MONITORING })
+             syntax = "micrometer:metricsType:metricsName", producerOnly = true, category = { Category.MONITORING },
+             headersClass = MicrometerConstants.class)
 public class MicrometerEndpoint extends DefaultEndpoint {
 
     protected MeterRegistry registry;
