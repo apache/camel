@@ -50,15 +50,22 @@ public class TomcatReactiveExecutor extends ServiceSupport implements ReactiveEx
 
     private static final int MAX_TRACKING_SIZE = 1000;
 
+    // to keep track of threads in use
+    private final ConcurrentMap<Thread, Field> threads = new ConcurrentHashMap<>();
+    private final TrackingThreadLocal workers = new TrackingThreadLocal();
+
+    // use for statistics so we have insights at runtime
+    private boolean statisticsEnabled;
+    private final AtomicInteger createdWorkers = new AtomicInteger();
+    private final LongAdder runningWorkers = new LongAdder();
+    private final LongAdder pendingTasks = new LongAdder();
+
     /**
      * ThreadLocal which keep tracks of all the threads that are using it, to ensure we can remove all these threads
      * when Camel is shutting down to not keep stale ThreadLocal which can have some application servers report this as
      * a potential thread-leak (such as Apache Tomcat).
      */
     private final class TrackingThreadLocal extends ThreadLocal<Worker> {
-
-        // to keep track of threads in use
-        private final ConcurrentMap<Thread, Field> threads = new ConcurrentHashMap<>();
 
         @Override
         protected Worker initialValue() {
@@ -76,32 +83,33 @@ public class TomcatReactiveExecutor extends ServiceSupport implements ReactiveEx
             return new Worker(number, TomcatReactiveExecutor.this);
         }
 
-        void clear() {
-            threads.forEach((t, f) -> {
-                try {
-                    Object map = ReflectionHelper.getField(f, t);
-                    if (map != null) {
-                        Method m = ReflectionHelper.findMethod(map.getClass(), "remove", ThreadLocal.class);
-                        if (m != null) {
-                            ObjectHelper.invokeMethodSafe(m, map, this);
-                        }
-                    }
-                } catch (Exception e) {
-                    // ignore
-                }
-            });
-            threads.clear();
+        @Override
+        public String toString() {
+            return "CamelTomcatReactiveWorker";
         }
-
     }
 
-    private final TrackingThreadLocal workers = new TrackingThreadLocal();
+    private void clearWorkers() {
+        int size = threads.size();
+        threads.forEach((t, f) -> {
+            try {
+                Object map = ReflectionHelper.getField(f, t);
+                if (map != null) {
+                    Method m = ReflectionHelper.findMethod(map.getClass(), "remove", ThreadLocal.class);
+                    if (m != null) {
+                        ObjectHelper.invokeMethodSafe(m, map, this);
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        });
+        threads.clear();
 
-    // use for statistics so we have insights at runtime
-    private boolean statisticsEnabled;
-    private final AtomicInteger createdWorkers = new AtomicInteger();
-    private final LongAdder runningWorkers = new LongAdder();
-    private final LongAdder pendingTasks = new LongAdder();
+        if (size > 0) {
+            LOG.info("Cleared {} ThreadLocals", size);
+        }
+    }
 
     @Override
     public void schedule(Runnable runnable) {
@@ -168,7 +176,12 @@ public class TomcatReactiveExecutor extends ServiceSupport implements ReactiveEx
     @Override
     protected void doShutdown() throws Exception {
         // cleanup workers
-        workers.clear();
+        clearWorkers();
+    }
+
+    @Override
+    public String toString() {
+        return "camel-reactive-executor-tomcat";
     }
 
     private static class Worker {
