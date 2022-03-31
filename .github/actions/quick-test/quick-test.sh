@@ -20,7 +20,7 @@ MVN_OPTS=${MVN_OPTS:-$MVN_DEFAULT_OPTS}
 failures=0
 basedir=$(pwd)
 testDate=$(date '+%Y-%m-%d-%H%M%S')
-logDir=${basedir}/automated-build-log/${testDate}
+logDir=${basedir}/automated-build-log
 testHost=$(hostname)
 
 function notifySuccess() {
@@ -49,7 +49,8 @@ function runTest() {
   echo "############################################################"
   echo ""
 
-  mvn -Psourcecheck ${MVN_OPTS} verify 2>&1 >>"${logDir}/${component/\//-}.log"
+  echo "Logging test to ${logDir}/${component/\//-}.log"
+  mvn -Psourcecheck ${MVN_OPTS} verify 2>&1 >> "${logDir}/${component/\//-}.log"
   if [[ $? -ne 0 ]]; then
     ((failures++))
     notifyError "${component} test" "${total}" "${current}" "${failures}"
