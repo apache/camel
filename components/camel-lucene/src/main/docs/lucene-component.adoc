@@ -62,21 +62,11 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Sending/Receiving Messages to/from the cache
-
-=== Message Headers
-
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Header |Description
-
-|`QUERY` |The Lucene Query to performed on the index. The query may include
-wildcards and phrases
-
-|`RETURN_LUCENE_DOCS` |Set this header to true to include the actual Lucene
-documentation when returning hit information.
-|=======================================================================
 
 === Lucene Producers
 
@@ -131,7 +121,7 @@ registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer());
 RouteBuilder builder = new RouteBuilder() {
     public void configure() {
        from("direct:start").
-          setHeader("QUERY", constant("Seinfeld")).
+          setHeader(LuceneConstants.HEADER_QUERY, constant("Seinfeld")).
           to("lucene:searchIndex:query?
              analyzer=#whitespaceAnalyzer&indexDir=#whitespace&maxHits=20").
           to("direct:next");
@@ -163,7 +153,7 @@ RouteBuilder builder = new RouteBuilder() {
     public void configure() {            
         try {
             from("direct:start").
-                setHeader("QUERY", constant("Rodney Dangerfield")).
+                setHeader(LuceneConstants.HEADER_QUERY, constant("Rodney Dangerfield")).
                 process(new LuceneQueryProcessor("target/stdindexDir", analyzer, null, 20)).
                 to("direct:next");
         } catch (Exception e) {

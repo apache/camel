@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.lucene.LuceneConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.lucene.support.Hits;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -44,7 +45,7 @@ public class LuceneQueryProcessorIT extends CamelTestSupport {
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
-                in.setHeader("QUERY", "");
+                in.setHeader(LuceneConstants.HEADER_QUERY, "");
             }
         });
     }
@@ -59,7 +60,7 @@ public class LuceneQueryProcessorIT extends CamelTestSupport {
             public void configure() {
 
                 try {
-                    from("direct:start").setHeader("QUERY", constant("Rodney Dangerfield"))
+                    from("direct:start").setHeader(LuceneConstants.HEADER_QUERY, constant("Rodney Dangerfield"))
                             .process(new LuceneQueryProcessor("target/stdindexDir", analyzer, null, 20)).to("direct:next");
                 } catch (Exception e) {
                     LOG.warn("Unhandled exception: {}", e.getMessage(), e);
@@ -101,7 +102,7 @@ public class LuceneQueryProcessorIT extends CamelTestSupport {
             public void configure() {
 
                 try {
-                    from("direct:start").setHeader("QUERY", constant("Carl*"))
+                    from("direct:start").setHeader(LuceneConstants.HEADER_QUERY, constant("Carl*"))
                             .process(new LuceneQueryProcessor("target/simpleindexDir", analyzer, null, 20))
                             .to("direct:next");
                 } catch (Exception e) {
