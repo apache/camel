@@ -17,23 +17,38 @@
 package org.apache.camel.component.microprofile.metrics;
 
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.spi.Metadata;
 
 public final class MicroProfileMetricsConstants {
 
     public static final String HEADER_PREFIX = "CamelMicroProfileMetrics";
 
+    @Metadata(description = "Override increment value in URI", javaType = "long")
     public static final String HEADER_COUNTER_INCREMENT = HEADER_PREFIX + "CounterIncrement";
+    @Metadata(description = "Override gaugeIncrement value from the URI", javaType = "Boolean")
     public static final String HEADER_GAUGE_INCREMENT = HEADER_PREFIX + "GaugeIncrement";
+    @Metadata(description = "Override gaugeDecrement value from the URI", javaType = "Boolean")
     public static final String HEADER_GAUGE_DECREMENT = HEADER_PREFIX + "GaugeDecrement";
+    @Metadata(description = "Override gaugeValue value from the URI", javaType = "Number")
     public static final String HEADER_GAUGE_VALUE = HEADER_PREFIX + "GaugeValue";
+    @Metadata(description = "Override histogram value from the URI", javaType = "Long")
     public static final String HEADER_HISTOGRAM_VALUE = HEADER_PREFIX + "HistogramValue";
+    @Metadata(description = "Override meter mark value from the URI", javaType = "Long")
     public static final String HEADER_METER_MARK = HEADER_PREFIX + "MeterMark";
+    @Metadata(description = "The description within the metric metadata", javaType = "String")
     public static final String HEADER_METRIC_DESCRIPTION = HEADER_PREFIX + "Description";
+    @Metadata(description = "The display name within the metric metadata", javaType = "String")
     public static final String HEADER_METRIC_DISPLAY_NAME = HEADER_PREFIX + "DisplayName";
+    @Metadata(description = "The name of the metric", javaType = "String")
     public static final String HEADER_METRIC_NAME = HEADER_PREFIX + "Name";
+    @Metadata(description = "The tags of the metric", javaType = "String")
     public static final String HEADER_METRIC_TAGS = HEADER_PREFIX + "Tags";
+    @Metadata(description = "The type of the metric", javaType = "org.eclipse.microprofile.metrics.MetricType")
     public static final String HEADER_METRIC_TYPE = HEADER_PREFIX + "Type";
+    @Metadata(description = "The metric unit within the metric metadata", javaType = "String")
     public static final String HEADER_METRIC_UNIT = HEADER_PREFIX + "Units";
+    @Metadata(description = "Override time action from the URI",
+              javaType = "org.apache.camel.component.microprofile.metrics.TimerAction")
     public static final String HEADER_TIMER_ACTION = HEADER_PREFIX + "TimerAction";
 
     public static final String CAMEL_METRIC_PREFIX = "camel";
