@@ -52,4 +52,54 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
+=== Azure Key Vault Producer operations
+
+Camel-AWS MSK component provides the following operation on the producer side:
+
+- createSecret
+- getSecret
+- deleteSecret
+- purgeDeletedSecret
+
+== Examples
+
+=== Producer Examples
+
+- createSecret: this operation will create a secret in Azure Key Vault
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:createSecret")
+    .setHeader(KeyVaultConstants.SECRET_NAME, "Test")
+    .setBody(constant("Test"))
+    .to("azure-key-vault://test123?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})")
+--------------------------------------------------------------------------------
+
+- getSecret: this operation will get a secret from Azure Key Vault
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getSecret")
+    .setHeader(KeyVaultConstants.SECRET_NAME, "Test")
+    .to("azure-key-vault://test123?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=getSecret")
+--------------------------------------------------------------------------------
+
+- deleteSecret: this operation will delete a Secret from Azure Key Vault
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:deleteSecret")
+    .setHeader(KeyVaultConstants.SECRET_NAME, "Test")
+    .to("azure-key-vault://test123?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=deleteSecret")
+--------------------------------------------------------------------------------
+
+- purgeDeletedSecret: this operation will purge a deleted Secret from Azure Key Vault
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:purgeDeletedSecret")
+    .setHeader(KeyVaultConstants.SECRET_NAME, "Test")
+    .to("azure-key-vault://test123?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=purgeDeletedSecret")
+--------------------------------------------------------------------------------
+
 include::spring-boot:partial$starter.adoc[]
