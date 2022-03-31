@@ -58,7 +58,7 @@ import static org.apache.camel.component.mongodb.MongoDbOutputType.MongoIterable
  * Perform operations on MongoDB documents and collections.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "mongodb", title = "MongoDB", syntax = "mongodb:connectionBean",
-             category = { Category.DATABASE, Category.NOSQL })
+             category = { Category.DATABASE, Category.NOSQL }, headersClass = MongoDbConstants.class)
 public class MongoDbEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
