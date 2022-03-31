@@ -493,9 +493,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             org.apache.camel.Message in = exchange.getIn();
             MailConfiguration config = getEndpoint().getConfiguration();
             // header values override configuration values
-            String copyTo = in.getHeader("copyTo", config.getCopyTo(), String.class);
-            String moveTo = in.getHeader("moveTo", config.getMoveTo(), String.class);
-            boolean delete = in.getHeader("delete", config.isDelete(), boolean.class);
+            String copyTo = in.getHeader(MailConstants.MAIL_COPY_TO, config.getCopyTo(), String.class);
+            String moveTo = in.getHeader(MailConstants.MAIL_MOVE_TO, config.getMoveTo(), String.class);
+            boolean delete = in.getHeader(MailConstants.MAIL_DELETE, config.isDelete(), boolean.class);
 
             copyOrMoveMessageIfRequired(config, mail, copyTo, false);
 

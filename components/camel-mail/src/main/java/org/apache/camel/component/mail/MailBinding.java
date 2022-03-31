@@ -104,7 +104,7 @@ public class MailBinding {
 
         // set the replyTo if it was passed in as an option in the uri. Note: if it is in both the URI
         // and headers the headers win.
-        String replyTo = exchange.getIn().getHeader("Reply-To", String.class);
+        String replyTo = exchange.getIn().getHeader(MailConstants.MAIL_REPLY_TO, String.class);
         if (replyTo == null) {
             replyTo = endpoint.getConfiguration().getReplyTo();
         }
@@ -153,8 +153,8 @@ public class MailBinding {
     protected String determineContentType(MailConfiguration configuration, Exchange exchange) {
         // see if we got any content type set
         String contentType = configuration.getContentType();
-        if (exchange.getIn().getHeader("contentType") != null) {
-            contentType = exchange.getIn().getHeader("contentType", String.class);
+        if (exchange.getIn().getHeader(MailConstants.MAIL_CONTENT_TYPE) != null) {
+            contentType = exchange.getIn().getHeader(MailConstants.MAIL_CONTENT_TYPE, String.class);
         } else if (exchange.getIn().getHeader(Exchange.CONTENT_TYPE) != null) {
             contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
         }
@@ -180,8 +180,8 @@ public class MailBinding {
 
         // see if we got any content type set
         String contentType = configuration.getContentType();
-        if (exchange.getIn().getHeader("contentType") != null) {
-            contentType = exchange.getIn().getHeader("contentType", String.class);
+        if (exchange.getIn().getHeader(MailConstants.MAIL_CONTENT_TYPE) != null) {
+            contentType = exchange.getIn().getHeader(MailConstants.MAIL_CONTENT_TYPE, String.class);
         } else if (exchange.getIn().getHeader(Exchange.CONTENT_TYPE) != null) {
             contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
         }
