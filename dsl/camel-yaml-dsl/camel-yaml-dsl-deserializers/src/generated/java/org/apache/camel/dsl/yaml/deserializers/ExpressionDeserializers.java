@@ -27,7 +27,11 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
         YamlDeserializationContext dc = getDeserializationContext(node);
         String key = asText(nt.getKeyNode());
         Node val = setDeserializationContext(nt.getValueNode(), dc);
-        return constructExpressionType(key, val);
+        ExpressionDefinition answer = constructExpressionType(key, val);
+        if (answer == null) {
+            throw new org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException(node, "Unknown expression with id: " + key);
+        }
+        return answer;
     }
 
     public static ExpressionDefinition constructExpressionType(String id, Node node) {

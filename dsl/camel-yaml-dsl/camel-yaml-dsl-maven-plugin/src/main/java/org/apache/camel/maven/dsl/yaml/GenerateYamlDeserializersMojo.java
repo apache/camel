@@ -142,7 +142,11 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     .addStatement("$T dc = getDeserializationContext(node)", CN_DESERIALIZATION_CONTEXT)
                     .addStatement("String key = asText(nt.getKeyNode())")
                     .addStatement("$T val = setDeserializationContext(nt.getValueNode(), dc)", CN_NODE)
-                    .addStatement("return constructExpressionType(key, val)")
+                    .addStatement("ExpressionDefinition answer = constructExpressionType(key, val)")
+                    .beginControlFlow("if (answer == null)")
+                    .addStatement("throw new org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException(node, \"Unknown expression with id: \" + key)")
+                    .endControlFlow()
+                    .addStatement("return answer")
                     .build())
             .build());
 
