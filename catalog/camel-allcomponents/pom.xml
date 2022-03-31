@@ -1127,6 +1127,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-reactive-executor-tomcat</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-reactive-executor-vertx</artifactId>
 		</dependency>
 		<dependency>
