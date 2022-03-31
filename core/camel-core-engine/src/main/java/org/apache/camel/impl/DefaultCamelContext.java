@@ -235,7 +235,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     public static String getExcludeRoutes() {
-        return (String) getOptions().get(OPTION_NO_START);
+        return (String) getOptions().get(OPTION_EXCLUDE_ROUTES);
     }
 
     public static void setExcludeRoutes(String s) {
