@@ -375,7 +375,10 @@ public class YamlDeserializerSupport {
     }
 
     public static Map<String, Object> parseParameters(Block target, NodeTuple node) {
-        return asScalarMap(node.getValueNode());
+        Node value = node.getValueNode();
+        final YamlDeserializationContext dc = getDeserializationContext(value);
+        Map<String, Object> answer = asScalarMap(value);
+        return answer;
     }
 
     public static void setSteps(Block target, Node node) {
@@ -384,7 +387,7 @@ public class YamlDeserializerSupport {
         setSteps(target, node, flow);
     }
 
-    public static void setSteps(Block target, Node node, boolean flowMode) {
+    private static void setSteps(Block target, Node node, boolean flowMode) {
         Block block = target;
         for (ProcessorDefinition<?> definition : asFlatList(node, ProcessorDefinition.class)) {
             block.addOutput(definition);

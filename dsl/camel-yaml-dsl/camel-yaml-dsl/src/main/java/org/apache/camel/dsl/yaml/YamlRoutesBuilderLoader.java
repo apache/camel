@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,6 +41,7 @@ import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
+import org.apache.camel.dsl.yaml.common.exception.InvalidEndpointException;
 import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
 import org.apache.camel.model.KameletDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -245,7 +247,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         };
     }
 
-    private Object preConfigureNode(Node root, YamlDeserializationContext ctx, boolean preParse) throws Exception {
+    private Object preConfigureNode(Node root, YamlDeserializationContext ctx, boolean preParse) {
         Object target = root;
 
         // check if the yaml is a camel-k yaml with embedded binding/routes (called flow(s))
@@ -478,7 +480,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     /**
      * Camel K Kamelet Binding file
      */
-    private Object preConfigureKameletBinding(Node root, YamlDeserializationContext ctx, Object target) throws Exception {
+    private Object preConfigureKameletBinding(Node root, YamlDeserializationContext ctx, Object target) {
         // start with a route
         final RouteDefinition route = new RouteDefinition();
         String routeId = asText(nodeAt(root, "/metadata/name"));
@@ -606,7 +608,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         return target;
     }
 
-    private String extractCamelEndpointUri(MappingNode node) throws Exception {
+    private String extractCamelEndpointUri(MappingNode node) {
         MappingNode mn = null;
         Node ref = nodeAt(node, "/ref");
         if (ref != null) {
@@ -632,8 +634,12 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         MappingNode prop = asMappingNode(nodeAt(node, "/properties"));
         Map<String, Object> params = asMap(prop);
         if (params != null && !params.isEmpty()) {
-            String query = URISupport.createQueryString(params);
-            uri = uri + "?" + query;
+            try {
+                String query = URISupport.createQueryString(params);
+                uri = uri + "?" + query;
+            } catch (URISyntaxException e) {
+                throw new InvalidEndpointException(node, "Error creating URI query parameters", e);
+            }
         }
 
         if (kamelet) {
@@ -662,8 +668,12 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             final Parser parser = new ParserImpl(local, reader);
             final Composer composer = new Composer(local, parser);
 
-            composer.getSingleNode()
-                    .map(node -> preParseNode(ctx, node));
+            try {
+                composer.getSingleNode()
+                        .map(node -> preParseNode(ctx, node));
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Error pre-parsing resource: " + ctx.getResource().getLocation(), e);
+            }
         }
     }
 
@@ -672,18 +682,14 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
         setDeserializationContext(root, ctx);
 
-        try {
-            Object target = preConfigureNode(root, ctx, true);
-            Iterator<?> it = ObjectHelper.createIterator(target);
-            while (it.hasNext()) {
-                target = it.next();
-                if (target instanceof CamelContextCustomizer) {
-                    CamelContextCustomizer customizer = (CamelContextCustomizer) target;
-                    customizer.configure(getCamelContext());
-                }
+        Object target = preConfigureNode(root, ctx, true);
+        Iterator<?> it = ObjectHelper.createIterator(target);
+        while (it.hasNext()) {
+            target = it.next();
+            if (target instanceof CamelContextCustomizer) {
+                CamelContextCustomizer customizer = (CamelContextCustomizer) target;
+                customizer.configure(getCamelContext());
             }
-        } catch (Exception e) {
-            throw new RuntimeCamelException("Error pre-parsing resource: " + ctx.getResource().getLocation(), e);
         }
 
         return null;

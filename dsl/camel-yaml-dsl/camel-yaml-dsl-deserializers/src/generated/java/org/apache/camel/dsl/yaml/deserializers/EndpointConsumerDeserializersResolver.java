@@ -31,6 +31,7 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "aws2-sqs":
             case "azure-cosmosdb":
             case "azure-eventhubs":
+            case "azure-key-vault":
             case "azure-servicebus":
             case "azure-storage-blob":
             case "azure-storage-datalake":

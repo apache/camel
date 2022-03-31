@@ -57,23 +57,14 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
             if (line != -1) {
                 line++;
             }
+            onNewTarget(node, target, line);
         } else if (node.getNodeType() == NodeType.MAPPING) {
             MappingNode mn = (MappingNode) node;
             target = newInstance();
+            onNewTarget(node, target, line);
             setProperties(target, mn);
         } else {
             throw new UnsupportedNodeTypeException(node);
-        }
-
-        // enrich model with source location:line number
-        if (target instanceof LineNumberAware && line != -1) {
-            LineNumberAware lna = (LineNumberAware) target;
-            lna.setLineNumber(line);
-
-            YamlDeserializationContext ctx = getDeserializationContext(node);
-            if (ctx != null) {
-                lna.setLocation(ctx.getResource().getLocation());
-            }
         }
 
         return target;
@@ -132,4 +123,18 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
     protected void handleUnknownProperty(T target, String propertyKey, String propertyName, Node value) {
         throw new UnsupportedFieldException(value, propertyName);
     }
+
+    protected void onNewTarget(Node node, T target, int line) {
+        // enrich model with source location:line number
+        if (target instanceof LineNumberAware && line != -1) {
+            LineNumberAware lna = (LineNumberAware) target;
+            lna.setLineNumber(line);
+
+            YamlDeserializationContext ctx = getDeserializationContext(node);
+            if (ctx != null) {
+                lna.setLocation(ctx.getResource().getLocation());
+            }
+        }
+    }
+
 }
