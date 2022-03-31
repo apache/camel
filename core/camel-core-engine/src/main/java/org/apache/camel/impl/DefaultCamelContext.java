@@ -99,7 +99,14 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultCamelContext extends SimpleCamelContext implements ModelCamelContext {
 
-    protected static final ThreadLocal<OptionHolder> OPTIONS = new NamedThreadLocal<>("CamelContextOptions", OptionHolder::new);
+    // global options that can be set on CamelContext as part of concurrent testing
+    // which means options should be isolated via thread-locals and not a static instance
+    // use a HashMap to store only JDK classes in the thread-local so there will not be any Camel classes leaking
+    private static final ThreadLocal<Map<String, Object>> OPTIONS = new NamedThreadLocal<>("CamelContextOptions", HashMap::new);
+    private static final String OPTION_NO_START = "OptionNoStart";
+    private static final String OPTION_DISABLE_JMX = "OptionDisableJMX";
+    private static final String OPTION_EXCLUDE_ROUTES = "OptionExcludeRoutes";
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
     private static final UuidGenerator UUID = new SimpleUuidGenerator();
 
@@ -207,19 +214,19 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     public static void setNoStart(boolean b) {
-        getOptions().noStart = b;
+        getOptions().put(OPTION_NO_START, b);
     }
 
     public static boolean isNoStart() {
-        return getOptions().noStart;
+        return (Boolean) getOptions().getOrDefault(OPTION_NO_START, Boolean.FALSE);
     }
 
     public static void setDisableJmx(boolean b) {
-        getOptions().disableJmx = b;
+        getOptions().put(OPTION_DISABLE_JMX, b);
     }
 
     public static boolean isDisableJmx() {
-        return getOptions().disableJmx;
+        return (Boolean) getOptions().getOrDefault(OPTION_DISABLE_JMX, Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED));
     }
 
     @Override
@@ -228,18 +235,18 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     public static String getExcludeRoutes() {
-        return getOptions().excludeRoutes;
+        return (String) getOptions().get(OPTION_NO_START);
     }
 
     public static void setExcludeRoutes(String s) {
-        getOptions().excludeRoutes = s;
+        getOptions().put(OPTION_EXCLUDE_ROUTES, s);
     }
 
     public static void clearOptions() {
-        OPTIONS.set(new OptionHolder());
+        OPTIONS.get().clear();
     }
 
-    private static OptionHolder getOptions() {
+    private static Map<String, Object> getOptions() {
         return OPTIONS.get();
     }
 
@@ -1006,9 +1013,4 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                 : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
     }
 
-    protected static class OptionHolder {
-        public boolean noStart;
-        public boolean disableJmx = Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED);
-        public String excludeRoutes;
-    }
 }
