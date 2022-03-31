@@ -55,23 +55,13 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Message Headers
-
-The following message headers can be used to affect the behavior of the
-component
-
-[width="100%",cols="10%,90%",options="header",]
-|===
-|Header |Description
-
-|`CamelLanguageScript` |The script to execute provided in the header. Takes precedence over
-script configured on the endpoint.
-|===
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Examples
 
-For example you can use the xref:languages:simple-language.adoc[Simple] language to
+For example, you can use the xref:languages:simple-language.adoc[Simple] language to
 Message Translator a message:
 
 In case you want to convert the message body type you can do this as
@@ -96,7 +86,7 @@ You can specify a resource uri for a script to load in either the
 endpoint uri, or in the `Exchange.LANGUAGE_SCRIPT` header.
 The uri must start with one of the following schemes: file:, classpath:, or http:
 
-By default the script is loaded once and cached. However you can disable
+By default, the script is loaded once and cached. However, you can disable
 the `contentCache` option and have the script loaded on each
 evaluation. For example if the file myscript.txt is changed on disk, then the
 updated script is used:
