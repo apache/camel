@@ -35,256 +35,9 @@ public interface KeyVaultEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Azure Key Vault component.
+     * Builder for endpoint for the Azure Key Vault component.
      */
-    public interface KeyVaultEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default AdvancedKeyVaultEndpointConsumerBuilder advanced() {
-            return (AdvancedKeyVaultEndpointConsumerBuilder) this;
-        }
-        /**
-         * Instance of Secret client.
-         * 
-         * The option is a:
-         * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param secretClient the value to set
-         * @return the dsl builder
-         */
-        default KeyVaultEndpointConsumerBuilder secretClient(
-                com.azure.security.keyvault.secrets.SecretClient secretClient) {
-            doSetProperty("secretClient", secretClient);
-            return this;
-        }
-        /**
-         * Instance of Secret client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param secretClient the value to set
-         * @return the dsl builder
-         */
-        default KeyVaultEndpointConsumerBuilder secretClient(String secretClient) {
-            doSetProperty("secretClient", secretClient);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default KeyVaultEndpointConsumerBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default KeyVaultEndpointConsumerBuilder bridgeErrorHandler(
-                String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Client Id to be used.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientId the value to set
-         * @return the dsl builder
-         */
-        default KeyVaultEndpointConsumerBuilder clientId(String clientId) {
-            doSetProperty("clientId", clientId);
-            return this;
-        }
-        /**
-         * Client Secret to be used.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientSecret the value to set
-         * @return the dsl builder
-         */
-        default KeyVaultEndpointConsumerBuilder clientSecret(String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
-         * Tenant Id to be used.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param tenantId the value to set
-         * @return the dsl builder
-         */
-        default KeyVaultEndpointConsumerBuilder tenantId(String tenantId) {
-            doSetProperty("tenantId", tenantId);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Azure Key Vault
-     * component.
-     */
-    public interface AdvancedKeyVaultEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default KeyVaultEndpointConsumerBuilder basic() {
-            return (KeyVaultEndpointConsumerBuilder) this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKeyVaultEndpointConsumerBuilder exceptionHandler(
-                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKeyVaultEndpointConsumerBuilder exceptionHandler(
-                String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKeyVaultEndpointConsumerBuilder exchangePattern(
-                org.apache.camel.ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKeyVaultEndpointConsumerBuilder exchangePattern(
-                String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint producers for the Azure Key Vault component.
-     */
-    public interface KeyVaultEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AdvancedKeyVaultEndpointProducerBuilder advanced() {
-            return (AdvancedKeyVaultEndpointProducerBuilder) this;
-        }
-        /**
-         * Instance of Secret client.
-         * 
-         * The option is a:
-         * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param secretClient the value to set
-         * @return the dsl builder
-         */
-        default KeyVaultEndpointProducerBuilder secretClient(
-                com.azure.security.keyvault.secrets.SecretClient secretClient) {
-            doSetProperty("secretClient", secretClient);
-            return this;
-        }
-        /**
-         * Instance of Secret client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param secretClient the value to set
-         * @return the dsl builder
-         */
-        default KeyVaultEndpointProducerBuilder secretClient(String secretClient) {
-            doSetProperty("secretClient", secretClient);
-            return this;
-        }
+    public interface KeyVaultEndpointBuilder extends EndpointProducerBuilder {
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -304,7 +57,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default KeyVaultEndpointProducerBuilder lazyStartProducer(
+        default KeyVaultEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -329,7 +82,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default KeyVaultEndpointProducerBuilder lazyStartProducer(
+        default KeyVaultEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -345,7 +98,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default KeyVaultEndpointProducerBuilder operation(
+        default KeyVaultEndpointBuilder operation(
                 org.apache.camel.component.azure.key.vault.KeyVaultOperation operation) {
             doSetProperty("operation", operation);
             return this;
@@ -361,75 +114,9 @@ public interface KeyVaultEndpointBuilderFactory {
          * @param operation the value to set
          * @return the dsl builder
          */
-        default KeyVaultEndpointProducerBuilder operation(String operation) {
+        default KeyVaultEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
             return this;
-        }
-        /**
-         * Client Id to be used.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientId the value to set
-         * @return the dsl builder
-         */
-        default KeyVaultEndpointProducerBuilder clientId(String clientId) {
-            doSetProperty("clientId", clientId);
-            return this;
-        }
-        /**
-         * Client Secret to be used.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param clientSecret the value to set
-         * @return the dsl builder
-         */
-        default KeyVaultEndpointProducerBuilder clientSecret(String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
-         * Tenant Id to be used.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param tenantId the value to set
-         * @return the dsl builder
-         */
-        default KeyVaultEndpointProducerBuilder tenantId(String tenantId) {
-            doSetProperty("tenantId", tenantId);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Azure Key Vault
-     * component.
-     */
-    public interface AdvancedKeyVaultEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default KeyVaultEndpointProducerBuilder basic() {
-            return (KeyVaultEndpointProducerBuilder) this;
-        }
-    }
-
-    /**
-     * Builder for endpoint for the Azure Key Vault component.
-     */
-    public interface KeyVaultEndpointBuilder
-            extends
-                KeyVaultEndpointConsumerBuilder,
-                KeyVaultEndpointProducerBuilder {
-        default AdvancedKeyVaultEndpointBuilder advanced() {
-            return (AdvancedKeyVaultEndpointBuilder) this;
         }
         /**
          * Instance of Secret client.
@@ -437,7 +124,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param secretClient the value to set
          * @return the dsl builder
@@ -453,7 +140,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;com.azure.security.keyvault.secrets.SecretClient&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param secretClient the value to set
          * @return the dsl builder
@@ -506,18 +193,6 @@ public interface KeyVaultEndpointBuilderFactory {
         }
     }
 
-    /**
-     * Advanced builder for endpoint for the Azure Key Vault component.
-     */
-    public interface AdvancedKeyVaultEndpointBuilder
-            extends
-                AdvancedKeyVaultEndpointConsumerBuilder,
-                AdvancedKeyVaultEndpointProducerBuilder {
-        default KeyVaultEndpointBuilder basic() {
-            return (KeyVaultEndpointBuilder) this;
-        }
-    }
-
     public interface KeyVaultBuilders {
         /**
          * Azure Key Vault (camel-azure-key-vault)
@@ -565,7 +240,7 @@ public interface KeyVaultEndpointBuilderFactory {
     static KeyVaultEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class KeyVaultEndpointBuilderImpl extends AbstractEndpointBuilder implements KeyVaultEndpointBuilder, AdvancedKeyVaultEndpointBuilder {
+        class KeyVaultEndpointBuilderImpl extends AbstractEndpointBuilder implements KeyVaultEndpointBuilder {
             public KeyVaultEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

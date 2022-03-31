@@ -837,7 +837,7 @@
     "async": false,
     "api": false,
     "consumerOnly": false,
-    "producerOnly": false,
+    "producerOnly": true,
     "lenientProperties": false
   },
   "AzureServicebusComponentBuilderFactory": {

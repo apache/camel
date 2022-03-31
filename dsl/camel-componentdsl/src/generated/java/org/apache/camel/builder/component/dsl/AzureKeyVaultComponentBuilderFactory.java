@@ -51,28 +51,6 @@ public interface AzureKeyVaultComponentBuilderFactory {
             extends
                 ComponentBuilder<KeyVaultComponent> {
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default AzureKeyVaultComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -134,7 +112,6 @@ public interface AzureKeyVaultComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "bridgeErrorHandler": ((KeyVaultComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((KeyVaultComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((KeyVaultComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
