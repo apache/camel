@@ -27,7 +27,7 @@ runs:
       run: ${{ github.action_path }}/quick-test.sh ${{ inputs.start-commit }} ${{ inputs.end-commit }}
       shell: bash
     - name: archive logs
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: test-logs

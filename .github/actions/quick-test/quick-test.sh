@@ -78,22 +78,17 @@ function main() {
   local total=$(echo "${components}" | grep -v -e '^$' | wc -l)
 
   if [[ ${total} -eq 0 ]]; then
-    echo "::set-output name=result:: :camel: There are (likely) no components to be tested in this PR"
-    echo "::set-output name=component-count::0"
-    echo "::set-output name=failures-count::0"
+    echo "result=There are (likely) no components to be tested in this PR" > "${logDir}"/results.txt
     exit 0
   else
     if [[ ${total} -gt 10 ]]; then
-      echo "::set-output name=result:: :camel: There are too many components to be tested in this PR"
-      echo "::set-output name=component-count::0"
-      echo "::set-output name=failures-count::0"
+      echo "result=There are too many components to be tested in this PR"  > "${logDir}"/results.txt
       exit 0
     fi
   fi
 
   echo "It will test the following ${total} components:"
   echo "${components}"
-  echo "::set-output name=component-count::${total}"
 
   current=0
   mkdir -p "${logDir}"
@@ -103,13 +98,11 @@ function main() {
   done
 
   if [[ ${failures} -eq 0 ]]; then
-    echo "::set-output name=result:: :heavy_check_mark: Finished verification: ${total} verified / ${failures} failed"
+    echo "result=:heavy_check_mark: Finished verification: ${total} verified / ${failures} failed" > "${logDir}"/results.txt
   else
-    echo "::set-output name=result:: :x: Finished verification: ${total} verified / ${failures} failed"
+    echo "result=:x: Finished verification: ${total} verified / ${failures} failed" > "${logDir}"/results.txt
   fi
 
-
-  echo "::set-output name=failures-count::${failures}"
   exit "${failures}"
 }
 

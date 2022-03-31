@@ -24,6 +24,10 @@ on:
       - reopened
     paths:
       - 'components/**'
+  workflow_run:
+    workflows: [ "main pr build" ]
+    types:
+      - completed
 
 jobs:
   process:
@@ -31,6 +35,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v6
+        if: |
+          github.event_name == 'pull_request_target' &&
+            (github.event.action == 'opened' ||
+             github.event.action == 'reopened')
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `This PR changes components and will be tested automatically`
+            })
+      - name: Download a single artifact
+        uses: actions/download-artifact@v3
+        if: |
+          github.event_name == 'workflow_run'
+        with:
+          name: test-logs
+      - name: Get the test result
+        if: |
+          github.event_name == 'workflow_run'
+        run: |
+          cat automated-build-log/results.txt >> $GITHUB_ENV
+      - uses: actions/github-script@v6
+        if: |
+          github.event_name == 'workflow_run'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -40,5 +71,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `This PR changes components and will be tested automatically`
+              body: "${{ env.result }}
             })
