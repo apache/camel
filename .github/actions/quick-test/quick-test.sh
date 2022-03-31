@@ -73,16 +73,18 @@ function main() {
   local startCommit=${1:-""}
   local endCommit=${2:-""}
 
+  mkdir -p "${logDir}"
+
   echo "Searching for modified components"
   local components=$(git diff "${startCommit}^..${endCommit}" --name-only --pretty=format:"" | grep -e '^components' | grep -v -e '^$' | cut -d / -f 1-2 | uniq | sort)
   local total=$(echo "${components}" | grep -v -e '^$' | wc -l)
 
   if [[ ${total} -eq 0 ]]; then
-    echo "result=There are (likely) no components to be tested in this PR" > "${logDir}"/results.txt
+    echo "result=There are (likely) no components to be tested in this PR" > "${logDir}/results.txt"
     exit 0
   else
     if [[ ${total} -gt 10 ]]; then
-      echo "result=There are too many components to be tested in this PR"  > "${logDir}"/results.txt
+      echo "result=There are too many components to be tested in this PR"  > "${logDir}/results.txt"
       exit 0
     fi
   fi
@@ -91,16 +93,15 @@ function main() {
   echo "${components}"
 
   current=0
-  mkdir -p "${logDir}"
   for component in $(echo $components); do
     ((current++))
     componentTest "${component}" "${total}" "${current}"
   done
 
   if [[ ${failures} -eq 0 ]]; then
-    echo "result=:heavy_check_mark: Finished verification: ${total} verified / ${failures} failed" > "${logDir}"/results.txt
+    echo "result=:heavy_check_mark: Finished verification: ${total} verified / ${failures} failed" > "${logDir}/results.txt"
   else
-    echo "result=:x: Finished verification: ${total} verified / ${failures} failed" > "${logDir}"/results.txt
+    echo "result=:x: Finished verification: ${total} verified / ${failures} failed" > "${logDir}/results.txt"
   fi
 
   exit "${failures}"

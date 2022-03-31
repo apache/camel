@@ -36,4 +36,4 @@ runs:
       if: always()
       with:
         name: test-logs
-        path: automated-build-log/**.log
+        path: automated-build-log/**/*
