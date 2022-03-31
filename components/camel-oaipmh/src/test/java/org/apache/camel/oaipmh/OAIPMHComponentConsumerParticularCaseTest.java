@@ -48,7 +48,7 @@ public class OAIPMHComponentConsumerParticularCaseTest extends CamelTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("oaipmh:localhost:" + mockOaipmhServer.getHttpPort() + "/index.php?page=oai&"
