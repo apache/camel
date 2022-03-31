@@ -87,4 +87,10 @@ public class MainHelperTest {
         Assertions.assertEquals("false", prop.getProperty("camel.component.foo.pretty-print"));
     }
 
+    @Test
+    public void testOptionKeyOnComponent() {
+        Assertions.assertEquals("camel.component.aws2-s3.accessKey",
+                MainHelper.optionKey("camel.component.aws2-s3.access-key"));
+    }
+
 }

@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
 
 public final class MainHelper {
     private static final Logger LOG = LoggerFactory.getLogger(MainHelper.class);
+    private static final String COMPONENT_PREFIX = "camel.component.";
 
     private final String version;
     private final long startDate;
@@ -231,8 +232,31 @@ public final class MainHelper {
 
     public static String optionKey(String key) {
         // as we ignore case for property names we should use keys in same case and without dashes
-        key = StringHelper.dashToCamelCase(key);
+        // If the component name itself contains a dash, it should be preserved.
+        String componentKey = excludeComponentNamewithDash(key);
+        if (componentKey != null) {
+            key = componentKey + StringHelper.dashToCamelCase(key.substring(componentKey.length()));
+        } else {
+            key = StringHelper.dashToCamelCase(key);
+        }
         return key;
+    }
+
+    /**
+     * If the key starts with "camel.component." and the name of the component contains a dash, then return the part of
+     * the key up to the end of the component name, else null.
+     * 
+     * @param  key Original property key
+     * @return     the part of the key containing the component name if it contains a dash, otherwise null.
+     */
+    private static String excludeComponentNamewithDash(String key) {
+        if (key.startsWith(COMPONENT_PREFIX)) {
+            int componentEnd = key.indexOf('.', COMPONENT_PREFIX.length());
+            if (componentEnd > 0 && key.substring(0, componentEnd).indexOf('-') > 0) {
+                return key.substring(0, componentEnd + 1);
+            }
+        }
+        return null;
     }
 
     public static boolean setPropertiesOnTarget(CamelContext context, Object target, Object source) throws Exception {
