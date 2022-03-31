@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka.integration;
+package org.apache.camel.component.kafka.integration.commit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
+import org.apache.camel.component.kafka.integration.BaseManualCommitTestSupport;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.RepeatedTest;
@@ -29,7 +30,7 @@ import org.junit.jupiter.api.TestInstance;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-public class KafkaConsumerManualNoopCommitIT extends BaseManualCommitTestSupport {
+public class KafkaConsumerNoopCommitIT extends BaseManualCommitTestSupport {
 
     public static final String TOPIC = "testManualNoopCommitTest";
 

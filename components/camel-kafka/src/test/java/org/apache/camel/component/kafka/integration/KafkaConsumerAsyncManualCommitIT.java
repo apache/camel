@@ -34,9 +34,12 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@EnabledIfSystemProperty(named = "enable.kafka.consumer.async", matches = "true",
+                         disabledReason = "Temporarily disabled due to being flaky")
 public class KafkaConsumerAsyncManualCommitIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String TOPIC = "testManualCommitTest";
