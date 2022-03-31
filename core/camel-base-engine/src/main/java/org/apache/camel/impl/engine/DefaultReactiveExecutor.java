@@ -16,18 +16,23 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
-import java.util.function.Supplier;
 
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.annotations.EagerClassloaded;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +45,49 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultReactiveExecutor.class);
 
-    private final ThreadLocal<Worker> workers = ThreadLocal.withInitial(new Supplier<Worker>() {
+    /**
+     * ThreadLocal which keep tracks of all the threads that are using it, to ensure we can remove all these threads
+     * when Camel is shutting down to not keep stale ThreadLocal which can have some application servers report this as
+     * a potential thread-leak (such as Apache Tomcat).
+     */
+    private final class TrackingThreadLocal extends ThreadLocal<Worker> {
+
+        // to keep track of threads in use
+        private final ConcurrentMap<Thread, Field> threads = new ConcurrentHashMap<>();
+
         @Override
-        public Worker get() {
+        protected Worker initialValue() {
+            try {
+                Thread t = Thread.currentThread();
+                Field f = Thread.class.getDeclaredField("threadLocals");
+                threads.putIfAbsent(t, f);
+            } catch (Exception e) {
+                // ignore
+            }
             int number = createdWorkers.incrementAndGet();
             return new Worker(number, DefaultReactiveExecutor.this);
         }
-    });
+
+        void clear() {
+            threads.forEach((t, f) -> {
+                try {
+                    Object map = ReflectionHelper.getField(f, t);
+                    if (map != null) {
+                        Method m = ReflectionHelper.findMethod(map.getClass(), "remove", ThreadLocal.class);
+                        if (m != null) {
+                            ObjectHelper.invokeMethodSafe(m, map, this);
+                        }
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
+            });
+            threads.clear();
+        }
+
+    }
+
+    private final TrackingThreadLocal workers = new TrackingThreadLocal();
 
     // use for statistics so we have insights at runtime
     private boolean statisticsEnabled;
@@ -125,7 +166,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     @Override
     protected void doShutdown() throws Exception {
         // cleanup workers
-        workers.remove();
+        workers.clear();
     }
 
     private static class Worker {
