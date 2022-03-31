@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.mongodb.gridfs.GridFsEndpoint;
+import org.apache.camel.component.mongodb.gridfs.GridFsConstants;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 
@@ -91,7 +91,7 @@ public class GridFsConsumerIT extends AbstractMongoDbITSupport {
                         exchange.getMessage().setHeaders(headers);
                     }
                 });
-        ObjectId objectId = result.getMessage().getHeader(GridFsEndpoint.GRIDFS_OBJECT_ID, ObjectId.class);
+        ObjectId objectId = result.getMessage().getHeader(GridFsConstants.GRIDFS_OBJECT_ID, ObjectId.class);
         assertNotNull(objectId);
 
         MockEndpoint mock = getMockEndpoint("mock:test");
@@ -100,7 +100,7 @@ public class GridFsConsumerIT extends AbstractMongoDbITSupport {
 
         template.requestBodyAndHeader(
                 "mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=remove&bucket=customFileFilterTest", null,
-                GridFsEndpoint.GRIDFS_OBJECT_ID, objectId);
+                GridFsConstants.GRIDFS_OBJECT_ID, objectId);
 
         Integer count = template.requestBodyAndHeaders(
                 "mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=count&bucket=customFileFilterTest", null, headers,
@@ -111,7 +111,7 @@ public class GridFsConsumerIT extends AbstractMongoDbITSupport {
     public void runTest(String target, GridFSBucket gridfs) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:test");
         mock.expectedBodiesReceived(FILE_DATA);
-        mock.expectedHeaderReceived(GridFsEndpoint.GRIDFS_METADATA, "{\"contentType\": \"text/plain\"}");
+        mock.expectedHeaderReceived(GridFsConstants.GRIDFS_METADATA, "{\"contentType\": \"text/plain\"}");
 
         Map<String, Object> headers = new HashMap<>();
         assertFalse(gridfs.find(eq(GRIDFS_FILE_KEY_FILENAME, FILE_NAME)).cursor().hasNext());

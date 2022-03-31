@@ -152,13 +152,13 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                     if (metadata != null) {
                         String contentType = metadata.get(GRIDFS_FILE_KEY_CONTENT_TYPE, String.class);
                         if (contentType != null) {
-                            exchange.getIn().setHeader(Exchange.FILE_CONTENT_TYPE, contentType);
+                            exchange.getIn().setHeader(GridFsConstants.FILE_CONTENT_TYPE, contentType);
                         }
-                        exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_METADATA, metadata.toJson());
+                        exchange.getIn().setHeader(GridFsConstants.GRIDFS_METADATA, metadata.toJson());
                     }
 
-                    exchange.getIn().setHeader(Exchange.FILE_LENGTH, file.getLength());
-                    exchange.getIn().setHeader(Exchange.FILE_LAST_MODIFIED, file.getUploadDate());
+                    exchange.getIn().setHeader(GridFsConstants.FILE_LENGTH, file.getLength());
+                    exchange.getIn().setHeader(GridFsConstants.FILE_LAST_MODIFIED, file.getUploadDate());
                     exchange.getIn().setBody(downloadStream, InputStream.class);
                     try {
                         getProcessor().process(exchange);
