@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-name: component check
+name: label pr
 
 on:
   pull_request_target:
