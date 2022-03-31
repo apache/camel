@@ -22,6 +22,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.milo.MiloConstants;
 import org.apache.camel.component.milo.client.MiloClientConfiguration;
 import org.apache.camel.component.milo.client.MiloClientConnection;
 import org.apache.camel.component.milo.client.MiloClientConnectionManager;
@@ -37,11 +38,13 @@ import org.eclipse.milo.opcua.stack.core.types.enumerated.NodeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.milo.MiloConstants.SCHEME_BROWSE;
+
 /**
  * Connect to OPC UA servers using the binary protocol for browsing the node tree.
  */
-@UriEndpoint(firstVersion = "3.15.0", scheme = "milo-browse", syntax = "milo-browse:endpointUri", title = "OPC UA Browser",
-             category = { Category.IOT }, producerOnly = true)
+@UriEndpoint(firstVersion = "3.15.0", scheme = SCHEME_BROWSE, syntax = "milo-browse:endpointUri", title = "OPC UA Browser",
+             category = { Category.IOT }, producerOnly = true, headersClass = MiloConstants.class)
 public class MiloBrowseEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MiloBrowseEndpoint.class);
