@@ -45,7 +45,7 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-security-keyvault-secrets</artifactId>
-            <version>4.3.8</version>
+            <version>${azure-keyvault-secrets-version}</version>
         </dependency>
         <dependency>
             <groupId>com.azure</groupId>

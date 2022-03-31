@@ -87,6 +87,7 @@
         <azure-cosmos-version>4.26.0</azure-cosmos-version>
         <azure-eventhubs-version>5.11.0</azure-eventhubs-version>
         <azure-identity-version>1.4.0</azure-identity-version>
+        <azure-keyvault-secrets-version>4.3.8</azure-keyvault-secrets-version>
         <azure-messaging-eventhubs-checkpointstore-blob-version>1.10.1</azure-messaging-eventhubs-checkpointstore-blob-version>
         <azure-messaging-servicebus-version>7.4.2</azure-messaging-servicebus-version>
         <azure-storage-blob-version>12.14.4</azure-storage-blob-version>
