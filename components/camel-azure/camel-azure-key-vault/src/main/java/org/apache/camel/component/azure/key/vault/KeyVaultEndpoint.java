@@ -34,7 +34,8 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "3.17.0", scheme = "azure-key-vault", title = "Azure Key Vault",
              syntax = "azure-key-vault:vaultName", category = {
-                     Category.CLOUD, Category.CLOUD }, producerOnly = true, 
+                     Category.CLOUD, Category.CLOUD },
+             producerOnly = true,
              headersClass = KeyVaultConstants.class)
 public class KeyVaultEndpoint extends DefaultEndpoint {
 

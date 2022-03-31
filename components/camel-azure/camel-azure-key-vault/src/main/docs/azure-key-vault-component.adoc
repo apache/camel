@@ -5,7 +5,7 @@
 :description: Manage secrets and keys in Azure Key Vault Service
 :since: 3.17
 :supportlevel: Preview
-:component-header: Both producer and consumer are supported
+:component-header: Only producer is supported
 //Manually maintained attributes
 :group: Azure
 :camel-spring-boot-name: azure-key-vault

@@ -21,16 +21,10 @@ public class KeyVaultEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KeyVaultEndpoint target = (KeyVaultEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientid":
         case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
         case "clientSecret": target.getConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.key.vault.KeyVaultOperation.class, value)); return true;
@@ -50,16 +44,10 @@ public class KeyVaultEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return boolean.class;
         case "clientid":
         case "clientId": return java.lang.String.class;
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
-        case "exceptionhandler":
-        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
-        case "exchangepattern":
-        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.azure.key.vault.KeyVaultOperation.class;
@@ -75,16 +63,10 @@ public class KeyVaultEndpointConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KeyVaultEndpoint target = (KeyVaultEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientid":
         case "clientId": return target.getConfiguration().getClientId();
         case "clientsecret":
         case "clientSecret": return target.getConfiguration().getClientSecret();
-        case "exceptionhandler":
-        case "exceptionHandler": return target.getExceptionHandler();
-        case "exchangepattern":
-        case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();
