@@ -65,7 +65,6 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
 import static org.apache.camel.component.jms.JmsMessageHelper.getSafeLongProperty;
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 import static org.apache.camel.component.jms.JmsMessageType.Bytes;
@@ -179,22 +178,25 @@ public class JmsBinding {
         if (jmsMessage != null) {
             // lets populate the standard JMS message headers
             try {
-                map.put("JMSCorrelationID", jmsMessage.getJMSCorrelationID());
-                map.put("JMSCorrelationIDAsBytes", JmsMessageHelper.getJMSCorrelationIDAsBytes(jmsMessage));
-                map.put("JMSDeliveryMode", jmsMessage.getJMSDeliveryMode());
-                map.put("JMSDestination", jmsMessage.getJMSDestination());
-                map.put("JMSExpiration", jmsMessage.getJMSExpiration());
-                map.put("JMSMessageID", jmsMessage.getJMSMessageID());
-                map.put("JMSPriority", jmsMessage.getJMSPriority());
-                map.put("JMSRedelivered", jmsMessage.getJMSRedelivered());
-                map.put("JMSTimestamp", jmsMessage.getJMSTimestamp());
+                map.put(JmsConstants.JMS_HEADER_CORRELATION_ID, jmsMessage.getJMSCorrelationID());
+                map.put(JmsConstants.JMS_HEADER_CORRELATION_ID_AS_BYTES,
+                        JmsMessageHelper.getJMSCorrelationIDAsBytes(jmsMessage));
+                map.put(JmsConstants.JMS_HEADER_DELIVERY_MODE, jmsMessage.getJMSDeliveryMode());
+                map.put(JmsConstants.JMS_HEADER_DESTINATION, jmsMessage.getJMSDestination());
+                map.put(JmsConstants.JMS_HEADER_EXPIRATION, jmsMessage.getJMSExpiration());
+                map.put(JmsConstants.JMS_HEADER_MESSAGE_ID, jmsMessage.getJMSMessageID());
+                map.put(JmsConstants.JMS_HEADER_PRIORITY, jmsMessage.getJMSPriority());
+                map.put(JmsConstants.JMS_HEADER_REDELIVERED, jmsMessage.getJMSRedelivered());
+                map.put(JmsConstants.JMS_HEADER_TIMESTAMP, jmsMessage.getJMSTimestamp());
 
-                map.put("JMSReplyTo", JmsMessageHelper.getJMSReplyTo(jmsMessage));
-                map.put("JMSType", JmsMessageHelper.getJMSType(jmsMessage));
+                map.put(JmsConstants.JMS_HEADER_REPLY_TO, JmsMessageHelper.getJMSReplyTo(jmsMessage));
+                map.put(JmsConstants.JMS_HEADER_TYPE, JmsMessageHelper.getJMSType(jmsMessage));
 
                 // this works around a bug in the ActiveMQ property handling
-                map.put(JMS_X_GROUP_ID, JmsMessageHelper.getStringProperty(jmsMessage, JMS_X_GROUP_ID));
-                map.put("JMSXUserID", JmsMessageHelper.getStringProperty(jmsMessage, "JMSXUserID"));
+                map.put(JmsConstants.JMS_X_GROUP_ID,
+                        JmsMessageHelper.getStringProperty(jmsMessage, JmsConstants.JMS_X_GROUP_ID));
+                map.put(JmsConstants.JMS_HEADER_XUSER_ID,
+                        JmsMessageHelper.getStringProperty(jmsMessage, JmsConstants.JMS_HEADER_XUSER_ID));
             } catch (JMSException e) {
                 throw new RuntimeCamelException(e);
             }
@@ -378,9 +380,10 @@ public class JmsBinding {
             String headerName, Object headerValue)
             throws JMSException {
         if (isStandardJMSHeader(headerName)) {
-            if (headerName.equals("JMSCorrelationID") && (endpoint == null || !endpoint.isUseMessageIDAsCorrelationID())) {
+            if (headerName.equals(JmsConstants.JMS_HEADER_CORRELATION_ID)
+                    && (endpoint == null || !endpoint.isUseMessageIDAsCorrelationID())) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-            } else if (headerName.equals("JMSReplyTo") && headerValue != null) {
+            } else if (headerName.equals(JmsConstants.JMS_HEADER_REPLY_TO) && headerValue != null) {
                 if (headerValue instanceof String) {
                     // if the value is a String we must normalize it first, and must include the prefix
                     // as ActiveMQ requires that when converting the String to a javax.jms.Destination type
@@ -388,13 +391,13 @@ public class JmsBinding {
                 }
                 Destination replyTo = ExchangeHelper.convertToType(exchange, Destination.class, headerValue);
                 JmsMessageHelper.setJMSReplyTo(jmsMessage, replyTo);
-            } else if (headerName.equals("JMSType")) {
+            } else if (headerName.equals(JmsConstants.JMS_HEADER_TYPE)) {
                 jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-            } else if (headerName.equals("JMSPriority")) {
+            } else if (headerName.equals(JmsConstants.JMS_HEADER_PRIORITY)) {
                 jmsMessage.setJMSPriority(ExchangeHelper.convertToType(exchange, Integer.class, headerValue));
-            } else if (headerName.equals("JMSDeliveryMode")) {
+            } else if (headerName.equals(JmsConstants.JMS_HEADER_DELIVERY_MODE)) {
                 JmsMessageHelper.setJMSDeliveryMode(exchange, jmsMessage, headerValue);
-            } else if (headerName.equals("JMSExpiration")) {
+            } else if (headerName.equals(JmsConstants.JMS_HEADER_EXPIRATION)) {
                 jmsMessage.setJMSExpiration(ExchangeHelper.convertToType(exchange, Long.class, headerValue));
             } else {
                 // The following properties are set by the MessageProducer:

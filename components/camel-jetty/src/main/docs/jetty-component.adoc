@@ -67,7 +67,7 @@ include::partial$component-endpoint-options.adoc[]
 Camel uses the same message headers as the xref:http-component.adoc[HTTP]
 component.
 It also uses (Exchange.HTTP_CHUNKED,CamelHttpChunked)
-header to turn on or turn off the chuched encoding on the camel-jetty
+header to turn on or turn off the chunked encoding on the camel-jetty
 consumer.
 
 Camel also populates *all* request.parameter and request.headers. For
@@ -77,6 +77,10 @@ header named `orderid` with the value 123.
 
 You can get the request.parameter from the
 message header not only from Get Method, but also other HTTP method.
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Usage
 

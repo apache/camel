@@ -51,7 +51,7 @@ import org.apache.camel.util.ObjectHelper;
  * You can append query options to the URI in the following format, ?options=value&option2=value&...
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "jmx", title = "JMX", syntax = "jmx:serverURL", consumerOnly = true,
-             category = { Category.MONITORING })
+             category = { Category.MONITORING }, headersClass = JMXConstants.class)
 public class JMXEndpoint extends DefaultEndpoint {
 
     // error messages as constants so they can be asserted on from unit tests
@@ -204,7 +204,7 @@ public class JMXEndpoint extends DefaultEndpoint {
 
     /**
      * Value to handback to the listener when a notification is received. This value will be put in the message header
-     * with the key "jmx.handback"
+     * with the key {@link JMXConstants#JMX_HANDBACK}.
      */
     @UriParam(label = "advanced")
     private Object handback;

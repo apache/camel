@@ -14,29 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jpa;
+package org.apache.camel.component.jmx;
 
 import org.apache.camel.spi.Metadata;
 
-/**
- * JPA constants
- */
-public final class JpaConstants {
+public final class JMXConstants {
 
-    @Metadata(description = "The JPA `EntityManager` object.", javaType = "javax.persistence.EntityManager")
-    public static final String ENTITY_MANAGER = "CamelEntityManager";
-    @Metadata(label = "producer", description = "Alternative way for passing query parameters as an Exchange header.",
-              javaType = "Map<String, Object>")
-    public static final String JPA_PARAMETERS_HEADER = "CamelJpaParameters";
+    @Metadata(label = "consumer", description = "The handback.", javaType = "Object")
+    public static final String JMX_HANDBACK = "jmx.handback";
 
-    /**
-     * @deprecated use {@link #ENTITY_MANAGER}
-     */
-    @Deprecated
-    public static final String ENTITYMANAGER = ENTITY_MANAGER;
+    private JMXConstants() {
 
-    private JpaConstants() {
-        // utility class
     }
-
 }

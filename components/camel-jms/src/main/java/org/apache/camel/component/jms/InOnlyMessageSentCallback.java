@@ -41,7 +41,7 @@ public class InOnlyMessageSentCallback implements MessageSentCallback {
         if (exchange != null) {
             String id = getJMSMessageID(message);
             if (id != null) {
-                exchange.getMessage().setHeader("JMSMessageID", id);
+                exchange.getMessage().setHeader(JmsConstants.JMS_HEADER_MESSAGE_ID, id);
             }
         }
     }

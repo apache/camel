@@ -53,28 +53,10 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
-== Headers
-
-[width="100%",cols="10%,10%,70%",options="header",]
-|=======================================================================
-|Header |Constant |Description
-
-|`JGROUPS_ORIGINAL_MESSAGE` |`JGroupsEndpoint.HEADER_JGROUPS_ORIGINAL_MESSAGE` |The original `org.jgroups.Message` instance from which the body of the
-consumed message has been extracted.
-
-|`JGROUPS_SRC` |`JGroupsEndpoint.`HEADER_JGROUPS_SRC |*Consumer* : The `org.jgroups.Address` instance extracted by
-`org.jgroups.Message`.getSrc() method of the consumed message. 
-*Producer*: The custom source `org.jgroups.Address` of the message to be sent.
-
-|`JGROUPS_DEST` |`JGroupsEndpoint.`HEADER_JGROUPS_DEST |*Consumer*: The `org.jgroups.Address` instance extracted by
-`org.jgroups.Message`.getDest() method of the consumed message.
-*Producer*: The custom destination `org.jgroups.Address` of the message to be sent.
-
-|`JGROUPS_CHANNEL_ADDRESS` |`JGroupsEndpoint.`HEADER_JGROUPS_CHANNEL_ADDRESS |Address (`org.jgroups.Address`) of the channel associated with the
-endpoint.
-|=======================================================================
- 
 == Usage
 
 Using `jgroups` component on the consumer side of the route will capture

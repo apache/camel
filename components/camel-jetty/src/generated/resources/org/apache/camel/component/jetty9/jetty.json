@@ -57,6 +57,10 @@
     "sslSocketConnectors": { "kind": "property", "displayName": "Ssl Socket Connectors", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.Integer, org.eclipse.jetty.server.Connector>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A map which contains per port number specific SSL connectors." },
     "useGlobalSslContextParameters": { "kind": "property", "displayName": "Use Global Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "defaultValue": false, "description": "Enable usage of global SSL context parameters" }
   },
+  "headers": {
+    "CamelServletContextPath": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The servlet context path used" },
+    "CamelHttpPath": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Request URI's path, the header will be used to build the request URI\nwith the HTTP_URI." }
+  },
   "properties": {
     "httpUri": { "kind": "path", "displayName": "Http Uri", "group": "common", "label": "common", "required": true, "type": "string", "javaType": "java.net.URI", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The url of the HTTP endpoint to call." },
     "chunked": { "kind": "parameter", "displayName": "Chunked", "group": "consumer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response" },

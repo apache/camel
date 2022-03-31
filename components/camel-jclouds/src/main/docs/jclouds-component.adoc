@@ -27,7 +27,7 @@ S3. For example, BlobStore can give you a simple Map view of a
 container.
 
 The camel jclouds component allows you to use both abstractions, as it
-specifes two types of endpoint the JcloudsBlobStoreEndpoint and the
+specifies two types of endpoint the JcloudsBlobStoreEndpoint and the
 JcloudsComputeEndpoint. You can have both producers and consumers on a
 blobstore endpoint but you can only have producers on compute endpoints.
 
@@ -132,20 +132,9 @@ jclouds:blobstore:aws-s3?operation=CamelJcloudsGet&container=mycontainer&blobNam
 For producer endpoint you can override all of the above URI options by
 passing the appropriate headers to the message.
 
-=== Message Headers for blobstore
-
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Header |Description
-
-|`CamelJcloudsOperation` |The operation to be performed on the blob. The valid options are
-* PUT
-* GET
-
-|`CamelJcloudsContainer` |The name of the blob container.
-
-|`CamelJcloudsBlobName` |The name of the blob.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Blobstore Usage Samples
 

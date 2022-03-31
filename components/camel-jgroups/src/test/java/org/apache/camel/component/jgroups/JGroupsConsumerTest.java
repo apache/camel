@@ -25,7 +25,7 @@ import org.jgroups.Message;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jgroups.JGroupsEndpoint.HEADER_JGROUPS_ORIGINAL_MESSAGE;
+import static org.apache.camel.component.jgroups.JGroupsConstants.HEADER_JGROUPS_ORIGINAL_MESSAGE;
 
 public class JGroupsConsumerTest extends CamelTestSupport {
 
