@@ -53,7 +53,9 @@ jobs:
         if: |
           github.event_name == 'workflow_run'
         with:
-# Secure download based on https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+# Secure download based on:
+# - https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+# - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run
           script: |
             var artifacts = await github.actions.listWorkflowRunArtifacts({
                owner: context.repo.owner,
@@ -85,10 +87,10 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { RESULT, COUNT } = process.env
+            let issue_number = Number(fs.readFileSync('./automated-build-log/pr_number'));
             
             github.rest.issues.createComment({
-              issue_number: context.issue.number,
+              issue_number: issue_number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: "${{ env.result }}
