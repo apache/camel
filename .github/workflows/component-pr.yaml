@@ -52,7 +52,7 @@ jobs:
         uses: actions/github-script@v3.1.0
         if: |
           github.event_name == 'workflow_run'
-        with:
+        with:the 
 # Secure download based on:
 # - https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
 # - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run
@@ -88,10 +88,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             let issue_number = Number(fs.readFileSync('./pr_number'));
-            
             github.rest.issues.createComment({
               issue_number: issue_number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: "${{ env.result }}
-            })
+            });
