@@ -22,23 +22,21 @@ on:
     types:
       - opened
       - reopened
-    paths:
-      - 'components/**'
+      - synchronize
 
 jobs:
   process:
     name: Process
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - name: Label changes scope
+        if: |
+          github.event_name == 'pull_request_target' &&
+            (github.event.action == 'opened' ||
+             github.event.action == 'reopened' ||
+             github.event.action == 'synchronize')
+        uses: actions/labeler@2.2.0
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { RESULT, COUNT } = process.env
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `This PR changes components and will be tested automatically`
-            })
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/workflows/generic-pr/label-config.yml
+          sync-labels: true
