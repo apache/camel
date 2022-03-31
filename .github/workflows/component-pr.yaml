@@ -80,14 +80,14 @@ jobs:
         if: |
           github.event_name == 'workflow_run'
         run: |
-          cat automated-build-log/results.txt >> $GITHUB_ENV
+          cat test-logs/results.txt >> $GITHUB_ENV
       - uses: actions/github-script@v6
         if: |
           github.event_name == 'workflow_run'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            let issue_number = Number(fs.readFileSync('./automated-build-log/pr_number'));
+            let issue_number = Number(fs.readFileSync('./test-logs/pr_number'));
             
             github.rest.issues.createComment({
               issue_number: issue_number,
