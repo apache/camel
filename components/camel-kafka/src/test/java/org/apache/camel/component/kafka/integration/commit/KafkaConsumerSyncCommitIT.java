@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka.integration;
+package org.apache.camel.component.kafka.integration.commit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
+import org.apache.camel.component.kafka.integration.BaseManualCommitTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.TestInstance;
@@ -28,13 +29,13 @@ import org.junit.jupiter.api.TestInstance;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-public class KafkaConsumerManualAsyncCommitIT extends BaseManualCommitTestSupport {
+public class KafkaConsumerSyncCommitIT extends BaseManualCommitTestSupport {
 
-    public static final String TOPIC = "testManualAsyncCommitTest";
+    public static final String TOPIC = "testManualCommitSyncTest";
 
     @EndpointInject("kafka:" + TOPIC
                     + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false"
-                    + "&allowManualCommit=true&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory")
+                    + "&allowManualCommit=true&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory")
     private Endpoint from;
 
     @AfterEach
