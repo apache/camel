@@ -70,6 +70,7 @@
     <azure-eventhubs-version>5.11.0</azure-eventhubs-version>
     <azure-identity-version>1.4.0</azure-identity-version>
     <azure-jackson2-version>2.13.1</azure-jackson2-version>
+    <azure-keyvault-secrets-version>4.3.8</azure-keyvault-secrets-version>
     <azure-messaging-eventhubs-checkpointstore-blob-version>1.10.1</azure-messaging-eventhubs-checkpointstore-blob-version>
     <azure-messaging-servicebus-version>7.4.2</azure-messaging-servicebus-version>
     <azure-storage-blob-changedfeed-version>12.0.0-beta.10</azure-storage-blob-changedfeed-version>
