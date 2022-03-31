@@ -1380,7 +1380,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         // load properties from properties component (override existing)
         OrderedLocationProperties propPC = (OrderedLocationProperties) camelContext.getPropertiesComponent()
-                .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
+                .loadProperties(name -> name.startsWith("camel."));
         prop.putAll(propPC);
 
         // load properties from ENV (override existing)
