@@ -678,7 +678,7 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Value to handback to the listener when a notification is received.
          * This value will be put in the message header with the key
-         * jmx.handback.
+         * JMXConstants#JMX_HANDBACK.
          * 
          * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
@@ -694,7 +694,7 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Value to handback to the listener when a notification is received.
          * This value will be put in the message header with the key
-         * jmx.handback.
+         * JMXConstants#JMX_HANDBACK.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
