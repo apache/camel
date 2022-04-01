@@ -36,7 +36,7 @@ public class CoAPRestComponentTCPTest extends CoAPRestComponentTestBase {
     }
 
     @Override
-    protected void decorateClient(CoapClient client) throws GeneralSecurityException, IOException {
+    protected void decorateClient(CoapClient client) {
         NetworkConfig config = NetworkConfig.createStandardWithoutFile();
         int tcpThreads = config.getInt(NetworkConfig.Keys.TCP_WORKER_THREADS);
         int tcpConnectTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECT_TIMEOUT);

@@ -33,7 +33,7 @@ public class CoAPRestComponentTest extends CoAPRestComponentTestBase {
     }
 
     @Override
-    protected void decorateClient(CoapClient client) throws GeneralSecurityException, IOException {
+    protected void decorateClient(CoapClient client) {
         // Nothing here
     }
 
