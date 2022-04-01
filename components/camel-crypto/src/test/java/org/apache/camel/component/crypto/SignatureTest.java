@@ -431,7 +431,7 @@ public class SignatureTest extends CamelTestSupport {
     }
 
     @BindToRegistry("myDSAPublicKey")
-    public PublicKey getDSAPublicKey() throws Exception {
+    public PublicKey getDSAPublicKey() {
         return dsaKeyPair.getPublic();
     }
 
@@ -441,7 +441,7 @@ public class SignatureTest extends CamelTestSupport {
     }
 
     @BindToRegistry("myDSAPrivateKey")
-    public PrivateKey getDSAPrivateKey() throws Exception {
+    public PrivateKey getDSAPrivateKey() {
         return dsaKeyPair.getPrivate();
     }
 
