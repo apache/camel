@@ -4867,61 +4867,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.FtpsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Ganglia (camel-ganglia)
-     * Send metrics to Ganglia monitoring system.
-     * 
-     * Category: monitoring
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-ganglia
-     * 
-     * Syntax: <code>ganglia:host:port</code>
-     * 
-     * Path parameter: host
-     * Host name for Ganglia server
-     * Default value: 239.2.11.71
-     * 
-     * Path parameter: port
-     * Port for Ganglia server
-     * Default value: 8649
-     * 
-     * @param path host:port
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.GangliaEndpointBuilder ganglia(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.endpointBuilder("ganglia", path);
-    }
-    /**
-     * Ganglia (camel-ganglia)
-     * Send metrics to Ganglia monitoring system.
-     * 
-     * Category: monitoring
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-ganglia
-     * 
-     * Syntax: <code>ganglia:host:port</code>
-     * 
-     * Path parameter: host
-     * Host name for Ganglia server
-     * Default value: 239.2.11.71
-     * 
-     * Path parameter: port
-     * Port for Ganglia server
-     * Default value: 8649
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path host:port
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.GangliaEndpointBuilder ganglia(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Geocoder (camel-geocoder)
      * Find geocodes (latitude and longitude) for a given address or the other
      * way round.
@@ -13613,55 +13558,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Soroush (camel-soroush)
-     * Send and receive messages as a Soroush chat bot.
-     * 
-     * Category: chat
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-soroush
-     * 
-     * Syntax: <code>soroush:action</code>
-     * 
-     * Path parameter: action (required)
-     * The action to do.
-     * There are 4 enums and the value can be one of: sendMessage, getMessage,
-     * uploadFile, downloadFile
-     * 
-     * @param path action
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.SoroushBotEndpointBuilder soroush(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.endpointBuilder("soroush", path);
-    }
-    /**
-     * Soroush (camel-soroush)
-     * Send and receive messages as a Soroush chat bot.
-     * 
-     * Category: chat
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-soroush
-     * 
-     * Syntax: <code>soroush:action</code>
-     * 
-     * Path parameter: action (required)
-     * The action to do.
-     * There are 4 enums and the value can be one of: sendMessage, getMessage,
-     * uploadFile, downloadFile
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path action
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.SoroushBotEndpointBuilder soroush(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Spark (camel-spark)

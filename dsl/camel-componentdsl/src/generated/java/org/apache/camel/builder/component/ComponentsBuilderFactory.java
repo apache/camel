@@ -1460,20 +1460,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.FtpsComponentBuilderFactory.ftps();
     }
     /**
-     * Ganglia (camel-ganglia)
-     * Send metrics to Ganglia monitoring system.
-     * 
-     * Category: monitoring
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-ganglia
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.GangliaComponentBuilderFactory.GangliaComponentBuilder ganglia() {
-        return org.apache.camel.builder.component.dsl.GangliaComponentBuilderFactory.ganglia();
-    }
-    /**
      * Geocoder (camel-geocoder)
      * Find geocodes (latitude and longitude) for a given address or the other
      * way round.

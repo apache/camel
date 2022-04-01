@@ -112,7 +112,6 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "freemarker":
             case "ftp":
             case "ftps":
-            case "ganglia":
             case "geocoder":
             case "git":
             case "github":

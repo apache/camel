@@ -2353,28 +2353,6 @@
     "producerOnly": false,
     "lenientProperties": false
   },
-  "GangliaComponentBuilderFactory": {
-    "kind": "component",
-    "name": "ganglia",
-    "title": "Ganglia",
-    "description": "Send metrics to Ganglia monitoring system.",
-    "deprecated": true,
-    "firstVersion": "2.15.0",
-    "label": "monitoring",
-    "javaType": "org.apache.camel.component.ganglia.GangliaComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-ganglia",
-    "version": "3.17.0-SNAPSHOT",
-    "scheme": "ganglia",
-    "extendsScheme": "",
-    "syntax": "ganglia:host:port",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": true,
-    "lenientProperties": false
-  },
   "GeocoderComponentBuilderFactory": {
     "kind": "component",
     "name": "geocoder",

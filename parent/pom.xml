@@ -200,7 +200,6 @@
         <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
         <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
         <gmavenplus-plugin-version>1.13.1</gmavenplus-plugin-version>
-        <gmetric4j-version>1.0.10</gmetric4j-version>
         <google-auth-library-oauth2-http-version>1.4.0</google-auth-library-oauth2-http-version>
         <google-guava-version>20.0</google-guava-version>
         <google-api-client-version>1.32.1</google-api-client-version>
@@ -1421,11 +1420,6 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-ftp</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-ganglia</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
