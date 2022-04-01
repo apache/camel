@@ -36,7 +36,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Send and receive messages from NSQ realtime distributed messaging platform.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "nsq", title = "NSQ", syntax = "nsq:topic", category = { Category.MESSAGING })
+@UriEndpoint(firstVersion = "2.23.0", scheme = "nsq", title = "NSQ", syntax = "nsq:topic", category = { Category.MESSAGING },
+             headersClass = NsqConstants.class)
 public class NsqEndpoint extends DefaultEndpoint {
 
     @UriParam

@@ -16,13 +16,19 @@
  */
 package org.apache.camel.component.nsq;
 
+import org.apache.camel.spi.Metadata;
+
 public interface NsqConstants {
 
     int NSQ_DEFAULT_PORT = 4150;
     int NSQ_DEFAULT_LOOKUP_PORT = 4160;
     int NSQ_DEFAULT_LOOKUP_PORT_HTTP = 4161;
+    @Metadata(label = "consumer", description = "The message Id.", javaType = "byte[]")
     String NSQ_MESSAGE_ID = "CamelNsqMessageId";
+    @Metadata(label = "consumer", description = "The message attempts.", javaType = "int")
     String NSQ_MESSAGE_ATTEMPTS = "CamelNsqMessageAttempts";
+    @Metadata(label = "consumer", description = "The message timestamp.", javaType = "java.util.Date")
     String NSQ_MESSAGE_TIMESTAMP = "CamelNsqMessageTimestamp";
+    @Metadata(label = "producer", description = "The message topic.", javaType = "String")
     String NSQ_MESSAGE_TOPIC = "CamelNsqMessageTopic";
 }
