@@ -93,5 +93,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue_number,
-              body: "${{ env.result }}
+              body: "${{ env.result }}"
             });
