@@ -48,10 +48,10 @@ public class BonitaProducerManualIT extends BonitaIntegrationTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:startCase")
                         .to("bonita:startCase?hostname={{host}}&port={{port}}&processName={{process}}&username={{username}}&password={{password}}");
             }

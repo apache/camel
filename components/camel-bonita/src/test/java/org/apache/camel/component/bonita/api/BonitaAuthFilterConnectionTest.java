@@ -48,7 +48,7 @@ public class BonitaAuthFilterConnectionTest {
     private WireMockServer wireMockServer;
 
     @BeforeEach
-    public void setup() throws IOException {
+    public void setup() {
         wireMockServer = new WireMockServer(WireMockConfiguration.options()/*.port(etc)*/);
         wireMockServer.start();
 
