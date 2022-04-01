@@ -25,5 +25,10 @@ public enum SomeEnumConstants {
               defaultValue = "VAL1", deprecationNote = "my deprecated note", secret = true)
     KEY_FULL,
     @Metadata
-    KEY_EMPTY;
+    KEY_EMPTY,
+    /**
+     * Some description
+     */
+    @Metadata
+    KEY_EMPTY_WITH_JAVA_DOC;
 }

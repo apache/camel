@@ -17,21 +17,18 @@
 package org.apache.camel.maven.packaging.endpoint;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
 
-public final class SomeConstants {
-    @Deprecated
-    @Metadata(description = "key full desc", label = "my label", displayName = "my display name",
-              javaType = "org.apache.camel.maven.packaging.endpoint.SomeEndpoint$MyEnum", required = true,
-              defaultValue = "VAL1", deprecationNote = "my deprecated note", secret = true)
-    public static final String KEY_FULL = "KEY_FULL";
-    @Metadata
-    static final String KEY_EMPTY = "KEY_EMPTY";
+@UriEndpoint(scheme = "some", syntax = "some", title = "some", headersClass = SomeEndpointWithJavadocAsDescription.class)
+public final class SomeEndpointWithJavadocAsDescription {
+
     /**
-     * Some description
+     * Some description about {@link #NO_DESCRIPTION}.
      */
     @Metadata
-    static final String KEY_EMPTY_WITH_JAVA_DOC = "KEY_EMPTY_WITH_JAVA_DOC";
+    static final String NO_DESCRIPTION = "no-description";
 
-    private SomeConstants() {
+    private SomeEndpointWithJavadocAsDescription() {
+
     }
 }

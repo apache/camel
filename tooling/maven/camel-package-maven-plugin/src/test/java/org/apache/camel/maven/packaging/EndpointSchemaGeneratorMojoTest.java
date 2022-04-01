@@ -23,6 +23,7 @@ import org.apache.camel.maven.packaging.endpoint.SomeEndpoint;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstants;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadHeaders;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithFilter;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithJavadocAsDescription;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithoutHeaders;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -60,7 +61,7 @@ class EndpointSchemaGeneratorMojoTest {
     void testCanRetrieveMetadataOfHeaders(Class<?> clazz) {
         mojo.addEndpointHeaders(model, clazz.getAnnotation(UriEndpoint.class), "some");
         List<EndpointHeaderModel> endpointHeaders = model.getEndpointHeaders();
-        assertEquals(2, endpointHeaders.size());
+        assertEquals(3, endpointHeaders.size());
         // Full
         EndpointHeaderModel headerFull = endpointHeaders.get(0);
         assertEquals("header", headerFull.getKind());
@@ -92,6 +93,22 @@ class EndpointSchemaGeneratorMojoTest {
         assertTrue(headerEmpty.getLabel().isEmpty());
         assertNull(headerEmpty.getEnums());
         assertEquals("common", headerEmpty.getGroup());
+        // Empty with Javadoc as description
+        EndpointHeaderModel headerEmptyWithJavadoc = endpointHeaders.get(2);
+        assertEquals("header", headerEmptyWithJavadoc.getKind());
+        assertEquals("KEY_EMPTY_WITH_JAVA_DOC", headerEmptyWithJavadoc.getName());
+        assertEquals("Some description", headerEmptyWithJavadoc.getDescription());
+        assertTrue(headerEmptyWithJavadoc.getDisplayName().isEmpty());
+        assertTrue(headerEmptyWithJavadoc.getJavaType().isEmpty());
+        assertFalse(headerEmptyWithJavadoc.isRequired());
+        assertInstanceOf(String.class, headerEmptyWithJavadoc.getDefaultValue());
+        assertTrue(((String) headerEmptyWithJavadoc.getDefaultValue()).isEmpty());
+        assertFalse(headerEmptyWithJavadoc.isDeprecated());
+        assertTrue(headerEmptyWithJavadoc.getDeprecationNote().isEmpty());
+        assertFalse(headerEmptyWithJavadoc.isSecret());
+        assertTrue(headerEmptyWithJavadoc.getLabel().isEmpty());
+        assertNull(headerEmptyWithJavadoc.getEnums());
+        assertEquals("common", headerEmptyWithJavadoc.getGroup());
     }
 
     @Test
@@ -116,5 +133,17 @@ class EndpointSchemaGeneratorMojoTest {
             assertEquals("header", headerEmpty.getKind());
             assertEquals(String.format("keep-%d", i + 1), headerEmpty.getName());
         }
+    }
+
+    @Test
+    void testEndpointWithCleanedJavadocAsDescription() {
+        mojo.addEndpointHeaders(model, SomeEndpointWithJavadocAsDescription.class.getAnnotation(UriEndpoint.class), "some");
+        mojo.enhanceComponentModel(model, null, "", "");
+        List<EndpointHeaderModel> endpointHeaders = model.getEndpointHeaders();
+        assertEquals(1, endpointHeaders.size());
+        EndpointHeaderModel headerEmpty = endpointHeaders.get(0);
+        assertEquals("header", headerEmpty.getKind());
+        assertEquals("no-description", headerEmpty.getName());
+        assertEquals("Some description about NO_DESCRIPTION.", headerEmpty.getDescription());
     }
 }
