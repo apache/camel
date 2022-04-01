@@ -28,7 +28,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.component.netty.NettyConfiguration;
-import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyProducer;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -91,11 +90,11 @@ public class NettyHttpProducer extends NettyProducer {
 
         final NettyHttpBinding nettyHttpBinding = endpoint.getNettyHttpBinding();
         final HttpRequest request = nettyHttpBinding.toNettyRequest(exchange.getIn(), u.toString(), getConfiguration());
-        exchange.getIn().setHeader(Exchange.HTTP_URL, uri);
+        exchange.getIn().setHeader(NettyHttpConstants.HTTP_URL, uri);
         // Need to check if we need to close the connection or not
         if (!HttpUtil.isKeepAlive(request)) {
             // just want to make sure we close the channel if the keepAlive is not true
-            exchange.setProperty(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
+            exchange.setProperty(NettyHttpConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
         }
         if (getConfiguration().isBridgeEndpoint()) {
             // Need to remove the Host key as it should be not used when bridging/proxying
@@ -155,7 +154,7 @@ public class NettyHttpProducer extends NettyProducer {
                             });
 
                             // the actual url is stored on the IN message in the getRequestBody method as its accessed on-demand
-                            String actualUrl = exchange.getIn().getHeader(Exchange.HTTP_URL, String.class);
+                            String actualUrl = exchange.getIn().getHeader(NettyHttpConstants.HTTP_URL, String.class);
                             int code = response.status() != null ? response.status().code() : -1;
                             LOG.debug("Http responseCode: {}", code);
 

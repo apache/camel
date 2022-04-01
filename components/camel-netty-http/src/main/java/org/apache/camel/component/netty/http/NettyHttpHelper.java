@@ -104,11 +104,11 @@ public final class NettyHttpHelper {
      */
     public static HttpMethod createMethod(Message message, boolean hasPayload) {
         // use header first
-        HttpMethod m = message.getHeader(Exchange.HTTP_METHOD, HttpMethod.class);
+        HttpMethod m = message.getHeader(NettyHttpConstants.HTTP_METHOD, HttpMethod.class);
         if (m != null) {
             return m;
         }
-        String name = message.getHeader(Exchange.HTTP_METHOD, String.class);
+        String name = message.getHeader(NettyHttpConstants.HTTP_METHOD, String.class);
         if (name != null) {
             // must be in upper case
             name = name.toUpperCase();
@@ -140,7 +140,7 @@ public final class NettyHttpHelper {
         }
 
         if (transferException) {
-            String contentType = response.headers().get(Exchange.CONTENT_TYPE);
+            String contentType = response.headers().get(NettyHttpConstants.CONTENT_TYPE);
             if (NettyHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
                 // if the response was a serialized exception then use that
                 InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, response);
@@ -201,7 +201,7 @@ public final class NettyHttpHelper {
         }
 
         // append HTTP_PATH to HTTP_URI if it is provided in the header
-        String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
+        String path = exchange.getIn().getHeader(NettyHttpConstants.HTTP_PATH, String.class);
         // NOW the HTTP_PATH is just related path, we don't need to trim it
         if (path != null && !path.isEmpty()) {
             if (path.startsWith("/")) {
@@ -247,10 +247,10 @@ public final class NettyHttpHelper {
         // is a query string provided in the endpoint URI or in a header
         // (header overrules endpoint, raw query header overrules query header)
         if (queryString == null) {
-            queryString = exchange.getIn().getHeader(Exchange.HTTP_RAW_QUERY, String.class);
+            queryString = exchange.getIn().getHeader(NettyHttpConstants.HTTP_RAW_QUERY, String.class);
         }
         if (queryString == null) {
-            queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+            queryString = exchange.getIn().getHeader(NettyHttpConstants.HTTP_QUERY, String.class);
         }
         if (queryString == null) {
             // use raw as we encode just below

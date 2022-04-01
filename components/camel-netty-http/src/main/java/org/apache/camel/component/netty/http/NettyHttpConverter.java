@@ -86,7 +86,7 @@ public final class NettyHttpConverter {
 
     @Converter
     public static String toString(FullHttpResponse response, Exchange exchange) {
-        String contentType = response.headers().get(Exchange.CONTENT_TYPE);
+        String contentType = response.headers().get(NettyHttpConstants.CONTENT_TYPE);
         String charset = NettyHttpHelper.getCharsetFromContentType(contentType);
         if (charset == null && exchange != null) {
             charset = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
