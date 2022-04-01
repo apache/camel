@@ -27,6 +27,7 @@ runs:
       run: ${{ github.action_path }}/quick-test.sh ${{ inputs.start-commit }} ${{ inputs.end-commit }}
       shell: bash
     - name: Save PR number
+      if: always()
       env:
         PR_NUMBER: ${{ github.event.number }}
       shell: bash
