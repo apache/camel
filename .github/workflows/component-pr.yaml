@@ -52,7 +52,7 @@ jobs:
         uses: actions/github-script@v3.1.0
         if: |
           github.event_name == 'workflow_run'
-        with:the 
+        with:
 # Secure download based on:
 # - https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
 # - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run
