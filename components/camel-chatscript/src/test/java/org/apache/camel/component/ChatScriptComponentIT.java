@@ -45,9 +45,9 @@ public class ChatScriptComponentIT extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws JsonProcessingException {
+            public void configure() {
                 String g = "CS" + Math.random();
                 ChatScriptMessage rqMsg = new ChatScriptMessage(g, "", "");
                 ChatScriptMessage rq2Msg = new ChatScriptMessage(g, "", "Hello");
