@@ -97,7 +97,7 @@ function main() {
     exit 0
   else
     if [[ ${total} -gt 10 ]]; then
-      echo "result=:no_entry_sign: There are too many components to be tested in this PR or the code needs a rebase: (${total} likely to be tested)"  > "${logDir}/results.txt"
+      echo "result=:no_entry_sign: There are too many components to be tested in this PR, components were removed or the code needs a rebase: (${total} likely to be tested)"  > "${logDir}/results.txt"
       exit 0
     fi
   fi
