@@ -27,7 +27,7 @@
     "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
   },
   "headers": {
-    "CamelFlatpackCounter": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The current row index. For `splitRows=false` the counter is the total\nnumber of rows." }
+    "CamelFlatpackCounter": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The current row index. For splitRows=false the counter is the total number of rows." }
   },
   "properties": {
     "type": { "kind": "path", "displayName": "Type", "group": "common", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.flatpack.FlatpackType", "enum": [ "fixed", "delim" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "defaultValue": "delim", "description": "Whether to use fixed or delimiter" },

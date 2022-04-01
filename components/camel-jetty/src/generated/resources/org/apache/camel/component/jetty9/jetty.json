@@ -59,7 +59,7 @@
   },
   "headers": {
     "CamelServletContextPath": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The servlet context path used" },
-    "CamelHttpPath": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Request URI's path, the header will be used to build the request URI\nwith the HTTP_URI." }
+    "CamelHttpPath": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Request URI's path, the header will be used to build the request URI with the HTTP_URI." }
   },
   "properties": {
     "httpUri": { "kind": "path", "displayName": "Http Uri", "group": "common", "label": "common", "required": true, "type": "string", "javaType": "java.net.URI", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The url of the HTTP endpoint to call." },

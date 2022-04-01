@@ -48,6 +48,10 @@
     "sessionName": { "kind": "property", "displayName": "Session Name", "group": "client", "label": "client", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.milo.client.MiloClientConfiguration", "configurationField": "configuration", "description": "Session name" },
     "sessionTimeout": { "kind": "property", "displayName": "Session Timeout", "group": "client", "label": "client", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.milo.client.MiloClientConfiguration", "configurationField": "configuration", "description": "Session timeout in milliseconds" }
   },
+  "headers": {
+    "CamelMiloNodeIds": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "List", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The node ids." },
+    "await": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The await setting for writes." }
+  },
   "properties": {
     "endpointUri": { "kind": "path", "displayName": "Endpoint Uri", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The OPC UA server endpoint" },
     "clientId": { "kind": "parameter", "displayName": "Client Id", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.milo.client.MiloClientConfiguration", "configurationField": "configuration", "description": "A virtual client id to force the creation of a new connection instance" },

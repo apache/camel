@@ -31,8 +31,8 @@
     "elSqlConfig": { "kind": "property", "displayName": "El Sql Config", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "com.opengamma.elsql.ElSqlConfig", "deprecated": false, "autowired": false, "secret": false, "description": "To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead." }
   },
   "headers": {
-    "CamelSqlUpdateCount": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The number of rows updated for `update` operations, returned as an\n`Integer` object." },
-    "CamelSqlRowCount": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The number of rows returned for `select` operations, returned as an\n`Integer` object." }
+    "CamelSqlUpdateCount": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The number of rows updated for update operations, returned as an Integer object." },
+    "CamelSqlRowCount": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The number of rows returned for select operations, returned as an Integer object." }
   },
   "properties": {
     "elsqlName": { "kind": "path", "displayName": "Elsql Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the elsql to use (is NAMED in the elsql file)" },
