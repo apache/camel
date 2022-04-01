@@ -25,6 +25,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "AccessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "awsvaultconfiguration":
         case "AwsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
+        case "azurevaultconfiguration":
+        case "AzureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
         case "defaultcredentialsprovider":
         case "DefaultCredentialsProvider": target.setDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "gcpvaultconfiguration":
@@ -44,6 +46,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "AccessKey": return java.lang.String.class;
         case "awsvaultconfiguration":
         case "AwsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
+        case "azurevaultconfiguration":
+        case "AzureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
         case "defaultcredentialsprovider":
         case "DefaultCredentialsProvider": return boolean.class;
         case "gcpvaultconfiguration":
@@ -64,6 +68,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "AccessKey": return target.getAccessKey();
         case "awsvaultconfiguration":
         case "AwsVaultConfiguration": return target.getAwsVaultConfiguration();
+        case "azurevaultconfiguration":
+        case "AzureVaultConfiguration": return target.getAzureVaultConfiguration();
         case "defaultcredentialsprovider":
         case "DefaultCredentialsProvider": return target.isDefaultCredentialsProvider();
         case "gcpvaultconfiguration":

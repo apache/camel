@@ -17,16 +17,18 @@
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.vault.VaultConfiguration;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.vault.AzureVaultConfiguration;
 
-public class VaultConfigurationProperties extends VaultConfiguration implements BootstrapCloseable {
+/**
+ * Configuration for access to Azure Key Vault Secret.
+ */
+@Configurer(bootstrap = true)
+public class AzureVaultConfigurationProperties extends AzureVaultConfiguration implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;
-    private AwsVaultConfigurationProperties aws;
-    private GcpVaultConfigurationProperties gcp;
-    private AzureVaultConfigurationProperties azure;
 
-    public VaultConfigurationProperties(MainConfigurationProperties parent) {
+    public AzureVaultConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
     }
 
@@ -37,15 +39,6 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
     @Override
     public void close() {
         parent = null;
-        if (aws != null) {
-            aws.close();
-        }
-        if (gcp != null) {
-            gcp.close();
-        }
-        if (azure != null) {
-            azure.close();
-        }
     }
 
     // getter and setters
@@ -56,27 +49,36 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
     // fluent builders
     // --------------------------------------------------------------
 
-    @Override
-    public AwsVaultConfigurationProperties aws() {
-        if (aws == null) {
-            aws = new AwsVaultConfigurationProperties(parent);
-        }
-        return aws;
+    /**
+     * The Vault Name
+     */
+    public AzureVaultConfigurationProperties withVaultName(String vaultName) {
+        setVaultName(vaultName);
+        return this;
     }
 
-    @Override
-    public GcpVaultConfigurationProperties gcp() {
-        if (gcp == null) {
-            gcp = new GcpVaultConfigurationProperties(parent);
-        }
-        return gcp;
+    /**
+     * The Azure Key Vault Client ID
+     */
+    public AzureVaultConfigurationProperties withClientId(String clientId) {
+        setClientId(clientId);
+        return this;
     }
 
-    @Override
-    public AzureVaultConfigurationProperties azure() {
-        if (azure == null) {
-            azure = new AzureVaultConfigurationProperties(parent);
-        }
-        return azure;
+    /**
+     * The Azure Key Vault Client Secret
+     */
+    public AzureVaultConfigurationProperties withClientSecret(String clientSecret) {
+        setClientSecret(clientSecret);
+        return this;
     }
+
+    /**
+     * The Azure Key Vault Tenant Id
+     */
+    public AzureVaultConfigurationProperties withTenantId(String tenantId) {
+        setTenantId(tenantId);
+        return this;
+    }
+
 }
