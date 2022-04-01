@@ -46,7 +46,7 @@ public class SMSMessageTest {
     private String validNumber;
 
     @BeforeEach
-    public void beforeTest() throws Exception {
+    public void beforeTest() {
 
         validNumber = pnu.format(pnu.getExampleNumber("ES"), PhoneNumberFormat.E164);
     }
