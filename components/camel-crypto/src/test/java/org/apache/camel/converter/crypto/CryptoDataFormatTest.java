@@ -265,7 +265,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 // END SNIPPET: hmac-sha256-algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: key-in-header
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES", null);
                 /**
@@ -279,7 +279,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                         .to("mock:encrypted");
 
                 from("direct:key-in-header-decrypt").unmarshal(cryptoFormat).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getIn().getHeaders().remove(CryptoDataFormat.KEY);
                         exchange.getMessage().copyFrom(exchange.getIn());
                     }

@@ -300,7 +300,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     }
 
     @Test
-    void testEncryptSignWithoutCompressedDataPacket() throws Exception {
+    void testEncryptSignWithoutCompressedDataPacket() {
         assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:encrypt-sign-without-compressed-data-packet"));
         //        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         //
