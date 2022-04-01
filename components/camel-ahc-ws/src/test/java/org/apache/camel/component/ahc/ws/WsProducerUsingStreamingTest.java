@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.ahc.ws;
 
-import java.io.UnsupportedEncodingException;
-
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ServerConnector;
 
