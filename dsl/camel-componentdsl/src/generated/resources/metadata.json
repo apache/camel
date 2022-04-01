@@ -972,28 +972,6 @@
     "producerOnly": true,
     "lenientProperties": false
   },
-  "BeanstalkComponentBuilderFactory": {
-    "kind": "component",
-    "name": "beanstalk",
-    "title": "Beanstalk",
-    "description": "Retrieve and post-process Beanstalk jobs.",
-    "deprecated": true,
-    "firstVersion": "2.15.0",
-    "label": "messaging",
-    "javaType": "org.apache.camel.component.beanstalk.BeanstalkComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-beanstalk",
-    "version": "3.17.0-SNAPSHOT",
-    "scheme": "beanstalk",
-    "extendsScheme": "",
-    "syntax": "beanstalk:connectionSettings",
-    "async": true,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "BonitaComponentBuilderFactory": {
     "kind": "component",
     "name": "bonita",
