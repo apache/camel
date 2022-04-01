@@ -34,7 +34,7 @@ public class SpringZipkinSimpleRouteTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testZipkinRoute() throws Exception {
+    public void testZipkinRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
 
         for (int i = 0; i < 5; i++) {

@@ -53,21 +53,21 @@ public class ZipkinMDCScopeDecoratorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testZipkinRoute() throws Exception {
+    public void testZipkinRoute() {
         template.requestBody("direct:start", "Camel say hello Cat");
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("seda:cat");
 
                 from("seda:cat").routeId("cat")
                         .setBody().constant("Cat says hello Dog")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 assertNotNull(MDC.get("traceId"));
                                 assertNotNull(MDC.get("spanId"));
                                 assertNotNull(MDC.get("parentId"));

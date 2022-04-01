@@ -50,7 +50,7 @@ public class ZipkinSimpleFallbackRouteTest extends CamelTestSupport {
     }
 
     @Test
-    public void testZipkinRoute() throws Exception {
+    public void testZipkinRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
 
         for (int i = 0; i < 5; i++) {
@@ -61,10 +61,10 @@ public class ZipkinSimpleFallbackRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:dude").routeId("dude")
                         .log("routing at ${routeId}")
                         .delay(simple("${random(1000,2000)}"));
