@@ -23,6 +23,7 @@ testDate=$(date '+%Y-%m-%d-%H%M%S')
 logDir=${basedir}/automated-build-log
 testHost=$(hostname)
 
+
 function notifySuccess() {
   local component=$1
   local total=$2
@@ -102,10 +103,11 @@ function main() {
     componentTest "${component}" "${total}" "${current}"
   done
 
+  # This is the comment that is displayed on the PR
   if [[ ${failures} -eq 0 ]]; then
-    echo "result=:heavy_check_mark: Finished verification: ${total} verified / ${failures} failed" > "${logDir}/results.txt"
+    echo "result=:heavy_check_mark: Finished component verification: ${failures} component(s) test failed out of **${total} component(s) tested**" > "${logDir}/results.txt"
   else
-    echo "result=:x: Finished verification: ${total} verified / ${failures} failed" > "${logDir}/results.txt"
+    echo "result=:x: Finished component verification: **${failures} component(s) test failed** out of ${total} component(s) tested" > "${logDir}/results.txt"
   fi
 
   exit "${failures}"
