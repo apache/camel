@@ -5,10 +5,10 @@
     "title": "Debezium Oracle Connector",
     "description": "Capture changes from a Oracle database.",
     "deprecated": false,
-    "firstVersion": "3.0.0",
+    "firstVersion": "3.17.0",
     "label": "database,sql",
     "javaType": "org.apache.camel.component.debezium.DebeziumOracleComponent",
-    "supportLevel": "Stable",
+    "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-oracle",
     "version": "3.17.0-SNAPSHOT",
@@ -126,10 +126,10 @@
     "unavailableValuePlaceholder": { "kind": "property", "displayName": "Unavailable Value Placeholder", "group": "oracle", "label": "consumer,oracle", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "__debezium_unavailable_value", "configurationClass": "org.apache.camel.component.debezium.configuration.OracleConnectorEmbeddedDebeziumConfiguration", "configurationField": "configuration", "description": "Specify the constant that will be provided by Debezium to indicate that the original value is unavailable and not provided by the database." }
   },
   "headers": {
-    "CamelDebeziumSourceMetadata": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "Map<String, Object>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The metadata about the source event, for example `table` name, database `name`, log position, etc, please refer to the Debezium documentation for more info." },
-    "CamelDebeziumIdentifier": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The identifier of the connector, normally is this format \"+++{server-name}.{database-name}.{table-name}+++\"." },
+    "CamelDebeziumSourceMetadata": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "Map<String, Object>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The metadata about the source event, for example table name, database name, log position, etc, please refer to the Debezium documentation for more info." },
+    "CamelDebeziumIdentifier": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The identifier of the connector, normally is this format {server-name}.{database-name}.{table-name}." },
     "CamelDebeziumKey": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "Struct", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The key of the event, normally is the table Primary Key." },
-    "CamelDebeziumOperation": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "If presents, the type of event operation. Values for the connector are `c` for create (or insert), `u` for update, `d` for delete or `r` for read (in the case of a initial sync) or in case of a snapshot event." },
+    "CamelDebeziumOperation": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "If presents, the type of event operation. Values for the connector are c for create (or insert), u for update, d for delete or r for read (in the case of a initial sync) or in case of a snapshot event." },
     "CamelDebeziumTimestamp": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "If presents, the time (using the system clock in the JVM) at which the connector processed the event." },
     "CamelDebeziumBefore": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "Struct", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "If presents, contains the state of the row before the event occurred." },
     "CamelDebeziumDdlSQL": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "If presents, the ddl sql text of the event." }
