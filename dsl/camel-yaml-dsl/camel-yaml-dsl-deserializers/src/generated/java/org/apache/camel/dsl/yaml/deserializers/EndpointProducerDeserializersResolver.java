@@ -285,7 +285,6 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "solr":
             case "solrCloud":
             case "solrs":
-            case "soroush":
             case "spark":
             case "splunk":
             case "splunk-hec":

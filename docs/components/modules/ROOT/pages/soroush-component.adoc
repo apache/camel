@@ -1,1 +1,0 @@
-../../../../../components/camel-soroush/src/main/docs/soroush-component.adoc

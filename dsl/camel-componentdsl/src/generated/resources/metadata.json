@@ -6571,28 +6571,6 @@
     "producerOnly": true,
     "lenientProperties": false
   },
-  "SoroushComponentBuilderFactory": {
-    "kind": "component",
-    "name": "soroush",
-    "title": "Soroush",
-    "description": "Send and receive messages as a Soroush chat bot.",
-    "deprecated": true,
-    "firstVersion": "3.0",
-    "label": "chat",
-    "javaType": "org.apache.camel.component.soroushbot.component.SoroushBotComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-soroush",
-    "version": "3.17.0-SNAPSHOT",
-    "scheme": "soroush",
-    "extendsScheme": "",
-    "syntax": "soroush:action",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "SparkComponentBuilderFactory": {
     "kind": "component",
     "name": "spark",

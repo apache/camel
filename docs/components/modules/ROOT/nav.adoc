@@ -296,7 +296,6 @@
 ** xref:smpp-component.adoc[SMPP]
 ** xref:snmp-component.adoc[SNMP]
 ** xref:solr-component.adoc[Solr]
-** xref:soroush-component.adoc[Soroush]
 ** xref:spark-component.adoc[Spark]
 ** xref:splunk-component.adoc[Splunk]
 ** xref:splunk-hec-component.adoc[Splunk HEC]

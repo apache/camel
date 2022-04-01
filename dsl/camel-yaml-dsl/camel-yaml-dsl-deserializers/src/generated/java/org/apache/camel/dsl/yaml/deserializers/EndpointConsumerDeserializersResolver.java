@@ -189,7 +189,6 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "smtp":
             case "smtps":
             case "snmp":
-            case "soroush":
             case "splunk":
             case "spring-event":
             case "spring-integration":
