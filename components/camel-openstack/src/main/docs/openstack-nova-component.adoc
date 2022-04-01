@@ -53,7 +53,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Usage
 
@@ -73,29 +75,6 @@ You can use following settings for each subsystem:
 |`getAll` | Get all flavors.
 
 |`delete` | Delete the flavor.
-|=========================================================================
-
-=== Message headers evaluated by the Flavor producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`ID` | `String` | ID of the flavor.
-
-|`name` |`String` |The flavor name.
-
-|`VCPU` |`Integer` |The number of flavor VCPU.
-
-|`ram` |`Integer` |Size of RAM.
-
-|`disk` |`Integer` |Size of disk.
-
-|`swap` |`Integer` |Size of swap.
-
-|`rxtxFactor` |`Integer` |Rxtx Factor.
 |=========================================================================
 
 If you need more precise flavor settings you can create new object of the type *org.openstack4j.model.compute.Flavor* and send in the message body.
@@ -120,31 +99,6 @@ If you need more precise flavor settings you can create new object of the type *
 |`action` | Perform an action on the server.
 |=========================================================================
 
-=== Message headers evaluated by the Server producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`ID` | `String` | ID of the server.
-
-|`name` |`String` |The server name.
-
-|`ImageId` |`String` | The Image ID.
-
-|`FlavorId` |`String` |The ID of flavor which will be used.
-
-|`KeypairName` |`String` | The Keypair name.
-
-|`NetworkId` |`String` | The network ID.
-
-|`AdminPassword` |`String` | Admin password of the new server.
-
-|`action` | `org.openstack4j.model.compute.Action` | An action to perform.
-|=========================================================================
-
 If you need more precise server settings you can create new object of the type *org.openstack4j.model.compute.ServerCreate* and send in the message body.
 
 == keypairs
@@ -163,19 +117,5 @@ If you need more precise server settings you can create new object of the type *
 |`delete` | Delete the keypair.
 
 |=========================================================================
-
-=== Message headers evaluated by the Keypair producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`name` |`String` |The keypair name.
-
-|=========================================================================
-
-
 
 include::spring-boot:partial$starter.adoc[]
