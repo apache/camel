@@ -84,8 +84,11 @@ import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Javadoc;
 import org.jboss.forge.roaster.model.JavaDoc;
 import org.jboss.forge.roaster.model.JavaDocCapable;
+import org.jboss.forge.roaster.model.source.FieldHolderSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaEnumSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
@@ -118,7 +121,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     protected Map<String, String> resources = new HashMap<>();
     protected List<Path> sourceRoots;
     protected Map<String, String> sources = new HashMap<>();
-    protected Map<String, JavaClassSource> parsed = new HashMap<>();
+    protected Map<String, JavaSource<?>> parsed = new HashMap<>();
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -363,7 +366,11 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             return false;
         }
         final EndpointHeaderModel header = new EndpointHeaderModel();
-        header.setDescription(metadata.description().trim());
+        String description = metadata.description().trim();
+        if (description.isEmpty()) {
+            description = getHeaderFieldJavadoc(field);
+        }
+        header.setDescription(description);
         header.setKind("header");
         header.setDisplayName(metadata.displayName());
         header.setJavaType(metadata.javaType());
@@ -391,6 +398,42 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     field.getDeclaringClass().getName()));
         }
         return true;
+    }
+
+    /**
+     * @param  headerField the field for which we want to extract the related Javadoc.
+     * @return             the Javadoc of the header field if any. An empty string otherwise.
+     */
+    private String getHeaderFieldJavadoc(Field headerField) {
+        JavaSource<?> source;
+        final String className = headerField.getDeclaringClass().getName();
+        try {
+            source = javaSource(className, JavaSource.class);
+            if (source == null) {
+                getLog().debug(String.format("The source of the class %s could not be found", className));
+                return "";
+            }
+        } catch (Exception e) {
+            getLog().debug(
+                    String.format("An error occurred while loading the source of the class %s could not be found", className),
+                    e);
+            return "";
+        }
+        JavaDocCapable<?> member = null;
+        if (source instanceof JavaEnumSource) {
+            member = ((JavaEnumSource) source).getEnumConstant(headerField.getName());
+        } else if (source instanceof FieldHolderSource) {
+            member = ((FieldHolderSource<?>) source).getField(headerField.getName());
+        } else {
+            getLog().debug(String.format("The header field cannot be retrieved from a source of type %s", source.getName()));
+        }
+        if (member != null) {
+            String doc = getJavaDocText(loadJavaSource(className), member);
+            if (!Strings.isNullOrEmpty(doc)) {
+                return doc;
+            }
+        }
+        return "";
     }
 
     private String getExcludedEnd(Metadata classElement) {
@@ -444,10 +487,11 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         return data;
     }
 
-    private void enhanceComponentModel(
+    void enhanceComponentModel(
             ComponentModel componentModel, ComponentModel parentData, String excludedEndpointProperties,
             String excludedComponentProperties) {
         componentModel.getComponentOptions().removeIf(option -> filterOutOption(componentModel, option));
+        componentModel.getEndpointHeaders().forEach(option -> fixDoc(option, null));
         componentModel.getComponentOptions()
                 .forEach(option -> fixDoc(option, parentData != null ? parentData.getComponentOptions() : null));
         componentModel.getComponentOptions().sort(EndpointHelper.createGroupAndLabelComparator());
@@ -455,7 +499,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         componentModel.getEndpointOptions()
                 .forEach(option -> fixDoc(option, parentData != null ? parentData.getEndpointOptions() : null));
         componentModel.getEndpointOptions().sort(EndpointHelper.createOverallComparator(componentModel.getSyntax()));
-        // merge with parent, removing excluded and overriden properties
+        // merge with parent, remove excluded and override properties
         if (parentData != null) {
             Set<String> componentOptionNames
                     = componentModel.getComponentOptions().stream().map(BaseOptionModel::getName).collect(Collectors.toSet());
@@ -1505,7 +1549,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         JavaClassSource source;
         try {
-            source = javaClassSource(classElement.getName());
+            source = javaSource(classElement.getName(), JavaClassSource.class);
             if (source == null) {
                 return "";
             }
@@ -1595,12 +1639,12 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private String getDocComment(Class<?> classElement) {
-        JavaClassSource source = javaClassSource(classElement.getName());
+        JavaClassSource source = javaSource(classElement.getName(), JavaClassSource.class);
         return getJavaDocText(loadJavaSource(classElement.getName()), source);
     }
 
-    private JavaClassSource javaClassSource(String className) {
-        return parsed.computeIfAbsent(className, this::doParseJavaClassSource);
+    private <T extends JavaSource<?>> T javaSource(String className, Class<T> targetType) {
+        return targetType.cast(parsed.computeIfAbsent(className, this::doParseJavaSource));
     }
 
     private List<Path> getSourceRoots() {
@@ -1612,13 +1656,13 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         return sourceRoots;
     }
 
-    private JavaClassSource doParseJavaClassSource(String className) {
+    private JavaSource<?> doParseJavaSource(String className) {
         try {
             String source = loadJavaSource(className);
-            if (source != null) {
-                return (JavaClassSource) Roaster.parse(source);
-            } else {
+            if (source == null) {
                 return null;
+            } else {
+                return (JavaSource<?>) Roaster.parse(source);
             }
         } catch (Exception e) {
             throw new RuntimeException("Unable to parse java class " + className, e);
