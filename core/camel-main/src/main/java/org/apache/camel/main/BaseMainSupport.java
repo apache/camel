@@ -1209,6 +1209,9 @@ public abstract class BaseMainSupport extends BaseService {
             if ("gcp".equalsIgnoreCase(name)) {
                 target = target.gcp();
             }
+            if ("azure".equalsIgnoreCase(name)) {
+                target = target.azure();
+            }
             // configure all the properties on the vault at once (to ensure they are configured in right order)
             OrderedLocationProperties config = MainHelper.extractProperties(properties, name + ".");
             setPropertiesOnTarget(camelContext, target, config, "camel.vault." + name + ".", failIfNotSet, true,

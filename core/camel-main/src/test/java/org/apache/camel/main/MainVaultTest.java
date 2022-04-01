@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.vault.AwsVaultConfiguration;
+import org.apache.camel.vault.AzureVaultConfiguration;
 import org.apache.camel.vault.GcpVaultConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -117,6 +118,54 @@ public class MainVaultTest {
         Assertions.assertEquals("file:////myKey", cfg.getServiceAccountKey());
         Assertions.assertEquals("gcp-project", cfg.getProjectId());
         Assertions.assertEquals(false, cfg.isUseDefaultInstance());
+        main.stop();
+    }
+
+    @Test
+    public void testMainAzure() throws Exception {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.vault.azure.vaultName", "vault");
+        main.addInitialProperty("camel.vault.azure.clientId", "id1");
+        main.addInitialProperty("camel.vault.azure.clientSecret", "secret1");
+        main.addInitialProperty("camel.vault.azure.tenantId", "tenant1");
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        AzureVaultConfiguration cfg = context.getVaultConfiguration().azure();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("vault", cfg.getVaultName());
+        Assertions.assertEquals("id1", cfg.getClientId());
+        Assertions.assertEquals("secret1", cfg.getClientSecret());
+        Assertions.assertEquals("tenant1", cfg.getTenantId());
+        main.stop();
+    }
+
+    @Test
+    public void testMainAzureFluent() throws Exception {
+        Main main = new Main();
+        main.configure().vault().azure()
+                .withVaultName("vault")
+                .withClientId("id1")
+                .withClientSecret("secret1")
+                .withTenantId("tenant1")
+                .end();
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        AzureVaultConfiguration cfg = context.getVaultConfiguration().azure();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("vault", cfg.getVaultName());
+        Assertions.assertEquals("id1", cfg.getClientId());
+        Assertions.assertEquals("secret1", cfg.getClientSecret());
+        Assertions.assertEquals("tenant1", cfg.getTenantId());
         main.stop();
     }
 
