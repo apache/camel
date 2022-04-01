@@ -100,7 +100,6 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "dynamic-router":
             case "ehcache":
             case "elasticsearch-rest":
-            case "elsql":
             case "etcd-keys":
             case "etcd-stats":
             case "exec":

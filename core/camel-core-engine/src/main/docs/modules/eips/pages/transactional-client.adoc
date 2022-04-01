@@ -26,7 +26,6 @@ In Camel transactions are supported by JMS messaging components:
 
 And all the SQL database components, such as:
 
-- xref:ROOT:elsql-component.adoc[ElSQL]
 - xref:ROOT:jdbc-component.adoc[JDBC]
 - xref:ROOT:jpa-component.adoc[JPA]
 - xref:ROOT:sql-component.adoc[SQL]
