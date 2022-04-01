@@ -628,20 +628,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.BeanValidatorComponentBuilderFactory.beanValidator();
     }
     /**
-     * Beanstalk (camel-beanstalk)
-     * Retrieve and post-process Beanstalk jobs.
-     * 
-     * Category: messaging
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-beanstalk
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.BeanstalkComponentBuilderFactory.BeanstalkComponentBuilder beanstalk() {
-        return org.apache.camel.builder.component.dsl.BeanstalkComponentBuilderFactory.beanstalk();
-    }
-    /**
      * Bonita (camel-bonita)
      * Communicate with a remote Bonita BPM process engine.
      * 

@@ -1970,51 +1970,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.BeanEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Beanstalk (camel-beanstalk)
-     * Retrieve and post-process Beanstalk jobs.
-     * 
-     * Category: messaging
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-beanstalk
-     * 
-     * Syntax: <code>beanstalk:connectionSettings</code>
-     * 
-     * Path parameter: connectionSettings
-     * Connection settings host:port/tube
-     * 
-     * @param path connectionSettings
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.BeanstalkEndpointBuilder beanstalk(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.endpointBuilder("beanstalk", path);
-    }
-    /**
-     * Beanstalk (camel-beanstalk)
-     * Retrieve and post-process Beanstalk jobs.
-     * 
-     * Category: messaging
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-beanstalk
-     * 
-     * Syntax: <code>beanstalk:connectionSettings</code>
-     * 
-     * Path parameter: connectionSettings
-     * Connection settings host:port/tube
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path connectionSettings
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.BeanstalkEndpointBuilder beanstalk(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Bean Validator (camel-bean-validator)
      * Validate the message body using the Java Bean Validation API.
      * 
