@@ -63,14 +63,14 @@ public class CometdProducerConsumerInOutInteractiveMain {
                 component.setSslKeystore(keyStoreUrl.getPath());
 
                 from(URI).setExchangePattern(ExchangePattern.InOut).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Message out = new DefaultMessage(exchange.getContext());
                         out.setBody("reply: " + exchange.getIn().getBody());
                         exchange.setOut(out);
                     }
                 });
                 from(URI2).setExchangePattern(ExchangePattern.InOut).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Message out = new DefaultMessage(exchange.getContext());
                         out.setBody("reply: " + exchange.getIn().getBody());
                         exchange.setOut(out);
