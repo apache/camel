@@ -68,15 +68,15 @@ public class ZipkinAutoConfigureHttp extends CamelTestSupport {
     }
 
     @Test
-    public void testZipkinRoute() throws Exception {
+    public void testZipkinRoute() {
         template.requestBody("direct:start", "Hello Cat");
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("seda:cat");
 
                 from("seda:cat").routeId("cat")
