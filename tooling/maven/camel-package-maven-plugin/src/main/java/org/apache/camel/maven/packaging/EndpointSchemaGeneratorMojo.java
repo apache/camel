@@ -320,21 +320,26 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         // A header class has been defined
         boolean foundHeader = false;
         final boolean isEnum = headersClass.isEnum();
-        for (Field field : headersClass.getDeclaredFields()) {
-            if ((isEnum || isStatic(field.getModifiers()) && field.getType() == String.class)
-                    && field.isAnnotationPresent(Metadata.class)) {
-                getLog().debug(
-                        String.format("Trying to add the constant %s in the class %s as header.", field.getName(),
-                                headersClass.getName()));
-                if (addEndpointHeader(componentModel, field, scheme)) {
-                    foundHeader = true;
-                    continue;
+        Class<?> currentClass = headersClass;
+        do {
+            for (Field field : currentClass.getDeclaredFields()) {
+                if ((isEnum || isStatic(field.getModifiers()) && field.getType() == String.class)
+                        && field.isAnnotationPresent(Metadata.class)) {
+                    getLog().debug(
+                            String.format("Trying to add the constant %s in the class %s as header.", field.getName(),
+                                    currentClass.getName()));
+                    if (addEndpointHeader(componentModel, field, scheme)) {
+                        foundHeader = true;
+                        continue;
+                    }
                 }
+                getLog().debug(
+                        String.format(
+                                "The field %s of the class %s is not considered as a name of a header, thus it is skipped",
+                                field.getName(), currentClass.getName()));
             }
-            getLog().debug(
-                    String.format("The field %s of the class %s is not considered as a name of a header, thus it is skipped",
-                            field.getName(), headersClass.getName()));
-        }
+            currentClass = currentClass.getSuperclass();
+        } while (!currentClass.equals(Object.class));
         if (!foundHeader) {
             getLog().debug(String.format("No headers have been detected in the headers class %s", headersClass.getName()));
         }
