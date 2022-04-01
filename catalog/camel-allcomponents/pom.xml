@@ -887,10 +887,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-leveldb-legacy</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-leveldb</artifactId>
 		</dependency>
 		<dependency>
