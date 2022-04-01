@@ -36,7 +36,7 @@ public class BonitaAPITest {
     }
 
     @Test
-    public void testStartCaseEmptyProcessDefinitionId() throws Exception {
+    public void testStartCaseEmptyProcessDefinitionId() {
         BonitaAPI bonitaApi = BonitaAPIBuilder
                 .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
 
@@ -47,7 +47,7 @@ public class BonitaAPITest {
     }
 
     @Test
-    public void testStartCaseNUllContractInput() throws Exception {
+    public void testStartCaseNUllContractInput() {
         BonitaAPI bonitaApi = BonitaAPIBuilder
                 .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
         ProcessDefinitionResponse processDefinition = new ProcessDefinitionResponse();
