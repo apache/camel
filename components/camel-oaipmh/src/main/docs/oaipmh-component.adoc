@@ -48,16 +48,10 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
-
-
-== Message Headers
-
-[width="100%",cols="20%,80%",options="header",]
-|=======================================================================
-|Name |Description
-|`CamelOaimphResumptionToken` | This header is obtained when onlyFirst option is enable. Return resumptiontoken of the request when data is still available.
-|=======================================================================
 
 == Usage
 
