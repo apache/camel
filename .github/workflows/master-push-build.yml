@@ -21,6 +21,14 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - .github/**/*
+      - README.md
+      - SECURITY.md
+      - Jenkinsfile
+      - Jenkinsfile.*
+      - NOTICE.txt
+
 jobs:
   build:
     runs-on: ubuntu-latest

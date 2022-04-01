@@ -21,6 +21,12 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - README.md
+      - SECURITY.md
+      - Jenkinsfile
+      - Jenkinsfile.*
+      - NOTICE.txt
 
 jobs:
   checkstyle:
