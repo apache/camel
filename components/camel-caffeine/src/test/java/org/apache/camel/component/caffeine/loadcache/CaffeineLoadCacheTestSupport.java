@@ -31,7 +31,7 @@ public class CaffeineLoadCacheTestSupport extends CamelTestSupport {
         CacheLoader cl = new CacheLoader<Integer, Integer>() {
 
             @Override
-            public Integer load(Integer key) throws Exception {
+            public Integer load(Integer key) {
                 return key + 1;
             }
         };
