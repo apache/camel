@@ -53,14 +53,6 @@ class ToDynamicTest extends YamlTestSupport {
                               parameters:
                                 name: "start"
                     '''),
-                asResource('endpoint', '''
-                    - from:
-                        uri: "direct:start"
-                        steps:    
-                          - toD: 
-                              direct:
-                                name: "start"
-                    '''),
                 asResource('properties-out-of-order', '''
                     - from:
                         uri: "direct:start"
@@ -102,14 +94,6 @@ class ToDynamicTest extends YamlTestSupport {
                           - toD: 
                               uri: "direct"
                               parameters:
-                                name: "start"
-                    '''),
-                    asResource('endpoint', '''
-                    - from:
-                        uri: "direct:start"
-                        steps:    
-                          - toD: 
-                              direct:
                                 name: "start"
                     '''),
                     asResource('properties-out-of-order', '''

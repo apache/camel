@@ -30,7 +30,6 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationMode;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.dsl.yaml.deserializers.CustomResolver;
-import org.apache.camel.dsl.yaml.deserializers.EndpointProducerDeserializersResolver;
 import org.apache.camel.dsl.yaml.deserializers.ModelDeserializersResolver;
 import org.apache.camel.spi.Resource;
 import org.snakeyaml.engine.v2.api.LoadSettings;
@@ -68,7 +67,6 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
         ctx.setCamelContext(getCamelContext());
         ctx.addResolvers(new CustomResolver());
         ctx.addResolvers(new ModelDeserializersResolver());
-        ctx.addResolvers(new EndpointProducerDeserializersResolver());
         return ctx;
     }
 

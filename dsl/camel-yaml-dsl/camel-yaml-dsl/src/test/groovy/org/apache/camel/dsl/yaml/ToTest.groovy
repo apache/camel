@@ -53,21 +53,6 @@ class ToTest extends YamlTestSupport {
                               parameters:
                                 name: "start"
                     '''),
-                asResource('endpoint', '''
-                    - from:
-                        uri: "direct:start"
-                        steps:    
-                          - to: 
-                              direct:
-                                name: "start"
-                    '''),
-                asResource('endpoint-dsl', '''
-                    - from:
-                        uri: "direct:start"
-                        steps:    
-                          - direct:
-                              name: "start"
-                    '''),
                 asResource('properties-out-of-order', '''
                     - from:
                         uri: "direct:start"

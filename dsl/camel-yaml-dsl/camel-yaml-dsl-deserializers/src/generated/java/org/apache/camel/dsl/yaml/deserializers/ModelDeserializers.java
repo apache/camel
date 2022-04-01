@@ -6606,14 +6606,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 default: {
-                    String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
-                    if (uri == null) {
-                        return false;
-                    }
-                    if (target.getUri() != null) {
-                        throw new IllegalStateException("url must not be set when using Endpoint DSL");
-                    }
-                    target.setUri(uri);
+                    return false;
                 }
             }
             return true;
@@ -6682,14 +6675,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 default: {
-                    String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
-                    if (uri == null) {
-                        return false;
-                    }
-                    if (target.getUri() != null) {
-                        throw new IllegalStateException("url must not be set when using Endpoint DSL");
-                    }
-                    target.setUri(uri);
+                    return false;
                 }
             }
             return true;
@@ -13172,14 +13158,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 default: {
-                    String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
-                    if (uri == null) {
-                        return false;
-                    }
-                    if (target.getUri() != null) {
-                        throw new IllegalStateException("url must not be set when using Endpoint DSL");
-                    }
-                    target.setUri(uri);
+                    return false;
                 }
             }
             return true;
@@ -15733,14 +15712,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 default: {
-                    String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
-                    if (uri == null) {
-                        return false;
-                    }
-                    if (target.getUri() != null) {
-                        throw new IllegalStateException("url must not be set when using Endpoint DSL");
-                    }
-                    target.setUri(uri);
+                    return false;
                 }
             }
             return true;
@@ -15839,14 +15811,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 default: {
-                    String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
-                    if (uri == null) {
-                        return false;
-                    }
-                    if (target.getUri() != null) {
-                        throw new IllegalStateException("url must not be set when using Endpoint DSL");
-                    }
-                    target.setUri(uri);
+                    return false;
                 }
             }
             return true;
@@ -17457,14 +17422,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 default: {
-                    String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node);
-                    if (uri == null) {
-                        return false;
-                    }
-                    if (target.getUri() != null) {
-                        throw new IllegalStateException("url must not be set when using Endpoint DSL");
-                    }
-                    target.setUri(uri);
+                    return false;
                 }
             }
             return true;

@@ -580,14 +580,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
         if (extendsType(info, SEND_DEFINITION_CLASS) || extendsType(info, TO_DYNAMIC_DEFINITION_CLASS)) {
             setProperty.beginControlFlow("default:");
-            setProperty.addStatement("String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node)");
-            setProperty.beginControlFlow("if (uri == null)");
             setProperty.addStatement("return false");
-            setProperty.endControlFlow();
-            setProperty.beginControlFlow("if (target.getUri() != null)");
-            setProperty.addStatement("throw new IllegalStateException(\"url must not be set when using Endpoint DSL\")");
-            setProperty.endControlFlow();
-            setProperty.addStatement("target.setUri(uri)");
             setProperty.endControlFlow();
 
             properties.add(

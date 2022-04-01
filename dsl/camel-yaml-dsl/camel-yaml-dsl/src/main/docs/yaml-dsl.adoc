@@ -130,19 +130,6 @@ To define an endpoint with the YAML dsl you have three options:
           parameters:
             authorizationToken: "XXX"
 ----
-. Using the YAML implementation of the xref:manual::Endpoint-dsl.adoc[Endpoint DSL]:
-+
-[source,yaml]
-----
-- from:
-    timer:
-      name: "tick"
-      period: "1s"
-    steps:
-      - telegram:
-          type: "bots"
-          authorizationToken: "XXX"
-----
 
 == Defining beans
 

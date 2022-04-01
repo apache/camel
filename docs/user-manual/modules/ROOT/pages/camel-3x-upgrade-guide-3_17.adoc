@@ -10,6 +10,49 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 Added method `findRouteResourcesFromDirectory` to `org.apache.camel.main.RoutesCollector`.
 
+=== camel-yaml-dsl
+
+Removed _endpoint-dsl_ notation which was not well known,
+causing problems for tools, and yaml-validation against the json-schema standard.
+
+For example the following notation:
+
+[source,yaml]
+----
+- from:
+    uri: "direct:start"
+    steps:
+      - to:
+          kafka:
+            topic: cheese
+            brokers: mykafka:1234
+----
+
+Should be change to:
+
+[source,yaml]
+----
+- from:
+    uri: "direct:start"
+    steps:
+      - to:
+          uri: "kafka:cheese?brokers=mykafka:1234"
+----
+
+Or
+
+[source,yaml]
+----
+- from:
+    uri: "direct:start"
+    steps:
+      - to:
+          uri: "kafka"
+          parameters:
+            topic: "cheese"
+            brokers: "mykafka:1234"
+----
+
 === camel-kafka
 
 The option `autoCommitOnStop` was removed from the Camel Kafka component. When using `autoCommitEnable` (which is enabled by default) the Kafka consumer will automatically commit on close.
