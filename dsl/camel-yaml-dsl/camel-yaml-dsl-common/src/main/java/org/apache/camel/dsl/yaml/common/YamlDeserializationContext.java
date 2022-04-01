@@ -32,7 +32,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Service;
 import org.apache.camel.dsl.yaml.common.exception.DuplicateKeyException;
-import org.apache.camel.dsl.yaml.common.exception.UnknownNodeTypeException;
+import org.apache.camel.dsl.yaml.common.exception.UnknownNodeIdException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.ObjectHelper;
@@ -233,7 +233,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
                 }
 
                 if (answer == null) {
-                    throw new UnknownNodeTypeException(node, id);
+                    throw new UnknownNodeIdException(node, id);
                 }
 
                 return answer;

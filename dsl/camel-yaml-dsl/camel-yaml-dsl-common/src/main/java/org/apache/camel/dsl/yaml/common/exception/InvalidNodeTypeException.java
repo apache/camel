@@ -25,8 +25,24 @@ import org.snakeyaml.engine.v2.nodes.NodeType;
 public class InvalidNodeTypeException extends MarkedYamlEngineException {
 
     public InvalidNodeTypeException(Node node, NodeType expected) {
-        super(null, Optional.empty(), "NodeType: " + node.getNodeType() + " is invalid, expected " + expected,
+        super(null, Optional.empty(), "Node type " + nodeTypeName(node.getNodeType())
+                                      + " is invalid, expected " + nodeTypeName(expected),
               node.getStartMark());
+    }
+
+    private static String nodeTypeName(NodeType nodeType) {
+        switch (nodeType) {
+            case ANCHOR:
+                return "anchor";
+            case MAPPING:
+                return "map";
+            case SCALAR:
+                return "key-value";
+            case SEQUENCE:
+                return "array";
+            default:
+                return nodeType.name();
+        }
     }
 
 }

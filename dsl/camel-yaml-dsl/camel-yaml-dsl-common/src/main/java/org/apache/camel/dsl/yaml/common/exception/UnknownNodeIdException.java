@@ -21,10 +21,10 @@ import java.util.Optional;
 import org.snakeyaml.engine.v2.exceptions.MarkedYamlEngineException;
 import org.snakeyaml.engine.v2.nodes.Node;
 
-public class UnknownNodeTypeException extends MarkedYamlEngineException {
+public class UnknownNodeIdException extends MarkedYamlEngineException {
 
-    public UnknownNodeTypeException(Node node, String nodeId) {
-        super(null, Optional.empty(), "Unknown type for node with id: " + nodeId, node.getStartMark());
+    public UnknownNodeIdException(Node node, String nodeId) {
+        super(null, Optional.empty(), "Unknown node id: " + nodeId, node.getStartMark());
     }
 
 }
