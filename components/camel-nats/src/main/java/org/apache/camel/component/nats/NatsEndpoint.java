@@ -40,7 +40,8 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Send and receive messages from <a href="http://nats.io/">NATS</a> messaging system.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:topic", category = { Category.MESSAGING })
+@UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:topic", category = { Category.MESSAGING },
+             headersClass = NatsConstants.class)
 public class NatsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, HeaderFilterStrategyAware {
 
     @UriParam
