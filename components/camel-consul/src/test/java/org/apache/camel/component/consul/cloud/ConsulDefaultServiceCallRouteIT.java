@@ -89,7 +89,7 @@ public class ConsulDefaultServiceCallRouteIT extends ConsulTestSupport {
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").serviceCall().name(SERVICE_NAME).component("http").defaultLoadBalancer()
                         .consulServiceDiscovery().url(service.getConsulUrl()).endParent()
                         .to("log:org.apache.camel.component.consul.cloud?level=INFO&showAll=true&multiline=true")
