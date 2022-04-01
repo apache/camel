@@ -515,10 +515,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-ganglia</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-geocoder</artifactId>
 		</dependency>
 		<dependency>

@@ -107,7 +107,6 @@
 ** xref:freemarker-component.adoc[Freemarker]
 ** xref:ftp-component.adoc[FTP]
 ** xref:ftps-component.adoc[FTPS]
-** xref:ganglia-component.adoc[Ganglia]
 ** xref:geocoder-component.adoc[Geocoder]
 ** xref:git-component.adoc[Git]
 ** xref:github-component.adoc[GitHub]
