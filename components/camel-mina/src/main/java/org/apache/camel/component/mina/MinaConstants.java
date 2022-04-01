@@ -16,17 +16,23 @@
  */
 package org.apache.camel.component.mina;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Mina constants
  */
 public final class MinaConstants {
 
+    @Metadata(description = "Indicates whether the session should be closed after complete", javaType = "Boolean")
     public static final String MINA_CLOSE_SESSION_WHEN_COMPLETE = "CamelMinaCloseSessionWhenComplete";
     /** The key of the IoSession which is stored in the message header */
+    @Metadata(label = "consumer", javaType = "org.apache.mina.core.session.IoSession")
     public static final String MINA_IOSESSION = "CamelMinaIoSession";
     /** The socket address of local machine that received the message. */
+    @Metadata(label = "consumer", javaType = "java.net.SocketAddress")
     public static final String MINA_LOCAL_ADDRESS = "CamelMinaLocalAddress";
     /** The socket address of the remote machine that send the message. */
+    @Metadata(label = "consumer", javaType = "java.net.SocketAddress")
     public static final String MINA_REMOTE_ADDRESS = "CamelMinaRemoteAddress";
 
     private MinaConstants() {

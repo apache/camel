@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mongodb.gridfs.GridFsConstants;
-import org.apache.camel.component.mongodb.gridfs.GridFsEndpoint;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +49,7 @@ public class GridFsProducerOperationsIT extends AbstractMongoDbITSupport {
                 from("direct:listAll")
                         .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=listAll&bucket=" + getBucket());
                 from("direct:count")
-                        .setHeader(GridFsEndpoint.GRIDFS_OPERATION, constant("count"))
+                        .setHeader(GridFsConstants.GRIDFS_OPERATION, constant("count"))
                         .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket());
             }
         };
@@ -77,8 +76,8 @@ public class GridFsProducerOperationsIT extends AbstractMongoDbITSupport {
         assertEquals(FILE_DATA, new String(b, 0, i, StandardCharsets.UTF_8));
 
         headers.put(Exchange.FILE_NAME, "2-" + FILE_NAME);
-        headers.put(GridFsEndpoint.GRIDFS_CHUNKSIZE, 10);
-        headers.put(GridFsEndpoint.GRIDFS_METADATA, "{'foo': 'bar'}");
+        headers.put(GridFsConstants.GRIDFS_CHUNKSIZE, 10);
+        headers.put(GridFsConstants.GRIDFS_METADATA, "{'foo': 'bar'}");
 
         template.requestBodyAndHeaders("direct:create", FILE_DATA + "data2", headers);
         assertEquals(1, template.requestBodyAndHeaders("direct:count", null, headers, Long.class).longValue());
@@ -105,11 +104,11 @@ public class GridFsProducerOperationsIT extends AbstractMongoDbITSupport {
                         exchange.getMessage().setHeaders(headers);
                     }
                 });
-        ObjectId objectId = result.getMessage().getHeader(GridFsEndpoint.GRIDFS_OBJECT_ID, ObjectId.class);
+        ObjectId objectId = result.getMessage().getHeader(GridFsConstants.GRIDFS_OBJECT_ID, ObjectId.class);
         assertNotNull(objectId);
 
         template.requestBodyAndHeader("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=remove&bucket=" + getBucket(),
-                null, GridFsEndpoint.GRIDFS_OBJECT_ID, objectId);
+                null, GridFsConstants.GRIDFS_OBJECT_ID, objectId);
 
         Integer count = template.requestBodyAndHeaders(
                 "mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=count&bucket=" + getBucket(), null, headers,

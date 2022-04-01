@@ -14,34 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mustache;
+package org.apache.camel.component.language;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 
-/**
- * Mustache component constants
- */
-public final class MustacheConstants {
+public final class LanguageConstants {
 
-    /**
-     * Header containing a Mustache template location
-     */
-    @Metadata(description = "A URI for the template resource to use instead of the endpoint.", javaType = "String")
-    public static final String MUSTACHE_RESOURCE_URI = "MustacheResourceUri";
+    @Metadata(description = "The script to execute provided in the header. Takes precedence over\n" +
+                            "script configured on the endpoint.",
+              javaType = "String or Expression")
+    public static final String LANGUAGE_SCRIPT = Exchange.LANGUAGE_SCRIPT;
 
-    /**
-     * Header containing the Mustache template code
-     */
-    @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
-    public static final String MUSTACHE_TEMPLATE = "MustacheTemplate";
-
-    /**
-     * Mustache endpoint URI prefix
-     */
-    public static final String MUSTACHE_ENDPOINT_URI_PREFIX = "mustache:";
-
-    private MustacheConstants() {
-        // Utility class
+    private LanguageConstants() {
     }
-
 }

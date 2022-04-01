@@ -54,19 +54,6 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-
-== Message Headers
-
-The MVEL component sets a couple headers on the message.
-
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Header |Description
-
-|`CamelMvelResourceUri` |The *templateName* as a `String` object.
-|=======================================================================
-
 == MVEL Context
 
 Camel will provide exchange information in the MVEL context (just a
@@ -101,15 +88,9 @@ location for a template, or the template content itself. If any of these
 headers is set then Camel uses this over the endpoint configured
 resource. This allows you to provide a dynamic template at runtime.
 
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|CamelMvelResourceUri |String |A URI for the template resource to use instead of the endpoint
-configured.
-
-|CamelMvelTemplate |String |The template to use instead of the endpoint configured.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Example
 

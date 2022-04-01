@@ -21,13 +21,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_BUILDS;
 
 /**
  * Perform operations on OpenShift Builds.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "openshift-builds", title = "Openshift Builds",
-             syntax = "openshift-builds:masterUrl", producerOnly = true, label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_BUILDS, title = "Openshift Builds",
+             syntax = "openshift-builds:masterUrl", producerOnly = true, label = "container,cloud,paas",
+             headersClass = KubernetesConstants.class)
 public class OpenshiftBuildsEndpoint extends AbstractKubernetesEndpoint {
 
     public OpenshiftBuildsEndpoint(String uri, OpenshiftBuildsComponent component, KubernetesConfiguration config) {

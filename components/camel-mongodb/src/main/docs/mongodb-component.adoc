@@ -75,7 +75,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 
 [[MongoDB-ConfigurationofdatabaseinSpringXML]]
@@ -226,33 +228,6 @@ from("direct:findAll")
     .to("mock:resultFindAll");
 -----------------------------------------------------------------------------
 
-Paging and efficient retrieval is supported via the following headers:
-
-[width="100%",cols="10%,10%,60%,20%",options="header",]
-|=======================================================================
-|Header key |Quick constant |Description (extracted from MongoDB API doc) |Expected type
-
-|`CamelMongoDbNumToSkip` |`MongoDbConstants.NUM_TO_SKIP` |Discards a given number of elements at the beginning of the cursor. |int/Integer
-
-|`CamelMongoDbLimit` |`MongoDbConstants.LIMIT` |Limits the number of elements returned. |int/Integer
-
-|`CamelMongoDbBatchSize` |`MongoDbConstants.BATCH_SIZE` |Limits the number of elements returned in one batch. A cursor typically
-fetches a batch of result objects and store them locally. If batchSize
-is positive, it represents the size of each batch of objects retrieved.
-It can be adjusted to optimize performance and limit data transfer. If
-batchSize is negative, it will limit of number objects returned, that
-fit within the max batch size limit (usually 4MB), and cursor will be
-closed. For example if batchSize is -10, then the server will return a
-maximum of 10 documents and as many as can fit in 4MB, then close the
-cursor. Note that this feature is different from limit() in that
-documents must fit within a maximum size, and it removes the need to
-send a request to close the cursor server-side. The batch size can be
-changed even after a cursor is iterated, in which case the setting will
-apply on the next batch retrieval. |int/Integer
-|`CamelMongoDbAllowDiskUse` |`MongoDbConstants.ALLOW_DISK_USE` | Sets allowDiskUse MongoDB flag.
-This is supported since MongoDB Server 4.3.1. Using this header with older MongoDB Server version can cause query to fail. |boolean/Boolean
-|=======================================================================
-
 ===== Example with option _outputType=MongoIterable_ and batch size
 
 [source,java]
@@ -263,20 +238,6 @@ from("direct:findAll")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=findAll&outputType=MongoIterable")
     .to("mock:resultFindAll");
 -----------------------------------------------------------------------------
-
-The `findAll` operation will also return the following OUT headers to
-enable you to iterate through result pages if you are using paging:
-
-[width="100%",cols="10%,10%,60%,20%",options="header",]
-|=======================================================================
-|Header key |Quick constant |Description (extracted from MongoDB API doc) |Data type
-
-|`CamelMongoDbResultTotalSize` |`MongoDbConstants.RESULT_TOTAL_SIZE` |Number of objects matching the query. This does not take limit/skip into
-consideration. |int/Integer
-
-|`CamelMongoDbResultPageSize` |`MongoDbConstants.RESULT_PAGE_SIZE` |Number of objects matching the query. This does not take limit/skip into
-consideration. |int/Integer
-|=======================================================================
 
 [TIP]
 ====
@@ -514,18 +475,6 @@ A header with key `CamelMongoDbRecordsAffected` will be returned
 (`MongoDbConstants.RECORDS_AFFECTED` constant) with the number of
 records updated (copied from `WriteResult.getN()`).
 
-Supports the following IN message headers:
-
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header key |Quick constant |Description (extracted from MongoDB API doc) |Expected type
-
-|`CamelMongoDbMultiUpdate` |`MongoDbConstants.MULTIUPDATE` |If the update should be applied to all objects matching. See
-http://www.mongodb.org/display/DOCS/Atomic+Operations[http://www.mongodb.org/display/DOCS/Atomic+Operations] |boolean/Boolean
-
-|`CamelMongoDbUpsert` |`MongoDbConstants.UPSERT` |If the database should create the element if it does not exist |boolean/Boolean
-|=======================================================================
-
 For example, the following will update *all* records whose filterField
 field equals true by setting the value of the "scientist" field to
 "Darwin":
@@ -609,13 +558,6 @@ By default, operations are executed in order and interrupted on the first write 
 To instruct MongoDB to continue to process remaining write operations in the list, set the `CamelMongoDbBulkOrdered` IN message header to `false`. 
 Unordered operations are executed in parallel and this behavior is not guaranteed.
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header key |Quick constant |Description (extracted from MongoDB API doc) |Expected type
-
-|`CamelMongoDbBulkOrdered` |`MongoDbConstants.BULK_ORDERED` | Perform an ordered or unordered operation execution. Defaults to true. |boolean/Boolean
-|=======================================================================
-
 
 === Other operations
 
@@ -636,18 +578,7 @@ from("direct:aggregate")
     .to("mock:resultAggregate");
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-Supports the following IN message headers:
-
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header key |Quick constant |Description (extracted from MongoDB API doc) |Expected type
-
-|`CamelMongoDbBatchSize` |`MongoDbConstants.BATCH_SIZE` | Sets the number of documents to return per batch. |int/Integer
-|`CamelMongoDbAllowDiskUse` |`MongoDbConstants.ALLOW_DISK_USE` | Enable aggregation pipeline stages to write data to temporary files. |boolean/Boolean
-|=======================================================================
-
-By default a List of all results is returned. This can be heavy on memory depending on the size of the results. A safer alternative is to set your
+By default, a List of all results is returned. This can be heavy on memory depending on the size of the results. A safer alternative is to set your
 outputType=MongoIterable. The next Processor will see an iterable in the message body allowing it to step through the results one by one. Thus setting
 a batch size and returning an iterable allows for efficient retrieval and processing of the result.
 
@@ -951,20 +882,6 @@ from("mongodb:myDb?consumerType=changeStreams&database=flights&collection=ticket
 
 TIP: You can externalize the streamFilter value into a property placeholder which allows the endpoint
 URI parameters to be _cleaner_ and easier to read.
-
-The `changeStreams` consumer type will also return the following OUT headers:
-
-[width="100%",cols="10%,10%,60%,20%",options="header",]
-|=======================================================================
-|Header key |Quick constant |Description (extracted from MongoDB API doc) |Data type
-
-|`CamelMongoDbStreamOperationType` |`MongoDbConstants.STREAM_OPERATION_TYPE` | The type of operation that occurred. Can
-be any of the following values: insert, delete, replace, update, drop, rename, dropDatabase, invalidate. |String
-
-|`_id` |`MongoDbConstants.MONGO_ID` |A document that contains the _id of the document created or modified by the insert,
-replace, delete, update operations (i.e. CRUD operations). For sharded collections, also displays the full shard key for
-the document. The _id field is not repeated if it is already a part of the shard key. |ObjectId
-|=======================================================================
 
 == Type conversions
 

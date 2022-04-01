@@ -14,34 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mustache;
+package org.apache.camel.component.lucene;
 
 import org.apache.camel.spi.Metadata;
 
-/**
- * Mustache component constants
- */
-public final class MustacheConstants {
+public final class LuceneConstants {
 
-    /**
-     * Header containing a Mustache template location
-     */
-    @Metadata(description = "A URI for the template resource to use instead of the endpoint.", javaType = "String")
-    public static final String MUSTACHE_RESOURCE_URI = "MustacheResourceUri";
+    @Metadata(description = "The Lucene Query to performed on the index. The query may include\n" +
+                            "wildcards and phrases.",
+              javaType = "String")
+    public static final String HEADER_QUERY = "QUERY";
+    @Metadata(description = "Set this header to true to include the actual Lucene\n" +
+                            "documentation when returning hit information.",
+              javaType = "String")
+    public static final String HEADER_RETURN_LUCENE_DOCS = "RETURN_LUCENE_DOCS";
 
-    /**
-     * Header containing the Mustache template code
-     */
-    @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
-    public static final String MUSTACHE_TEMPLATE = "MustacheTemplate";
-
-    /**
-     * Mustache endpoint URI prefix
-     */
-    public static final String MUSTACHE_ENDPOINT_URI_PREFIX = "mustache:";
-
-    private MustacheConstants() {
-        // Utility class
+    private LuceneConstants() {
     }
-
 }

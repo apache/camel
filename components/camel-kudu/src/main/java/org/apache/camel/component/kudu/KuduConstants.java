@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.kudu;
 
+import org.apache.camel.spi.Metadata;
+
 public final class KuduConstants {
+    @Metadata(description = "The schema", javaType = "org.apache.kudu.Schema")
     public static final String CAMEL_KUDU_SCHEMA = "CamelKuduSchema";
+    @Metadata(description = "The create table options", javaType = "org.apache.kudu.client.CreateTableOptions")
     public static final String CAMEL_KUDU_TABLE_OPTIONS = "CamelKuduTableOptions";
 
     private KuduConstants() {

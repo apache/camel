@@ -14,34 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mustache;
+package org.apache.camel.component.milo;
 
 import org.apache.camel.spi.Metadata;
 
-/**
- * Mustache component constants
- */
-public final class MustacheConstants {
+public final class MiloConstants {
 
-    /**
-     * Header containing a Mustache template location
-     */
-    @Metadata(description = "A URI for the template resource to use instead of the endpoint.", javaType = "String")
-    public static final String MUSTACHE_RESOURCE_URI = "MustacheResourceUri";
+    // The schemes
+    public static final String SCHEME_BROWSE = "milo-browse";
+    public static final String SCHEME_CLIENT = "milo-client";
+    public static final String SCHEME_SERVER = "milo-server";
 
-    /**
-     * Header containing the Mustache template code
-     */
-    @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
-    public static final String MUSTACHE_TEMPLATE = "MustacheTemplate";
+    @Metadata(label = "producer", description = "The node ids.", javaType = "List")
+    public static final String HEADER_NODE_IDS = "CamelMiloNodeIds";
+    @Metadata(label = "producer", description = "The \"await\" setting for writes.", javaType = "Boolean",
+              applicableFor = SCHEME_CLIENT)
+    public static final String HEADER_AWAIT = "await";
 
-    /**
-     * Mustache endpoint URI prefix
-     */
-    public static final String MUSTACHE_ENDPOINT_URI_PREFIX = "mustache:";
+    private MiloConstants() {
 
-    private MustacheConstants() {
-        // Utility class
     }
-
 }

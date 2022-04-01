@@ -60,7 +60,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == MLLP Consumer
 
@@ -73,33 +75,6 @@ of acknowledgement that will be generated can be controlled by setting
 the CamelMllpAcknowledgementType exchange property. The MLLP Consumer
 can read messages without sending any HL7 Acknowledgement if the
 automatic acknowledgement is disabled and exchange pattern is InOnly.
-
-=== Message Headers
-
-The MLLP Consumer adds these headers on the Camel message:
-
-[width="100%",cols="<34%,<33%,<33%",]
-|===========================================
-|*Key* |*Description* |
-|CamelMllpLocalAddress | The local TCP Address of the Socket |
-|CamelMllpRemoteAddress | The local TCP Address of the Socket |
-|CamelMllpSendingApplication | MSH-3 value |
-|CamelMllpSendingFacility | MSH-4 value |
-|CamelMllpReceivingApplication | MSH-5 value |
-|CamelMllpReceivingFacility | MSH-6 value |
-|CamelMllpTimestamp | MSH-7 value |
-|CamelMllpSecurity | MSH-8 value |
-|CamelMllpMessageType | MSH-9 value |
-|CamelMllpEventType | MSH-9-1 value |
-|CamelMllpTriggerEvent | MSH-9-2 value |
-|CamelMllpMessageControlId | MSH-10 value |
-|CamelMllpProcessingId | MSH-11 value |
-|CamelMllpVersionId | MSH-12 value |
-|CamelMllpCharset | MSH-18 value |
-|===========================================
-
-All headers are String types. If a header value is missing, its value
-is null.
 
 === Exchange Properties
 
@@ -129,20 +104,6 @@ Acknowledgments and raises exceptions if a negative acknowledgement is
 received.  The received acknowledgement is interrogated and an exception
 is raised in the event of a negative acknowledgement. The MLLP Producer
 can ignore acknowledgements when configured with InOnly exchange pattern.
-
-=== Message Headers
-
-The MLLP Producer adds these headers on the Camel message:
-
-[width="100%",cols="<34%,<33%,<33%",]
-|===================================
-|*Key* |*Description* |
-|CamelMllpLocalAddress | The local TCP Address of the Socket | 
-|CamelMllpRemoteAddress | The remote TCP Address of the Socket | 
-|CamelMllpAcknowledgement | The HL7 Acknowledgment byte[] received | 
-|CamelMllpAcknowledgementString | The HL7 Acknowledgment received, converted to a String | 
-|CamelMllpAcknowledgementType | The HL7 acknowledgement type (AA, AE, AR, etc)
-|===================================
 
 === Exchange Properties
 

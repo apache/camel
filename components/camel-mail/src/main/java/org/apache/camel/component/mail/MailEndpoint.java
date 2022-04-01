@@ -37,7 +37,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS",
              syntax = "imap:host:port", alternativeSyntax = "imap:username:password@host:port",
-             category = { Category.MAIL })
+             category = { Category.MAIL }, headersClass = MailConstants.class)
 public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
 
     @UriParam(defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, javaType = "java.time.Duration",

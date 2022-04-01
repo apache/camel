@@ -32,7 +32,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.milo.AbstractMiloServerTest;
-import org.apache.camel.component.milo.NodeIds;
+import org.apache.camel.component.milo.MiloConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
@@ -220,7 +220,7 @@ public class BrowseServerTest extends AbstractMiloServerTest {
         final Map<ExpandedNodeId, BrowseResult> browseResults = (Map<ExpandedNodeId, BrowseResult>) message.getBody(Map.class);
         assertNotNull(browseResults);
 
-        final List<?> nodes = message.getHeader(NodeIds.HEADER_NODE_IDS, List.class);
+        final List<?> nodes = message.getHeader(MiloConstants.HEADER_NODE_IDS, List.class);
         assertNotNull(nodes);
 
         assertEquals(expectedNumberOfResults, browseResults.keySet().size());
@@ -269,7 +269,8 @@ public class BrowseServerTest extends AbstractMiloServerTest {
         mock1.expectedMessagesMatches(assertPredicate(e -> assertBrowseResult(e.getMessage(),
                 "ObjectTypes", "VariableTypes", "DataTypes", "ReferenceTypes", "EventTypes")));
         producer1.send(ExchangeBuilder.anExchange(context)
-                .withHeader(NodeIds.HEADER_NODE_IDS, Collections.singletonList(Identifiers.TypesFolder.toParseableString()))
+                .withHeader(MiloConstants.HEADER_NODE_IDS,
+                        Collections.singletonList(Identifiers.TypesFolder.toParseableString()))
                 .build());
         assertIsSatisfied(5, TimeUnit.SECONDS, mock1);
     }
@@ -338,7 +339,8 @@ public class BrowseServerTest extends AbstractMiloServerTest {
         mock5.setExpectedCount(1);
         mock5.expectedMessagesMatches(assertPredicate(e -> assertBrowseResult(e.getMessage(), "Root")));
         producer5.send(ExchangeBuilder.anExchange(context)
-                .withHeader(NodeIds.HEADER_NODE_IDS, Collections.singletonList(Identifiers.TypesFolder.toParseableString()))
+                .withHeader(MiloConstants.HEADER_NODE_IDS,
+                        Collections.singletonList(Identifiers.TypesFolder.toParseableString()))
                 .build());
         assertIsSatisfied(5, TimeUnit.SECONDS, mock5);
     }
@@ -349,7 +351,7 @@ public class BrowseServerTest extends AbstractMiloServerTest {
         mock1.reset();
         mock1.setExpectedCount(0);
         final Exchange exchange = producer1.send(ExchangeBuilder.anExchange(context)
-                .withHeader(NodeIds.HEADER_NODE_IDS, Collections.singletonList("invalidNodeId"))
+                .withHeader(MiloConstants.HEADER_NODE_IDS, Collections.singletonList("invalidNodeId"))
                 .build());
         assertIsSatisfied(5, TimeUnit.SECONDS, mock1);
         assertNotNull(exchange.getException());
@@ -362,7 +364,7 @@ public class BrowseServerTest extends AbstractMiloServerTest {
         mock6.setExpectedCount(1);
         mock6.expectedMessagesMatches(assertPredicate(e -> assertBrowseResults(e.getMessage(), 9, 9)));
         producer6.send(ExchangeBuilder.anExchange(context)
-                .withHeader(NodeIds.HEADER_NODE_IDS, Collections.singletonList(Identifiers.String.toParseableString()))
+                .withHeader(MiloConstants.HEADER_NODE_IDS, Collections.singletonList(Identifiers.String.toParseableString()))
                 .build());
         assertIsSatisfied(5, TimeUnit.SECONDS, mock6);
     }
@@ -374,7 +376,7 @@ public class BrowseServerTest extends AbstractMiloServerTest {
         mock7.setExpectedCount(1);
         mock7.expectedMessagesMatches(assertPredicate(e -> assertBrowseResults(e.getMessage(), 1, 0)));
         producer7.send(ExchangeBuilder.anExchange(context)
-                .withHeader(NodeIds.HEADER_NODE_IDS, Collections.singletonList(Identifiers.String.toParseableString()))
+                .withHeader(MiloConstants.HEADER_NODE_IDS, Collections.singletonList(Identifiers.String.toParseableString()))
                 .build());
         assertIsSatisfied(5, TimeUnit.SECONDS, mock7);
     }

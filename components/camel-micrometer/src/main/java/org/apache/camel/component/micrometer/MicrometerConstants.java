@@ -19,15 +19,23 @@ package org.apache.camel.component.micrometer;
 import java.util.function.Predicate;
 
 import io.micrometer.core.instrument.Meter;
+import org.apache.camel.spi.Metadata;
 
 public final class MicrometerConstants {
 
     public static final String HEADER_PREFIX = "CamelMetrics";
+    @Metadata(description = "Override timer action in URI",
+              javaType = "org.apache.camel.component.micrometer.MicrometerTimerAction")
     public static final String HEADER_TIMER_ACTION = HEADER_PREFIX + "TimerAction";
+    @Metadata(description = "Override histogram value in URI", javaType = "long")
     public static final String HEADER_HISTOGRAM_VALUE = HEADER_PREFIX + "HistogramValue";
+    @Metadata(description = "Override decrement value in URI", javaType = "Double")
     public static final String HEADER_COUNTER_DECREMENT = HEADER_PREFIX + "CounterDecrement";
+    @Metadata(description = "Override increment value in URI", javaType = "Double")
     public static final String HEADER_COUNTER_INCREMENT = HEADER_PREFIX + "CounterIncrement";
+    @Metadata(description = "Override name value in URI", javaType = "String")
     public static final String HEADER_METRIC_NAME = HEADER_PREFIX + "Name";
+    @Metadata(description = "To augment meter tags defined as URI parameters", javaType = "java.lang.Iterable<Tag>")
     public static final String HEADER_METRIC_TAGS = HEADER_PREFIX + "Tags";
 
     public static final String DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME = "CamelMessageHistory";

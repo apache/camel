@@ -54,7 +54,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 [[MetricsComponent-registry]]
 == Metric Registry
@@ -235,7 +237,7 @@ metrics:histogram:metricname[?options]
 |value |- |Value to use in histogram
 |===================================
 
-If `value` is not set nothing is added to histogram and warning is
+If `value` is not set, nothing is added to histogram and warning is
 logged.
 
 [source,java]

@@ -90,7 +90,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertFalse(config.isDelete());
         assertFalse(config.isIgnoreUriScheme());
         assertEquals(-1, config.getFetchSize(), "fetchSize");
-        assertEquals("text/plain", config.getContentType(), "contentType");
+        assertEquals("text/plain", config.getContentType(), MailConstants.MAIL_CONTENT_TYPE);
         assertEquals(true, config.isUnseen(), "unseen");
         assertFalse(config.isDebugMode());
         assertEquals(MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT, config.getConnectionTimeout());
@@ -114,7 +114,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertFalse(config.isDelete());
         assertFalse(config.isIgnoreUriScheme());
         assertEquals(-1, config.getFetchSize(), "fetchSize");
-        assertEquals("text/plain", config.getContentType(), "contentType");
+        assertEquals("text/plain", config.getContentType(), MailConstants.MAIL_CONTENT_TYPE);
         assertEquals(true, config.isUnseen(), "unseen");
         assertFalse(config.isDebugMode());
         assertEquals(MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT, config.getConnectionTimeout());
@@ -152,7 +152,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertFalse(config.isDelete());
         assertFalse(config.isIgnoreUriScheme());
         assertEquals(-1, config.getFetchSize(), "fetchSize");
-        assertEquals("text/plain", config.getContentType(), "contentType");
+        assertEquals("text/plain", config.getContentType(), MailConstants.MAIL_CONTENT_TYPE);
         assertEquals(true, config.isUnseen(), "unseen");
         assertFalse(config.isDebugMode());
     }
@@ -173,7 +173,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertFalse(config.isDelete());
         assertFalse(config.isIgnoreUriScheme());
         assertEquals(-1, config.getFetchSize(), "fetchSize");
-        assertEquals("text/plain", config.getContentType(), "contentType");
+        assertEquals("text/plain", config.getContentType(), MailConstants.MAIL_CONTENT_TYPE);
         assertEquals(true, config.isUnseen(), "unseen");
         assertFalse(config.isDebugMode());
     }
@@ -197,7 +197,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertFalse(config.isIgnoreUriScheme());
         assertEquals(-1, config.getFetchSize(), "fetchSize");
         assertFalse(config.isUnseen(), "unseen");
-        assertEquals("text/html", config.getContentType(), "contentType");
+        assertEquals("text/html", config.getContentType(), MailConstants.MAIL_CONTENT_TYPE);
         assertFalse(config.isDebugMode());
     }
 
