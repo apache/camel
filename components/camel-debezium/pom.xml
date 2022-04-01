@@ -36,6 +36,7 @@
         <module>camel-debezium-common</module>
         <module>camel-debezium-mongodb</module>
         <module>camel-debezium-mysql</module>
+        <module>camel-debezium-oracle</module>
         <module>camel-debezium-postgres</module>
         <module>camel-debezium-sqlserver</module>
     </modules>
