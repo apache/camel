@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -206,7 +205,7 @@ public final class YamlSupport {
         return node;
     }
 
-    public static String creteEndpointUri(Node node, BiFunction<String, Node, String> endpointResolver, RouteDefinition route) {
+    public static String creteEndpointUri(Node node, RouteDefinition route) {
         String answer = null;
 
         if (node.getNodeType() == NodeType.SCALAR) {
@@ -226,17 +225,9 @@ public final class YamlSupport {
 
                 switch (key) {
                     case "uri":
-                        if (answer != null) {
-                            throw new InvalidEndpointException(
-                                    node, "Uri and parameters are not supported when using Endpoint DSL");
-                        }
                         uri = asText(val);
                         break;
                     case "parameters":
-                        if (answer != null) {
-                            throw new InvalidEndpointException(
-                                    node, "Uri and parameters are not supported when using Endpoint DSL");
-                        }
                         parameters = parseParameters(route, tuple);
                         break;
                     case "steps":
@@ -244,23 +235,11 @@ public final class YamlSupport {
                         setSteps(route, val);
                         break;
                     default:
-                        String endpointUri = endpointResolver.apply(key, val);
-                        if (endpointUri != null) {
-                            if (uri != null || parameters != null) {
-                                throw new InvalidEndpointException(
-                                        node, "Uri and parameters are not supported when using Endpoint DSL");
-                            }
-                            answer = endpointUri;
-                        } else {
-                            throw new UnsupportedFieldException(val, key);
-                        }
+                        throw new UnsupportedFieldException(val, key);
                 }
             }
 
-            if (answer == null) {
-                ObjectHelper.notNull(uri, "The uri must set");
-                answer = YamlSupport.createEndpointUri(dc.getCamelContext(), node, uri, parameters);
-            }
+            answer = YamlSupport.createEndpointUri(dc.getCamelContext(), node, uri, parameters);
         }
 
         return answer;

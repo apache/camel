@@ -22,7 +22,6 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlSupport;
-import org.apache.camel.dsl.yaml.common.exception.InvalidEndpointException;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.spi.annotations.YamlProperty;
@@ -84,22 +83,7 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
                     parameters = parseParameters(target, tuple);
                     break;
                 default:
-                    String endpointUri = EndpointConsumerDeserializersResolver.resolveEndpointUri(key, val);
-                    if (endpointUri != null) {
-                        if (uri != null || parameters != null) {
-                            throw new InvalidEndpointException(
-                                    node, "Uri and parameters are not supported when using Endpoint DSL");
-                        }
-                        FromDefinition from = new FromDefinition(endpointUri);
-                        // enrich model with line number
-                        if (line != -1) {
-                            from.setLineNumber(line);
-                            from.setLocation(dc.getResource().getLocation());
-                        }
-                        target.setDelegate(from);
-                    } else {
-                        throw new UnsupportedFieldException(node, key);
-                    }
+                    throw new UnsupportedFieldException(node, key);
             }
         }
 
