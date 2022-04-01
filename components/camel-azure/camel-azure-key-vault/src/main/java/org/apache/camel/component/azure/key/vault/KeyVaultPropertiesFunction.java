@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.key.vault;
 
+import com.azure.core.exception.ResourceNotFoundException;
 import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
@@ -170,7 +171,7 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
             if (ObjectHelper.isEmpty(returnValue)) {
                 returnValue = defaultValue;
             }
-        } catch (Exception ex) {
+        } catch (ResourceNotFoundException ex) {
             if (ObjectHelper.isNotEmpty(defaultValue)) {
                 returnValue = defaultValue;
             } else {
