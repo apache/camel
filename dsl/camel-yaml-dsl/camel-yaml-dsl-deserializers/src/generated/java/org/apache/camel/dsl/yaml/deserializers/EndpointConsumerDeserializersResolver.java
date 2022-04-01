@@ -35,7 +35,6 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "azure-storage-blob":
             case "azure-storage-datalake":
             case "azure-storage-queue":
-            case "beanstalk":
             case "box":
             case "browse":
             case "cmis":

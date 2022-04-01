@@ -57,7 +57,6 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "azure-storage-queue":
             case "bean":
             case "bean-validator":
-            case "beanstalk":
             case "bonita":
             case "box":
             case "braintree":

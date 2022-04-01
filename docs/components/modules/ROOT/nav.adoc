@@ -47,7 +47,6 @@
 *** xref:azure-storage-queue-component.adoc[Azure Storage Queue Service]
 ** xref:bean-component.adoc[Bean]
 ** xref:bean-validator-component.adoc[Bean Validator]
-** xref:beanstalk-component.adoc[Beanstalk]
 ** xref:bonita-component.adoc[Bonita]
 ** xref:box-component.adoc[Box]
 ** xref:braintree-component.adoc[Braintree]
