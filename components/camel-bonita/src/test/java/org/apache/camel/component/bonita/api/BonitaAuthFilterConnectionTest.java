@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.bonita.api;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import javax.ws.rs.client.ClientRequestContext;

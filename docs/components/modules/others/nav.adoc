@@ -32,7 +32,6 @@
 ** xref:jta.adoc[JTA]
 ** xref:knative-http.adoc[Knative Http]
 ** xref:leveldb.adoc[LevelDB]
-** xref:leveldb-legacy.adoc[LevelDB-legacy]
 ** xref:lra.adoc[LRA]
 ** xref:main.adoc[Main]
 ** xref:microprofile-config.adoc[Microprofile Config]
