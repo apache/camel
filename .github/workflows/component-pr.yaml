@@ -46,7 +46,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `This PR changes components and will be tested automatically`
+              body: `:warning: This PR changes Camel components and will be tested automatically.`
             })
       - name: 'Download artifact'
         uses: actions/github-script@v3.1.0
