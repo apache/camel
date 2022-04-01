@@ -64,8 +64,12 @@ function componentTest() {
   local total=$2
   local current=$3
 
-  cd ${basedir}/${component}
-  runTest "${component}" "${total}" "${current}"
+  if [[ -d "${basedir}/${component}" ]] ; then
+    cd "${basedir}/${component}"
+    runTest "${component}" "${total}" "${current}"
+  else
+    echo "Skipping modified entity ${basedir}/${component} because it's not a directory"
+  fi
 }
 
 function main() {
