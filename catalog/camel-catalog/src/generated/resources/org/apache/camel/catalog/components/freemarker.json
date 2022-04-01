@@ -30,7 +30,7 @@
     "configuration": { "kind": "property", "displayName": "Configuration", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "freemarker.template.Configuration", "deprecated": false, "autowired": false, "secret": false, "description": "To use an existing freemarker.template.Configuration instance as the configuration." }
   },
   "headers": {
-    "CamelFreemarkerResourceUri": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A URI for the template resource to use instead of the endpoint\nconfigured." },
+    "CamelFreemarkerResourceUri": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A URI for the template resource to use instead of the endpoint configured." },
     "CamelFreemarkerTemplate": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The template to use instead of the endpoint configured." },
     "CamelFreemarkerDataModel": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The data model" }
   },

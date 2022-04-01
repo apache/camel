@@ -47,7 +47,7 @@
   "headers": {
     "CamelSignaturePrivateKey": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "java.security.PrivateKey", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The PrivateKey that should be used to sign the message" },
     "CamelSignaturePublicKeyOrCert": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Certificate or PublicKey", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Certificate or PublicKey that should be used to verify the signature" },
-    "CamelSignatureKeyStoreAlias": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The alias used to query the KeyStore for keys and Certificates to be\n used in signing and verifying exchanges" },
+    "CamelSignatureKeyStoreAlias": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The alias used to query the KeyStore for keys and Certificates to be used in signing and verifying exchanges" },
     "CamelSignatureKeyStorePassword": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "char[]", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The password used to access an aliased PrivateKey in the KeyStore." }
   },
   "properties": {

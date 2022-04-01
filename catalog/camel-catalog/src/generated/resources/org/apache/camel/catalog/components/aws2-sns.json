@@ -49,7 +49,7 @@
   },
   "headers": {
     "CamelAwsSnsMessageId": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Amazon SNS message ID." },
-    "CamelAwsSnsSubject": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Amazon SNS message subject. If not set, the subject from the\n`SnsConfiguration` is used." },
+    "CamelAwsSnsSubject": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Amazon SNS message subject. If not set, the subject from the SnsConfiguration is used." },
     "CamelAwsSnsMessageStructure": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The message structure to use such as json." }
   },
   "properties": {
