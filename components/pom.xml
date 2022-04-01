@@ -296,7 +296,6 @@
         <module>camel-snmp</module>
         <module>camel-soap</module>
         <module>camel-solr</module>
-        <module>camel-soroush</module>
         <module>camel-spark</module>
         <module>camel-splunk</module>
         <module>camel-splunk-hec</module>

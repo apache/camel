@@ -3997,20 +3997,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SolrsComponentBuilderFactory.solrs();
     }
     /**
-     * Soroush (camel-soroush)
-     * Send and receive messages as a Soroush chat bot.
-     * 
-     * Category: chat
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-soroush
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.SoroushComponentBuilderFactory.SoroushComponentBuilder soroush() {
-        return org.apache.camel.builder.component.dsl.SoroushComponentBuilderFactory.soroush();
-    }
-    /**
      * Spark (camel-spark)
      * Send RDD or DataFrame jobs to Apache Spark clusters.
      * 
