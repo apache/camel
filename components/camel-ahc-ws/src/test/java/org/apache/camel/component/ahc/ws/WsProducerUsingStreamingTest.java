@@ -24,11 +24,11 @@ import org.eclipse.jetty.server.ServerConnector;
 public class WsProducerUsingStreamingTest extends WsProducerTestBase {
 
     @Override
-    protected void setUpComponent() throws Exception {
+    protected void setUpComponent() {
     }
 
     @Override
-    protected Connector getConnector() throws Exception {
+    protected Connector getConnector() {
         return new ServerConnector(server);
     }
 
@@ -38,7 +38,7 @@ public class WsProducerUsingStreamingTest extends WsProducerTestBase {
     }
 
     @Override
-    protected byte[] getByteTestMessage() throws UnsupportedEncodingException {
+    protected byte[] getByteTestMessage() {
         return createLongByteTestMessage();
     }
 

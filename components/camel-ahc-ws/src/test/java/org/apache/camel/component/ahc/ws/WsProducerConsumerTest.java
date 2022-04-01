@@ -163,7 +163,7 @@ public class WsProducerConsumerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         RouteBuilder[] rbs = new RouteBuilder[3];
         rbs[0] = new RouteBuilder() {
             public void configure() {
