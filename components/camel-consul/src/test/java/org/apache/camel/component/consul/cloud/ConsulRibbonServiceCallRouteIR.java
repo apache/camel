@@ -89,7 +89,7 @@ public class ConsulRibbonServiceCallRouteIR extends ConsulTestSupport {
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").serviceCall().name(SERVICE_NAME).component("http").consulServiceDiscovery()
                         .url(service.getConsulUrl()).endParent()
                         .to("log:org.apache.camel.component.consul.processor.service?level=INFO&showAll=true&multiline=true")

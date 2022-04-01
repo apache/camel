@@ -84,7 +84,7 @@ public class ConsulMasterIT {
             context.addService(consulClusterService);
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("master:my-ns:timer:consul?delay=1000&period=1000").routeId("route-" + id).log("From ${routeId}")
                             .process(e -> contextLatch.countDown());
                 }
