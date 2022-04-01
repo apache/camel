@@ -15,14 +15,22 @@
 # limitations under the License.
 #
 
+# This script runs a quick test for modified components
+# It receives a starting and end commit IDs and verifies if any component was modified between them.
+# It iterates through the list of components, running a unit and integration tests with -Psourcecheck
+# The result and other important data is saved on log files (i.e.: test log, the PR number and the result message).
+# The log file is archived by the action (see: action.yaml file)
+
+# Modify maven options here if needed
 MVN_DEFAULT_OPTS="-Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 MVN_OPTS=${MVN_OPTS:-$MVN_DEFAULT_OPTS}
+
+# Script variables
 failures=0
 basedir=$(pwd)
 testDate=$(date '+%Y-%m-%d-%H%M%S')
 logDir=${basedir}/automated-build-log
 testHost=$(hostname)
-
 
 function notifySuccess() {
   local component=$1
