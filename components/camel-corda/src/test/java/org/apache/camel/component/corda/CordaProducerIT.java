@@ -75,7 +75,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void currentNodeTimeTest() throws Exception {
+    public void currentNodeTimeTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, CURRENT_NODE_TIME);
         template.send(exchange);
         Object body = exchange.getIn().getBody();
@@ -85,7 +85,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void getProtocolVersionTest() throws Exception {
+    public void getProtocolVersionTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, GET_PROTOCOL_VERSION);
         template.send(exchange);
         Object body = exchange.getIn().getBody();
@@ -95,7 +95,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void networkMapSnapshotTest() throws Exception {
+    public void networkMapSnapshotTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, NETWORK_MAP_SNAPSHOT);
         template.send(exchange);
         Object body = exchange.getIn().getBody();
@@ -105,7 +105,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void stateMachinesSnapshotTest() throws Exception {
+    public void stateMachinesSnapshotTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, STATE_MACHINE_SNAPSHOT);
         template.send(exchange);
         Object body = exchange.getIn().getBody();
@@ -115,7 +115,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void stateMachineRecordedTransactionMappingSnapshotTest() throws Exception {
+    public void stateMachineRecordedTransactionMappingSnapshotTest() {
         Exchange exchange
                 = createExchangeWithBodyAndHeader(null, OPERATION, STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_SNAPSHOT);
         template.send(exchange);
@@ -126,7 +126,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void registeredFlowsTest() throws Exception {
+    public void registeredFlowsTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, REGISTERED_FLOWS);
         template.send(exchange);
         Object body = exchange.getIn().getBody();
@@ -136,7 +136,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void clearNetworkMapCacheTest() throws Exception {
+    public void clearNetworkMapCacheTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, CLEAR_NETWORK_MAP_CACHE);
         template.send(exchange);
         Object body = exchange.getIn().getBody();
@@ -146,7 +146,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void isFlowsDrainingModeEnabledTest() throws Exception {
+    public void isFlowsDrainingModeEnabledTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, IS_FLOWS_DRAINING_MODE_ENABLED);
         template.send(exchange);
         Object body = exchange.getIn().getBody();
@@ -156,7 +156,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void setFlowsDrainingModeEnabledTest() throws Exception {
+    public void setFlowsDrainingModeEnabledTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, SET_FLOWS_DRAINING_MODE_ENABLED);
         exchange.getIn().setHeader(DRAINING_MODE, false);
         template.send(exchange);
@@ -165,7 +165,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void notaryIdentitiesTest() throws Exception {
+    public void notaryIdentitiesTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, NOTARY_IDENTITIES);
         template.send(exchange);
         Object body = exchange.getIn().getBody();
@@ -175,7 +175,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void nodeInfoTest() throws Exception {
+    public void nodeInfoTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, NODE_INFO);
         template.send(exchange);
         Object body = exchange.getIn().getBody();
@@ -185,7 +185,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void addVaultTransactionNoteTest() throws Exception {
+    public void addVaultTransactionNoteTest() {
         Exchange exchange = createExchangeWithBodyAndHeader("Some note", OPERATION, ADD_VAULT_TRANSACTION_NOTE);
 
         exchange.getIn().setHeader(SECURE_HASH, TEST_SHA_256);
@@ -195,7 +195,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void getVaultTransactionNotesTest() throws Exception {
+    public void getVaultTransactionNotesTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, GET_VAULT_TRANSACTION_NOTES);
 
         exchange.getIn().setHeader(SECURE_HASH, TEST_SHA_256);
@@ -207,7 +207,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void uploadAttachmentTest() throws Exception {
+    public void uploadAttachmentTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, UPLOAD_ATTACHMENT);
         exchange.getIn().setBody(zipIt("HELLO" + System.nanoTime(), "test1.txt"));
         template.send(exchange);
@@ -219,7 +219,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void attachmentExistsTest() throws Exception {
+    public void attachmentExistsTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, ATTACHMENT_EXISTS);
         exchange.getIn().setHeader(SECURE_HASH, TEST_SHA_256);
 
@@ -232,7 +232,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void openAttachmentTest() throws Exception {
+    public void openAttachmentTest() {
         //Setup node with attachment
         Exchange uploadExchange = createExchangeWithBodyAndHeader(null, OPERATION, UPLOAD_ATTACHMENT);
         uploadExchange.getIn().setBody(zipIt("HELLO" + System.nanoTime(), "test2.txt"));
@@ -251,7 +251,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void queryAttachmentsTest() throws Exception {
+    public void queryAttachmentsTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, QUERY_ATTACHMENTS);
         AttachmentQueryCriteria.AttachmentsQueryCriteria queryCriteria = new AttachmentQueryCriteria.AttachmentsQueryCriteria(
                 new ColumnPredicate.EqualityComparison(EqualityComparisonOperator.EQUAL, "Daredevil"));
@@ -282,7 +282,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void notaryPartyFromX500NameTest() throws Exception {
+    public void notaryPartyFromX500NameTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, NOTARY_PARTY_FROM_X500_NAME);
         CordaX500Name cordaX500Name = new CordaX500Name("Notary", "London", "GB");
         exchange.getIn().setBody(cordaX500Name);
@@ -295,7 +295,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void partiesFromNameTest() throws Exception {
+    public void partiesFromNameTest() {
         Exchange exchange = createExchangeWithBodyAndHeader("A", OPERATION, PARTIES_FROM_NAME);
         exchange.getIn().setHeader(EXACT_MATCH, false);
 
@@ -319,7 +319,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void wellKnownPartyFromX500NameTest() throws Exception {
+    public void wellKnownPartyFromX500NameTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, WELL_KNOWN_PARTY_FROM_X500_NAME);
         CordaX500Name cordaX500Name1 = new CordaX500Name("PartyA", "London", "GB");
         exchange.getIn().setBody(cordaX500Name1);
@@ -364,7 +364,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void vaultQueryTest() throws Exception {
+    public void vaultQueryTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(OwnableState.class, OPERATION, VAULT_QUERY);
 
         template.send(exchange);
@@ -375,7 +375,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void vaultQueryByTest() throws Exception {
+    public void vaultQueryByTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(OwnableState.class, OPERATION, VAULT_QUERY_BY);
         QueryCriteria.VaultQueryCriteria criteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.CONSUMED);
         PageSpecification pageSpec = new PageSpecification(DEFAULT_PAGE_NUM, MAX_PAGE_SIZE);
@@ -394,7 +394,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void vaultQueryByCriteriaTest() throws Exception {
+    public void vaultQueryByCriteriaTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(OwnableState.class, OPERATION, VAULT_QUERY_BY_CRITERIA);
         QueryCriteria.VaultQueryCriteria criteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.CONSUMED);
         exchange.getIn().setHeader(QUERY_CRITERIA, criteria);
@@ -407,7 +407,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void vaultQueryByWithPagingSpecTest() throws Exception {
+    public void vaultQueryByWithPagingSpecTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(OwnableState.class, OPERATION, VAULT_QUERY_BY_WITH_PAGING_SPEC);
         QueryCriteria.VaultQueryCriteria criteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.CONSUMED);
         PageSpecification pageSpec = new PageSpecification(DEFAULT_PAGE_NUM, MAX_PAGE_SIZE);
@@ -422,7 +422,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Test
-    public void vaultQueryByWithSortingTest() throws Exception {
+    public void vaultQueryByWithSortingTest() {
         Exchange exchange = createExchangeWithBodyAndHeader(OwnableState.class, OPERATION, VAULT_QUERY_BY_WITH_SORTING);
         QueryCriteria.VaultQueryCriteria criteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.CONSUMED);
         Sort.SortColumn sortByUid
@@ -461,7 +461,7 @@ public class CordaProducerIT extends CordaITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
