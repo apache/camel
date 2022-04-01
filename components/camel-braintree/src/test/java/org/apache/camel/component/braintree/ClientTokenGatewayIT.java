@@ -29,14 +29,14 @@ public class ClientTokenGatewayIT extends AbstractBraintreeTestSupport {
     private static final String PATH_PREFIX = getApiNameAsString(ClientTokenGatewayApiMethod.class);
 
     @Test
-    public void testClientTokenGeneration() throws Exception {
+    public void testClientTokenGeneration() {
         final String token = requestBody("direct://GENERATE", null, String.class);
 
         assertTrue(ObjectHelper.isNotEmpty(token));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://GENERATE")

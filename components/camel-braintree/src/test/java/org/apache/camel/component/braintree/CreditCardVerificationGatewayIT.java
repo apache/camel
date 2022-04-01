@@ -39,7 +39,7 @@ public class CreditCardVerificationGatewayIT extends AbstractBraintreeTestSuppor
     // TODO provide parameter values for find
     @Disabled
     @Test
-    public void testFind() throws Exception {
+    public void testFind() {
         // using String message body for single parameter "id"
         final CreditCardVerification result = requestBody("direct://FIND", null, CreditCardVerification.class);
 
@@ -50,7 +50,7 @@ public class CreditCardVerificationGatewayIT extends AbstractBraintreeTestSuppor
     // TODO provide parameter values for search
     @Disabled
     @Test
-    public void testSearch() throws Exception {
+    public void testSearch() {
         // using com.braintreegateway.CreditCardVerificationSearchRequest message body for single parameter "query"
         final ResourceCollection<CreditCardVerification> result
                 = requestBody("direct://SEARCH", null, ResourceCollection.class);
@@ -60,7 +60,7 @@ public class CreditCardVerificationGatewayIT extends AbstractBraintreeTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for find

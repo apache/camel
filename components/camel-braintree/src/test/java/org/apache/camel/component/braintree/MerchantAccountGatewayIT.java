@@ -41,7 +41,7 @@ public class MerchantAccountGatewayIT extends AbstractBraintreeTestSupport {
 
     @Disabled
     @Test
-    public void testCreate() throws Exception {
+    public void testCreate() {
         final String merchantId = UUID.randomUUID().toString();
         final Result<MerchantAccount> result = requestBody("direct://CREATE",
                 new MerchantAccountRequest()
@@ -61,7 +61,7 @@ public class MerchantAccountGatewayIT extends AbstractBraintreeTestSupport {
 
     @Disabled
     @Test
-    public void testFind() throws Exception {
+    public void testFind() {
         final Map<String, Object> headers = new HashMap<>();
         headers.put(BraintreeConstants.PROPERTY_PREFIX + "id", System.getenv("CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID"));
         final MerchantAccount result = requestBodyAndHeaders("direct://FIND", null, headers, MerchantAccount.class);
@@ -71,7 +71,7 @@ public class MerchantAccountGatewayIT extends AbstractBraintreeTestSupport {
 
     @Disabled
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         final Map<String, Object> headers = new HashMap<>();
         headers.put(BraintreeConstants.PROPERTY_PREFIX + "id", System.getenv("CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID"));
 
@@ -94,7 +94,7 @@ public class MerchantAccountGatewayIT extends AbstractBraintreeTestSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for create

@@ -59,7 +59,7 @@ public class AddressGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Override
-    protected void doPostSetup() throws Exception {
+    protected void doPostSetup() {
         this.gateway = getGateway();
         this.customer = gateway.customer().create(
                 new CustomerRequest()
@@ -74,7 +74,7 @@ public class AddressGatewayIT extends AbstractBraintreeTestSupport {
 
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (this.gateway != null && customer != null) {
             for (String id : this.addressIds) {
                 if (this.gateway.address().delete(customer.getId(), id).isSuccess()) {
@@ -116,7 +116,7 @@ public class AddressGatewayIT extends AbstractBraintreeTestSupport {
     // *************************************************************************
 
     @Test
-    public void testCreate() throws Exception {
+    public void testCreate() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
         assertNotNull(this.customer, "Customer can't be null");
 
@@ -140,7 +140,7 @@ public class AddressGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
         assertNotNull(this.customer, "Customer can't be null");
 
@@ -161,7 +161,7 @@ public class AddressGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testFind() throws Exception {
+    public void testFind() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
         assertNotNull(this.customer, "Customer can't be null");
 
@@ -181,7 +181,7 @@ public class AddressGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
         assertNotNull(this.customer, "Customer can't be null");
 
@@ -211,7 +211,7 @@ public class AddressGatewayIT extends AbstractBraintreeTestSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for create
