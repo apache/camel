@@ -42,6 +42,7 @@ import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.common.exception.InvalidEndpointException;
+import org.apache.camel.dsl.yaml.common.exception.InvalidNodeTypeException;
 import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
 import org.apache.camel.model.KameletDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -317,6 +318,10 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 routes = nodeAt(root, "/spec/flow");
             }
             if (routes != null) {
+                // routes should be an array
+                if (routes.getNodeType() != NodeType.SEQUENCE) {
+                    throw new InvalidNodeTypeException(routes, NodeType.SEQUENCE);
+                }
                 answer.add(routes);
             }
         }
