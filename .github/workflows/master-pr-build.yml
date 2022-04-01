@@ -62,6 +62,7 @@ jobs:
       - name: maven build
         run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests install
       - id: test
+        name: Quick test execution for affected components
         uses: ./.github/actions/quick-test
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
