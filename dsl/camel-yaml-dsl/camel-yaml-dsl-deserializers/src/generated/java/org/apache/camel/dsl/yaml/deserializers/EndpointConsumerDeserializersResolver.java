@@ -64,7 +64,6 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "docker":
             case "dropbox":
             case "ehcache":
-            case "elsql":
             case "etcd-stats":
             case "etcd-watch":
             case "facebook":

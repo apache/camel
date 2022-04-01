@@ -4187,65 +4187,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * ElSQL (camel-elsql)
-     * Use ElSql to define SQL queries. Extends the SQL Component.
-     * 
-     * Category: database,sql
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-elsql
-     * 
-     * Syntax: <code>elsql:elsqlName:resourceUri</code>
-     * 
-     * Path parameter: elsqlName (required)
-     * The name of the elsql to use (is NAMED in the elsql file)
-     * 
-     * Path parameter: resourceUri
-     * The resource file which contains the elsql SQL statements to use. You can
-     * specify multiple resources separated by comma. The resources are loaded
-     * on the classpath by default, you can prefix with file: to load from file
-     * system. Notice you can set this option on the component and then you do
-     * not have to configure this on the endpoint.
-     * 
-     * @param path elsqlName:resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.ElsqlEndpointBuilder elsql(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.endpointBuilder("elsql", path);
-    }
-    /**
-     * ElSQL (camel-elsql)
-     * Use ElSql to define SQL queries. Extends the SQL Component.
-     * 
-     * Category: database,sql
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-elsql
-     * 
-     * Syntax: <code>elsql:elsqlName:resourceUri</code>
-     * 
-     * Path parameter: elsqlName (required)
-     * The name of the elsql to use (is NAMED in the elsql file)
-     * 
-     * Path parameter: resourceUri
-     * The resource file which contains the elsql SQL statements to use. You can
-     * specify multiple resources separated by comma. The resources are loaded
-     * on the classpath by default, you can prefix with file: to load from file
-     * system. Notice you can set this option on the component and then you do
-     * not have to configure this on the endpoint.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path elsqlName:resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.ElsqlEndpointBuilder elsql(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Etcd Keys (camel-etcd)
      * Get, set or delete keys in etcd key-value store.
      * 

@@ -93,7 +93,6 @@
 ** xref:dynamic-router-component.adoc[Dynamic Router]
 ** xref:ehcache-component.adoc[Ehcache]
 ** xref:elasticsearch-rest-component.adoc[Elasticsearch Rest]
-** xref:elsql-component.adoc[ElSQL]
 ** xref:etcd-keys-component.adoc[Etcd Keys]
 ** xref:etcd-stats-component.adoc[Etcd Stats]
 ** xref:etcd-watch-component.adoc[Etcd Watch]

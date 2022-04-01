@@ -2040,28 +2040,6 @@
     "producerOnly": true,
     "lenientProperties": false
   },
-  "ElsqlComponentBuilderFactory": {
-    "kind": "component",
-    "name": "elsql",
-    "title": "ElSQL",
-    "description": "Use ElSql to define SQL queries. Extends the SQL Component.",
-    "deprecated": true,
-    "firstVersion": "2.16.0",
-    "label": "database,sql",
-    "javaType": "org.apache.camel.component.elsql.ElsqlComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-elsql",
-    "version": "3.17.0-SNAPSHOT",
-    "scheme": "elsql",
-    "extendsScheme": "",
-    "syntax": "elsql:elsqlName:resourceUri",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "EtcdKeysComponentBuilderFactory": {
     "kind": "component",
     "name": "etcd-keys",

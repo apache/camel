@@ -1271,20 +1271,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ElasticsearchRestComponentBuilderFactory.elasticsearchRest();
     }
     /**
-     * ElSQL (camel-elsql)
-     * Use ElSql to define SQL queries. Extends the SQL Component.
-     * 
-     * Category: database,sql
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-elsql
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.ElsqlComponentBuilderFactory.ElsqlComponentBuilder elsql() {
-        return org.apache.camel.builder.component.dsl.ElsqlComponentBuilderFactory.elsql();
-    }
-    /**
      * Etcd Keys (camel-etcd)
      * Get, set or delete keys in etcd key-value store.
      * 
