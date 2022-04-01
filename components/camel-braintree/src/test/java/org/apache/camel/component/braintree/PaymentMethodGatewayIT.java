@@ -58,7 +58,7 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Override
-    protected void doPostSetup() throws Exception {
+    protected void doPostSetup() {
         this.gateway = getGateway();
         this.customer = gateway.customer().create(
                 new CustomerRequest()
@@ -73,7 +73,7 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
 
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (this.gateway != null) {
             for (String token : this.paymentMethodsTokens) {
                 if (this.gateway.paymentMethod().delete(token).isSuccess()) {
@@ -112,7 +112,7 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
     // *************************************************************************
 
     @Test
-    public void testCreate() throws Exception {
+    public void testCreate() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
         assertNotNull(this.customer, "Customer can't be null");
 
@@ -130,7 +130,7 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
         assertNotNull(this.customer, "Customer can't be null");
 
@@ -145,7 +145,7 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testFind() throws Exception {
+    public void testFind() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
         assertNotNull(this.customer, "Customer can't be null");
 
@@ -160,7 +160,7 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
         assertNotNull(this.customer, "Customer can't be null");
 
@@ -190,7 +190,7 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for create

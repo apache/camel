@@ -40,7 +40,7 @@ public class SettlementBatchSummaryGatewayIT extends AbstractBraintreeTestSuppor
     // TODO provide parameter values for generate
     @Disabled
     @Test
-    public void testGenerate() throws Exception {
+    public void testGenerate() {
         // using java.util.Calendar message body for single parameter "settlementDate"
         final com.braintreegateway.Result result = requestBody("direct://GENERATE", null);
 
@@ -51,7 +51,7 @@ public class SettlementBatchSummaryGatewayIT extends AbstractBraintreeTestSuppor
     // TODO provide parameter values for generate
     @Disabled
     @Test
-    public void testGenerateWithCustomFields() throws Exception {
+    public void testGenerateWithCustomFields() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is java.util.Calendar
         headers.put("CamelBraintree.settlementDate", null);
@@ -65,7 +65,7 @@ public class SettlementBatchSummaryGatewayIT extends AbstractBraintreeTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for generate

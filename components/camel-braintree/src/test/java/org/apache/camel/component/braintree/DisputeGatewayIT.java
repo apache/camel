@@ -63,12 +63,12 @@ public class DisputeGatewayIT extends AbstractBraintreeTestSupport {
     private BraintreeGateway gateway;
 
     @Override
-    protected void doPostSetup() throws Exception {
+    protected void doPostSetup() {
         this.gateway = getGateway();
     }
 
     @Test
-    public void testAccept() throws Exception {
+    public void testAccept() {
         Dispute createdDispute = createDispute();
         assertEquals(Dispute.Status.OPEN, createdDispute.getStatus());
 
@@ -88,7 +88,7 @@ public class DisputeGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testAddFileEvidence() throws Exception {
+    public void testAddFileEvidence() {
         Dispute createdDispute = createDispute();
         assertEquals(Dispute.Status.OPEN, createdDispute.getStatus());
         DocumentUpload uploadedDocument = uploadDocument();
@@ -108,7 +108,7 @@ public class DisputeGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testAddFileEvidenceOne() throws Exception {
+    public void testAddFileEvidenceOne() {
         Dispute createdDispute = createDispute();
         assertEquals(Dispute.Status.OPEN, createdDispute.getStatus());
         DocumentUpload uploadedDocument = uploadDocument();
@@ -129,7 +129,7 @@ public class DisputeGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testAddTextEvidence() throws Exception {
+    public void testAddTextEvidence() {
         final String textEvidence = "Text Evidence";
 
         Dispute createdDispute = createDispute();
@@ -152,7 +152,7 @@ public class DisputeGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testAddTextEvidenceOne() throws Exception {
+    public void testAddTextEvidenceOne() {
         final String textEvidence = "Text Evidence";
 
         Dispute createdDispute = createDispute();
@@ -177,7 +177,7 @@ public class DisputeGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testFinalize() throws Exception {
+    public void testFinalize() {
         Dispute createdDispute = createDispute();
         assertEquals(Dispute.Status.OPEN, createdDispute.getStatus());
 
@@ -198,7 +198,7 @@ public class DisputeGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testFind() throws Exception {
+    public void testFind() {
         Dispute createdDispute = createDispute();
         assertEquals(Dispute.Status.OPEN, createdDispute.getStatus());
 
@@ -210,7 +210,7 @@ public class DisputeGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testRemoveEvidence() throws Exception {
+    public void testRemoveEvidence() {
         final String textEvidence = "Text Evidence";
 
         Dispute createdDispute = createDispute();
@@ -247,7 +247,7 @@ public class DisputeGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testSearch() throws Exception {
+    public void testSearch() {
         Dispute createdDispute = createDispute();
         assertEquals(Dispute.Status.OPEN, createdDispute.getStatus());
 
@@ -263,7 +263,7 @@ public class DisputeGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // route to create transaction

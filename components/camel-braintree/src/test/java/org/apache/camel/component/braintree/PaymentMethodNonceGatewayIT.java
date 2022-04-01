@@ -37,7 +37,7 @@ public class PaymentMethodNonceGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for create
     @Disabled
     @Test
-    public void testCreate() throws Exception {
+    public void testCreate() {
         // using String message body for single parameter "paymentMethodToken"
         final com.braintreegateway.Result result = requestBody("direct://CREATE", null);
 
@@ -48,7 +48,7 @@ public class PaymentMethodNonceGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for find
     @Disabled
     @Test
-    public void testFind() throws Exception {
+    public void testFind() {
         // using String message body for single parameter "paymentMethodNonce"
         final com.braintreegateway.PaymentMethodNonce result = requestBody("direct://FIND", null);
 
@@ -57,7 +57,7 @@ public class PaymentMethodNonceGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for create
