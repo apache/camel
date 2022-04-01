@@ -50,7 +50,7 @@ public class WssProducerTest extends WsProducerTestBase {
     }
 
     @Override
-    protected void setUpComponent() throws Exception {
+    protected void setUpComponent() {
         WsComponent wsComponent = (WsComponent) camelContext.getComponent("ahc-wss");
         wsComponent.setSslContextParameters(defineSSLContextClientParameters());
     }

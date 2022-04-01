@@ -22,11 +22,11 @@ import org.eclipse.jetty.server.ServerConnector;
 public class WsProducerTest extends WsProducerTestBase {
 
     @Override
-    protected void setUpComponent() throws Exception {
+    protected void setUpComponent() {
     }
 
     @Override
-    protected Connector getConnector() throws Exception {
+    protected Connector getConnector() {
         return new ServerConnector(server);
     }
 

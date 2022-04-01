@@ -95,7 +95,7 @@ public abstract class WsProducerTestBase {
         stopTestServer();
     }
 
-    protected abstract void setUpComponent() throws Exception;
+    protected abstract void setUpComponent();
 
     protected abstract Connector getConnector() throws Exception;
 
@@ -203,7 +203,7 @@ public abstract class WsProducerTestBase {
         return baos.toByteArray();
     }
 
-    protected String createLongTextTestMessage() throws Exception {
+    protected String createLongTextTestMessage() {
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i <= 100; i++) {
             sb.append(Integer.toString(i));
