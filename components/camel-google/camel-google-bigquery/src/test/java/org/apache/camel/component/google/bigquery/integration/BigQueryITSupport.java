@@ -22,7 +22,7 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.cloud.bigquery.BigQueryException;
 import com.google.cloud.bigquery.Field;
 import com.google.cloud.bigquery.FieldList;
 import com.google.cloud.bigquery.JobId;
@@ -38,8 +38,10 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryComponent;
+import org.apache.camel.component.google.bigquery.GoogleBigQueryConfiguration;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLComponent;
+import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLConfiguration;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,10 +89,15 @@ public class BigQueryITSupport extends CamelTestSupport {
 
     protected void addBigqueryComponent(CamelContext context) {
 
-        connectionFactory = new GoogleBigQueryConnectionFactory()
-                .setCredentialsFileLocation(CREDENTIALS_FILE_LOCATION);
+        GoogleBigQueryConfiguration configuration = new GoogleBigQueryConfiguration()
+                .setServiceAccountKey(CREDENTIALS_FILE_LOCATION);
 
-        GoogleBigQueryComponent component = new GoogleBigQueryComponent();
+        connectionFactory = new GoogleBigQueryConnectionFactory()
+                .setServiceAccountKeyFile(configuration.getServiceAccountKey())
+                .setCamelContext(context);
+        configuration.setConnectionFactory(connectionFactory);
+
+        GoogleBigQueryComponent component = new GoogleBigQueryComponent(configuration);
         component.setConnectionFactory(connectionFactory);
 
         context.addComponent("google-bigquery", component);
@@ -99,10 +106,14 @@ public class BigQueryITSupport extends CamelTestSupport {
 
     protected void addBigquerySqlComponent(CamelContext context) {
 
+        GoogleBigQuerySQLConfiguration configuration = new GoogleBigQuerySQLConfiguration()
+                .setServiceAccountKey(CREDENTIALS_FILE_LOCATION);
         connectionFactory = new GoogleBigQueryConnectionFactory()
-                .setCredentialsFileLocation(CREDENTIALS_FILE_LOCATION);
+                .setServiceAccountKeyFile(configuration.getServiceAccountKey())
+                .setCamelContext(context);
+        configuration.setConnectionFactory(connectionFactory);
 
-        GoogleBigQuerySQLComponent component = new GoogleBigQuerySQLComponent();
+        GoogleBigQuerySQLComponent component = new GoogleBigQuerySQLComponent(configuration);
         component.setConnectionFactory(connectionFactory);
 
         context.addComponent("google-bigquery-sql", component);
@@ -146,9 +157,9 @@ public class BigQueryITSupport extends CamelTestSupport {
         TableInfo tableInfo = TableInfo.of(id, builder.build());
         try {
             getConnectionFactory().getDefaultClient().create(tableInfo);
-        } catch (GoogleJsonResponseException e) {
-            if (e.getDetails().getCode() == 409) {
-                LOGGER.info("Table {} already exist");
+        } catch (BigQueryException e) {
+            if (e.getCode() == 409) {
+                LOGGER.info("TableId {} already exists", tableId);
             } else {
                 throw e;
             }

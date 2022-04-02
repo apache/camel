@@ -25,6 +25,8 @@ public class GoogleBigQueryEndpointConfigurer extends PropertyConfigurerSupport 
         case "connectionFactory": target.getConfiguration().setConnectionFactory(property(camelContext, org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "serviceaccountkey":
+        case "serviceAccountKey": target.getConfiguration().setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "useasinsertid":
         case "useAsInsertId": target.getConfiguration().setUseAsInsertId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -43,6 +45,8 @@ public class GoogleBigQueryEndpointConfigurer extends PropertyConfigurerSupport 
         case "connectionFactory": return org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "serviceaccountkey":
+        case "serviceAccountKey": return java.lang.String.class;
         case "useasinsertid":
         case "useAsInsertId": return java.lang.String.class;
         default: return null;
@@ -57,6 +61,8 @@ public class GoogleBigQueryEndpointConfigurer extends PropertyConfigurerSupport 
         case "connectionFactory": return target.getConfiguration().getConnectionFactory();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "serviceaccountkey":
+        case "serviceAccountKey": return target.getConfiguration().getServiceAccountKey();
         case "useasinsertid":
         case "useAsInsertId": return target.getConfiguration().getUseAsInsertId();
         default: return null;

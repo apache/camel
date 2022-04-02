@@ -18,7 +18,7 @@ package org.apache.camel.component.google.bigquery.unit.sql;
 
 import java.util.List;
 
-import com.google.cloud.bigquery.JobId;
+import com.google.cloud.bigquery.JobInfo;
 import com.google.cloud.bigquery.QueryJobConfiguration;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 public class GoogleBigQuerySQLProducerWithPatternTest extends GoogleBigQuerySQLProducerBaseTest {
@@ -45,12 +44,13 @@ public class GoogleBigQuerySQLProducerWithPatternTest extends GoogleBigQuerySQLP
         String expected = "insert into dataset.testTableId(id, data) values(1, 'test')";
         producer.process(exchange);
 
-        ArgumentCaptor<QueryJobConfiguration> dataCaptor = ArgumentCaptor.forClass(QueryJobConfiguration.class);
-        verify(bigquery).query(dataCaptor.capture(), any(JobId.class));
+        ArgumentCaptor<JobInfo> dataCaptor = ArgumentCaptor.forClass(JobInfo.class);
+        verify(bigquery).create(dataCaptor.capture());
 
-        List<QueryJobConfiguration> requests = dataCaptor.getAllValues();
+        List<JobInfo> requests = dataCaptor.getAllValues();
         assertEquals(1, requests.size());
-        assertEquals(expected, requests.get(0).getQuery());
+        QueryJobConfiguration conf = requests.get(0).getConfiguration();
+        assertEquals(expected, conf.getQuery());
     }
 
     @Test
@@ -60,12 +60,13 @@ public class GoogleBigQuerySQLProducerWithPatternTest extends GoogleBigQuerySQLP
         String expected = "insert into dataset.testTableId(id, data) values(1, 'test')";
         producer.process(exchange);
 
-        ArgumentCaptor<QueryJobConfiguration> dataCaptor = ArgumentCaptor.forClass(QueryJobConfiguration.class);
-        verify(bigquery).query(dataCaptor.capture(), any(JobId.class));
+        ArgumentCaptor<JobInfo> dataCaptor = ArgumentCaptor.forClass(JobInfo.class);
+        verify(bigquery).create(dataCaptor.capture());
 
-        List<QueryJobConfiguration> requests = dataCaptor.getAllValues();
+        List<JobInfo> requests = dataCaptor.getAllValues();
         assertEquals(1, requests.size());
-        assertEquals(expected, requests.get(0).getQuery());
+        QueryJobConfiguration conf = requests.get(0).getConfiguration();
+        assertEquals(expected, conf.getQuery());
     }
 
 }
