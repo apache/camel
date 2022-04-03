@@ -4668,20 +4668,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.XsltSaxonComponentBuilderFactory.xsltSaxon();
     }
     /**
-     * Yammer (camel-yammer)
-     * Interact with the Yammer enterprise social network.
-     * 
-     * Category: social,cloud,api
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-yammer
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.YammerComponentBuilderFactory.YammerComponentBuilder yammer() {
-        return org.apache.camel.builder.component.dsl.YammerComponentBuilderFactory.yammer();
-    }
-    /**
      * Zendesk (camel-zendesk)
      * Manage Zendesk tickets, users, organizations, etc.
      * 

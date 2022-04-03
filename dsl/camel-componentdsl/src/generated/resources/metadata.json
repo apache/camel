@@ -7696,28 +7696,6 @@
     "producerOnly": true,
     "lenientProperties": false
   },
-  "YammerComponentBuilderFactory": {
-    "kind": "component",
-    "name": "yammer",
-    "title": "Yammer",
-    "description": "Interact with the Yammer enterprise social network.",
-    "deprecated": true,
-    "firstVersion": "2.12.0",
-    "label": "social,cloud,api",
-    "javaType": "org.apache.camel.component.yammer.YammerComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-yammer",
-    "version": "3.17.0-SNAPSHOT",
-    "scheme": "yammer",
-    "extendsScheme": "",
-    "syntax": "yammer:function",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "ZendeskComponentBuilderFactory": {
     "kind": "component",
     "name": "zendesk",
