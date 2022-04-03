@@ -13199,55 +13199,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SftpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * SIP (camel-sip)
-     * Send and receive messages using the SIP protocol (used in
-     * telecommunications).
-     * 
-     * Category: mobile
-     * Since: 2.5
-     * Maven coordinates: org.apache.camel:camel-sip
-     * 
-     * Syntax: <code>sip:uri</code>
-     * 
-     * Path parameter: uri (required)
-     * URI of the SIP server to connect to (the username and password can be
-     * included such as: john:secretmyserver:9999)
-     * 
-     * @param path uri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.SipEndpointBuilder sip(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.endpointBuilder("sip", path);
-    }
-    /**
-     * SIP (camel-sip)
-     * Send and receive messages using the SIP protocol (used in
-     * telecommunications).
-     * 
-     * Category: mobile
-     * Since: 2.5
-     * Maven coordinates: org.apache.camel:camel-sip
-     * 
-     * Syntax: <code>sip:uri</code>
-     * 
-     * Path parameter: uri (required)
-     * URI of the SIP server to connect to (the username and password can be
-     * included such as: john:secretmyserver:9999)
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path uri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.SipEndpointBuilder sip(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Simple JMS (camel-sjms)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 1.x API.
