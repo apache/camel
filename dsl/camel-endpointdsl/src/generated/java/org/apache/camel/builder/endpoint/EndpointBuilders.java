@@ -357,7 +357,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.XmppEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.XsltEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.XsltSaxonEndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ZendeskEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ZooKeeperMasterEndpointBuilderFactory {

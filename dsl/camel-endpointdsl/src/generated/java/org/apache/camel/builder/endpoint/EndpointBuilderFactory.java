@@ -360,7 +360,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.XmppEndpointBuilderFactory.XmppBuilders,
             org.apache.camel.builder.endpoint.dsl.XsltEndpointBuilderFactory.XsltBuilders,
             org.apache.camel.builder.endpoint.dsl.XsltSaxonEndpointBuilderFactory.XsltSaxonBuilders,
-            org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.YammerBuilders,
             org.apache.camel.builder.endpoint.dsl.ZendeskEndpointBuilderFactory.ZendeskBuilders,
             org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperBuilders,
             org.apache.camel.builder.endpoint.dsl.ZooKeeperMasterEndpointBuilderFactory.ZooKeeperMasterBuilders {

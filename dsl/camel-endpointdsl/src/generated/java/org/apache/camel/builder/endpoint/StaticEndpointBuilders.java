@@ -16132,55 +16132,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.XsltSaxonEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Yammer (camel-yammer)
-     * Interact with the Yammer enterprise social network.
-     * 
-     * Category: social,cloud,api
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-yammer
-     * 
-     * Syntax: <code>yammer:function</code>
-     * 
-     * Path parameter: function (required)
-     * The function to use
-     * There are 9 enums and the value can be one of: MESSAGES, MY_FEED, ALGO,
-     * FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT
-     * 
-     * @param path function
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.YammerEndpointBuilder yammer(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.endpointBuilder("yammer", path);
-    }
-    /**
-     * Yammer (camel-yammer)
-     * Interact with the Yammer enterprise social network.
-     * 
-     * Category: social,cloud,api
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-yammer
-     * 
-     * Syntax: <code>yammer:function</code>
-     * 
-     * Path parameter: function (required)
-     * The function to use
-     * There are 9 enums and the value can be one of: MESSAGES, MY_FEED, ALGO,
-     * FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path function
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.YammerEndpointBuilder yammer(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Zendesk (camel-zendesk)
      * Manage Zendesk tickets, users, organizations, etc.
      * 
