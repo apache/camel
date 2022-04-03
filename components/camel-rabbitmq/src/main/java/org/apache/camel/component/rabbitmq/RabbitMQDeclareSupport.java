@@ -161,7 +161,6 @@ public class RabbitMQDeclareSupport {
 
             throws IOException {
 
-        //if (!endpoint.isPassive()) { log.warn("Forcing passive because declaration was skipped"); }
         channel.exchangeDeclarePassive(exchange);
         channel.queueDeclarePassive(queue);
         channel.queueBind(queue, exchange, emptyIfNull(routingKey), bindingArgs);

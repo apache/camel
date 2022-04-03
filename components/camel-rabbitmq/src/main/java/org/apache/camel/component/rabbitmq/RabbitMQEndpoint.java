@@ -433,8 +433,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * If true the producer will not declare and bind a queue. This can be used for directing messages via an existing
-     * routing key.
+     * If true the producer will not declare the queue. This can be used for directing messages via an existing routing
+     * key. If you still want to bind the queue to the exchange, set skipQueueBind to false.
      */
     public void setSkipQueueDeclare(boolean skipQueueDeclare) {
         this.skipQueueDeclare = skipQueueDeclare;
