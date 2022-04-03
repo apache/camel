@@ -38,7 +38,6 @@
 ** xref:syslog-dataformat.adoc[Syslog]
 ** xref:tarFile-dataformat.adoc[Tar File]
 ** xref:thrift-dataformat.adoc[Thrift]
-** xref:tidyMarkup-dataformat.adoc[TidyMarkup]
 ** xref:univocityCsv-dataformat.adoc[uniVocity CSV]
 ** xref:univocityFixed-dataformat.adoc[uniVocity Fixed Length]
 ** xref:univocityTsv-dataformat.adoc[uniVocity TSV]
