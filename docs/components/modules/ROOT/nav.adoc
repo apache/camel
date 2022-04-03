@@ -290,7 +290,6 @@
 ** xref:sftp-component.adoc[SFTP]
 ** xref:sjms-component.adoc[Simple JMS]
 ** xref:sjms2-component.adoc[Simple JMS2]
-** xref:sip-component.adoc[SIP]
 ** xref:slack-component.adoc[Slack]
 ** xref:smpp-component.adoc[SMPP]
 ** xref:snmp-component.adoc[SNMP]

@@ -3805,36 +3805,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SftpComponentBuilderFactory.sftp();
     }
     /**
-     * SIP (camel-sip)
-     * Send and receive messages using the SIP protocol (used in
-     * telecommunications).
-     * 
-     * Category: mobile
-     * Since: 2.5
-     * Maven coordinates: org.apache.camel:camel-sip
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.SipComponentBuilderFactory.SipComponentBuilder sip() {
-        return org.apache.camel.builder.component.dsl.SipComponentBuilderFactory.sip();
-    }
-    /**
-     * SIP (Secure) (camel-sip)
-     * Send and receive messages using the SIP protocol (used in
-     * telecommunications).
-     * 
-     * Category: mobile
-     * Since: 2.5
-     * Maven coordinates: org.apache.camel:camel-sip
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.SipsComponentBuilderFactory.SipsComponentBuilder sips() {
-        return org.apache.camel.builder.component.dsl.SipsComponentBuilderFactory.sips();
-    }
-    /**
      * Simple JMS (camel-sjms)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 1.x API.

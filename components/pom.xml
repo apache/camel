@@ -285,7 +285,6 @@
         <module>camel-servicenow</module>
         <module>camel-servlet</module>
         <module>camel-shiro</module>
-        <module>camel-sip</module>
         <module>camel-sjms2</module>
         <module>camel-sjms</module>
         <module>camel-slack</module>
