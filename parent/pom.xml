@@ -516,7 +516,6 @@
         <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
         <stax-api-version>1.0.1</stax-api-version>
         <stringtemplate-version>4.3.1</stringtemplate-version>
-        <tagsoup-version>1.2.1</tagsoup-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
         <testcontainers-version>1.16.3</testcontainers-version>
         <tika-version>2.3.0</tika-version>
@@ -2523,11 +2522,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-tagsoup</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-tarfile</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -3797,13 +3791,6 @@
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>
                 <version>${jettison-version}</version>
-            </dependency>
-
-            <!-- optional Tagsoup -->
-            <dependency>
-                <groupId>org.ccil.cowan.tagsoup</groupId>
-                <artifactId>tagsoup</artifactId>
-                <version>${tagsoup-version}</version>
             </dependency>
 
             <!-- optional Any23 -->
