@@ -6,6 +6,11 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.16 to 3.17
 
+=== camel-health
+
+Camel now reports DOWN when Camel is being stopped, during the graceful shutdown process.
+This ensures that Camel reports that it's not ready to accept new traffic.
+
 === camel-main
 
 Added method `findRouteResourcesFromDirectory` to `org.apache.camel.main.RoutesCollector`.
