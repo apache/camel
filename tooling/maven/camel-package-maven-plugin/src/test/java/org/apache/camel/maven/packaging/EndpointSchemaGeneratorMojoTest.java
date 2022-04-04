@@ -21,8 +21,11 @@ import java.util.List;
 
 import org.apache.camel.maven.packaging.endpoint.SomeEndpoint;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstants;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingInterfaceConstants;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadHeaders;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithFilter;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderClassHierarchy;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderInterfaceHierarchy;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithJavadocAsDescription;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithoutHeaders;
 import org.apache.camel.spi.UriEndpoint;
@@ -57,7 +60,8 @@ class EndpointSchemaGeneratorMojoTest {
     }
 
     @ParameterizedTest
-    @ValueSource(classes = { SomeEndpoint.class, SomeEndpointUsingEnumConstants.class })
+    @ValueSource(classes = {
+            SomeEndpoint.class, SomeEndpointUsingEnumConstants.class, SomeEndpointUsingInterfaceConstants.class })
     void testCanRetrieveMetadataOfHeaders(Class<?> clazz) {
         mojo.addEndpointHeaders(model, clazz.getAnnotation(UriEndpoint.class), "some");
         List<EndpointHeaderModel> endpointHeaders = model.getEndpointHeaders();
@@ -145,5 +149,20 @@ class EndpointSchemaGeneratorMojoTest {
         assertEquals("header", headerEmpty.getKind());
         assertEquals("no-description", headerEmpty.getName());
         assertEquals("Some description about NO_DESCRIPTION.", headerEmpty.getDescription());
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {
+            SomeEndpointWithHeaderClassHierarchy.class, SomeEndpointWithHeaderInterfaceHierarchy.class })
+    void testEndpointWithHeadersInHierarchy(Class<?> clazz) {
+        mojo.addEndpointHeaders(model, clazz.getAnnotation(UriEndpoint.class), "some");
+        List<EndpointHeaderModel> endpointHeaders = model.getEndpointHeaders();
+        assertEquals(2, endpointHeaders.size());
+        EndpointHeaderModel header = endpointHeaders.get(0);
+        assertEquals("header", header.getKind());
+        assertEquals("KEY_FROM_SPECIFIC", header.getName());
+        header = endpointHeaders.get(1);
+        assertEquals("header", header.getKind());
+        assertEquals("KEY_FROM_COMMON", header.getName());
     }
 }
