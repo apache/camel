@@ -16,20 +16,37 @@
  */
 package org.apache.camel.component.resteasy;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants used in the Resteasy component
  *
  */
 public final class ResteasyConstants {
+    @Metadata(label = "producer", description = "The resteasy method to process the request", javaType = "String")
     public static final String RESTEASY_PROXY_METHOD = "CamelResteasyProxyMethod";
+    @Metadata(label = "producer", description = "The proxy method params", javaType = "java.util.ArrayList")
     public static final String RESTEASY_PROXY_METHOD_PARAMS = "CamelResteasyProxyMethodArgs";
+    @Metadata(label = "producer", description = "The username", javaType = "String")
     public static final String RESTEASY_USERNAME = "CamelResteasyLogin";
+    @Metadata(label = "producer", description = "The password", javaType = "String")
     public static final String RESTEASY_PASSWORD = "CamelResteasyPassword";
+    @Metadata(description = "The context path", javaType = "String")
     public static final String RESTEASY_CONTEXT_PATH = "CamelResteasyContextPath";
     public static final String RESTEASY_RESPONSE = "CamelResteasyResponse";
+    @Metadata(label = "producer", description = "The resteasy method to process the request", javaType = "String")
     public static final String RESTEASY_HTTP_METHOD = "CamelResteasyHttpMethod";
+    @Metadata(description = "The http request", javaType = "String")
     public static final String RESTEASY_HTTP_REQUEST = "CamelResteasyHttpRequest";
+    @Metadata(label = "producer", description = "The proxy client exception", javaType = "Exception")
     public static final String RESTEASY_PROXY_PRODUCER_EXCEPTION = "CamelResteasyProxyProducerException";
+    @Metadata(label = "producer", description = "The http query", javaType = "String")
+    public static final String HTTP_QUERY = Exchange.HTTP_QUERY;
+    @Metadata(label = "producer", description = "The content type", javaType = "String")
+    public static final String CONTENT_TYPE = Exchange.CONTENT_TYPE;
+    @Metadata(description = "The http path", javaType = "String")
+    public static final String HTTP_PATH = Exchange.HTTP_PATH;
 
     /**
      * Utility classes should not have a public constructor.

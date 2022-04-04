@@ -57,7 +57,7 @@ import static org.apache.camel.component.rabbitmq.RabbitMQComponent.QUEUE_ARG_PR
  * Send and receive messages from <a href="http://www.rabbitmq.com/">RabbitMQ</a> instances.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "rabbitmq", title = "RabbitMQ", syntax = "rabbitmq:exchangeName",
-             category = { Category.MESSAGING })
+             category = { Category.MESSAGING }, headersClass = RabbitMQConstants.class)
 public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     // header to indicate that the message body needs to be de-serialized
     public static final String SERIALIZE_HEADER = "CamelSerialize";

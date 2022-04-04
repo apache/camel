@@ -61,12 +61,12 @@ public class ResteasyProducer extends DefaultProducer {
         ResteasyEndpoint resteasyEndpoint = ObjectHelper.cast(ResteasyEndpoint.class, getEndpoint());
         Map<String, String> parameters = getParameters(exchange, resteasyEndpoint);
 
-        String query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        String query = exchange.getIn().getHeader(ResteasyConstants.HTTP_QUERY, String.class);
         String uri = resteasyEndpoint.buildUri();
         if (query != null) {
             LOG.debug("Adding query: {} to uri: {}", query, uri);
             uri = addQueryToUri(uri, query);
-            LOG.debug("URI: {} populated via Exchange.HTTP_QUERY header", uri);
+            LOG.debug("URI: {} populated via ResteasyConstants.HTTP_QUERY header", uri);
         }
 
         WebTarget resteasyWebTarget = createWebClientTarget(uri);
@@ -247,7 +247,7 @@ public class ResteasyProducer extends DefaultProducer {
         String body = exchange.getIn().getBody(String.class);
         LOG.debug("Body in producer: {}", body);
 
-        String mediaType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+        String mediaType = exchange.getIn().getHeader(ResteasyConstants.CONTENT_TYPE, String.class);
 
         LOG.debug("Populate Resteasy request from exchange body: {} using media type {}", body, mediaType);
 
