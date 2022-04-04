@@ -1,0 +1,1 @@
+../../../../../components/camel-debezium/camel-debezium-db2/src/main/docs/debezium-db2-component.adoc
