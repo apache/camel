@@ -34,6 +34,7 @@
 
     <modules>
         <module>camel-debezium-common</module>
+        <module>camel-debezium-db2</module> 
         <module>camel-debezium-mongodb</module>
         <module>camel-debezium-mysql</module>
         <module>camel-debezium-oracle</module>
