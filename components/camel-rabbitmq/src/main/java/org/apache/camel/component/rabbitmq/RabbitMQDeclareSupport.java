@@ -57,6 +57,11 @@ public class RabbitMQDeclareSupport {
             // declare
             declareAndBindQueue(channel, endpoint.getQueue(), endpoint.getExchangeName(), endpoint.getRoutingKey(),
                     resolvedQueueArguments(), endpoint.getBindingArgs());
+        } else if (shouldBindQueue()) {
+            // we skipped declarations because they should exist, but we still
+            // want to bind both. Forced passive declaration
+            passivelyDeclareExchangeAndQueueAndBindThem(channel, endpoint.getQueue(), endpoint.getExchangeName(),
+                    endpoint.getRoutingKey(), endpoint.getBindingArgs());
         }
     }
 
@@ -148,6 +153,17 @@ public class RabbitMQDeclareSupport {
         if (shouldBindQueue()) {
             channel.queueBind(queue, exchange, emptyIfNull(routingKey), bindingArgs);
         }
+    }
+
+    private void passivelyDeclareExchangeAndQueueAndBindThem(
+            final Channel channel, final String queue, final String exchange, final String routingKey,
+            final Map<String, Object> bindingArgs)
+
+            throws IOException {
+
+        channel.exchangeDeclarePassive(exchange);
+        channel.queueDeclarePassive(queue);
+        channel.queueBind(queue, exchange, emptyIfNull(routingKey), bindingArgs);
     }
 
     private String emptyIfNull(final String routingKey) {

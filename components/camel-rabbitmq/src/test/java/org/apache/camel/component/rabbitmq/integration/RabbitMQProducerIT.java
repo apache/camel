@@ -89,7 +89,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
     private String getBasicURI(String route) {
         ConnectionProperties connectionProperties = service.connectionProperties();
 
-        return String.format("rabbitmq:%s:%d/%s?routingKey=%s&username=%s&password=%s&skipQueueDeclare=true",
+        return String.format("rabbitmq:%s:%d/%s?routingKey=%s&username=%s&password=%s&skipQueueDeclare=true&skipQueueBind=true",
                 connectionProperties.hostname(), connectionProperties.port(),
                 EXCHANGE, route, connectionProperties.username(), connectionProperties.password());
     }
