@@ -74,6 +74,7 @@
 ** xref:dataset-component.adoc[Dataset]
 ** xref:dataset-test-component.adoc[DataSet Test]
 ** xref:debezium-summary.adoc[Debezium]
+*** xref:debezium-db2-component.adoc[Debezium DB2 Connector]
 *** xref:debezium-mongodb-component.adoc[Debezium MongoDB Connector]
 *** xref:debezium-mysql-component.adoc[Debezium MySQL Connector]
 *** xref:debezium-oracle-component.adoc[Debezium Oracle Connector]
