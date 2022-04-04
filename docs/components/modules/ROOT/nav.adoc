@@ -229,7 +229,6 @@
 ** xref:mock-component.adoc[Mock]
 ** xref:mongodb-component.adoc[MongoDB]
 ** xref:mongodb-gridfs-component.adoc[MongoDB GridFS]
-** xref:msv-component.adoc[MSV]
 ** xref:mustache-component.adoc[Mustache]
 ** xref:mvel-component.adoc[MVEL]
 ** xref:mybatis-component.adoc[MyBatis]

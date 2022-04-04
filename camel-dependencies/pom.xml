@@ -273,8 +273,6 @@
     <influx-java-driver-version>2.22</influx-java-driver-version>
     <irclib-version>1.10</irclib-version>
     <ironmq-version>3.0.5</ironmq-version>
-    <isorelax-jaxp-bridge-version>1.1</isorelax-jaxp-bridge-version>
-    <isorelax-version>20090621</isorelax-version>
     <ivy-version>2.5.0</ivy-version>
     <jackrabbit-version>2.21.10</jackrabbit-version>
     <jackson-version>1.9.12</jackson-version>
@@ -415,7 +413,6 @@
     <mockwebserver-version>0.1.8</mockwebserver-version>
     <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
     <mongo-java-driver-version>4.5.0</mongo-java-driver-version>
-    <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.9.10</mustache-java-version>
     <mvel-version>2.4.14.Final</mvel-version>
     <mybatis-version>3.5.9</mybatis-version>
