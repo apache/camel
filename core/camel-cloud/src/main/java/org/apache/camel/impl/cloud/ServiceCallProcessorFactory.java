@@ -219,10 +219,8 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
                                 ServiceDiscovery.class))
                 .orElseGet(
                         // Default, that's s little ugly but a load balancer may
-                        // live without
-                        // (i.e. the Ribbon one) so let's delegate the null check
-                        // to the actual
-                        // impl.
+                        // live without so let's delegate the null check
+                        // to the actual impl.
                         () -> null);
     }
 

@@ -47,7 +47,6 @@
 ** xref:redis.adoc[Redis]
 ** xref:resilience4j.adoc[Resilience4j]
 ** xref:resourceresolver-github.adoc[Resourceresolver Github]
-** xref:ribbon.adoc[Ribbon]
 ** xref:rxjava.adoc[RxJava]
 ** xref:shiro.adoc[Shiro]
 ** xref:spring-main.adoc[Spring Main]

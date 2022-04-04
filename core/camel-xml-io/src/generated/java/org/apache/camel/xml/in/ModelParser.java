@@ -1744,18 +1744,6 @@ public class ModelParser extends BaseParser {
         return doParse(new PassThroughServiceCallServiceFilterConfiguration(),
             identifiedTypeAttributeHandler(), serviceCallConfigurationElementHandler(), noValueHandler());
     }
-    protected RibbonServiceCallServiceLoadBalancerConfiguration doParseRibbonServiceCallServiceLoadBalancerConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new RibbonServiceCallServiceLoadBalancerConfiguration(), (def, key, val) -> {
-            switch (key) {
-                case "clientName": def.setClientName(val); break;
-                case "namespace": def.setNamespace(val); break;
-                case "password": def.setPassword(val); break;
-                case "username": def.setUsername(val); break;
-                default: return identifiedTypeAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        }, serviceCallConfigurationElementHandler(), noValueHandler());
-    }
     protected ServiceCallConfigurationDefinition doParseServiceCallConfigurationDefinition() throws IOException, XmlPullParserException {
         return doParse(new ServiceCallConfigurationDefinition(), (def, key, val) -> {
             switch (key) {
@@ -1772,7 +1760,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, (def, key) -> {
             switch (key) {
-                case "ribbonLoadBalancer": def.setLoadBalancerConfiguration(doParseRibbonServiceCallServiceLoadBalancerConfiguration()); break;
                 case "defaultLoadBalancer": def.setLoadBalancerConfiguration(doParseDefaultServiceCallServiceLoadBalancerConfiguration()); break;
                 case "cachingServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseCachingServiceCallServiceDiscoveryConfiguration()); break;
                 case "combinedServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseCombinedServiceCallServiceDiscoveryConfiguration()); break;
@@ -1828,7 +1815,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, (def, key) -> {
             switch (key) {
-                case "ribbonLoadBalancer": def.setLoadBalancerConfiguration(doParseRibbonServiceCallServiceLoadBalancerConfiguration()); break;
                 case "defaultLoadBalancer": def.setLoadBalancerConfiguration(doParseDefaultServiceCallServiceLoadBalancerConfiguration()); break;
                 case "cachingServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseCachingServiceCallServiceDiscoveryConfiguration()); break;
                 case "combinedServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseCombinedServiceCallServiceDiscoveryConfiguration()); break;

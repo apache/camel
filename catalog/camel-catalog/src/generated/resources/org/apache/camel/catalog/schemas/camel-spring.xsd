@@ -1214,14 +1214,6 @@ Resume EIP to support resuming processing from last known offset.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="ribbonLoadBalancer" type="tns:ribbonServiceCallServiceLoadBalancerConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-null
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
   <xs:element name="rollback" type="tns:rollbackDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -12400,8 +12392,8 @@ comma in the format: servicehost:port,servicehost2:port,servicehost3:port.
             <xs:annotation>
               <xs:documentation xml:lang="en"><![CDATA[
 Set client properties to use. These properties are specific to what service call
-implementation are in use. For example if using ribbon, then the client
-properties are define in com.netflix.client.config.CommonClientConfigKey.
+implementation are in use. For example if using a different one, then the client
+properties are defined according to the specific service in use.
               ]]></xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -12843,42 +12835,6 @@ Reference of a ServiceFilter.
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="ribbonServiceCallServiceLoadBalancerConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceLoadBalancerConfiguration">
-        <xs:sequence/>
-        <xs:attribute name="namespace" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The namespace.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="username" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The username.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="password" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The password.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="clientName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the Ribbon client name.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:complexType name="serviceCallConfigurationDefinition">
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
@@ -12900,10 +12856,7 @@ Sets the Ribbon client name.
             <xs:element ref="tns:healthyServiceFilter"/>
             <xs:element ref="tns:passThroughServiceFilter"/>
           </xs:choice>
-          <xs:choice minOccurs="0">
-            <xs:element ref="tns:ribbonLoadBalancer"/>
-            <xs:element ref="tns:defaultLoadBalancer"/>
-          </xs:choice>
+          <xs:element minOccurs="0" ref="tns:defaultLoadBalancer"/>
           <xs:element minOccurs="0" name="expression" type="tns:serviceCallExpressionConfiguration">
             <xs:annotation>
               <xs:documentation xml:lang="en"><![CDATA[
@@ -13108,10 +13061,7 @@ ServiceCallConstants.SERVICE_PORT. Default value: CamelServiceCallServicePort
             <xs:element ref="tns:healthyServiceFilter"/>
             <xs:element ref="tns:passThroughServiceFilter"/>
           </xs:choice>
-          <xs:choice minOccurs="0">
-            <xs:element ref="tns:ribbonLoadBalancer"/>
-            <xs:element ref="tns:defaultLoadBalancer"/>
-          </xs:choice>
+          <xs:element minOccurs="0" ref="tns:defaultLoadBalancer"/>
           <xs:element minOccurs="0" name="expression" type="tns:serviceCallExpressionConfiguration">
             <xs:annotation>
               <xs:documentation xml:lang="en"><![CDATA[
