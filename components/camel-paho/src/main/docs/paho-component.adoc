@@ -53,25 +53,14 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
-
-== Headers
-
-The following headers are recognized by the Paho component:
-
-[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
-|===
-|Header |Java constant |Endpoint type |Value type |Description
-
-|CamelMqttTopic |PahoConstants.MQTT_TOPIC |Consumer |String |The name of the topic
-|CamelMqttQoS |PahoConstants.MQTT_QOS |Consumer |Integer |QualityOfService of the incoming message
-|CamelPahoOverrideTopic |PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC |Producer |String |Name of topic to override and send to instead of topic specified on endpoint
-|===
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 
 == Default payload type
 
-By default Camel Paho component operates on the binary payloads
+By default, Camel Paho component operates on the binary payloads
 extracted out of (or put into) the MQTT message:
 
 [source,java]
