@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.reactive.streams;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Useful constants used in the Camel Reactive Streams component.
  */
@@ -30,8 +32,9 @@ public final class ReactiveStreamsConstants {
      * (value="onNext"), an error (value="onError") or a completion event (value="onComplete"). Errors and completion
      * notification are not forwarded by default.
      */
+    @Metadata(label = "consumer", javaType = "String")
     public static final String REACTIVE_STREAMS_EVENT_TYPE = "CamelReactiveStreamsEventType";
-
+    @Metadata(description = "The callback.", javaType = "org.apache.camel.component.reactive.streams.api.DispatchCallback")
     public static final String REACTIVE_STREAMS_CALLBACK = "CamelReactiveStreamsCallback";
 
     private ReactiveStreamsConstants() {
