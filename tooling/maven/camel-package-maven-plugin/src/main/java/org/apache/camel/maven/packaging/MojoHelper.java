@@ -59,7 +59,8 @@ public final class MojoHelper {
                         dir.resolve("camel-google-secret-manager"));
             case "camel-debezium":
                 return Arrays.asList(dir.resolve("camel-debezium-mongodb"), dir.resolve("camel-debezium-mysql"),
-                        dir.resolve("camel-debezium-postgres"), dir.resolve("camel-debezium-sqlserver"), dir.resolve("camel-debezium-oracle"));
+                        dir.resolve("camel-debezium-postgres"), dir.resolve("camel-debezium-sqlserver"),
+                        dir.resolve("camel-debezium-oracle"));
             case "camel-microprofile":
                 return Arrays.asList(dir.resolve("camel-microprofile-config"),
                         dir.resolve("camel-microprofile-fault-tolerance"),

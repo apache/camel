@@ -1058,6 +1058,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.DebeziumMysqlComponentBuilderFactory.debeziumMysql();
     }
     /**
+     * Debezium Oracle Connector (camel-debezium-oracle)
+     * Capture changes from a Oracle database.
+     * 
+     * Category: database,sql
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-debezium-oracle
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.DebeziumOracleComponentBuilderFactory.DebeziumOracleComponentBuilder debeziumOracle() {
+        return org.apache.camel.builder.component.dsl.DebeziumOracleComponentBuilderFactory.debeziumOracle();
+    }
+    /**
      * Debezium PostgresSQL Connector (camel-debezium-postgres)
      * Capture changes from a PostgresSQL database.
      * 

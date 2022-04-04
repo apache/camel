@@ -3433,6 +3433,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.DebeziumMySqlEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Debezium Oracle Connector (camel-debezium-oracle)
+     * Capture changes from a Oracle database.
+     * 
+     * Category: database,sql
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-debezium-oracle
+     * 
+     * Syntax: <code>debezium-oracle:name</code>
+     * 
+     * Path parameter: name (required)
+     * Unique name for the connector. Attempting to register again with the same
+     * name will fail.
+     * 
+     * @param path name
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DebeziumOracleEndpointBuilderFactory.DebeziumOracleEndpointBuilder debeziumOracle(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DebeziumOracleEndpointBuilderFactory.endpointBuilder("debezium-oracle", path);
+    }
+    /**
+     * Debezium Oracle Connector (camel-debezium-oracle)
+     * Capture changes from a Oracle database.
+     * 
+     * Category: database,sql
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-debezium-oracle
+     * 
+     * Syntax: <code>debezium-oracle:name</code>
+     * 
+     * Path parameter: name (required)
+     * Unique name for the connector. Attempting to register again with the same
+     * name will fail.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path name
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DebeziumOracleEndpointBuilderFactory.DebeziumOracleEndpointBuilder debeziumOracle(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DebeziumOracleEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Debezium PostgresSQL Connector (camel-debezium-postgres)
      * Capture changes from a PostgresSQL database.
      * 
