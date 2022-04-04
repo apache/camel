@@ -60,7 +60,7 @@ public final class MojoHelper {
             case "camel-debezium":
                 return Arrays.asList(dir.resolve("camel-debezium-mongodb"), dir.resolve("camel-debezium-mysql"),
                         dir.resolve("camel-debezium-postgres"), dir.resolve("camel-debezium-sqlserver"),
-                        dir.resolve("camel-debezium-oracle"));
+                        dir.resolve("camel-debezium-oracle"), dir.resolve("camel-debezium-db2"));
             case "camel-microprofile":
                 return Arrays.asList(dir.resolve("camel-microprofile-config"),
                         dir.resolve("camel-microprofile-fault-tolerance"),
