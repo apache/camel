@@ -10718,57 +10718,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MyBatisBeanEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Nagios (camel-nagios)
-     * Send passive checks to Nagios using JSendNSCA.
-     * 
-     * Category: monitoring
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-nagios
-     * 
-     * Syntax: <code>nagios:host:port</code>
-     * 
-     * Path parameter: host (required)
-     * This is the address of the Nagios host where checks should be send.
-     * 
-     * Path parameter: port (required)
-     * The port number of the host.
-     * 
-     * @param path host:port
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.NagiosEndpointBuilder nagios(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.endpointBuilder("nagios", path);
-    }
-    /**
-     * Nagios (camel-nagios)
-     * Send passive checks to Nagios using JSendNSCA.
-     * 
-     * Category: monitoring
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-nagios
-     * 
-     * Syntax: <code>nagios:host:port</code>
-     * 
-     * Path parameter: host (required)
-     * This is the address of the Nagios host where checks should be send.
-     * 
-     * Path parameter: port (required)
-     * The port number of the host.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path host:port
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.NagiosEndpointBuilder nagios(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Nats (camel-nats)
      * Send and receive messages from NATS messaging system.
      * 

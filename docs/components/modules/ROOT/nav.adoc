@@ -235,7 +235,6 @@
 ** xref:mvel-component.adoc[MVEL]
 ** xref:mybatis-component.adoc[MyBatis]
 ** xref:mybatis-bean-component.adoc[MyBatis Bean]
-** xref:nagios-component.adoc[Nagios]
 ** xref:nats-component.adoc[Nats]
 ** xref:netty-component.adoc[Netty]
 ** xref:netty-http-component.adoc[Netty HTTP]

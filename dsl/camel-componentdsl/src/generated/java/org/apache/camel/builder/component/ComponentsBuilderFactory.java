@@ -3125,20 +3125,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.MybatisBeanComponentBuilderFactory.mybatisBean();
     }
     /**
-     * Nagios (camel-nagios)
-     * Send passive checks to Nagios using JSendNSCA.
-     * 
-     * Category: monitoring
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-nagios
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.NagiosComponentBuilderFactory.NagiosComponentBuilder nagios() {
-        return org.apache.camel.builder.component.dsl.NagiosComponentBuilderFactory.nagios();
-    }
-    /**
      * Nats (camel-nats)
      * Send and receive messages from NATS messaging system.
      * 

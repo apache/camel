@@ -234,7 +234,6 @@
         <module>camel-mustache</module>
         <module>camel-mvel</module>
         <module>camel-mybatis</module>
-        <module>camel-nagios</module>
         <module>camel-nats</module>
         <module>camel-netty-http</module>
         <module>camel-netty</module>

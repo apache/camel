@@ -343,7 +343,6 @@
     <jose4j-version>0.6.4</jose4j-version>
     <jota-version>1.0.0-beta9</jota-version>
     <jsch-version>0.2.0</jsch-version>
-    <jsendnsca-version>2.1.1</jsendnsca-version>
     <jslt-version>0.1.11</jslt-version>
     <jsmpp-version>2.3.11</jsmpp-version>
     <json-api>1.0</json-api>
