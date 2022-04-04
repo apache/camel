@@ -42,28 +42,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Message headers
-
-=== Consumer headers
-
-The following headers are available when consuming from Nitrite.
-[width="100%",cols="2m,2m,1m,5",options="header"]
-|===
-| Header constant | Header value | Type | Description
-| NitriteConstants.CHANGE_TIMESTAMP | "CamelNitriteChangeTimestamp" | Long | Event timestamp in Epoch millis
-| NitriteConstants.CHANGE_TYPE | "CamelNitriteChangeType" | org.dizitart.no2.event.ChangeType | Type of event
-|===
-
-=== Producer headers
-
-The following headers are available when producing to Nitrite.
-[width="100%",cols="2m,2m,1m,5",options="header"]
-|===
-| Header constant | Header value | Type | Description
-| NitriteConstants.OPERATION | "CamelNitriteOperation" | AbstractNitriteOperation | Operation to invoke on Collection or Repository. Defaults to `UpsertOperation` if not specified
-| NitriteConstants.WRITE_RESULT | "CamelNitriteWriteResult" | org.dizitart.no2.WriteResult | Result of data modifying operation
-|===
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Producer operations
 The following Operations are available to specify as NitriteConstants.OPERATION when producing to Nitrite.

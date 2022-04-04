@@ -16,10 +16,15 @@
  */
 package org.apache.camel.component.nagios;
 
+import org.apache.camel.spi.Metadata;
+
 public final class NagiosConstants {
 
+    @Metadata(description = "The hostname to be sent in this passive check.", javaType = "String", defaultValue = "localhost")
     public static final String HOST_NAME = "CamelNagiosHostName";
+    @Metadata(description = "The level of the passive check.", javaType = "com.googlecode.jsendnsca.Level")
     public static final String LEVEL = "CamelNagiosLevel";
+    @Metadata(description = "The service name.", javaType = "String", defaultValue = "The context name")
     public static final String SERVICE_NAME = "CamelNagiosServiceName";
 
     private NagiosConstants() {

@@ -31,6 +31,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty.http.InboundStreamHttpResponse;
+import org.apache.camel.component.netty.http.NettyHttpConstants;
 import org.apache.camel.component.netty.http.NettyHttpProducer;
 
 /**
@@ -70,11 +71,11 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
 
         if (!HttpUtil.isKeepAlive(response)) {
             // just want to make sure we close the channel if the keepAlive is not true
-            exchange.setProperty(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
+            exchange.setProperty(NettyHttpConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
         }
         // handle cookies
         if (producer.getEndpoint().getCookieHandler() != null) {
-            String actualUri = exchange.getIn().getHeader(Exchange.HTTP_URL, String.class);
+            String actualUri = exchange.getIn().getHeader(NettyHttpConstants.HTTP_URL, String.class);
             URI uri = new URI(actualUri);
             Map<String, List<String>> m = new HashMap<>();
             for (String name : response.headers().names()) {

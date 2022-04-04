@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.olingo4.internal;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants for Olingo4 component.
  */
@@ -28,4 +30,6 @@ public interface Olingo4Constants {
     String THREAD_PROFILE_NAME = "CamelOlingo4";
 
     String RESPONSE_HTTP_HEADERS = "responseHttpHeaders";
+    @Metadata(label = "producer", description = "The response Http headers", javaType = "Map<String, String>")
+    String FULL_RESPONSE_HTTP_HEADERS = PROPERTY_PREFIX + RESPONSE_HTTP_HEADERS;
 }

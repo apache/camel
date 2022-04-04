@@ -52,7 +52,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Usage
 
@@ -82,36 +84,6 @@ You can use following settings for each subsystem:
 |`deleteMetadata` | Delete metadata.
 |=========================================================================
 
-=== Message headers evaluated by the Volume producer
-
-[width="100%",cols="20%,10%,70%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`name` |`String` |The container name.
-
-|`X-Container-Meta-` |`Map` | Container metadata prefix.
-
-|`X-Versions-Location` |`String` | Versions location.
-
-|`X-Container-Read` |`String` |  ACL - container read.
-
-|`X-Container-Write` |`String` | ACL - container write.
-
-|`limit` | `Integer` | List options - limit.
-
-|`marker` | `String` | List options - marker.
-
-|`end_marker` | `String` | List options - end marker.
-
-|`delimiter` | `Character` | List options - delimiter.
-
-|`path` | `String` | List options - path.
-
-|=========================================================================
-
 If you need more precise container settings you can create new object of the type *org.openstack4j.model.storage.object.options.CreateUpdateContainerOptions* (in case of create or update operation) 
 or *org.openstack4j.model.storage.object.options.ContainerListOptions* for listing containers and send in the message body.
 
@@ -137,21 +109,5 @@ or *org.openstack4j.model.storage.object.options.ContainerListOptions* for listi
 |`createUpdateMetadata` | Create/update metadata.
 
 |=========================================================================
-
-=== Message headers evaluated by the Object producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`containerName` |`String` |The container name.
-
-|`objectName` |`String` |The object name.
-
-|=========================================================================
-
-
 
 include::spring-boot:partial$starter.adoc[]

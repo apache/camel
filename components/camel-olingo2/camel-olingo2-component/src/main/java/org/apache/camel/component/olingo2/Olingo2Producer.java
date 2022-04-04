@@ -38,8 +38,6 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
 
     private static final Logger LOG = LoggerFactory.getLogger(Olingo2Producer.class);
 
-    private static final String RESPONSE_HTTP_HEADERS = "responseHttpHeaders";
-
     private Olingo2Index resultIndex;
 
     public Olingo2Producer(Olingo2Endpoint endpoint) {
@@ -72,7 +70,7 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
                 exchange.getOut().setHeaders(exchange.getIn().getHeaders());
 
                 // Add http response headers
-                exchange.getOut().setHeader(Olingo2Constants.PROPERTY_PREFIX + RESPONSE_HTTP_HEADERS, responseHeaders);
+                exchange.getOut().setHeader(Olingo2Constants.RESPONSE_HTTP_HEADERS, responseHeaders);
 
                 interceptResult(response, exchange);
 

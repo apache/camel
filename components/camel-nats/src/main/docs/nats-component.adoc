@@ -48,7 +48,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Configuring servers
 
@@ -89,18 +91,6 @@ If you are using Camel Main or Spring Boot you can configure the server urls in 
 ----
 camel.component.nats.servers=scott:tiger@someserver:4222,superman:123@someotherserver:42222
 ----
-
-== Headers
-
-[width="100%",options="header"]
-|=======================================================================
-|Name |Type |Description
-| CamelNatsSID | String | The SID of a consumed message.
-| CamelNatsReplyTo | String | The ReplyTo of a consumed message (may be null).
-| CamelNatsSubject | String | The Subject of a consumed message.
-| CamelNatsQueueName | String | The Queue name of a consumed message (may be null).
-| CamelNatsMessageTimestamp | long | The timestamp of a consumed message.
-|=======================================================================
 
 == Request/Reply support
 The producer supports request/reply where it can wait for an expected reply message.

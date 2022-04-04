@@ -23,6 +23,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.oaipmh.component.model.OAIPMHConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,7 +36,7 @@ import org.joda.time.format.ISODateTimeFormat;
  * Harvest metadata using OAI-PMH protocol
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "oaipmh", title = "OAI-PMH", syntax = "oaipmh:baseUrl", lenientProperties = true,
-             category = { Category.ENDPOINT, Category.WEBSERVICE, Category.BATCH })
+             category = { Category.ENDPOINT, Category.WEBSERVICE, Category.BATCH }, headersClass = OAIPMHConstants.class)
 public class OAIPMHEndpoint extends ScheduledPollEndpoint {
 
     private transient URI url;

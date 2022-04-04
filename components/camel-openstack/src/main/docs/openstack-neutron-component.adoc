@@ -53,7 +53,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Usage
 
@@ -73,33 +75,6 @@ You can use following settings for each subsystem:
 |`getAll` | Get all networks.
 
 |`delete` | Delete the network.
-|=========================================================================
-
-=== Message headers evaluated by the Network producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`ID` | `String` | ID of the network.
-
-|`name` |`String` |The network name.
-
-|`tenantId` |`String` |Tenant ID.
-
-|`adminStateUp` |`Boolean` |AdminStateUp header.
-
-|`networkType` |`org.openstack4j.model.network.NetworkType` |Network type.
-
-|`physicalNetwork` |`String` |Physical network.
-
-|`segmentId` |`String` |Segment ID.
-
-|`isShared` |`Boolean` |Is shared.
-
-|`isRouterExternal` |`Boolean` | Is router external.
 |=========================================================================
 
 If you need more precise network settings you can create new object of the type *org.openstack4j.model.network.Network* and send in the message body.
@@ -122,25 +97,6 @@ If you need more precise network settings you can create new object of the type 
 |`action` | Perform an action on the subnet.
 |=========================================================================
 
-=== Message headers evaluated by the Subnet producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`ID` | `String` | ID of the subnet.
-
-|`name` |`String` |The subnet name.
-
-|`networkId` |`String` |Network ID.
-
-|`enableDHCP` |`Boolean` | Enable DHCP.
-
-|`gateway` |`String` |Gateway.
-|=========================================================================
-
 If you need more precise subnet settings you can create new object of the type *org.openstack4j.model.network.Subnet* and send in the message body.
 
 == ports
@@ -160,25 +116,6 @@ If you need more precise subnet settings you can create new object of the type *
 
 |`delete` | Delete the port.
 
-|=========================================================================
-
-=== Message headers evaluated by the Port producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`name` |`String` |The port name.
-
-|`networkId` |`String` |Network ID.
-
-|`tenantId` |`String` |Tenant ID.
-
-|`deviceId` | `String` | Device ID.
-
-|`macAddress` | `String` | MAC address.
 |=========================================================================
 
 == routers
@@ -203,29 +140,5 @@ If you need more precise subnet settings you can create new object of the type *
 |`detachInterface` | Detach an interface.
 
 |=========================================================================
-
-=== Message headers evaluated by the Port producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`name` |`String` |The router name.
-
-|`routerId` |`String` |Router ID.
-
-|`subnetId` |`String` |Subnet ID.
-
-|`portId` |`String` |Port ID.
-
-|`interfaceType` | `org.openstack4j.model.network.AttachInterfaceType` | Interface type.
-
-|`tenantId` | `String` | Tenant ID.
-|=========================================================================
-
-
-
 
 include::spring-boot:partial$starter.adoc[]

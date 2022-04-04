@@ -16,10 +16,18 @@
  */
 package org.apache.camel.component.nitrite;
 
+import org.apache.camel.spi.Metadata;
+
 public final class NitriteConstants {
+    @Metadata(label = "consumer", description = "Event timestamp in Epoch millis.", javaType = "long")
     public static final String CHANGE_TIMESTAMP = "CamelNitriteChangeTimestamp";
+    @Metadata(label = "consumer", description = "Type of event.", javaType = "org.dizitart.no2.event.ChangeType")
     public static final String CHANGE_TYPE = "CamelNitriteChangeType";
+    @Metadata(label = "producer",
+              description = "Operation to invoke on Collection or Repository. Defaults to `UpsertOperation` if not specified.",
+              javaType = "org.apache.camel.component.nitrite.AbstractNitriteOperation")
     public static final String OPERATION = "CamelNitriteOperation";
+    @Metadata(description = "Result of data modifying operation.", javaType = "org.dizitart.no2.WriteResult")
     public static final String WRITE_RESULT = "CamelNitriteWriteResult";
 
     private NitriteConstants() {

@@ -56,6 +56,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Usage
 
@@ -77,21 +80,6 @@ You can use following settings for each subsystem:
 |`update` | Update the domain.
 
 |`delete` | Delete the domain.
-|=========================================================================
-
-=== Message headers evaluated by the Domain producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`ID` | `String` | ID of the domain.
-
-|`name` |`String` |The domain name.
-
-|`description` |`String` | Domain description.
 |=========================================================================
 
 If you need more precise domain settings you can create new object of the type *org.openstack4j.model.identity.v3.Domain* and send in the message body.
@@ -120,25 +108,6 @@ If you need more precise domain settings you can create new object of the type *
 |`removeUserFromGroup` | Remove the user from the group.
 |=========================================================================
 
-=== Message headers evaluated by the Group producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`groupId` | `String` | ID of the group.
-
-|`name` |`String` |The group name.
-
-|`userId` | `String` | ID of the user.
-
-|`domainId` | `String` | ID of the domain.
-
-|`description` |`String` | Group description.
-|=========================================================================
-
 If you need more precise group settings you can create new object of the type *org.openstack4j.model.identity.v3.Group* and send in the message body.
 
 == projects
@@ -157,25 +126,6 @@ If you need more precise group settings you can create new object of the type *o
 |`update` | Update the project.
 
 |`delete` | Delete the project.
-|=========================================================================
-
-=== Message headers evaluated by the Project producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`ID` | `String` | ID of the project.
-
-|`name` |`String` |The project name.
-
-|`description` |`String` | Project description.
-
-|`domainId` | `String` | ID of the domain.
-
-|`parentId` | `String` | The parent project ID.
 |=========================================================================
 
 If you need more precise project settings you can create new object of the type *org.openstack4j.model.identity.v3.Project* and send in the message body.
@@ -198,19 +148,6 @@ If you need more precise project settings you can create new object of the type 
 |`delete` | Delete the region.
 |=========================================================================
 
-=== Message headers evaluated by the Region producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`ID` | `String` | ID of the region.
-
-|`description` |`String` | Region description.
-|=========================================================================
-
 If you need more precise region settings you can create new object of the type *org.openstack4j.model.identity.v3.Region* and send in the message body.
 
 == users
@@ -229,27 +166,6 @@ If you need more precise region settings you can create new object of the type *
 |`update` | Update the user.
 
 |`delete` | Delete the user.
-|=========================================================================
-
-=== Message headers evaluated by the User producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=========================================================================
-|Header |Type |Description
-
-|`operation` | `String` | The operation to perform.
-
-|`ID` | `String` | ID of the user.
-
-|`name` |`String` |The user name.
-
-|`description` |`String` | User description.
-
-|`domainId` | `String` | ID of the domain.
-
-|`password` | `String`| User's password.
-
-|`email` | `String`| User's email.
 |=========================================================================
 
 If you need more precise user settings you can create new object of the type *org.openstack4j.model.identity.v3.User* and send in the message body.
