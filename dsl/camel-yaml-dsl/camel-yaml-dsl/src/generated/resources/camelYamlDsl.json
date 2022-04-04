@@ -3799,32 +3799,6 @@
           }
         }
       },
-      "org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration" : {
-        "type" : "object",
-        "properties" : {
-          "clientName" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "namespace" : {
-            "type" : "string"
-          },
-          "password" : {
-            "type" : "string"
-          },
-          "properties" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-            }
-          },
-          "username" : {
-            "type" : "string"
-          }
-        }
-      },
       "org.apache.camel.model.cloud.ServiceCallConfigurationDefinition" : {
         "type" : "object",
         "properties" : {
@@ -3881,9 +3855,6 @@
           },
           "pattern" : {
             "type" : "string"
-          },
-          "ribbonLoadBalancer" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration"
           },
           "serviceChooserRef" : {
             "type" : "string"
@@ -3976,9 +3947,6 @@
             },
             "pattern" : {
               "type" : "string"
-            },
-            "ribbonLoadBalancer" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration"
             },
             "serviceChooserRef" : {
               "type" : "string"

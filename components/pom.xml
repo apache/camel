@@ -78,9 +78,6 @@
         <module>camel-master</module>
         <module>camel-service</module>
 
-        <!-- build it first so it can be used by other component to test i.e. ServiceCall EIP -->
-        <module>camel-ribbon</module>
-
         <!-- regular modules in alphabetic order -->
         <module>camel-activemq</module>
         <module>camel-ahc-ws</module>

@@ -355,9 +355,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.rest.RestsDefinition": return new ModelDeserializers.RestsDefinitionDeserializer();
             case "resumable": return new ModelDeserializers.ResumableDefinitionDeserializer();
             case "org.apache.camel.model.ResumableDefinition": return new ModelDeserializers.ResumableDefinitionDeserializer();
-            case "ribbon-load-balancer": return new ModelDeserializers.RibbonServiceCallServiceLoadBalancerConfigurationDeserializer();
-            case "ribbonLoadBalancer": return new ModelDeserializers.RibbonServiceCallServiceLoadBalancerConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration": return new ModelDeserializers.RibbonServiceCallServiceLoadBalancerConfigurationDeserializer();
             case "rollback": return new ModelDeserializers.RollbackDefinitionDeserializer();
             case "org.apache.camel.model.RollbackDefinition": return new ModelDeserializers.RollbackDefinitionDeserializer();
             case "round-robin": return new ModelDeserializers.RoundRobinLoadBalancerDefinitionDeserializer();

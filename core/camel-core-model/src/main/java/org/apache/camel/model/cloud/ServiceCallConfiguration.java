@@ -57,8 +57,8 @@ public abstract class ServiceCallConfiguration extends IdentifiedType {
     /**
      * Set client properties to use.
      * <p/>
-     * These properties are specific to what service call implementation are in use. For example if using ribbon, then
-     * the client properties are define in com.netflix.client.config.CommonClientConfigKey.
+     * These properties are specific to what service call implementation are in use. For example if using a different
+     * one, then the client properties are defined according to the specific service in use.
      */
     public void setProperties(List<PropertyDefinition> properties) {
         this.properties = properties;
@@ -67,8 +67,8 @@ public abstract class ServiceCallConfiguration extends IdentifiedType {
     /**
      * Adds a custom property to use.
      * <p/>
-     * These properties are specific to what service call implementation are in use. For example if using ribbon, then
-     * the client properties are define in com.netflix.client.config.CommonClientConfigKey.
+     * These properties are specific to what service call implementation are in use. For example if using a different
+     * one, then the client properties are defined according to the specific service in use.
      */
     public ServiceCallConfiguration property(String key, String value) {
         if (properties == null) {

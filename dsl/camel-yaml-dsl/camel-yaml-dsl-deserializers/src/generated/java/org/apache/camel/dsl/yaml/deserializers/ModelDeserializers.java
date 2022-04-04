@@ -114,7 +114,6 @@ import org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration
 import org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration;
-import org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.model.cloud.ServiceCallExpressionConfiguration;
@@ -12555,74 +12554,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = {
-                    "ribbon-load-balancer",
-                    "ribbonLoadBalancer"
-            },
-            properties = {
-                    @YamlProperty(name = "client-name", type = "string"),
-                    @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "namespace", type = "string"),
-                    @YamlProperty(name = "password", type = "string"),
-                    @YamlProperty(name = "properties", type = "array:org.apache.camel.model.PropertyDefinition"),
-                    @YamlProperty(name = "username", type = "string")
-            }
-    )
-    public static class RibbonServiceCallServiceLoadBalancerConfigurationDeserializer extends YamlDeserializerBase<RibbonServiceCallServiceLoadBalancerConfiguration> {
-        public RibbonServiceCallServiceLoadBalancerConfigurationDeserializer() {
-            super(RibbonServiceCallServiceLoadBalancerConfiguration.class);
-        }
-
-        @Override
-        protected RibbonServiceCallServiceLoadBalancerConfiguration newInstance() {
-            return new RibbonServiceCallServiceLoadBalancerConfiguration();
-        }
-
-        @Override
-        protected boolean setProperty(RibbonServiceCallServiceLoadBalancerConfiguration target,
-                String propertyKey, String propertyName, Node node) {
-            switch(propertyKey) {
-                case "client-name": {
-                    String val = asText(node);
-                    target.setClientName(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "namespace": {
-                    String val = asText(node);
-                    target.setNamespace(val);
-                    break;
-                }
-                case "password": {
-                    String val = asText(node);
-                    target.setPassword(val);
-                    break;
-                }
-                case "properties": {
-                    java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
-                    target.setProperties(val);
-                    break;
-                }
-                case "username": {
-                    String val = asText(node);
-                    target.setUsername(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
             inline = true,
             types = org.apache.camel.model.RollbackDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -13454,7 +13385,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "load-balancer-ref", type = "string"),
                     @YamlProperty(name = "pass-through-service-filter", type = "object:org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration"),
                     @YamlProperty(name = "pattern", type = "string"),
-                    @YamlProperty(name = "ribbon-load-balancer", type = "object:org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration"),
                     @YamlProperty(name = "service-chooser-ref", type = "string"),
                     @YamlProperty(name = "service-discovery-ref", type = "string"),
                     @YamlProperty(name = "service-filter-ref", type = "string"),
@@ -13495,16 +13425,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
-                    break;
-                }
-                case "load-balancer-configuration": {
-                    MappingNode val = asMappingNode(node);
-                    setProperties(target, val);
-                    break;
-                }
-                case "ribbon-load-balancer": {
-                    org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration val = asType(node, org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration.class);
-                    target.setLoadBalancerConfiguration(val);
                     break;
                 }
                 case "default-load-balancer": {
@@ -13656,7 +13576,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "pass-through-service-filter", type = "object:org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration"),
                     @YamlProperty(name = "pattern", type = "string"),
-                    @YamlProperty(name = "ribbon-load-balancer", type = "object:org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration"),
                     @YamlProperty(name = "service-chooser-ref", type = "string"),
                     @YamlProperty(name = "service-discovery-ref", type = "string"),
                     @YamlProperty(name = "service-filter-ref", type = "string"),
@@ -13707,16 +13626,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
-                    break;
-                }
-                case "load-balancer-configuration": {
-                    MappingNode val = asMappingNode(node);
-                    setProperties(target, val);
-                    break;
-                }
-                case "ribbon-load-balancer": {
-                    org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration val = asType(node, org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration.class);
-                    target.setLoadBalancerConfiguration(val);
                     break;
                 }
                 case "default-load-balancer": {

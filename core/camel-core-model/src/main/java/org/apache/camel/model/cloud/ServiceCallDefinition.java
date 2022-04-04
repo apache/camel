@@ -96,7 +96,6 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     private ServiceCallServiceFilterConfiguration serviceFilterConfiguration;
 
     @XmlElements({
-            @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallServiceLoadBalancerConfiguration.class),
             @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallServiceLoadBalancerConfiguration.class) })
     private ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration;
 
@@ -726,21 +725,4 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
         return this;
     }
-
-    public ServiceCallDefinition ribbonLoadBalancer() {
-        RibbonServiceCallServiceLoadBalancerConfiguration conf = new RibbonServiceCallServiceLoadBalancerConfiguration(this);
-        setLoadBalancerConfiguration(conf);
-
-        return this;
-    }
-
-    public ServiceCallDefinition ribbonLoadBalancer(String clientName) {
-        RibbonServiceCallServiceLoadBalancerConfiguration conf = new RibbonServiceCallServiceLoadBalancerConfiguration(this);
-        conf.setClientName(clientName);
-
-        setLoadBalancerConfiguration(conf);
-
-        return this;
-    }
-
 }
