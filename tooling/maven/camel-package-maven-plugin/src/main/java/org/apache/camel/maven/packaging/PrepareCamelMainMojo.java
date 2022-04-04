@@ -199,7 +199,6 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.vault.aws.";
                 } else if (file.getName().contains("GcpVault")) {
                     prefix = "camel.vault.gcp.";
-                    // TODO: add more vault providers here
                 } else if (file.getName().contains("AzureVault")) {
                     prefix = "camel.vault.azure.";
                     // TODO: add more vault providers here
