@@ -796,7 +796,7 @@ public abstract class BaseMainSupport extends BaseService {
         // lookup and configure SPI beans
         DefaultConfigurationConfigurer.afterConfigure(camelContext);
 
-        // now configure context/hystrix/resilience4j/rest with additional properties
+        // now configure context/resilience4j/rest with additional properties
         OrderedLocationProperties prop = (OrderedLocationProperties) camelContext.getPropertiesComponent()
                 .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
 
@@ -824,7 +824,6 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         OrderedLocationProperties contextProperties = new OrderedLocationProperties();
-        OrderedLocationProperties hystrixProperties = new OrderedLocationProperties();
         OrderedLocationProperties resilience4jProperties = new OrderedLocationProperties();
         OrderedLocationProperties faultToleranceProperties = new OrderedLocationProperties();
         OrderedLocationProperties restProperties = new OrderedLocationProperties();
@@ -844,12 +843,6 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(14);
                 validateOptionAndValue(key, option, value);
                 contextProperties.put(loc, optionKey(option), value);
-            } else if (key.startsWith("camel.hystrix.")) {
-                // grab the value
-                String value = prop.getProperty(key);
-                String option = key.substring(14);
-                validateOptionAndValue(key, option, value);
-                hystrixProperties.put(loc, optionKey(option), value);
             } else if (key.startsWith("camel.resilience4j.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -984,7 +977,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         // configure which requires access to the model
         MainSupportModelConfigurer.configureModelCamelContext(camelContext, mainConfigurationProperties,
-                autoConfiguredProperties, hystrixProperties, resilience4jProperties, faultToleranceProperties);
+                autoConfiguredProperties, resilience4jProperties, faultToleranceProperties);
 
         // log which options was not set
         if (!beansProperties.isEmpty()) {
@@ -995,11 +988,6 @@ public abstract class BaseMainSupport extends BaseService {
         if (!contextProperties.isEmpty()) {
             contextProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.context.{}={}", k, v);
-            });
-        }
-        if (!hystrixProperties.isEmpty()) {
-            hystrixProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.hystrix.{}={}", k, v);
             });
         }
         if (!resilience4jProperties.isEmpty()) {

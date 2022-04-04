@@ -249,16 +249,11 @@ public class ModelParser extends BaseParser {
         }, (def, key) -> {
             switch (key) {
                 case "faultToleranceConfiguration": def.setFaultToleranceConfiguration(doParseFaultToleranceConfigurationDefinition()); break;
-                case "hystrixConfiguration": def.setHystrixConfiguration(doParseHystrixConfigurationDefinition()); break;
                 case "resilience4jConfiguration": def.setResilience4jConfiguration(doParseResilience4jConfigurationDefinition()); break;
                 default: return outputDefinitionElementHandler().accept(def, key);
             }
             return true;
         }, noValueHandler());
-    }
-    protected HystrixConfigurationDefinition doParseHystrixConfigurationDefinition() throws IOException, XmlPullParserException {
-        return doParse(new HystrixConfigurationDefinition(),
-            hystrixConfigurationCommonAttributeHandler(), noElementHandler(), noValueHandler());
     }
     protected Resilience4jConfigurationDefinition doParseResilience4jConfigurationDefinition() throws IOException, XmlPullParserException {
         return doParse(new Resilience4jConfigurationDefinition(),
@@ -457,48 +452,6 @@ public class ModelParser extends BaseParser {
             }
             return false;
         }, noValueHandler());
-    }
-    protected <T extends HystrixConfigurationCommon> AttributeHandler<T> hystrixConfigurationCommonAttributeHandler() {
-        return (def, key, val) -> {
-            switch (key) {
-                case "allowMaximumSizeToDivergeFromCoreSize": def.setAllowMaximumSizeToDivergeFromCoreSize(val); break;
-                case "circuitBreakerEnabled": def.setCircuitBreakerEnabled(val); break;
-                case "circuitBreakerErrorThresholdPercentage": def.setCircuitBreakerErrorThresholdPercentage(val); break;
-                case "circuitBreakerForceClosed": def.setCircuitBreakerForceClosed(val); break;
-                case "circuitBreakerForceOpen": def.setCircuitBreakerForceOpen(val); break;
-                case "circuitBreakerRequestVolumeThreshold": def.setCircuitBreakerRequestVolumeThreshold(val); break;
-                case "circuitBreakerSleepWindowInMilliseconds": def.setCircuitBreakerSleepWindowInMilliseconds(val); break;
-                case "corePoolSize": def.setCorePoolSize(val); break;
-                case "executionIsolationSemaphoreMaxConcurrentRequests": def.setExecutionIsolationSemaphoreMaxConcurrentRequests(val); break;
-                case "executionIsolationStrategy": def.setExecutionIsolationStrategy(val); break;
-                case "executionIsolationThreadInterruptOnTimeout": def.setExecutionIsolationThreadInterruptOnTimeout(val); break;
-                case "executionTimeoutEnabled": def.setExecutionTimeoutEnabled(val); break;
-                case "executionTimeoutInMilliseconds": def.setExecutionTimeoutInMilliseconds(val); break;
-                case "fallbackEnabled": def.setFallbackEnabled(val); break;
-                case "fallbackIsolationSemaphoreMaxConcurrentRequests": def.setFallbackIsolationSemaphoreMaxConcurrentRequests(val); break;
-                case "groupKey": def.setGroupKey(val); break;
-                case "keepAliveTime": def.setKeepAliveTime(val); break;
-                case "maxQueueSize": def.setMaxQueueSize(val); break;
-                case "maximumSize": def.setMaximumSize(val); break;
-                case "metricsHealthSnapshotIntervalInMilliseconds": def.setMetricsHealthSnapshotIntervalInMilliseconds(val); break;
-                case "metricsRollingPercentileBucketSize": def.setMetricsRollingPercentileBucketSize(val); break;
-                case "metricsRollingPercentileEnabled": def.setMetricsRollingPercentileEnabled(val); break;
-                case "metricsRollingPercentileWindowBuckets": def.setMetricsRollingPercentileWindowBuckets(val); break;
-                case "metricsRollingPercentileWindowInMilliseconds": def.setMetricsRollingPercentileWindowInMilliseconds(val); break;
-                case "metricsRollingStatisticalWindowBuckets": def.setMetricsRollingStatisticalWindowBuckets(val); break;
-                case "metricsRollingStatisticalWindowInMilliseconds": def.setMetricsRollingStatisticalWindowInMilliseconds(val); break;
-                case "queueSizeRejectionThreshold": def.setQueueSizeRejectionThreshold(val); break;
-                case "requestLogEnabled": def.setRequestLogEnabled(val); break;
-                case "threadPoolKey": def.setThreadPoolKey(val); break;
-                case "threadPoolRollingNumberStatisticalWindowBuckets": def.setThreadPoolRollingNumberStatisticalWindowBuckets(val); break;
-                case "threadPoolRollingNumberStatisticalWindowInMilliseconds": def.setThreadPoolRollingNumberStatisticalWindowInMilliseconds(val); break;
-                default: return identifiedTypeAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        };
-    }
-    protected HystrixConfigurationCommon doParseHystrixConfigurationCommon() throws IOException, XmlPullParserException {
-        return doParse(new HystrixConfigurationCommon(), hystrixConfigurationCommonAttributeHandler(),  noElementHandler(), noValueHandler());
     }
     protected IdempotentConsumerDefinition doParseIdempotentConsumerDefinition() throws IOException, XmlPullParserException {
         return doParse(new IdempotentConsumerDefinition(), (def, key, val) -> {

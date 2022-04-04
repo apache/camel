@@ -175,9 +175,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration": return new ModelDeserializers.HealthyServiceCallServiceFilterConfigurationDeserializer();
             case "hl7terser": return new ModelDeserializers.Hl7TerserExpressionDeserializer();
             case "org.apache.camel.model.language.Hl7TerserExpression": return new ModelDeserializers.Hl7TerserExpressionDeserializer();
-            case "hystrix-configuration": return new ModelDeserializers.HystrixConfigurationDefinitionDeserializer();
-            case "hystrixConfiguration": return new ModelDeserializers.HystrixConfigurationDefinitionDeserializer();
-            case "org.apache.camel.model.HystrixConfigurationDefinition": return new ModelDeserializers.HystrixConfigurationDefinitionDeserializer();
             case "ical": return new ModelDeserializers.IcalDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.IcalDataFormat": return new ModelDeserializers.IcalDataFormatDeserializer();
             case "idempotent-consumer": return new ModelDeserializers.IdempotentConsumerDefinitionDeserializer();

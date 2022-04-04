@@ -238,7 +238,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.MllpEndpointBuilderFactory.MllpBuilders,
             org.apache.camel.builder.endpoint.dsl.MockEndpointBuilderFactory.MockBuilders,
             org.apache.camel.builder.endpoint.dsl.MongoDbEndpointBuilderFactory.MongoDbBuilders,
-            org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.MsvBuilders,
             org.apache.camel.builder.endpoint.dsl.MustacheEndpointBuilderFactory.MustacheBuilders,
             org.apache.camel.builder.endpoint.dsl.MvelEndpointBuilderFactory.MvelBuilders,
             org.apache.camel.builder.endpoint.dsl.MyBatisBeanEndpointBuilderFactory.MyBatisBeanBuilders,

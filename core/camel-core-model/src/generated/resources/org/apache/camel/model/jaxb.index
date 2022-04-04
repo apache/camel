@@ -20,7 +20,6 @@ FinallyDefinition
 FromDefinition
 GlobalOptionDefinition
 GlobalOptionsDefinition
-HystrixConfigurationDefinition
 IdempotentConsumerDefinition
 IdentifiedType
 InOnlyDefinition
