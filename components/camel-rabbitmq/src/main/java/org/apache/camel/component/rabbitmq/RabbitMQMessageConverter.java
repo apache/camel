@@ -333,7 +333,7 @@ public class RabbitMQMessageConverter {
             }
         }
         if (properties.getTimestamp() != null) {
-            message.setHeader(Exchange.MESSAGE_TIMESTAMP, properties.getTimestamp().getTime());
+            message.setHeader(RabbitMQConstants.MESSAGE_TIMESTAMP, properties.getTimestamp().getTime());
         }
     }
 
