@@ -23,9 +23,8 @@ from("seda:inputB")
 
 Here if the processing of *`seda:inputA`* or *`seda:inputB`* cause
 a *`ValidationException`* to be thrown (such as due to the XSD
-validation of the xref:components::validator-component.adoc[Validation] component or the
-Relax NG Compact syntax validation of the xref:components::jing-component.adoc[Jing]
-component), then the message will be sent to the
+validation of the xref:components::validator-component.adoc[Validation] component),
+then the message will be sent to the
 *`activemq:validationFailed`* queue.
 
 You can define multiple *`onException`* clauses for different behavior:

@@ -3886,28 +3886,6 @@
     "producerOnly": false,
     "lenientProperties": false
   },
-  "JingComponentBuilderFactory": {
-    "kind": "component",
-    "name": "jing",
-    "title": "Jing",
-    "description": "Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax) using Jing library.",
-    "deprecated": true,
-    "firstVersion": "1.1.0",
-    "label": "validation",
-    "javaType": "org.apache.camel.component.validator.jing.JingComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-jing",
-    "version": "3.17.0-SNAPSHOT",
-    "scheme": "jing",
-    "extendsScheme": "",
-    "syntax": "jing:resourceUri",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": true,
-    "lenientProperties": false
-  },
   "JiraComponentBuilderFactory": {
     "kind": "component",
     "name": "jira",

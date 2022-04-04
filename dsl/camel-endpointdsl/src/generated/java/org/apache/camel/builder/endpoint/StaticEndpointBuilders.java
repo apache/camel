@@ -7980,57 +7980,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.JGroupsRaftEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Jing (camel-jing)
-     * Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax)
-     * using Jing library.
-     * 
-     * Category: validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-jing
-     * 
-     * Syntax: <code>jing:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * URL to a local resource on the classpath or a full URL to a remote
-     * resource or resource on the file system which contains the schema to
-     * validate against.
-     * 
-     * @param path resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.JingEndpointBuilder jing(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.endpointBuilder("jing", path);
-    }
-    /**
-     * Jing (camel-jing)
-     * Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax)
-     * using Jing library.
-     * 
-     * Category: validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-jing
-     * 
-     * Syntax: <code>jing:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * URL to a local resource on the classpath or a full URL to a remote
-     * resource or resource on the file system which contains the schema to
-     * validate against.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.JingEndpointBuilder jing(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Jira (camel-jira)
      * Interact with JIRA issue tracker.
      * 
