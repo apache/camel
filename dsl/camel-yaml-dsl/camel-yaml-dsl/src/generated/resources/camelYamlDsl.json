@@ -558,9 +558,6 @@
           "faultToleranceConfiguration" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.FaultToleranceConfigurationDefinition"
           },
-          "hystrixConfiguration" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.HystrixConfigurationDefinition"
-          },
           "id" : {
             "type" : "string"
           },
@@ -983,107 +980,6 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.GlobalOptionDefinition"
             }
-          }
-        }
-      },
-      "org.apache.camel.model.HystrixConfigurationDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "allowMaximumSizeToDivergeFromCoreSize" : {
-            "type" : "boolean"
-          },
-          "circuitBreakerEnabled" : {
-            "type" : "boolean"
-          },
-          "circuitBreakerErrorThresholdPercentage" : {
-            "type" : "number"
-          },
-          "circuitBreakerForceClosed" : {
-            "type" : "boolean"
-          },
-          "circuitBreakerForceOpen" : {
-            "type" : "boolean"
-          },
-          "circuitBreakerRequestVolumeThreshold" : {
-            "type" : "number"
-          },
-          "circuitBreakerSleepWindowInMilliseconds" : {
-            "type" : "number"
-          },
-          "corePoolSize" : {
-            "type" : "number"
-          },
-          "executionIsolationSemaphoreMaxConcurrentRequests" : {
-            "type" : "number"
-          },
-          "executionIsolationStrategy" : {
-            "type" : "string"
-          },
-          "executionIsolationThreadInterruptOnTimeout" : {
-            "type" : "boolean"
-          },
-          "executionTimeoutEnabled" : {
-            "type" : "boolean"
-          },
-          "executionTimeoutInMilliseconds" : {
-            "type" : "number"
-          },
-          "fallbackEnabled" : {
-            "type" : "boolean"
-          },
-          "fallbackIsolationSemaphoreMaxConcurrentRequests" : {
-            "type" : "number"
-          },
-          "groupKey" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "keepAliveTime" : {
-            "type" : "number"
-          },
-          "maxQueueSize" : {
-            "type" : "number"
-          },
-          "maximumSize" : {
-            "type" : "number"
-          },
-          "metricsHealthSnapshotIntervalInMilliseconds" : {
-            "type" : "number"
-          },
-          "metricsRollingPercentileBucketSize" : {
-            "type" : "number"
-          },
-          "metricsRollingPercentileEnabled" : {
-            "type" : "boolean"
-          },
-          "metricsRollingPercentileWindowBuckets" : {
-            "type" : "number"
-          },
-          "metricsRollingPercentileWindowInMilliseconds" : {
-            "type" : "number"
-          },
-          "metricsRollingStatisticalWindowBuckets" : {
-            "type" : "number"
-          },
-          "metricsRollingStatisticalWindowInMilliseconds" : {
-            "type" : "number"
-          },
-          "queueSizeRejectionThreshold" : {
-            "type" : "number"
-          },
-          "requestLogEnabled" : {
-            "type" : "boolean"
-          },
-          "threadPoolKey" : {
-            "type" : "string"
-          },
-          "threadPoolRollingNumberStatisticalWindowBuckets" : {
-            "type" : "number"
-          },
-          "threadPoolRollingNumberStatisticalWindowInMilliseconds" : {
-            "type" : "number"
           }
         }
       },

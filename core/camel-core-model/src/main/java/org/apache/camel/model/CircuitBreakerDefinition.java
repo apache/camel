@@ -39,9 +39,6 @@ import org.apache.camel.spi.annotations.DslProperty;
 public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {
 
     @XmlElement
-    @Deprecated
-    private HystrixConfigurationDefinition hystrixConfiguration;
-    @XmlElement
     private Resilience4jConfigurationDefinition resilience4jConfiguration;
     @XmlElement
     private FaultToleranceConfigurationDefinition faultToleranceConfiguration;
@@ -116,19 +113,6 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         }
     }
 
-    // Getter/Setter
-    // -------------------------------------------------------------------------
-
-    @Deprecated
-    public HystrixConfigurationDefinition getHystrixConfiguration() {
-        return hystrixConfiguration;
-    }
-
-    @Deprecated
-    public void setHystrixConfiguration(HystrixConfigurationDefinition hystrixConfiguration) {
-        this.hystrixConfiguration = hystrixConfiguration;
-    }
-
     public Resilience4jConfigurationCommon getResilience4jConfiguration() {
         return resilience4jConfiguration;
     }
@@ -167,27 +151,6 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
 
     // Fluent API
     // -------------------------------------------------------------------------
-
-    /**
-     * Configures the circuit breaker to use Hystrix.
-     * <p/>
-     * Use <tt>end</tt> when configuration is complete, to return back to the Circuit Breaker EIP.
-     */
-    @Deprecated
-    public HystrixConfigurationDefinition hystrixConfiguration() {
-        hystrixConfiguration = hystrixConfiguration == null ? new HystrixConfigurationDefinition(this) : hystrixConfiguration;
-        return hystrixConfiguration;
-    }
-
-    /**
-     * Configures the circuit breaker to use Hystrix with the given configuration.
-     */
-    @Deprecated
-    public CircuitBreakerDefinition hystrixConfiguration(HystrixConfigurationDefinition configuration) {
-        hystrixConfiguration = configuration;
-        return this;
-    }
-
     /**
      * Configures the circuit breaker to use Resilience4j.
      * <p/>

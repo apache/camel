@@ -61,7 +61,6 @@ import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.GlobalOptionsDefinition;
-import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -1100,10 +1099,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract List<ServiceCallConfigurationDefinition> getServiceCallConfigurations();
 
-    public abstract HystrixConfigurationDefinition getDefaultHystrixConfiguration();
-
-    public abstract List<HystrixConfigurationDefinition> getHystrixConfigurations();
-
     public abstract Resilience4jConfigurationDefinition getDefaultResilience4jConfiguration();
 
     public abstract List<Resilience4jConfigurationDefinition> getResilience4jConfigurations();
@@ -1249,14 +1244,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getServiceCallConfigurations() != null) {
             for (ServiceCallConfigurationDefinition bean : getServiceCallConfigurations()) {
                 context.addServiceCallConfiguration(bean.getId(), bean);
-            }
-        }
-        if (getDefaultHystrixConfiguration() != null) {
-            context.setHystrixConfiguration(getDefaultHystrixConfiguration());
-        }
-        if (getHystrixConfigurations() != null) {
-            for (HystrixConfigurationDefinition bean : getHystrixConfigurations()) {
-                context.addHystrixConfiguration(bean.getId(), bean);
             }
         }
         if (getDefaultResilience4jConfiguration() != null) {
