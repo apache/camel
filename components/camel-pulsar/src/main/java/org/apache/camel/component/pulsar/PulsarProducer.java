@@ -56,7 +56,7 @@ public class PulsarProducer extends DefaultProducer {
             body = exchange.getContext().getTypeConverter()
                     .mandatoryConvertTo(byte[].class, exchange, message.getBody());
         } catch (NoTypeConversionAvailableException | TypeConversionException exception) {
-            // fallback to try serialize the data
+            // fallback to try to serialize the data
             body = PulsarMessageUtils.serialize(message.getBody());
         }
         messageBuilder.value(body);

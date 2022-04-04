@@ -54,6 +54,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Common problems
 
@@ -61,8 +64,5 @@ include::partial$component-endpoint-options.adoc[]
 Using the driver provided by PostgreSQL itself (`jdbc:postgresql:/...`) when using a DataSource to connect to a PostgreSQL database does not work.
 
 Please use the pgjdbc-ng driver (`jdbc:pgsql:/...`) instead.
-
-
-
 
 include::spring-boot:partial$starter.adoc[]

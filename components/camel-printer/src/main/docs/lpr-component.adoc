@@ -59,7 +59,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Sending Messages to a Printer
 
@@ -77,7 +79,7 @@ route.
 -----------------------------------------------
 RouteBuilder builder = new RouteBuilder() {
     public void configure() {
-       from(file://inputdir/?delete=true)
+       from("file://inputdir/?delete=true")
        .to("lpr://localhost/default?copies=2" +
            "&flavor=DocFlavor.INPUT_STREAM&" +
            "&mimeType=AUTOSENSE" +
@@ -92,7 +94,7 @@ RouteBuilder builder = new RouteBuilder() {
 --------------------------------------------------
 RouteBuilder builder = new RouteBuilder() {
     public void configure() {
-       from(file://inputdir/?delete=true)
+       from("file://inputdir/?delete=true")
        .to("lpr://remotehost/sales/salesprinter" +
            "?copies=2&sides=one-sided" +
            "&mimeType=GIF&mediaSize=ISO_A4" +
@@ -106,7 +108,7 @@ RouteBuilder builder = new RouteBuilder() {
 --------------------------------------------------
 RouteBuilder builder = new RouteBuilder() {
     public void configure() {
-       from(file://inputdir/?delete=true)
+       from("file://inputdir/?delete=true")
        .to("lpr://remotehost/sales/salesprinter" +
            "?copies=2&sides=one-sided" +
            "&mimeType=JPEG" +
