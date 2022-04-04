@@ -93,28 +93,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Exchange Format
-
-The exchange headers include information to help with exchange
-filtering, routing and other processing. The following headers are
-available:
-
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Header Name |Description
-|EventCategory |One of `AppMessageReceived`, `AppMessageSent`,
-`AdminMessageReceived`, `AdminMessageSent`, `SessionCreated`,
-`SessionLogon`, `SessionLogoff`. See the `QuickfixjEventCategory` enum.
-
-|SessionID |The FIX message SessionID
-
-|MessageType |The FIX MsgType tag value
-
-|DataDictionary |Specifies a data dictionary to used for parsing an
-incoming message. Can be an instance of a data dictionary or a resource
-path for a QuickFIX/J data dictionary file
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 The DataDictionary header is useful if string messages are being
 received and need to be parsed in a route. QuickFIX/J requires a data

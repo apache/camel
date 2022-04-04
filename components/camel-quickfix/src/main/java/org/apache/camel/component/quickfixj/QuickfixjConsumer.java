@@ -73,7 +73,7 @@ public class QuickfixjConsumer extends DefaultConsumer {
 
         LOG.debug("Sending FIX message reply: {}", quickfixjMessage);
 
-        SessionID messageSessionID = exchange.getIn().getHeader("SessionID", SessionID.class);
+        SessionID messageSessionID = exchange.getIn().getHeader(QuickfixjEndpoint.SESSION_ID_KEY, SessionID.class);
 
         Session session = getSession(messageSessionID);
         if (session == null) {
