@@ -3343,6 +3343,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.DataSetTestEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Debezium DB2 Connector (camel-debezium-db2)
+     * Capture changes from a Oracle database.
+     * 
+     * Category: database,sql
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-debezium-db2
+     * 
+     * Syntax: <code>debezium-db2:name</code>
+     * 
+     * Path parameter: name (required)
+     * Unique name for the connector. Attempting to register again with the same
+     * name will fail.
+     * 
+     * @param path name
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DebeziumDb2EndpointBuilderFactory.DebeziumDb2EndpointBuilder debeziumDb2(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DebeziumDb2EndpointBuilderFactory.endpointBuilder("debezium-db2", path);
+    }
+    /**
+     * Debezium DB2 Connector (camel-debezium-db2)
+     * Capture changes from a Oracle database.
+     * 
+     * Category: database,sql
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-debezium-db2
+     * 
+     * Syntax: <code>debezium-db2:name</code>
+     * 
+     * Path parameter: name (required)
+     * Unique name for the connector. Attempting to register again with the same
+     * name will fail.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path name
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DebeziumDb2EndpointBuilderFactory.DebeziumDb2EndpointBuilder debeziumDb2(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DebeziumDb2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Debezium MongoDB Connector (camel-debezium-mongodb)
      * Capture changes from a MongoDB database.
      * 
