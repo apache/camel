@@ -16,9 +16,6 @@
  */
 package org.apache.camel.coap;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.network.CoapEndpoint;
