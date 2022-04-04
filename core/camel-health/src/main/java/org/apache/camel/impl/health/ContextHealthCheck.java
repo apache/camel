@@ -56,8 +56,8 @@ public final class ContextHealthCheck extends AbstractHealthCheck {
 
             if (getCamelContext().getStatus().isStarted()) {
                 builder.up();
-            } else if (getCamelContext().isStopping() || getCamelContext().isStopped()) {
-                // not ready during graceful shutdown
+            } else {
+                // not ready also during graceful shutdown
                 builder.down();
             }
         }
