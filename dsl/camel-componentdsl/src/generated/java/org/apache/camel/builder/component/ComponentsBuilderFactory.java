@@ -3042,20 +3042,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.MongodbGridfsComponentBuilderFactory.mongodbGridfs();
     }
     /**
-     * MSV (camel-msv)
-     * Validate XML payloads using Multi-Schema Validator (MSV).
-     * 
-     * Category: validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-msv
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.MsvComponentBuilderFactory.MsvComponentBuilder msv() {
-        return org.apache.camel.builder.component.dsl.MsvComponentBuilderFactory.msv();
-    }
-    /**
      * Mustache (camel-mustache)
      * Transform messages using a Mustache template.
      * 

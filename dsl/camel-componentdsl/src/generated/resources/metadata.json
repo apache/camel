@@ -4987,28 +4987,6 @@
     "producerOnly": false,
     "lenientProperties": false
   },
-  "MsvComponentBuilderFactory": {
-    "kind": "component",
-    "name": "msv",
-    "title": "MSV",
-    "description": "Validate XML payloads using Multi-Schema Validator (MSV).",
-    "deprecated": true,
-    "firstVersion": "1.1.0",
-    "label": "validation",
-    "javaType": "org.apache.camel.component.validator.msv.MsvComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-msv",
-    "version": "3.17.0-SNAPSHOT",
-    "scheme": "msv",
-    "extendsScheme": "",
-    "syntax": "msv:resourceUri",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": true,
-    "lenientProperties": false
-  },
   "MustacheComponentBuilderFactory": {
     "kind": "component",
     "name": "mustache",
