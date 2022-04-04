@@ -1,1 +1,0 @@
-../../../../../components/camel-jing/src/main/docs/jing-component.adoc

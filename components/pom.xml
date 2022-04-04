@@ -191,7 +191,6 @@
         <module>camel-jfr</module>
         <module>camel-jgroups-raft</module>
         <module>camel-jgroups</module>
-        <module>camel-jing</module>
         <module>camel-jira</module>
         <module>camel-jmx</module>
         <module>camel-johnzon</module>

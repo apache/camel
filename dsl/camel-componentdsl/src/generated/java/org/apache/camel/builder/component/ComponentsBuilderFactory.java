@@ -2374,21 +2374,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.JgroupsRaftComponentBuilderFactory.jgroupsRaft();
     }
     /**
-     * Jing (camel-jing)
-     * Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax)
-     * using Jing library.
-     * 
-     * Category: validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-jing
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.JingComponentBuilderFactory.JingComponentBuilder jing() {
-        return org.apache.camel.builder.component.dsl.JingComponentBuilderFactory.jing();
-    }
-    /**
      * Jira (camel-jira)
      * Interact with JIRA issue tracker.
      * 

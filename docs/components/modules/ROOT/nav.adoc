@@ -179,7 +179,6 @@
 ** xref:websocket-component.adoc[Jetty Websocket]
 ** xref:jgroups-component.adoc[JGroups]
 ** xref:jgroups-raft-component.adoc[JGroups raft]
-** xref:jing-component.adoc[Jing]
 ** xref:jira-component.adoc[Jira]
 ** xref:jms-component.adoc[JMS]
 ** xref:jmx-component.adoc[JMX]

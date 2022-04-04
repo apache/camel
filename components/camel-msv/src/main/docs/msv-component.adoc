@@ -32,10 +32,6 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-Note that the xref:jing-component.adoc[Jing] component also supports
-http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
-Syntax]
-
 == URI format
 
 ---------------------------------------
