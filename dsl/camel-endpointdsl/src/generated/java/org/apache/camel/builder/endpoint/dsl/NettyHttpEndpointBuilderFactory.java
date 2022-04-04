@@ -45,13 +45,13 @@ public interface NettyHttpEndpointBuilderFactory {
             return (AdvancedNettyHttpEndpointConsumerBuilder) this;
         }
         /**
-         * If the option is true, the producer will ignore the Exchange.HTTP_URI
-         * header, and use the endpoint's URI for request. You may also set the
-         * throwExceptionOnFailure to be false to let the producer send all the
-         * fault response back. The consumer working in the bridge mode will
-         * skip the gzip compression and WWW URL form encoding (by adding the
-         * Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
-         * headers to the consumed exchange).
+         * If the option is true, the producer will ignore the
+         * NettyHttpConstants.HTTP_URI header, and use the endpoint's URI for
+         * request. You may also set the throwExceptionOnFailure to be false to
+         * let the producer send all the fault response back. The consumer
+         * working in the bridge mode will skip the gzip compression and WWW URL
+         * form encoding (by adding the Exchange.SKIP_GZIP_ENCODING and
+         * Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed exchange).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -67,13 +67,13 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * If the option is true, the producer will ignore the Exchange.HTTP_URI
-         * header, and use the endpoint's URI for request. You may also set the
-         * throwExceptionOnFailure to be false to let the producer send all the
-         * fault response back. The consumer working in the bridge mode will
-         * skip the gzip compression and WWW URL form encoding (by adding the
-         * Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
-         * headers to the consumed exchange).
+         * If the option is true, the producer will ignore the
+         * NettyHttpConstants.HTTP_URI header, and use the endpoint's URI for
+         * request. You may also set the throwExceptionOnFailure to be false to
+         * let the producer send all the fault response back. The consumer
+         * working in the bridge mode will skip the gzip compression and WWW URL
+         * form encoding (by adding the Exchange.SKIP_GZIP_ENCODING and
+         * Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed exchange).
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -2306,13 +2306,13 @@ public interface NettyHttpEndpointBuilderFactory {
             return (AdvancedNettyHttpEndpointProducerBuilder) this;
         }
         /**
-         * If the option is true, the producer will ignore the Exchange.HTTP_URI
-         * header, and use the endpoint's URI for request. You may also set the
-         * throwExceptionOnFailure to be false to let the producer send all the
-         * fault response back. The consumer working in the bridge mode will
-         * skip the gzip compression and WWW URL form encoding (by adding the
-         * Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
-         * headers to the consumed exchange).
+         * If the option is true, the producer will ignore the
+         * NettyHttpConstants.HTTP_URI header, and use the endpoint's URI for
+         * request. You may also set the throwExceptionOnFailure to be false to
+         * let the producer send all the fault response back. The consumer
+         * working in the bridge mode will skip the gzip compression and WWW URL
+         * form encoding (by adding the Exchange.SKIP_GZIP_ENCODING and
+         * Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed exchange).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -2328,13 +2328,13 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * If the option is true, the producer will ignore the Exchange.HTTP_URI
-         * header, and use the endpoint's URI for request. You may also set the
-         * throwExceptionOnFailure to be false to let the producer send all the
-         * fault response back. The consumer working in the bridge mode will
-         * skip the gzip compression and WWW URL form encoding (by adding the
-         * Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
-         * headers to the consumed exchange).
+         * If the option is true, the producer will ignore the
+         * NettyHttpConstants.HTTP_URI header, and use the endpoint's URI for
+         * request. You may also set the throwExceptionOnFailure to be false to
+         * let the producer send all the fault response back. The consumer
+         * working in the bridge mode will skip the gzip compression and WWW URL
+         * form encoding (by adding the Exchange.SKIP_GZIP_ENCODING and
+         * Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed exchange).
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -4062,13 +4062,13 @@ public interface NettyHttpEndpointBuilderFactory {
             return (AdvancedNettyHttpEndpointBuilder) this;
         }
         /**
-         * If the option is true, the producer will ignore the Exchange.HTTP_URI
-         * header, and use the endpoint's URI for request. You may also set the
-         * throwExceptionOnFailure to be false to let the producer send all the
-         * fault response back. The consumer working in the bridge mode will
-         * skip the gzip compression and WWW URL form encoding (by adding the
-         * Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
-         * headers to the consumed exchange).
+         * If the option is true, the producer will ignore the
+         * NettyHttpConstants.HTTP_URI header, and use the endpoint's URI for
+         * request. You may also set the throwExceptionOnFailure to be false to
+         * let the producer send all the fault response back. The consumer
+         * working in the bridge mode will skip the gzip compression and WWW URL
+         * form encoding (by adding the Exchange.SKIP_GZIP_ENCODING and
+         * Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed exchange).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -4083,13 +4083,13 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * If the option is true, the producer will ignore the Exchange.HTTP_URI
-         * header, and use the endpoint's URI for request. You may also set the
-         * throwExceptionOnFailure to be false to let the producer send all the
-         * fault response back. The consumer working in the bridge mode will
-         * skip the gzip compression and WWW URL form encoding (by adding the
-         * Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
-         * headers to the consumed exchange).
+         * If the option is true, the producer will ignore the
+         * NettyHttpConstants.HTTP_URI header, and use the endpoint's URI for
+         * request. You may also set the throwExceptionOnFailure to be false to
+         * let the producer send all the fault response back. The consumer
+         * working in the bridge mode will skip the gzip compression and WWW URL
+         * form encoding (by adding the Exchange.SKIP_GZIP_ENCODING and
+         * Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed exchange).
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
