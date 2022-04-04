@@ -32,11 +32,13 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -300,10 +302,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     /**
-     * Retrieve the metadata added to all the {@code String} constants defined in class corresponding to the element
-     * {@code headersClass} of the annotation {@code UriEndpoint}, convert the metadata found into instances of
-     * {@link EndpointHeaderModel} and finally add the instances of {@link EndpointHeaderModel} to the given component
-     * model.
+     * Retrieve the metadata added to all the {@code String} constants defined in the class corresponding to the element
+     * {@code headersClass} of the annotation {@code UriEndpoint} along with all its super classes and implemented
+     * interfaces, convert the metadata found into instances of {@link EndpointHeaderModel} and finally add the
+     * instances of {@link EndpointHeaderModel} to the given component model.
      * <p/>
      * Only headers applicable for the given scheme are added.
      *
@@ -319,30 +321,54 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         // A header class has been defined
         boolean foundHeader = false;
-        final boolean isEnum = headersClass.isEnum();
-        Class<?> currentClass = headersClass;
-        do {
-            for (Field field : currentClass.getDeclaredFields()) {
-                if ((isEnum || isStatic(field.getModifiers()) && field.getType() == String.class)
-                        && field.isAnnotationPresent(Metadata.class)) {
-                    getLog().debug(
-                            String.format("Trying to add the constant %s in the class %s as header.", field.getName(),
-                                    currentClass.getName()));
-                    if (addEndpointHeader(componentModel, field, scheme)) {
-                        foundHeader = true;
-                        continue;
-                    }
-                }
-                getLog().debug(
-                        String.format(
-                                "The field %s of the class %s is not considered as a name of a header, thus it is skipped",
-                                field.getName(), currentClass.getName()));
+        final Deque<Class<?>> classes = new ArrayDeque<>();
+        classes.add(headersClass);
+        Class<?> currentHeadersClass;
+        while ((currentHeadersClass = classes.poll()) != null) {
+            foundHeader |= addEndpointHeaders(componentModel, scheme, currentHeadersClass);
+            final Class<?> superclass = currentHeadersClass.getSuperclass();
+            if (superclass != null && !superclass.equals(Object.class)) {
+                classes.add(superclass);
             }
-            currentClass = currentClass.getSuperclass();
-        } while (!currentClass.equals(Object.class));
+            classes.addAll(Arrays.asList(currentHeadersClass.getInterfaces()));
+        }
         if (!foundHeader) {
             getLog().debug(String.format("No headers have been detected in the headers class %s", headersClass.getName()));
         }
+    }
+
+    /**
+     * Retrieve the metadata added to all the {@code String} constants defined in the given headers class, convert the
+     * metadata found into instances of {@link EndpointHeaderModel} and finally add the instances of
+     * {@link EndpointHeaderModel} to the given component model.
+     * <p/>
+     * Only headers applicable for the given scheme are added.
+     *
+     * @param  componentModel the component model to which the headers should be added.
+     * @param  scheme         the scheme for which we want to add the headers.
+     * @param  headersClass   the class from which we extract the headers.
+     * @return                {@code true} if at least one header has been added, {@code false} otherwise.
+     */
+    private boolean addEndpointHeaders(ComponentModel componentModel, String scheme, Class<?> headersClass) {
+        final boolean isEnum = headersClass.isEnum();
+        boolean foundHeader = false;
+        for (Field field : headersClass.getDeclaredFields()) {
+            if ((isEnum || isStatic(field.getModifiers()) && field.getType() == String.class)
+                    && field.isAnnotationPresent(Metadata.class)) {
+                getLog().debug(
+                        String.format("Trying to add the constant %s in the class %s as header.", field.getName(),
+                                headersClass.getName()));
+                if (addEndpointHeader(componentModel, field, scheme)) {
+                    foundHeader = true;
+                    continue;
+                }
+            }
+            getLog().debug(
+                    String.format(
+                            "The field %s of the class %s is not considered as a name of a header, thus it is skipped",
+                            field.getName(), headersClass.getName()));
+        }
+        return foundHeader;
     }
 
     /**
