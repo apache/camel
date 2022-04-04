@@ -1641,6 +1641,28 @@
     "producerOnly": true,
     "lenientProperties": true
   },
+  "DebeziumDb2ComponentBuilderFactory": {
+    "kind": "component",
+    "name": "debezium-db2",
+    "title": "Debezium DB2 Connector",
+    "description": "Capture changes from a Oracle database.",
+    "deprecated": false,
+    "firstVersion": "3.17.0",
+    "label": "database,sql",
+    "javaType": "org.apache.camel.component.debezium.DebeziumDb2Component",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-debezium-db2",
+    "version": "3.17.0-SNAPSHOT",
+    "scheme": "debezium-db2",
+    "extendsScheme": "",
+    "syntax": "debezium-db2:name",
+    "async": false,
+    "api": false,
+    "consumerOnly": true,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "DebeziumMongodbComponentBuilderFactory": {
     "kind": "component",
     "name": "debezium-mongodb",

@@ -76,6 +76,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.DataSetTestEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Ddb2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.DebeziumDb2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.DebeziumMongodbEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.DebeziumMySqlEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.DebeziumOracleEndpointBuilderFactory,

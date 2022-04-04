@@ -1032,6 +1032,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.DatasetTestComponentBuilderFactory.datasetTest();
     }
     /**
+     * Debezium DB2 Connector (camel-debezium-db2)
+     * Capture changes from a Oracle database.
+     * 
+     * Category: database,sql
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-debezium-db2
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.DebeziumDb2ComponentBuilderFactory.DebeziumDb2ComponentBuilder debeziumDb2() {
+        return org.apache.camel.builder.component.dsl.DebeziumDb2ComponentBuilderFactory.debeziumDb2();
+    }
+    /**
      * Debezium MongoDB Connector (camel-debezium-mongodb)
      * Capture changes from a MongoDB database.
      * 
