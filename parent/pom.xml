@@ -327,7 +327,6 @@
         <joor-version>0.9.14</joor-version>
         <johnzon-version>1.2.16</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
-        <jsendnsca-version>2.1.1</jsendnsca-version>
         <jslt-version>0.1.11</jslt-version>
         <jsmpp-version>2.3.11</jsmpp-version>
         <jsch-version>0.2.0</jsch-version>
@@ -2024,11 +2023,6 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-mybatis</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-nagios</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

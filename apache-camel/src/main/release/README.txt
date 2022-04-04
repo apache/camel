@@ -100,7 +100,6 @@ software:
   * camel-jasypt can be used for secure communications
   * camel-jetty can be configured to use https
   * camel-mail can be configured for secure communications
-  * camel-nagios can be configured for secure communications
   * camel-netty-http can be configured to use https
   * camel-undertow can be configured to use https
   * camel-xmlsecurity can be configured for secure communications

@@ -1,1 +1,0 @@
-../../../../../components/camel-nagios/src/main/docs/nagios-component.adoc
