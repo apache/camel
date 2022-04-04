@@ -221,6 +221,18 @@ The camel.vault.gcp supports 3 options, which are listed below.
 | *camel.vault.gcp.useDefault{zwsp}Instance* | Define if we want to use the GCP Client Default Instance or not | false | boolean
 |===
 
+=== Camel Azure Key Vault configurations
+The camel.vault.azure supports 4 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.vault.azure.clientId* | The client Id for accessing Azure Key Vault |  | String
+| *camel.vault.azure.clientSecret* | The client Secret for accessing Azure Key Vault |  | String
+| *camel.vault.azure.tenantId* | The Tenant Id for accessing Azure Key Vault |  | String
+| *camel.vault.azure.vaultName* | The vault Name in Azure Key Vault |  | String
+|===
+
 === Fault Tolerance EIP Circuit Breaker configurations
 The camel.faulttolerance supports 13 options, which are listed below.
 

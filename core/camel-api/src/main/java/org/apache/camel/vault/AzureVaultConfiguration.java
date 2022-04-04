@@ -32,46 +32,46 @@ public class AzureVaultConfiguration extends VaultConfiguration {
     @Metadata(secret = true)
     private String tenantId;
 
-    /**
-     * The vault Name in Azure Key Vault
-     */
     public String getVaultName() {
         return vaultName;
     }
 
+    /**
+     * The vault Name in Azure Key Vault
+     */
     public void setVaultName(String vaultName) {
         this.vaultName = vaultName;
+    }
+
+    public String getClientId() {
+        return clientId;
     }
 
     /**
      * The client Id for accessing Azure Key Vault
      */
-    public String getClientId() {
-        return clientId;
-    }
-
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
     }
 
     /**
      * The client Secret for accessing Azure Key Vault
      */
-    public String getClientSecret() {
-        return clientSecret;
-    }
-
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
+    }
+
+    public String getTenantId() {
+        return tenantId;
     }
 
     /**
      * The Tenant Id for accessing Azure Key Vault
      */
-    public String getTenantId() {
-        return tenantId;
-    }
-
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
     }
