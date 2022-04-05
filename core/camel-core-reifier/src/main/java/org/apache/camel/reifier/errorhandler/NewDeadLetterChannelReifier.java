@@ -119,7 +119,7 @@ public class NewDeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterC
             // camel context will shutdown the executor when it shutdown so no
             // need to shut it down when stopping
             if (executorServiceRef != null) {
-                executorService = lookup(executorServiceRef, ScheduledExecutorService.class);
+                executorService = lookupByNameAndType(executorServiceRef, ScheduledExecutorService.class);
                 if (executorService == null) {
                     ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
                     ThreadPoolProfile profile = manager.getThreadPoolProfile(executorServiceRef);
@@ -130,8 +130,7 @@ public class NewDeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterC
                 }
             } else {
                 // no explicit configured thread pool, so leave it up to the
-                // error handler to decide if it need
-                // a default thread pool from
+                // error handler to decide if it need a default thread pool from
                 // CamelContext#getErrorHandlerExecutorService
                 executorService = null;
             }
