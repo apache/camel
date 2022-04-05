@@ -256,7 +256,7 @@
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.0</ivy-version>
         <jackson-version>1.9.12</jackson-version>
-        <jackson2-version>2.13.2</jackson2-version>
+        <jackson2-version>2.13.2.1</jackson2-version>
         <jackrabbit-version>2.21.10</jackrabbit-version>
         <jasminb-jsonapi-version>0.11</jasminb-jsonapi-version>
         <jandex-version>2.4.2.Final</jandex-version>
