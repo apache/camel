@@ -54,7 +54,9 @@ public class DataLakeFileSystemOperations {
         final Duration timeout = configurationProxy.getTimeout(exchange);
         final DataLakeExchangeHeaders dataLakeExchangeHeaders
                 = new DataLakeExchangeHeaders().httpHeaders(client.createFileSystem(metadata, publicAccessType, timeout));
-        LOG.info(dataLakeExchangeHeaders.toString());
+
+        LOG.info("DataLake exchange headers: {}", dataLakeExchangeHeaders);
+
         return new DataLakeOperationResponse(true, dataLakeExchangeHeaders.toMap());
     }
 

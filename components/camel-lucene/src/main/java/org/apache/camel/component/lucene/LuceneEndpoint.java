@@ -29,7 +29,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Perform inserts or queries against Apache Lucene databases.
  */
 @UriEndpoint(firstVersion = "2.2.0", scheme = "lucene", title = "Lucene", syntax = "lucene:host:operation", producerOnly = true,
-             category = { Category.DATABASE, Category.SEARCH })
+             category = { Category.DATABASE, Category.SEARCH }, headersClass = LuceneConstants.class)
 public class LuceneEndpoint extends DefaultEndpoint {
     @UriParam
     LuceneConfiguration config;

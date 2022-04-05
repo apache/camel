@@ -37,7 +37,7 @@ public class Sjms2ComponentRestartTest extends CamelTestSupport {
     public void testRestartWithStopStart() throws Exception {
         RouteBuilder routeBuilder = new RouteBuilder(context) {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("sjms2:queue:test").to("mock:test");
             }
         };
@@ -73,7 +73,7 @@ public class Sjms2ComponentRestartTest extends CamelTestSupport {
     public void testRestartWithSuspendResume() throws Exception {
         RouteBuilder routeBuilder = new RouteBuilder(context) {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("sjms2:queue:test").to("mock:test");
             }
         };

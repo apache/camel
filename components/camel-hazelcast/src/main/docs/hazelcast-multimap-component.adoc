@@ -35,19 +35,22 @@ include::partial$component-endpoint-options.adoc[]
 
 == multimap cache producer - to("hazelcast-multimap:foo")
 
-A multimap is a cache where you can store n values to one key. The
-multimap producer provides 4 operations (put, get, removevalue, delete).
+A multimap is a cache where you can store n values to one key.
 
-Header Variables for the request message:
+The  multimap producer provides 8 operations:
 
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
+* put
+* get
+* removevalue
+* delete
+* containsKey
+* containsValue
+* clear
+* valueCount
 
-|`CamelHazelcastOperationType` |`String` |valid values are: put, get, removevalue, delete, clear.
-
-|`CamelHazelcastObjectId` |`String` |the object id to store / find your object inside the cache
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Sample for *put*:
 
@@ -166,7 +169,7 @@ template.sendBodyAndHeader("direct:[put|get|removevalue|delete]", "my-foo", Haze
 == multimap cache consumer - from("hazelcast-multimap:foo")
 
 For the multimap cache this component provides the same listeners /
-variables as for the map cache consumer (except the update and enviction
+variables as for the map cache consumer (except the update and eviction
 listener). The only difference is the *multimap* prefix inside the URI.
 Here is a sample:
 
@@ -187,25 +190,5 @@ fromF("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX)
         .otherwise()
                 .log("fail!");
 --------------------------------------------------------------------------------------------------
-
-Header Variables inside the response message:
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-
-|`CamelHazelcastListenerTime` |`Long` |time of the event in millis
-
-|`CamelHazelcastListenerType` |`String` |the map consumer sets here "cachelistener"
-
-|`CamelHazelcastListenerAction` |`String` |type of event - here *added* and *removed* (and soon *envicted*)
-
-|`CamelHazelcastObjectId` |`String` |the oid of the object
-
-|`CamelHazelcastCacheName` |`String` |the name of the cache - e.g. "foo"
-
-|`CamelHazelcastCacheType` |`String` |the type of the cache - here multimap
-|=======================================================================
-
 
 include::spring-boot:partial$starter.adoc[]

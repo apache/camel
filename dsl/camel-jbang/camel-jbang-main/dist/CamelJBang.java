@@ -18,9 +18,9 @@
  */
 
 //JAVA 11+
-//REPOS mavencentral
-//DEPS org.apache.camel:camel-bom:${camel.jbang.version:3.15.0}@pom
-//DEPS org.apache.camel:camel-jbang-core:${camel.jbang.version:3.15.0}
+//REPOS mavencentral,apache=https://repository.apache.org/snapshots
+//DEPS org.apache.camel:camel-bom:${camel.jbang.version:3.16.0}@pom
+//DEPS org.apache.camel:camel-jbang-core:${camel.jbang.version:3.16.0}
 //DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:0.7.1}
 //DEPS org.apache.camel.kamelets:camel-kamelets-utils:${camel-kamelets.version:0.7.1}
 

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-translate",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "aws2-translate",
     "extendsScheme": "",
     "syntax": "aws2-translate:label",
@@ -41,6 +41,12 @@
     "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "accessKey": { "kind": "property", "displayName": "Access Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.aws2.translate.Translate2Configuration", "configurationField": "configuration", "description": "Amazon AWS Access Key" },
     "secretKey": { "kind": "property", "displayName": "Secret Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.aws2.translate.Translate2Configuration", "configurationField": "configuration", "description": "Amazon AWS Secret Key" }
+  },
+  "headers": {
+    "CamelAwsTranslateSourceLanguage": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The text source language" },
+    "CamelAwsTranslateTargetLanguage": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The text target language" },
+    "CamelAwsTranslateTerminologyNames": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Collection<String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The terminologies to use" },
+    "CamelAwsTranslateOperation": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation we want to perform" }
   },
   "properties": {
     "label": { "kind": "path", "displayName": "Label", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.translate.Translate2Configuration", "configurationField": "configuration", "description": "Logical name" },

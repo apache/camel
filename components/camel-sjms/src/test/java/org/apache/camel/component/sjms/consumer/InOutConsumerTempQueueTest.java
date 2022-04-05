@@ -34,9 +34,9 @@ public class InOutConsumerTempQueueTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("sjms:queue:start").to("sjms:queue:in.out.temp.queue?exchangePattern=InOut")
                         .to("mock:result");
 

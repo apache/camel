@@ -37,7 +37,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "authenticationPreemptive": target.setAuthenticationPreemptive(property(camelContext, boolean.class, value)); return true;
         case "bridgeendpoint":
         case "bridgeEndpoint": target.setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
-        case "chunked": target.setChunked(property(camelContext, boolean.class, value)); return true;
         case "clearexpiredcookies":
         case "clearExpiredCookies": target.setClearExpiredCookies(property(camelContext, boolean.class, value)); return true;
         case "clientbuilder":
@@ -64,8 +63,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "getWithBody": target.setGetWithBody(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "httpbinding":
-        case "httpBinding": target.setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
         case "httpclient":
         case "httpClient": target.setHttpClient(property(camelContext, org.apache.http.client.HttpClient.class, value)); return true;
         case "httpclientconfigurer":
@@ -114,8 +111,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "throwexceptiononfailure":
         case "throwExceptionOnFailure": target.setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
-        case "transferexception":
-        case "transferException": target.setTransferException(property(camelContext, boolean.class, value)); return true;
         case "usesystemproperties":
         case "useSystemProperties": target.setUseSystemProperties(property(camelContext, boolean.class, value)); return true;
         case "useragent":
@@ -145,7 +140,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "authenticationPreemptive": return boolean.class;
         case "bridgeendpoint":
         case "bridgeEndpoint": return boolean.class;
-        case "chunked": return boolean.class;
         case "clearexpiredcookies":
         case "clearExpiredCookies": return boolean.class;
         case "clientbuilder":
@@ -172,8 +166,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "getWithBody": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
-        case "httpbinding":
-        case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
         case "httpclient":
         case "httpClient": return org.apache.http.client.HttpClient.class;
         case "httpclientconfigurer":
@@ -222,8 +214,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "throwexceptiononfailure":
         case "throwExceptionOnFailure": return boolean.class;
-        case "transferexception":
-        case "transferException": return boolean.class;
         case "usesystemproperties":
         case "useSystemProperties": return boolean.class;
         case "useragent":
@@ -254,7 +244,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "authenticationPreemptive": return target.isAuthenticationPreemptive();
         case "bridgeendpoint":
         case "bridgeEndpoint": return target.isBridgeEndpoint();
-        case "chunked": return target.isChunked();
         case "clearexpiredcookies":
         case "clearExpiredCookies": return target.isClearExpiredCookies();
         case "clientbuilder":
@@ -281,8 +270,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "getWithBody": return target.isGetWithBody();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
-        case "httpbinding":
-        case "httpBinding": return target.getHttpBinding();
         case "httpclient":
         case "httpClient": return target.getHttpClient();
         case "httpclientconfigurer":
@@ -331,8 +318,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sslContextParameters": return target.getSslContextParameters();
         case "throwexceptiononfailure":
         case "throwExceptionOnFailure": return target.isThrowExceptionOnFailure();
-        case "transferexception":
-        case "transferException": return target.isTransferException();
         case "usesystemproperties":
         case "useSystemProperties": return target.isUseSystemProperties();
         case "useragent":

@@ -17,21 +17,29 @@
 
 package org.apache.camel;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
+/**
+ * An interface that represents a set of resumables (i.e.: files in a directory, rows in a database, etc)
+ *
+ * @param <T> the indivudal type of each member of the set
+ */
 public interface ResumableSet<T> {
 
     /**
      * Iterates over the set of input checking if they should be resumed or not.
      *
-     * @param  input
-     * @param  resumableCheck
-     * @return
+     * @param  input          the input array to check for resumables
+     * @param  resumableCheck a checker method that returns true if a single entry of the input should be resumed or
+     *                        false otherwise. For instance: given a set A, B and C, where B has already been processed,
+     *                        then a test for A and C returns true, whereas a test for B returns false.
+     * @return                a new array containing the elements that still need to be processed
      */
     default T[] resumeEach(T[] input, Predicate<T> resumableCheck) {
-
-        T[] tmp = Arrays.copyOf(input, input.length);
+        @SuppressWarnings("unchecked")
+        T[] tmp = (T[]) Array.newInstance(input.getClass().getComponentType(), input.length);
         int count = 0;
 
         for (T entry : input) {
@@ -52,7 +60,8 @@ public interface ResumableSet<T> {
      * Iterates over the set of input checking if they should be resumed or not
      *
      * @param resumableCheck a checker method that returns true if a single entry of the input should be resumed or
-     *                       false otherwise
+     *                       false otherwise. For instance: given a set A, B and C, where B has already been processed,
+     *                       then a test for A and C returns true, whereas a test for B returns false.
      */
     void resumeEach(Predicate<T> resumableCheck);
 

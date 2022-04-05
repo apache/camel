@@ -35,7 +35,7 @@ public class Any23DataFormatHTTPTest extends CamelTestSupport {
     private final String baseURI = "http://mock.foo/bar";
 
     @Test
-    public void test() throws Exception {
+    public void test() {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         template.sendBody("direct:start", "bar");
         List<Exchange> list = resultEndpoint.getReceivedExchanges();

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.16.0-SNAPSHOT</version>
+        <version>3.17.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jsch</artifactId>
@@ -33,7 +33,7 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-            com.jcraft.jsch.*;version="[0.1.5,0.2)"
+            com.jcraft.jsch.*;version="[0.2,1)"
         </camel.osgi.import.before.defaults>
     </properties>
 
@@ -43,7 +43,7 @@
             <artifactId>camel-ftp</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.jcraft</groupId>
+            <groupId>com.github.mwiede</groupId>
             <artifactId>jsch</artifactId>
             <version>${jsch-version}</version>
         </dependency>
@@ -91,6 +91,12 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
             <version>${bouncycastle-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.i2p.crypto</groupId>
+            <artifactId>eddsa</artifactId>
+            <version>${eddsa-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

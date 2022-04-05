@@ -32,7 +32,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.lang.model.element.Modifier;
@@ -43,14 +42,9 @@ import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import org.apache.camel.CamelContext;
-import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.maven.dsl.yaml.support.ToolingSupport;
 import org.apache.camel.maven.dsl.yaml.support.TypeSpecHolder;
-import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.plugin.MojoFailureException;
@@ -86,8 +80,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
     protected void generate() throws MojoFailureException {
         try {
             write(generateExpressionDeserializers());
-            write(generateEndpointProducer());
-            write(generateEndpointConsumer());
             write(generateDeserializers());
         } catch (Exception e) {
             throw new MojoFailureException(e.getMessage(), e);
@@ -142,7 +134,11 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     .addStatement("$T dc = getDeserializationContext(node)", CN_DESERIALIZATION_CONTEXT)
                     .addStatement("String key = asText(nt.getKeyNode())")
                     .addStatement("$T val = setDeserializationContext(nt.getValueNode(), dc)", CN_NODE)
-                    .addStatement("return constructExpressionType(key, val)")
+                    .addStatement("ExpressionDefinition answer = constructExpressionType(key, val)")
+                    .beginControlFlow("if (answer == null)")
+                    .addStatement("throw new org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException(node, \"Unknown expression with id: \" + key)")
+                    .endControlFlow()
+                    .addStatement("return answer")
                     .build())
             .build());
 
@@ -361,76 +357,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         );
     }
 
-    public final Collection<TypeSpec> generateEndpointConsumer() {
-        return generateEndpoint(
-            "EndpointConsumerDeserializers",
-            component -> !component.isProducerOnly(),
-            ClassName.get("org.apache.camel.model", "FromDefinition")
-        );
-    }
-
-    public final Collection<TypeSpec> generateEndpointProducer() {
-        return generateEndpoint(
-            "EndpointProducerDeserializers",
-            component -> !component.isConsumerOnly(),
-            ClassName.get("org.apache.camel.model", "ToDefinition")
-        );
-    }
-
-    public final Collection<TypeSpec> generateEndpoint(
-        String className,
-        Predicate<ComponentModel> componentFilter,
-        TypeName superClass) {
-
-        TypeSpec.Builder resolver = TypeSpec.classBuilder(className + "Resolver");
-        resolver.addModifiers(Modifier.PUBLIC, Modifier.FINAL);
-        resolver.addSuperinterface(CN_DESERIALIZER_RESOLVER);
-
-        CodeBlock.Builder sw = CodeBlock.builder();
-        sw.beginControlFlow("switch(id)");
-
-        CamelCatalog catalog = new DefaultCamelCatalog();
-        catalog.findComponentNames().stream()
-            .map(catalog::componentModel)
-            .filter(componentFilter)
-            .flatMap(component -> ToolingSupport.combine(component.getScheme(), component.getAlternativeSchemes()))
-            .sorted()
-            .distinct()
-            .forEach(scheme -> sw.add("case $S:\n", scheme));
-
-        sw.addStatement("return org.apache.camel.dsl.yaml.common.YamlSupport.creteEndpointUri(id, node)", superClass);
-        sw.endControlFlow();
-        sw.addStatement("return null");
-
-        resolver.addMethod(
-            MethodSpec.methodBuilder("getOrder")
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(Override.class)
-                .returns(int.class)
-                .addStatement("return YamlDeserializerResolver.ORDER_LOWEST")
-                .build());
-        resolver.addMethod(
-            MethodSpec.methodBuilder("resolveEndpointUri")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .addParameter(String.class, "id")
-                .addParameter(Node.class, "node")
-                .returns(String.class)
-                .addCode(sw.build())
-                .build());
-        resolver.addMethod(
-            MethodSpec.methodBuilder("resolve")
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(Override.class)
-                .addParameter(String.class, "id")
-                .returns(ConstructNode.class)
-                .addStatement("return node -> org.apache.camel.dsl.yaml.common.YamlSupport.creteEndpoint(id, node, $L::new)", superClass)
-                .build());
-
-        return Arrays.asList(
-            resolver.build()
-        );
-    }
-
     private TypeSpecHolder generateParser(ClassInfo info) {
         final ClassName targetType = ClassName.get(info.name().prefix().toString(), info.name().withoutPackagePrefix());
         final TypeSpec.Builder builder = TypeSpec.classBuilder(info.simpleName() + "Deserializer");
@@ -576,14 +502,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
         if (extendsType(info, SEND_DEFINITION_CLASS) || extendsType(info, TO_DYNAMIC_DEFINITION_CLASS)) {
             setProperty.beginControlFlow("default:");
-            setProperty.addStatement("String uri = EndpointProducerDeserializersResolver.resolveEndpointUri(propertyKey, node)");
-            setProperty.beginControlFlow("if (uri == null)");
             setProperty.addStatement("return false");
-            setProperty.endControlFlow();
-            setProperty.beginControlFlow("if (target.getUri() != null)");
-            setProperty.addStatement("throw new IllegalStateException(\"url must not be set when using Endpoint DSL\")");
-            setProperty.endControlFlow();
-            setProperty.addStatement("target.setUri(uri)");
             setProperty.endControlFlow();
 
             properties.add(
@@ -596,6 +515,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 .addAnnotation(AnnotationSpec.builder(Override.class).build())
                 .addModifiers(Modifier.PROTECTED)
                 .addParameter(CamelContext.class, "camelContext")
+                .addParameter(Node.class, "node")
                 .addParameter(targetType, "target")
                 .addParameter(
                     ParameterizedTypeName.get(
@@ -605,14 +525,14 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     "parameters")
                 .addCode(
                     CodeBlock.builder()
-                        .addStatement("target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, target.getUri(), parameters))")
+                        .addStatement("target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, node, target.getUri(), parameters))")
                         .build())
                 .build());
         } else if (implementType(info, HAS_EXPRESSION_TYPE_CLASS)) {
             setProperty.beginControlFlow("default:");
             setProperty.addStatement("$T ed = target.getExpressionType()", CN_EXPRESSION_DEFINITION);
             setProperty.beginControlFlow("if (ed != null)");
-            setProperty.addStatement("throw new org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException(propertyName, \"an expression has already been configured (\" + ed + \")\")");
+            setProperty.addStatement("throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, \"as an expression\")");
             setProperty.endControlFlow();
             setProperty.addStatement("ed = ExpressionDeserializers.constructExpressionType(propertyKey, node)");
             setProperty.beginControlFlow("if (ed != null)");

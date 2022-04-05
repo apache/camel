@@ -19,7 +19,6 @@ package org.apache.camel.coap;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -140,9 +139,9 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
 
                 from("direct:post1").process(exchange -> {
                     String id = exchange.getIn().getHeader("id", String.class);
-                    String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+                    String ct = exchange.getIn().getHeader(CoAPConstants.CONTENT_TYPE, String.class);
                     exchange.getMessage().setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));
-                    exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, ct);
+                    exchange.getMessage().setHeader(CoAPConstants.CONTENT_TYPE, ct);
                 });
 
                 from("direct:start").toF(getClientURI(), coapport).to("mock:result");

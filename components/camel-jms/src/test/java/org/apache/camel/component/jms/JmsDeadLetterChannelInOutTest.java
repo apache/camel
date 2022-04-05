@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class JmsDeadLetterChannelInOutTest extends CamelTestSupport {
 
     @Test
-    public void testJmsDLCInOut() throws Exception {
+    public void testJmsDLCInOut() {
         Exchange out = template.send("direct:start", exchange -> {
             // use InOut
             exchange.setPattern(ExchangePattern.InOut);
@@ -58,10 +58,10 @@ public class JmsDeadLetterChannelInOutTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("activemq:queue:error"));
 
                 from("direct:start").throwException(new IllegalArgumentException("Damn"));

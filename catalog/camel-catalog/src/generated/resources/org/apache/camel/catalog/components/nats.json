@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-nats",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "nats",
     "extendsScheme": "",
     "syntax": "nats:topic",
@@ -29,6 +29,13 @@
     "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "headerFilterStrategy": { "kind": "property", "displayName": "Header Filter Strategy", "group": "filter", "label": "filter", "required": false, "type": "object", "javaType": "org.apache.camel.spi.HeaderFilterStrategy", "deprecated": false, "autowired": false, "secret": false, "description": "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message." },
     "useGlobalSslContextParameters": { "kind": "property", "displayName": "Use Global Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Enable usage of global SSL context parameters." }
+  },
+  "headers": {
+    "CamelNatsMessageTimestamp": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The timestamp of a consumed message." },
+    "CamelNatsSID": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The SID of a consumed message." },
+    "CamelNatsReplyTo": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The ReplyTo of a consumed message (may be null)." },
+    "CamelNatsSubject": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Subject of a consumed message." },
+    "CamelNatsQueueName": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Queue name of a consumed message (may be null)." }
   },
   "properties": {
     "topic": { "kind": "path", "displayName": "Topic", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.nats.NatsConfiguration", "configurationField": "configuration", "description": "The name of topic we want to use" },

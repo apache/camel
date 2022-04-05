@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
+import org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
 import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
@@ -88,6 +89,15 @@ public final class JsonMapper {
                 ComponentOptionModel option = new ComponentOptionModel();
                 parseOption(mp, option, entry.getKey());
                 model.addComponentOption(option);
+            }
+        }
+        JsonObject headers = (JsonObject) obj.get("headers");
+        if (headers != null) {
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                EndpointHeaderModel header = new EndpointHeaderModel();
+                parseOption(mp, header, entry.getKey());
+                model.addEndpointHeader(header);
             }
         }
         JsonObject mprp = (JsonObject) obj.get("properties");
@@ -213,6 +223,10 @@ public final class JsonMapper {
         JsonObject wrapper = new JsonObject();
         wrapper.put("component", obj);
         wrapper.put("componentProperties", asJsonObject(model.getComponentOptions()));
+        final List<EndpointHeaderModel> headers = model.getEndpointHeaders();
+        if (!headers.isEmpty()) {
+            wrapper.put("headers", asJsonObject(headers));
+        }
         wrapper.put("properties", asJsonObject(model.getEndpointOptions()));
         if (!model.getApiOptions().isEmpty()) {
             wrapper.put("apis", apiModelAsJsonObject(model.getApiOptions(), false));

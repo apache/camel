@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "hazelcast-instance",
     "extendsScheme": "",
     "syntax": "hazelcast-instance:cacheName",
@@ -26,6 +26,13 @@
     "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "hazelcastInstance": { "kind": "property", "displayName": "Hazelcast Instance", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "com.hazelcast.core.HazelcastInstance", "deprecated": false, "autowired": false, "secret": false, "description": "The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance." },
     "hazelcastMode": { "kind": "property", "displayName": "Hazelcast Mode", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "node", "description": "The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default." }
+  },
+  "headers": {
+    "CamelHazelcastListenerAction": { "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The type of event - here added and removed" },
+    "CamelHazelcastListenerType": { "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The map consumer" },
+    "CamelHazelcastListenerTime": { "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The time of the event in millis" },
+    "CamelHazelcastInstanceHost": { "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The host name of the instance" },
+    "CamelHazelcastInstancePort": { "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The port number of the instance" }
   },
   "properties": {
     "cacheName": { "kind": "path", "displayName": "Cache Name", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the cache" },

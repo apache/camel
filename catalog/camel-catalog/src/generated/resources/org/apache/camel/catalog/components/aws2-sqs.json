@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-sqs",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "aws2-sqs",
     "extendsScheme": "",
     "syntax": "aws2-sqs:queueNameOrArn",
@@ -66,6 +66,16 @@
     "redrivePolicy": { "kind": "property", "displayName": "Redrive Policy", "group": "queue", "label": "queue", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.sqs.Sqs2Configuration", "configurationField": "configuration", "description": "Specify the policy that send message to DeadLetter queue. See detail at Amazon docs." },
     "accessKey": { "kind": "property", "displayName": "Access Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.aws2.sqs.Sqs2Configuration", "configurationField": "configuration", "description": "Amazon AWS Access Key" },
     "secretKey": { "kind": "property", "displayName": "Secret Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.aws2.sqs.Sqs2Configuration", "configurationField": "configuration", "description": "Amazon AWS Secret Key" }
+  },
+  "headers": {
+    "CamelAwsSqsAttributes": { "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "Map<MessageSystemAttributeName, String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A map of the attributes requested in ReceiveMessage to their respective values." },
+    "CamelAwsSqsMessageAttributes": { "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "Map<String, MessageAttributeValue>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Amazon SQS message attributes." },
+    "CamelAwsSqsMD5OfBody": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The MD5 checksum of the Amazon SQS message." },
+    "CamelAwsSqsMessageId": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Amazon SQS message ID." },
+    "CamelAwsSqsReceiptHandle": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Amazon SQS message receipt handle." },
+    "CamelAwsSqsDelaySeconds": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The delay seconds that the Amazon SQS message can be see by others." },
+    "CamelAwsSqsPrefix": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A string to use for filtering the list results." },
+    "CamelAwsSqsOperation": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation we want to perform" }
   },
   "properties": {
     "queueNameOrArn": { "kind": "path", "displayName": "Queue Name Or Arn", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Queue name or ARN" },

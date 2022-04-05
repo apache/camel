@@ -43,16 +43,16 @@ public class FromFtpRecursiveNotStepwiseNoBasePathIT extends FtpServerTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).convertBodyTo(String.class).to("log:ftp").to("mock:result");
             }
         };
     }
 
-    private void prepareFtpServer() throws Exception {
+    private void prepareFtpServer() {
         sendFile(getFtpUrl(), "Bye World", "bye.txt");
         sendFile(getFtpUrl(), "Hello World", "sub/hello.txt");
         sendFile(getFtpUrl(), "Goodday World", "sub/sub2/godday.txt");

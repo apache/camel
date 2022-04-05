@@ -557,276 +557,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.AtomEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Atomix Map (camel-atomix)
-     * Access Atomix's distributed map.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-map:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     * 
-     * @param path resourceName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.AtomixMapEndpointBuilder atomixMap(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.endpointBuilder("atomix-map", path);
-    }
-    /**
-     * Atomix Map (camel-atomix)
-     * Access Atomix's distributed map.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-map:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path resourceName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.AtomixMapEndpointBuilder atomixMap(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Atomix Messaging (camel-atomix)
-     * Access Atomix's group messaging.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-messaging:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     * 
-     * @param path resourceName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.AtomixMessagingEndpointBuilder atomixMessaging(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.endpointBuilder("atomix-messaging", path);
-    }
-    /**
-     * Atomix Messaging (camel-atomix)
-     * Access Atomix's group messaging.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-messaging:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path resourceName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.AtomixMessagingEndpointBuilder atomixMessaging(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Atomix MultiMap (camel-atomix)
-     * Access Atomix's distributed multi map.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-multimap:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     * 
-     * @param path resourceName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.AtomixMultiMapEndpointBuilder atomixMultimap(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.endpointBuilder("atomix-multimap", path);
-    }
-    /**
-     * Atomix MultiMap (camel-atomix)
-     * Access Atomix's distributed multi map.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-multimap:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path resourceName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.AtomixMultiMapEndpointBuilder atomixMultimap(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Atomix Queue (camel-atomix)
-     * Access Atomix's distributed queue.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-queue:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     * 
-     * @param path resourceName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.AtomixQueueEndpointBuilder atomixQueue(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.endpointBuilder("atomix-queue", path);
-    }
-    /**
-     * Atomix Queue (camel-atomix)
-     * Access Atomix's distributed queue.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-queue:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path resourceName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.AtomixQueueEndpointBuilder atomixQueue(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Atomix Set (camel-atomix)
-     * Access Atomix's distributed set.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-set:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     * 
-     * @param path resourceName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.AtomixSetEndpointBuilder atomixSet(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.endpointBuilder("atomix-set", path);
-    }
-    /**
-     * Atomix Set (camel-atomix)
-     * Access Atomix's distributed set.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-set:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path resourceName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.AtomixSetEndpointBuilder atomixSet(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Atomix Value (camel-atomix)
-     * Access Atomix's distributed value.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-value:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     * 
-     * @param path resourceName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.AtomixValueEndpointBuilder atomixValue(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.endpointBuilder("atomix-value", path);
-    }
-    /**
-     * Atomix Value (camel-atomix)
-     * Access Atomix's distributed value.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * Syntax: <code>atomix-value:resourceName</code>
-     * 
-     * Path parameter: resourceName (required)
-     * The distributed resource name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path resourceName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.AtomixValueEndpointBuilder atomixValue(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Avro RPC (camel-avro-rpc)
      * Produce or consume Apache Avro RPC services.
      * 
@@ -1956,6 +1686,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Azure Key Vault (camel-azure-key-vault)
+     * Manage secrets and keys in Azure Key Vault Service
+     * 
+     * Category: cloud,cloud
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-azure-key-vault
+     * 
+     * Syntax: <code>azure-key-vault:vaultName</code>
+     * 
+     * Path parameter: vaultName
+     * Vault Name to be used
+     * 
+     * @param path vaultName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KeyVaultEndpointBuilderFactory.KeyVaultEndpointBuilder azureKeyVault(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KeyVaultEndpointBuilderFactory.endpointBuilder("azure-key-vault", path);
+    }
+    /**
+     * Azure Key Vault (camel-azure-key-vault)
+     * Manage secrets and keys in Azure Key Vault Service
+     * 
+     * Category: cloud,cloud
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-azure-key-vault
+     * 
+     * Syntax: <code>azure-key-vault:vaultName</code>
+     * 
+     * Path parameter: vaultName
+     * Vault Name to be used
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path vaultName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KeyVaultEndpointBuilderFactory.KeyVaultEndpointBuilder azureKeyVault(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KeyVaultEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Azure ServiceBus (camel-azure-servicebus)
      * Send and receive messages to/from Azure Event Bus.
      * 
@@ -2195,51 +1968,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.BeanEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Beanstalk (camel-beanstalk)
-     * Retrieve and post-process Beanstalk jobs.
-     * 
-     * Category: messaging
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-beanstalk
-     * 
-     * Syntax: <code>beanstalk:connectionSettings</code>
-     * 
-     * Path parameter: connectionSettings
-     * Connection settings host:port/tube
-     * 
-     * @param path connectionSettings
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.BeanstalkEndpointBuilder beanstalk(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.endpointBuilder("beanstalk", path);
-    }
-    /**
-     * Beanstalk (camel-beanstalk)
-     * Retrieve and post-process Beanstalk jobs.
-     * 
-     * Category: messaging
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-beanstalk
-     * 
-     * Syntax: <code>beanstalk:connectionSettings</code>
-     * 
-     * Path parameter: connectionSettings
-     * Connection settings host:port/tube
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path connectionSettings
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.BeanstalkEndpointBuilder beanstalk(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Bean Validator (camel-bean-validator)
@@ -3615,6 +3343,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.DataSetTestEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Debezium DB2 Connector (camel-debezium-db2)
+     * Capture changes from a Oracle database.
+     * 
+     * Category: database,sql
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-debezium-db2
+     * 
+     * Syntax: <code>debezium-db2:name</code>
+     * 
+     * Path parameter: name (required)
+     * Unique name for the connector. Attempting to register again with the same
+     * name will fail.
+     * 
+     * @param path name
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DebeziumDb2EndpointBuilderFactory.DebeziumDb2EndpointBuilder debeziumDb2(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DebeziumDb2EndpointBuilderFactory.endpointBuilder("debezium-db2", path);
+    }
+    /**
+     * Debezium DB2 Connector (camel-debezium-db2)
+     * Capture changes from a Oracle database.
+     * 
+     * Category: database,sql
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-debezium-db2
+     * 
+     * Syntax: <code>debezium-db2:name</code>
+     * 
+     * Path parameter: name (required)
+     * Unique name for the connector. Attempting to register again with the same
+     * name will fail.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path name
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DebeziumDb2EndpointBuilderFactory.DebeziumDb2EndpointBuilder debeziumDb2(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DebeziumDb2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Debezium MongoDB Connector (camel-debezium-mongodb)
      * Capture changes from a MongoDB database.
      * 
@@ -3703,6 +3476,51 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DebeziumMySqlEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Debezium Oracle Connector (camel-debezium-oracle)
+     * Capture changes from a Oracle database.
+     * 
+     * Category: database,sql
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-debezium-oracle
+     * 
+     * Syntax: <code>debezium-oracle:name</code>
+     * 
+     * Path parameter: name (required)
+     * Unique name for the connector. Attempting to register again with the same
+     * name will fail.
+     * 
+     * @param path name
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DebeziumOracleEndpointBuilderFactory.DebeziumOracleEndpointBuilder debeziumOracle(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DebeziumOracleEndpointBuilderFactory.endpointBuilder("debezium-oracle", path);
+    }
+    /**
+     * Debezium Oracle Connector (camel-debezium-oracle)
+     * Capture changes from a Oracle database.
+     * 
+     * Category: database,sql
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-debezium-oracle
+     * 
+     * Syntax: <code>debezium-oracle:name</code>
+     * 
+     * Path parameter: name (required)
+     * Unique name for the connector. Attempting to register again with the same
+     * name will fail.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path name
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.DebeziumOracleEndpointBuilderFactory.DebeziumOracleEndpointBuilder debeziumOracle(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.DebeziumOracleEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Debezium PostgresSQL Connector (camel-debezium-postgres)
@@ -4429,6 +4247,7 @@ public class StaticEndpointBuilders {
      * @param path clusterName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearchRest(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.endpointBuilder("elasticsearch-rest", path);
@@ -4451,69 +4270,11 @@ public class StaticEndpointBuilders {
      * @param path clusterName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearchRest(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * ElSQL (camel-elsql)
-     * Use ElSql to define SQL queries. Extends the SQL Component.
-     * 
-     * Category: database,sql
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-elsql
-     * 
-     * Syntax: <code>elsql:elsqlName:resourceUri</code>
-     * 
-     * Path parameter: elsqlName (required)
-     * The name of the elsql to use (is NAMED in the elsql file)
-     * 
-     * Path parameter: resourceUri
-     * The resource file which contains the elsql SQL statements to use. You can
-     * specify multiple resources separated by comma. The resources are loaded
-     * on the classpath by default, you can prefix with file: to load from file
-     * system. Notice you can set this option on the component and then you do
-     * not have to configure this on the endpoint.
-     * 
-     * @param path elsqlName:resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.ElsqlEndpointBuilder elsql(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.endpointBuilder("elsql", path);
-    }
-    /**
-     * ElSQL (camel-elsql)
-     * Use ElSql to define SQL queries. Extends the SQL Component.
-     * 
-     * Category: database,sql
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-elsql
-     * 
-     * Syntax: <code>elsql:elsqlName:resourceUri</code>
-     * 
-     * Path parameter: elsqlName (required)
-     * The name of the elsql to use (is NAMED in the elsql file)
-     * 
-     * Path parameter: resourceUri
-     * The resource file which contains the elsql SQL statements to use. You can
-     * specify multiple resources separated by comma. The resources are loaded
-     * on the classpath by default, you can prefix with file: to load from file
-     * system. Notice you can set this option on the component and then you do
-     * not have to configure this on the endpoint.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path elsqlName:resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.ElsqlEndpointBuilder elsql(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Etcd Keys (camel-etcd)
@@ -5194,61 +4955,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.FtpsEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Ganglia (camel-ganglia)
-     * Send metrics to Ganglia monitoring system.
-     * 
-     * Category: monitoring
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-ganglia
-     * 
-     * Syntax: <code>ganglia:host:port</code>
-     * 
-     * Path parameter: host
-     * Host name for Ganglia server
-     * Default value: 239.2.11.71
-     * 
-     * Path parameter: port
-     * Port for Ganglia server
-     * Default value: 8649
-     * 
-     * @param path host:port
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.GangliaEndpointBuilder ganglia(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.endpointBuilder("ganglia", path);
-    }
-    /**
-     * Ganglia (camel-ganglia)
-     * Send metrics to Ganglia monitoring system.
-     * 
-     * Category: monitoring
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-ganglia
-     * 
-     * Syntax: <code>ganglia:host:port</code>
-     * 
-     * Path parameter: host
-     * Host name for Ganglia server
-     * Default value: 239.2.11.71
-     * 
-     * Path parameter: port
-     * Port for Ganglia server
-     * Default value: 8649
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path host:port
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.GangliaEndpointBuilder ganglia(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Geocoder (camel-geocoder)
@@ -8364,57 +8070,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.JGroupsRaftEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Jing (camel-jing)
-     * Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax)
-     * using Jing library.
-     * 
-     * Category: validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-jing
-     * 
-     * Syntax: <code>jing:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * URL to a local resource on the classpath or a full URL to a remote
-     * resource or resource on the file system which contains the schema to
-     * validate against.
-     * 
-     * @param path resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.JingEndpointBuilder jing(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.endpointBuilder("jing", path);
-    }
-    /**
-     * Jing (camel-jing)
-     * Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax)
-     * using Jing library.
-     * 
-     * Category: validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-jing
-     * 
-     * Syntax: <code>jing:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * URL to a local resource on the classpath or a full URL to a remote
-     * resource or resource on the file system which contains the schema to
-     * validate against.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.JingEndpointBuilder jing(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Jira (camel-jira)
      * Interact with JIRA issue tracker.
      * 
@@ -10851,55 +10506,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GridFsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * MSV (camel-msv)
-     * Validate XML payloads using Multi-Schema Validator (MSV).
-     * 
-     * Category: validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-msv
-     * 
-     * Syntax: <code>msv:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * URL to a local resource on the classpath, or a reference to lookup a bean
-     * in the Registry, or a full URL to a remote resource or resource on the
-     * file system which contains the XSD to validate against.
-     * 
-     * @param path resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.MsvEndpointBuilder msv(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.endpointBuilder("msv", path);
-    }
-    /**
-     * MSV (camel-msv)
-     * Validate XML payloads using Multi-Schema Validator (MSV).
-     * 
-     * Category: validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-msv
-     * 
-     * Syntax: <code>msv:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * URL to a local resource on the classpath, or a reference to lookup a bean
-     * in the Registry, or a full URL to a remote resource or resource on the
-     * file system which contains the XSD to validate against.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.MsvEndpointBuilder msv(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Mustache (camel-mustache)
      * Transform messages using a Mustache template.
      * 
@@ -11100,57 +10706,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.MyBatisBeanEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Nagios (camel-nagios)
-     * Send passive checks to Nagios using JSendNSCA.
-     * 
-     * Category: monitoring
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-nagios
-     * 
-     * Syntax: <code>nagios:host:port</code>
-     * 
-     * Path parameter: host (required)
-     * This is the address of the Nagios host where checks should be send.
-     * 
-     * Path parameter: port (required)
-     * The port number of the host.
-     * 
-     * @param path host:port
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.NagiosEndpointBuilder nagios(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.endpointBuilder("nagios", path);
-    }
-    /**
-     * Nagios (camel-nagios)
-     * Send passive checks to Nagios using JSendNSCA.
-     * 
-     * Category: monitoring
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-nagios
-     * 
-     * Syntax: <code>nagios:host:port</code>
-     * 
-     * Path parameter: host (required)
-     * This is the address of the Nagios host where checks should be send.
-     * 
-     * Path parameter: port (required)
-     * The port number of the host.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path host:port
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.NagiosEndpointBuilder nagios(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Nats (camel-nats)
@@ -11363,53 +10918,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.NitriteEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * NSQ (camel-nsq)
-     * Send and receive messages from NSQ realtime distributed messaging
-     * platform.
-     * 
-     * Category: messaging
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-nsq
-     * 
-     * Syntax: <code>nsq:topic</code>
-     * 
-     * Path parameter: topic (required)
-     * The NSQ topic
-     * 
-     * @param path topic
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.NsqEndpointBuilder nsq(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.endpointBuilder("nsq", path);
-    }
-    /**
-     * NSQ (camel-nsq)
-     * Send and receive messages from NSQ realtime distributed messaging
-     * platform.
-     * 
-     * Category: messaging
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-nsq
-     * 
-     * Syntax: <code>nsq:topic</code>
-     * 
-     * Path parameter: topic (required)
-     * The NSQ topic
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path topic
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.NsqEndpointBuilder nsq(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * OAI-PMH (camel-oaipmh)
@@ -13583,55 +13091,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SftpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * SIP (camel-sip)
-     * Send and receive messages using the SIP protocol (used in
-     * telecommunications).
-     * 
-     * Category: mobile
-     * Since: 2.5
-     * Maven coordinates: org.apache.camel:camel-sip
-     * 
-     * Syntax: <code>sip:uri</code>
-     * 
-     * Path parameter: uri (required)
-     * URI of the SIP server to connect to (the username and password can be
-     * included such as: john:secretmyserver:9999)
-     * 
-     * @param path uri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.SipEndpointBuilder sip(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.endpointBuilder("sip", path);
-    }
-    /**
-     * SIP (camel-sip)
-     * Send and receive messages using the SIP protocol (used in
-     * telecommunications).
-     * 
-     * Category: mobile
-     * Since: 2.5
-     * Maven coordinates: org.apache.camel:camel-sip
-     * 
-     * Syntax: <code>sip:uri</code>
-     * 
-     * Path parameter: uri (required)
-     * URI of the SIP server to connect to (the username and password can be
-     * included such as: john:secretmyserver:9999)
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path uri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.SipEndpointBuilder sip(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Simple JMS (camel-sjms)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 1.x API.
@@ -13942,55 +13401,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Soroush (camel-soroush)
-     * Send and receive messages as a Soroush chat bot.
-     * 
-     * Category: chat
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-soroush
-     * 
-     * Syntax: <code>soroush:action</code>
-     * 
-     * Path parameter: action (required)
-     * The action to do.
-     * There are 4 enums and the value can be one of: sendMessage, getMessage,
-     * uploadFile, downloadFile
-     * 
-     * @param path action
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.SoroushBotEndpointBuilder soroush(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.endpointBuilder("soroush", path);
-    }
-    /**
-     * Soroush (camel-soroush)
-     * Send and receive messages as a Soroush chat bot.
-     * 
-     * Category: chat
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-soroush
-     * 
-     * Syntax: <code>soroush:action</code>
-     * 
-     * Path parameter: action (required)
-     * The action to do.
-     * There are 4 enums and the value can be one of: sendMessage, getMessage,
-     * uploadFile, downloadFile
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path action
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.SoroushBotEndpointBuilder soroush(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Spark (camel-spark)
@@ -16563,55 +15973,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.XsltSaxonEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Yammer (camel-yammer)
-     * Interact with the Yammer enterprise social network.
-     * 
-     * Category: social,cloud,api
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-yammer
-     * 
-     * Syntax: <code>yammer:function</code>
-     * 
-     * Path parameter: function (required)
-     * The function to use
-     * There are 9 enums and the value can be one of: MESSAGES, MY_FEED, ALGO,
-     * FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT
-     * 
-     * @param path function
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.YammerEndpointBuilder yammer(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.endpointBuilder("yammer", path);
-    }
-    /**
-     * Yammer (camel-yammer)
-     * Interact with the Yammer enterprise social network.
-     * 
-     * Category: social,cloud,api
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-yammer
-     * 
-     * Syntax: <code>yammer:function</code>
-     * 
-     * Path parameter: function (required)
-     * The function to use
-     * There are 9 enums and the value can be one of: MESSAGES, MY_FEED, ALGO,
-     * FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path function
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.YammerEndpointBuilder yammer(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Zendesk (camel-zendesk)

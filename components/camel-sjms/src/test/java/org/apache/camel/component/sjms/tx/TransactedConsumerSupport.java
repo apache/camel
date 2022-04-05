@@ -115,7 +115,7 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
                                  private final AtomicInteger counter = new AtomicInteger();
 
                                  @Override
-                                 public void process(Exchange exchange) throws Exception {
+                                 public void process(Exchange exchange) {
                                      if (counter.incrementAndGet() == maxAttemptsCount) {
                                          log.info(
                                                  "{} Messages have been processed. Failing the exchange to force a rollback of the transaction.",
@@ -133,7 +133,7 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
                              .to("mock:test.after." + routeNumber)
                              .process(new Processor() {
                                  @Override
-                                 public void process(Exchange exchange) throws Exception {
+                                 public void process(Exchange exchange) {
 
                                      // Countdown the latch
                                      latch.countDown();

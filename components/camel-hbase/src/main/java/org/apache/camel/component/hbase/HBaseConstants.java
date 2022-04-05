@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.hbase;
 
+import org.apache.camel.spi.Metadata;
+
 public interface HBaseConstants {
 
+    @Metadata(label = "producer", description = "The HBase operation to perform", javaType = "String")
     String OPERATION = "CamelHBaseOperation";
 
     String PUT = "CamelHBasePut";
@@ -25,9 +28,17 @@ public interface HBaseConstants {
     String SCAN = "CamelHBaseScan";
     String DELETE = "CamelHBaseDelete";
 
+    @Metadata(label = "producer", description = "The maximum number of rows to scan.", javaType = "Integer")
     String HBASE_MAX_SCAN_RESULTS = "CamelHBaseMaxScanResults";
-
+    @Metadata(label = "producer", description = "The row to start scanner at or after", javaType = "String")
     String FROM_ROW = "CamelHBaseStartRow";
-
+    @Metadata(label = "producer", description = "The row to end at (exclusive)", javaType = "String")
     String STOP_ROW = "CamelHBaseStopRow";
+    @Metadata(description = "The strategy to use for mapping Camel messages to HBase columns.\n\nSupported values:\n\n* header\n* body",
+              javaType = "String")
+    String STRATEGY = "CamelMappingStrategy";
+    @Metadata(description = "The class name of a custom mapping strategy implementation.", javaType = "String")
+    String STRATEGY_CLASS_NAME = "CamelMappingStrategyClassName";
+    @Metadata(label = "consumer", description = "The marked row id", javaType = "byte[]")
+    String HBASE_MARKED_ROW_ID = HBaseAttribute.HBASE_MARKED_ROW_ID.asHeader();
 }

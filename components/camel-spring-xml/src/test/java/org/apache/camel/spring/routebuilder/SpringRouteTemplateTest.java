@@ -19,10 +19,14 @@ package org.apache.camel.spring.routebuilder;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -140,6 +144,39 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
         template.sendBody("direct:one", "Hello Cheese");
 
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testDumpModelAsXml() throws Exception {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("foo", "one");
+        parameters.put("bar", "cheese");
+        context.addRouteFromTemplate("first", "myTemplate", parameters);
+
+        RouteDefinition def = context.getRouteDefinition("first");
+
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, def, true, true);
+
+        assertNotNull(xml);
+        Assertions.assertTrue(xml.contains("<from uri=\"direct:one\"/>"));
+    }
+
+    @Test
+    public void testDumpModelsAsXml() throws Exception {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("foo", "one");
+        parameters.put("bar", "cheese");
+        context.addRouteFromTemplate("first", "myTemplate", parameters);
+
+        RoutesDefinition def = new RoutesDefinition();
+        def.setRoutes(context.getRouteDefinitions());
+
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, def, true, true);
+
+        assertNotNull(xml);
+        Assertions.assertTrue(xml.contains("<from uri=\"direct:one\"/>"));
     }
 
 }

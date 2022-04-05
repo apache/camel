@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "netty-http", extendsScheme = "netty", title = "Netty HTTP",
              syntax = "netty-http:protocol://host:port/path", category = { Category.NETWORKING, Category.HTTP },
-             lenientProperties = true)
+             lenientProperties = true, headersClass = NettyHttpConstants.class)
 @Metadata(excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
                               + ",clientMode,reconnect,reconnectInterval,useByteBuf,udpByteArrayCodec,broadcast,correlationManager")
 public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {

@@ -44,9 +44,9 @@ public class FileToFtpsWithDefaultSettingsIT extends FtpsServerExplicitTLSWithou
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:src/test/data?noop=true").log("Got ${file:name}").to(getFtpUrl());
 
                 from(getFtpUrl()).to("mock:result");

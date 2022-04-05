@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class JmsRouteTimeoutCheckerIntervalTest extends CamelTestSupport {
 
     @Test
-    public void testTimeout() throws Exception {
+    public void testTimeout() {
         try {
             // send a in-out with a timeout for 1 sec 
             template.requestBody("activemq:queue:slow?requestTimeout=1000", "Hello World");
@@ -47,7 +47,7 @@ public class JmsRouteTimeoutCheckerIntervalTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNoTimeout() throws Exception {
+    public void testNoTimeout() {
         // START SNIPPET: e1
         // send a in-out with a timeout for 5 sec
         Object out = template.requestBody("activemq:queue:slow?requestTimeout=5000", "Hello World");
@@ -69,9 +69,9 @@ public class JmsRouteTimeoutCheckerIntervalTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:slow").delay(3000).transform(constant("Bye World"));
             }
         };

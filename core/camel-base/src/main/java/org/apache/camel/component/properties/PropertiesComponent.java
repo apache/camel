@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -44,6 +45,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,11 +182,11 @@ public class PropertiesComponent extends ServiceSupport
         // this method may be replaced by loadProperties(k -> true) but the underlying sources
         // may have some optimization for bulk load so let's keep it
 
-        Properties prop = new OrderedProperties();
+        OrderedLocationProperties prop = new OrderedLocationProperties();
 
         // use initial properties
         if (initialProperties != null) {
-            prop.putAll(initialProperties);
+            prop.putAll("initial", initialProperties);
         }
 
         if (!sources.isEmpty()) {
@@ -196,7 +198,14 @@ public class PropertiesComponent extends ServiceSupport
                 if (ps instanceof LoadablePropertiesSource) {
                     LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
                     Properties p = lps.loadProperties();
-                    prop.putAll(p);
+                    if (p instanceof OrderedLocationProperties) {
+                        prop.putAll((OrderedLocationProperties) p);
+                    } else if (ps instanceof LocationPropertiesSource) {
+                        String loc = ((LocationPropertiesSource) ps).getLocation().getPath();
+                        prop.putAll(loc, p);
+                    } else {
+                        prop.putAll(lps.getName(), p);
+                    }
                 }
             }
         }
@@ -204,9 +213,9 @@ public class PropertiesComponent extends ServiceSupport
         // use override properties
         if (overrideProperties != null) {
             // make a copy to avoid affecting the original properties
-            Properties override = new OrderedProperties();
+            OrderedLocationProperties override = new OrderedLocationProperties();
             override.putAll(prop);
-            override.putAll(overrideProperties);
+            override.putAll("override", overrideProperties);
             prop = override;
         }
 
@@ -215,13 +224,13 @@ public class PropertiesComponent extends ServiceSupport
 
     @Override
     public Properties loadProperties(Predicate<String> filter) {
-        Properties prop = new OrderedProperties();
+        OrderedLocationProperties prop = new OrderedLocationProperties();
 
         // use initial properties
         if (initialProperties != null) {
             for (String name : initialProperties.stringPropertyNames()) {
                 if (filter.test(name)) {
-                    prop.put(name, initialProperties.get(name));
+                    prop.put("initial", name, initialProperties.get(name));
                 }
             }
         }
@@ -235,7 +244,14 @@ public class PropertiesComponent extends ServiceSupport
                 if (ps instanceof LoadablePropertiesSource) {
                     LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
                     Properties p = lps.loadProperties(filter);
-                    prop.putAll(p);
+                    if (p instanceof OrderedLocationProperties) {
+                        prop.putAll((OrderedLocationProperties) p);
+                    } else if (ps instanceof LocationPropertiesSource) {
+                        String loc = ((LocationPropertiesSource) ps).getLocation().getPath();
+                        prop.putAll(loc, p);
+                    } else {
+                        prop.putAll(lps.getName(), p);
+                    }
                 }
             }
         }
@@ -244,7 +260,69 @@ public class PropertiesComponent extends ServiceSupport
         if (overrideProperties != null) {
             for (String name : overrideProperties.stringPropertyNames()) {
                 if (filter.test(name)) {
-                    prop.put(name, overrideProperties.get(name));
+                    prop.put("override", name, overrideProperties.get(name));
+                }
+            }
+        }
+
+        return prop;
+    }
+
+    @Override
+    public Properties loadProperties(Predicate<String> filter, Function<String, String> keyMapper) {
+        OrderedLocationProperties prop = new OrderedLocationProperties();
+
+        // use initial properties
+        if (initialProperties != null) {
+            for (String name : initialProperties.stringPropertyNames()) {
+                if (filter.test(name)) {
+                    Object value = initialProperties.get(name);
+                    name = keyMapper.apply(name);
+                    prop.put("initial", name, value);
+                }
+            }
+        }
+
+        if (!sources.isEmpty()) {
+            // sources are ordered according to {@link org.apache.camel.support.OrderComparator} so
+            // it is needed to iterate them in reverse order otherwise lower priority sources may
+            // override properties from higher priority ones
+            for (int i = sources.size(); i-- > 0;) {
+                PropertiesSource ps = sources.get(i);
+                if (ps instanceof LoadablePropertiesSource) {
+                    LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
+                    Properties p = lps.loadProperties(filter);
+                    if (p instanceof OrderedLocationProperties) {
+                        OrderedLocationProperties olp = (OrderedLocationProperties) p;
+                        for (String name : olp.stringPropertyNames()) {
+                            String loc = olp.getLocation(name);
+                            Object value = olp.getProperty(name);
+                            name = keyMapper.apply(name);
+                            prop.put(loc, name, value);
+                        }
+                    } else {
+                        String loc = lps.getName();
+                        if (ps instanceof LocationPropertiesSource) {
+                            LocationPropertiesSource olp = (LocationPropertiesSource) ps;
+                            loc = olp.getLocation().getPath();
+                        }
+                        for (String name : p.stringPropertyNames()) {
+                            Object value = p.getProperty(name);
+                            name = keyMapper.apply(name);
+                            prop.put(loc, name, value);
+                        }
+                    }
+                }
+            }
+        }
+
+        // use override properties
+        if (overrideProperties != null) {
+            for (String name : overrideProperties.stringPropertyNames()) {
+                if (filter.test(name)) {
+                    Object value = overrideProperties.get(name);
+                    name = keyMapper.apply(name);
+                    prop.put("override", name, value);
                 }
             }
         }
@@ -594,8 +672,10 @@ public class PropertiesComponent extends ServiceSupport
         CamelContextAware.trySetCamelContext(propertiesSource, getCamelContext());
         synchronized (lock) {
             sources.add(propertiesSource);
+            // resort after we add a new source
+            sources.sort(OrderedComparator.get());
             if (!isNew()) {
-                // if we have already initialized or started then we should also init the source
+                // if we have already initialized or started then also init the source
                 ServiceHelper.initService(propertiesSource);
             }
             if (isStarted()) {

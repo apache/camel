@@ -67,7 +67,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
                   + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
     }
 
-    public ECDSASignatureTest() throws Exception {
+    public ECDSASignatureTest() {
         try {
             // BouncyCastle is required for some algorithms
             if (Security.getProvider("BC") == null) {
@@ -105,13 +105,13 @@ public class ECDSASignatureTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         if (!canTest) {
             return new RouteBuilder[] {};
         }
 
         return new RouteBuilder[] { new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: ecdsa signature algorithm
                 from("direct:ecdsa_sha1")
                         .to("xmlsecurity-sign:ecdsa_sha1?keyAccessor=#accessor"
@@ -122,7 +122,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
                 // END SNIPPET: ecdsa signature algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: ecdsa signature algorithm
                 from("direct:ecdsa_sha224")
                         .to("xmlsecurity-sign:ecdsa_sha224?keyAccessor=#accessor"
@@ -132,7 +132,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
                 // END SNIPPET: ecdsa signature algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: ecdsa signature algorithm
                 from("direct:ecdsa_sha256")
                         .to("xmlsecurity-sign:ecdsa_sha256?keyAccessor=#accessor"
@@ -142,7 +142,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
                 // END SNIPPET: ecdsa signature algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: ecdsa signature algorithm
                 from("direct:ecdsa_sha384")
                         .to("xmlsecurity-sign:ecdsa_sha384?keyAccessor=#accessor"
@@ -152,7 +152,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
                 // END SNIPPET: ecdsa signature algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: ecdsa signature algorithm
                 from("direct:ecdsa_sha512")
                         .to("xmlsecurity-sign:ecdsa_sha512?keyAccessor=#accessor"
@@ -162,7 +162,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
                 // END SNIPPET: ecdsa signature algorithm
             }
         }, new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: ecdsa signature algorithm
                 from("direct:ecdsa_ripemd160")
                         .to("xmlsecurity-sign:ecdsa_ripemd160?keyAccessor=#accessor"
@@ -256,7 +256,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         disableJMX();
         try {
             super.setUp();
@@ -293,8 +293,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
             @Override
             public KeyInfo getKeyInfo(
                     Message mess, Node messageBody,
-                    KeyInfoFactory keyInfoFactory)
-                    throws Exception {
+                    KeyInfoFactory keyInfoFactory) {
                 return null;
             }
         };

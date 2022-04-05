@@ -27,11 +27,12 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.test.infra.fhir.services.FhirService;
 import org.apache.camel.test.infra.fhir.services.FhirServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.hl7.fhir.dstu3.model.Bundle;
-import org.hl7.fhir.dstu3.model.HumanName;
-import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.HumanName;
+import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,18 +43,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractFhirTestSupport extends CamelTestSupport {
 
-    static FhirService service;
+    @RegisterExtension
+    public static FhirService service = FhirServiceFactory.createSingletonService();
 
     protected Patient patient;
     FhirContext fhirContext;
     IGenericClient fhirClient;
-
-    static {
-        // We don't want a new FHIR server for every test class
-        // https://www.testcontainers.org/test_framework_integration/manual_lifecycle_control/
-        service = FhirServiceFactory.createService();
-        service.initialize();
-    }
 
     @BeforeEach
     public void cleanFhirServerState() {
@@ -87,7 +82,7 @@ public abstract class AbstractFhirTestSupport extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
-        this.fhirContext = new FhirContext(FhirVersionEnum.DSTU3);
+        this.fhirContext = new FhirContext(FhirVersionEnum.R4);
         // Set proxy so that FHIR resource URLs returned by the server are using the correct host and port
         this.fhirContext.getRestfulClientFactory().setProxy(service.getHost(), service.getPort());
         this.fhirClient = this.fhirContext.newRestfulGenericClient(service.getServiceBaseURL());

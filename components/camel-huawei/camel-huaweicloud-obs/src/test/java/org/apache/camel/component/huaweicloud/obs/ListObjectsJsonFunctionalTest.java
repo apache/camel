@@ -38,10 +38,10 @@ public class ListObjectsJsonFunctionalTest extends CamelTestSupport {
     @BindToRegistry("serviceKeys")
     ServiceKeys serviceKeys = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list_objects")
                         .to("hwcloud-obs:listObjects?" +
                             "serviceKeys=#serviceKeys" +

@@ -63,10 +63,10 @@ public class RestNettyHttpBindingModeJsonTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().component("netty-http").host("localhost").port(getPort()).bindingMode(RestBindingMode.json);
 
                 // use the rest DSL to define the rest services

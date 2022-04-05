@@ -63,7 +63,7 @@ public class SqlProducerOutputTypeSelectOneNoResultTest extends CamelTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);

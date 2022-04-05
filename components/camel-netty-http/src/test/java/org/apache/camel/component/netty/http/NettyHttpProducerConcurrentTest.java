@@ -56,7 +56,7 @@ public class NettyHttpProducerConcurrentTest extends BaseNettyTest {
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
-                public String call() throws Exception {
+                public String call() {
                     return template.requestBody("netty-http:http://localhost:{{port}}/echo", "" + index, String.class);
                 }
             });
@@ -79,9 +79,9 @@ public class NettyHttpProducerConcurrentTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // expose a echo service
                 from("netty-http:http://localhost:{{port}}/echo")
                         .transform(body().append(body())).to("mock:result");

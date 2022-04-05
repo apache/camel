@@ -56,7 +56,7 @@ public class VelocityTemplateInHeaderTest extends CamelTestSupport {
     protected void assertRespondsWith(final String headerName, final String headerValue, String expectedBody)
             throws InvalidPayloadException {
         Exchange response = template.request("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setHeader(VelocityConstants.VELOCITY_TEMPLATE, "<hello>${headers." + headerName + "}</hello>");
                 in.setHeader(headerName, headerValue);

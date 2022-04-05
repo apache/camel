@@ -86,7 +86,7 @@ If you're using the env properties approach:
 Then you should be able to add
 
 ```
-jbang --fresh -Dcamel.jbang.version=3.16.0-SNAPSHOT  camel@apache/camel run --modeline=true  ../examples/aws-secrets-manager-properties.yaml
+jbang --fresh -Dcamel.jbang.version=3.17.0-SNAPSHOT  camel@apache/camel run --modeline=true  ../examples/aws-secrets-manager-properties.yaml
 ```
 
 If you're using the properties file approach:
@@ -94,15 +94,15 @@ If you're using the properties file approach:
 Then you should be able to add
 
 ```
-jbang --fresh -Dcamel.jbang.version=3.16.0-SNAPSHOT  camel@apache/camel run --modeline=true --properties=<path>  ../examples/aws-secrets-manager-properties.yaml
+jbang --fresh -Dcamel.jbang.version=3.17.0-SNAPSHOT  camel@apache/camel run --modeline=true --properties=<path>  ../examples/aws-secrets-manager-properties.yaml
 ```
 
 And you should see the following output:
 
 ```
 [jbang] Resolving dependencies...
-[jbang] Loading MavenCoordinate [org.apache.camel:camel-bom:pom:3.16.0-SNAPSHOT]
-[jbang]     Resolving org.apache.camel:camel-jbang-core:3.16.0-SNAPSHOT...Done
+[jbang] Loading MavenCoordinate [org.apache.camel:camel-bom:pom:3.17.0-SNAPSHOT]
+[jbang]     Resolving org.apache.camel:camel-jbang-core:3.17.0-SNAPSHOT...Done
 [jbang]     Resolving org.apache.camel.kamelets:camel-kamelets:0.7.1...Done
 [jbang]     Resolving org.apache.camel.kamelets:camel-kamelets-utils:0.7.1...Done
 [jbang] Dependencies resolved
@@ -120,24 +120,24 @@ Starting CamelJBang
 2022-02-15 16:49:07.274  INFO 31844 --- [           main] org.apache.camel.main.BaseMainSupport    :     camel.main.modeline=true
 2022-02-15 16:49:07.274  INFO 31844 --- [           main] org.apache.camel.main.BaseMainSupport    :     camel.main.routesIncludePattern=file:../examples/aws-secrets-manager-properties.yaml
 2022-02-15 16:49:07.274  INFO 31844 --- [           main] org.apache.camel.main.BaseMainSupport    :     camel.component.kamelet.location=classpath:/kamelets,github:apache:camel-kamelets/kamelets
-2022-02-15 16:49:08.359  INFO 31844 --- [           main] org.apache.camel.main.DownloaderHelper   : Downloaded dependency: org.apache.camel:camel-aws-secrets-manager:3.16.0-SNAPSHOT took: 1s14ms
+2022-02-15 16:49:08.359  INFO 31844 --- [           main] org.apache.camel.main.DownloaderHelper   : Downloaded dependency: org.apache.camel:camel-aws-secrets-manager:3.17.0-SNAPSHOT took: 1s14ms
 2022-02-15 16:49:08.419  INFO 31844 --- [           main] e.camel.management.JmxManagementStrategy : JMX is enabled
 2022-02-15 16:49:09.928  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext : Routes startup (total:3 started:3)
 2022-02-15 16:49:09.928  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext :     Started route1 (kamelet://timer-source)
 2022-02-15 16:49:09.928  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext :     Started timer-source-1 (timer://tick)
 2022-02-15 16:49:09.928  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext :     Started log-sink-2 (kamelet://source)
-2022-02-15 16:49:09.928  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext : Apache Camel 3.16.0-SNAPSHOT (CamelJBang) started in 1s683ms (build:149ms init:1s368ms start:166ms)
+2022-02-15 16:49:09.928  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext : Apache Camel 3.17.0-SNAPSHOT (CamelJBang) started in 1s683ms (build:149ms init:1s368ms start:166ms)
 2022-02-15 16:49:09.929  INFO 31844 --- [           main] ache.camel.impl.debugger.BacklogDebugger : Enabling Camel debugger
 2022-02-15 16:49:11.417  INFO 31844 --- [ - timer://tick] info                                     : Exchange[ExchangePattern: InOnly, BodyType: org.apache.camel.converter.stream.CachedOutputStream.WrappedInputStream, Body: {"c":131.25,"d":1.1,"dp":0.8452,"h":131.68,"l":130.42,"o":130.64,"pc":130.15,"t":1644940124}]
 2022-02-15 16:49:16.123  INFO 31844 --- [ - timer://tick] info                                     : Exchange[ExchangePattern: InOnly, BodyType: org.apache.camel.converter.stream.CachedOutputStream.WrappedInputStream, Body: {"c":131.25,"d":1.1,"dp":0.8452,"h":131.68,"l":130.42,"o":130.64,"pc":130.15,"t":1644940124}]
 2022-02-15 16:49:21.139  INFO 31844 --- [ - timer://tick] info                                     : Exchange[ExchangePattern: InOnly, BodyType: org.apache.camel.converter.stream.CachedOutputStream.WrappedInputStream, Body: {"c":131.25,"d":1.1,"dp":0.8452,"h":131.68,"l":130.42,"o":130.64,"pc":130.15,"t":1644940124}]
-^C2022-02-15 16:49:24.140  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext : Apache Camel 3.16.0-SNAPSHOT (CamelJBang) shutting down (timeout:5s)
+^C2022-02-15 16:49:24.140  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext : Apache Camel 3.17.0-SNAPSHOT (CamelJBang) shutting down (timeout:5s)
 2022-02-15 16:49:24.154  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext : Routes stopped (total:3 stopped:3)
 2022-02-15 16:49:24.154  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext :     Stopped log-sink-2 (kamelet://source)
 2022-02-15 16:49:24.154  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext :     Stopped timer-source-1 (timer://tick)
 2022-02-15 16:49:24.154  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext :     Stopped route1 (kamelet://timer-source)
 2022-02-15 16:49:24.159  INFO 31844 --- [           main] ache.camel.impl.debugger.BacklogDebugger : Disabling Camel debugger
-2022-02-15 16:49:24.161  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext : Apache Camel 3.16.0-SNAPSHOT (CamelJBang) shutdown in 21ms (uptime:14s399ms)
+2022-02-15 16:49:24.161  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext : Apache Camel 3.17.0-SNAPSHOT (CamelJBang) shutdown in 21ms (uptime:14s399ms)
 
 ```
 
@@ -148,7 +148,7 @@ Starting CamelJBang
 If needed for development and debugging purposes, dependencies can be referenced by correctly resolving the parameterized variables on the command line. Such as: 
 
 ```
-jbang -Dcamel.jbang.version=3.16.0-SNAPSHOT CamelJBang.java
+jbang -Dcamel.jbang.version=3.17.0-SNAPSHOT CamelJBang.java
 ```
 
 ### Checkstyle

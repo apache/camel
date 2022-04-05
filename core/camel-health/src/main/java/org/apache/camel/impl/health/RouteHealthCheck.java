@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckResultBuilder;
 
 /**
@@ -53,7 +54,6 @@ public class RouteHealthCheck extends AbstractHealthCheck {
 
             builder.detail("route.id", route.getId());
             builder.detail("route.status", status.name());
-            builder.detail("route.context.name", context.getName());
 
             if (route.getRouteController() != null || route.isAutoStartup()) {
                 if (status.isStarted()) {

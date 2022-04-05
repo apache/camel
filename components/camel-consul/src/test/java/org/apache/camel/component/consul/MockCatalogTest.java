@@ -53,10 +53,10 @@ public class MockCatalogTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("servicesRoute")
                         .to("consul:catalog?action=" + ConsulCatalogActions.LIST_NODES);
             }

@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * Read and write files.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "file", title = "File", syntax = "file:directoryName",
-             category = { Category.FILE, Category.CORE })
+             category = { Category.FILE, Category.CORE }, headersClass = FileConstants.class)
 public class FileEndpoint extends GenericFileEndpoint<File> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileEndpoint.class);

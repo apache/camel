@@ -83,6 +83,10 @@ public class AsyncCommitManager extends AbstractCommitManager {
             Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> record) {
 
         KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
+        if (manualCommitFactory == null) {
+            manualCommitFactory = new DefaultKafkaManualAsyncCommitFactory();
+        }
+
         return getManualCommit(exchange, partition, record, asyncCommits, manualCommitFactory);
     }
 }

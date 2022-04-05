@@ -16,10 +16,29 @@
  */
 package org.apache.camel.component.atmos.util;
 
+import org.apache.camel.spi.Metadata;
+
 public final class AtmosConstants {
 
     public static final String ATMOS_FILE_SEPARATOR = "/";
     public static final long POLL_CONSUMER_DELAY = 60 * 60 * 1000L;
+
+    @Metadata(description = "The name of the remote path downloaded in case of a single file.", javaType = "java.lang.String")
+    public static final String DOWNLOADED_FILE = "DOWNLOADED_FILE";
+    @Metadata(description = "The name of the remote paths downloaded in case of multiple files (one per line).",
+              javaType = "java.lang.String")
+    public static final String DOWNLOADED_FILES = "DOWNLOADED_FILES";
+    @Metadata(label = "producer", description = "The name of the remote path uploaded in case of a single file.",
+              javaType = "java.lang.String")
+    public static final String UPLOADED_FILE = "UPLOADED_FILE";
+    @Metadata(label = "producer",
+              description = "The name of the remote paths uploaded in case of multiple files (one per line).",
+              javaType = "java.lang.String")
+    public static final String UPLOADED_FILES = "UPLOADED_FILES";
+    @Metadata(label = "producer", description = "The remote path deleted on Atmos.", javaType = "java.lang.String")
+    public static final String DELETED_PATH = "DELETED_PATH";
+    @Metadata(label = "producer", description = "The moved path.", javaType = "java.lang.String")
+    public static final String MOVED_PATH = "MOVED_PATH";
 
     private AtmosConstants() {
     }

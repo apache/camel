@@ -29,7 +29,6 @@ import ca.uhn.fhir.rest.api.RequestFormatParamStyleEnum;
 import ca.uhn.fhir.rest.api.RequestTypeEnum;
 import ca.uhn.fhir.rest.api.SummaryEnum;
 import ca.uhn.fhir.rest.client.api.Header;
-import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpClient;
 import ca.uhn.fhir.rest.client.api.IRestfulClient;
@@ -297,6 +296,11 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
+        public void registerInterceptor(Object o) {
+
+        }
+
+        @Override
         public IInterceptorService getInterceptorService() {
             return null;
         }
@@ -332,11 +336,6 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
-        public void registerInterceptor(IClientInterceptor theInterceptor) {
-
-        }
-
-        @Override
         public void setEncoding(EncodingEnum theEncoding) {
 
         }
@@ -367,7 +366,7 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
-        public void unregisterInterceptor(IClientInterceptor theInterceptor) {
+        public void unregisterInterceptor(Object o) {
 
         }
 

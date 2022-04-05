@@ -49,10 +49,10 @@ public class NettyTextlineInOnlyTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}?textline=true&sync=false")
                         // body should be a String when using textline codec
                         .validate(body().isInstanceOf(String.class))

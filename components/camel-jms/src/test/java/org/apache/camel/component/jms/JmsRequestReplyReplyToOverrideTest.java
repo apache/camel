@@ -45,7 +45,7 @@ public class JmsRequestReplyReplyToOverrideTest extends CamelTestSupport {
     }
 
     @Test
-    public void testJmsRequestReplyReplyToAndReplyToHeader() throws Exception {
+    public void testJmsRequestReplyReplyToAndReplyToHeader() {
         // must start CamelContext because use route builder is false
         context.start();
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -44,6 +46,7 @@ import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.SimpleEventNotifierSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,7 +148,7 @@ public final class VertxHttpServer {
     }
 
     private static void doRegisterConsole(CamelContext context) {
-        Route dev = router.route("/dev");
+        Route dev = router.route("/q/dev");
         dev.method(HttpMethod.GET);
         dev.produces("text/plain");
         dev.handler(new Handler<RoutingContext>() {
@@ -177,7 +180,7 @@ public final class VertxHttpServer {
                 }
             }
         });
-        phc.addHttpEndpoint("/dev");
+        phc.addHttpEndpoint("/q/dev");
     }
 
     public static void registerHealthCheck(CamelContext camelContext) {
@@ -187,13 +190,13 @@ public final class VertxHttpServer {
     }
 
     private static void doRegisterHealthCheck(CamelContext context) {
-        final Route health = router.route("/health");
+        final Route health = router.route("/q/health");
         health.method(HttpMethod.GET);
         health.produces("application/json");
-        final Route live = router.route("/health/live");
+        final Route live = router.route("/q/health/live");
         live.method(HttpMethod.GET);
         live.produces("application/json");
-        final Route ready = router.route("/health/ready");
+        final Route ready = router.route("/q/health/ready");
         ready.method(HttpMethod.GET);
         ready.produces("application/json");
 
@@ -204,6 +207,7 @@ public final class VertxHttpServer {
 
                 boolean all = ctx.currentRoute() == health;
                 boolean liv = ctx.currentRoute() == live;
+                boolean rdy = ctx.currentRoute() == ready;
 
                 Collection<HealthCheck.Result> res;
                 if (all) {
@@ -218,13 +222,26 @@ public final class VertxHttpServer {
                 sb.append("{\n");
 
                 HealthCheckRegistry registry = HealthCheckRegistry.get(context);
-                String level = registry.getExposureLevel();
+                String level = ctx.request().getParam("exposureLevel");
+                if (level == null) {
+                    level = registry.getExposureLevel();
+                }
+
+                // are we UP
+                boolean up = HealthCheckHelper.isResultsUp(res, rdy);
+
                 if ("oneline".equals(level)) {
-                    healthCheckOneline(sb, res);
+                    // only brief status
+                    healthCheckStatus(sb, up);
                 } else if ("full".equals(level)) {
-                    healthCheckFull(sb, res);
+                    // include all details
+                    List<HealthCheck.Result> list = new ArrayList<>(res);
+                    healthCheckDetails(sb, list, up);
                 } else {
-                    healthCheckDefault(sb, res);
+                    // include only DOWN details
+                    List<HealthCheck.Result> downs = res.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN))
+                            .collect(Collectors.toList());
+                    healthCheckDetails(sb, downs, up);
                 }
                 sb.append("}\n");
                 ctx.end(sb.toString());
@@ -234,11 +251,10 @@ public final class VertxHttpServer {
         live.handler(handler);
         ready.handler(handler);
 
-        phc.addHttpEndpoint("/health");
+        phc.addHttpEndpoint("/q/health");
     }
 
-    private static void healthCheckOneline(StringBuilder sb, Collection<HealthCheck.Result> res) {
-        boolean up = res.stream().noneMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
+    private static void healthCheckStatus(StringBuilder sb, boolean up) {
         if (up) {
             sb.append("    \"status\": \"UP\"\n");
         } else {
@@ -246,15 +262,9 @@ public final class VertxHttpServer {
         }
     }
 
-    private static void healthCheckFull(StringBuilder sb, Collection<HealthCheck.Result> res) {
-        // we just want a brief summary or either UP or DOWN
-        boolean up = res.stream().noneMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-        if (up) {
-            sb.append("    \"status\": \"UP\"");
-        } else {
-            sb.append("    \"status\": \"DOWN\"");
-        }
-        List<HealthCheck.Result> checks = new ArrayList<>(res);
+    private static void healthCheckDetails(StringBuilder sb, List<HealthCheck.Result> checks, boolean up) {
+        healthCheckStatus(sb, up);
+
         if (!checks.isEmpty()) {
             sb.append(",\n");
             sb.append("    \"checks\": [\n");
@@ -274,37 +284,14 @@ public final class VertxHttpServer {
         }
     }
 
-    private static void healthCheckDefault(StringBuilder sb, Collection<HealthCheck.Result> res) {
-        // we just want a brief summary or either UP or DOWN
-        boolean up = res.stream().noneMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-        if (up) {
-            sb.append("    \"status\": \"UP\"\n");
-        } else {
-            // when we are DOWN then grab the only downs
-            List<HealthCheck.Result> down
-                    = res.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN)).collect(Collectors.toList());
-            sb.append("    \"status\": \"DOWN\",\n");
-            sb.append("    \"checks\": [\n");
-            for (int i = 0; i < down.size(); i++) {
-                HealthCheck.Result d = down.get(i);
-                sb.append("        {\n");
-                reportHealthCheck(sb, d);
-                if (i < down.size() - 1) {
-                    sb.append("        },\n");
-                } else {
-                    sb.append("        }\n");
-                }
-            }
-            sb.append("    ]\n");
-        }
-    }
-
     private static void reportHealthCheck(StringBuilder sb, HealthCheck.Result d) {
         sb.append("            \"name\": \"").append(d.getCheck().getId()).append("\",\n");
         sb.append("            \"status\": \"").append(d.getState()).append("\",\n");
         if (d.getError().isPresent()) {
-            String msg = d.getError().get().getMessage();
+            String msg = allCausedByErrorMessages(d.getError().get());
             sb.append("            \"error-message\": \"").append(msg)
+                    .append("\",\n");
+            sb.append("            \"error-stacktrace\": \"").append(errorStackTrace(d.getError().get()))
                     .append("\",\n");
         }
         if (d.getMessage().isPresent()) {
@@ -326,6 +313,35 @@ public final class VertxHttpServer {
             }
             sb.append("            }\n");
         }
+    }
+
+    private static String allCausedByErrorMessages(Throwable e) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(e.getMessage());
+
+        while (e.getCause() != null) {
+            e = e.getCause();
+            if (e.getMessage() != null) {
+                sb.append("; Caused by: ");
+                sb.append(ObjectHelper.classCanonicalName(e));
+                sb.append(": ");
+                sb.append(e.getMessage());
+            }
+        }
+
+        return sb.toString();
+    }
+
+    private static String errorStackTrace(Throwable e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+
+        String trace = sw.toString();
+        // because the stacktrace is printed in json we need to make it safe
+        trace = trace.replace('"', '\'');
+        trace = trace.replace('\t', ' ');
+        trace = trace.replace(System.lineSeparator(), " ");
+        return trace;
     }
 
 }

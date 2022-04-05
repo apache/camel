@@ -217,7 +217,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
         super.doStop();
 
         if (executorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
+            getCamelContext().getExecutorServiceManager().shutdown(executorService);
             executorService = null;
         }
 

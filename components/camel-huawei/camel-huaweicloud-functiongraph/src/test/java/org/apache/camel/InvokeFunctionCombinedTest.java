@@ -36,10 +36,10 @@ public class InvokeFunctionCombinedTest extends CamelTestSupport {
     @BindToRegistry("functionGraphClient")
     FunctionGraphMockClient mockClient = new FunctionGraphMockClient(null);
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:invoke_function")
                         .setProperty(FunctionGraphProperties.XCFFLOGTYPE, constant("tail"))
                         .setProperty(FunctionGraphProperties.OPERATION, constant("invokeFunction"))

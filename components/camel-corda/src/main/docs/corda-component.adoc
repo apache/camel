@@ -50,17 +50,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Message Headers
-
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Header |Description
-
-|`All URI options` |All URI options can also be set as exchange headers.
-
-|=======================================================================
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Samples
 

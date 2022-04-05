@@ -155,8 +155,8 @@ public class KafkaConsumerHealthCheckIT extends BaseEmbeddedKafkaTestSupport {
 
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
-                .count());
+        assertEquals(5, MockConsumerInterceptor.recordsCaptured.stream()
+                .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
 
         Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
         assertFalse(headers.containsKey(skippedHeaderKey), "Should not receive skipped header");
@@ -176,7 +176,7 @@ public class KafkaConsumerHealthCheckIT extends BaseEmbeddedKafkaTestSupport {
                     = res2.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN)).findFirst();
             Assertions.assertTrue(down.isPresent());
             String msg = down.get().getMessage().get();
-            Assertions.assertEquals("KafkaConsumer is not ready", msg);
+            Assertions.assertEquals("KafkaConsumer is not ready (recovery in progress using 5s intervals).", msg);
             Map<String, Object> map = down.get().getDetails();
             Assertions.assertEquals(TOPIC, map.get("topic"));
             Assertions.assertEquals("test-health-it", map.get("route.id"));

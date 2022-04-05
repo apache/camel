@@ -117,8 +117,8 @@ public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
 
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
-                .count());
+        assertEquals(5, MockConsumerInterceptor.recordsCaptured.stream()
+                .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
 
         Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
         assertFalse(headers.containsKey(skippedHeaderKey), "Should not receive skipped header");

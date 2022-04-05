@@ -51,6 +51,7 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.OnCamelContextEvent;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.util.ObjectHelper;
@@ -64,7 +65,7 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is used to build {@link Route} instances in a
  * {@link CamelContext} for smart routing.
  */
-public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, Ordered {
+public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, Ordered, ResourceAware {
     protected Logger log = LoggerFactory.getLogger(getClass());
 
     private Resource resource;

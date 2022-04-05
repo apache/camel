@@ -24,10 +24,10 @@ public class BonitaEndpointUriFactory extends org.apache.camel.support.component
         Set<String> props = new HashSet<>(7);
         props.add("hostname");
         props.add("lazyStartProducer");
+        props.add("operation");
         props.add("password");
         props.add("port");
         props.add("processName");
-        props.add("operation");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);

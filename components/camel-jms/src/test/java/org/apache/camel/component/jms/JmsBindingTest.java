@@ -71,7 +71,7 @@ public class JmsBindingTest {
     }
 
     @Test
-    public void testExtractNullBodyFromJmsShouldReturnNull() throws Exception {
+    public void testExtractNullBodyFromJmsShouldReturnNull() {
         assertNull(jmsBindingUnderTest.extractBodyFromJms(null, new ActiveMQBlobMessage()));
     }
 

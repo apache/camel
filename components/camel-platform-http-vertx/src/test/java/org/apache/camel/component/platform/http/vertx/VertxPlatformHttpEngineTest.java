@@ -41,6 +41,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.rest.RestParamType;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -120,7 +121,7 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/get")
                             .routeId("get")
                             .setBody().constant("get");
@@ -171,7 +172,7 @@ public class VertxPlatformHttpEngineTest {
 
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/get")
                             .routeId("get")
                             .process(e -> Thread.sleep(TimeUnit.SECONDS.toMillis(3)))
@@ -200,7 +201,7 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/get")
                             .routeId("get")
                             .process(exchange -> {
@@ -231,7 +232,7 @@ public class VertxPlatformHttpEngineTest {
             context.getRegistry().bind("clientSSLContextParameters", clientSSLParameters);
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/")
                             .transform().body(String.class, b -> b.toUpperCase());
                 }
@@ -260,7 +261,7 @@ public class VertxPlatformHttpEngineTest {
 
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/")
                             .transform().body(String.class, b -> b.toUpperCase());
                 }
@@ -289,7 +290,7 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/")
                             .transform().constant("cors");
                 }
@@ -324,7 +325,7 @@ public class VertxPlatformHttpEngineTest {
             final String greeting = "Hello Camel";
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/greeting/{name}?matchOnUriPrefix=true")
                             .transform().simple("Hello ${header.name}");
                 }
@@ -372,7 +373,7 @@ public class VertxPlatformHttpEngineTest {
 
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/upload")
                             .process(exchange -> {
                                 AttachmentMessage message = exchange.getMessage(AttachmentMessage.class);
@@ -403,7 +404,7 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/form/post")
                             .convertBodyTo(String.class);
                 }
@@ -431,7 +432,7 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/text/post")
                             .log("POST:/test/post has body ${body}");
                 }
@@ -454,13 +455,53 @@ public class VertxPlatformHttpEngineTest {
     }
 
     @Test
+    public void testRestCORSWitchConsumes() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+
+                @Override
+                public void configure() {
+                    restConfiguration().component("platform-http").enableCORS(true);
+
+                    rest("/rest")
+                            .post()
+                            .consumes("application/json")
+                            .to("direct:rest");
+
+                    from("direct:rest")
+                            .setBody(simple("Hello ${body}"));
+                }
+            });
+
+            context.start();
+
+            final String origin = "http://custom.origin.quarkus";
+
+            given()
+                    .header("Origin", origin)
+                    .when()
+                    .options("/rest")
+                    .then()
+                    .statusCode(204)
+                    .header("Access-Control-Allow-Origin", RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN)
+                    .header("Access-Control-Allow-Methods", RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS)
+                    .header("Access-Control-Allow-Headers", RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS)
+                    .header("Access-Control-Max-Age", RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE);
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
     public void testBodyClientRequestValidation() throws Exception {
         final CamelContext context = createCamelContext();
 
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     restConfiguration().component("platform-http");
 
                     rest("/rest")
@@ -511,7 +552,7 @@ public class VertxPlatformHttpEngineTest {
         CamelContext context = createCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("platform-http:/secure")
                         .process(exchange -> {
                             Message message = exchange.getMessage();

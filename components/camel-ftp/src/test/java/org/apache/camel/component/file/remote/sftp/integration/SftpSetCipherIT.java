@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SftpSetCipherIT extends SftpServerTestSupport {
 
     @Test
-    public void testSftpSetCipherName() throws Exception {
-        String cipher = "blowfish-cbc";
+    public void testSftpSetCipherName() {
+        String cipher = "aes256-ctr";
         String uri
                 = "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&ciphers="
                   + cipher;

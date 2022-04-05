@@ -53,10 +53,10 @@ public class JmsDurableTopicTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:topic:foo?clientId=123&durableSubscriptionName=bar")
                         .to("mock:result");
 

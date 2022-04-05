@@ -70,7 +70,7 @@ public class SecretsManagerUpdateSecretProducerLocalstackIT extends AwsSecretsMa
         });
 
         String secret = exchange.getIn().getBody(String.class);
-        assertEquals("Binary Body", secret);
+        assertEquals("QmluYXJ5IEJvZHk=", secret);
 
     }
 

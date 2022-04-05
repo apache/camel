@@ -22,14 +22,14 @@ public class BeanValidatorEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(9);
-        props.add("lazyStartProducer");
-        props.add("messageInterpolator");
-        props.add("validationProviderResolver");
         props.add("constraintValidatorFactory");
-        props.add("label");
-        props.add("traversableResolver");
         props.add("group");
         props.add("ignoreXmlConfiguration");
+        props.add("label");
+        props.add("lazyStartProducer");
+        props.add("messageInterpolator");
+        props.add("traversableResolver");
+        props.add("validationProviderResolver");
         props.add("validatorFactory");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

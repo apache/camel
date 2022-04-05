@@ -70,7 +70,7 @@ public class FromDefinitionDeserializer implements ConstructNode {
             route = new RouteDefinition();
         }
 
-        String uri = YamlSupport.creteEndpointUri(node, EndpointConsumerDeserializersResolver::resolveEndpointUri, route);
+        String uri = YamlSupport.creteEndpointUri(node, route);
         if (uri == null) {
             throw new IllegalStateException("The endpoint URI must be set");
         }

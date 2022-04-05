@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.apache.camel.StaticService;
@@ -101,14 +102,10 @@ public interface PropertiesComponent extends StaticService {
 
     /**
      * Loads the properties from the default locations and sources filtering them out according to a predicate.
-     * </p>
      *
      * <pre>
-     * {
-     *     &#64;code
-     *     PropertiesComponent pc = getPropertiesComponent();
-     *     Properties props = pc.loadProperties(key -> key.startsWith("camel.component.seda"));
-     * }
+     * PropertiesComponent pc = getPropertiesComponent();
+     * Properties props = pc.loadProperties(key -> key.startsWith("camel.component.seda"));
      * </pre>
      *
      * @param  filter the predicate used to filter out properties based on the key.
@@ -117,15 +114,26 @@ public interface PropertiesComponent extends StaticService {
     Properties loadProperties(Predicate<String> filter);
 
     /**
-     * Loads the properties from the default locations and sources filtering them out according to a predicate.
-     * </p>
+     * Loads the properties from the default locations and sources filtering them out according to a predicate, and maps
+     * the key using the key mapper.
      *
      * <pre>
-     * {
-     *     &#64;code
-     *     PropertiesComponent pc = getPropertiesComponent();
-     *     Map<String, Object> props = pc.loadPropertiesAsMap(key -> key.startsWith("camel.component.seda"));
-     * }
+     * PropertiesComponent pc = getPropertiesComponent();
+     * Properties props = pc.loadProperties(key -> key.startsWith("camel.component.seda"), StringHelper::dashToCamelCase);
+     * </pre>
+     *
+     * @param  filter    the predicate used to filter out properties based on the key.
+     * @param  keyMapper to map keys
+     * @return           the properties loaded.
+     */
+    Properties loadProperties(Predicate<String> filter, Function<String, String> keyMapper);
+
+    /**
+     * Loads the properties from the default locations and sources filtering them out according to a predicate.
+     *
+     * <pre>
+     * PropertiesComponent pc = getPropertiesComponent();
+     * Map props = pc.loadPropertiesAsMap(key -> key.startsWith("camel.component.seda"));
      * </pre>
      *
      * @param  filter the predicate used to filter out properties based on the key.

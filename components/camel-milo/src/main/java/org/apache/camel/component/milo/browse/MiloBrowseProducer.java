@@ -36,7 +36,7 @@ import org.eclipse.milo.opcua.stack.core.types.structured.ReferenceDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.milo.NodeIds.HEADER_NODE_IDS;
+import static org.apache.camel.component.milo.MiloConstants.HEADER_NODE_IDS;
 
 public class MiloBrowseProducer extends DefaultAsyncProducer {
 

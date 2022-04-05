@@ -50,7 +50,7 @@ public class TemplateCacheTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldCacheTemplateFunctions() throws InterruptedException {
+    public void shouldCacheTemplateFunctions() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(db);
         CallableStatementWrapperFactory fac
                 = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser(context.getClassResolver()), false);

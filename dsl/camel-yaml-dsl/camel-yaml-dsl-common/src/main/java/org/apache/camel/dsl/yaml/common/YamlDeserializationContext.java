@@ -31,7 +31,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Service;
-import org.apache.camel.dsl.yaml.common.exception.UnknownNodeTypeException;
+import org.apache.camel.dsl.yaml.common.exception.DuplicateKeyException;
+import org.apache.camel.dsl.yaml.common.exception.UnknownNodeIdException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.ObjectHelper;
@@ -44,19 +45,18 @@ import org.snakeyaml.engine.v2.nodes.NodeType;
 import org.snakeyaml.engine.v2.nodes.ScalarNode;
 
 public class YamlDeserializationContext extends StandardConstructor implements CamelContextAware, Service {
+
     private final Set<YamlDeserializerResolver> resolvers;
     private final Map<String, ConstructNode> constructors;
-
     private YamlDeserializationMode deserializationMode;
     private ExtendedCamelContext camelContext;
     private Resource resource;
 
     public YamlDeserializationContext(LoadSettings settings) {
         super(settings);
-
         this.resolvers = new TreeSet<>(Comparator.comparing(Ordered::getOrder));
         this.constructors = new HashMap<>();
-        this.deserializationMode = YamlDeserializationMode.CLASSIC;
+        this.deserializationMode = YamlDeserializationMode.FLOW;
     }
 
     public void addResolver(YamlDeserializerResolver resolver) {
@@ -97,10 +97,6 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         this.camelContext = camelContext.adapt(ExtendedCamelContext.class);
     }
 
-    public Object constructDocument(Node node) {
-        return super.construct(node);
-    }
-
     @Override
     protected Optional<ConstructNode> findConstructorFor(Node node) {
         ConstructNode ctor = resolve(node);
@@ -129,19 +125,6 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     //
     // *********************************
 
-    public Object construct(String key, Node val) {
-        return mandatoryResolve(key).construct(val);
-    }
-
-    public <T> T construct(String key, Node val, Class<T> type) {
-        Object result = construct(key, val);
-        if (result == null) {
-            return null;
-        }
-
-        return type.cast(result);
-    }
-
     public Object construct(Node key, Node val) {
         return mandatoryResolve(key).construct(val);
     }
@@ -158,7 +141,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     public <T> T construct(Node node, Class<T> type) {
         ConstructNode constructor = resolve(type);
         if (constructor == null) {
-            throw new YamlDeserializationException("Unable to find constructor for node: " + node);
+            throw new YamlDeserializationException(node, "Unable to find constructor for node");
         }
         Object result = constructor.construct(node);
         if (result == null) {
@@ -175,8 +158,6 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     // *********************************
 
     public ConstructNode resolve(Class<?> type) {
-        final ConstructNode answer = resolve(type.getName());
-
         return CamelContextAware.trySetCamelContext(
                 new ConstructNode() {
                     @Override
@@ -186,6 +167,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
                                 YamlDeserializationContext.class.getName(),
                                 YamlDeserializationContext.this);
 
+                        final ConstructNode answer = resolve(node, type.getName());
                         return answer.construct(n);
                     }
                 },
@@ -195,7 +177,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
     public ConstructNode mandatoryResolve(Node node) {
         ConstructNode constructor = resolve(node);
         if (constructor == null) {
-            throw new YamlDeserializationException("Unable to find constructor for node: " + node);
+            throw new YamlDeserializationException(node, "Unable to find constructor for node");
         }
 
         return constructor;
@@ -207,7 +189,9 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         }
 
         MappingNode mn = (MappingNode) node;
-        if (mn.getValue().size() != 1) {
+        if (mn.getValue().size() > 1) {
+            throw new DuplicateKeyException(node, mn.getValue());
+        } else if (mn.getValue().size() != 1) {
             return null;
         }
 
@@ -217,7 +201,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         }
 
         final String id = ((ScalarNode) key).getValue();
-        final ConstructNode answer = resolve(id);
+        final ConstructNode answer = resolve(node, id);
 
         return CamelContextAware.trySetCamelContext(
                 new ConstructNode() {
@@ -235,16 +219,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
                 camelContext);
     }
 
-    public ConstructNode mandatoryResolve(String id) {
-        ConstructNode constructor = resolve(id);
-        if (constructor == null) {
-            throw new YamlDeserializationException("Unable to find constructor for id: " + id);
-        }
-
-        return constructor;
-    }
-
-    public ConstructNode resolve(String id) {
+    public ConstructNode resolve(Node node, String id) {
         return constructors.computeIfAbsent(id, new Function<String, ConstructNode>() {
             @Override
             public ConstructNode apply(String s) {
@@ -258,7 +233,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
                 }
 
                 if (answer == null) {
-                    throw new UnknownNodeTypeException(id);
+                    throw new UnknownNodeIdException(node, id);
                 }
 
                 return answer;

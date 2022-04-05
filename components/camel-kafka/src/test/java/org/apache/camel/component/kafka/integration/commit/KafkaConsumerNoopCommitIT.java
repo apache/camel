@@ -1,0 +1,108 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.kafka.integration.commit;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
+import org.apache.camel.component.kafka.integration.BaseManualCommitTestSupport;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.TestInstance;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class KafkaConsumerNoopCommitIT extends BaseManualCommitTestSupport {
+
+    public static final String TOPIC = "testManualNoopCommitTest";
+
+    @EndpointInject("kafka:" + TOPIC
+                    + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false"
+                    + "&allowManualCommit=true&autoOffsetReset=earliest")
+    private Endpoint from;
+
+    @AfterEach
+    public void after() {
+        cleanupKafka(TOPIC);
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+
+            @Override
+            public void configure() {
+                from(from).routeId("foo").to(to).process(e -> {
+                    KafkaManualCommit manual = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+                    assertNotNull(manual);
+                    manual.commit();
+                });
+                from(from).routeId("bar").autoStartup(false).to(toBar);
+            }
+        };
+    }
+
+    @RepeatedTest(1)
+    public void kafkaAutoCommitDisabledDuringRebalance() throws Exception {
+        to.expectedMessageCount(1);
+        String firstMessage = "message-0";
+        to.expectedBodiesReceivedInAnyOrder(firstMessage);
+
+        ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", firstMessage);
+        producer.send(data);
+
+        to.assertIsSatisfied(3000);
+
+        to.reset();
+
+        context.getRouteController().stopRoute("foo");
+        to.expectedMessageCount(0);
+
+        String secondMessage = "message-1";
+        data = new ProducerRecord<>(TOPIC, "1", secondMessage);
+        producer.send(data);
+
+        to.assertIsSatisfied(3000);
+
+        to.reset();
+
+        // start a new route in order to rebalance kafka
+        context.getRouteController().startRoute("bar");
+        toBar.expectedMessageCount(1);
+
+        toBar.assertIsSatisfied();
+
+        context.getRouteController().stopRoute("bar");
+
+        // The route bar is not committing the offset, so by restarting foo, last 3 items will be processed
+        context.getRouteController().startRoute("foo");
+        to.expectedMessageCount(1);
+        to.expectedBodiesReceivedInAnyOrder("message-1");
+
+        to.assertIsSatisfied(3000);
+    }
+
+    @RepeatedTest(1)
+    public void kafkaManualCommit() throws Exception {
+        kafkaManualCommitTest(TOPIC);
+    }
+
+}

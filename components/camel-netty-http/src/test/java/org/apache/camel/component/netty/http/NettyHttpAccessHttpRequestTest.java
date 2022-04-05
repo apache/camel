@@ -38,15 +38,15 @@ public class NettyHttpAccessHttpRequestTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:input")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 // we can get the original http request
                                 HttpRequest request = exchange.getIn(NettyHttpMessage.class).getHttpRequest();
                                 assertNotNull(request);

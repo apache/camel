@@ -47,7 +47,26 @@ Google security credentials can be set explicitly by providing the path to the G
 Or they are set implicitly, where the connection factory falls back on
 https://developers.google.com/identity/protocols/application-default-credentials#howtheywork[Application Default Credentials].
 
-*OBS!* The location of the default credentials file is configurable - via GOOGLE_APPLICATION_CREDENTIALS environment variable.
+When you have the **service account key** you can provide authentication credentials to your application code.
+Google security credentials can be set through the component endpoint:
+
+[source,java]
+--------------------------------------------------------
+String endpoint = "google-bigquery-sql://project-id:query?serviceAccountKey=/home/user/Downloads/my-key.json";
+--------------------------------------------------------
+
+You can also use the base64 encoded content of the authentication credentials file if you don't want to set a file system path.
+
+[source,java]
+--------------------------------------------------------
+String endpoint = "google-bigquery-sql://project-id:query?serviceAccountKey=base64:<base64 encoded>";
+--------------------------------------------------------
+
+Or by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS` :
+
+--------------------------------------------------------
+export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
+--------------------------------------------------------
 
 == URI Format
 
@@ -86,23 +105,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Message Headers
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-|`CamelGoogleBigQueryJobId` |`JobId` |A custom `JobId` to use
-|=======================================================================
-
-== Output Message Headers
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-|`CamelGoogleBigQueryTranslatedQuery` |`String` | Preprocessed query text
-|=======================================================================
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Producer Endpoints
 

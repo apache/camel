@@ -22,10 +22,10 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
-import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -46,28 +46,12 @@ public final class MainSupportModelConfigurer {
     static void configureModelCamelContext(
             CamelContext camelContext,
             MainConfigurationProperties mainConfigurationProperties,
-            Map<String, String> autoConfiguredProperties,
-            Map<String, Object> hystrixProperties,
-            Map<String, Object> resilience4jProperties,
-            Map<String, Object> faultToleranceProperties)
+            OrderedLocationProperties autoConfiguredProperties,
+            OrderedLocationProperties resilience4jProperties,
+            OrderedLocationProperties faultToleranceProperties)
             throws Exception {
 
         ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
-
-        if (!hystrixProperties.isEmpty() || mainConfigurationProperties.hasHystrixConfiguration()) {
-            HystrixConfigurationProperties hystrix = mainConfigurationProperties.hystrix();
-            LOG.debug("Auto-configuring Hystrix Circuit Breaker EIP from loaded properties: {}", hystrixProperties.size());
-            setPropertiesOnTarget(camelContext, hystrix, hystrixProperties, "camel.hystrix.",
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
-            HystrixConfigurationDefinition hystrixModel = model.getHystrixConfiguration(null);
-            if (hystrixModel == null) {
-                hystrixModel = new HystrixConfigurationDefinition();
-                model.setHystrixConfiguration(hystrixModel);
-            }
-            if (hystrix != null) {
-                setPropertiesOnTarget(camelContext, hystrixModel, hystrix);
-            }
-        }
 
         if (!resilience4jProperties.isEmpty() || mainConfigurationProperties.hasResilience4jConfiguration()) {
             Resilience4jConfigurationProperties resilience4j = mainConfigurationProperties.resilience4j();
@@ -101,14 +85,14 @@ public final class MainSupportModelConfigurer {
     static void setThreadPoolProperties(
             CamelContext camelContext,
             MainConfigurationProperties mainConfigurationProperties,
-            Map<String, Object> threadPoolProperties,
-            boolean failIfNotSet, Map<String, String> autoConfiguredProperties)
+            OrderedLocationProperties threadPoolProperties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
 
         ThreadPoolConfigurationProperties tp = mainConfigurationProperties.threadPool();
 
         // extract all config to know their parent ids so we can set the values afterwards
-        Map<String, Object> hcConfig = PropertiesHelper.extractProperties(threadPoolProperties, "config", false);
+        Map<String, Object> hcConfig = PropertiesHelper.extractProperties(threadPoolProperties.asMap(), "config", false);
         Map<String, ThreadPoolProfileConfigurationProperties> tpConfigs = new HashMap<>();
         // build set of configuration objects
         for (Map.Entry<String, Object> entry : hcConfig.entrySet()) {

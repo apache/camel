@@ -68,7 +68,7 @@ public class AuthenticatorTest extends CamelTestSupport {
         return body;
     }
 
-    private void execute(String mailAddress, String body) throws MessagingException, InterruptedException {
+    private void execute(String mailAddress, String body) throws MessagingException {
 
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "localhost");

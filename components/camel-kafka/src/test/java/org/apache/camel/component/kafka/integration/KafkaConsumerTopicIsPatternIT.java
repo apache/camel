@@ -39,7 +39,7 @@ public class KafkaConsumerTopicIsPatternIT extends BaseEmbeddedKafkaTestSupport 
     public static final String TOPIC_PATTERN = "v.*d";
 
     @EndpointInject("kafka:" + TOPIC_PATTERN + "?topicIsPattern=true&groupId=group1&autoOffsetReset=earliest"
-                    + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                    + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor&metadataMaxAgeMs=1000")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -89,11 +89,10 @@ public class KafkaConsumerTopicIsPatternIT extends BaseEmbeddedKafkaTestSupport 
             ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
             producer.send(data);
         }
-
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
-                .count());
+        assertEquals(5, MockConsumerInterceptor.recordsCaptured.stream()
+                .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
     }
 
 }

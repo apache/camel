@@ -205,90 +205,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AtomComponentBuilderFactory.atom();
     }
     /**
-     * Atomix Map (camel-atomix)
-     * Access Atomix's distributed map.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AtomixMapComponentBuilderFactory.AtomixMapComponentBuilder atomixMap() {
-        return org.apache.camel.builder.component.dsl.AtomixMapComponentBuilderFactory.atomixMap();
-    }
-    /**
-     * Atomix Messaging (camel-atomix)
-     * Access Atomix's group messaging.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AtomixMessagingComponentBuilderFactory.AtomixMessagingComponentBuilder atomixMessaging() {
-        return org.apache.camel.builder.component.dsl.AtomixMessagingComponentBuilderFactory.atomixMessaging();
-    }
-    /**
-     * Atomix MultiMap (camel-atomix)
-     * Access Atomix's distributed multi map.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AtomixMultimapComponentBuilderFactory.AtomixMultimapComponentBuilder atomixMultimap() {
-        return org.apache.camel.builder.component.dsl.AtomixMultimapComponentBuilderFactory.atomixMultimap();
-    }
-    /**
-     * Atomix Queue (camel-atomix)
-     * Access Atomix's distributed queue.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AtomixQueueComponentBuilderFactory.AtomixQueueComponentBuilder atomixQueue() {
-        return org.apache.camel.builder.component.dsl.AtomixQueueComponentBuilderFactory.atomixQueue();
-    }
-    /**
-     * Atomix Set (camel-atomix)
-     * Access Atomix's distributed set.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AtomixSetComponentBuilderFactory.AtomixSetComponentBuilder atomixSet() {
-        return org.apache.camel.builder.component.dsl.AtomixSetComponentBuilderFactory.atomixSet();
-    }
-    /**
-     * Atomix Value (camel-atomix)
-     * Access Atomix's distributed value.
-     * 
-     * Category: clustering
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-atomix
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AtomixValueComponentBuilderFactory.AtomixValueComponentBuilder atomixValue() {
-        return org.apache.camel.builder.component.dsl.AtomixValueComponentBuilderFactory.atomixValue();
-    }
-    /**
      * Avro RPC (camel-avro-rpc)
      * Produce or consume Apache Avro RPC services.
      * 
@@ -621,6 +537,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AzureEventhubsComponentBuilderFactory.azureEventhubs();
     }
     /**
+     * Azure Key Vault (camel-azure-key-vault)
+     * Manage secrets and keys in Azure Key Vault Service
+     * 
+     * Category: cloud,cloud
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-azure-key-vault
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AzureKeyVaultComponentBuilderFactory.AzureKeyVaultComponentBuilder azureKeyVault() {
+        return org.apache.camel.builder.component.dsl.AzureKeyVaultComponentBuilderFactory.azureKeyVault();
+    }
+    /**
      * Azure ServiceBus (camel-azure-servicebus)
      * Send and receive messages to/from Azure Event Bus.
      * 
@@ -697,20 +626,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.BeanValidatorComponentBuilderFactory.BeanValidatorComponentBuilder beanValidator() {
         return org.apache.camel.builder.component.dsl.BeanValidatorComponentBuilderFactory.beanValidator();
-    }
-    /**
-     * Beanstalk (camel-beanstalk)
-     * Retrieve and post-process Beanstalk jobs.
-     * 
-     * Category: messaging
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-beanstalk
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.BeanstalkComponentBuilderFactory.BeanstalkComponentBuilder beanstalk() {
-        return org.apache.camel.builder.component.dsl.BeanstalkComponentBuilderFactory.beanstalk();
     }
     /**
      * Bonita (camel-bonita)
@@ -1117,6 +1032,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.DatasetTestComponentBuilderFactory.datasetTest();
     }
     /**
+     * Debezium DB2 Connector (camel-debezium-db2)
+     * Capture changes from a Oracle database.
+     * 
+     * Category: database,sql
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-debezium-db2
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.DebeziumDb2ComponentBuilderFactory.DebeziumDb2ComponentBuilder debeziumDb2() {
+        return org.apache.camel.builder.component.dsl.DebeziumDb2ComponentBuilderFactory.debeziumDb2();
+    }
+    /**
      * Debezium MongoDB Connector (camel-debezium-mongodb)
      * Capture changes from a MongoDB database.
      * 
@@ -1141,6 +1069,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.DebeziumMysqlComponentBuilderFactory.DebeziumMysqlComponentBuilder debeziumMysql() {
         return org.apache.camel.builder.component.dsl.DebeziumMysqlComponentBuilderFactory.debeziumMysql();
+    }
+    /**
+     * Debezium Oracle Connector (camel-debezium-oracle)
+     * Capture changes from a Oracle database.
+     * 
+     * Category: database,sql
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-debezium-oracle
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.DebeziumOracleComponentBuilderFactory.DebeziumOracleComponentBuilder debeziumOracle() {
+        return org.apache.camel.builder.component.dsl.DebeziumOracleComponentBuilderFactory.debeziumOracle();
     }
     /**
      * Debezium PostgresSQL Connector (camel-debezium-postgres)
@@ -1351,22 +1292,9 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.ElasticsearchRestComponentBuilderFactory.ElasticsearchRestComponentBuilder elasticsearchRest() {
         return org.apache.camel.builder.component.dsl.ElasticsearchRestComponentBuilderFactory.elasticsearchRest();
-    }
-    /**
-     * ElSQL (camel-elsql)
-     * Use ElSql to define SQL queries. Extends the SQL Component.
-     * 
-     * Category: database,sql
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-elsql
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.ElsqlComponentBuilderFactory.ElsqlComponentBuilder elsql() {
-        return org.apache.camel.builder.component.dsl.ElsqlComponentBuilderFactory.elsql();
     }
     /**
      * Etcd Keys (camel-etcd)
@@ -1556,20 +1484,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.FtpsComponentBuilderFactory.FtpsComponentBuilder ftps() {
         return org.apache.camel.builder.component.dsl.FtpsComponentBuilderFactory.ftps();
-    }
-    /**
-     * Ganglia (camel-ganglia)
-     * Send metrics to Ganglia monitoring system.
-     * 
-     * Category: monitoring
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-ganglia
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.GangliaComponentBuilderFactory.GangliaComponentBuilder ganglia() {
-        return org.apache.camel.builder.component.dsl.GangliaComponentBuilderFactory.ganglia();
     }
     /**
      * Geocoder (camel-geocoder)
@@ -2486,21 +2400,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.JgroupsRaftComponentBuilderFactory.jgroupsRaft();
     }
     /**
-     * Jing (camel-jing)
-     * Validate XML against a RelaxNG schema (XML Syntax or Compact Syntax)
-     * using Jing library.
-     * 
-     * Category: validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-jing
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.JingComponentBuilderFactory.JingComponentBuilder jing() {
-        return org.apache.camel.builder.component.dsl.JingComponentBuilderFactory.jing();
-    }
-    /**
      * Jira (camel-jira)
      * Interact with JIRA issue tracker.
      * 
@@ -3169,20 +3068,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.MongodbGridfsComponentBuilderFactory.mongodbGridfs();
     }
     /**
-     * MSV (camel-msv)
-     * Validate XML payloads using Multi-Schema Validator (MSV).
-     * 
-     * Category: validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-msv
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.MsvComponentBuilderFactory.MsvComponentBuilder msv() {
-        return org.apache.camel.builder.component.dsl.MsvComponentBuilderFactory.msv();
-    }
-    /**
      * Mustache (camel-mustache)
      * Transform messages using a Mustache template.
      * 
@@ -3237,20 +3122,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.MybatisBeanComponentBuilderFactory.mybatisBean();
     }
     /**
-     * Nagios (camel-nagios)
-     * Send passive checks to Nagios using JSendNSCA.
-     * 
-     * Category: monitoring
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-nagios
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.NagiosComponentBuilderFactory.NagiosComponentBuilder nagios() {
-        return org.apache.camel.builder.component.dsl.NagiosComponentBuilderFactory.nagios();
-    }
-    /**
      * Nats (camel-nats)
      * Send and receive messages from NATS messaging system.
      * 
@@ -3301,21 +3172,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.NitriteComponentBuilderFactory.NitriteComponentBuilder nitrite() {
         return org.apache.camel.builder.component.dsl.NitriteComponentBuilderFactory.nitrite();
-    }
-    /**
-     * NSQ (camel-nsq)
-     * Send and receive messages from NSQ realtime distributed messaging
-     * platform.
-     * 
-     * Category: messaging
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-nsq
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.NsqComponentBuilderFactory.NsqComponentBuilder nsq() {
-        return org.apache.camel.builder.component.dsl.NsqComponentBuilderFactory.nsq();
     }
     /**
      * OAI-PMH (camel-oaipmh)
@@ -3917,36 +3773,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SftpComponentBuilderFactory.sftp();
     }
     /**
-     * SIP (camel-sip)
-     * Send and receive messages using the SIP protocol (used in
-     * telecommunications).
-     * 
-     * Category: mobile
-     * Since: 2.5
-     * Maven coordinates: org.apache.camel:camel-sip
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.SipComponentBuilderFactory.SipComponentBuilder sip() {
-        return org.apache.camel.builder.component.dsl.SipComponentBuilderFactory.sip();
-    }
-    /**
-     * SIP (Secure) (camel-sip)
-     * Send and receive messages using the SIP protocol (used in
-     * telecommunications).
-     * 
-     * Category: mobile
-     * Since: 2.5
-     * Maven coordinates: org.apache.camel:camel-sip
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.SipsComponentBuilderFactory.SipsComponentBuilder sips() {
-        return org.apache.camel.builder.component.dsl.SipsComponentBuilderFactory.sips();
-    }
-    /**
      * Simple JMS (camel-sjms)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 1.x API.
@@ -4093,20 +3919,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.SolrsComponentBuilderFactory.SolrsComponentBuilder solrs() {
         return org.apache.camel.builder.component.dsl.SolrsComponentBuilderFactory.solrs();
-    }
-    /**
-     * Soroush (camel-soroush)
-     * Send and receive messages as a Soroush chat bot.
-     * 
-     * Category: chat
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-soroush
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.SoroushComponentBuilderFactory.SoroushComponentBuilder soroush() {
-        return org.apache.camel.builder.component.dsl.SoroushComponentBuilderFactory.soroush();
     }
     /**
      * Spark (camel-spark)
@@ -4792,20 +4604,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.XsltSaxonComponentBuilderFactory.XsltSaxonComponentBuilder xsltSaxon() {
         return org.apache.camel.builder.component.dsl.XsltSaxonComponentBuilderFactory.xsltSaxon();
-    }
-    /**
-     * Yammer (camel-yammer)
-     * Interact with the Yammer enterprise social network.
-     * 
-     * Category: social,cloud,api
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-yammer
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.YammerComponentBuilderFactory.YammerComponentBuilder yammer() {
-        return org.apache.camel.builder.component.dsl.YammerComponentBuilderFactory.yammer();
     }
     /**
      * Zendesk (camel-zendesk)

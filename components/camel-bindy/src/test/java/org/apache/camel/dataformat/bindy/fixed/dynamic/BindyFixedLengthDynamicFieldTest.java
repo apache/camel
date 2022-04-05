@@ -80,7 +80,7 @@ public class BindyFixedLengthDynamicFieldTest extends CamelTestSupport {
     }
 
     @Test
-    public void testFailWhenUnmarshallMessageWithUnmappedChars() throws Exception {
+    public void testFailWhenUnmarshallMessageWithUnmappedChars() {
 
         unmarshallResult.reset();
         unmarshallResult.expectedMessageCount(0);
@@ -124,11 +124,11 @@ public class BindyFixedLengthDynamicFieldTest extends CamelTestSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         RouteBuilder routeBuilder = new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 BindyDataFormat bindy = new BindyDataFormat()
                         .locale("en")
                         .classType(BindyFixedLengthDynamicFieldTest.Order.class)

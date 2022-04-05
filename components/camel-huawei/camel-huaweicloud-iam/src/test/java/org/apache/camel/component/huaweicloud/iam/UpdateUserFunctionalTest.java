@@ -37,9 +37,9 @@ public class UpdateUserFunctionalTest extends CamelTestSupport {
     private static final String REGION = "replace_this_with_region";
     private static final String USER_ID = "replace_this_with_user_id";
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:update_user")
                         .to("hwcloud-iam:updateUser?" +
                             "accessKey=" + ACCESS_KEY +

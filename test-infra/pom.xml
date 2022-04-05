@@ -22,7 +22,7 @@
     <parent>
         <artifactId>camel-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.16.0-SNAPSHOT</version>
+        <version>3.17.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -60,7 +60,6 @@
         <module>camel-test-infra-infinispan</module>
         <module>camel-test-infra-minio</module>
         <module>camel-test-infra-nats</module>
-        <module>camel-test-infra-nsq</module>
         <module>camel-test-infra-pulsar</module>
         <module>camel-test-infra-redis</module>
         <module>camel-test-infra-solr</module>

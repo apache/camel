@@ -16,11 +16,16 @@
  */
 package org.apache.camel.component.aws2.ecs;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants used in Camel AWS2 ECS module
  */
 public interface ECS2Constants {
+    @Metadata(description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsECSOperation";
+    @Metadata(description = "The limit number of results while listing clusters", javaType = "Integer")
     String MAX_RESULTS = "CamelAwsECSMaxResults";
+    @Metadata(description = "The cluster name", javaType = "String")
     String CLUSTER_NAME = "CamelAwsECSClusterName";
 }

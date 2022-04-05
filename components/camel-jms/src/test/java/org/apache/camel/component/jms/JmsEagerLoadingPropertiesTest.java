@@ -51,10 +51,10 @@ public class JmsEagerLoadingPropertiesTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo?eagerLoadingOfProperties=true").process(exchange -> {
                     String name = exchange.getIn().getHeader("name", String.class);
                     assertEquals("Claus", name);

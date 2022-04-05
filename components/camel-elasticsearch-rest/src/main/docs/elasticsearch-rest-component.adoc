@@ -1,10 +1,11 @@
-= Elasticsearch Rest Component
+= Elasticsearch Rest Component (deprecated)
 :doctitle: Elasticsearch Rest
 :shortname: elasticsearch-rest
 :artifactid: camel-elasticsearch-rest
 :description: Send requests to ElasticSearch via REST API
 :since: 2.21
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: elasticsearch-rest
@@ -49,7 +50,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Message Operations
 

@@ -40,6 +40,7 @@ public interface ElasticsearchRestComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static ElasticsearchRestComponentBuilder elasticsearchRest() {
         return new ElasticsearchRestComponentBuilderImpl();
     }

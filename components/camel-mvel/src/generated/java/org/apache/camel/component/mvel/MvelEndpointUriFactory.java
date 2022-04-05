@@ -22,12 +22,12 @@ public class MvelEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(6);
-        props.add("allowTemplateFromHeader");
-        props.add("lazyStartProducer");
-        props.add("contentCache");
         props.add("allowContextMapAll");
-        props.add("resourceUri");
+        props.add("allowTemplateFromHeader");
+        props.add("contentCache");
         props.add("encoding");
+        props.add("lazyStartProducer");
+        props.add("resourceUri");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

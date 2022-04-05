@@ -56,7 +56,7 @@ public class SqlProducerReuseParameterTest extends CamelTestSupport {
     }
 
     @Test
-    public void testReuseParameter() throws Exception {
+    public void testReuseParameter() {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
@@ -72,7 +72,7 @@ public class SqlProducerReuseParameterTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);

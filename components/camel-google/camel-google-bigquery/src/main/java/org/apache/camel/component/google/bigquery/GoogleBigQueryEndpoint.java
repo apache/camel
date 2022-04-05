@@ -25,6 +25,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
+import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants.SCHEME_BIGQUERY;
+
 /**
  * Google BigQuery data warehouse for analytics.
  *
@@ -37,13 +39,15 @@ import org.apache.camel.support.DefaultEndpoint;
  * Another consideration is that exceptions are not handled within the class. They are expected to bubble up and be
  * handled by Camel.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "google-bigquery", title = "Google BigQuery",
+@UriEndpoint(firstVersion = "2.20.0", scheme = SCHEME_BIGQUERY, title = "Google BigQuery",
              syntax = "google-bigquery:projectId:datasetId:tableId",
-             category = { Category.CLOUD, Category.BIGDATA }, producerOnly = true)
+             category = { Category.CLOUD, Category.BIGDATA }, producerOnly = true, headersClass = GoogleBigQueryConstants.class)
 public class GoogleBigQueryEndpoint extends DefaultEndpoint {
 
     @UriParam
     protected final GoogleBigQueryConfiguration configuration;
+
+    private BigQuery bigQuery;
 
     protected GoogleBigQueryEndpoint(String endpointUri, GoogleBigQueryComponent component,
                                      GoogleBigQueryConfiguration configuration) {
@@ -53,9 +57,20 @@ public class GoogleBigQueryEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        BigQuery bigquery = getConfiguration().getConnectionFactory().getDefaultClient();
-        GoogleBigQueryProducer producer = new GoogleBigQueryProducer(bigquery, this, configuration);
-        return producer;
+        return new GoogleBigQueryProducer(bigQuery, this, configuration);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        GoogleBigQueryConnectionFactory connFactory = configuration.getConnectionFactory();
+        if (connFactory == null) {
+            connFactory = new GoogleBigQueryConnectionFactory()
+                    .setCamelContext(getCamelContext())
+                    .setServiceAccountKeyFile(configuration.getServiceAccountKey());
+            configuration.setConnectionFactory(connFactory);
+        }
+        bigQuery = connFactory.getDefaultClient();
     }
 
     @Override

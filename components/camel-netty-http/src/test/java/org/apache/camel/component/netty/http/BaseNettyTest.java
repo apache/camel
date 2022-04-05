@@ -49,7 +49,7 @@ public class BaseNettyTest extends CamelTestSupport {
     }
 
     @AfterAll
-    public static void verifyNoLeaks() throws Exception {
+    public static void verifyNoLeaks() {
         //Force GC to bring up leaks
         System.gc();
         //Kick leak detection logging
@@ -74,7 +74,7 @@ public class BaseNettyTest extends CamelTestSupport {
     }
 
     @BindToRegistry("prop")
-    public Properties loadProp() throws Exception {
+    public Properties loadProp() {
 
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());

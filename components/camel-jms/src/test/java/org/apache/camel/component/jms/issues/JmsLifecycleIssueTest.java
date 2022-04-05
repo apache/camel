@@ -77,13 +77,13 @@ public class JmsLifecycleIssueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 context.addRoutes(new RouteBuilder() {
                     @Override
-                    public void configure() throws Exception {
+                    public void configure() {
                         from(ENDPOINT_URI).routeId(ROUTE_ID).autoStartup(false)
                                 .to("log:input")
                                 .to("mock:result");

@@ -59,6 +59,8 @@ public class KafkaProducerHealthCheck extends AbstractHealthCheck {
                 builder.detail("group.id", gid);
             }
             builder.detail("topic", cfg.getTopic());
+        } else {
+            builder.up();
         }
     }
 }

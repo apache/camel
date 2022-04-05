@@ -74,10 +74,10 @@ public class KameletLocationTest extends CamelTestSupport {
         }
 
         @Override
-        public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
+        public RoutesBuilder loadRoutesBuilder(Resource resource) {
             return new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     routeTemplate("upper")
                             .from("kamelet:source")
                             .transform().simple("${body.toUpperCase()}");
@@ -103,10 +103,10 @@ public class KameletLocationTest extends CamelTestSupport {
     // **********************************************
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .kamelet("upper?location=file:src/test/resources/upper-kamelet.xml")
                         .to("mock:result");

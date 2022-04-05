@@ -35,10 +35,10 @@ public class NettyCamelWebsiteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in")
                         .setHeader(Exchange.HTTP_METHOD, constant("GET"))
                         .to("netty-http:http://camel.apache.org/")

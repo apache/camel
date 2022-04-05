@@ -23,7 +23,6 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -41,6 +40,7 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -280,9 +280,9 @@ public final class MainHelper {
     }
 
     public static boolean setPropertiesOnTarget(
-            CamelContext context, Object target, Map<String, Object> properties,
+            CamelContext context, Object target, OrderedLocationProperties properties,
             String optionPrefix, boolean failIfNotSet, boolean ignoreCase,
-            Map<String, String> autoConfiguredProperties) {
+            OrderedLocationProperties autoConfiguredProperties) {
 
         ObjectHelper.notNull(context, "context");
         ObjectHelper.notNull(target, "target");
@@ -305,16 +305,17 @@ public final class MainHelper {
 
         try {
             // keep a reference of the original keys
-            Map<String, Object> backup = new LinkedHashMap<>(properties);
+            OrderedLocationProperties backup = new OrderedLocationProperties();
+            backup.putAll(properties);
 
             rc = PropertyBindingSupport.build()
                     .withMandatory(failIfNotSet)
                     .withRemoveParameters(true)
                     .withConfigurer(configurer)
                     .withIgnoreCase(ignoreCase)
-                    .bind(context, target, properties);
+                    .bind(context, target, properties.asMap());
 
-            for (Map.Entry<String, Object> entry : backup.entrySet()) {
+            for (Map.Entry<Object, Object> entry : backup.entrySet()) {
                 if (entry.getValue() != null && !properties.containsKey(entry.getKey())) {
                     String prefix = optionPrefix;
                     if (prefix != null && !prefix.endsWith(".")) {
@@ -322,7 +323,9 @@ public final class MainHelper {
                     }
 
                     LOG.debug("Configured property: {}{}={} on bean: {}", prefix, entry.getKey(), entry.getValue(), target);
-                    autoConfiguredProperties.put(prefix + entry.getKey(), entry.getValue().toString());
+                    String loc = backup.getLocation(entry.getKey());
+                    String key = prefix + entry.getKey();
+                    autoConfiguredProperties.put(loc, key, entry.getValue());
                 }
             }
         } catch (PropertyBindingException e) {
@@ -353,7 +356,8 @@ public final class MainHelper {
     }
 
     public static void computeProperties(
-            String keyPrefix, String key, Properties prop, Map<PropertyOptionKey, Map<String, Object>> properties,
+            String keyPrefix, String key, OrderedLocationProperties prop,
+            Map<PropertyOptionKey, OrderedLocationProperties> properties,
             Function<String, Iterable<Object>> supplier) {
         if (key.startsWith(keyPrefix)) {
             // grab name
@@ -398,10 +402,11 @@ public final class MainHelper {
             Iterable<Object> targets = supplier.apply(name);
             for (Object target : targets) {
                 PropertyOptionKey pok = new PropertyOptionKey(target, prefix);
-                Map<String, Object> values = properties.computeIfAbsent(pok, k -> new LinkedHashMap<>());
+                OrderedLocationProperties values = properties.computeIfAbsent(pok, k -> new OrderedLocationProperties());
+                String loc = prop.getLocation(key);
 
                 // we ignore case for property keys (so we should store them in canonical style
-                values.put(optionKey(option), value);
+                values.put(loc, optionKey(option), value);
             }
         }
     }
@@ -485,6 +490,28 @@ public final class MainHelper {
         }
 
         return version;
+    }
+
+    public static OrderedLocationProperties extractProperties(OrderedLocationProperties properties, String optionPrefix) {
+        if (properties == null) {
+            return new OrderedLocationProperties();
+        }
+        OrderedLocationProperties rc = new OrderedLocationProperties();
+
+        Set<Object> toRemove = new HashSet<>();
+        for (var entry : properties.entrySet()) {
+            String key = entry.getKey().toString();
+            String loc = properties.getLocation(key);
+            if (key.startsWith(optionPrefix)) {
+                Object value = properties.get(key);
+                key = key.substring(optionPrefix.length());
+                rc.put(loc, key, value);
+                toRemove.add(entry.getKey());
+            }
+        }
+        toRemove.forEach(properties::remove);
+
+        return rc;
     }
 
 }

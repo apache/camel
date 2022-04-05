@@ -51,21 +51,21 @@ public class ZipkinProducerSpanKindTest extends CamelTestSupport {
     }
 
     @Test
-    public void testB3SingleHeaderPresent() throws Exception {
+    public void testB3SingleHeaderPresent() {
         template.requestBody("direct:start", "Hello World");
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("seda:a").routeId("start");
 
                 from("seda:a").routeId("a")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String b3Header = exchange.getIn().getHeader("b3", String.class);
                                 Assertions.assertThat(b3Header).isNotNull();
                             }

@@ -21,18 +21,20 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.iec60870.AbstractIecEndpoint;
+import org.apache.camel.component.iec60870.Constants;
 import org.apache.camel.component.iec60870.ObjectAddress;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultComponent;
 
 import static java.util.Objects.requireNonNull;
+import static org.apache.camel.component.iec60870.Constants.SCHEME_SERVER;
 
 /**
  * IEC 60870 supervisory control and data acquisition (SCADA) server using NeoSCADA implementation.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "iec60870-server", syntax = "iec60870-server:uriPath",
-             title = "IEC 60870 Server", category = { Category.IOT })
+@UriEndpoint(firstVersion = "2.20.0", scheme = SCHEME_SERVER, syntax = "iec60870-server:uriPath",
+             title = "IEC 60870 Server", category = { Category.IOT }, headersClass = Constants.class)
 public class ServerEndpoint extends AbstractIecEndpoint<ServerConnectionMultiplexor> {
 
     /**

@@ -22,18 +22,18 @@ public class SplunkHECEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(12);
-        props.add("lazyStartProducer");
         props.add("bodyOnly");
-        props.add("splunkURL");
-        props.add("sourceType");
-        props.add("skipTlsVerify");
-        props.add("host");
-        props.add("index");
-        props.add("source");
-        props.add("time");
-        props.add("https");
-        props.add("token");
         props.add("headersOnly");
+        props.add("host");
+        props.add("https");
+        props.add("index");
+        props.add("lazyStartProducer");
+        props.add("skipTlsVerify");
+        props.add("source");
+        props.add("sourceType");
+        props.add("splunkURL");
+        props.add("time");
+        props.add("token");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

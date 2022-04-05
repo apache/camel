@@ -23,11 +23,17 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class StrimziContainer extends GenericContainer<StrimziContainer> {
-    private static final String STRIMZI_CONTAINER = System.getProperty("itest.strimzi.container.image");
+    public static final String DEFAULT_STRIMZI_CONTAINER = "quay.io/strimzi/kafka:0.28.0-kafka-3.1.0";
+    private static final String STRIMZI_CONTAINER
+            = System.getProperty("itest.strimzi.container.image", DEFAULT_STRIMZI_CONTAINER);
     private static final int KAFKA_PORT = 9092;
 
     public StrimziContainer(Network network, String name, String zookeeperInstanceName) {
-        super(STRIMZI_CONTAINER);
+        this(network, name, STRIMZI_CONTAINER, zookeeperInstanceName);
+    }
+
+    public StrimziContainer(Network network, String name, String containerName, String zookeeperInstanceName) {
+        super(containerName);
 
         withEnv("LOG_DIR", "/tmp/logs");
         withExposedPorts(KAFKA_PORT);

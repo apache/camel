@@ -65,7 +65,7 @@ public class NettyTCPChainedTest extends BaseNettyTest {
     }
 
     @BindToRegistry("encoder")
-    public ChannelHandler getEncoder() throws Exception {
+    public ChannelHandler getEncoder() {
         return ChannelHandlerFactories.newByteArrayEncoder("tcp");
     }
 
@@ -79,10 +79,10 @@ public class NettyTCPChainedTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}?sync=false&encoders=#encoder")
                         .to("log:result")
                         .to("mock:result");

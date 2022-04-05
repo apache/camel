@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-olingo4",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "olingo4",
     "extendsScheme": "",
     "syntax": "olingo4:apiName\/methodName",
@@ -39,6 +39,9 @@
     "httpClientBuilder": { "kind": "property", "displayName": "Http Client Builder", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.http.impl.client.HttpClientBuilder", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.olingo4.Olingo4Configuration", "configurationField": "configuration", "description": "Custom HTTP client builder for more complex HTTP client configuration, overrides connectionTimeout, socketTimeout, proxy and sslContext. Note that a socketTimeout MUST be specified in the builder, otherwise OData requests could block indefinitely" },
     "sslContextParameters": { "kind": "property", "displayName": "Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "org.apache.camel.support.jsse.SSLContextParameters", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.olingo4.Olingo4Configuration", "configurationField": "configuration", "description": "To configure security using SSLContextParameters" },
     "useGlobalSslContextParameters": { "kind": "property", "displayName": "Use Global Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Enable usage of global SSL context parameters." }
+  },
+  "headers": {
+    "CamelOlingo4.responseHttpHeaders": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Map<String, String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The response Http headers" }
   },
   "properties": {
     "apiName": { "kind": "path", "displayName": "Api Name", "group": "common", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.olingo4.internal.Olingo4ApiName", "enum": [ "DEFAULT" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.olingo4.Olingo4Configuration", "configurationField": "configuration", "description": "What kind of operation to perform" },

@@ -71,10 +71,10 @@ public class FtpSoTimeoutTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:with").to("ftp://localhost:" + serverSocket.getLocalPort()
                                        + "?ftpClient=#myftpclient&connectTimeout=300&soTimeout=300&reconnectDelay=100");
 
@@ -85,7 +85,7 @@ public class FtpSoTimeoutTest extends CamelTestSupport {
     }
 
     @BindToRegistry("myftpclient")
-    public FTPClient createFtpClient() throws Exception {
+    public FTPClient createFtpClient() {
         FTPClient ftpClient = new FTPClient();
         ftpClient.setDefaultTimeout(300);
         return ftpClient;
@@ -95,7 +95,7 @@ public class FtpSoTimeoutTest extends CamelTestSupport {
 
     @Test
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
-    public void testWithDefaultTimeout() throws Exception {
+    public void testWithDefaultTimeout() {
         assertThrows(CamelExecutionException.class, () -> {
             // send exchange to the route using the custom FTPClient (with a
             // default timeout)
@@ -106,7 +106,7 @@ public class FtpSoTimeoutTest extends CamelTestSupport {
 
     @Test
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
-    public void testWithoutDefaultTimeout() throws Exception {
+    public void testWithoutDefaultTimeout() {
         assertThrows(CamelExecutionException.class, () -> {
             // send exchange to the route using the default FTPClient (without a
             // default timeout)

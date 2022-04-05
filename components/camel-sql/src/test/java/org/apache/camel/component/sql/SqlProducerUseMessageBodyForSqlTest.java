@@ -115,7 +115,7 @@ public class SqlProducerUseMessageBodyForSqlTest extends CamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "deprecated" })
     public void testUseMessageBodyForSqlAndCamelSqlParametersBatch() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {

@@ -41,7 +41,7 @@ public class RestPlatformHttpContextPathConfigurationTest extends AbstractPlatfo
     protected RouteBuilder routes() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration()
                         .component("platform-http")
                         .contextPath("/rest");

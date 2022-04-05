@@ -64,23 +64,11 @@ You have the possibility of avoiding the usage of explicit static credentials, b
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
  - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable AWS_CONTAINER_CREDENTIALS_RELATIVE_URI is set.
- - Amazon EC2 Instance profile credentials. 
+ - Amazon EC2 Instance profile credentials.
 
-
-=== Message headers evaluated by the Translate producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelAwsTranslateSourceLanguage` |`String` |The text source language
-
-|`CamelAwsTranslateTargetLanguage` |`String` |The text target language
-
-|`CamelAwsTranslateTerminologyNames` |`String` |The terminologies to use
-
-|`CamelAwsTranslateOperation` |`String` |The operation to perform
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Translate Producer operations
 

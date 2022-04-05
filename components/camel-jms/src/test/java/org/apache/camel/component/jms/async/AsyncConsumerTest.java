@@ -58,10 +58,10 @@ public class AsyncConsumerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable async in only mode on the consumer
                 from("activemq:queue:start?asyncConsumer=true")
                         .choice()

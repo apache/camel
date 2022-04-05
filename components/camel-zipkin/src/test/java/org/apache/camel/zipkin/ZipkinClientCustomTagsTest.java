@@ -51,21 +51,21 @@ public class ZipkinClientCustomTagsTest extends CamelTestSupport {
     }
 
     @Test
-    public void testZipkinRoute() throws Exception {
+    public void testZipkinRoute() {
         template.requestBody("direct:start", "Camel client sends custom tags");
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("seda:a");
 
                 from("seda:a").routeId("a")
                         .setBody().constant("Camel client sends custom tags")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Map<String, String> customTags = new HashMap<>();
                                 customTags.put("customTag1", "value1");
                                 customTags.put("customTag2", "value2");

@@ -58,10 +58,10 @@ public class NettyUDPLargeMessageInOnlyTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:udp://localhost:{{port}}?receiveBufferSizePredictor=2048&sync=false")
                         .to("mock:result");
             }

@@ -38,9 +38,9 @@ public class InOnlyConsumerTopicTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("sjms:topic:in.only.topic").to("log:request").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = (String) exchange.getIn().getBody();

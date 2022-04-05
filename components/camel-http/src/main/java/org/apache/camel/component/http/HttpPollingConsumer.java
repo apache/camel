@@ -108,9 +108,9 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
                     message.setHeader(name, value);
                 }
             }
-            message.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+            message.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
             if (response.getStatusLine() != null) {
-                message.setHeader(Exchange.HTTP_RESPONSE_TEXT, response.getStatusLine().getReasonPhrase());
+                message.setHeader(HttpConstants.HTTP_RESPONSE_TEXT, response.getStatusLine().getReasonPhrase());
             }
 
             return exchange;

@@ -59,7 +59,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Transport security and authentication support
 
@@ -111,18 +113,6 @@ The table below shows the types of objects in the message body, depending on the
 |*asynchronous*|simple|stream|Object|List<Object>
 |*asynchronous*|stream|simple|Object or List<Object>|List<Object>
 |*asynchronous*|stream|stream|Object or List<Object>|List<Object>
-
-|=======================================================================
-
-== gRPC consumer headers (will be installed after the consumer invocation)
-
-[width="100%",cols="25%,50,25%",options="header",]
-|=======================================================================
-|Header name |Description|Possible values
-
-|*CamelGrpcMethodName*|Method name handled by the consumer service|
-|*CamelGrpcEventType*|Received event type from the sent request|onNext, onCompleted or onError
-|*CamelGrpcUserAgent*|If provided, the given agent will prepend the gRPC library's user agent information|
 
 |=======================================================================
 

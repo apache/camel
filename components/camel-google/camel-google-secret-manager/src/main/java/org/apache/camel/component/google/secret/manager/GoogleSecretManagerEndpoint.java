@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "3.16.0", scheme = "google-secret-manager", title = "Google Secret Manager",
              syntax = "google-secret-manager:project", category = {
                      Category.CLOUD },
-             producerOnly = true)
+             producerOnly = true, headersClass = GoogleSecretManagerConstants.class)
 public class GoogleSecretManagerEndpoint extends DefaultEndpoint {
 
     @UriParam

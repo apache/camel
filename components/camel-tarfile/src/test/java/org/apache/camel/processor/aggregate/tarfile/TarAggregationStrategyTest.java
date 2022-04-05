@@ -78,10 +78,10 @@ public class TarAggregationStrategyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Untar file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/aggregate/tarfile/data?delay=1000&noop=true")
                         .setHeader("foo", constant("bar"))

@@ -116,11 +116,13 @@ import org.apache.cxf.wsdl.WSDLManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_CXF;
+
 /**
  * Expose SOAP WebServices using Apache CXF or connect to external WebServices using CXF WS client.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "cxf", title = "CXF", syntax = "cxf:beanId:address",
-             category = { Category.SOAP, Category.WEBSERVICE })
+@UriEndpoint(firstVersion = "1.0.0", scheme = SCHEME_CXF, title = "CXF", syntax = "cxf:beanId:address",
+             category = { Category.SOAP, Category.WEBSERVICE }, headersClass = CxfConstants.class)
 public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, Service, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
@@ -1454,7 +1456,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
      * get the request uri for a given exchange.
      */
     URI getRequestUri(Exchange camelExchange) {
-        String uriString = camelExchange.getIn().getHeader(Exchange.DESTINATION_OVERRIDE_URL, String.class);
+        String uriString = camelExchange.getIn().getHeader(CxfConstants.DESTINATION_OVERRIDE_URL, String.class);
         if (uriString == null) {
             uriString = getAddress();
         }

@@ -20,8 +20,12 @@ package org.apache.camel.component.kafka.consumer;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConsumer;
 import org.apache.kafka.clients.consumer.Consumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class CommitManagers {
+    private static final Logger LOG = LoggerFactory.getLogger(CommitManagers.class);
+
     private CommitManagers() {
     }
 
@@ -29,25 +33,30 @@ public final class CommitManagers {
             Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
         KafkaConfiguration configuration = kafkaConsumer.getEndpoint().getConfiguration();
 
-        if (!configuration.isAllowManualCommit() && configuration.getOffsetRepository() != null) {
-            return new CommitToOffsetManager(consumer, kafkaConsumer, threadId, printableTopic);
-        }
-
-        if (configuration.isAutoCommitEnable()) {
-            if ("async".equals(configuration.getAutoCommitOnStop())) {
+        if (configuration.isAllowManualCommit()) {
+            LOG.debug("Allowing manual commit management");
+            KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
+            if (manualCommitFactory instanceof DefaultKafkaManualAsyncCommitFactory) {
+                LOG.debug("Using an async commit manager for manual commit management");
                 return new AsyncCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
-            } else if ("sync".equals(configuration.getAutoCommitOnStop())) {
-                return new SyncCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
-            } else if ("none".equals(configuration.getAutoCommitOnStop())) {
-                return new NoopCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
+            } else {
+                if (manualCommitFactory instanceof DefaultKafkaManualCommitFactory) {
+                    LOG.debug("Using a sync commit manager for manual commit management");
+                    return new SyncCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
+                } else {
+                    // This has been the default behavior for Camel
+                    LOG.debug("Using an NO-OP commit manager for manual commit management");
+                    return new NoopCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
+                }
+            }
+        } else {
+            if (configuration.getOffsetRepository() != null) {
+                LOG.debug("Using a commit-to-offset manager for commit management");
+                return new CommitToOffsetManager(consumer, kafkaConsumer, threadId, printableTopic);
             }
         }
 
-        KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
-        if (manualCommitFactory instanceof DefaultKafkaManualAsyncCommitFactory) {
-            return new AsyncCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
-        }
-
+        LOG.debug("Using a NO-OP commit manager with auto-commit enabled on the Kafka consumer");
         return new NoopCommitManager(consumer, kafkaConsumer, threadId, printableTopic);
     }
 }

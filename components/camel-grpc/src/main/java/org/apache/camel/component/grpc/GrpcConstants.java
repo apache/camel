@@ -43,8 +43,19 @@ public interface GrpcConstants {
     /*
      * This headers will be set after gRPC consumer method is invoked
      */
+    @org.apache.camel.spi.Metadata(label = "consumer", description = "Method name handled by the consumer service",
+                                   javaType = "String")
     String GRPC_METHOD_NAME_HEADER = "CamelGrpcMethodName";
+    @org.apache.camel.spi.Metadata(label = "consumer",
+                                   description = "If provided, the given agent will prepend the gRPC library's user agent information",
+                                   javaType = "String")
     String GRPC_USER_AGENT_HEADER = "CamelGrpcUserAgent";
+    @org.apache.camel.spi.Metadata(label = "consumer", description = "Received event type from the sent request.\n\n" +
+                                                                     "Possible values:\n\n" +
+                                                                     "* onNext\n" +
+                                                                     "* onCompleted\n" +
+                                                                     "* onError",
+                                   javaType = "String")
     String GRPC_EVENT_TYPE_HEADER = "CamelGrpcEventType";
 
     String GRPC_EVENT_TYPE_ON_NEXT = "onNext";

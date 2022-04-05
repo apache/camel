@@ -63,16 +63,16 @@ public class ClusteredJdbcAggregateRecoverTest extends AbstractClusteredJdbcAggr
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionSize(5)
                         .aggregationRepository(repo)
                         .log("aggregated exchange id ${exchangeId} with ${body}").to("mock:aggregated").delay(1000)
                         // simulate errors the first two times
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 int count = counter.incrementAndGet();
                                 if (count <= 2) {
                                     throw new IllegalArgumentException("Damn");

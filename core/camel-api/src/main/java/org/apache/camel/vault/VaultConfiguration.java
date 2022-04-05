@@ -23,6 +23,7 @@ public class VaultConfiguration {
 
     private AwsVaultConfiguration aws;
     private GcpVaultConfiguration gcp;
+    private AzureVaultConfiguration azure;
 
     /**
      * AWS Vault Configuration
@@ -44,6 +45,16 @@ public class VaultConfiguration {
         return gcp;
     }
 
+    /**
+     * Azure Vault Configuration
+     */
+    public AzureVaultConfiguration azure() {
+        if (azure == null) {
+            azure = new AzureVaultConfiguration();
+        }
+        return azure;
+    }
+
     public AwsVaultConfiguration getAwsVaultConfiguration() {
         return aws;
     }
@@ -58,5 +69,13 @@ public class VaultConfiguration {
 
     public void setGcpVaultConfiguration(GcpVaultConfiguration gcp) {
         this.gcp = gcp;
+    }
+
+    public AzureVaultConfiguration getAzureVaultConfiguration() {
+        return azure;
+    }
+
+    public void setAzureVaultConfiguration(AzureVaultConfiguration azure) {
+        this.azure = azure;
     }
 }

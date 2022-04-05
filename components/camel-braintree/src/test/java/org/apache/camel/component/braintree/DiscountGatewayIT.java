@@ -39,7 +39,7 @@ public class DiscountGatewayIT extends AbstractBraintreeTestSupport {
 
     @Disabled
     @Test
-    public void testAll() throws Exception {
+    public void testAll() {
         final List<Discount> result = requestBody("direct://ALL", null, List.class);
 
         assertNotNull(result, "all result");
@@ -47,7 +47,7 @@ public class DiscountGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for all

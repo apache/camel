@@ -286,17 +286,18 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         final Map<String, Object> httpClientOptions = new HashMap<>();
 
         // timeout values can be configured on both component and endpoint level, where endpoint take priority
-        int val = getAndRemoveParameter(parameters, "connectionRequestTimeout", int.class, connectionRequestTimeout);
-        if (val != -1) {
-            httpClientOptions.put("connectionRequestTimeout", val);
+        int valConnectionRequestTimeout
+                = getAndRemoveParameter(parameters, "connectionRequestTimeout", int.class, connectionRequestTimeout);
+        if (valConnectionRequestTimeout != -1) {
+            httpClientOptions.put("connectionRequestTimeout", valConnectionRequestTimeout);
         }
-        val = getAndRemoveParameter(parameters, "connectTimeout", int.class, connectTimeout);
-        if (val != -1) {
-            httpClientOptions.put("connectTimeout", val);
+        int valConnectTimeout = getAndRemoveParameter(parameters, "connectTimeout", int.class, connectTimeout);
+        if (valConnectTimeout != -1) {
+            httpClientOptions.put("connectTimeout", valConnectTimeout);
         }
-        val = getAndRemoveParameter(parameters, "socketTimeout", int.class, socketTimeout);
-        if (val != -1) {
-            httpClientOptions.put("socketTimeout", val);
+        int valSocketTimeout = getAndRemoveParameter(parameters, "socketTimeout", int.class, socketTimeout);
+        if (valSocketTimeout != -1) {
+            httpClientOptions.put("socketTimeout", valSocketTimeout);
         }
 
         final HttpClientBuilder clientBuilder = createHttpClientBuilder(uri, parameters, httpClientOptions);
@@ -361,6 +362,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         LOG.debug("Creating endpoint uri {}", endpointUriString);
         final HttpClientConnectionManager localConnectionManager = createConnectionManager(parameters, sslContextParameters);
         HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
+        endpoint.setSocketTimeout(valSocketTimeout);
+        endpoint.setConnectTimeout(valConnectTimeout);
+        endpoint.setConnectionRequestTimeout(valConnectionRequestTimeout);
         endpoint.setCopyHeaders(copyHeaders);
         endpoint.setSkipRequestHeaders(skipRequestHeaders);
         endpoint.setSkipResponseHeaders(skipResponseHeaders);
@@ -713,8 +717,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * The timeout in milliseconds used when requesting a connection from the connection manager. A timeout value of
-     * zero is interpreted as an infinite timeout.
+     * The timeout in milliseconds used when requesting a connection from the connection manager.
      * <p>
      * A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined
      * (system default).

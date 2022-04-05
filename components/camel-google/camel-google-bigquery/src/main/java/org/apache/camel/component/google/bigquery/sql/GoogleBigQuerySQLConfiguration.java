@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.bigquery.sql;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -23,17 +24,24 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class GoogleBigQuerySQLConfiguration {
+public class GoogleBigQuerySQLConfiguration implements Cloneable {
 
     @UriParam(description = "ConnectionFactory to obtain connection to Bigquery Service. If not provided the default one will be used")
     @Metadata(autowired = true)
     private GoogleBigQueryConnectionFactory connectionFactory;
+
     @UriPath(label = "common", description = "Google Cloud Project Id")
     @Metadata(required = true)
     private String projectId;
+
     @UriPath(label = "common", description = "BigQuery standard SQL query")
     @Metadata(required = true)
     private String queryString;
+
+    @UriParam(label = "security",
+              description = "Service account key in json format to authenticate an application as a service account to google cloud platform")
+    @Metadata(required = false)
+    private String serviceAccountKey;
 
     public void parseRemaining(String remaining) {
         int indexOfColon = remaining.indexOf(':');
@@ -74,4 +82,22 @@ public class GoogleBigQuerySQLConfiguration {
         this.projectId = projectId;
         return this;
     }
+
+    public String getServiceAccountKey() {
+        return serviceAccountKey;
+    }
+
+    public GoogleBigQuerySQLConfiguration setServiceAccountKey(String serviceAccountKey) {
+        this.serviceAccountKey = serviceAccountKey;
+        return this;
+    }
+
+    public GoogleBigQuerySQLConfiguration copy() {
+        try {
+            return (GoogleBigQuerySQLConfiguration) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
 }

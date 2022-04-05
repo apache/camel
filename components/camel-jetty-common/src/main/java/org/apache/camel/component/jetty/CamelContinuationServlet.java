@@ -208,7 +208,7 @@ public class CamelContinuationServlet extends CamelServlet {
             }
             // set context path as header
             String contextPath = consumer.getEndpoint().getPath();
-            exchange.getIn().setHeader("CamelServletContextPath", contextPath);
+            exchange.getIn().setHeader(JettyHttpConstants.SERVLET_CONTEXT_PATH, contextPath);
 
             updateHttpPath(exchange, contextPath);
 
@@ -293,13 +293,13 @@ public class CamelContinuationServlet extends CamelServlet {
     }
 
     private void updateHttpPath(Exchange exchange, String contextPath) {
-        String httpPath = (String) exchange.getIn().getHeader(Exchange.HTTP_PATH);
+        String httpPath = (String) exchange.getIn().getHeader(JettyHttpConstants.HTTP_PATH);
         // encode context path in case it contains unsafe chars, because HTTP_PATH isn't decoded at this moment
         String encodedContextPath = UnsafeUriCharactersEncoder.encodeHttpURI(contextPath);
 
         // here we just remove the CamelServletContextPath part from the HTTP_PATH
         if (contextPath != null && httpPath.startsWith(encodedContextPath)) {
-            exchange.getIn().setHeader(Exchange.HTTP_PATH, httpPath.substring(encodedContextPath.length()));
+            exchange.getIn().setHeader(JettyHttpConstants.HTTP_PATH, httpPath.substring(encodedContextPath.length()));
         }
     }
 

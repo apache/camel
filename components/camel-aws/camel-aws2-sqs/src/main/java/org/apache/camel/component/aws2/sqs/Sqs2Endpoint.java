@@ -57,7 +57,8 @@ import software.amazon.awssdk.services.sqs.model.SqsException;
  * Send and receive messages to/from AWS SQS service using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sqs", title = "AWS Simple Queue Service (SQS)",
-             syntax = "aws2-sqs:queueNameOrArn", category = { Category.CLOUD, Category.MESSAGING })
+             syntax = "aws2-sqs:queueNameOrArn", category = { Category.CLOUD, Category.MESSAGING },
+             headersClass = Sqs2Constants.class)
 public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sqs2Endpoint.class);

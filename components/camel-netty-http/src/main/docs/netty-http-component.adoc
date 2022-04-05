@@ -98,73 +98,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-
-== Message Headers
-
-The following headers can be used on the producer to control the HTTP
-request.
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-
-|`CamelHttpMethod` |`String` |Allow to control what HTTP method to use such as GET, POST, TRACE etc.
-The type can also be a `io.netty.handler.codec.http.HttpMethod`
-instance.
-
-|`CamelHttpQuery` |`String` |Allows to provide URI query parameters as a `String` value that
-overrides the endpoint configuration. Separate multiple parameters using
-the & sign. For example: `foo=bar&beer=yes`.
-
-|`CamelHttpPath` |`String` |Allows to provide URI context-path and query parameters as a `String`
-value that overrides the endpoint configuration. This allows to reuse
-the same producer for calling same remote http server, but using a
-dynamic context-path and query parameters.
-
-|`Content-Type` |`String` |To set the content-type of the HTTP body. For example:
-`text/plain; charset="UTF-8"`.
-
-|`CamelHttpResponseCode` |`int` |Allows to set the HTTP Status code to use. By default 200 is used for
-success, and 500 for failure.
-|=======================================================================
-
-The following headers is provided as meta-data when a route starts from
-an Netty HTTP endpoint:
-
-The description in the table takes offset in a route having:
-`from("netty-http:http:0.0.0.0:8080/myapp")...`
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-
-|`CamelHttpMethod` |`String` |The HTTP method used, such as GET, POST, TRACE etc.
-
-|`CamelHttpUrl` |`String` |The URL including protocol, host and port, etc: 
-`\http://0.0.0.0:8080/myapp`
-
-|`CamelHttpUri` |`String` |The URI without protocol, host and port, etc:
-`/myapp`
-
-|`CamelHttpQuery` |`String` |Any query parameters, such as `foo=bar&beer=yes`
-
-|`CamelHttpRawQuery` |`String` |Any query parameters, such as `foo=bar&beer=yes`. Stored in the raw
-form, as they arrived to the consumer (i.e. before URL decoding).
-
-|`CamelHttpPath` |`String` |Additional context-path. This value is empty if the client called the
-context-path `/myapp`. If the client calls `/myapp/mystuff`, then this
-header value is `/mystuff`. In other words its the value after the
-context-path configured on the route endpoint.
-
-|`CamelHttpCharacterEncoding` |`String` |The charset from the content-type header.
-
-|`CamelHttpAuthentication` |`String` |If the user was authenticated using HTTP Basic then this header is added
-with the value `Basic`.
-
-|`Content-Type` |`String` |The content type if provided. For example:
-`text/plain; charset="UTF-8"`.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Access to Netty types
 

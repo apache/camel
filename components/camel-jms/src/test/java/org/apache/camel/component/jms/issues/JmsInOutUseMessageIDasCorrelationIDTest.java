@@ -31,13 +31,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class JmsInOutUseMessageIDasCorrelationIDTest extends CamelTestSupport {
 
     @Test
-    public void testInOutWithMsgIdAsCorrId() throws Exception {
+    public void testInOutWithMsgIdAsCorrId() {
         String reply = template.requestBody("activemq:queue:in?useMessageIDAsCorrelationID=true", "Hello World", String.class);
         assertEquals("Bye World", reply);
     }
 
     @Test
-    public void testInOutFixedReplyToAndWithMsgIdAsCorrId() throws Exception {
+    public void testInOutFixedReplyToAndWithMsgIdAsCorrId() {
         String reply = template.requestBody("activemq:queue:in?replyTo=bar&useMessageIDAsCorrelationID=true", "Hello World",
                 String.class);
         assertEquals("Bye World", reply);
@@ -52,9 +52,9 @@ public class JmsInOutUseMessageIDasCorrelationIDTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:in?useMessageIDAsCorrelationID=true").process(exchange -> {
                     String id = exchange.getIn().getHeader("JMSCorrelationID", String.class);
                     assertNull(id, "JMSCorrelationID should be null");

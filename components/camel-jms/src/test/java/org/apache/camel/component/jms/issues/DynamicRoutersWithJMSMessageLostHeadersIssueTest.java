@@ -54,10 +54,10 @@ public class DynamicRoutersWithJMSMessageLostHeadersIssueTest extends CamelTestS
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue1")
                         .setHeader("HEADER1", constant("header1"))
                         .dynamicRouter(method(DynamicRouter.class, "dynamicRoute"))

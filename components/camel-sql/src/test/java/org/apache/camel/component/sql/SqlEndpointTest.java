@@ -61,7 +61,7 @@ public class SqlEndpointTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 SqlEndpoint sql = new SqlEndpoint();

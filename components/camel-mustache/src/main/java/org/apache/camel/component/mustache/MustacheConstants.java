@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mustache;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Mustache component constants
  */
@@ -24,11 +26,13 @@ public final class MustacheConstants {
     /**
      * Header containing a Mustache template location
      */
+    @Metadata(description = "A URI for the template resource to use instead of the endpoint.", javaType = "String")
     public static final String MUSTACHE_RESOURCE_URI = "MustacheResourceUri";
 
     /**
      * Header containing the Mustache template code
      */
+    @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
     public static final String MUSTACHE_TEMPLATE = "MustacheTemplate";
 
     /**

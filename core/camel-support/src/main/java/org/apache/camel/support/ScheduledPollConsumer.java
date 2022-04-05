@@ -538,22 +538,28 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         if (getHealthCheck() == null) {
             String id = "consumer:" + getRouteId();
             ScheduledPollConsumerHealthCheck hc = new ScheduledPollConsumerHealthCheck(this, id);
-            hc.setDownBeforeFirstPoll(initialHealthCheckState() == HealthCheck.State.DOWN);
+            // is there a custom initial state the consumer must use
+            HealthCheck.State initialState = initialHealthCheckState();
+            if (initialState != null) {
+                hc.setInitialState(initialState);
+            }
             setHealthCheck(hc);
         }
         super.doBuild();
     }
 
     /**
-     * The initial state of the health check during startup. By default the state is DOWN meaning that the consumer must
-     * run the first poll successfully to have the state regarded as UP.
+     * Used to allow special consumers to override the initial state of the health check (readiness check) during
+     * startup.
      *
      * Consumers that are internal only such as camel-scheduler uses UP as initial state because the scheduler may be
      * configured to run only very in-frequently and therefore the overall health-check state would be affected and seen
      * as DOWN.
+     *
+     * @return null to use the initial state configured, otherwise force using the returned state.
      */
     protected HealthCheck.State initialHealthCheckState() {
-        return HealthCheck.State.DOWN;
+        return null;
     }
 
     @Override

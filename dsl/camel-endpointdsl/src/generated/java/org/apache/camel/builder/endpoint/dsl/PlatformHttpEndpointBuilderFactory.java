@@ -157,6 +157,39 @@ public interface PlatformHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpEndpointBuilder muteException(String muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * The content type this endpoint produces, such as application/xml or
          * application/json.
          * 

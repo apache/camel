@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.spi.Resource;
 
 /**
  * Collects routes and rests from the various sources (like registry or opinionated classpath locations) and adds these
@@ -48,6 +49,17 @@ public interface RoutesCollector {
      * @return                the discovered RoutesBuilder or an empty collection
      */
     Collection<RoutesBuilder> collectRoutesFromDirectory(
+            CamelContext camelContext, String excludePattern, String includePattern);
+
+    /**
+     * Finds all routes as {@link Resource} from the given directory.
+     *
+     * @param  camelContext   the Camel Context
+     * @param  excludePattern exclude pattern (see routesExcludePattern option)
+     * @param  includePattern include pattern (see routesIncludePattern option)
+     * @return                the discovered routes as {@link Resource} or an empty collection
+     */
+    Collection<Resource> findRouteResourcesFromDirectory(
             CamelContext camelContext, String excludePattern, String includePattern);
 
 }

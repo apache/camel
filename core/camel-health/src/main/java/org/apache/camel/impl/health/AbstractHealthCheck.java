@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.health.HealthCheckResultStrategy;
 import org.apache.camel.util.ObjectHelper;
@@ -128,6 +129,22 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
     protected HealthCheckResultBuilder doCall(Map<String, Object> options) {
         final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this);
 
+        // set initial state
+        final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
+        if (registry != null) {
+            builder.state(registry.getInitialState());
+        }
+
+        // what kind of check is this
+        HealthCheck.Kind kind;
+        if (isLiveness() && isReadiness()) {
+            // if we can do both then use kind from what type we were invoked as
+            kind = (Kind) options.getOrDefault(CHECK_KIND, Kind.ALL);
+        } else {
+            // we can only be either live or ready so report that
+            kind = isLiveness() ? Kind.LIVENESS : Kind.READINESS;
+        }
+        builder.detail(CHECK_KIND, kind);
         // Extract relevant information from meta data.
         int invocationCount = (Integer) meta.getOrDefault(INVOCATION_COUNT, 0);
         int failureCount = (Integer) meta.getOrDefault(FAILURE_COUNT, 0);
@@ -139,14 +156,14 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
         meta.put(INVOCATION_ATTEMPT_TIME, invocationTime);
 
         if (!isEnabled()) {
-            LOG.debug("health-check {}/{} disabled", getGroup(), getId());
+            LOG.debug("health-check ({}) {}/{} disabled", kind, getGroup(), getId());
             builder.message("Disabled");
             builder.detail(CHECK_ENABLED, false);
             builder.unknown();
             return builder;
         }
 
-        LOG.debug("Invoke health-check {}/{}", getGroup(), getId());
+        LOG.debug("Invoke health-check ({}) {}/{}", kind, getGroup(), getId());
         doCall(builder, options);
 
         if (builder.state() == null) {

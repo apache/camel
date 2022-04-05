@@ -49,7 +49,7 @@ public class MailRouteTest extends CamelTestSupport {
         resultEndpoint.expectedBodiesReceived("hello world!");
 
         Map<String, Object> headers = new HashMap<>();
-        headers.put("reply-to", "route-test-reply@localhost");
+        headers.put(MailConstants.MAIL_REPLY_TO, "route-test-reply@localhost");
         template.sendBodyAndHeaders("smtp://route-test-james@localhost", "hello world!", headers);
 
         // lets test the first sent worked
@@ -60,7 +60,7 @@ public class MailRouteTest extends CamelTestSupport {
 
         // Validate that the headers were preserved.
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
-        String replyTo = (String) exchange.getIn().getHeader("reply-to");
+        String replyTo = (String) exchange.getIn().getHeader(MailConstants.MAIL_REPLY_TO);
         assertEquals("route-test-reply@localhost", replyTo);
 
         assertMailboxReceivedMessages("route-test-copy@localhost");
@@ -82,7 +82,7 @@ public class MailRouteTest extends CamelTestSupport {
 
         template.send("direct:a", new Processor() {
 
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(body);
                 exchange.getIn().setHeader("subject", subject);
                 exchange.setProperty(Exchange.CHARSET_NAME, "US-ASCII");

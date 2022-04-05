@@ -22,15 +22,15 @@ public class MetricsEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(9);
-        props.add("metricsType");
-        props.add("lazyStartProducer");
-        props.add("decrement");
-        props.add("subject");
-        props.add("metricsName");
         props.add("action");
+        props.add("decrement");
         props.add("increment");
-        props.add("value");
+        props.add("lazyStartProducer");
         props.add("mark");
+        props.add("metricsName");
+        props.add("metricsType");
+        props.add("subject");
+        props.add("value");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

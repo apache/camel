@@ -51,7 +51,7 @@ import org.apache.camel.util.ObjectHelper;
  * Query or transform JSON payloads using an JSLT.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "jslt", title = "JSLT", syntax = "jslt:resourceUri", producerOnly = true,
-             category = { Category.TRANSFORMATION })
+             category = { Category.TRANSFORMATION }, headersClass = JsltConstants.class)
 public class JsltEndpoint extends ResourceEndpoint {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();

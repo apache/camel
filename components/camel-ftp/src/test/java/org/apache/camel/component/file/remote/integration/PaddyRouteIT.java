@@ -45,12 +45,12 @@ public class PaddyRouteIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertNotNull(exchange.getIn().getHeader(Exchange.FILE_NAME));
                         assertEquals("hello.txt", exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY));
                         assertEquals("Hello World", exchange.getIn().getBody(String.class));

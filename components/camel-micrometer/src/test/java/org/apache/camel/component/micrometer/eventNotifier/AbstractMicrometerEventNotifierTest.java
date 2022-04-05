@@ -38,7 +38,7 @@ abstract class AbstractMicrometerEventNotifierTest extends CamelTestSupport {
         return true;
     }
 
-    public void addRegistry() throws Exception {
+    public void addRegistry() {
         meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(new SimpleMeterRegistry());
         meterRegistry.add(new JmxMeterRegistry(CamelJmxConfig.DEFAULT, Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));

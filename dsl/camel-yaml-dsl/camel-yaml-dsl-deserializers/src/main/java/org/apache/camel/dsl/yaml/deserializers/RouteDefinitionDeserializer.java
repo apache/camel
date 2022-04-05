@@ -38,9 +38,11 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
           properties = {
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "description", type = "string"),
-                  @YamlProperty(name = "precondition", type = "string"),
                   @YamlProperty(name = "group", type = "string"),
+                  @YamlProperty(name = "precondition", type = "string"),
                   @YamlProperty(name = "route-configuration-id", type = "string"),
+                  @YamlProperty(name = "auto-startup", type = "boolean"),
+                  @YamlProperty(name = "stream-caching", type = "boolean"),
                   @YamlProperty(name = "from", type = "object:org.apache.camel.model.FromDefinition", required = true)
           })
 public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefinition> {
@@ -79,6 +81,12 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     break;
                 case "route-configuration-id":
                     target.setRouteConfigurationId(asText(val));
+                    break;
+                case "auto-startup":
+                    target.setAutoStartup(asText(val));
+                    break;
+                case "stream-caching":
+                    target.setStreamCache(asText(val));
                     break;
                 case "from":
                     val.setProperty(RouteDefinition.class.getName(), target);

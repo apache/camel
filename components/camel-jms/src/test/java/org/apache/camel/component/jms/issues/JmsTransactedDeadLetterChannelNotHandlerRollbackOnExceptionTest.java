@@ -30,7 +30,7 @@ public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionTest
 
     @Override
     @Test
-    public void shouldNotLoseMessagesOnExceptionInErrorHandler() throws Exception {
+    public void shouldNotLoseMessagesOnExceptionInErrorHandler() {
         template.sendBody(testingEndpoint, "Hello World");
 
         // as we do not handle new exception, then the exception propagates back

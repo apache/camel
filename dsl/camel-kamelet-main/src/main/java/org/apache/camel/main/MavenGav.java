@@ -36,8 +36,24 @@ public final class MavenGav {
         if (gav.startsWith("camel:")) {
             answer.setGroupId("org.apache.camel");
             String a = gav.substring(6);
+            // users may mistakenly use quarkus extension but they should just refer to the vanilla component name
+            if (a.startsWith("camel-quarkus-")) {
+                a = "camel-" + a.substring(14);
+            }
             if (!a.startsWith("camel-")) {
                 a = "camel-" + a;
+            }
+            answer.setArtifactId(a);
+            if (context != null) {
+                answer.setVersion(context.getVersion());
+            }
+        } else if (gav.startsWith("camel-") && !(gav.contains(":") || gav.contains("/"))) {
+            // not really camel-k style but users may mistakenly use camel-file instead of camel:file
+            answer.setGroupId("org.apache.camel");
+            String a = gav;
+            // users may mistakenly use quarkus extension but they should just refer to the vanilla component name
+            if (a.startsWith("camel-quarkus-")) {
+                a = "camel-" + a.substring(14);
             }
             answer.setArtifactId(a);
             if (context != null) {

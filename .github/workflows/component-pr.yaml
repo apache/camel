@@ -1,0 +1,97 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+name: component check
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+    paths:
+      - 'components/**'
+  workflow_run:
+    workflows: [ "main pr build" ]
+    types:
+      - completed
+
+jobs:
+  process:
+    name: Process
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        if: |
+          github.event_name == 'pull_request_target' &&
+            (github.event.action == 'opened' ||
+             github.event.action == 'reopened')
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `:warning: This PR changes Camel components and will be tested automatically.`
+            })
+      - name: 'Download artifact'
+        uses: actions/github-script@v3.1.0
+        if: |
+          github.event_name == 'workflow_run'
+        with:
+# Secure download based on:
+# - https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+# - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run
+          script: |
+            var artifacts = await github.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "test-logs"
+            })[0];
+            var download = await github.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            var fs = require('fs');
+            fs.writeFileSync('${{github.workspace}}/test-logs.zip', Buffer.from(download.data));
+      - run: unzip test-logs.zip
+        if: |
+          github.event_name == 'workflow_run'
+      - name: Get the test result
+        if: |
+          github.event_name == 'workflow_run'
+        run: |
+          cat results.txt >> $GITHUB_ENV
+      - uses: actions/github-script@v6
+        if: |
+          github.event_name == 'workflow_run'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            let fs = require('fs');
+            let issue_number = Number(fs.readFileSync('./pr_number'));
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: "${{ env.result }}"
+            });

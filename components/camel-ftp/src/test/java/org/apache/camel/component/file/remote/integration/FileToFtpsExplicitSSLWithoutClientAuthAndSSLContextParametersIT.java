@@ -25,7 +25,7 @@ public class FileToFtpsExplicitSSLWithoutClientAuthAndSSLContextParametersIT
         extends FileToFtpsExplicitSSLWithoutClientAuthIT {
 
     @BindToRegistry("sslContextParameters")
-    public SSLContextParameters createSslContextParams() throws Exception {
+    public SSLContextParameters createSslContextParams() {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("server.jks");
         ksp.setPassword("password");

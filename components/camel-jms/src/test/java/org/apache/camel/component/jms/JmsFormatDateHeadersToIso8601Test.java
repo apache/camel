@@ -35,13 +35,13 @@ public class JmsFormatDateHeadersToIso8601Test extends CamelTestSupport {
     private static final Date DATE = Date.from(Instant.ofEpochMilli(1519672338000L));
 
     @Test
-    public void testComponentFormatDateHeaderToIso8601() throws Exception {
+    public void testComponentFormatDateHeaderToIso8601() {
         String outDate = template.requestBodyAndHeader("direct:start-isoformat", "body", "date", DATE, String.class);
         assertEquals("2018-02-26T19:12:18Z", outDate);
     }
 
     @Test
-    public void testBindingFormatDateHeaderToIso8601() throws Exception {
+    public void testBindingFormatDateHeaderToIso8601() {
         String outDate = template.requestBodyAndHeader("direct:start-nonisoformat", "body", "date", DATE, String.class);
         assertNotEquals("2018-02-26T19:12:18Z", outDate);
     }
@@ -57,10 +57,10 @@ public class JmsFormatDateHeadersToIso8601Test extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start-isoformat").to("activemq:queue:foo");
                 from("direct:start-nonisoformat").to("activemq:queue:foo?formatDateHeadersToIso8601=false");
                 from("activemq:queue:foo").setBody(simple("${in.header.date}"));

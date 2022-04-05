@@ -41,7 +41,7 @@ import org.apache.camel.util.StringHelper;
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "jcr", title = "JCR", syntax = "jcr:host/base",
              alternativeSyntax = "jcr:username:password@host/base",
-             category = { Category.DATABASE, Category.CMS })
+             category = { Category.DATABASE, Category.CMS }, headersClass = JcrConstants.class)
 public class JcrEndpoint extends DefaultEndpoint {
 
     private Credentials credentials;

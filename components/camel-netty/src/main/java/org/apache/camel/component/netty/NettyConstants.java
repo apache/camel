@@ -16,22 +16,34 @@
  */
 package org.apache.camel.component.netty;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Netty constants
  */
 public final class NettyConstants {
-
+    @Metadata(description = "Indicates whether the channel should be closed after complete.", javaType = "Boolean")
     public static final String NETTY_CLOSE_CHANNEL_WHEN_COMPLETE = "CamelNettyCloseChannelWhenComplete";
+    @Metadata(description = "The channel handler context.", javaType = "io.netty.channel.ChannelHandlerContext")
     public static final String NETTY_CHANNEL_HANDLER_CONTEXT = "CamelNettyChannelHandlerContext";
     public static final String NETTY_MESSAGE_EVENT = "CamelNettyMessageEvent";
+    @Metadata(description = "The remote address.", javaType = "java.net.SocketAddress")
     public static final String NETTY_REMOTE_ADDRESS = "CamelNettyRemoteAddress";
+    @Metadata(description = "The local address.", javaType = "java.net.SocketAddress")
     public static final String NETTY_LOCAL_ADDRESS = "CamelNettyLocalAddress";
+    @Metadata(description = "The SSL session.", javaType = "javax.net.ssl.SSLSession")
     public static final String NETTY_SSL_SESSION = "CamelNettySSLSession";
+    @Metadata(description = "The SSL client certificate subject name.", javaType = "String")
     public static final String NETTY_SSL_CLIENT_CERT_SUBJECT_NAME = "CamelNettySSLClientCertSubjectName";
+    @Metadata(description = "The SSL client certificate issuer name.", javaType = "String")
     public static final String NETTY_SSL_CLIENT_CERT_ISSUER_NAME = "CamelNettySSLClientCertIssuerName";
+    @Metadata(description = "The SSL client certificate serial number.", javaType = "String")
     public static final String NETTY_SSL_CLIENT_CERT_SERIAL_NO = "CamelNettySSLClientCertSerialNumber";
+    @Metadata(description = "The SSL client certificate not before.", javaType = "java.util.Date")
     public static final String NETTY_SSL_CLIENT_CERT_NOT_BEFORE = "CamelNettySSLClientCertNotBefore";
+    @Metadata(description = "The SSL client certificate not after.", javaType = "java.util.Date")
     public static final String NETTY_SSL_CLIENT_CERT_NOT_AFTER = "CamelNettySSLClientCertNotAfter";
+    @Metadata(description = "The read timeout.", javaType = "Long")
     public static final String NETTY_REQUEST_TIMEOUT = "CamelNettyRequestTimeout";
     public static final String NETTY_CHANNEL = "CamelNettyChannel";
     public static final String NETTY_CLIENT_CONTINUE = "CamelClientContinue";

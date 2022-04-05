@@ -59,7 +59,7 @@ public class ModelineParser {
         try (LineNumberReader reader = new LineNumberReader(resource.getReader())) {
             String line = reader.readLine();
             while (line != null) {
-                List<CamelContextCustomizer> list = parse(line);
+                List<CamelContextCustomizer> list = parse(resource, line);
                 answer.addAll(list);
                 line = reader.readLine();
             }
@@ -68,7 +68,7 @@ public class ModelineParser {
         return answer;
     }
 
-    protected List<CamelContextCustomizer> parse(String line) {
+    protected List<CamelContextCustomizer> parse(Resource resource, String line) {
         if (!isModeline(line)) {
             return Collections.emptyList();
         }
@@ -86,7 +86,7 @@ public class ModelineParser {
                 String value = StringHelper.after(part, "=");
                 Trait trait = traits.get(name);
                 if (trait != null) {
-                    CamelContextCustomizer customizer = trait.parseTrait(value);
+                    CamelContextCustomizer customizer = trait.parseTrait(resource, value);
                     if (customizer != null) {
                         answer.add(customizer);
                     }

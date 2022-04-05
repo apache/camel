@@ -1149,6 +1149,43 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * If true, streams SOQL query result and transparently handles
+         * subsequent requests if there are multiple pages. Otherwise, results
+         * are returned one page at a time.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamQueryResult the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder streamQueryResult(
+                Boolean streamQueryResult) {
+            doSetProperty("streamQueryResult", streamQueryResult);
+            return this;
+        }
+        /**
+         * If true, streams SOQL query result and transparently handles
+         * subsequent requests if there are multiple pages. Otherwise, results
+         * are returned one page at a time.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamQueryResult the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder streamQueryResult(
+                String streamQueryResult) {
+            doSetProperty("streamQueryResult", streamQueryResult);
+            return this;
+        }
+        /**
          * Whether to update an existing Push Topic when using the Streaming
          * API, defaults to false.
          * 
@@ -2451,6 +2488,43 @@ public interface SalesforceEndpointBuilderFactory {
         default SalesforceEndpointProducerBuilder sObjectSearch(
                 String sObjectSearch) {
             doSetProperty("sObjectSearch", sObjectSearch);
+            return this;
+        }
+        /**
+         * If true, streams SOQL query result and transparently handles
+         * subsequent requests if there are multiple pages. Otherwise, results
+         * are returned one page at a time.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamQueryResult the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder streamQueryResult(
+                Boolean streamQueryResult) {
+            doSetProperty("streamQueryResult", streamQueryResult);
+            return this;
+        }
+        /**
+         * If true, streams SOQL query result and transparently handles
+         * subsequent requests if there are multiple pages. Otherwise, results
+         * are returned one page at a time.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamQueryResult the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder streamQueryResult(
+                String streamQueryResult) {
+            doSetProperty("streamQueryResult", streamQueryResult);
             return this;
         }
         /**
@@ -3769,6 +3843,43 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder sObjectSearch(String sObjectSearch) {
             doSetProperty("sObjectSearch", sObjectSearch);
+            return this;
+        }
+        /**
+         * If true, streams SOQL query result and transparently handles
+         * subsequent requests if there are multiple pages. Otherwise, results
+         * are returned one page at a time.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamQueryResult the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointBuilder streamQueryResult(
+                Boolean streamQueryResult) {
+            doSetProperty("streamQueryResult", streamQueryResult);
+            return this;
+        }
+        /**
+         * If true, streams SOQL query result and transparently handles
+         * subsequent requests if there are multiple pages. Otherwise, results
+         * are returned one page at a time.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamQueryResult the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointBuilder streamQueryResult(
+                String streamQueryResult) {
+            doSetProperty("streamQueryResult", streamQueryResult);
             return this;
         }
         /**

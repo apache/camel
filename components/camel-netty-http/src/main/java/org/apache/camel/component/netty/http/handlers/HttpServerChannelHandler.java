@@ -45,6 +45,7 @@ import org.apache.camel.component.netty.handlers.ServerChannelHandler;
 import org.apache.camel.component.netty.http.HttpPrincipal;
 import org.apache.camel.component.netty.http.InboundStreamHttpRequest;
 import org.apache.camel.component.netty.http.NettyHttpConfiguration;
+import org.apache.camel.component.netty.http.NettyHttpConstants;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
 import org.apache.camel.component.netty.http.NettyHttpHelper;
 import org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration;
@@ -101,7 +102,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                 }
             }
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
-            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             ctx.writeAndFlush(response);
             ctx.channel().close();
@@ -112,7 +113,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             // are we suspended?
             LOG.debug("Consumer suspended, cannot service request {}", request);
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, SERVICE_UNAVAILABLE);
-            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             ctx.writeAndFlush(response);
             ctx.channel().close();
@@ -122,7 +123,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         if (consumer.getEndpoint().getHttpMethodRestrict() != null
                 && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.method().name())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
-            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             ctx.writeAndFlush(response);
             ctx.channel().close();
@@ -130,7 +131,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
         if ("TRACE".equals(request.method().name()) && !consumer.getEndpoint().isTraceEnabled()) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
-            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             ctx.writeAndFlush(response);
             ctx.channel().close();
@@ -140,7 +141,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         if (!request.headers().contains(HttpHeaderNames.HOST.toString())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
             //response.setChunked(false);
-            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             ctx.writeAndFlush(response);
             ctx.channel().close();
@@ -208,7 +209,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                     // restricted resource, so send back 401 to require valid username/password
                     HttpResponse response = new DefaultHttpResponse(HTTP_1_1, UNAUTHORIZED);
                     response.headers().set("WWW-Authenticate", "Basic realm=\"" + security.getRealm() + "\"");
-                    response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+                    response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
                     response.headers().set(Exchange.CONTENT_LENGTH, 0);
                     ctx.writeAndFlush(response);
                     // close the channel
@@ -312,7 +313,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         boolean keepAlive = HttpUtil.isKeepAlive(request);
         if (!keepAlive) {
             // Just make sure we close the connection this time.
-            exchange.setProperty(HttpHeaderNames.CONNECTION.toString(), HttpHeaderValues.CLOSE.toString());
+            exchange.setProperty(NettyHttpConstants.CONNECTION, HttpHeaderValues.CLOSE.toString());
         }
 
         final Message in = exchange.getIn();
@@ -359,11 +360,11 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         consumer.getEndpoint().updateMessageHeader(in, ctx);
 
         // honor the character encoding
-        String contentType = in.getHeader(Exchange.CONTENT_TYPE, String.class);
+        String contentType = in.getHeader(NettyHttpConstants.CONTENT_TYPE, String.class);
         String charset = NettyHttpHelper.getCharsetFromContentType(contentType);
         if (charset != null) {
             exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
-            in.setHeader(Exchange.HTTP_CHARACTER_ENCODING, charset);
+            in.setHeader(NettyHttpConstants.HTTP_CHARACTER_ENCODING, charset);
         }
 
         return exchange;

@@ -20,6 +20,7 @@ import org.apache.camel.Ordered;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 
 public interface YamlDeserializerResolver extends Ordered {
+
     int ORDER_DEFAULT = 0;
     int ORDER_HIGHEST = Ordered.HIGHEST;
     int ORDER_LOWEST = Ordered.LOWEST;

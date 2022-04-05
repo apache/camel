@@ -43,10 +43,13 @@ import quickfix.SessionID;
  * Open a Financial Interchange (FIX) session using an embedded QuickFix/J engine.
  */
 @UriEndpoint(firstVersion = "2.1.0", scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName",
-             category = { Category.MESSAGING })
+             category = { Category.MESSAGING }, headersClass = QuickfixjEndpoint.class)
 public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEventListener, MultipleConsumersSupport {
+    @Metadata(description = "The event category.", javaType = "org.apache.camel.component.quickfixj.QuickfixjEventCategory")
     public static final String EVENT_CATEGORY_KEY = "EventCategory";
+    @Metadata(description = "The FIX message SessionID.", javaType = "quickfix.SessionID")
     public static final String SESSION_ID_KEY = "SessionID";
+    @Metadata(description = "The FIX MsgType tag value.", javaType = "String")
     public static final String MESSAGE_TYPE_KEY = "MessageType";
     public static final String DATA_DICTIONARY_KEY = "DataDictionary";
 

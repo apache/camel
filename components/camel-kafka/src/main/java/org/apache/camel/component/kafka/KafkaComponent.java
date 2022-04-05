@@ -42,6 +42,14 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     private KafkaClientFactory kafkaClientFactory;
     @Metadata(autowired = true, label = "consumer,advanced")
     private PollExceptionStrategy pollExceptionStrategy;
+    @Metadata(label = "consumer,advanced")
+    private int createConsumerBackoffMaxAttempts;
+    @Metadata(label = "consumer,advanced", defaultValue = "5000")
+    private long createConsumerBackoffInterval = 5000;
+    @Metadata(label = "consumer,advanced")
+    private int subscribeConsumerBackoffMaxAttempts;
+    @Metadata(label = "consumer,advanced", defaultValue = "5000")
+    private long subscribeConsumerBackoffInterval = 5000;
 
     public KafkaComponent() {
     }
@@ -149,6 +157,67 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         this.pollExceptionStrategy = pollExceptionStrategy;
     }
 
+    public int getCreateConsumerBackoffMaxAttempts() {
+        return createConsumerBackoffMaxAttempts;
+    }
+
+    /**
+     * Maximum attempts to create the kafka consumer (kafka-client), before eventually giving up and failing.
+     *
+     * Error during creating the consumer may be fatal due to invalid configuration and as such recovery is not
+     * possible. However, one part of the validation is DNS resolution of the bootstrap broker hostnames. This may be a
+     * temporary networking problem, and could potentially be recoverable. While other errors are fatal such as some
+     * invalid kafka configurations. Unfortunately kafka-client does not separate this kind of errors.
+     *
+     * Camel will by default retry forever, and therefore never give up. If you want to give up after many attempts then
+     * set this option and Camel will then when giving up terminate the consumer. You can manually restart the consumer
+     * by stopping and starting the route, to try again.
+     */
+    public void setCreateConsumerBackoffMaxAttempts(int createConsumerBackoffMaxAttempts) {
+        this.createConsumerBackoffMaxAttempts = createConsumerBackoffMaxAttempts;
+    }
+
+    public long getCreateConsumerBackoffInterval() {
+        return createConsumerBackoffInterval;
+    }
+
+    /**
+     * The delay in millis seconds to wait before trying again to create the kafka consumer (kafka-client).
+     */
+    public void setCreateConsumerBackoffInterval(long createConsumerBackoffInterval) {
+        this.createConsumerBackoffInterval = createConsumerBackoffInterval;
+    }
+
+    public int getSubscribeConsumerBackoffMaxAttempts() {
+        return subscribeConsumerBackoffMaxAttempts;
+    }
+
+    /**
+     * Maximum number the kafka consumer will attempt to subscribe to the kafka broker, before eventually giving up and
+     * failing.
+     *
+     * Error during subscribing the consumer to the kafka topic could be temporary errors due to network issues, and
+     * could potentially be recoverable.
+     *
+     * Camel will by default retry forever, and therefore never give up. If you want to give up after many attempts then
+     * set this option and Camel will then when giving up terminate the consumer. You can manually restart the consumer
+     * by stopping and starting the route, to try again.
+     */
+    public void setSubscribeConsumerBackoffMaxAttempts(int subscribeConsumerBackoffMaxAttempts) {
+        this.subscribeConsumerBackoffMaxAttempts = subscribeConsumerBackoffMaxAttempts;
+    }
+
+    public long getSubscribeConsumerBackoffInterval() {
+        return subscribeConsumerBackoffInterval;
+    }
+
+    /**
+     * The delay in millis seconds to wait before trying again to subscribe to the kafka broker.
+     */
+    public void setSubscribeConsumerBackoffInterval(long subscribeConsumerBackoffInterval) {
+        this.subscribeConsumerBackoffInterval = subscribeConsumerBackoffInterval;
+    }
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();
@@ -157,7 +226,7 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         if (kafkaClientFactory == null) {
             kafkaClientFactory = new DefaultKafkaClientFactory();
         }
-        if (kafkaManualCommitFactory == null) {
+        if (configuration.isAllowManualCommit() && kafkaManualCommitFactory == null) {
             kafkaManualCommitFactory = new DefaultKafkaManualCommitFactory();
         }
     }

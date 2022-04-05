@@ -32,7 +32,7 @@ public class JdbcGrowIssueTest extends AbstractJdbcAggregationTestSupport {
     private static final int SIZE = 1024;
 
     @Test
-    public void testGrowIssue() throws Exception {
+    public void testGrowIssue() {
         // a 1kb string for testing
         StringBuilder sb = new StringBuilder(SIZE);
         for (int i = 0; i < SIZE; i++) {

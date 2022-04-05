@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
@@ -46,7 +45,7 @@ public class VertxPlatformHttpEngineWithTypeConverterTest {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/bytebuffer")
                             .routeId("bytebuffer")
                             .setBody().constant(Collections.singletonMap("bb", "my-test"));
@@ -76,7 +75,7 @@ public class VertxPlatformHttpEngineWithTypeConverterTest {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/inputstream")
                             .routeId("inputstream")
                             .setBody().constant(Collections.singletonMap("is", "my-test"));
@@ -135,13 +134,13 @@ public class VertxPlatformHttpEngineWithTypeConverterTest {
 
         @Override
         public <T> T mandatoryConvertTo(Class<T> type, Object value)
-                throws TypeConversionException, NoTypeConversionAvailableException {
+                throws TypeConversionException {
             return null;
         }
 
         @Override
         public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value)
-                throws TypeConversionException, NoTypeConversionAvailableException {
+                throws TypeConversionException {
             return null;
         }
 

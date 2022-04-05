@@ -47,7 +47,7 @@ public abstract class CamelTestConfiguration extends CamelSpringTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 log.debug("CM Component is an URI based component\nCM URI: {}", uri);
 
                 // Route definition

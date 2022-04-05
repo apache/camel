@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-corda",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "corda",
     "extendsScheme": "",
     "syntax": "corda:node",
@@ -36,6 +36,17 @@
     "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "password": { "kind": "property", "displayName": "Password", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.corda.CordaConfiguration", "configurationField": "configuration", "description": "Password for login" },
     "username": { "kind": "property", "displayName": "Username", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.corda.CordaConfiguration", "configurationField": "configuration", "description": "Username for login" }
+  },
+  "headers": {
+    "OPERATION": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation to perform" },
+    "ATTACHMENT_QUERY_CRITERIA": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "net.corda.core.node.services.vault.AttachmentQueryCriteria", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The attachment query criteria" },
+    "SORT": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The sort" },
+    "EXACT_MATCH": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "If true, a case sensitive match is done against each component of each X.500 name." },
+    "ARGUMENTS": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Object[]", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The arguments." },
+    "DRAINING_MODE": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The value of the node's flows draining mode." },
+    "SECURE_HASH": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "net.corda.core.crypto.SecureHash", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Container for a cryptographically secure hash value." },
+    "QUERY_CRITERIA": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "net.corda.core.node.services.vault.QueryCriteria", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The query criteria." },
+    "PAGE_SPECIFICATION": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "net.corda.core.node.services.vault.PageSpecification", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The PageSpecification allows specification of a page number and page size" }
   },
   "properties": {
     "node": { "kind": "path", "displayName": "Node", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.corda.CordaConfiguration", "configurationField": "configuration", "description": "The url for the corda node" },

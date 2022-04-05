@@ -16,15 +16,37 @@
  */
 package org.apache.camel.component.etcd;
 
+import org.apache.camel.spi.Metadata;
+
 public interface EtcdConstants {
+
+    // The schemes
+    String SCHEME_KEYS = "etcd-keys";
+    String SCHEME_STATS = "etcd-stats";
+    String SCHEME_WATCH = "etcd-watch";
 
     String ETCD_DEFAULT_URIS = "http://localhost:2379,http://localhost:4001";
 
+    @Metadata(label = "producer", description = "The action to perform.\n" +
+                                                "Supported values:\n" +
+                                                "\n" +
+                                                "* set\n" +
+                                                "* get\n" +
+                                                "* delete\n",
+              javaType = "String", applicableFor = SCHEME_KEYS)
     String ETCD_ACTION = "CamelEtcdAction";
+    @Metadata(description = "The namespace", javaType = "String")
     String ETCD_NAMESPACE = "CamelEtcdNamespace";
+    @Metadata(description = "The target path", javaType = "String")
     String ETCD_PATH = "CamelEtcdPath";
+    @Metadata(label = "producer", description = "The timeout of the request in milliseconds", javaType = "Long or Boolean",
+              applicableFor = { SCHEME_KEYS, SCHEME_WATCH })
     String ETCD_TIMEOUT = "CamelEtcdTimeout";
+    @Metadata(label = "producer", description = "To apply an action recursively.", javaType = "Boolean",
+              applicableFor = SCHEME_KEYS)
     String ETCD_RECURSIVE = "CamelEtcdRecursive";
+    @Metadata(label = "producer", description = "To set the lifespan of a key in milliseconds.", javaType = "Integer",
+              applicableFor = SCHEME_KEYS)
     String ETCD_TTL = "CamelEtcdTtl";
 
     String ETCD_KEYS_ACTION_SET = "set";

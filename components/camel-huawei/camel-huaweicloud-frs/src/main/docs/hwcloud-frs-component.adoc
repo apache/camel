@@ -4,7 +4,7 @@
 :artifactid: camel-huaweicloud-frs
 :description: Face Recognition Service (FRS) is an intelligent service that uses computers to process, analyze, and understand facial images based on human facial features.
 :since: 3.15
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Huawei Cloud

@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CaffeineLRUSoftCacheTest {
 
     @Test
-    public void testLRUSoftCacheGetAndPut() throws Exception {
+    public void testLRUSoftCacheGetAndPut() {
         CaffeineLRUSoftCache<Integer, Object> cache = new CaffeineLRUSoftCache<>(1000);
 
         cache.put(1, "foo");
@@ -48,7 +48,7 @@ public class CaffeineLRUSoftCacheTest {
     }
 
     @Test
-    public void testLRUSoftCacheHitsAndMisses() throws Exception {
+    public void testLRUSoftCacheHitsAndMisses() {
         CaffeineLRUSoftCache<Integer, Object> cache = new CaffeineLRUSoftCache<>(1000);
 
         cache.put(1, "foo");
@@ -71,7 +71,7 @@ public class CaffeineLRUSoftCacheTest {
     }
 
     @Test
-    public void testLRUSoftCachePutOverride() throws Exception {
+    public void testLRUSoftCachePutOverride() {
         CaffeineLRUSoftCache<Integer, Object> cache = new CaffeineLRUSoftCache<>(1000);
 
         Object old = cache.put(1, "foo");
@@ -89,7 +89,7 @@ public class CaffeineLRUSoftCacheTest {
     }
 
     @Test
-    public void testLRUSoftCachePutAll() throws Exception {
+    public void testLRUSoftCachePutAll() {
         CaffeineLRUSoftCache<Integer, Object> cache = new CaffeineLRUSoftCache<>(1000);
 
         Map<Integer, Object> map = new HashMap<>();
@@ -105,7 +105,7 @@ public class CaffeineLRUSoftCacheTest {
     }
 
     @Test
-    public void testLRUSoftCachePutAllAnotherLRUSoftCache() throws Exception {
+    public void testLRUSoftCachePutAllAnotherLRUSoftCache() {
         CaffeineLRUSoftCache<Integer, Object> cache = new CaffeineLRUSoftCache<>(1000);
 
         CaffeineLRUSoftCache<Integer, Object> cache2 = new CaffeineLRUSoftCache<>(1000);
@@ -121,7 +121,7 @@ public class CaffeineLRUSoftCacheTest {
     }
 
     @Test
-    public void testLRUSoftCacheRemove() throws Exception {
+    public void testLRUSoftCacheRemove() {
         CaffeineLRUSoftCache<Integer, Object> cache = new CaffeineLRUSoftCache<>(1000);
 
         cache.put(1, "foo");
@@ -133,7 +133,7 @@ public class CaffeineLRUSoftCacheTest {
     }
 
     @Test
-    public void testLRUSoftCacheValues() throws Exception {
+    public void testLRUSoftCacheValues() {
         CaffeineLRUSoftCache<Integer, Object> cache = new CaffeineLRUSoftCache<>(1000);
 
         cache.put(1, "foo");
@@ -148,7 +148,7 @@ public class CaffeineLRUSoftCacheTest {
     }
 
     @Test
-    public void testLRUSoftCacheEmpty() throws Exception {
+    public void testLRUSoftCacheEmpty() {
         CaffeineLRUSoftCache<Integer, Object> cache = new CaffeineLRUSoftCache<>(1000);
 
         assertTrue(cache.isEmpty());
@@ -167,7 +167,7 @@ public class CaffeineLRUSoftCacheTest {
     }
 
     @Test
-    public void testLRUSoftCacheContainsKey() throws Exception {
+    public void testLRUSoftCacheContainsKey() {
         CaffeineLRUSoftCache<Integer, Object> cache = new CaffeineLRUSoftCache<>(1000);
 
         assertFalse(cache.containsKey(1));
@@ -184,7 +184,7 @@ public class CaffeineLRUSoftCacheTest {
     }
 
     @Test
-    public void testLRUSoftCacheKeySet() throws Exception {
+    public void testLRUSoftCacheKeySet() {
         CaffeineLRUSoftCache<Integer, Object> cache = new CaffeineLRUSoftCache<>(1000);
 
         cache.put(1, "foo");

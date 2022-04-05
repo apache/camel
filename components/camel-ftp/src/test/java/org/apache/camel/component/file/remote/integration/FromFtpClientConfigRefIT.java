@@ -33,7 +33,7 @@ public class FromFtpClientConfigRefIT extends FtpServerTestSupport {
     }
 
     @BindToRegistry("myConfig")
-    public FTPClientConfig addFtpConfig() throws Exception {
+    public FTPClientConfig addFtpConfig() {
 
         FTPClientConfig config = new FTPClientConfig();
         config.setServerLanguageCode("fr");
@@ -70,9 +70,9 @@ public class FromFtpClientConfigRefIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).to("mock:result");
             }
         };

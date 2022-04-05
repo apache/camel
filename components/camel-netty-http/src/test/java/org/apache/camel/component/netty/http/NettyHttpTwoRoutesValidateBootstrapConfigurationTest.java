@@ -33,7 +33,7 @@ public class NettyHttpTwoRoutesValidateBootstrapConfigurationTest extends BaseNe
     public void testTwoRoutes() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?option.child.keepAlive=false")
                         .to("mock:foo")
                         .transform().constant("Bye World");

@@ -48,7 +48,9 @@ public final class VertxPlatformHttpSupport {
     private VertxPlatformHttpSupport() {
     }
 
-    static Object toHttpResponse(HttpServerResponse response, Message message, HeaderFilterStrategy headerFilterStrategy) {
+    static Object toHttpResponse(
+            HttpServerResponse response, Message message, HeaderFilterStrategy headerFilterStrategy,
+            boolean muteExceptions) {
         final Exchange exchange = message.getExchange();
         final TypeConverter tc = exchange.getContext().getTypeConverter();
 
@@ -93,15 +95,21 @@ public final class VertxPlatformHttpSupport {
         final Exception exception = exchange.getException();
 
         if (exception != null) {
-            // we failed due an exception so print it as plain text
-            final StringWriter sw = new StringWriter();
-            final PrintWriter pw = new PrintWriter(sw);
-            exception.printStackTrace(pw);
+            if (muteExceptions) {
+                body = ""; // do not include stacktrace in body
+                // force content type to be text/plain as that is what the stacktrace is
+                message.setHeader(Exchange.CONTENT_TYPE, "text/plain; charset=utf-8");
+            } else {
+                // we failed due an exception so print it as plain text
+                final StringWriter sw = new StringWriter();
+                final PrintWriter pw = new PrintWriter(sw);
+                exception.printStackTrace(pw);
 
-            // the body should then be the stacktrace
-            body = ByteBuffer.wrap(sw.toString().getBytes(StandardCharsets.UTF_8));
-            // force content type to be text/plain as that is what the stacktrace is
-            message.setHeader(Exchange.CONTENT_TYPE, "text/plain; charset=utf-8");
+                // the body should then be the stacktrace
+                body = ByteBuffer.wrap(sw.toString().getBytes(StandardCharsets.UTF_8));
+                // force content type to be text/plain as that is what the stacktrace is
+                message.setHeader(Exchange.CONTENT_TYPE, "text/plain; charset=utf-8");
+            }
 
             // and mark the exception as failure handled, as we handled it by returning it as the response
             ExchangeHelper.setFailureHandled(exchange);
@@ -156,9 +164,10 @@ public final class VertxPlatformHttpSupport {
         return codeToUse;
     }
 
-    static void writeResponse(RoutingContext ctx, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy)
+    static void writeResponse(
+            RoutingContext ctx, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy, boolean muteExceptions)
             throws Exception {
-        final Object body = toHttpResponse(ctx.response(), camelExchange.getMessage(), headerFilterStrategy);
+        final Object body = toHttpResponse(ctx.response(), camelExchange.getMessage(), headerFilterStrategy, muteExceptions);
         final HttpServerResponse response = ctx.response();
 
         if (body == null) {

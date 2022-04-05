@@ -23,6 +23,8 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "awsvaultconfiguration":
         case "AwsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
+        case "azurevaultconfiguration":
+        case "AzureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "projectid":
@@ -40,6 +42,8 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "awsvaultconfiguration":
         case "AwsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
+        case "azurevaultconfiguration":
+        case "AzureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "projectid":
@@ -58,6 +62,8 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "awsvaultconfiguration":
         case "AwsVaultConfiguration": return target.getAwsVaultConfiguration();
+        case "azurevaultconfiguration":
+        case "AzureVaultConfiguration": return target.getAzureVaultConfiguration();
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "projectid":

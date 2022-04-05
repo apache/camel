@@ -22,16 +22,16 @@ public class ChunkEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(10);
-        props.add("themeLayer");
+        props.add("allowContextMapAll");
         props.add("allowTemplateFromHeader");
+        props.add("contentCache");
+        props.add("encoding");
         props.add("extension");
         props.add("lazyStartProducer");
-        props.add("themeSubfolder");
-        props.add("contentCache");
-        props.add("allowContextMapAll");
-        props.add("themeFolder");
         props.add("resourceUri");
-        props.add("encoding");
+        props.add("themeFolder");
+        props.add("themeLayer");
+        props.add("themeSubfolder");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

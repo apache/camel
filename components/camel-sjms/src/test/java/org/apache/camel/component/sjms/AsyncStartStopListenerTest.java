@@ -67,9 +67,9 @@ public class AsyncStartStopListenerTest extends JmsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("sjms:queue:foo.startstop?asyncStartListener=true&asyncStopListener=true").to("mock:result");
                 from("sjms:queue:foo.start?asyncStartListener=true").to("mock:result");
                 from("sjms:queue:foo.stop?asyncStopListener=true").to("mock:result");

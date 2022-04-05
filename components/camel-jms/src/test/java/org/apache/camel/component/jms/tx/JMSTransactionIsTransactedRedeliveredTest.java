@@ -58,7 +58,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
     public void testTransactionSuccess() throws Exception {
         AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(AssertionError.class).to("log:error", "mock:error");
             }
         });
@@ -111,7 +111,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         private int count;
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             ++count;
 
             // the first is not redelivered

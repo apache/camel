@@ -58,9 +58,13 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 == Samples
 
-For example you could use something like:
+For example, you could use something like:
 
 [source,java]
 ----

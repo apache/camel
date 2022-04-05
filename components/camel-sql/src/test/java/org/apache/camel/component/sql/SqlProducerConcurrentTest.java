@@ -64,7 +64,7 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<List<?>> out = executor.submit(new Callable<List<?>>() {
-                public List<?> call() throws Exception {
+                public List<?> call() {
                     int id = (index % 3) + 1;
                     return template.requestBody("direct:simple", "" + id, List.class);
                 }
@@ -109,7 +109,7 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);

@@ -87,15 +87,15 @@ public class Netty2978IssueTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}?sync=true")
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
-                                exchange.getOut().setBody("Bye " + body);
+                                exchange.getMessage().setBody("Bye " + body);
                             }
                         });
             }
@@ -111,7 +111,7 @@ public class Netty2978IssueTest extends BaseNettyTest {
             this.producerTemplate = camelContext.createProducerTemplate();
         }
 
-        public void close() throws Exception {
+        public void close() {
             producerTemplate.stop();
         }
 

@@ -30,5 +30,5 @@ public interface PollExceptionStrategy {
      * @param  exception the caused exception which typically would be a {@link org.apache.kafka.common.KafkaException}
      * @return           how to handle the exception
      */
-    PollOnError handleException(Exception exception);
+    void handle(long partitionLastOffset, Exception exception);
 }

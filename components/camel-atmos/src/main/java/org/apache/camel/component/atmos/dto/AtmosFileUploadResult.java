@@ -19,8 +19,8 @@ package org.apache.camel.component.atmos.dto;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.atmos.util.AtmosConstants;
 import org.apache.camel.component.atmos.util.AtmosResultCode;
-import org.apache.camel.component.atmos.util.AtmosResultHeader;
 
 public class AtmosFileUploadResult extends AtmosResult {
 
@@ -44,14 +44,14 @@ public class AtmosFileUploadResult extends AtmosResult {
                 pathExtracted = entry.getKey();
                 codeExtracted = entry.getValue();
             }
-            exchange.getIn().setHeader(AtmosResultHeader.UPLOADED_FILE.name(), pathExtracted);
+            exchange.getIn().setHeader(AtmosConstants.UPLOADED_FILE, pathExtracted);
             exchange.getIn().setBody(codeExtracted.name());
         } else {
             StringBuffer pathsExtracted = new StringBuffer();
             for (Map.Entry<String, AtmosResultCode> entry : map.entrySet()) {
                 pathsExtracted.append(entry.getKey() + "\n");
             }
-            exchange.getIn().setHeader(AtmosResultHeader.UPLOADED_FILES.name(), pathsExtracted.toString());
+            exchange.getIn().setHeader(AtmosConstants.UPLOADED_FILES, pathsExtracted.toString());
             exchange.getIn().setBody(map);
         }
     }

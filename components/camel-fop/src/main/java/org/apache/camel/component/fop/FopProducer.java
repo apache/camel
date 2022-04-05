@@ -73,7 +73,7 @@ public class FopProducer extends DefaultProducer {
     private String getOutputFormat(Exchange exchange) {
         String headerOutputFormat = exchange.getIn().getHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, String.class);
         if (headerOutputFormat != null) {
-            // it may be a short hand
+            // it may be a shorthand
             FopOutputType type
                     = exchange.getContext().getTypeConverter().tryConvertTo(FopOutputType.class, exchange, headerOutputFormat);
             if (type != null) {

@@ -46,7 +46,7 @@ public class JmsTransferExceptionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testOk() throws Exception {
+    public void testOk() {
         Object out = template.requestBody(getUri(), "Hello World");
         assertEquals("Bye World", out);
 
@@ -80,10 +80,10 @@ public class JmsTransferExceptionTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(defaultErrorHandler().maximumRedeliveries(2));
 
                 from(getUri())

@@ -51,7 +51,7 @@ public final class MyCustomCodec {
     public static class BytesDecoder extends MessageToMessageDecoder<ByteBuf> {
 
         @Override
-        protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
+        protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) {
             // it may be empty, then return null
             if (msg.isReadable()) {
                 // ByteBuf may not expose array method for accessing the under layer bytes
@@ -68,7 +68,7 @@ public final class MyCustomCodec {
     public static class BytesEncoder extends MessageToMessageEncoder<byte[]> {
 
         @Override
-        protected void encode(ChannelHandlerContext ctx, byte[] msg, List<Object> out) throws Exception {
+        protected void encode(ChannelHandlerContext ctx, byte[] msg, List<Object> out) {
             byte[] bytes = msg;
             ByteBuf buf = ByteBufAllocator.DEFAULT.buffer(bytes.length);
             buf.writeBytes(bytes);

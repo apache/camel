@@ -38,7 +38,7 @@ public class SqlDataSourceTest extends CamelTestSupport {
     private EmbeddedDatabase db;
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         Registry reg = new SimpleRegistry();
 
         // this is the database we create with some initial data for our unit test
@@ -80,7 +80,7 @@ public class SqlDataSourceTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:simple")

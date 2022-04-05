@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 public class NettySSLContextParametersTest extends BaseNettyTest {
 
     @BindToRegistry("sslContextParameters")
-    public SSLContextParameters loadSSLContextParams() throws Exception {
+    public SSLContextParameters loadSSLContextParams() {
 
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("keystore.jks").toString());
@@ -77,8 +77,8 @@ public class NettySSLContextParametersTest extends BaseNettyTest {
             public void configure() {
                 from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&sslContextParameters=#sslContextParameters")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody(
+                            public void process(Exchange exchange) {
+                                exchange.getMessage().setBody(
                                         "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                             }
                         });

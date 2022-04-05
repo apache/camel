@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -79,7 +77,7 @@ public class UnicodeHelperTest {
     }
 
     @Test
-    public void testSubstringCPs() throws FileNotFoundException, IOException {
+    public void testSubstringCPs() {
 
         final UnicodeHelper lh = new UnicodeHelper("a", Method.CODEPOINTS);
         assertEquals("a", lh.substring(0));
@@ -99,7 +97,7 @@ public class UnicodeHelperTest {
     }
 
     @Test
-    public void testSubstringGrapheme() throws FileNotFoundException, IOException {
+    public void testSubstringGrapheme() {
 
         final UnicodeHelper lh = new UnicodeHelper("a", Method.GRAPHEME);
         assertEquals("a", lh.substring(0));

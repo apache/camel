@@ -45,10 +45,10 @@ public class NettyHttpMuteExceptionTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?muteException=true")
                         .to("mock:input")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));

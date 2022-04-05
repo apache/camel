@@ -60,10 +60,10 @@ public class DistributionSummaryRouteTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in-1")
                         .to("micrometer:summary:A?value=332491")
                         .to("mock:out");

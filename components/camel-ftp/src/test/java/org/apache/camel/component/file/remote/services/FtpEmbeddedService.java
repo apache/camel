@@ -17,7 +17,6 @@
 
 package org.apache.camel.component.file.remote.services;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -121,7 +120,7 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         return serverFactory;
     }
 
-    public void tearDown() throws Exception {
+    public void tearDown() {
         try {
             if (ftpServer != null) {
                 ftpServer.stop();
@@ -144,7 +143,7 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         //        }
     }
 
-    public void disconnectAllSessions() throws IOException {
+    public void disconnectAllSessions() {
         // stop all listeners
         Map<String, Listener> listeners = ((DefaultFtpServer) ftpServer).getListeners();
         for (Listener listener : listeners.values()) {

@@ -22,15 +22,15 @@ public class LanguageEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(9);
-        props.add("lazyStartProducer");
-        props.add("transform");
-        props.add("binary");
-        props.add("contentCache");
         props.add("allowContextMapAll");
-        props.add("resourceUri");
+        props.add("binary");
         props.add("cacheScript");
+        props.add("contentCache");
         props.add("languageName");
+        props.add("lazyStartProducer");
+        props.add("resourceUri");
         props.add("script");
+        props.add("transform");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

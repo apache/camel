@@ -651,9 +651,6 @@
           "fault-tolerance-configuration" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.FaultToleranceConfigurationDefinition"
           },
-          "hystrix-configuration" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.HystrixConfigurationDefinition"
-          },
           "id" : {
             "type" : "string"
           },
@@ -1079,107 +1076,6 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.GlobalOptionDefinition"
             }
-          }
-        }
-      },
-      "org.apache.camel.model.HystrixConfigurationDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "allow-maximum-size-to-diverge-from-core-size" : {
-            "type" : "boolean"
-          },
-          "circuit-breaker-enabled" : {
-            "type" : "boolean"
-          },
-          "circuit-breaker-error-threshold-percentage" : {
-            "type" : "number"
-          },
-          "circuit-breaker-force-closed" : {
-            "type" : "boolean"
-          },
-          "circuit-breaker-force-open" : {
-            "type" : "boolean"
-          },
-          "circuit-breaker-request-volume-threshold" : {
-            "type" : "number"
-          },
-          "circuit-breaker-sleep-window-in-milliseconds" : {
-            "type" : "number"
-          },
-          "core-pool-size" : {
-            "type" : "number"
-          },
-          "execution-isolation-semaphore-max-concurrent-requests" : {
-            "type" : "number"
-          },
-          "execution-isolation-strategy" : {
-            "type" : "string"
-          },
-          "execution-isolation-thread-interrupt-on-timeout" : {
-            "type" : "boolean"
-          },
-          "execution-timeout-enabled" : {
-            "type" : "boolean"
-          },
-          "execution-timeout-in-milliseconds" : {
-            "type" : "number"
-          },
-          "fallback-enabled" : {
-            "type" : "boolean"
-          },
-          "fallback-isolation-semaphore-max-concurrent-requests" : {
-            "type" : "number"
-          },
-          "group-key" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "keep-alive-time" : {
-            "type" : "number"
-          },
-          "max-queue-size" : {
-            "type" : "number"
-          },
-          "maximum-size" : {
-            "type" : "number"
-          },
-          "metrics-health-snapshot-interval-in-milliseconds" : {
-            "type" : "number"
-          },
-          "metrics-rolling-percentile-bucket-size" : {
-            "type" : "number"
-          },
-          "metrics-rolling-percentile-enabled" : {
-            "type" : "boolean"
-          },
-          "metrics-rolling-percentile-window-buckets" : {
-            "type" : "number"
-          },
-          "metrics-rolling-percentile-window-in-milliseconds" : {
-            "type" : "number"
-          },
-          "metrics-rolling-statistical-window-buckets" : {
-            "type" : "number"
-          },
-          "metrics-rolling-statistical-window-in-milliseconds" : {
-            "type" : "number"
-          },
-          "queue-size-rejection-threshold" : {
-            "type" : "number"
-          },
-          "request-log-enabled" : {
-            "type" : "boolean"
-          },
-          "thread-pool-key" : {
-            "type" : "string"
-          },
-          "thread-pool-rolling-number-statistical-window-buckets" : {
-            "type" : "number"
-          },
-          "thread-pool-rolling-number-statistical-window-in-milliseconds" : {
-            "type" : "number"
           }
         }
       },
@@ -2502,6 +2398,9 @@
       "org.apache.camel.model.RouteDefinition" : {
         "type" : "object",
         "properties" : {
+          "auto-startup" : {
+            "type" : "boolean"
+          },
           "description" : {
             "type" : "string"
           },
@@ -2519,6 +2418,9 @@
           },
           "route-configuration-id" : {
             "type" : "string"
+          },
+          "stream-caching" : {
+            "type" : "boolean"
           }
         },
         "required" : [ "from" ]
@@ -3889,32 +3791,6 @@
           }
         }
       },
-      "org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration" : {
-        "type" : "object",
-        "properties" : {
-          "client-name" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "namespace" : {
-            "type" : "string"
-          },
-          "password" : {
-            "type" : "string"
-          },
-          "properties" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-            }
-          },
-          "username" : {
-            "type" : "string"
-          }
-        }
-      },
       "org.apache.camel.model.cloud.ServiceCallConfigurationDefinition" : {
         "type" : "object",
         "properties" : {
@@ -3971,9 +3847,6 @@
           },
           "pattern" : {
             "type" : "string"
-          },
-          "ribbon-load-balancer" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration"
           },
           "service-chooser-ref" : {
             "type" : "string"
@@ -4066,9 +3939,6 @@
             },
             "pattern" : {
               "type" : "string"
-            },
-            "ribbon-load-balancer" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration"
             },
             "service-chooser-ref" : {
               "type" : "string"

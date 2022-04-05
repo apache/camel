@@ -31,6 +31,7 @@ import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
  * A Main class for booting up Camel with Kamelet in standalone mode.
  */
 public class KameletMain extends MainCommandLineSupport {
+
     public static final String DEFAULT_KAMELETS_LOCATION = "classpath:/kamelets,github:apache:camel-kamelets/kamelets";
 
     private static ClassLoader kameletClassLoader;
@@ -156,13 +157,23 @@ public class KameletMain extends MainCommandLineSupport {
     protected CamelContext createCamelContext() {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
+
+        // any additional files to add to classpath
+        ClassLoader parentCL = KameletMain.class.getClassLoader();
+        String cpFiles = getInitialProperties().getProperty("camel.jbang.classpathFiles");
+        if (cpFiles != null) {
+            parentCL = new ExtraFilesClassLoader(parentCL, cpFiles.split(","));
+            LOG.info("Additional files added to classpath: {}", cpFiles);
+        }
         if (kameletClassLoader == null) {
-            kameletClassLoader = new GroovyClassLoader(KameletMain.class.getClassLoader());
+            kameletClassLoader = new GroovyClassLoader(parentCL);
         }
         answer.setApplicationContextClassLoader(kameletClassLoader);
         answer.setRegistry(registry);
         // load camel component and custom health-checks
         answer.setLoadHealthChecks(true);
+        // annotation based dependency injection for camel/spring/quarkus annotations in DSLs and Java beans
+        AnnotationDependencyInjection.initAnnotationBasedDependencyInjection(answer);
 
         // embed HTTP server if port is specified
         Object port = getInitialProperties().get("camel.jbang.platform-http.port");
@@ -180,6 +191,7 @@ public class KameletMain extends MainCommandLineSupport {
             VertxHttpServer.registerConsole(answer);
         }
         configure().withLoadHealthChecks(true);
+        configure().withModeline(true);
 
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
         if (health && port == null) {
@@ -187,7 +199,6 @@ public class KameletMain extends MainCommandLineSupport {
             VertxHttpServer.registerServer(answer, 8080);
         }
         if (health) {
-            configure().withLoadHealthChecks(true);
             VertxHttpServer.registerHealthCheck(answer);
         }
 

@@ -52,7 +52,7 @@ public class RemoteFileIgnoreDoPollErrorTest {
         }
 
         @Override
-        public RemoteFileOperations<Object> createRemoteFileOperations() throws Exception {
+        public RemoteFileOperations<Object> createRemoteFileOperations() {
             return null;
         }
 
@@ -68,21 +68,21 @@ public class RemoteFileIgnoreDoPollErrorTest {
     };
 
     @Test
-    public void testReadDirErrorIsHandled() throws Exception {
+    public void testReadDirErrorIsHandled() {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("true", true);
         boolean result = consumer.doSafePollSubDirectory("anyPath", "adir", new ArrayList<GenericFile<Object>>(), 0);
         assertTrue(result);
     }
 
     @Test
-    public void testReadDirErrorIsHandledWithNoMorePoll() throws Exception {
+    public void testReadDirErrorIsHandledWithNoMorePoll() {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("false", true);
         boolean result = consumer.doSafePollSubDirectory("anyPath", "adir", new ArrayList<GenericFile<Object>>(), 0);
         assertFalse(result);
     }
 
     @Test
-    public void testReadDirErrorNotHandled() throws Exception {
+    public void testReadDirErrorNotHandled() {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("IllegalStateException", false);
         List<GenericFile<Object>> list = Collections.emptyList();
 
@@ -93,7 +93,7 @@ public class RemoteFileIgnoreDoPollErrorTest {
     }
 
     @Test
-    public void testReadDirErrorNotHandledForGenericFileOperationException() throws Exception {
+    public void testReadDirErrorNotHandledForGenericFileOperationException() {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("GenericFileOperationFailedException", false);
         List<GenericFile<Object>> list = Collections.emptyList();
 

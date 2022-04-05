@@ -22,19 +22,19 @@ public class HazelcastSedaEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(13);
-        props.add("exchangePattern");
+        props.add("bridgeErrorHandler");
+        props.add("cacheName");
+        props.add("concurrentConsumers");
         props.add("defaultOperation");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("hazelcastInstance");
+        props.add("hazelcastInstanceName");
+        props.add("lazyStartProducer");
+        props.add("onErrorDelay");
         props.add("pollTimeout");
         props.add("transacted");
-        props.add("concurrentConsumers");
-        props.add("lazyStartProducer");
-        props.add("cacheName");
-        props.add("bridgeErrorHandler");
-        props.add("hazelcastInstance");
         props.add("transferExchange");
-        props.add("hazelcastInstanceName");
-        props.add("onErrorDelay");
-        props.add("exceptionHandler");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

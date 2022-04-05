@@ -40,7 +40,7 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
  */
 @UriEndpoint(firstVersion = "3.8.0", scheme = "paho-mqtt5", title = "Paho MQTT 5",
              category = { Category.MESSAGING, Category.IOT },
-             syntax = "paho-mqtt5:topic")
+             syntax = "paho-mqtt5:topic", headersClass = PahoMqtt5Constants.class)
 public class PahoMqtt5Endpoint extends DefaultEndpoint {
 
     // Configuration members

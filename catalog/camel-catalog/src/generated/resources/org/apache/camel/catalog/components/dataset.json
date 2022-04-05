@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dataset",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "dataset",
     "extendsScheme": "",
     "syntax": "dataset:name",
@@ -27,6 +27,9 @@
     "log": { "kind": "property", "displayName": "Log", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To turn on logging when the mock receives an incoming message. This will log only one time at INFO level for the incoming message. For more detailed logging then set the logger to DEBUG level for the org.apache.camel.component.mock.MockEndpoint class." },
     "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "exchangeFormatter": { "kind": "property", "displayName": "Exchange Formatter", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.spi.ExchangeFormatter", "deprecated": false, "autowired": true, "secret": false, "description": "Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified, we default to DefaultExchangeFormatter." }
+  },
+  "headers": {
+    "CamelDataSetIndex": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The dataset index" }
   },
   "properties": {
     "name": { "kind": "path", "displayName": "Name", "group": "common", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.dataset.DataSet", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of DataSet to lookup in the registry" },

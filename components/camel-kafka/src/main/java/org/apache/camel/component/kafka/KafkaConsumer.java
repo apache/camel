@@ -50,7 +50,6 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
     // This list helps to work around the infinite loop of KAFKA-1894
     private final List<KafkaFetchRecords> tasks = new ArrayList<>();
     private volatile boolean stopOffsetRepo;
-    private PollExceptionStrategy pollExceptionStrategy;
     private KafkaConsumerResumeStrategy resumeStrategy;
 
     public KafkaConsumer(KafkaEndpoint endpoint, Processor processor) {
@@ -71,12 +70,6 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
-
-        if (endpoint.getComponent().getPollExceptionStrategy() != null) {
-            pollExceptionStrategy = endpoint.getComponent().getPollExceptionStrategy();
-        } else {
-            pollExceptionStrategy = new DefaultPollExceptionStrategy(endpoint.getConfiguration().getPollOnError());
-        }
     }
 
     @Override
@@ -116,6 +109,14 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
                 endpoint.getConfiguration().isBreakOnFirstError());
         super.doStart();
 
+        // health-check is optional so discover and resolve
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(endpoint.getCamelContext(), "camel-kafka",
+                KafkaHealthCheckRepository.class);
+        if (healthCheckRepository != null) {
+            consumerHealthCheck = new KafkaConsumerHealthCheck(this, getRouteId());
+            healthCheckRepository.addHealthCheck(consumerHealthCheck);
+        }
+
         // is the offset repository already started?
         StateRepository<String, String> repo = endpoint.getConfiguration().getOffsetRepository();
         if (repo instanceof ServiceSupport) {
@@ -139,24 +140,20 @@ public class KafkaConsumer extends DefaultConsumer implements ResumeAware<KafkaC
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
         for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
             KafkaFetchRecords task = new KafkaFetchRecords(
-                    this, pollExceptionStrategy, bridge, topic, pattern, i + "", getProps());
+                    this, bridge, topic, pattern, i + "", getProps());
             executor.submit(task);
 
             tasks.add(task);
-        }
-
-        // health-check is optional so discover and resolve
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(endpoint.getCamelContext(), "camel-kafka",
-                KafkaHealthCheckRepository.class);
-        if (healthCheckRepository != null) {
-            consumerHealthCheck = new KafkaConsumerHealthCheck(this, getRouteId());
-            healthCheckRepository.addHealthCheck(consumerHealthCheck);
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        LOG.info("Stopping Kafka consumer on topic: {}", endpoint.getConfiguration().getTopic());
+        if (endpoint.getConfiguration().isTopicIsPattern()) {
+            LOG.info("Stopping Kafka consumer on topic pattern: {}", endpoint.getConfiguration().getTopic());
+        } else {
+            LOG.info("Stopping Kafka consumer on topic: {}", endpoint.getConfiguration().getTopic());
+        }
 
         if (healthCheckRepository != null && consumerHealthCheck != null) {
             healthCheckRepository.removeHealthCheck(consumerHealthCheck);

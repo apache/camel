@@ -56,7 +56,7 @@ public class JmsRequestReplyTemporaryCacheNoneTest extends CamelTestSupport {
     public void testNotAllowed() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("activemq:queue:hello?replyToCacheLevelName=CACHE_NONE");
 
                 from("activemq:queue:hello").process(exchange -> {

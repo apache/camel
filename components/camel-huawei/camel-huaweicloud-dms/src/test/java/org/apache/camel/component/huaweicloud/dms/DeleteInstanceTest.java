@@ -41,10 +41,10 @@ public class DeleteInstanceTest extends CamelTestSupport {
             testConfiguration.getProperty("accessKey"),
             testConfiguration.getProperty("secretKey"));
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:operation")
                         .setProperty(DMSProperties.OPERATION, constant("deleteInstance"))
                         .setProperty(DMSProperties.INSTANCE_ID, constant(testConfiguration.getProperty("instanceId")))

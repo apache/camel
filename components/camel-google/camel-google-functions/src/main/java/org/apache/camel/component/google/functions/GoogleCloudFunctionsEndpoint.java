@@ -34,7 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "3.9.0", scheme = "google-functions", title = "Google Cloud Functions",
              syntax = "google-functions:functionName", category = {
                      Category.CLOUD },
-             producerOnly = true)
+             producerOnly = true, headersClass = GoogleCloudFunctionsConstants.class)
 public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint {
 
     @UriParam

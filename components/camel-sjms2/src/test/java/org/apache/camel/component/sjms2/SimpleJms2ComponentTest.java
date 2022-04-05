@@ -26,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SimpleJms2ComponentTest extends CamelTestSupport {
 
     @Test
-    public void testHelloWorld() throws Exception {
+    public void testHelloWorld() {
         Sjms2Component component = context.getComponent("sjms2", Sjms2Component.class);
         assertNotNull(component);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 ActiveMQConnectionFactory connectionFactory

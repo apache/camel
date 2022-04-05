@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>3.16.0-SNAPSHOT</version>
+    <version>3.17.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-json-patch</artifactId>
@@ -37,6 +37,12 @@
       <groupId>com.github.java-json-tools</groupId>
       <artifactId>json-patch</artifactId>
       <version>${json-patch-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.code.findbugs</groupId>
+          <artifactId>jsr305</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

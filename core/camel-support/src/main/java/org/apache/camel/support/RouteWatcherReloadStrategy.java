@@ -21,6 +21,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -45,6 +46,12 @@ import org.slf4j.LoggerFactory;
  * files.
  */
 public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrategy {
+
+    /**
+     * Special when reloading routes(s) requires to also ensure other resources are reloaded together such as
+     * camel-java-joor-dsl to ensure all resources are compiled in the same compilation unit.
+     */
+    public static final String RELOAD_RESOURCES = "RouteWatcherReloadResources";
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteWatcherReloadStrategy.class);
 
@@ -177,6 +184,16 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
             if (resource != null && Files.exists(Paths.get(resource.getURI()))) {
                 sources.add(resource);
+            }
+
+            Collection<Resource> extras
+                    = getCamelContext().getRegistry().lookupByNameAndType(RELOAD_RESOURCES, Collection.class);
+            if (extras != null) {
+                for (Resource extra : extras) {
+                    if (!sources.contains(extra)) {
+                        sources.add(extra);
+                    }
+                }
             }
 
             // reload those other routes that was stopped and removed as we want to keep running those

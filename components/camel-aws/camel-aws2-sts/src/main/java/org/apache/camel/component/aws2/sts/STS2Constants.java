@@ -16,13 +16,19 @@
  */
 package org.apache.camel.component.aws2.sts;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants used in Camel AWS2 STS module
  */
 public interface STS2Constants {
+    @Metadata(description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsStsOperation";
+    @Metadata(description = "The Amazon Resource Name (ARN) of the role to assume.", javaType = "String")
     String ROLE_ARN = "CamelAwsStsRoleArn";
+    @Metadata(description = "An identifier for the assumed role session.", javaType = "String")
     String ROLE_SESSION_NAME = "CamelAwsStsRoleSessionName";
+    @Metadata(description = "The name of the federated user.", javaType = "String")
     String FEDERATED_NAME = "CamelAwsStsFederatedName";
     String ACCESS_KEY_ID = "CamelAwsStsAccessKeyId";
     String SECRET_KEY_ID = "CamelAwsStsSecretKey";

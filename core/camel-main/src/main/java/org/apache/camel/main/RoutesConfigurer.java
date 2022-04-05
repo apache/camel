@@ -26,10 +26,10 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
@@ -46,7 +46,6 @@ public class RoutesConfigurer {
     private CamelBeanPostProcessor beanPostProcessor;
     private List<RoutesBuilder> routesBuilders;
     private String basePackageScan;
-    private boolean modeline;
     private String routesBuilderClasses;
     private String javaRoutesExcludePattern;
     private String javaRoutesIncludePattern;
@@ -67,14 +66,6 @@ public class RoutesConfigurer {
 
     public void setBasePackageScan(String basePackageScan) {
         this.basePackageScan = basePackageScan;
-    }
-
-    public boolean ismodeline() {
-        return modeline;
-    }
-
-    public void setmodeline(boolean modeline) {
-        this.modeline = modeline;
     }
 
     public String getRoutesBuilderClasses() {
@@ -232,22 +223,6 @@ public class RoutesConfigurer {
         // sort routes according to ordered
         routes.sort(OrderedComparator.get());
 
-        if (modeline) {
-            ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-            ModelineFactory factory = ecc.getModelineFactory();
-            List<Resource> resources = new ArrayList<>();
-            // gather resources for modeline
-            for (RoutesBuilder builder : routes) {
-                if (builder instanceof RouteBuilder) {
-                    resources.add(((RouteBuilder) builder).getResource());
-                }
-            }
-            for (Resource resource : resources) {
-                LOG.debug("Parsing modeline: {}", resource);
-                factory.parseModeline(resource);
-            }
-        }
-
         // first add the routes configurations as they are globally for all routes
         for (RoutesBuilder builder : routes) {
             if (builder instanceof RouteConfigurationsBuilder) {
@@ -261,6 +236,48 @@ public class RoutesConfigurer {
             LOG.debug("Adding routes into CamelContext from RoutesBuilder: {}", builder);
             camelContext.addRoutes(builder);
         }
+    }
+
+    /**
+     * Discover routes and rests from directories and scan for modeline present in their source code, which is then
+     * parsed using {@link ModelineFactory}.
+     *
+     * @param camelContext the Camel context
+     */
+    public void configureModeline(CamelContext camelContext) throws Exception {
+        if (getRoutesCollector() == null) {
+            return;
+        }
+
+        Collection<Resource> resources;
+        try {
+            LOG.debug("RoutesCollectorEnabled: {}", getRoutesCollector());
+
+            // we can only scan for modeline for routes that we can load from directory as modelines
+            // are comments in the source files
+            resources = getRoutesCollector().findRouteResourcesFromDirectory(
+                    camelContext,
+                    getRoutesExcludePattern(),
+                    getRoutesIncludePattern());
+
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
+
+        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        ModelineFactory factory = ecc.getModelineFactory();
+
+        for (Resource resource : resources) {
+            LOG.debug("Parsing modeline: {}", resource);
+            factory.parseModeline(resource);
+        }
+        // the resource may also have additional configurations which we need to detect via pre-parsing
+        for (Resource resource : resources) {
+            LOG.debug("Pre-parsing: {}", resource);
+            RoutesLoader loader = camelContext.adapt(ExtendedCamelContext.class).getRoutesLoader();
+            loader.preParseRoute(resource);
+        }
+
     }
 
 }

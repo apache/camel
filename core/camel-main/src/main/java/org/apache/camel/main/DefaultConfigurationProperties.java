@@ -1212,7 +1212,7 @@ public abstract class DefaultConfigurationProperties<T> {
      * represented as XML DSL into the log. This is intended for trouble shooting or to assist during development.
      *
      * Sensitive information that may be configured in the route endpoints could potentially be included in the dump
-     * output and is therefore not recommended to be used for production usage.
+     * output and is therefore not recommended being used for production usage.
      *
      * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
      */
@@ -1232,6 +1232,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setGlobalOptions(Map<String, String> globalOptions) {
         this.globalOptions = globalOptions;
+    }
+
+    /**
+     * Adds a global options that can be referenced in the camel context
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
+     */
+    public void addGlobalOption(String key, Object value) {
+        if (this.globalOptions == null) {
+            this.globalOptions = new HashMap<>();
+        }
+        this.globalOptions.put(key, value.toString());
     }
 
     @Deprecated

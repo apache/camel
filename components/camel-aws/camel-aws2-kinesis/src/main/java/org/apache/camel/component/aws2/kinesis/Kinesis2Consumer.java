@@ -191,13 +191,13 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
 
     protected Exchange createExchange(Record record) {
         Exchange exchange = createExchange(true);
-        exchange.getIn().setBody(record);
+        exchange.getIn().setBody(record.data().asInputStream());
         exchange.getIn().setHeader(Kinesis2Constants.APPROX_ARRIVAL_TIME, record.approximateArrivalTimestamp());
         exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, record.partitionKey());
         exchange.getIn().setHeader(Kinesis2Constants.SEQUENCE_NUMBER, record.sequenceNumber());
         if (record.approximateArrivalTimestamp() != null) {
             long ts = record.approximateArrivalTimestamp().getEpochSecond() * 1000;
-            exchange.getIn().setHeader(Exchange.MESSAGE_TIMESTAMP, ts);
+            exchange.getIn().setHeader(Kinesis2Constants.MESSAGE_TIMESTAMP, ts);
         }
         return exchange;
     }

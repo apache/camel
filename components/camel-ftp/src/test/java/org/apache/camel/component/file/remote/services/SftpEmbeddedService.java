@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -31,8 +30,6 @@ import org.apache.camel.test.infra.common.services.AbstractTestService;
 import org.apache.camel.test.infra.ftp.common.FtpProperties;
 import org.apache.camel.test.infra.ftp.services.FtpService;
 import org.apache.sshd.common.NamedFactory;
-import org.apache.sshd.common.cipher.BuiltinCiphers;
-import org.apache.sshd.common.cipher.Cipher;
 import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.common.session.helpers.AbstractSession;
@@ -90,17 +87,13 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
         if (rootDirMode) {
             sshd.setFileSystemFactory(new VirtualFileSystemFactory(testDirectory().resolve("res").toAbsolutePath()));
         }
-
-        //added support of old signature and cipher for the test scope, to allow upgrade of sshd from 2.5.0 (https://issues.apache.org/jira/browse/CAMEL-17163)
-        // (these security options were disabled - https://issues.apache.org/jira/browse/SSHD-1004)
-        List<NamedFactory<Signature>> signatures = new LinkedList<NamedFactory<Signature>>(sshd.getSignatureFactories());
-        signatures.add(BuiltinSignatures.dsa);
-        sshd.setSignatureFactories(signatures);
-
-        List<NamedFactory<Cipher>> ciphers = sshd.getCipherFactories();
-        ciphers.add(BuiltinCiphers.blowfishcbc);
-        sshd.setCipherFactories(ciphers);
-
+        List<NamedFactory<Signature>> signatureFactories = sshd.getSignatureFactories();
+        signatureFactories.clear();
+        // use only one, quite strong signature algorithms for 3 kinds of keys - RSA, EC, EDDSA
+        signatureFactories.add(BuiltinSignatures.rsaSHA512);
+        signatureFactories.add(BuiltinSignatures.nistp521);
+        signatureFactories.add(BuiltinSignatures.ed25519);
+        sshd.setSignatureFactories(signatureFactories);
         sshd.start();
 
         port = ((InetSocketAddress) sshd.getBoundAddresses().iterator().next()).getPort();
@@ -110,7 +103,7 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
         return (username, key, session) -> true;
     }
 
-    public void tearDown() throws Exception {
+    public void tearDown() {
         tearDownServer();
     }
 

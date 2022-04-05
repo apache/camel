@@ -29,24 +29,8 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-== Headers used
-
-This endpoint uses the following headers:
-[width="100%",cols="1,1,1,4",options="header"]
-|=======================================================================
-| Header name | Constant | Expected type | Description
-| CamelIgniteQueueOperation | IgniteConstants.IGNITE_QUEUE_OPERATION | IgniteQueueOperation enum |
-Allows you to dynamically change the queue operation.
-
-| CamelIgniteQueueMaxElements | IgniteConstants.IGNITE_QUEUE_MAX_ELEMENTS | Integer or int |
-When invoking the DRAIN operation, the amount of items to drain.
-
-| CamelIgniteQueueTransferredCount | IgniteConstants.IGNITE_QUEUE_TRANSFERRED_COUNT | Integer or int |
-The amount of items transferred as the result of the DRAIN operation.
-
-| CamelIgniteQueueTimeoutMillis | IgniteConstants.IGNITE_QUEUE_TIMEOUT_MILLIS | Long or long |
-Dynamically sets the timeout in milliseconds to use when invoking the OFFER or POLL operations. 
-|=======================================================================
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 include::spring-boot:partial$starter.adoc[]

@@ -569,7 +569,7 @@ public class MethodInfo {
 
             // if there was an explicit method name to invoke, then we should support using
             // any provided parameter values in the method name
-            String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
+            String methodName = exchange.getIn().getHeader(BeanConstants.BEAN_METHOD_NAME, String.class);
             // the parameter values is between the parenthesis
             String methodParameters = StringHelper.betweenOuterPair(methodName, '(', ')');
             // use an iterator to walk the parameter values

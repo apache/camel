@@ -66,33 +66,9 @@ You have the possibility of avoiding the usage of explicit static credentials, b
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
-=== Message headers evaluated by the SES producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelAwsSesFrom` |`String` |The sender's email address.
-
-|`CamelAwsSesTo` |`List<String>` |The destination(s) for this email.
-
-|`CamelAwsSesSubject` |`String` |The subject of the message.
-
-|`CamelAwsSesReplyToAddresses` |`List<String>` |The reply-to email address(es) for the message.
-
-|`CamelAwsSesReturnPath` |`String` |The email address to which bounce notifications are to be forwarded.
-
-|`CamelAwsSesHtmlEmail` |`Boolean` |The flag to show if email content is HTML.
-|=======================================================================
-
-=== Message headers set by the SES producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelAwsSesMessageId` |`String` |The Amazon SES message ID.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Advanced SesClient configuration
 

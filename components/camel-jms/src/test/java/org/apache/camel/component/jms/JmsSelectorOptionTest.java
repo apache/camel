@@ -58,7 +58,7 @@ public class JmsSelectorOptionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConsumerTemplate() throws Exception {
+    public void testConsumerTemplate() {
         template.sendBodyAndHeader("activemq:queue:consumer", "Message1", "SIZE_NUMBER", 1505);
         template.sendBodyAndHeader("activemq:queue:consumer", "Message3", "SIZE_NUMBER", 1300);
         template.sendBodyAndHeader("activemq:queue:consumer", "Message2", "SIZE_NUMBER", 1600);
@@ -90,9 +90,9 @@ public class JmsSelectorOptionTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:hello?selector=color='blue'").to("mock:a");
                 from("activemq:queue:hello?selector=color='red'").to("mock:b");
                 from("activemq:queue:hello?selector=SIZE_NUMBER>1500").to("mock:c");

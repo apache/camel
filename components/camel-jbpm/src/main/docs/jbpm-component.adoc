@@ -55,7 +55,7 @@ include::partial$component-endpoint-options.adoc[]
 jBPM Consumer allows to attach routes to
 
 * ProcessEventListeners
-* TaskEventListners
+* TaskEventListeners
 * CaseEventListeners
 
 === Path Parameters (3 parameters):
@@ -150,61 +150,16 @@ jBPM (KIE Server).
 ---------------------------------------------
 jbpm::hostName[:port][/resourceUri][?options]
 ---------------------------------------------
-
-== Message Headers
-
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Name |Default Value |Type |Description
-
-|CamelJBPMValue |null |Object |the value to assign to the global identifier
-
-|CamelJBPMOperation |PUT |String |The operation to perform. The operation name must be prefixed with
-CamelJBPMOperation and the name of the operation. See the full list
-above. It is case insensitive.
-
-|CamelJBPMProcessId |null |String |the id of the process that should be acted upon
-
-|CamelJBPMProcessInstanceId |0 |Long |the id of the process instance
-
-|CamelJBPMParameters |null |Map<String, Object> |the variables that should be set for various operations
-
-|CamelJBPMEventType |null |String |the type of event to use when signalEvent operation is performed
-
-|CamelJBPMEvent |null |String |The type of the received event. Possible values defined here
-org.infinispan.notifications.cachelistener.event.Event.Type
-
-|CamelJBPMMaxNumber |null |Integer |the maximum number of rules that should be fired
-
-|CamelJBPMIdentifier |null |long |identifier the global identifier
-
-|CamelJBPMWorkItemId |0 |Long |the id of the work item
-
-|CamelJBPMTaskId |0 |Long |the id of the task
-
-|CamelJBPMTask |null |Task |The task instance to use with task operations
-
-|CamelJBPMUserId |null |String |userId to use with task operations
-
-|CamelJBPMTargetUserId |null |String |The targetUserId used when delegating a task
-
-|CamelJBPMLanguage |null |String |The language to use when filtering user tasks
-
-|CamelJBPMAttachmentId |0 |Long |attachId to use when retrieving attachments
-
-|CamelJBPMContentId |0 |Long |contentId to use when retrieving attachments
-
-|CamelJBPMEntityList |null |List<String> |The potentialOwners when nominateTask operation is performed
-
-|CamelJBPMStatusList |null |List<String> |The list of status to use when filtering tasks
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Example
 
 Below is an example route that starts a business process with id
 evaluation. To run this example you need jBPM to run locally, easiest is to use single zip 
 distribution - downloaded from jbpm.org. Next, start it and import Evaluation sample project, build and deploy.
-Once done this test can be ran out of the box.
+Once done this test can be run out of the box.
 
 [source,java]
 ----------------------------------------------------------------------------------------------

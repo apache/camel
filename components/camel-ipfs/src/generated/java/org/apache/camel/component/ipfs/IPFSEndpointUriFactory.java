@@ -22,8 +22,8 @@ public class IPFSEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(3);
-        props.add("lazyStartProducer");
         props.add("ipfsCmd");
+        props.add("lazyStartProducer");
         props.add("outdir");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

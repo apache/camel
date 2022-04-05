@@ -50,7 +50,8 @@ import software.amazon.awssdk.services.dynamodb.model.TableStatus;
  * Store and retrieve data from AWS DynamoDB service using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddb", title = "AWS DynamoDB", syntax = "aws2-ddb:tableName",
-             producerOnly = true, category = { Category.CLOUD, Category.DATABASE, Category.NOSQL })
+             producerOnly = true, category = { Category.CLOUD, Category.DATABASE, Category.NOSQL },
+             headersClass = Ddb2Constants.class)
 public class Ddb2Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(Ddb2Endpoint.class);

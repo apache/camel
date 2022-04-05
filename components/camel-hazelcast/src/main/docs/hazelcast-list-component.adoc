@@ -34,14 +34,20 @@ include::partial$component-endpoint-options.adoc[]
 
 == List producer – to(“hazelcast-list:foo”)
 
-The list producer provides 7 operations:
+The list producer provides 8 operations:
+
 * add
 * addAll
-* set
+* setvalue
 * get
 * removevalue
 * removeAll
 * clear
+* retainAll
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Sample for *add*:
 

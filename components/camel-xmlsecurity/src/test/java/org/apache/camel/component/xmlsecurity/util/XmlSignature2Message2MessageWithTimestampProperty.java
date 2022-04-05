@@ -30,7 +30,7 @@ import org.apache.camel.component.xmlsecurity.api.DefaultXmlSignature2Message;
 public class XmlSignature2Message2MessageWithTimestampProperty extends DefaultXmlSignature2Message {
 
     @Override
-    protected List<Reference> getReferencesForMessageMapping(Input input) throws Exception {
+    protected List<Reference> getReferencesForMessageMapping(Input input) {
 
         List<Reference> result = new ArrayList<>(1);
         for (Reference ref : input.getReferences()) {

@@ -22,14 +22,14 @@ public class IgniteEventsEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(8);
-        props.add("clusterGroupExpression");
         props.add("bridgeErrorHandler");
+        props.add("clusterGroupExpression");
+        props.add("endpointId");
+        props.add("events");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
         props.add("propagateIncomingBodyIfNoReturnValue");
         props.add("treatCollectionsAsCacheObjects");
-        props.add("endpointId");
-        props.add("exchangePattern");
-        props.add("exceptionHandler");
-        props.add("events");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

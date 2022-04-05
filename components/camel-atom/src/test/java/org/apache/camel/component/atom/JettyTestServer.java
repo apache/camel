@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -127,7 +126,7 @@ public final class JettyTestServer {
         private static final long serialVersionUID = 5594945031962091041L;
 
         @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
             resp.getWriter().write(FileUtils.readFileToString(new File("src/test/data/feed.atom"),
                     StandardCharsets.UTF_8));
         }

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class NettyHttpBindingUseRelativePathInPostTest extends BaseNettyTest {
 
     @Test
-    public void testSendToNetty() throws Exception {
+    public void testSendToNetty() {
         Exchange exchange = template.request(
                 "netty-http:http://localhost:{{port}}/myapp/myservice?query1=a&query2=b&useRelativePath=true", exchange1 -> {
                     exchange1.getIn().setBody("b1=x&b2=y");
@@ -40,9 +40,9 @@ public class NettyHttpBindingUseRelativePathInPostTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://localhost:{{port}}/myapp/myservice").process(exchange -> {
                     String body = exchange.getIn().getBody(String.class);
 

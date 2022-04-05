@@ -43,39 +43,6 @@ public interface HttpEndpointBuilderFactory {
             return (AdvancedHttpEndpointBuilder) this;
         }
         /**
-         * If this option is false the Servlet will disable the HTTP streaming
-         * and set the content-length header on the response.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param chunked the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder chunked(boolean chunked) {
-            doSetProperty("chunked", chunked);
-            return this;
-        }
-        /**
-         * If this option is false the Servlet will disable the HTTP streaming
-         * and set the content-length header on the response.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param chunked the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder chunked(String chunked) {
-            doSetProperty("chunked", chunked);
-            return this;
-        }
-        /**
          * Determines whether or not the raw input stream from Servlet is cached
          * or not (Camel will read the stream into a in memory/overflow to file,
          * Stream caching) cache. By default Camel will cache the Servlet input
@@ -532,53 +499,6 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * If enabled and an Exchange failed processing on the consumer side,
-         * and if the caused Exception was send back serialized in the response
-         * as a application/x-java-serialized-object content type. On the
-         * producer side the exception will be deserialized and thrown as is,
-         * instead of the HttpOperationFailedException. The caused exception is
-         * required to be serialized. This is by default turned off. If you
-         * enable this then be aware that Java will deserialize the incoming
-         * data from the request to Java and that can be a potential security
-         * risk.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param transferException the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder transferException(boolean transferException) {
-            doSetProperty("transferException", transferException);
-            return this;
-        }
-        /**
-         * If enabled and an Exchange failed processing on the consumer side,
-         * and if the caused Exception was send back serialized in the response
-         * as a application/x-java-serialized-object content type. On the
-         * producer side the exception will be deserialized and thrown as is,
-         * instead of the HttpOperationFailedException. The caused exception is
-         * required to be serialized. This is by default turned off. If you
-         * enable this then be aware that Java will deserialize the incoming
-         * data from the request to Java and that can be a potential security
-         * risk.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param transferException the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder transferException(String transferException) {
-            doSetProperty("transferException", transferException);
-            return this;
-        }
-        /**
          * Proxy authentication domain to use with NTML.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -951,41 +871,6 @@ public interface HttpEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default HttpEndpointBuilder basic() {
             return (HttpEndpointBuilder) this;
-        }
-        /**
-         * To use a custom HttpBinding to control the mapping between Camel
-         * message and HttpClient.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
-         * type.
-         * 
-         * Group: common (advanced)
-         * 
-         * @param httpBinding the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHttpEndpointBuilder httpBinding(
-                org.apache.camel.http.common.HttpBinding httpBinding) {
-            doSetProperty("httpBinding", httpBinding);
-            return this;
-        }
-        /**
-         * To use a custom HttpBinding to control the mapping between Camel
-         * message and HttpClient.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
-         * type.
-         * 
-         * Group: common (advanced)
-         * 
-         * @param httpBinding the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHttpEndpointBuilder httpBinding(String httpBinding) {
-            doSetProperty("httpBinding", httpBinding);
-            return this;
         }
         /**
          * Configure a cookie handler to maintain a HTTP session.

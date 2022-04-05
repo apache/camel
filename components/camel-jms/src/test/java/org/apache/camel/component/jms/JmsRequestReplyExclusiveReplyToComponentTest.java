@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JmsRequestReplyExclusiveReplyToComponentTest extends CamelTestSupport {
 
     @Test
-    public void testJmsRequestReplyExclusiveFixedReplyTo() throws Exception {
+    public void testJmsRequestReplyExclusiveFixedReplyTo() {
         StopWatch watch = new StopWatch();
 
         assertEquals("Hello A", template.requestBody("activemq:queue:foo?replyTo=bar", "A"));
@@ -59,10 +59,10 @@ public class JmsRequestReplyExclusiveReplyToComponentTest extends CamelTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo")
                         .transform(body().prepend("Hello "));
             }

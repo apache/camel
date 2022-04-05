@@ -39,15 +39,14 @@ public class RequestReplyCorrelatedWithCustomHeaderTest extends CamelTestSupport
     public static void processRequest(
             @Body final String body,
             @Header("CustomCorrelation") final String customCorrelation,
-            @Header("JMSCorrelationId") final String jmsCorrelationId, final Exchange exchange)
-            throws Exception {
+            @Header("JMSCorrelationId") final String jmsCorrelationId, final Exchange exchange) {
         assertNotNull(customCorrelation);
         assertNull(jmsCorrelationId);
         exchange.getIn().setBody("Hi, " + body + ", " + customCorrelation);
     }
 
     @Test
-    public void shouldCorrelateRepliesWithCustomCorrelationProperty() throws Exception {
+    public void shouldCorrelateRepliesWithCustomCorrelationProperty() {
         final String reply = template.requestBody("activemq:queue:request",
                 "Bobby", String.class);
 
@@ -55,7 +54,7 @@ public class RequestReplyCorrelatedWithCustomHeaderTest extends CamelTestSupport
     }
 
     @Test
-    public void shouldCorrelateRepliesWithCustomCorrelationPropertyAndValue() throws Exception {
+    public void shouldCorrelateRepliesWithCustomCorrelationPropertyAndValue() {
         final String reply = template.requestBodyAndHeader(
                 "activemq:queue:request", "Bobby", "CustomCorrelation",
                 "custom-id", String.class);
@@ -78,10 +77,10 @@ public class RequestReplyCorrelatedWithCustomHeaderTest extends CamelTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:request").bean(RequestReplyCorrelatedWithCustomHeaderTest.class, "processRequest");
             }
         };

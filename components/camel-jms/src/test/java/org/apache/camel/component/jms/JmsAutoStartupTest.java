@@ -59,10 +59,10 @@ public class JmsAutoStartupTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 endpoint = context.getEndpoint("activemq:queue:foo?autoStartup=false", JmsEndpoint.class);
 
                 from(endpoint).to("mock:result");

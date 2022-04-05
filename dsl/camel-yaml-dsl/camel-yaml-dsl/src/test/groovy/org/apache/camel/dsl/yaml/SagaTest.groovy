@@ -136,29 +136,6 @@ class SagaTest extends YamlTestSupport {
                                  expression:
                                    simple: "${body}"        
                           - to: "mock:result"
-                    '''),
-                asResource('endpoint-dsl', '''
-                    - from:
-                        uri: "direct:start"
-                        steps:    
-                          - saga: 
-                             propagation: "MANDATORY"
-                             completionMode: "MANUAL"
-                             compensation: 
-                               direct:
-                                 name: "compensation"
-                             completion:
-                               direct:
-                                 name: "completion"
-                             steps:
-                               - to: "direct:something"  
-                             option:
-                               - key: o1
-                                 simple: "${body}" 
-                               - key: o2
-                                 expression:
-                                   simple: "${body}"          
-                          - to: "mock:result"
                     ''')
            ]
     }

@@ -34,19 +34,24 @@ include::partial$component-endpoint-options.adoc[]
 
 == Queue producer – to(“hazelcast-queue:foo”)
 
-The queue producer provides 10 operations:
+The queue producer provides 12 operations:
+
 * add
 * put
 * poll
 * peek
 * offer
-* remove value
-* remaining capacity
-* remove all
-* remove if
-* drain to
+* removevalue
+* remainingCapacity
+* removeAll
+* removeIf
+* drainTo
 * take
-* retain all
+* retainAll
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Sample for *add*:
 

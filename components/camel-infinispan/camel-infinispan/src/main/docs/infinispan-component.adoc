@@ -50,6 +50,10 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 == Camel Operations
 This section lists all available operations, along with their header information.
 
@@ -204,26 +208,6 @@ This section lists all available operations, along with their header information
 Write methods like put(key, value) and remove(key) do not return the previous value by default.
 ====
 
-== Message Headers
-
-[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
-|=======================================================================
-|Name |Default Value |Type |Context |Description
-|CamelInfinispanCacheName |`null` |String |Shared |The cache participating in the operation or event.
-|CamelInfinispanOperation |`PUT` |InfinispanOperation |Producer |The operation to perform.
-|CamelInfinispanMap |`null` |Map |Producer |A Map to use in case of CamelInfinispanOperationPutAll operation
-|CamelInfinispanKey |`null` |Object |Shared |The key to perform the operation to or the key generating the event.
-|CamelInfinispanValue |`null` |Object |Producer |The value to use for the operation.
-|CamelInfinispanEventType |`null` |String |Consumer |The type of the received event. 
-|CamelInfinispanLifespanTime |`null` |long |Producer |The Lifespan time of a value inside the cache. Negative values are interpreted as infinity.
-|CamelInfinispanTimeUnit |`null` |String |Producer |The Time Unit of an entry Lifespan Time.
-|CamelInfinispanMaxIdleTime |`null` |long |Producer |The maximum amount of time an entry is allowed to be idle for before it is considered as expired.
-|CamelInfinispanMaxIdleTimeUnit |`null` |String |Producer |The Time Unit of an entry Max Idle Time.
-|CamelInfinispanQueryBuilder |null |InfinispanQueryBuilder |Producer |The QueryBuilde to use for QUERY command, if not present the command defaults to InifinispanConfiguration's one
-|CamelInfinispanOperationResultHeader |null |String |Producer |Store the operation result in a header instead of the message body
-|=======================================================================
-
-
 == Examples
 
 * Put a key/value into a named cache:
@@ -247,7 +231,7 @@ from("direct:start")
     .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.GET)
     .setHeader(InfinispanConstants.KEY).constant("123")
     .setHeader(InfinispanConstants.LIFESPAN_TIME).constant(100L) // <1>
-    .setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT.constant(TimeUnit.MILLISECONDS.toString()) // <2>
+    .setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT).constant(TimeUnit.MILLISECONDS.toString()) // <2>
     .to("infinispan:myCacheName");
 ----
 <1> Set the lifespan of the entry

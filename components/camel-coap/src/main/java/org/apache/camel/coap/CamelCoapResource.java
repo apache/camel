@@ -111,7 +111,7 @@ final class CamelCoapResource extends CoapResource {
 
             if (options.hasContentFormat()) {
                 String mt = MediaTypeRegistry.toString(options.getContentFormat());
-                camelExchange.getIn().setHeader(org.apache.camel.Exchange.CONTENT_TYPE, mt);
+                camelExchange.getIn().setHeader(CoAPConstants.CONTENT_TYPE, mt);
             }
 
             List<String> path = exchange.getRequest().getOptions().getUriPath();
@@ -140,7 +140,7 @@ final class CamelCoapResource extends CoapResource {
             consumer.getProcessor().process(camelExchange);
             Message target = camelExchange.getMessage();
 
-            int format = MediaTypeRegistry.parse(target.getHeader(org.apache.camel.Exchange.CONTENT_TYPE, String.class));
+            int format = MediaTypeRegistry.parse(target.getHeader(CoAPConstants.CONTENT_TYPE, String.class));
             cexchange.respond(ResponseCode.CONTENT, target.getBody(byte[].class), format);
 
         } catch (Exception e) {

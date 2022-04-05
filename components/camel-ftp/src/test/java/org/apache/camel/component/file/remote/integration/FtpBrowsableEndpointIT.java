@@ -50,7 +50,7 @@ public class FtpBrowsableEndpointIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testBrowsableNoFiles() throws Exception {
+    public void testBrowsableNoFiles() {
         BrowsableEndpoint browse = context.getEndpoint(getFtpUrl(), BrowsableEndpoint.class);
         assertNotNull(browse);
 
@@ -60,7 +60,7 @@ public class FtpBrowsableEndpointIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testBrowsableOneFile() throws Exception {
+    public void testBrowsableOneFile() {
         template.sendBodyAndHeader(getFtpUrl(), "A", Exchange.FILE_NAME, "a.txt");
 
         FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
@@ -83,7 +83,7 @@ public class FtpBrowsableEndpointIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testBrowsableTwoFiles() throws Exception {
+    public void testBrowsableTwoFiles() {
         template.sendBodyAndHeader(getFtpUrl(), "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(getFtpUrl(), "B", Exchange.FILE_NAME, "b.txt");
 
@@ -109,7 +109,7 @@ public class FtpBrowsableEndpointIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testBrowsableThreeFilesRecursive() throws Exception {
+    public void testBrowsableThreeFilesRecursive() {
         template.sendBodyAndHeader(getFtpUrl(), "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(getFtpUrl(), "B", Exchange.FILE_NAME, "foo/b.txt");
         template.sendBodyAndHeader(getFtpUrl(), "C", Exchange.FILE_NAME, "bar/c.txt");

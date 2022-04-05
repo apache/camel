@@ -24,10 +24,10 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 public class CurrentWeatherMadridConsumerIT extends BaseWeatherConsumerIT {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("weather:foo?location=Madrid,Spain&appid=9162755b2efa555823cfe0451d7fff38").to("mock:result");
             }
         };

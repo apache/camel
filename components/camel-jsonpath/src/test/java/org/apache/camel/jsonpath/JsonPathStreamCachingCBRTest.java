@@ -28,10 +28,10 @@ import org.junit.jupiter.api.Test;
 public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getStreamCachingStrategy().setSpoolDirectory("target/tmp");
                 context.getStreamCachingStrategy().setSpoolThreshold(-1);
 

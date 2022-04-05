@@ -83,15 +83,15 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // no redelivery for unit test as we want it to be polled next time
                 onException(IllegalArgumentException.class).to("mock:error");
 
                 from("imap://localhost?username=claus&password=secret&unseen=true&initialDelay=100&delay=100")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 counter++;
                                 if (counter < 3) {
                                     throw new IllegalArgumentException("Forced by unit test");

@@ -23,11 +23,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class FtpConsumerLocalWorkDirectoryWorkOnPayloadIT extends FtpConsumerLocalWorkDirectoryIT {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // alter the body by setting it to a String type
                         exchange.getIn().setBody("Hello World");
 

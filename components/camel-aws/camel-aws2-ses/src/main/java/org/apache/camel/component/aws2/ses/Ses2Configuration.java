@@ -106,7 +106,7 @@ public class Ses2Configuration implements Cloneable {
     }
 
     /**
-     * List of comma separated destination email address. Can be overriden with 'CamelAwsSesTo' header.
+     * List of comma separated destination email address. Can be overridden with 'CamelAwsSesTo' header.
      */
     public void setTo(String to) {
         this.to = to;
@@ -117,7 +117,8 @@ public class Ses2Configuration implements Cloneable {
     }
 
     /**
-     * List of comma separated destination carbon copy (cc) email address. Can be overriden with 'CamelAwsSesCc' header.
+     * List of comma separated destination carbon copy (cc) email address. Can be overridden with 'CamelAwsSesCc'
+     * header.
      */
     public void setCc(String cc) {
         this.cc = cc;
@@ -128,8 +129,8 @@ public class Ses2Configuration implements Cloneable {
     }
 
     /**
-     * List of comma separated destination blind carbon copy (bcc) email address. Can be overriden with 'CamelAwsSesBcc'
-     * header.
+     * List of comma separated destination blind carbon copy (bcc) email address. Can be overridden with
+     * 'CamelAwsSesBcc' header.
      */
     public void setBcc(String bcc) {
         this.bcc = bcc;

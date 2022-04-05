@@ -242,9 +242,9 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jms:queue:hello").process(exchange -> {
                     exchange.getIn().setBody(REPLY_BODY);
                     assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));

@@ -42,7 +42,6 @@ import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.PropertyInject;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.AnnotationExpressionFactory;
@@ -100,18 +99,6 @@ public class BeanInfo {
 
     public BeanInfo(CamelContext camelContext, Class<?> type, Method explicitMethod, ParameterMappingStrategy strategy,
                     BeanComponent beanComponent) {
-
-        // use type resolver
-        BeanInfoTypeResolver typeResolver = CamelContextHelper.findSingleByType(camelContext, BeanInfoTypeResolver.class);
-        if (typeResolver == null) {
-            // use default instance
-            typeResolver = DefaultBeanInfoTypeResolver.INSTANCE;
-        }
-        Object[] resolved = typeResolver.resolve(type, explicitMethod);
-        if (resolved != null) {
-            type = (Class<?>) resolved[0];
-            explicitMethod = (Method) resolved[1];
-        }
 
         this.camelContext = camelContext;
         this.type = type;
@@ -183,7 +170,7 @@ public class BeanInfo {
 
         MethodInfo methodInfo = null;
 
-        String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
+        String methodName = exchange.getIn().getHeader(BeanConstants.BEAN_METHOD_NAME, String.class);
         if (methodName != null) {
 
             // do not use qualifier for name
@@ -388,7 +375,7 @@ public class BeanInfo {
             // maybe the method overrides, and the method map keeps info of the source override we can use
             for (Map.Entry<Method, MethodInfo> methodEntry : methodMap.entrySet()) {
                 Method source = methodEntry.getKey();
-                if (org.apache.camel.util.ObjectHelper.isOverridingMethod(getType(), source, method, false)) {
+                if (isOverridingMethod(source, method)) {
                     answer = methodEntry.getValue();
                     break;
                 }
@@ -925,8 +912,9 @@ public class BeanInfo {
     }
 
     /**
-     * Gets the most specific override of a given method, if any. Indeed, overrides may have already been found while
-     * inspecting sub classes. Or the given method could override an interface extra method.
+     * Gets the most specific override of a given method, if any. Ignores overrides from synthetic classes. Indeed,
+     * overrides may have already been found while inspecting sub classes. Or the given method could override an
+     * interface extra method.
      *
      * @param  proposedMethodInfo the method for which a more specific override is searched
      * @return                    The already registered most specific override if any, otherwise <code>null</code>
@@ -936,16 +924,24 @@ public class BeanInfo {
             Method alreadyRegisteredMethod = alreadyRegisteredMethodInfo.getMethod();
             Method proposedMethod = proposedMethodInfo.getMethod();
 
-            if (org.apache.camel.util.ObjectHelper.isOverridingMethod(getType(), proposedMethod, alreadyRegisteredMethod,
-                    false)) {
+            if (!alreadyRegisteredMethod.getDeclaringClass().isSynthetic()
+                    && isOverridingMethod(proposedMethod, alreadyRegisteredMethod)) {
                 return alreadyRegisteredMethodInfo;
-            } else if (org.apache.camel.util.ObjectHelper.isOverridingMethod(getType(), alreadyRegisteredMethod, proposedMethod,
-                    false)) {
+            } else if (isOverridingMethod(alreadyRegisteredMethod, proposedMethod)) {
                 return proposedMethodInfo;
             }
         }
 
         return null;
+    }
+
+    /**
+     * Wrapper loosely checking the bean type for overrides
+     * 
+     * @see org.apache.camel.util.ObjectHelper#isOverridingMethod(Class, Method, Method, boolean)
+     */
+    private boolean isOverridingMethod(Method source, Method target) {
+        return org.apache.camel.util.ObjectHelper.isOverridingMethod(getType(), source, target, false);
     }
 
     private MethodInfo chooseMethodWithCustomAnnotations(Collection<MethodInfo> possibles) {

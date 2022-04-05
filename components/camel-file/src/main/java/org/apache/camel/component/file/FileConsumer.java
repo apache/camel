@@ -175,7 +175,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             FileResumeSet resumeSet = new FileResumeSet(dirFiles);
             resumeStrategy.resume(resumeSet);
 
-            return resumeSet.hasResumables() ? resumeSet.resumed() : dirFiles;
+            return resumeSet.resumed();
         }
 
         return dirFiles;
@@ -288,10 +288,10 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         file.setFileLength(length);
         file.setLastModified(modified);
         if (length >= 0) {
-            message.setHeader(Exchange.FILE_LENGTH, length);
+            message.setHeader(FileConstants.FILE_LENGTH, length);
         }
         if (modified >= 0) {
-            message.setHeader(Exchange.FILE_LAST_MODIFIED, modified);
+            message.setHeader(FileConstants.FILE_LAST_MODIFIED, modified);
         }
     }
 

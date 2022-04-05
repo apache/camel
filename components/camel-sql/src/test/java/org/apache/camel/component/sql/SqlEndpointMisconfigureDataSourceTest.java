@@ -61,7 +61,7 @@ public class SqlEndpointMisconfigureDataSourceTest extends CamelTestSupport {
         context.getRegistry().bind("myDataSource", db);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("sql:foo?dataSource=#myDataSource")
                         .to("mock:result");

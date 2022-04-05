@@ -37,11 +37,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BarcodeUnmarshalTest extends BarcodeTestBase {
 
     @Test
-    void testOrientation() throws Exception {
+    void testOrientation() {
 
         Exchange exchange = template.request("direct:code1", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(MSG);
             }
         });

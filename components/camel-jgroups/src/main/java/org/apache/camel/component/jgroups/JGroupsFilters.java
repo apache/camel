@@ -23,7 +23,7 @@ import org.jgroups.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jgroups.JGroupsEndpoint.HEADER_JGROUPS_CHANNEL_ADDRESS;
+import static org.apache.camel.component.jgroups.JGroupsConstants.HEADER_JGROUPS_CHANNEL_ADDRESS;
 
 /**
  * JGroups-specific filters factory.

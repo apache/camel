@@ -32,7 +32,8 @@ import org.apache.camel.util.ObjectHelper;
  * Stores and retrieves messages to/from Azure Storage Queue.
  */
 @UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-queue", title = "Azure Storage Queue Service",
-             syntax = "azure-storage-queue:accountName/queueName", category = { Category.CLOUD, Category.MESSAGING })
+             syntax = "azure-storage-queue:accountName/queueName", category = { Category.CLOUD, Category.MESSAGING },
+             headersClass = QueueConstants.class)
 public class QueueEndpoint extends ScheduledPollEndpoint {
 
     private QueueServiceClient queueServiceClient;

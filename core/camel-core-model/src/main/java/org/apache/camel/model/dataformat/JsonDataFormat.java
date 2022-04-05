@@ -53,15 +53,18 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @XmlTransient
     private Class<?> unmarshalType;
     @XmlAttribute(name = "jsonView")
+    @Metadata(label = "advanced")
     private String jsonViewTypeName;
     @XmlTransient
     private Class<?> jsonView;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String include;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String allowJmsType;
     @XmlAttribute(name = "collectionType")
+    @Metadata(label = "advanced")
     private String collectionTypeName;
     @XmlTransient
     private Class<?> collectionType;
@@ -75,8 +78,10 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(label = "advanced")
     private String moduleRefs;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String enableFeatures;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String disableFeatures;
     @XmlAttribute
     @Metadata(label = "advanced")
@@ -88,7 +93,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(label = "advanced")
     private String timezone;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String dropRootNode;
     @XmlAttribute
     @Metadata(label = "advanced")
@@ -250,7 +255,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
 
     /**
      * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but
-     * allows to use different collection types than java.util.Collection based as default.
+     * allows using different collection types than java.util.Collection based as default.
      */
     public void setCollectionTypeName(String collectionTypeName) {
         this.collectionTypeName = collectionTypeName;
@@ -400,7 +405,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     }
 
     /**
-     * If set to true then Jackson will lookup for an objectMapper into the registry
+     * If set to true then Jackson will look for an objectMapper to use from the registry
      */
     public void setAutoDiscoverObjectMapper(String autoDiscoverObjectMapper) {
         this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;

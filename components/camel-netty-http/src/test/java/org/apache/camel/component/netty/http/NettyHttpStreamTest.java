@@ -68,10 +68,10 @@ public class NettyHttpStreamTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:upstream-call")
                         .bean(Helper.class, "prepareStream")
                         .to("netty-http:http://localhost:{{port}}/upstream?disableStreamCache=true")

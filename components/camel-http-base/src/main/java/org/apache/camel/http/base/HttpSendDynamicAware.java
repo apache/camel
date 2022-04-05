@@ -159,28 +159,32 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
             String host = parse.getHost();
             String path = parse.getPath();
             String authority = parse.getAuthority();
+
+            // we want host to include port
+            int port = parse.getPort();
+            if (port > 0 && port != 80 && port != 443) {
+                host += ":" + port;
+            }
+
             // if the path is just a trailing slash then skip it (eg it must be longer than just the slash itself)
             if (path != null && path.length() > 1) {
-                int port = parse.getPort();
-                if (port > 0 && port != 80 && port != 443) {
-                    host += ":" + port;
-                }
                 // remove double slash for path
                 while (path.startsWith("//")) {
                     path = path.substring(1);
                 }
-                if (!httpComponent) {
-                    // include scheme for components that are not camel-http
-                    String scheme = parse.getScheme();
-                    if (scheme != null) {
-                        host = scheme + "://" + host;
-                    }
-                }
-                return new String[] { host, path, authority };
             }
+
+            // include scheme for components that are not camel-http
+            if (!httpComponent) {
+                String scheme = parse.getScheme();
+                if (scheme != null) {
+                    host = scheme + "://" + host;
+                }
+            }
+
+            return new String[] { host, path, authority };
         } catch (URISyntaxException e) {
             // ignore
-            return new String[] { u, null, null };
         }
 
         // no context path

@@ -64,7 +64,7 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
     public void testNullBody() throws Exception {
         Mailbox.clearAll();
 
-        template.sendBodyAndHeader("direct:b", null, "contentType", "text/plain; charset=iso-8859-1");
+        template.sendBodyAndHeader("direct:b", null, MailConstants.MAIL_CONTENT_TYPE, "text/plain; charset=iso-8859-1");
 
         Mailbox box = Mailbox.get("claus@localhost");
         Message msg = box.get(0);
@@ -76,7 +76,8 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
     public void testSendPlainMailContentTypeInHeader() throws Exception {
         Mailbox.clearAll();
 
-        template.sendBodyAndHeader("direct:b", "Hello World", "contentType", "text/plain; charset=iso-8859-1");
+        template.sendBodyAndHeader("direct:b", "Hello World", MailConstants.MAIL_CONTENT_TYPE,
+                "text/plain; charset=iso-8859-1");
 
         Mailbox box = Mailbox.get("claus@localhost");
         Message msg = box.get(0);
@@ -101,7 +102,7 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
         Mailbox.clearAll();
 
         // Camel will fixup the Content-Type if you do not have a space after the semi colon
-        template.sendBodyAndHeader("direct:b", "Hello World", "contentType", "text/plain;charset=iso-8859-1");
+        template.sendBodyAndHeader("direct:b", "Hello World", MailConstants.MAIL_CONTENT_TYPE, "text/plain;charset=iso-8859-1");
 
         Mailbox box = Mailbox.get("claus@localhost");
         Message msg = box.get(0);
@@ -111,9 +112,9 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").to("smtp://claus@localhost?contentType=text/html;charset=UTF-8");
                 from("direct:b").to("smtp://claus@localhost");
                 from("direct:c").to("smtp://claus@localhost?contentType=text/html;charset=iso-8859-1");

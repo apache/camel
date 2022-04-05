@@ -30,6 +30,20 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+== set cache producer
 
+The set producer provides 7 operations:
+
+* add
+* removeAll
+* clear
+* addAll
+* removeAll
+* retainAll
+* getAll
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 include::spring-boot:partial$starter.adoc[]

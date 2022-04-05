@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * Perform caching operations using <a href="http://www.ehcache.org">Ehcache</a>.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "ehcache", title = "Ehcache", syntax = "ehcache:cacheName",
-             category = { Category.CACHE, Category.DATAGRID, Category.CLUSTERING })
+             category = { Category.CACHE, Category.DATAGRID, Category.CLUSTERING }, headersClass = EhcacheConstants.class)
 public class EhcacheEndpoint extends DefaultEndpoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EhcacheComponent.class);

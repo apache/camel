@@ -63,7 +63,7 @@ public class ProducerBatchInvalidTest extends CamelTestSupport {
     public void shouldInvalid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // required for the sql component
                 getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
 

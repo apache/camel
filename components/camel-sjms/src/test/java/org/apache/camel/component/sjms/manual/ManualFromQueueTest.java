@@ -59,10 +59,10 @@ public class ManualFromQueueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("sjms:queue:foo?asyncStartListener=true")
                         .to("log:foo")
                         .to("mock:foo");

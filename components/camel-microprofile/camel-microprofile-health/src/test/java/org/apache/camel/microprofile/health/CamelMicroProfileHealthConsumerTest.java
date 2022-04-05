@@ -27,7 +27,6 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.eclipse.microprofile.health.HealthCheckResponse.Status;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.microprofile.health.CamelMicroProfileHealthCheckRegistry.CONSUMERS_CHECK_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CamelMicroProfileHealthConsumerTest extends CamelMicroProfileHealthTestSupport {
@@ -47,7 +46,7 @@ public class CamelMicroProfileHealthConsumerTest extends CamelMicroProfileHealth
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput(CONSUMERS_CHECK_NAME, Status.UP, checks.getJsonObject(0));
+        assertHealthCheckOutput("camel-consumers", Status.UP, checks.getJsonObject(0));
     }
 
     @Test
@@ -67,7 +66,7 @@ public class CamelMicroProfileHealthConsumerTest extends CamelMicroProfileHealth
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput(CONSUMERS_CHECK_NAME, Status.DOWN, checks.getJsonObject(0), jsonObject -> {
+        assertHealthCheckOutput("camel-consumers", Status.DOWN, checks.getJsonObject(0), jsonObject -> {
             assertEquals("healthyRoute", jsonObject.getString("route.id"));
             assertEquals(ServiceStatus.Stopped.name(), jsonObject.getString("route.status"));
         });
@@ -87,7 +86,7 @@ public class CamelMicroProfileHealthConsumerTest extends CamelMicroProfileHealth
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput(CONSUMERS_CHECK_NAME, Status.UP, checks.getJsonObject(0));
+        assertHealthCheckOutput("camel-consumers", Status.UP, checks.getJsonObject(0));
 
         healthCheckRegistry.unregister(hc);
 

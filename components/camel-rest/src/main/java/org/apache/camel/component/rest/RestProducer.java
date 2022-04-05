@@ -52,7 +52,6 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  */
 public class RestProducer extends DefaultAsyncProducer {
 
-    private static final String ACCEPT = "Accept";
     private final CamelContext camelContext;
     private final RestConfiguration configuration;
     private boolean prepareUriTemplate = true;
@@ -177,7 +176,7 @@ public class RestProducer extends DefaultAsyncProducer {
 
         if (query != null) {
             // the query parameters for the rest call to be used
-            inMessage.setHeader(Exchange.REST_HTTP_QUERY, query);
+            inMessage.setHeader(RestConstants.REST_HTTP_QUERY, query);
         }
 
         if (hasPath) {
@@ -194,7 +193,7 @@ public class RestProducer extends DefaultAsyncProducer {
                 overrideUri += "/" + resolvedUriTemplate;
             }
             // the http uri for the rest call to be used
-            inMessage.setHeader(Exchange.REST_HTTP_URI, overrideUri);
+            inMessage.setHeader(RestConstants.REST_HTTP_URI, overrideUri);
 
             // when chaining RestConsumer with RestProducer, the
             // HTTP_PATH header will be present, we remove it here
@@ -209,17 +208,17 @@ public class RestProducer extends DefaultAsyncProducer {
         if (method != null) {
             // the method should be in upper case
             String upper = method.toUpperCase(Locale.US);
-            inMessage.setHeader(Exchange.HTTP_METHOD, upper);
+            inMessage.setHeader(RestConstants.HTTP_METHOD, upper);
         }
 
         final String produces = getEndpoint().getProduces();
-        if (isEmpty(inMessage.getHeader(Exchange.CONTENT_TYPE)) && isNotEmpty(produces)) {
-            inMessage.setHeader(Exchange.CONTENT_TYPE, produces);
+        if (isEmpty(inMessage.getHeader(RestConstants.CONTENT_TYPE)) && isNotEmpty(produces)) {
+            inMessage.setHeader(RestConstants.CONTENT_TYPE, produces);
         }
 
         final String consumes = getEndpoint().getConsumes();
-        if (isEmpty(inMessage.getHeader(ACCEPT)) && isNotEmpty(consumes)) {
-            inMessage.setHeader(ACCEPT, consumes);
+        if (isEmpty(inMessage.getHeader(RestConstants.ACCEPT)) && isNotEmpty(consumes)) {
+            inMessage.setHeader(RestConstants.ACCEPT, consumes);
         }
     }
 

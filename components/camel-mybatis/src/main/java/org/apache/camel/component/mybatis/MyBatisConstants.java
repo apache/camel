@@ -16,13 +16,24 @@
  */
 package org.apache.camel.component.mybatis;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * MyBatis constants.
  */
 public final class MyBatisConstants {
 
-    public static final String MYBATIS_RESULT = "CamelMyBatisResult";
+    // The schemes
+    public static final String SCHEME_MYBATIS_BEAN = "mybatis-bean";
+    public static final String SCHEME_MYBATIS = "mybatis";
 
+    @Metadata(label = "producer", description = "The *response* returned from MtBatis in any of the operations. For\n" +
+                                                "instance an `INSERT` could return the auto-generated key, or number of\n" +
+                                                "rows etc.",
+              javaType = "Object")
+    public static final String MYBATIS_RESULT = "CamelMyBatisResult";
+    @Metadata(description = "The *statementName* used (for example: insertAccount).", javaType = "String",
+              applicableFor = SCHEME_MYBATIS)
     public static final String MYBATIS_STATEMENT_NAME = "CamelMyBatisStatementName";
 
     private MyBatisConstants() {

@@ -54,6 +54,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     private boolean enabled = true;
     private String excludePattern;
     private String exposureLevel = "default";
+    private HealthCheck.State initialState = HealthCheck.State.DOWN;
     private volatile boolean loadHealthChecksDone;
 
     public DefaultHealthCheckRegistry() {
@@ -105,6 +106,14 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     @Override
     public void setExposureLevel(String exposureLevel) {
         this.exposureLevel = exposureLevel;
+    }
+
+    public HealthCheck.State getInitialState() {
+        return initialState;
+    }
+
+    public void setInitialState(HealthCheck.State initialState) {
+        this.initialState = initialState;
     }
 
     @Override

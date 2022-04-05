@@ -58,17 +58,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
-
-== Message headers when subscribing
-
-[width="100%",cols="20%,80%",options="header",]
-|=======================================================================
-|Name |Description
-|`CamelPubNubTimeToken` |The Timestamp for the event.
-|`CamelPubNubChannel` |The channel for which the message belongs.
-|=======================================================================
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Message body
 

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class NettyHttpBindingUseRelativePathTest extends BaseNettyTest {
 
     @Test
-    public void testSendToNettyWithPath() throws Exception {
+    public void testSendToNettyWithPath() {
         Exchange exchange = template.request("netty-http:http://localhost:{{port}}/mypath",
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST));
 
@@ -37,7 +37,7 @@ public class NettyHttpBindingUseRelativePathTest extends BaseNettyTest {
     }
 
     @Test
-    public void testSendToNettyWithoutPath() throws Exception {
+    public void testSendToNettyWithoutPath() {
         Exchange exchange = template.request("netty-http:http://localhost:{{port}}",
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST));
 
@@ -47,7 +47,7 @@ public class NettyHttpBindingUseRelativePathTest extends BaseNettyTest {
     }
 
     @Test
-    public void testSendToNettyWithoutPath2() throws Exception {
+    public void testSendToNettyWithoutPath2() {
         Exchange exchange = template.request("netty-http:http://localhost:{{port}}/",
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST));
 
@@ -57,9 +57,9 @@ public class NettyHttpBindingUseRelativePathTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://localhost:{{port}}/mypath").process(exchange -> {
                     assertEquals("localhost:" + getPort(), exchange.getIn().getHeader("host"),
                             "Get a wrong form parameter from the message header");

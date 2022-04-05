@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atmos.integration.AtmosTestSupport;
-import org.apache.camel.component.atmos.util.AtmosResultHeader;
+import org.apache.camel.component.atmos.util.AtmosConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
@@ -30,14 +30,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AtmosProducerDelTest extends AtmosTestSupport {
 
-    public AtmosProducerDelTest() throws Exception {
+    public AtmosProducerDelTest() {
     }
 
     @Test
     public void testCamelAtmos() throws Exception {
         template.send("direct:start", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader("test", "test");
             }
         });
@@ -48,14 +48,14 @@ public class AtmosProducerDelTest extends AtmosTestSupport {
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         Exchange exchange = exchanges.get(0);
-        Object header = exchange.getIn().getHeader(AtmosResultHeader.DELETED_PATH.name());
+        Object header = exchange.getIn().getHeader(AtmosConstants.DELETED_PATH);
         Object body = exchange.getIn().getBody();
         assertNotNull(header);
         assertNotNull(body);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")

@@ -17,17 +17,7 @@
 The Validation component performs XML validation of the message body
 using the JAXP Validation API and based on any of the supported XML
 schema languages, which defaults to http://www.w3.org/XML/Schema[XML
-Schema]
-
-Note that the xref:jing-component.adoc[Jing] component also supports the following
-useful schema languages:
-
-* http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
-Syntax]
-* http://relaxng.org/[RelaxNG XML Syntax]
-
-The xref:msv-component.adoc[MSV] component also supports
-http://relaxng.org/[RelaxNG XML Syntax].
+Schema].
 
 == URI format
 
@@ -39,13 +29,9 @@ Where *someLocalOrRemoteResource* is some URL to a local resource on the
 classpath or a full URL to a remote resource or resource on the file
 system which contains the XSD to validate against. For example:
 
-* `msv:org/foo/bar.xsd`
-* `msv:file:../foo/bar.xsd`
-* `msv:http://acme.com/cheese.xsd`
 * `validator:com/mypackage/myschema.xsd`
 
 The Validation component is provided directly in the camel-core.
-
 
 
 // component-configure options: START

@@ -76,10 +76,10 @@ public class JmsTypeConverterIssueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:inbox")
                         .setProperty(Exchange.CHARSET_NAME, constant("UTF-8"))
                         .setHeader("agentId", xpath("/agent/@id"))
@@ -104,7 +104,7 @@ public class JmsTypeConverterIssueTest extends CamelTestSupport {
 
     private static class FixateHeaderValuesProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             String id = exchange.getIn().getHeader("agentId", String.class);
             exchange.getIn().setHeader("agentId", id);
         }
@@ -112,7 +112,7 @@ public class JmsTypeConverterIssueTest extends CamelTestSupport {
 
     private static class ReadLocalFile implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
             exchange.getIn().setBody(new File(filename));
         }

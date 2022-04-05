@@ -36,8 +36,6 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autoCommitEnable": getOrCreateConfiguration(target).setAutoCommitEnable(property(camelContext, boolean.class, value)); return true;
         case "autocommitintervalms":
         case "autoCommitIntervalMs": getOrCreateConfiguration(target).setAutoCommitIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "autocommitonstop":
-        case "autoCommitOnStop": getOrCreateConfiguration(target).setAutoCommitOnStop(property(camelContext, java.lang.String.class, value)); return true;
         case "autooffsetreset":
         case "autoOffsetReset": getOrCreateConfiguration(target).setAutoOffsetReset(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
@@ -64,6 +62,10 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "consumerRequestTimeoutMs": getOrCreateConfiguration(target).setConsumerRequestTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "consumerscount":
         case "consumersCount": getOrCreateConfiguration(target).setConsumersCount(property(camelContext, int.class, value)); return true;
+        case "createconsumerbackoffinterval":
+        case "createConsumerBackoffInterval": target.setCreateConsumerBackoffInterval(property(camelContext, long.class, value)); return true;
+        case "createconsumerbackoffmaxattempts":
+        case "createConsumerBackoffMaxAttempts": target.setCreateConsumerBackoffMaxAttempts(property(camelContext, int.class, value)); return true;
         case "deliverytimeoutms":
         case "deliveryTimeoutMs": getOrCreateConfiguration(target).setDeliveryTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "enableidempotence":
@@ -213,6 +215,10 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "sslTruststorePassword": getOrCreateConfiguration(target).setSslTruststorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "ssltruststoretype":
         case "sslTruststoreType": getOrCreateConfiguration(target).setSslTruststoreType(property(camelContext, java.lang.String.class, value)); return true;
+        case "subscribeconsumerbackoffinterval":
+        case "subscribeConsumerBackoffInterval": target.setSubscribeConsumerBackoffInterval(property(camelContext, long.class, value)); return true;
+        case "subscribeconsumerbackoffmaxattempts":
+        case "subscribeConsumerBackoffMaxAttempts": target.setSubscribeConsumerBackoffMaxAttempts(property(camelContext, int.class, value)); return true;
         case "synchronous": getOrCreateConfiguration(target).setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "topicispattern":
         case "topicIsPattern": getOrCreateConfiguration(target).setTopicIsPattern(property(camelContext, boolean.class, value)); return true;
@@ -248,8 +254,6 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autoCommitEnable": return boolean.class;
         case "autocommitintervalms":
         case "autoCommitIntervalMs": return java.lang.Integer.class;
-        case "autocommitonstop":
-        case "autoCommitOnStop": return java.lang.String.class;
         case "autooffsetreset":
         case "autoOffsetReset": return java.lang.String.class;
         case "autowiredenabled":
@@ -276,6 +280,10 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "consumerRequestTimeoutMs": return java.lang.Integer.class;
         case "consumerscount":
         case "consumersCount": return int.class;
+        case "createconsumerbackoffinterval":
+        case "createConsumerBackoffInterval": return long.class;
+        case "createconsumerbackoffmaxattempts":
+        case "createConsumerBackoffMaxAttempts": return int.class;
         case "deliverytimeoutms":
         case "deliveryTimeoutMs": return java.lang.Integer.class;
         case "enableidempotence":
@@ -425,6 +433,10 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "sslTruststorePassword": return java.lang.String.class;
         case "ssltruststoretype":
         case "sslTruststoreType": return java.lang.String.class;
+        case "subscribeconsumerbackoffinterval":
+        case "subscribeConsumerBackoffInterval": return long.class;
+        case "subscribeconsumerbackoffmaxattempts":
+        case "subscribeConsumerBackoffMaxAttempts": return int.class;
         case "synchronous": return boolean.class;
         case "topicispattern":
         case "topicIsPattern": return boolean.class;
@@ -456,8 +468,6 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autoCommitEnable": return getOrCreateConfiguration(target).isAutoCommitEnable();
         case "autocommitintervalms":
         case "autoCommitIntervalMs": return getOrCreateConfiguration(target).getAutoCommitIntervalMs();
-        case "autocommitonstop":
-        case "autoCommitOnStop": return getOrCreateConfiguration(target).getAutoCommitOnStop();
         case "autooffsetreset":
         case "autoOffsetReset": return getOrCreateConfiguration(target).getAutoOffsetReset();
         case "autowiredenabled":
@@ -484,6 +494,10 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "consumerRequestTimeoutMs": return getOrCreateConfiguration(target).getConsumerRequestTimeoutMs();
         case "consumerscount":
         case "consumersCount": return getOrCreateConfiguration(target).getConsumersCount();
+        case "createconsumerbackoffinterval":
+        case "createConsumerBackoffInterval": return target.getCreateConsumerBackoffInterval();
+        case "createconsumerbackoffmaxattempts":
+        case "createConsumerBackoffMaxAttempts": return target.getCreateConsumerBackoffMaxAttempts();
         case "deliverytimeoutms":
         case "deliveryTimeoutMs": return getOrCreateConfiguration(target).getDeliveryTimeoutMs();
         case "enableidempotence":
@@ -633,6 +647,10 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "sslTruststorePassword": return getOrCreateConfiguration(target).getSslTruststorePassword();
         case "ssltruststoretype":
         case "sslTruststoreType": return getOrCreateConfiguration(target).getSslTruststoreType();
+        case "subscribeconsumerbackoffinterval":
+        case "subscribeConsumerBackoffInterval": return target.getSubscribeConsumerBackoffInterval();
+        case "subscribeconsumerbackoffmaxattempts":
+        case "subscribeConsumerBackoffMaxAttempts": return target.getSubscribeConsumerBackoffMaxAttempts();
         case "synchronous": return getOrCreateConfiguration(target).isSynchronous();
         case "topicispattern":
         case "topicIsPattern": return getOrCreateConfiguration(target).isTopicIsPattern();

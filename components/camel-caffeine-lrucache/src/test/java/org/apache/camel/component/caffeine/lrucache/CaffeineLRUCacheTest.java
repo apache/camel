@@ -30,7 +30,7 @@ public class CaffeineLRUCacheTest {
     private LRUCache<String, Service> cache;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         // for testing use sync listener
         cache = new CaffeineLRUCache<>(10, 10, true, false, false, true);
     }
@@ -50,7 +50,7 @@ public class CaffeineLRUCacheTest {
     }
 
     @Test
-    public void testLRUCacheEviction() throws Exception {
+    public void testLRUCacheEviction() {
         MyService service1 = new MyService();
         MyService service2 = new MyService();
         MyService service3 = new MyService();

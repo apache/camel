@@ -146,7 +146,7 @@ public class CMTest extends CamelTestConfiguration {
 
         // Body
         final SMSMessage smsMessage = new SMSMessage(generateIdAsString(), generateUnicodeMessage(), validNumber, null);
-        assertThrows(CMResponseException.class,
+        assertThrows(NoAccountFoundForProductTokenException.class,
                 () -> cmProxy.send(smsMessage));
     }
 

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mybatis",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "mybatis",
     "extendsScheme": "",
     "syntax": "mybatis:statement",
@@ -27,6 +27,10 @@
     "lazyStartProducer": { "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
     "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "sqlSessionFactory": { "kind": "property", "displayName": "Sql Session Factory", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.ibatis.session.SqlSessionFactory", "deprecated": false, "autowired": false, "secret": false, "description": "To use the SqlSessionFactory" }
+  },
+  "headers": {
+    "CamelMyBatisResult": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The response returned from MtBatis in any of the operations. For instance an INSERT could return the auto-generated key, or number of rows etc." },
+    "CamelMyBatisStatementName": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The statementName used (for example: insertAccount)." }
   },
   "properties": {
     "statement": { "kind": "path", "displayName": "Statement", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The statement name in the MyBatis XML mapping file which maps to the query, insert, update or delete operation you wish to evaluate." },

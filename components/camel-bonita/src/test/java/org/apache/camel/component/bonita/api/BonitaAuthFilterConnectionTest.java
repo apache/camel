@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.bonita.api;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import javax.ws.rs.client.ClientRequestContext;
@@ -48,7 +47,7 @@ public class BonitaAuthFilterConnectionTest {
     private WireMockServer wireMockServer;
 
     @BeforeEach
-    public void setup() throws IOException {
+    public void setup() {
         wireMockServer = new WireMockServer(WireMockConfiguration.options()/*.port(etc)*/);
         wireMockServer.start();
 

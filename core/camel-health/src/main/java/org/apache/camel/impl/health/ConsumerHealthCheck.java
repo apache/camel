@@ -55,7 +55,7 @@ public class ConsumerHealthCheck extends RouteHealthCheck {
                 if (LOGGER.isTraceEnabled()) {
                     LOGGER.trace("Calling HealthCheck on consumer route: {}", route.getRouteId());
                 }
-                Result result = hc.call();
+                Result result = hc.call(options);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("HealthCheck consumer route: {} -> {}", route.getRouteId(), result.getState());
                 }

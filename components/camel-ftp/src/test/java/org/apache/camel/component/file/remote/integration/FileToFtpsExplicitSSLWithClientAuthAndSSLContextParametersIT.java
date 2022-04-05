@@ -27,7 +27,7 @@ import org.junit.jupiter.api.TestInstance;
 public class FileToFtpsExplicitSSLWithClientAuthAndSSLContextParametersIT extends FileToFtpsExplicitSSLWithClientAuthIT {
 
     @BindToRegistry("sslContextParameters")
-    public SSLContextParameters createSslContextParams() throws Exception {
+    public SSLContextParameters createSslContextParams() {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("server.jks");
         ksp.setPassword("password");

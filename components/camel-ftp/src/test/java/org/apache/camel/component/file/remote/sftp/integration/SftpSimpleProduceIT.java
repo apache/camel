@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SftpSimpleProduceIT extends SftpServerTestSupport {
 
     @Test
-    public void testSftpSimpleProduce() throws Exception {
+    public void testSftpSimpleProduce() {
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin",
                 "Hello World", Exchange.FILE_NAME, "hello.txt");
@@ -40,7 +40,7 @@ public class SftpSimpleProduceIT extends SftpServerTestSupport {
     }
 
     @Test
-    public void testSftpSimpleSubPathProduce() throws Exception {
+    public void testSftpSimpleSubPathProduce() {
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}/mysub?username=admin&password=admin",
                 "Bye World",
@@ -52,7 +52,7 @@ public class SftpSimpleProduceIT extends SftpServerTestSupport {
     }
 
     @Test
-    public void testSftpSimpleTwoSubPathProduce() throws Exception {
+    public void testSftpSimpleTwoSubPathProduce() {
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                                    + "/mysub/myother?username=admin&password=admin",

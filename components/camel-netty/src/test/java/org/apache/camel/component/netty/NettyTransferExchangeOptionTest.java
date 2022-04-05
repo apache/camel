@@ -52,12 +52,12 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
     }
 
     @BindToRegistry("encoder")
-    public ChannelHandler getEncoder() throws Exception {
+    public ChannelHandler getEncoder() {
         return new ShareableChannelHandlerFactory(new ObjectEncoder());
     }
 
     @BindToRegistry("decoder")
-    public ChannelHandler getDecoder() throws Exception {
+    public ChannelHandler getDecoder() {
         return new DefaultChannelHandlerFactory() {
             @Override
             public ChannelHandler newChannelHandler() {
@@ -120,7 +120,7 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
             public void configure() {
                 from("netty:tcp://localhost:{{port}}?transferExchange=true&encoders=#encoder&decoders=#decoder")
                         .process(new Processor() {
-                            public void process(Exchange e) throws InterruptedException {
+                            public void process(Exchange e) {
                                 assertNotNull(e.getIn().getBody());
                                 assertNotNull(e.getIn().getHeaders());
                                 assertNotNull(e.getProperties());

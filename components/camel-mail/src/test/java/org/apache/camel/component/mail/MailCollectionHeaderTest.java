@@ -52,9 +52,9 @@ public class MailCollectionHeaderTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").to("smtp://localhost?username=james@localhost");
 
                 from("pop3://localhost?username=james&password=secret&initialDelay=100&delay=100").to("mock:result");

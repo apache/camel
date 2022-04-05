@@ -91,10 +91,10 @@ public class ManagedZipkinSimpleRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:dude").routeId("dude")
                         .log("routing at ${routeId}")
                         .delay(simple("${random(10,20)}"));

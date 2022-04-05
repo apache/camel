@@ -102,7 +102,7 @@ public class SftpSimpleProduceThroughProxyIT extends SftpServerTestSupport {
     }
 
     @BindToRegistry("proxy")
-    public ProxyHTTP createProxy() throws Exception {
+    public ProxyHTTP createProxy() {
 
         final ProxyHTTP proxyHTTP = new ProxyHTTP("localhost", proxyPort);
         proxyHTTP.setUserPasswd("user", "password");

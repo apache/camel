@@ -54,10 +54,9 @@ public class CustomerGatewayIT extends AbstractBraintreeTestSupport {
      * Customers management workflow: - create a customer - lookup by id - update first name - delete by id - confirm
      * deletion by searching again
      *
-     * @throws Exception
      */
     @Test
-    public void testCustomerManagementWorkflow() throws Exception {
+    public void testCustomerManagementWorkflow() {
         String customerLastName = UUID.randomUUID().toString();
         String customerId = null;
 
@@ -119,7 +118,7 @@ public class CustomerGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testUpdateUnknownCustomer() throws Exception {
+    public void testUpdateUnknownCustomer() {
         String id = "unknown-" + UUID.randomUUID().toString();
 
         HashMap<String, Object> headers = new HashMap<>();
@@ -134,7 +133,7 @@ public class CustomerGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testSearchUnknownCustomer() throws Exception {
+    public void testSearchUnknownCustomer() {
         String uuid = "unknown-" + UUID.randomUUID().toString();
 
         Exception ex = assertThrows(CamelExecutionException.class,
@@ -144,7 +143,7 @@ public class CustomerGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testWrongCustomerCreateRequest() throws Exception {
+    public void testWrongCustomerCreateRequest() {
         // Create customer
         Result<Customer> createResult = requestBody(
                 "direct://CREATE_IN_BODY",
@@ -179,7 +178,7 @@ public class CustomerGatewayIT extends AbstractBraintreeTestSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

@@ -241,11 +241,11 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
         // Maybe send request to camel also for some logging or something
         exchange.getIn().setHeader(ResteasyConstants.RESTEASY_HTTP_REQUEST, httpServletRequest);
 
-        String httpPath = (String) exchange.getIn().getHeader(Exchange.HTTP_PATH);
+        String httpPath = (String) exchange.getIn().getHeader(ResteasyConstants.HTTP_PATH);
         // here we just remove the CamelServletContextPath part from the HTTP_PATH
         if (contextPath != null
                 && httpPath.startsWith(contextPath)) {
-            exchange.getIn().setHeader(Exchange.HTTP_PATH,
+            exchange.getIn().setHeader(ResteasyConstants.HTTP_PATH,
                     httpPath.substring(contextPath.length()));
         }
 

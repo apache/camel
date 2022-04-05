@@ -56,10 +56,10 @@ public class RestNettyHttpGetCorsTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use netty-http on localhost with the given port
                 restConfiguration().component("netty-http").host("localhost").port(getPort()).enableCORS(true);
 

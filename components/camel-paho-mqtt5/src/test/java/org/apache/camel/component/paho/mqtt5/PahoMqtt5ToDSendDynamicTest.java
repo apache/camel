@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PahoMqtt5ToDSendDynamicTest extends PahoMqtt5TestSupport {
 
     @Test
-    public void testToD() throws Exception {
+    public void testToD() {
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
@@ -40,10 +40,10 @@ public class PahoMqtt5ToDSendDynamicTest extends PahoMqtt5TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 PahoMqtt5Component paho = context.getComponent("paho-mqtt5", PahoMqtt5Component.class);
                 paho.getConfiguration().setBrokerUrl("tcp://localhost:" + mqttPort);
 

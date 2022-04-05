@@ -4,7 +4,7 @@
 :artifactid: camel-cdi-jta
 :description: JTA Transaction support for Camel CDI
 :since: 3.15
-:supportlevel: Preview
+:supportlevel: Stable
 
 *Since Camel {since}*
 

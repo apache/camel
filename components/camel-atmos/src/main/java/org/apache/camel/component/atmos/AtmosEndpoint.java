@@ -26,6 +26,7 @@ import org.apache.camel.component.atmos.integration.producer.AtmosDelProducer;
 import org.apache.camel.component.atmos.integration.producer.AtmosGetProducer;
 import org.apache.camel.component.atmos.integration.producer.AtmosMoveProducer;
 import org.apache.camel.component.atmos.integration.producer.AtmosPutProducer;
+import org.apache.camel.component.atmos.util.AtmosConstants;
 import org.apache.camel.component.atmos.util.AtmosException;
 import org.apache.camel.component.atmos.util.AtmosOperation;
 import org.apache.camel.spi.UriEndpoint;
@@ -38,7 +39,7 @@ import static org.apache.camel.component.atmos.util.AtmosConstants.POLL_CONSUMER
  * Integrate with EMC's ViPR object data services using the Atmos Client.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "atmos", title = "Atmos", syntax = "atmos:name/operation",
-             category = { Category.CLOUD, Category.FILE })
+             category = { Category.CLOUD, Category.FILE }, headersClass = AtmosConstants.class)
 public class AtmosEndpoint extends DefaultEndpoint {
 
     @UriParam

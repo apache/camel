@@ -36,28 +36,35 @@ final class CamelMicroProfileHealthHelper {
     /**
      * Propagates details from the Camel Health {@link Result} to the MicroProfile {@link HealthCheckResponseBuilder}.
      *
-     * @param builder The health check response builder
-     * @param result  The Camel health check result
+     * @param builder       The health check response builder
+     * @param result        The Camel health check result
+     * @param exposureLevel The level at which to expose details from the health check result
      */
-    public static void applyHealthDetail(HealthCheckResponseBuilder builder, Result result) {
-        HealthCheck check = result.getCheck();
-        Set<String> metaKeys = check.getMetaData().keySet();
+    public static void applyHealthDetail(HealthCheckResponseBuilder builder, Result result, String exposureLevel) {
+        if (!exposureLevel.equals("oneline")) {
+            HealthCheck check = result.getCheck();
+            Set<String> metaKeys = check.getMetaData().keySet();
 
-        result.getDetails().forEach((key, value) -> {
-            // Filter health check metadata to have a less verbose output
-            if (!metaKeys.contains(key)) {
-                builder.withData(key, value.toString());
-            }
-        });
+            result.getDetails().forEach((key, value) -> {
+                if (exposureLevel.equals("full")) {
+                    builder.withData(key, value.toString());
+                } else {
+                    // Filter health check metadata to have a less verbose output
+                    if (!metaKeys.contains(key)) {
+                        builder.withData(key, value.toString());
+                    }
+                }
+            });
 
-        result.getError().ifPresent(error -> {
-            builder.withData("error.message", error.getMessage());
+            result.getError().ifPresent(error -> {
+                builder.withData("error.message", error.getMessage());
 
-            final StringWriter stackTraceWriter = new StringWriter();
-            try (final PrintWriter pw = new PrintWriter(stackTraceWriter, true)) {
-                error.printStackTrace(pw);
-                builder.withData("error.stacktrace", stackTraceWriter.toString());
-            }
-        });
+                final StringWriter stackTraceWriter = new StringWriter();
+                try (final PrintWriter pw = new PrintWriter(stackTraceWriter, true)) {
+                    error.printStackTrace(pw);
+                    builder.withData("error.stacktrace", stackTraceWriter.toString());
+                }
+            });
+        }
     }
 }

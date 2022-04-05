@@ -31,10 +31,10 @@ public class FtpConsumerNotStepwiseCamelRecursiveToAbsoluteManualTest extends Ca
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("ftp:localhost/one/two?username=camel&password=camel&recursive=true&noop=true&stepwise=false")
                         .to("file:E:/temp/sample/file2ftp").to("mock:result");
             }

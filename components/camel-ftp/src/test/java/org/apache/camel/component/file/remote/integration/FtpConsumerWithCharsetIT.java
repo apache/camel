@@ -121,14 +121,14 @@ public class FtpConsumerWithCharsetIT extends FtpServerTestSupport {
         assertEquals(-87, data[8]);
     }
 
-    private void prepareFtpServer() throws Exception {
+    private void prepareFtpServer() {
         sendFile(getFtpUrl(), payload, "iso.txt");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).to("mock:result");
             }
         };

@@ -44,7 +44,7 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
     }
 
     @BindToRegistry("mySecurityConfig")
-    public NettyHttpSecurityConfiguration loadSecConfig() throws Exception {
+    public NettyHttpSecurityConfiguration loadSecConfig() {
 
         NettyHttpSecurityConfiguration security = new NettyHttpSecurityConfiguration();
         security.setRealm("karaf");
@@ -56,7 +56,7 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
     }
 
     @Test
-    public void testBasicAuthFailed() throws Exception {
+    public void testBasicAuthFailed() {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class));
         NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
@@ -78,7 +78,7 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
     }
 
     @Test
-    public void testInvalidCredentials() throws Exception {
+    public void testInvalidCredentials() {
         // username:password is scott:typo
         try {
             // password is invalid so we should get a 401
@@ -92,10 +92,10 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration=#mySecurityConfig")
                         .to("mock:input")
                         .transform().constant("Bye World");

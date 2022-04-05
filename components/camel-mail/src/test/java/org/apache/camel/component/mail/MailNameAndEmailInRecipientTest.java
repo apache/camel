@@ -45,7 +45,7 @@ public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    private void assertMailbox(String name) throws Exception {
+    private void assertMailbox(String name) {
         MockEndpoint mock = getMockEndpoint("mock:" + name);
         mock.expectedBodiesReceived("Hello World");
         mock.message(0).header("to").isEqualTo("Claus Ibsen <davsclaus@localhost>");
@@ -53,9 +53,9 @@ public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("pop3://davsclaus@localhost?initialDelay=100&delay=100").to("mock:davsclaus");
 
                 from("pop3://jstrachan@localhost?initialDelay=100&delay=100").to("mock:jstrachan");

@@ -83,15 +83,9 @@ location for a template or the template content itself. If any of these
 headers is set then Camel uses this over the endpoint configured
 resource. This allows you to provide a dynamic template at runtime.
 
-[width="100%",cols="20%,10%,10%,60%",options="header",]
-|=======================================================================
-|Header |Type |Description |Support Version
-
-|ChunkConstants.CHUNK_RESOURCE_URI |String |A URI for the template resource to use instead of the endpoint
-configured. |
-
-|ChunkConstants.CHUNK_TEMPLATE |String |The template to use instead of the endpoint configured. |
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Samples
 

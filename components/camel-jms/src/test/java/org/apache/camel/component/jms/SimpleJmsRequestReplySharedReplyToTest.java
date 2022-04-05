@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SimpleJmsRequestReplySharedReplyToTest extends CamelTestSupport {
 
     @Test
-    public void testJmsRequestReplySharedReplyTo() throws Exception {
+    public void testJmsRequestReplySharedReplyTo() {
         assertEquals("Hello A", template.requestBody(
                 "activemq:queue:foo?replyTo=bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
                 "A"));
@@ -56,10 +56,10 @@ public class SimpleJmsRequestReplySharedReplyToTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo")
                         .transform(body().prepend("Hello "));
             }

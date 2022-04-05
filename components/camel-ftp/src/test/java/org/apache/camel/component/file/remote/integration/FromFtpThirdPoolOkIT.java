@@ -58,15 +58,15 @@ public class FromFtpThirdPoolOkIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // no redeliveries as we want the ftp consumer to try again
                 // use no delay for fast unit testing
                 onException(IllegalArgumentException.class).logStackTrace(false).to("mock:error");
 
                 from(getFtpUrl()).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         counter++;
                         if (counter < 3) {
                             // file should exists

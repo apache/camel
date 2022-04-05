@@ -4,7 +4,7 @@
 :artifactid: camel-dynamic-router
 :description: The Dynamic Router component routes exchanges to recipients, and the recipients (and their rules) may change at runtime.
 :since: 3.15
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: dynamic-router

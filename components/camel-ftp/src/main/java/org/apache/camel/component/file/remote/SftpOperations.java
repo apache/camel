@@ -144,7 +144,9 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     private boolean tryConnect(TaskPayload payload) {
-        LOG.trace("Reconnect attempt to {}", payload.configuration.remoteServerInformation());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Reconnect attempt to {}", payload.configuration.remoteServerInformation());
+        }
 
         try {
             if (channel == null || !channel.isConnected()) {
@@ -172,7 +174,10 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     LOG.trace("Connecting ...");
                     channel.connect();
                 }
-                LOG.debug("Connected to {}", payload.configuration.remoteServerInformation());
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Connected to {}", payload.configuration.remoteServerInformation());
+                }
             }
         } catch (JSchException e) {
             payload.exception = e;
@@ -755,7 +760,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
     @Override
     public synchronized void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
-        InputStream is = exchange.getIn().getHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, InputStream.class);
+        InputStream is = exchange.getIn().getHeader(FtpConstants.REMOTE_FILE_INPUT_STREAM, InputStream.class);
 
         if (is != null) {
             try {
@@ -796,7 +801,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
             if (endpoint.getConfiguration().isStreamDownload()) {
                 target.setBody(is);
-                exchange.getIn().setHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, is);
+                exchange.getIn().setHeader(FtpConstants.REMOTE_FILE_INPUT_STREAM, is);
             } else {
                 // read the entire file into memory in the byte array
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -863,7 +868,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             os = new FileOutputStream(temp);
 
             // set header with the path to the local work file
-            exchange.getIn().setHeader(Exchange.FILE_LOCAL_WORK_PATH, local.getPath());
+            exchange.getIn().setHeader(FtpConstants.FILE_LOCAL_WORK_PATH, local.getPath());
         } catch (Exception e) {
             throw new GenericFileOperationFailedException("Cannot create new local work file: " + local);
         }

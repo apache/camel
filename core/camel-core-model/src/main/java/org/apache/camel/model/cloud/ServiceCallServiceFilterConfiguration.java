@@ -69,8 +69,8 @@ public class ServiceCallServiceFilterConfiguration extends ServiceCallConfigurat
     /**
      * Adds a custom property to use.
      * <p/>
-     * These properties are specific to what service call implementation are in use. For example if using ribbon, then
-     * the client properties are define in com.netflix.client.config.CommonClientConfigKey.
+     * These properties are specific to what service call implementation are in use. For example if using a different
+     * one, then the client properties are defined according to the specific service in use.
      */
     @Override
     public ServiceCallServiceFilterConfiguration property(String key, String value) {

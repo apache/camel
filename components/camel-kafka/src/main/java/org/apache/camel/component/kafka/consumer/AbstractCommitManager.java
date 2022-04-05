@@ -73,6 +73,10 @@ public abstract class AbstractCommitManager implements CommitManager {
             Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> record) {
 
         KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
+        if (manualCommitFactory == null) {
+            manualCommitFactory = new DefaultKafkaManualCommitFactory();
+        }
+
         return getManualCommit(exchange, partition, record, null, manualCommitFactory);
     }
 

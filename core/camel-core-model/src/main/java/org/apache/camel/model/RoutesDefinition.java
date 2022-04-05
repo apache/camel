@@ -33,6 +33,7 @@ import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PatternHelper;
 import org.slf4j.Logger;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
 @XmlRootElement(name = "routes")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinition>
-        implements RouteContainer, CamelContextAware {
+        implements RouteContainer, CamelContextAware, ResourceAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoutesDefinition.class);
 

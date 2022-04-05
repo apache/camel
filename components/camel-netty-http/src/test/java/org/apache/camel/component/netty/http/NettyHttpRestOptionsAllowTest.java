@@ -29,7 +29,7 @@ public class NettyHttpRestOptionsAllowTest extends BaseNettyTest {
     static final String ALLOW_METHODS = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
 
     @Test
-    public void shouldGetAllowMethods() throws Exception {
+    public void shouldGetAllowMethods() {
         Exchange response = template.request("netty-http:http://localhost:{{port}}/myapp", exchange -> {
             exchange.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.OPTIONS);
             exchange.getIn().setBody("");
@@ -43,10 +43,10 @@ public class NettyHttpRestOptionsAllowTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/myapp").setBody().constant("options");
             }
         };

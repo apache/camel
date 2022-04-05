@@ -58,18 +58,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Message Headers
-
-[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
-|=======================================================================
-|Name |Default Value |Type |Context |Description
-
-|CamelOptaPlannerSolverId |null |String |Shared |Specifies the solverId to use
-
-|CamelOptaPlannerIsAsync |PUT |String |Producer |Specify whether to use another thread for submitting Solution instances
-rather than blocking the current thread.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Message Body
 

@@ -34,7 +34,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Setting up class loader
 
@@ -108,17 +110,6 @@ String:
 -----------------------------------------------------------------------------------------------------------
 producerTemplate.sendBody("grape:defaultMavenCoordinates", "org.apache.camel/camel-ftp/2.15.2".getBytes());
 -----------------------------------------------------------------------------------------------------------
-
-== Headers
-
-The following headers are recognized by the Grape component:
-
-[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
-|=======================================================================
-|Header |Java constant |Endpoint type |Value type |Description
-
-|`CamelGrapeCommand` |`GrapeConstants.GRAPE_COMMAND` |Producer |`org.apache.camel.component.grape.GrapeCommand` |The command to be performed by the Grape endpoint. Default to `grab`.
-|=======================================================================
 
 == Loading components at runtime
 

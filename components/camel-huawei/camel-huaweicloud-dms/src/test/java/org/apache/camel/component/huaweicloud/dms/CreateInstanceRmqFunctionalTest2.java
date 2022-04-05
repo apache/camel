@@ -57,9 +57,9 @@ public class CreateInstanceRmqFunctionalTest2 extends CamelTestSupport {
     @BindToRegistry("availableZones")
     List<String> availableZones = new ArrayList<>();
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:operation")
                         .setProperty(DMSProperties.NAME, constant(NAME))
                         .setProperty(DMSProperties.ENGINE, constant("rabbitmq"))

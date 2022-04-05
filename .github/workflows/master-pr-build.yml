@@ -21,6 +21,12 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - README.md
+      - SECURITY.md
+      - Jenkinsfile
+      - Jenkinsfile.*
+      - NOTICE.txt
 
 jobs:
   checkstyle:
@@ -38,8 +44,16 @@ jobs:
         java-version: 11
         cache: 'maven'
     - name: mvn checkstyle
-      run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress  -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
+      run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l checkstyle.log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress  -Dcheckstyle.failOnViolation=true checkstyle:checkstyle
+    - name: archive logs
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: checkstyle.log
+        path: checkstyle.log
   build:
+    permissions:
+      issues: write
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -58,4 +72,17 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: maven build
-        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests install
+        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l build.log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pfastinstall -Dcheckstyle.skip=true -DskipTests install
+      - name: archive logs
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: build.log
+          path: build.log
+      - id: test
+        name: Quick test execution for affected components
+        uses: ./.github/actions/quick-test
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          start-commit: ${{ github.event.pull_request.base.sha }}
+          end-commit: ${{ github.event.after }}

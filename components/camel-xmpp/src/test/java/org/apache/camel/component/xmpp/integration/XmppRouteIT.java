@@ -74,7 +74,7 @@ public class XmppRouteIT extends XmppBaseIT {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         String uriPrefix = getUriPrefix();
         final String uri1 = uriPrefix + "&resource=camel-test-from&nickname=came-test-from";
         final String uri2 = uriPrefix + "&resource=camel-test-to&nickname=came-test-to";

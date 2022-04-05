@@ -48,21 +48,23 @@ public final class HealthCheckHelper {
      * Invokes the checks and returns a collection of results.
      */
     public static Collection<HealthCheck.Result> invoke(CamelContext camelContext) {
-        return invoke(camelContext, check -> Collections.emptyMap(), check -> false);
+        return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.ALL), check -> false);
     }
 
     /**
      * Invokes the readiness checks and returns a collection of results.
      */
     public static Collection<HealthCheck.Result> invokeReadiness(CamelContext camelContext) {
-        return invoke(camelContext, check -> Collections.emptyMap(), check -> !check.isReadiness());
+        return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.READINESS),
+                check -> !check.isReadiness());
     }
 
     /**
      * Invokes the liveness checks and returns a collection of results.
      */
     public static Collection<HealthCheck.Result> invokeLiveness(CamelContext camelContext) {
-        return invoke(camelContext, check -> Collections.emptyMap(), check -> !check.isLiveness());
+        return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.LIVENESS),
+                check -> !check.isLiveness());
     }
 
     /**
@@ -260,6 +262,25 @@ public final class HealthCheckHelper {
             return type.cast(answer);
         }
         return null;
+    }
+
+    /**
+     * Checks the overall status of the results.
+     *
+     * @param  results   the results from the invoked health checks
+     * @param  readiness readiness or liveness mode
+     * @return           true if up, or false if down
+     */
+    public static boolean isResultsUp(Collection<HealthCheck.Result> results, boolean readiness) {
+        boolean up;
+        if (readiness) {
+            // readiness requires that all are UP
+            up = results.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
+        } else {
+            // liveness will fail if there is any down
+            up = results.stream().noneMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
+        }
+        return up;
     }
 
     /**

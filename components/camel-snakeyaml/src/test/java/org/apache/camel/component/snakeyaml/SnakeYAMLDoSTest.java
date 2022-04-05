@@ -144,14 +144,14 @@ public class SnakeYAMLDoSTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         SnakeYAMLDataFormat dataFormat = new SnakeYAMLDataFormat();
         dataFormat.setMaxAliasesForCollections(150);
 
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:back")
                         .unmarshal(new SnakeYAMLDataFormat())
                         .to("mock:reverse");

@@ -26,8 +26,6 @@ import org.apache.camel.util.StringHelper;
 import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
-import static java.lang.String.format;
-
 /**
  * A {@link org.apache.camel.component.properties.PropertiesParser} which is using
  * &nbsp;<a href="http://www.jasypt.org/">Jasypt</a> to decrypt encrypted values.
@@ -52,12 +50,14 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
 
     @Override
     public String parseProperty(String key, String value, PropertiesLookup properties) {
-        log.trace(format("Parsing property '%s=%s'", key, value));
+        log.trace("Parsing property '{}={}'", key, value);
         if (value != null) {
             initEncryptor();
             Matcher matcher = PATTERN.matcher(value);
             while (matcher.find()) {
-                log.trace(format("Decrypting part '%s'", matcher.group(0)));
+                if (log.isTraceEnabled()) {
+                    log.trace("Decrypting part '{}'", matcher.group(0));
+                }
                 String decrypted = encryptor.decrypt(matcher.group(1));
                 value = value.replace(matcher.group(0), decrypted);
             }
@@ -72,7 +72,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
             pbeStringEncryptor.setPassword(password);
             if (algorithm != null) {
                 pbeStringEncryptor.setAlgorithm(algorithm);
-                log.debug(format("Initialized encryptor using %s algorithm and provided password", algorithm));
+                log.debug("Initialized encryptor using {} algorithm and provided password", algorithm);
             } else {
                 log.debug("Initialized encryptor using default algorithm and provided password");
             }

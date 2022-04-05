@@ -66,12 +66,7 @@ public class BeanCreateBodyExceptionTest extends ContextTestSupport {
             });
         });
 
-        try {
-            assertMockEndpointsSatisfied();
-            fail("Should fail");
-        } catch (Throwable e) {
-            // ignore
-        }
+        assertThrows(AssertionError.class, () -> assertMockEndpointsSatisfied());
 
         // mock:dead should have as failure as createBody fails so cannot do defensive copy in mock
         assertEquals(1, getMockEndpoint("mock:dead").getFailures().size());

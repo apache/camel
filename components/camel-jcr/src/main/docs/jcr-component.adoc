@@ -57,6 +57,10 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 == Example
 
 The snippet below creates a node named `node` under the `/home/test`

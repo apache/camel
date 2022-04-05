@@ -123,6 +123,22 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Service account key in json format to authenticate an application as
+         * a service account to google cloud platform.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GoogleBigQuerySQLEndpointBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
+            return this;
+        }
     }
 
     public interface GoogleBigQuerySQLBuilders {

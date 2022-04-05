@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupport {
 
     @SuppressWarnings("unchecked")
-    protected void testRetrieveGeneratedKeys(String query, Map<String, Object> parameters) throws Exception {
+    protected void testRetrieveGeneratedKeys(String query, Map<String, Object> parameters) {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
 
@@ -68,8 +68,7 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
     @SuppressWarnings("unchecked")
     protected void testRetrieveGeneratedKeysWithStringGeneratedColumns(
             String query,
-            Map<String, Object> parameters)
-            throws Exception {
+            Map<String, Object> parameters) {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
 
@@ -107,8 +106,7 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
     @SuppressWarnings("unchecked")
     protected void testRetrieveGeneratedKeysWithIntGeneratedColumns(
             String query,
-            Map<String, Object> parameters)
-            throws Exception {
+            Map<String, Object> parameters) {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
 
@@ -145,8 +143,7 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
 
     protected void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown(
             String query,
-            Map<String, Object> parameters)
-            throws Exception {
+            Map<String, Object> parameters) {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
 
@@ -178,6 +175,6 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
     }
 
     @Override
-    protected abstract RouteBuilder createRouteBuilder() throws Exception;
+    protected abstract RouteBuilder createRouteBuilder();
 
 }

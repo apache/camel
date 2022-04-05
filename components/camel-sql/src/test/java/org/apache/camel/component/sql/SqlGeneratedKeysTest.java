@@ -61,10 +61,10 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
                 from("direct:insert").to("sql:insert into projects (project, license, description) values (#, #, #)");
                 from("direct:batch").to("sql:insert into projects (project, license, description) values (#, #, #)?batch=true");
@@ -76,7 +76,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testRetrieveGeneratedKey() throws Exception {
+    public void testRetrieveGeneratedKey() {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:insert");
 
@@ -108,7 +108,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testRetrieveGeneratedKeys() throws Exception {
+    public void testRetrieveGeneratedKeys() {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:insert2");
 
@@ -141,7 +141,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testRetrieveGeneratedKeysForBatch() throws Exception {
+    public void testRetrieveGeneratedKeysForBatch() {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:batch");
 
@@ -181,7 +181,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testRetrieveGeneratedKeyWithStringGeneratedColumns() throws Exception {
+    public void testRetrieveGeneratedKeyWithStringGeneratedColumns() {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:insert");
 
@@ -213,7 +213,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testRetrieveGeneratedKeyWithIntGeneratedColumns() throws Exception {
+    public void testRetrieveGeneratedKeyWithIntGeneratedColumns() {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:insert");
 
@@ -243,7 +243,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
     }
 
     @Test
-    public void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown() throws Exception {
+    public void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown() {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:insert");
 
@@ -263,7 +263,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testNoKeysForSelect() throws Exception {
+    public void testNoKeysForSelect() {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:select");
 

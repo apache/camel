@@ -36,7 +36,7 @@ public class QueueToQueueTransactionTest extends AbstractTransactionTest {
         context.addRoutes(new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Policy required = context().getRegistry().lookupByNameAndType("PROPAGATION_REQUIRED_POLICY",
                         SpringTransactionPolicy.class);
                 from("activemq:queue:foo?transacted=true").policy(required).process(new ConditionalExceptionProcessor())

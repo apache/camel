@@ -29,12 +29,14 @@ import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.impl.health.ContextHealthCheck;
+import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.HealthCheckResponse.Status;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTestSupport {
 
@@ -321,6 +323,131 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         assertHealthCheckOutput("exception-check", Status.DOWN, checks.getJsonObject(1), jsonObject -> {
             assertEquals(errorMessage, jsonObject.getString("error.message"));
             assertNotNull(jsonObject.getString("error.stacktrace"));
+        });
+    }
+
+    @Test
+    public void testExposureLevelDefault() {
+        HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
+
+        HealthCheck failingCheck = new AbstractHealthCheck("failing-check") {
+            @Override
+            public boolean isLiveness() {
+                return false;
+            }
+
+            @Override
+            protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
+                builder.error(new Exception("Forced exception"));
+                builder.down();
+            }
+        };
+
+        healthCheckRegistry.register(failingCheck);
+        healthCheckRegistry.register(createLivenessCheck("liveness-1", true, builder -> builder.detail("test", "test").up()));
+
+        SmallRyeHealth health = reporter.getHealth();
+
+        JsonObject healthObject = getHealthJson(health);
+        assertEquals(HealthCheckResponse.Status.DOWN.name(), healthObject.getString("status"));
+
+        JsonArray checks = healthObject.getJsonArray("checks");
+        assertEquals(2, checks.size());
+
+        JsonObject check = checks.getJsonObject(0);
+        assertHealthCheckOutput("liveness-1", HealthCheckResponse.Status.UP, check, result -> {
+            assertNotNull(result);
+            assertEquals("test", result.getString("test"));
+        });
+
+        JsonObject failedCheck = checks.getJsonObject(1);
+        assertHealthCheckOutput("failing-check", HealthCheckResponse.Status.DOWN, failedCheck, result -> {
+            assertNotNull(result);
+            assertEquals("Forced exception", result.getString("error.message"));
+            assertNotNull(result.getString("error.stacktrace"));
+        });
+    }
+
+    @Test
+    public void testExposureLevelFull() {
+        HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
+        healthCheckRegistry.setExposureLevel("full");
+
+        HealthCheck failingCheck = new AbstractHealthCheck("failing-check") {
+            @Override
+            public boolean isLiveness() {
+                return false;
+            }
+
+            @Override
+            protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
+                builder.error(new Exception("Forced exception"));
+                builder.down();
+            }
+        };
+
+        healthCheckRegistry.register(failingCheck);
+        healthCheckRegistry.register(createLivenessCheck("liveness-1", true, builder -> builder.detail("test", "test").up()));
+
+        SmallRyeHealth health = reporter.getHealth();
+
+        JsonObject healthObject = getHealthJson(health);
+        assertEquals(HealthCheckResponse.Status.DOWN.name(), healthObject.getString("status"));
+
+        JsonArray checks = healthObject.getJsonArray("checks");
+        assertEquals(2, checks.size());
+
+        JsonObject livenessCheck = checks.getJsonObject(0);
+        assertHealthCheckOutput("liveness-1", HealthCheckResponse.Status.UP, livenessCheck, result -> {
+            assertNotNull(result);
+            assertEquals("test", result.getString("test"));
+        });
+
+        JsonObject failedCheck = checks.getJsonObject(1);
+        assertHealthCheckOutput("failing-check", HealthCheckResponse.Status.DOWN, failedCheck, result -> {
+            assertNotNull(result);
+            assertEquals("Forced exception", result.getString("error.message"));
+            assertNotNull(result.getString("error.stacktrace"));
+        });
+    }
+
+    @Test
+    public void testExposureLevelOneline() {
+        HealthCheckRegistry healthCheckRegistry = HealthCheckRegistry.get(context);
+        healthCheckRegistry.setExposureLevel("oneline");
+
+        HealthCheck failingCheck = new AbstractHealthCheck("failing-check") {
+            @Override
+            public boolean isLiveness() {
+                return false;
+            }
+
+            @Override
+            protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
+                builder.error(new Exception("Forced exception"));
+                builder.down();
+            }
+        };
+
+        healthCheckRegistry.register(failingCheck);
+        healthCheckRegistry.register(createLivenessCheck("liveness-1", true, builder -> builder.detail("test", "test").up()));
+
+        SmallRyeHealth health = reporter.getHealth();
+
+        JsonObject healthObject = getHealthJson(health);
+        assertEquals(HealthCheckResponse.Status.DOWN.name(), healthObject.getString("status"));
+
+        JsonArray checks = healthObject.getJsonArray("checks");
+        assertEquals(2, checks.size());
+
+        JsonObject livenessCheck = checks.getJsonObject(0);
+        assertHealthCheckOutput("liveness-1", HealthCheckResponse.Status.UP, livenessCheck, result -> {
+            assertNull(result);
+        });
+
+        JsonObject failedCheck = checks.getJsonObject(1);
+        assertHealthCheckOutput("failing-check", HealthCheckResponse.Status.DOWN, failedCheck, result -> {
+            assertNull(result);
         });
     }
 }

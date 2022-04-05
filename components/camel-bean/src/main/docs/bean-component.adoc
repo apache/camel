@@ -38,6 +38,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Using
 
@@ -113,6 +116,18 @@ from("direct:start").bean(new ExampleBean(), "methodName");
 
 // Camel will create the instance of bean and cache it for you.
 from("direct:start").bean(ExampleBean.class);
+---------------------------------------------------------------
+
+This bean could be a lambda if you cast the lambda to a `@FunctionalInterface`
+
+[source,java]
+---------------------------------------------------------------
+@FunctionalInterface
+public interface ExampleInterface() {
+    @Handler String methodName();
+}
+/* - - - - - - - - - - - */
+from("direct:start").bean((ExampleInterface) () -> ""))
 ---------------------------------------------------------------
 
 == Bean Binding

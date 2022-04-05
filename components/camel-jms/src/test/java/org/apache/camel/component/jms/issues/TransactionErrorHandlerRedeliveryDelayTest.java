@@ -53,7 +53,7 @@ public class TransactionErrorHandlerRedeliveryDelayTest extends CamelSpringTestS
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             if (counter++ < 3) {
                 throw new IllegalArgumentException("Forced exception as counter is " + counter);
             }

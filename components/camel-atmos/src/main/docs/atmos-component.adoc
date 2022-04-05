@@ -31,7 +31,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Dependencies
 
@@ -73,7 +75,7 @@ exchange
 
 [source,text]
 -------------------------------
-DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, FOUND_FILES, DELETED_PATH, MOVED_PATH
+DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, DELETED_PATH, MOVED_PATH
 -------------------------------
 
 == Examples

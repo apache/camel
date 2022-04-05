@@ -38,7 +38,7 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testIllegalOption() throws Exception {
+    public void testIllegalOption() {
         try {
             context.getEndpoint("activemq:queue:bar?jmsHeaderStrategy=xxx");
             fail("Should have thrown a ResolveEndpointFailedException");
@@ -97,10 +97,10 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(getUri());
 
                 from(getUri()).to("mock:result");

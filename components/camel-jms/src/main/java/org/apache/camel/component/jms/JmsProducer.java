@@ -206,7 +206,7 @@ public class JmsProducer extends DefaultAsyncProducer {
 
         final String correlationProperty = configuration.getCorrelationProperty();
 
-        final String correlationPropertyToUse = ofNullable(correlationProperty).orElse("JMSCorrelationID");
+        final String correlationPropertyToUse = ofNullable(correlationProperty).orElse(JmsConstants.JMS_HEADER_CORRELATION_ID);
 
         final String originalCorrelationId = in.getHeader(correlationPropertyToUse, String.class);
 
@@ -338,7 +338,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                     // if the binding did not create the reply to then we have to try to create it here
                     if (jmsReplyTo == null) {
                         // prefer reply to from header over endpoint configured
-                        jmsReplyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);
+                        jmsReplyTo = exchange.getIn().getHeader(JmsConstants.JMS_HEADER_REPLY_TO, String.class);
                         if (jmsReplyTo == null) {
                             jmsReplyTo = endpoint.getReplyTo();
                         }

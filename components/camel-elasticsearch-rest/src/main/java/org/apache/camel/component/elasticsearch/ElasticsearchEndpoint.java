@@ -30,7 +30,7 @@ import org.elasticsearch.client.RestClient;
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "elasticsearch-rest", title = "Elasticsearch Rest",
              syntax = "elasticsearch-rest:clusterName", producerOnly = true,
-             category = { Category.SEARCH, Category.MONITORING })
+             category = { Category.SEARCH, Category.MONITORING }, headersClass = ElasticsearchConstants.class)
 public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     @UriParam

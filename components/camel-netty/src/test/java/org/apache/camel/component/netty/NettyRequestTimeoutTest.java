@@ -33,14 +33,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class NettyRequestTimeoutTest extends BaseNettyTest {
 
     @Test
-    public void testRequestTimeoutOK() throws Exception {
+    public void testRequestTimeoutOK() {
         String out = template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=500",
                 "Hello Camel", String.class);
         assertEquals("Bye World", out);
     }
 
     @Test
-    public void testRequestTimeout() throws Exception {
+    public void testRequestTimeout() {
         try {
             template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100", "Hello Camel",
                     String.class);
@@ -66,7 +66,7 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
     }
 
     @Test
-    public void testRequestTimeoutViaHeader() throws Exception {
+    public void testRequestTimeoutViaHeader() {
         try {
             template.requestBodyAndHeader("netty:tcp://localhost:{{port}}?textline=true&sync=true", "Hello Camel",
                     NettyConstants.NETTY_REQUEST_TIMEOUT, 100, String.class);
@@ -78,7 +78,7 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
     }
 
     @Test
-    public void testRequestTimeoutAndOk() throws Exception {
+    public void testRequestTimeoutAndOk() {
         try {
             template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100", "Hello Camel",
                     String.class);
@@ -95,10 +95,10 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}?textline=true&sync=true")
                         .process(new Processor() {
                             @Override

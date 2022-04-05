@@ -55,7 +55,7 @@ public class SqlProducerNamedParameterNotExistTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNamedParameterNotExistFromBody() throws Exception {
+    public void testNamedParameterNotExistFromBody() {
         Map<String, Object> map = new HashMap<>();
         map.put("foo", "ASF");
 
@@ -68,7 +68,7 @@ public class SqlProducerNamedParameterNotExistTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNamedParameterNotExistFromHeader() throws Exception {
+    public void testNamedParameterNotExistFromHeader() {
         try {
             template.sendBodyAndHeader("direct:start", "This is a dummy body", "foo", "ASF");
             fail("Should have thrown exception");
@@ -78,7 +78,7 @@ public class SqlProducerNamedParameterNotExistTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);

@@ -22,12 +22,12 @@ public class GoogleSecretManagerEndpointUriFactory extends org.apache.camel.supp
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(6);
-        props.add("serviceAccountKey");
-        props.add("lazyStartProducer");
-        props.add("project");
         props.add("client");
+        props.add("lazyStartProducer");
         props.add("operation");
         props.add("pojoRequest");
+        props.add("project");
+        props.add("serviceAccountKey");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

@@ -41,14 +41,14 @@ public class ZipkinSpanReporterInRegistryTest extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         Registry registry = new SimpleRegistry();
         registry.bind("span", Reporter.NOOP);
         return registry;
     }
 
     @Test
-    public void testZipkinConfiguration() throws Exception {
+    public void testZipkinConfiguration() {
         assertNotNull(zipkin.getSpanReporter());
         assertSame(Reporter.NOOP, zipkin.getSpanReporter());
     }

@@ -73,7 +73,7 @@ public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> ex
         // for transacted routing try the default REQUIRED name
         if (type == TransactedPolicy.class) {
             // still not found try with the default name PROPAGATION_REQUIRED
-            answer = lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
+            answer = lookupByNameAndType(PROPAGATION_REQUIRED, TransactedPolicy.class);
         }
 
         // this logic only applies if we are a transacted policy

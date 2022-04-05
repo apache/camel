@@ -16,15 +16,20 @@
  */
 package org.apache.camel.component.freemarker;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Freemarker Constants
  */
 public final class FreemarkerConstants {
 
+    @Metadata(description = "A URI for the template resource to use instead of the endpoint\n" +
+                            "configured.",
+              javaType = "String")
     public static final String FREEMARKER_RESOURCE_URI = "CamelFreemarkerResourceUri";
-
+    @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
     public static final String FREEMARKER_TEMPLATE = "CamelFreemarkerTemplate";
-
+    @Metadata(description = "The data model", javaType = "Object")
     public static final String FREEMARKER_DATA_MODEL = "CamelFreemarkerDataModel";
 
     private FreemarkerConstants() {

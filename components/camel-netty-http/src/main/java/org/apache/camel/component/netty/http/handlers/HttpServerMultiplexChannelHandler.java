@@ -39,6 +39,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.netty.http.HttpServerConsumerChannelFactory;
 import org.apache.camel.component.netty.http.InboundStreamHttpRequest;
 import org.apache.camel.component.netty.http.NettyHttpConfiguration;
+import org.apache.camel.component.netty.http.NettyHttpConstants;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -145,7 +146,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
                 }
 
                 HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
-                response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+                response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
                 response.headers().set(Exchange.CONTENT_LENGTH, 0);
                 response.headers().set("Allow", allowedMethods);
                 ctx.writeAndFlush(response);
@@ -173,7 +174,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
                 // this resource is not found, return 404
                 response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
             }
-            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
             ctx.writeAndFlush(response);
             ctx.close();
@@ -198,7 +199,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
                         cause);
                 // Now we just send 404 back to the client
                 HttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
-                response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+                response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
                 response.headers().set(Exchange.CONTENT_LENGTH, 0);
                 ctx.writeAndFlush(response);
                 ctx.close();

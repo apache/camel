@@ -59,7 +59,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // do we have an explicit method name we always should invoke (either configured on endpoint or as a header)
-        String explicitMethodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, method, String.class);
+        String explicitMethodName = exchange.getIn().getHeader(BeanConstants.BEAN_METHOD_NAME, method, String.class);
 
         Object bean;
         BeanInfo beanInfo;
@@ -118,7 +118,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
 
         // set explicit method name to invoke as a header, which is how BeanInfo can detect it
         if (explicitMethodName != null) {
-            in.setHeader(Exchange.BEAN_METHOD_NAME, explicitMethodName);
+            in.setHeader(BeanConstants.BEAN_METHOD_NAME, explicitMethodName);
         }
 
         MethodInvocation invocation;

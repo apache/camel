@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-functions",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "google-functions",
     "extendsScheme": "",
     "syntax": "google-functions:functionName",
@@ -24,6 +24,13 @@
   "componentProperties": {
     "lazyStartProducer": { "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
     "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "headers": {
+    "GoogleCloudFunctionsOperation": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "org.apache.camel.component.google.functions.GoogleCloudFunctionsOperations", "enum": [ "listFunctions", "getFunction", "callFunction", "generateDownloadUrl", "generateUploadUrl", "createFunction", "updateFunction", "deleteFunction" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation to perform" },
+    "GoogleCloudFunctionsEntryPoint": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the function (as defined in source code) that will be executed. Used for createFunction operation" },
+    "GoogleCloudFunctionsRuntime": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The runtime in which to run the function. Possible values are: nodejs10 nodejs12 nodejs14 python37 python38 python39 go111 go113 java11 dotnet3 ruby26 nodejs6 nodejs8 Used for createFunction operation." },
+    "GoogleCloudFunctionsSourceArchiveUrl": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Google Cloud Storage URL, starting with gs:\/\/, pointing to the zip archive which contains the function. Used for createFunction operation." },
+    "GoogleCloudFunctionsResponseObject": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The response object resulting from the Google Functions Client invocation" }
   },
   "properties": {
     "functionName": { "kind": "path", "displayName": "Function Name", "group": "common", "label": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.google.functions.GoogleCloudFunctionsConfiguration", "configurationField": "configuration", "description": "The user-defined name of the function" },

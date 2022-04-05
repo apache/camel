@@ -91,7 +91,7 @@ public final class KnativeHttpTestSupport {
         try {
             camelContext.addService(new VertxPlatformHttpServer(configuration) {
                 @Override
-                protected void doInit() throws Exception {
+                protected void doInit() {
                     initializeServer();
                 }
 

@@ -35,20 +35,18 @@ include::partial$component-endpoint-options.adoc[]
 == atomic number producer - to("hazelcast-atomicvalue:foo")
 
 The operations for this producer are:
+
 * setvalue (set the number with a given value)
 * get
-* increase (+1)
-* decrease (-1)
+* increment (+1)
+* decrement (-1)
 * destroy
+* compareAndSet
+* getAndAdd
 
-Header Variables for the request message:
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-
-|`CamelHazelcastOperationType` |`String` |valid values are: setvalue, get, increase, decrease, destroy 
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Sample for *set*:
 

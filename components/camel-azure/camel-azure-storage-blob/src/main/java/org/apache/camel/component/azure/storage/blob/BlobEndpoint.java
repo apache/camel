@@ -37,7 +37,8 @@ import org.apache.camel.util.ObjectHelper;
  * Store and retrieve blobs from Azure Storage Blob Service.
  */
 @UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-blob", title = "Azure Storage Blob Service",
-             syntax = "azure-storage-blob:accountName/containerName", category = { Category.CLOUD, Category.FILE })
+             syntax = "azure-storage-blob:accountName/containerName", category = { Category.CLOUD, Category.FILE },
+             headersClass = BlobConstants.class)
 public class BlobEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

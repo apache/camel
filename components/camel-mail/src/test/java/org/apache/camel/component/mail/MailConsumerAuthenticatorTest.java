@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mail;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import javax.mail.MessagingException;
@@ -49,7 +48,7 @@ public class MailConsumerAuthenticatorTest {
         execute("imap");
     }
 
-    private void execute(String protocol) throws Exception, IOException {
+    private void execute(String protocol) throws Exception {
         MailAuthenticator authenticator = new MyAuthenticator();
 
         JavaMailSender sender = Mockito.mock(JavaMailSender.class);

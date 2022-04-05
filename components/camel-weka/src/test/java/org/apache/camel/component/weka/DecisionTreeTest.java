@@ -41,7 +41,7 @@ public class DecisionTreeTest extends AbstractWekaTest {
             camelctx.addRoutes(new RouteBuilder() {
 
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
 
                     // Use the weka to read the model training data
                     from("direct:start")
@@ -78,7 +78,7 @@ public class DecisionTreeTest extends AbstractWekaTest {
             camelctx.addRoutes(new RouteBuilder() {
 
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
 
                     // Use the weka to read the model training data
                     from("direct:start")
@@ -115,7 +115,7 @@ public class DecisionTreeTest extends AbstractWekaTest {
             camelctx.addRoutes(new RouteBuilder() {
 
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
 
                     // Use the weka to read the model training data
                     from("direct:start")

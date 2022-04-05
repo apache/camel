@@ -45,7 +45,7 @@ public class FtpConsumerTemplateIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testConsumerTemplate() throws Exception {
+    public void testConsumerTemplate() {
         Exchange exchange = consumer.receive(getFtpUrl(), 5000);
         assertNotNull(exchange);
         assertEquals("hello.txt", exchange.getIn().getHeader(Exchange.FILE_NAME));
@@ -70,7 +70,7 @@ public class FtpConsumerTemplateIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testConsumerTemplateNotDone() throws Exception {
+    public void testConsumerTemplateNotDone() {
         Exchange exchange = consumer.receive(getFtpUrl(), 5000);
         assertNotNull(exchange);
         assertEquals("hello.txt", exchange.getIn().getHeader(Exchange.FILE_NAME));

@@ -44,7 +44,7 @@ You can specify which Camel version to run as shown:
 
 [source,bash]
 ----
-jbang -Dcamel.jbang.version=3.14.0 camel@apache/camel [command]
+jbang run -Dcamel.jbang.version=3.14.0 camel@apache/camel [command]
 ----
 
 == Running Routes
@@ -237,6 +237,40 @@ And you can call the HTTP service with:
 curl http://localhost:8080/hello
 Hello World%
 ----
+
+=== Dependency Injection in Java classes
+
+When running Camel applications with camel-jbang, then the runtime is `camel-main` based. This means
+there is no Spring Boot, or Quarkus available. However, we have added support for using annotation
+based dependency injection in Java classes.
+
+==== Using Camel dependency injection
+
+You can use the following Camel annotations (they work on all runtimes):
+
+- `@BindToRegistry` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
+- `@BeanInject` to dependency inject a bean on a class field.
+- `@PropertyInject` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
+- `@BindToRegistry` on a method to create a bean by invoking the method.
+- `@Converter` on class level to auto-register the xref:type-converter.adoc[type converters] from the class.
+
+==== Using Spring Boot dependency injection
+
+You can use the following Spring Boot annotations:
+
+- `@Component` or `@Service` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
+- `@Autowired` to dependency inject a bean on a class field. `@Qualifier` can be used to specify the bean id.
+- `@Value` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
+- `@Bean` on a method to create a bean by invoking the method.
+
+==== Using Quarkus injection
+
+You can use the following Quarkus annotations:
+
+- `@ApplicationScoped` or `@Singleton` on class level to create an instance of the class and register in the xref:registry.adoc[Registry]. `@Named` can be used to specify the bean id.
+- `@Inject` to dependency inject an bean on a class field. `@Named` can be used to specify the bean id.
+- `@ConfigProperty` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
+- `@Produces` on a method to create a bean by invoking the method. `@Named` can be used to specify the bean id.
 
 === Debugging
 

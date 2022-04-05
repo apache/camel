@@ -30,11 +30,8 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationMode;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.dsl.yaml.deserializers.CustomResolver;
-import org.apache.camel.dsl.yaml.deserializers.EndpointProducerDeserializersResolver;
 import org.apache.camel.dsl.yaml.deserializers.ModelDeserializersResolver;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.YamlUnicodeReader;
 import org.snakeyaml.engine.v2.composer.Composer;
@@ -48,95 +45,53 @@ import org.snakeyaml.engine.v2.scanner.StreamReader;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 
 public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderSupport {
-    public static final String DESERIALIZATION_MODE = "CamelYamlDslDeserializationMode";
 
-    private LoadSettings settings;
-    private YamlDeserializationContext deserializationContext;
-    private YamlDeserializationMode deserializationMode;
+    public static final String DESERIALIZATION_MODE = "CamelYamlDslDeserializationMode";
 
     public YamlRoutesBuilderLoaderSupport(String extension) {
         super(extension);
     }
 
-    public YamlDeserializationMode getDeserializationMode() {
-        return deserializationMode;
-    }
+    protected YamlDeserializationContext newYamlDeserializationContext(LoadSettings settings, Resource resource) {
+        YamlDeserializationContext ctx = new YamlDeserializationContext(settings);
 
-    public void setDeserializationMode(YamlDeserializationMode deserializationMode) {
-        this.deserializationMode = deserializationMode;
-    }
-
-    @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
-
-        this.settings = LoadSettings.builder().build();
-        this.deserializationContext = new YamlDeserializationContext(settings);
-        this.deserializationContext.setCamelContext(getCamelContext());
-        this.deserializationContext.addResolvers(new CustomResolver());
-        this.deserializationContext.addResolvers(new ModelDeserializersResolver());
-        this.deserializationContext.addResolvers(new EndpointProducerDeserializersResolver());
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        if (this.deserializationMode == null) {
-            final Map<String, String> options = getCamelContext().getGlobalOptions();
-            final String mode = options.get(DESERIALIZATION_MODE);
-            if (mode != null) {
-                this.deserializationContext.setDeserializationMode(
-                        YamlDeserializationMode.valueOf(mode.toUpperCase(Locale.US)));
-            } else {
-                this.deserializationContext.setDeserializationMode(YamlDeserializationMode.FLOW);
-            }
-        } else {
-            this.deserializationContext.setDeserializationMode(deserializationMode);
+        YamlDeserializationMode deserializationMode = YamlDeserializationMode.FLOW;
+        final Map<String, String> options = getCamelContext().getGlobalOptions();
+        final String mode = options.get(DESERIALIZATION_MODE);
+        if (mode != null) {
+            deserializationMode = YamlDeserializationMode.valueOf(mode.toUpperCase(Locale.US));
         }
 
-        ServiceHelper.startService(this.deserializationContext);
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-
-        ServiceHelper.stopService(this.deserializationContext);
-
-        this.deserializationContext = null;
-        this.settings = null;
+        ctx.setDeserializationMode(deserializationMode);
+        ctx.setResource(resource);
+        ctx.setCamelContext(getCamelContext());
+        ctx.addResolvers(new CustomResolver());
+        ctx.addResolvers(new ModelDeserializersResolver());
+        return ctx;
     }
 
     @Override
     public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
-        ObjectHelper.notNull(deserializationContext, "constructor");
-        ObjectHelper.notNull(settings, "settings");
-
         if (!resource.exists()) {
             throw new FileNotFoundException("Resource not found: " + resource.getLocation());
         }
 
         try (InputStream is = resource.getInputStream()) {
-            final StreamReader reader = new StreamReader(settings, new YamlUnicodeReader(is));
-            final Parser parser = new ParserImpl(settings, reader);
-            final Composer composer = new Composer(settings, parser);
+            // need a local settings because we want the label to be the resource we parse so the parser
+            // can show parsing errors referring to actual resource file being parsed.
+            LoadSettings local = LoadSettings.builder().setLabel(resource.getLocation()).build();
+            final YamlDeserializationContext ctx = newYamlDeserializationContext(local, resource);
+            final StreamReader reader = new StreamReader(local, new YamlUnicodeReader(is));
+            final Parser parser = new ParserImpl(local, reader);
+            final Composer composer = new Composer(local, parser);
 
             return composer.getSingleNode()
-                    .map(node -> builder(node, resource))
-                    .orElseThrow(() -> new YamlDeserializationException("Unable to deserialize resource"));
+                    .map(node -> builder(ctx, node))
+                    .orElseThrow(() -> new YamlDeserializationException("Unable to parse resource: " + resource.getLocation()));
         }
     }
 
-    protected LoadSettings getSettings() {
-        return this.settings;
-    }
-
-    protected YamlDeserializationContext getDeserializationContext() {
-        return this.deserializationContext;
-    }
-
-    protected abstract RouteBuilder builder(Node node, Resource resource);
+    protected abstract RouteBuilder builder(YamlDeserializationContext ctx, Node node);
 
     protected boolean anyTupleMatches(List<NodeTuple> list, String aKey, String aValue) {
         return anyTupleMatches(list, aKey, Predicate.isEqual(aValue));

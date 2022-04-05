@@ -60,10 +60,10 @@ public class JmsBatchResequencerJMSPriorityTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("jms:queue:foo")
                         // sort by JMSPriority by allowing duplicates (message can have same JMSPriority)

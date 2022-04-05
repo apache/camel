@@ -22,8 +22,8 @@ package org.apache.camel;
 public interface CamelContextLifecycle extends AutoCloseable {
 
     /**
-     * Starts the {@link CamelContext} (<b>important:</b> the start method is not blocked, see more details
-     * <a href="http://camel.apache.org/running-camel-standalone-and-have-it-keep-running.html">here</a>)</li>.
+     * Starts the {@link CamelContext} (<b>important:</b> the start method is not blocked, see more details in the
+     * {@link Main} documentation for running Camel Standalone).
      * <p/>
      * See more details at the class-level javadoc at {@link CamelContext}.
      *

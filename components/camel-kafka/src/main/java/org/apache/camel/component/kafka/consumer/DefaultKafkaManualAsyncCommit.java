@@ -49,7 +49,7 @@ public class DefaultKafkaManualAsyncCommit extends DefaultKafkaManualCommit impl
             if (offsetRepository != null) {
                 offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(recordOffset));
             } else {
-                LOG.debug("CommitAsync {} from topic {} with offset: {}", getThreadId(), getTopicName(), recordOffset);
+                LOG.debug("Commit async {} from topic {} with offset: {}", getThreadId(), getTopicName(), recordOffset);
                 camelExchangePayload.consumer.commitAsync(
                         Collections.singletonMap(partition, new OffsetAndMetadata(recordOffset + 1)),
                         (offsets, exception) -> {

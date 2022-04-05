@@ -31,6 +31,7 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
 
     String CHECK_ID = "check.id";
     String CHECK_GROUP = "check.group";
+    String CHECK_KIND = "check.kind";
     String CHECK_ENABLED = "check.enabled";
     String INVOCATION_COUNT = "invocation.count";
     String INVOCATION_TIME = "invocation.time";
@@ -50,6 +51,12 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
         UP,
         DOWN,
         UNKNOWN
+    }
+
+    enum Kind {
+        READINESS,
+        LIVENESS,
+        ALL,
     }
 
     @Override
@@ -95,6 +102,24 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
      */
     default Result call() {
         return call(Collections.emptyMap());
+    }
+
+    /**
+     * Invoke the check as readiness check.
+     *
+     * @see #call(Map)
+     */
+    default Result callReadiness() {
+        return call(Map.of(HealthCheck.CHECK_KIND, Kind.READINESS));
+    }
+
+    /**
+     * Invoke the check as liveness check.
+     *
+     * @see #call(Map)
+     */
+    default Result callLiveness() {
+        return call(Map.of(HealthCheck.CHECK_KIND, Kind.LIVENESS));
     }
 
     /**

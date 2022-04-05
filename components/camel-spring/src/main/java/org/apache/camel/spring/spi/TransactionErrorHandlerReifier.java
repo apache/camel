@@ -55,7 +55,7 @@ public class TransactionErrorHandlerReifier extends DefaultErrorHandlerReifier<T
             }
 
             if (transactionTemplate == null) {
-                TransactedPolicy policy = lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
+                TransactedPolicy policy = lookupByNameAndType(PROPAGATION_REQUIRED, TransactedPolicy.class);
                 if (policy instanceof SpringTransactionPolicy) {
                     transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
                 }

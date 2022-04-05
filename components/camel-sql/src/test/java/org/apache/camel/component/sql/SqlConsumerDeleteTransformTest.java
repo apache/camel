@@ -79,10 +79,10 @@ public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 // even if we transform the exchange we can still do onConsume as we have the original data at

@@ -112,7 +112,7 @@ public class KnativeHttpServer extends ServiceSupport {
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doStart() {
         this.executor = context.getExecutorServiceManager().newSingleThreadExecutor(this, "knative-http-server");
         this.vertx = Vertx.vertx();
         this.server = vertx.createHttpServer();

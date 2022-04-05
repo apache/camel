@@ -81,8 +81,6 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.http.HttpHeaders.HOST;
-
 public class HttpProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
@@ -155,7 +153,7 @@ public class HttpProducer extends DefaultProducer {
 
         if (getEndpoint().isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
-            String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+            String queryString = exchange.getIn().getHeader(HttpConstants.HTTP_QUERY, String.class);
             if (queryString != null) {
                 skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
@@ -165,7 +163,7 @@ public class HttpProducer extends DefaultProducer {
         HttpHost httpHost = createHost(httpRequest, exchange);
 
         Message in = exchange.getIn();
-        String httpProtocolVersion = in.getHeader(Exchange.HTTP_PROTOCOL_VERSION, String.class);
+        String httpProtocolVersion = in.getHeader(HttpConstants.HTTP_PROTOCOL_VERSION, String.class);
         if (httpProtocolVersion != null) {
             // set the HTTP protocol version
             int[] version = HttpHelper.parserHttpVersion(httpProtocolVersion);
@@ -250,15 +248,15 @@ public class HttpProducer extends DefaultProducer {
         }
 
         if (getEndpoint().getCustomHostHeader() != null) {
-            httpRequest.setHeader(HOST, getEndpoint().getCustomHostHeader());
+            httpRequest.setHeader(HttpConstants.HTTP_HEADER_HOST, getEndpoint().getCustomHostHeader());
         }
         //In reverse proxy applications it can be desirable for the downstream service to see the original Host header
         //if this option is set, and the exchange Host header is not null, we will set it's current value on the httpRequest
         if (getEndpoint().isPreserveHostHeader()) {
-            String hostHeader = exchange.getIn().getHeader("Host", String.class);
+            String hostHeader = exchange.getIn().getHeader(HttpConstants.HTTP_HEADER_HOST, String.class);
             if (hostHeader != null) {
                 //HttpClient 4 will check to see if the Host header is present, and use it if it is, see org.apache.http.protocol.RequestTargetHost in httpcore
-                httpRequest.setHeader(HOST, hostHeader);
+                httpRequest.setHeader(HttpConstants.HTTP_HEADER_HOST, hostHeader);
             }
         }
 
@@ -336,12 +334,12 @@ public class HttpProducer extends DefaultProducer {
 
         // optimize for 200 response code as the boxing is outside the cached integers
         if (responseCode == 200) {
-            answer.setHeader(Exchange.HTTP_RESPONSE_CODE, OK_RESPONSE_CODE);
+            answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, OK_RESPONSE_CODE);
         } else {
-            answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+            answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
         }
         if (httpResponse.getStatusLine() != null) {
-            answer.setHeader(Exchange.HTTP_RESPONSE_TEXT, httpResponse.getStatusLine().getReasonPhrase());
+            answer.setHeader(HttpConstants.HTTP_RESPONSE_TEXT, httpResponse.getStatusLine().getReasonPhrase());
         }
         answer.setBody(response);
 
@@ -482,7 +480,7 @@ public class HttpProducer extends DefaultProducer {
             return null;
         }
 
-        Header header = httpResponse.getFirstHeader(Exchange.CONTENT_ENCODING);
+        Header header = httpResponse.getFirstHeader(HttpConstants.CONTENT_ENCODING);
         String contentEncoding = header != null ? header.getValue() : null;
 
         if (!exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
@@ -592,17 +590,17 @@ public class HttpProducer extends DefaultProducer {
         // these checks are checks that is done in HttpHelper.createURL and HttpHelper.createURI methods
         boolean create = false;
         Message in = exchange.getIn();
-        if (in.getHeader(Exchange.REST_HTTP_URI) != null) {
+        if (in.getHeader(HttpConstants.REST_HTTP_URI) != null) {
             create = true;
-        } else if (in.getHeader(Exchange.HTTP_URI) != null && !getEndpoint().isBridgeEndpoint()) {
+        } else if (in.getHeader(HttpConstants.HTTP_URI) != null && !getEndpoint().isBridgeEndpoint()) {
             create = true;
-        } else if (in.getHeader(Exchange.HTTP_PATH) != null) {
+        } else if (in.getHeader(HttpConstants.HTTP_PATH) != null) {
             create = true;
-        } else if (in.getHeader(Exchange.REST_HTTP_QUERY) != null) {
+        } else if (in.getHeader(HttpConstants.REST_HTTP_QUERY) != null) {
             create = true;
-        } else if (in.getHeader("CamelHttpRawQuery") != null) {
+        } else if (in.getHeader(HttpConstants.HTTP_RAW_QUERY) != null) {
             create = true;
-        } else if (in.getHeader(Exchange.HTTP_QUERY) != null) {
+        } else if (in.getHeader(HttpConstants.HTTP_QUERY) != null) {
             create = true;
         }
 

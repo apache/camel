@@ -45,13 +45,13 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
     private TestServerChannelPipelineFactory testServerFactory = new TestServerChannelPipelineFactory(null);
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}?serverInitializerFactory=#spf&textline=true").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody(
+                    public void process(Exchange exchange) {
+                        exchange.getMessage().setBody(
                                 "Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");
                     }
                 });
@@ -60,7 +60,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
     }
 
     @Test
-    public void testCustomClientInitializerFactory() throws Exception {
+    public void testCustomClientInitializerFactory() {
         String response
                 = (String) template.requestBody("netty:tcp://localhost:{{port}}?clientInitializerFactory=#cpf&textline=true",
                         "Forest Gump describing Vietnam...");
@@ -80,7 +80,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
         }
 
         @Override
-        protected void initChannel(Channel ch) throws Exception {
+        protected void initChannel(Channel ch) {
 
             ChannelPipeline channelPipeline = ch.pipeline();
             clientInvoked = true;
@@ -106,7 +106,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
         }
 
         @Override
-        protected void initChannel(Channel ch) throws Exception {
+        protected void initChannel(Channel ch) {
             ChannelPipeline channelPipeline = ch.pipeline();
             serverInvoked = true;
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));

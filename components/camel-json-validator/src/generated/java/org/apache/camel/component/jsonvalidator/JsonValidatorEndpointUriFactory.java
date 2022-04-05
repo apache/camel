@@ -22,13 +22,13 @@ public class JsonValidatorEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(9);
-        props.add("lazyStartProducer");
-        props.add("headerName");
-        props.add("failOnNullHeader");
-        props.add("contentCache");
         props.add("allowContextMapAll");
-        props.add("failOnNullBody");
+        props.add("contentCache");
         props.add("errorHandler");
+        props.add("failOnNullBody");
+        props.add("failOnNullHeader");
+        props.add("headerName");
+        props.add("lazyStartProducer");
         props.add("resourceUri");
         props.add("uriSchemaLoader");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

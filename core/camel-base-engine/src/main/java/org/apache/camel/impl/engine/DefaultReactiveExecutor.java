@@ -20,7 +20,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
-import java.util.function.Supplier;
 
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -28,6 +27,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.concurrent.NamedThreadLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,19 +40,16 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultReactiveExecutor.class);
 
-    private final ThreadLocal<Worker> workers = ThreadLocal.withInitial(new Supplier<Worker>() {
-        @Override
-        public Worker get() {
-            int number = createdWorkers.incrementAndGet();
-            return new Worker(number, DefaultReactiveExecutor.this);
-        }
-    });
-
     // use for statistics so we have insights at runtime
     private boolean statisticsEnabled;
     private final AtomicInteger createdWorkers = new AtomicInteger();
     private final LongAdder runningWorkers = new LongAdder();
     private final LongAdder pendingTasks = new LongAdder();
+
+    private final NamedThreadLocal<Worker> workers = new NamedThreadLocal<>("CamelReactiveWorker", () -> {
+        int number = createdWorkers.incrementAndGet();
+        return new Worker(number, DefaultReactiveExecutor.this);
+    });
 
     @Override
     public void schedule(Runnable runnable) {
@@ -124,7 +121,6 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
 
     @Override
     protected void doShutdown() throws Exception {
-        // cleanup workers
         workers.remove();
     }
 

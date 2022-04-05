@@ -44,7 +44,7 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
     AvailablePortFinder.Port port4 = AvailablePortFinder.find();
 
     @Test
-    public void testEncodedQuery() throws Exception {
+    public void testEncodedQuery() {
         String response = template.requestBody("http://localhost:" + port2 + "/nettyTestRouteA?param1=%2B447777111222", null,
                 String.class);
         assertEquals("param1=+447777111222", response, "Get a wrong response");
@@ -70,7 +70,7 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
 

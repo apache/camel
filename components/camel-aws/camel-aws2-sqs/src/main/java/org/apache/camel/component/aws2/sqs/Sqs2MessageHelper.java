@@ -38,6 +38,11 @@ public final class Sqs2MessageHelper {
             mav.dataType("Binary");
             mav.binaryValue(SdkBytes.fromByteBuffer((ByteBuffer) value));
             return mav.build();
+        } else if (value instanceof byte[]) {
+            MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
+            mav.dataType("Binary");
+            mav.binaryValue(SdkBytes.fromByteArray((byte[]) value));
+            return mav.build();
         } else if (value instanceof Boolean) {
             MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
             mav.dataType("Number.Boolean");

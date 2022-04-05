@@ -50,10 +50,10 @@ public class ListBucketsTest extends CamelTestSupport {
             testConfiguration.getProperty("accessKey"),
             testConfiguration.getProperty("secretKey"));
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list_buckets")
                         .to("hwcloud-obs:listBuckets?" +
                             "accessKey=" + testConfiguration.getProperty("accessKey") +

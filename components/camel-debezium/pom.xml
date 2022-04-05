@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.16.0-SNAPSHOT</version>
+        <version>3.17.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-debezium-parent</artifactId>
@@ -34,8 +34,10 @@
 
     <modules>
         <module>camel-debezium-common</module>
+        <module>camel-debezium-db2</module> 
         <module>camel-debezium-mongodb</module>
         <module>camel-debezium-mysql</module>
+        <module>camel-debezium-oracle</module>
         <module>camel-debezium-postgres</module>
         <module>camel-debezium-sqlserver</module>
     </modules>

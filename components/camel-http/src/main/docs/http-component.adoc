@@ -52,43 +52,15 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Message Headers
-
-[width="100%",cols="10%,20%,70%",options="header",]
-|=======================================================================
-|Name |Type |Description
-
-|`Exchange.HTTP_URI` |`String` |URI to call. Will override existing URI set directly on the endpoint.
-This uri is the uri of the http server to call. Its not the same as the
-Camel endpoint uri, where you can configure endpoint options such as
-security etc. This header does not support that, its only the uri of the
-http server.
-
-|`Exchange.HTTP_PATH` |`String` |Request URI's path, the header will be used to build the request URI
-with the HTTP_URI.
-
-|`Exchange.HTTP_QUERY` |`String` |URI parameters. Will override existing URI parameters set directly on
-the endpoint.
-
-|`Exchange.HTTP_RESPONSE_CODE` |`int` |The HTTP response code from the external server. Is 200 for OK.
-
-|`Exchange.HTTP_RESPONSE_TEXT` | `String` |The HTTP response text from the external server.
-
-|`Exchange.HTTP_CHARACTER_ENCODING` |`String` |Character encoding.
-
-|`Exchange.CONTENT_TYPE` |`String` |The HTTP content type. Is set on both the IN and OUT message to provide
-a content type, such as `text/html`.
-
-|`Exchange.CONTENT_ENCODING` |`String` |The HTTP content encoding. Is set on both the IN and OUT message to
-provide a content encoding, such as `gzip`.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Message Body
 
 Camel will store the HTTP response from the external server on the OUT
 body. All headers from the IN message will be copied to the OUT message,
-so headers are preserved during routing. Additionally Camel will add the
+so headers are preserved during routing. Additionally, Camel will add the
 HTTP response headers as well to the OUT message headers.
 
 == Using System Properties
@@ -150,23 +122,6 @@ The following algorithm is used to determine what HTTP method should be used: +
  4. `GET` if endpoint is configured with a query string. +
  5. `POST` if there is data to send (body is not `null`). +
  6. `GET` otherwise.
-
-== How to get access to HttpServletRequest and HttpServletResponse
-
-You can get access to these two using the Camel type converter system
-using 
-
-[NOTE]
-====
-You can get the request and response not just from the processor
-after the camel-jetty or camel-cxf endpoint.
-====
-
-[source,java]
-----------------------------------------------------------------------------------
-HttpServletRequest request = exchange.getIn().getBody(HttpServletRequest.class);
-HttpServletRequest response = exchange.getIn().getBody(HttpServletResponse.class);
-----------------------------------------------------------------------------------
 
 == Configuring URI to call
 

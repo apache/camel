@@ -62,10 +62,10 @@ public class SftpSimpleConsumeStreamingPartialReadIT extends SftpServerTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true"
                      + "&move=done&moveFailed=failed").routeId("foo").noAutoStartup().process(new Processor() {

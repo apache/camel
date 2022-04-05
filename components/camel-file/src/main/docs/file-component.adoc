@@ -64,6 +64,10 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 [TIP]
 ====
 *Default behavior for file producer* 
@@ -164,66 +168,6 @@ timestamp you can use
 `moveFailed=/error/${``file:name.noext``}-${date:now:yyyyMMddHHmmssSSS}.${``file:ext`}.
 
 See more examples at xref:languages:file-language.adoc[File Language]
-
-== Message Headers
-
-The following headers are supported by this component:
-
-=== File producer only
-
-[width="100%",cols="10%,90%",options="header",]
-|===
-|Header |Description
-
-|`CamelFileName` |Specifies the name of the file to write (relative to the endpoint
-directory). This name can be a `String`; a `String` with a
-xref:languages:file-language.adoc[File Language] or xref:languages:simple-language.adoc[Simple]
-expression; or an Expression object. If it's
-`null` then Camel will auto-generate a filename based on the message
-unique ID.
-
-|`CamelFileNameProduced` |The actual absolute filepath (path + name) for the output file that was
-written. This header is set by Camel and its purpose is providing
-end-users with the name of the file that was written.
-
-|`CamelOverruleFileName` |Is used for overruling `CamelFileName` header and use the
-value instead (but only once, as the producer will remove this header
-after writing the file). The value can be only be a String. Notice that
-if the option `fileName` has been configured, then this is still being
-evaluated.
-|===
-
-=== File consumer only
-
-[width="100%",cols="10%,90%",options="header",]
-|===
-|Header |Description
-
-|`CamelFileName` |Name of the consumed file as a relative file path with offset from the
-starting directory configured on the endpoint.
-
-|`CamelFileNameOnly` |Only the file name (the name with no leading paths).
-
-|`CamelFileAbsolute` |A `boolean` option specifying whether the consumed file denotes an
-absolute path or not. Should normally be `false` for relative paths.
-Absolute paths should normally not be used but we added to the move
-option to allow moving files to absolute paths. But can be used
-elsewhere as well.
-
-|`CamelFileAbsolutePath` |The absolute path to the file. For relative files this path holds the
-relative path instead.
-
-|`CamelFilePath` |The file path. For relative files this is the starting directory + the
-relative filename. For absolute files this is the absolute path.
-
-|`CamelFileRelativePath` |The relative path.
-
-|`CamelFileParent` |The parent path.
-
-|`CamelFileLength` |A `long` value containing the file size.
-
-|`CamelFileLastModified` |A `Long` value containing the last modified timestamp of the file.
-|===
 
 == Batch Consumer
 

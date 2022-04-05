@@ -1,1 +1,0 @@
-../../../../../components/camel-hystrix/src/main/docs/hystrix.adoc

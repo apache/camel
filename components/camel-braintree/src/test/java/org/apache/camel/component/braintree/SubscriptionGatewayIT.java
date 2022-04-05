@@ -40,7 +40,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for cancel
     @Disabled
     @Test
-    public void testCancel() throws Exception {
+    public void testCancel() {
         // using String message body for single parameter "id"
         final com.braintreegateway.Result result = requestBody("direct://CANCEL", null);
 
@@ -51,7 +51,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for create
     @Disabled
     @Test
-    public void testCreate() throws Exception {
+    public void testCreate() {
         // using com.braintreegateway.SubscriptionRequest message body for single parameter "request"
         final com.braintreegateway.Result result = requestBody("direct://CREATE", null);
 
@@ -62,7 +62,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for delete
     @Disabled
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBraintree.customerId", null);
@@ -78,7 +78,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for find
     @Disabled
     @Test
-    public void testFind() throws Exception {
+    public void testFind() {
         // using String message body for single parameter "id"
         final com.braintreegateway.Subscription result = requestBody("direct://FIND", null);
 
@@ -89,7 +89,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for retryCharge
     @Disabled
     @Test
-    public void testRetryCharge() throws Exception {
+    public void testRetryCharge() {
         // using String message body for single parameter "subscriptionId"
         final com.braintreegateway.Result result = requestBody("direct://RETRYCHARGE", null);
 
@@ -100,7 +100,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for retryCharge
     @Disabled
     @Test
-    public void testRetryChargeWithAmount() throws Exception {
+    public void testRetryChargeWithAmount() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBraintree.subscriptionId", null);
@@ -116,7 +116,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for search
     @Disabled
     @Test
-    public void testSearch() throws Exception {
+    public void testSearch() {
         // using com.braintreegateway.SubscriptionSearchRequest message body for single parameter "searchRequest"
         final com.braintreegateway.ResourceCollection result = requestBody("direct://SEARCH", null);
 
@@ -127,7 +127,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for update
     @Disabled
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBraintree.id", null);
@@ -141,7 +141,7 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for cancel

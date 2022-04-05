@@ -1,0 +1,73 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.16 to 3.17
+
+=== camel-health
+
+Camel now reports DOWN when Camel is being stopped, during the graceful shutdown process.
+This ensures that Camel reports that it's not ready to accept new traffic.
+
+=== camel-main
+
+Added method `findRouteResourcesFromDirectory` to `org.apache.camel.main.RoutesCollector`.
+
+=== camel-yaml-dsl
+
+Removed _endpoint-dsl_ notation which was not well known,
+causing problems for tools, and yaml-validation against the json-schema standard.
+
+For example the following notation:
+
+[source,yaml]
+----
+- from:
+    uri: "direct:start"
+    steps:
+      - to:
+          kafka:
+            topic: cheese
+            brokers: mykafka:1234
+----
+
+Should be change to:
+
+[source,yaml]
+----
+- from:
+    uri: "direct:start"
+    steps:
+      - to:
+          uri: "kafka:cheese?brokers=mykafka:1234"
+----
+
+Or
+
+[source,yaml]
+----
+- from:
+    uri: "direct:start"
+    steps:
+      - to:
+          uri: "kafka"
+          parameters:
+            topic: "cheese"
+            brokers: "mykafka:1234"
+----
+
+=== camel-kafka
+
+The option `autoCommitOnStop` was removed from the Camel Kafka component. When using `autoCommitEnable` (which is enabled by default) the Kafka consumer will automatically commit on close.
+
+When the `autoCommitEnable` is turned off, the component issues a call to the respective commit manager during shutdown.
+
+Asynchronous, Synchronous or NO-OP commit policies from the former `autoCommitOnStop` are now determined by automatically by the value of the `kafkaManualCommitFactory` option:
+
+* NO-OP is the default behavior if no `kafkaManualCommitFactory` is provided
+* Async can be set using `kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory`
+* Sync can be set using `kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory`
+
+

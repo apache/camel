@@ -61,9 +61,9 @@ public class LarsIssueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 Processor myProcessor = e -> LOG.info(">>>> Received exchange: " + e);
 
                 // lets enable CACHE_CONSUMER so that the consumer stays around in JMX

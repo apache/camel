@@ -74,10 +74,10 @@ public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("netty:tcp://localhost:" + port.getPort()
                      + "?textline=true&sync=true&workerGroup=#sharedServerPool&usingExecutorService=false")

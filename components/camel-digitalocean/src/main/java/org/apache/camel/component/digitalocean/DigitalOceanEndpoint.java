@@ -21,6 +21,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
 import org.apache.camel.component.digitalocean.producer.DigitalOceanAccountProducer;
 import org.apache.camel.component.digitalocean.producer.DigitalOceanActionsProducer;
 import org.apache.camel.component.digitalocean.producer.DigitalOceanBlockStoragesProducer;
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * Manage Droplets and resources within the DigitalOcean cloud.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "digitalocean", title = "DigitalOcean", syntax = "digitalocean:operation",
-             producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT })
+             producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT }, headersClass = DigitalOceanHeaders.class)
 public class DigitalOceanEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DigitalOceanEndpoint.class);

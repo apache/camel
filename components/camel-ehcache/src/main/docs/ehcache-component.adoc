@@ -51,46 +51,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-
-=== Message Headers Camel 
-
- 
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|CamelEhcacheAction |`String` |The operation to be perfomed on the cache, valid options are:
-
-* CLEAR
-* PUT
-* PUT_ALL
-* PUT_IF_ABSENT
-* GET
-* GET_ALL
-* REMOVE
-* REMOVE_ALL
-* REPLACE
-
-|CamelEhcacheActionHasResult |Boolean |Set to true if the action has a result
-
-|CamelEhcacheActionSucceeded |`Boolean` |Set to true if the actionsuccedded
-
-|CamelEhcacheKey |Object |The cache key used for an action
-
-|CamelEhcacheKeys |Set<Object> |A list of keys, used in
-
-* PUT_ALL
-* GET_ALL
-* REMOVE_ALL
-
-|CamelEhcacheValue |Object |The value to put in the cache or the result of an operation
-
-|CamelEhcacheOldValue |Object |The old value associated to a key for actions like PUT_IF_ABSENT or the
-Object used for comparison for actions like REPLACE
-
-|CamelEhcacheEventType |EventType |The type of event received
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Ehcache based idempotent repository example:
 

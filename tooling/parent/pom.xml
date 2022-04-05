@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>tooling</artifactId>
-        <version>3.16.0-SNAPSHOT</version>
+        <version>3.17.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>tooling-parent</artifactId>
@@ -38,7 +38,7 @@
         <maven-maven-plugin-descriptor-version>2.2.1</maven-maven-plugin-descriptor-version>
         <maven-project-version>2.2.1</maven-project-version>
         <maven-dependency-tree-version>2.2</maven-dependency-tree-version>
-        <maven-plugin-annotations-version>3.6.0</maven-plugin-annotations-version>
+        <maven-plugin-annotations-version>3.6.4</maven-plugin-annotations-version>
         <maven-reporting-api-version>3.0</maven-reporting-api-version>
         <maven-reporting-impl-version>2.4</maven-reporting-impl-version>
         <maven-resolver-version>1.0.3</maven-resolver-version>
@@ -55,6 +55,7 @@
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-core</artifactId>
                 <version>${maven-version}</version>
+                <scope>provided</scope>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -72,18 +73,51 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
+                <artifactId>maven-model</artifactId>
+                <version>${maven-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-settings</artifactId>
+                <version>${maven-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-repository-metadata</artifactId>
+                <version>${maven-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-toolchain</artifactId>
+                <version>${maven-project-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-artifact-manager</artifactId>
+                <version>${maven-project-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
                 <artifactId>maven-artifact</artifactId>
                 <version>${maven-version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-api</artifactId>
                 <version>${maven-version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-compat</artifactId>
                 <version>${maven-version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.plugin-tools</groupId>
@@ -94,6 +128,7 @@
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-descriptor</artifactId>
                 <version>${maven-maven-plugin-descriptor-version}</version>
+                <scope>provided</scope>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -105,6 +140,7 @@
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-project</artifactId>
                 <version>${maven-project-version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.shared</groupId>

@@ -32,11 +32,11 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  */
 class EnrichWithoutRestResponseTest extends BaseNettyTest {
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // mock server - accepts connection and immediately disconnects without any response
                 from("netty:tcp://0.0.0.0:{{port}}?disconnect=true")
                         .log("Got request ${body}")

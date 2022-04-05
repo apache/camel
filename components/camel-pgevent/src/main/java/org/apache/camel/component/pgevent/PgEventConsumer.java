@@ -61,7 +61,7 @@ public class PgEventConsumer extends DefaultConsumer implements PGNotificationLi
 
         Exchange exchange = createExchange(false);
         Message msg = exchange.getIn();
-        msg.setHeader("channel", channel);
+        msg.setHeader(PgEventConstants.HEADER_CHANNEL, channel);
         msg.setBody(payload);
 
         try {

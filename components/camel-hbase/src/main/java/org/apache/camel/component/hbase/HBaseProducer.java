@@ -23,7 +23,6 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hbase.filters.ModelAwareFilter;
 import org.apache.camel.component.hbase.mapping.CellMappingStrategy;
-import org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory;
 import org.apache.camel.component.hbase.model.HBaseCell;
 import org.apache.camel.component.hbase.model.HBaseData;
 import org.apache.camel.component.hbase.model.HBaseRow;
@@ -278,13 +277,13 @@ public class HBaseProducer extends DefaultProducer {
                 exchange.getIn().setHeader(HBaseConstants.HBASE_MAX_SCAN_RESULTS, endpoint.getMaxResults());
             }
             if (endpoint.getMappingStrategyName() != null
-                    && exchange.getIn().getHeader(CellMappingStrategyFactory.STRATEGY) == null) {
-                exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY, endpoint.getMappingStrategyName());
+                    && exchange.getIn().getHeader(HBaseConstants.STRATEGY) == null) {
+                exchange.getIn().setHeader(HBaseConstants.STRATEGY, endpoint.getMappingStrategyName());
             }
 
             if (endpoint.getMappingStrategyName() != null
-                    && exchange.getIn().getHeader(CellMappingStrategyFactory.STRATEGY_CLASS_NAME) == null) {
-                exchange.getIn().setHeader(CellMappingStrategyFactory.STRATEGY_CLASS_NAME,
+                    && exchange.getIn().getHeader(HBaseConstants.STRATEGY_CLASS_NAME) == null) {
+                exchange.getIn().setHeader(HBaseConstants.STRATEGY_CLASS_NAME,
                         endpoint.getMappingStrategyClassName());
             }
 

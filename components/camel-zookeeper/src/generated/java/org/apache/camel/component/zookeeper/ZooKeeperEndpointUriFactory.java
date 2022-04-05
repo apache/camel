@@ -23,18 +23,18 @@ public class ZooKeeperEndpointUriFactory extends org.apache.camel.support.compon
     static {
         Set<String> props = new HashSet<>(13);
         props.add("backoff");
-        props.add("createMode");
-        props.add("exchangePattern");
-        props.add("serverUrls");
-        props.add("timeout");
-        props.add("path");
-        props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
+        props.add("create");
+        props.add("createMode");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("lazyStartProducer");
+        props.add("listChildren");
+        props.add("path");
         props.add("repeat");
         props.add("sendEmptyMessageOnDelete");
-        props.add("create");
-        props.add("exceptionHandler");
-        props.add("listChildren");
+        props.add("serverUrls");
+        props.add("timeout");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

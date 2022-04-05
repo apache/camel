@@ -321,7 +321,7 @@ public class FileOperations implements GenericFileOperations<File> {
                 // a full file to file copy, as the local work copy is to be
                 // deleted afterwards anyway
                 // local work path
-                File local = exchange.getIn().getHeader(Exchange.FILE_LOCAL_WORK_PATH, File.class);
+                File local = exchange.getIn().getHeader(FileConstants.FILE_LOCAL_WORK_PATH, File.class);
                 if (local != null && local.exists()) {
                     boolean renamed = writeFileByLocalWorkPath(local, file);
                     if (renamed) {
@@ -340,7 +340,7 @@ public class FileOperations implements GenericFileOperations<File> {
                             }
                         }
                         // clear header as we have renamed the file
-                        exchange.getIn().setHeader(Exchange.FILE_LOCAL_WORK_PATH, null);
+                        exchange.getIn().setHeader(FileConstants.FILE_LOCAL_WORK_PATH, null);
                         // return as the operation is complete, we just renamed
                         // the local work file
                         // to the target.
@@ -415,12 +415,12 @@ public class FileOperations implements GenericFileOperations<File> {
     private void keepLastModified(Exchange exchange, File file) {
         if (endpoint.isKeepLastModified()) {
             Long last;
-            Date date = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
+            Date date = exchange.getIn().getHeader(FileConstants.FILE_LAST_MODIFIED, Date.class);
             if (date != null) {
                 last = date.getTime();
             } else {
                 // fallback and try a long
-                last = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
+                last = exchange.getIn().getHeader(FileConstants.FILE_LAST_MODIFIED, Long.class);
             }
             if (last != null) {
                 boolean result = file.setLastModified(last);

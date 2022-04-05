@@ -29,12 +29,21 @@ public class GoogleBigQueryComponent extends DefaultComponent {
 
     @Metadata
     private String projectId;
+
     @Metadata
     private String datasetId;
+
+    @Metadata
+    private GoogleBigQueryConfiguration configuration;
+
     @Metadata(autowired = true)
     private GoogleBigQueryConnectionFactory connectionFactory;
 
     public GoogleBigQueryComponent() {
+    }
+
+    public GoogleBigQueryComponent(GoogleBigQueryConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     public GoogleBigQueryComponent(CamelContext camelContext) {
@@ -50,17 +59,10 @@ public class GoogleBigQueryComponent extends DefaultComponent {
             throw new IllegalArgumentException("Google BigQuery Endpoint format \"projectId:datasetId:tableName\"");
         }
 
-        GoogleBigQueryConfiguration configuration = new GoogleBigQueryConfiguration();
-        configuration.parseRemaining(remaining);
+        GoogleBigQueryConfiguration conf = configuration != null ? configuration.copy() : new GoogleBigQueryConfiguration();
+        conf.parseRemaining(remaining);
 
-        if (configuration.getConnectionFactory() == null) {
-            if (connectionFactory == null) {
-                connectionFactory = new GoogleBigQueryConnectionFactory();
-            }
-            configuration.setConnectionFactory(getConnectionFactory());
-        }
-
-        GoogleBigQueryEndpoint endpoint = new GoogleBigQueryEndpoint(uri, this, configuration);
+        GoogleBigQueryEndpoint endpoint = new GoogleBigQueryEndpoint(uri, this, conf);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -96,5 +98,9 @@ public class GoogleBigQueryComponent extends DefaultComponent {
      */
     public void setConnectionFactory(GoogleBigQueryConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
+    }
+
+    public GoogleBigQueryConfiguration getConfiguration() {
+        return configuration;
     }
 }

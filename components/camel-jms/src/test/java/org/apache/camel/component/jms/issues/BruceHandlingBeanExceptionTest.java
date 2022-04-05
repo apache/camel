@@ -34,13 +34,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BruceHandlingBeanExceptionTest extends CamelTestSupport {
 
     @Test
-    public void testSendOK() throws Exception {
+    public void testSendOK() {
         Object out = template.requestBody("activemq:queue:ok", "Hello World");
         assertEquals("Bye World", out);
     }
 
     @Test
-    public void testSendError() throws Exception {
+    public void testSendError() {
         Object out = template.requestBody("activemq:queue:error", "Hello World");
         IllegalArgumentException e = assertIsInstanceOf(IllegalArgumentException.class, out);
         assertEquals("Forced exception by unit test", e.getMessage());
@@ -57,9 +57,9 @@ public class BruceHandlingBeanExceptionTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:ok").transform(constant("Bye World"));
 
                 from("activemq:queue:error?transferException=true").bean(MyExceptionBean.class);
@@ -68,7 +68,7 @@ public class BruceHandlingBeanExceptionTest extends CamelTestSupport {
     }
 
     public static class MyExceptionBean {
-        public String doSomething(String input) throws Exception {
+        public String doSomething(String input) {
             throw new IllegalArgumentException("Forced exception by unit test");
         }
     }

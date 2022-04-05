@@ -44,11 +44,11 @@ public class AvroMarshalAndUnmarshallTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMarshalAndUnmarshalWithDSL3() throws Exception {
+    public void testMarshalAndUnmarshalWithDSL3() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:unmarshalC").unmarshal().avro(new CamelException("wrong schema"))
                             .to("mock:reverse");
                 }
@@ -78,10 +78,10 @@ public class AvroMarshalAndUnmarshallTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 AvroDataFormat format = new AvroDataFormat(Value.SCHEMA$);
 
                 from("direct:in").marshal(format);

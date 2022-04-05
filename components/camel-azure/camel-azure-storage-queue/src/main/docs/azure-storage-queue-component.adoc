@@ -88,37 +88,9 @@ from("azure-storage-queue://storageAccount/messageQueue?accessKey=yourAccessKey"
 to("file://queuedirectory");
 --------------------------------------------------------------------------------
 
-=== Message headers evaluated by the component producer
-[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Operations |Description
-
-|`CamelAzureStorageQueueSegmentOptions`| `QueueConstants.QUEUES_SEGMENT_OPTIONS`|`QueuesSegmentOptions`|`listQueues`|Options for listing queues
-|`CamelAzureStorageQueueTimeout`|`QueueConstants.TIMEOUT`|`Duration`|All|An optional timeout value beyond which a {@link RuntimeException} will be raised.
-|`CamelAzureStorageQueueMetadata`|`QueueConstants.METADATA`|`Map<String,String>`|`createQueue`|Metadata to associate with the queue
-|`CamelAzureStorageQueueTimeToLive`|`QueueConstants.TIME_TO_LIVE`|`Duration`|`sendMessage`|How long the message will stay alive in the queue. If unset the value will default to 7 days, if -1 is passed the message will not expire. The time to live must be -1 or any positive number.
-|`CamelAzureStorageQueueVisibilityTimeout`|`QueueConstants.VISIBILITY_TIMEOUT`|`Duration`|`sendMessage`, `receiveMessages`, `updateMessage`| The timeout period for how long the message is invisible in the queue. If unset the value will default to 0 and the message will be instantly visible. The timeout must be between 0 seconds and 7 days.
-|`CamelAzureStorageQueueCreateQueue`|`QueueConstants.CREATE_QUEUE`|`boolean`|`sendMessage`| When is set to `true`, the queue will be automatically created when sending messages to the queue.
-|`CamelAzureStorageQueuePopReceipt`|`QueueConstants.POP_RECEIPT`|`String`|`deleteMessage`, `updateMessage`|Unique identifier that must match for the message to be deleted or updated.
-|`CamelAzureStorageQueueMessageId`|`QueueConstants.MESSAGE_ID`|`String`|`deleteMessage`, `updateMessage`| The ID of the message to be deleted or updated.
-|`CamelAzureStorageQueueMaxMessages`|`QueueConstants.MAX_MESSAGES`|`Integer`|`receiveMessages`, `peekMessages`|  Maximum number of messages to get, if there are less messages exist in the queue than requested all the messages will be returned. If left empty only 1 message will be retrieved, the allowed range is 1 to 32 messages.
-|`CamelAzureStorageQueueOperation`|`QueueConstants.QUEUE_OPERATION`|`QueueOperationDefinition`|All|Specify the producer operation to execute, please see the doc on this page related to producer operation.
-|`CamelAzureStorageQueueName`|`QueueConstants.QUEUE_NAME`|`String`|All| Override the queue name.
-|=======================================================================
-
-
-=== Message headers set by either component producer or consumer
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Description
-|`CamelAzureStorageQueueMessageId`|`QueueConstants.MESSAGE_ID`|`String`| The ID of message that being sent to the queue.
-|`CamelAzureStorageQueueInsertionTime`|`QueueConstants.INSERTION_TIME`|`OffsetDateTime`|The time the Message was inserted into the Queue.
-|`CamelAzureStorageQueueExpirationTime`|`QueueConstants.EXPIRATION_TIME`|`OffsetDateTime`|The time that the Message will expire and be automatically deleted.
-|`CamelAzureStorageQueuePopReceipt`|`QueueConstants.POP_RECEIPT`|`String`|This value is required to delete/update the Message. If deletion fails using this popreceipt then the message has been dequeued by another client.
-|`CamelAzureStorageQueueTimeNextVisible`|`QueueConstants.TIME_NEXT_VISIBLE`|`OffsetDateTime`|The time that the message will again become visible in the Queue.
-|`CamelAzureStorageQueueDequeueCount` | `QueueConstants.DEQUEUE_COUNT`|`long`|The number of times the message has been dequeued.
-|`CamelAzureStorageQueueRawHttpHeaders`|`QueueConstants.RAW_HTTP_HEADERS`|`HttpHeaders`|Returns non-parsed httpHeaders that can be used by the user.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Advanced Azure Storage Queue configuration
 If your Camel Application is running behind a firewall or if you need to

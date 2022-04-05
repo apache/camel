@@ -44,7 +44,7 @@ public class MultipleCodecsTest extends BaseNettyTest {
     private StringEncoder stringEncoder = new StringEncoder();
 
     @BindToRegistry("encoders")
-    public List<ChannelHandler> addEncoders() throws Exception {
+    public List<ChannelHandler> addEncoders() {
 
         List<ChannelHandler> encoders = new ArrayList<>();
         encoders.add(lengthEncoder);
@@ -54,7 +54,7 @@ public class MultipleCodecsTest extends BaseNettyTest {
     }
 
     @BindToRegistry("decoders")
-    public List<ChannelHandler> addDecoders() throws Exception {
+    public List<ChannelHandler> addDecoders() {
 
         List<ChannelHandler> decoders = new ArrayList<>();
         decoders.add(lengthDecoder);
@@ -75,9 +75,9 @@ public class MultipleCodecsTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: routes
                 from("direct:multiple-codec").to("netty:tcp://localhost:{{port}}?encoders=#encoders&sync=false");
 

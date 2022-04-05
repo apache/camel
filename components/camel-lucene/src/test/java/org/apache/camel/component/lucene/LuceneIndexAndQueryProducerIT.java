@@ -86,7 +86,7 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
-                in.setHeader("QUERY", "");
+                in.setHeader(LuceneConstants.HEADER_QUERY, "");
             }
         });
     }
@@ -122,7 +122,7 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
 
-                from("direct:start").setHeader("QUERY", constant("Seinfeld"))
+                from("direct:start").setHeader(LuceneConstants.HEADER_QUERY, constant("Seinfeld"))
                         .to("lucene:searchIndex:query?analyzer=#whitespaceAnalyzer&indexDir=#whitespace&maxHits=20")
                         .to("direct:next");
 
@@ -158,7 +158,7 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
 
-                from("direct:start").setHeader("QUERY", constant("Grouc?? Marx"))
+                from("direct:start").setHeader(LuceneConstants.HEADER_QUERY, constant("Grouc?? Marx"))
                         .to("lucene:searchIndex:query?analyzer=#stdAnalyzer&indexDir=#std&maxHits=20").to("direct:next");
 
                 from("direct:next").process(new Processor() {
@@ -192,8 +192,8 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
 
-                from("direct:start").setHeader("QUERY", constant("Grouc?? Marx"))
-                        .setHeader("RETURN_LUCENE_DOCS", constant("true"))
+                from("direct:start").setHeader(LuceneConstants.HEADER_QUERY, constant("Grouc?? Marx"))
+                        .setHeader(LuceneConstants.HEADER_RETURN_LUCENE_DOCS, constant("true"))
                         .to("lucene:searchIndex:query?analyzer=#stdAnalyzer&indexDir=#std&maxHits=20").to("direct:next");
 
                 from("direct:next").process(new Processor() {

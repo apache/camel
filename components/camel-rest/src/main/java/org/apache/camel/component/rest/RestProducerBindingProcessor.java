@@ -270,7 +270,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             }
 
             if (skipBindingOnErrorCode) {
-                Integer code = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+                Integer code = exchange.getMessage().getHeader(RestConstants.HTTP_RESPONSE_CODE, Integer.class);
                 // if there is a custom http error code then skip binding
                 if (code != null && code >= 300) {
                     return;
@@ -327,7 +327,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
                 return;
             }
 
-            contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+            contentType = exchange.getIn().getHeader(RestConstants.CONTENT_TYPE, String.class);
             // need to lower-case so the contains check below can match if using upper case
             contentType = contentType.toLowerCase(Locale.US);
             try {
@@ -367,13 +367,13 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
                 // make sure there is a content-type with json
                 String type = ExchangeHelper.getContentType(exchange);
                 if (type == null) {
-                    exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+                    exchange.getIn().setHeader(RestConstants.CONTENT_TYPE, "application/json");
                 }
             } else if (isXml) {
                 // make sure there is a content-type with xml
                 String type = ExchangeHelper.getContentType(exchange);
                 if (type == null) {
-                    exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+                    exchange.getIn().setHeader(RestConstants.CONTENT_TYPE, "application/xml");
                 }
             }
         }

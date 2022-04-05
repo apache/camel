@@ -28,7 +28,7 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
     private NettySharedHttpServer nettySharedHttpServer;
 
     @BindToRegistry("myNettyServer")
-    public NettySharedHttpServer createServer() throws Exception {
+    public NettySharedHttpServer createServer() {
         nettySharedHttpServer = new DefaultNettySharedHttpServer();
         nettySharedHttpServer.setCamelContext(context);
 
@@ -69,10 +69,10 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // we are using a shared netty http server, so the port number is not needed to be defined in the uri
                 from("netty-http:http://localhost/foo?nettySharedHttpServer=#myNettyServer")
                         .log("Foo route using thread ${threadName}")

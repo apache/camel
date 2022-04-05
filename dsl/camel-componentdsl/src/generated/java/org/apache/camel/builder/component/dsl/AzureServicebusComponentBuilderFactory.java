@@ -275,8 +275,8 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the receiverAsyncClient in order to consume messages in the
-         * Consumer.
+         * Sets the receiverAsyncClient in order to consume messages by the
+         * consumer.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient&lt;/code&gt; type.
@@ -326,7 +326,9 @@ public interface AzureServicebusComponentBuilderFactory {
         }
         /**
          * Sets the name of the subscription in the topic to listen to.
-         * topicOrQueueName and serviceBusType=topic must also be set.
+         * topicOrQueueName and serviceBusType=topic must also be set. This
+         * property is required if serviceBusType=topic and the consumer is in
+         * use.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

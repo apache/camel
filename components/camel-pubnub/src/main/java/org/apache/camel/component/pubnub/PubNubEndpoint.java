@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  * Send and receive messages to/from PubNub data stream network for connected devices.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "pubnub", title = "PubNub", syntax = "pubnub:channel",
-             category = { Category.CLOUD, Category.IOT, Category.MESSAGING })
+             category = { Category.CLOUD, Category.IOT, Category.MESSAGING }, headersClass = PubNubConstants.class)
 public class PubNubEndpoint extends DefaultEndpoint {
 
     @UriParam(label = "advanced")

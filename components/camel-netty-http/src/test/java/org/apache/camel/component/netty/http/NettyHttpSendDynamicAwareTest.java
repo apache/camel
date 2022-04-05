@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class NettyHttpSendDynamicAwareTest extends BaseNettyTest {
 
     @Test
-    public void testDynamicAware() throws Exception {
+    public void testDynamicAware() {
         String out = fluentTemplate.to("direct:moes").withHeader("drink", "beer").request(String.class);
         assertEquals("Drinking beer", out);
 
@@ -43,10 +43,10 @@ public class NettyHttpSendDynamicAwareTest extends BaseNettyTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:moes")
                         .toD("netty-http:http://localhost:{{port}}/moes?throwExceptionOnFailure=false&drink=${header.drink}");
 

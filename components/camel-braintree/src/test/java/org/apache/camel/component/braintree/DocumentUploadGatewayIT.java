@@ -41,7 +41,7 @@ public class DocumentUploadGatewayIT extends AbstractBraintreeTestSupport {
             = BraintreeApiCollection.getCollection().getApiName(DocumentUploadGatewayApiMethod.class).getName();
 
     @Test
-    public void testCreate() throws Exception {
+    public void testCreate() {
         final String documentName = "pdf-sample.pdf";
 
         File evidenceDocument = new File(getClass().getClassLoader().getResource(documentName).getPath());
@@ -61,7 +61,7 @@ public class DocumentUploadGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for create

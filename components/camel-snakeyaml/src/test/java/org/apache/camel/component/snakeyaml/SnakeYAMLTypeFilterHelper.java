@@ -31,7 +31,7 @@ public final class SnakeYAMLTypeFilterHelper {
     private SnakeYAMLTypeFilterHelper() {
     }
 
-    static void testSafeConstructor(ProducerTemplate template) throws Exception {
+    static void testSafeConstructor(ProducerTemplate template) {
         try {
             template.sendBody(
                     "direct:safe-constructor",
@@ -43,7 +43,7 @@ public final class SnakeYAMLTypeFilterHelper {
         }
     }
 
-    static void testTypeConstructor(ProducerTemplate template) throws Exception {
+    static void testTypeConstructor(ProducerTemplate template) {
         Object result = template.requestBody(
                 "direct:type-constructor",
                 "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}");
@@ -65,7 +65,7 @@ public final class SnakeYAMLTypeFilterHelper {
         }
     }
 
-    static void testTypeConstructorFromDefinition(ProducerTemplate template) throws Exception {
+    static void testTypeConstructorFromDefinition(ProducerTemplate template) {
         Object result;
 
         // TestPojo --> from definition type:
@@ -98,7 +98,7 @@ public final class SnakeYAMLTypeFilterHelper {
         }
     }
 
-    static void testAllowAllConstructor(ProducerTemplate template) throws Exception {
+    static void testAllowAllConstructor(ProducerTemplate template) {
         Object testPojo = template.requestBody(
                 "direct:all-constructor",
                 "!!org.apache.camel.component.snakeyaml.model.TestPojo {name: Camel}");

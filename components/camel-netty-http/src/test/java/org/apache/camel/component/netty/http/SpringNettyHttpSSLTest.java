@@ -63,7 +63,7 @@ public class SpringNettyHttpSSLTest {
     }
 
     @AfterAll
-    public static void tearDownJSSE() throws Exception {
+    public static void tearDownJSSE() {
         System.clearProperty("javax.net.ssl.trustStore");
         System.clearProperty("javax.net.ssl.trustStorePassword");
     }

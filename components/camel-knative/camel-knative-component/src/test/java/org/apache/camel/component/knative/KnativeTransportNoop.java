@@ -41,7 +41,7 @@ public class KnativeTransportNoop implements KnativeConsumerFactory, KnativeProd
     public Producer createProducer(Endpoint endpoint, KnativeTransportConfiguration configuration, KnativeResource service) {
         return new DefaultProducer(endpoint) {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
             }
         };
     }

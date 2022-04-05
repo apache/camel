@@ -140,11 +140,11 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         }
         WebClient client = cfb.createWebClient();
         ((CxfRsEndpoint) getEndpoint()).getChainedCxfRsEndpointConfigurer().configureClient(client);
-        String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
+        String httpMethod = inMessage.getHeader(CxfConstants.HTTP_METHOD, String.class);
         Class<?> responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
         Type genericType = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, Type.class);
         Object[] pathValues = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, Object[].class);
-        String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
+        String path = inMessage.getHeader(CxfConstants.HTTP_PATH, String.class);
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("HTTP method = {}", httpMethod);
@@ -168,9 +168,9 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         setupClientQueryAndHeaders(client, exchange);
 
         // ensure the CONTENT_TYPE header can be retrieved
-        if (ObjectHelper.isEmpty(inMessage.getHeader(Exchange.CONTENT_TYPE, String.class))
-                && ObjectHelper.isNotEmpty(client.getHeaders().get(Exchange.CONTENT_TYPE))) {
-            inMessage.setHeader(Exchange.CONTENT_TYPE, client.getHeaders().get(Exchange.CONTENT_TYPE).get(0));
+        if (ObjectHelper.isEmpty(inMessage.getHeader(CxfConstants.CONTENT_TYPE, String.class))
+                && ObjectHelper.isNotEmpty(client.getHeaders().get(CxfConstants.CONTENT_TYPE))) {
+            inMessage.setHeader(CxfConstants.CONTENT_TYPE, client.getHeaders().get(CxfConstants.CONTENT_TYPE).get(0));
         }
 
         //Build message entity
@@ -246,7 +246,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         if (maps != null) {
             insertQueryParametersFromMap(client, maps);
         } else {
-            String queryString = inMessage.getHeader(Exchange.HTTP_QUERY, String.class);
+            String queryString = inMessage.getHeader(CxfConstants.HTTP_QUERY, String.class);
             if (queryString != null) {
                 // Insert QueryParameters from HTTP_QUERY header
                 insertQueryParametersFromQueryString(client, queryString, ExchangeHelper.getCharsetName(exchange));
@@ -269,7 +269,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
     protected void setupClientMatrix(WebClient client, Exchange exchange) throws Exception {
 
         org.apache.cxf.message.Message cxfMessage
-                = (org.apache.cxf.message.Message) exchange.getIn().getHeader("CamelCxfMessage");
+                = (org.apache.cxf.message.Message) exchange.getIn().getHeader(CxfConstants.CAMEL_CXF_MESSAGE);
         if (cxfMessage != null) {
             String requestURL = (String) cxfMessage.get("org.apache.cxf.request.uri");
             String matrixParam = null;
@@ -308,11 +308,11 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         }
         WebClient client = cfb.createWebClient();
         ((CxfRsEndpoint) getEndpoint()).getChainedCxfRsEndpointConfigurer().configureClient(client);
-        String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
+        String httpMethod = inMessage.getHeader(CxfConstants.HTTP_METHOD, String.class);
         Class<?> responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
         Type genericType = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, Type.class);
         Object[] pathValues = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, Object[].class);
-        String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
+        String path = inMessage.getHeader(CxfConstants.HTTP_PATH, String.class);
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("HTTP method = {}", httpMethod);
@@ -381,7 +381,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
             exchange.getMessage().setBody(binding.bindResponseToCamelBody(response, exchange));
             exchange.getMessage().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
-            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
+            exchange.getMessage().setHeader(CxfConstants.HTTP_RESPONSE_CODE, statesCode);
         } else {
             // just close the input stream of the response object
             if (response instanceof Response) {
@@ -478,7 +478,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
             exchange.getMessage().setBody(binding.bindResponseToCamelBody(response, exchange));
             exchange.getMessage().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
-            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
+            exchange.getMessage().setHeader(CxfConstants.HTTP_RESPONSE_CODE, statesCode);
         } else {
             // just close the input stream of the response object
             if (response instanceof Response) {
@@ -710,7 +710,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
                 } else {
                     exchange.getMessage().setBody(binding.bindResponseToCamelBody(response, exchange));
                 }
-                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, response.getStatus());
+                exchange.getMessage().setHeader(CxfConstants.HTTP_RESPONSE_CODE, response.getStatus());
             } catch (Exception exception) {
                 LOG.error("Error while processing response", exception);
                 fail(exception);
@@ -803,7 +803,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
                 final CxfRsBinding binding = cxfRsEndpoint.getBinding();
                 exchange.getMessage().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
                 exchange.getMessage().setBody(binding.bindResponseToCamelBody(body, exchange));
-                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, response.getStatus());
+                exchange.getMessage().setHeader(CxfConstants.HTTP_RESPONSE_CODE, response.getStatus());
             } catch (Exception exception) {
                 LOG.error("Error while processing response", exception);
                 fail(exception);

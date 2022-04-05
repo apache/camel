@@ -341,7 +341,7 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
     protected String evaluateFileExpression(Exchange exchange, String downloadFileName, String blogName) {
         CamelContext camelContext = exchange.getContext();
         // use blob as file name
-        exchange.getMessage().setHeader(Exchange.FILE_NAME, blogName);
+        exchange.getMessage().setHeader(GoogleCloudStorageConstants.FILE_NAME, blogName);
 
         String eval = downloadFileName;
         if (!downloadFileName.contains("$")) {

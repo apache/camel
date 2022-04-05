@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-facebook",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "facebook",
     "extendsScheme": "",
     "syntax": "facebook:methodName",
@@ -53,6 +53,9 @@
     "oAuthAppSecret": { "kind": "property", "displayName": "OAuth App Secret", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.facebook.config.FacebookConfiguration", "configurationField": "configuration", "description": "The application Secret" },
     "oAuthAuthorizationURL": { "kind": "property", "displayName": "OAuth Authorization URL", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "https:\/\/www.facebook.com\/dialog\/oauth", "configurationClass": "org.apache.camel.component.facebook.config.FacebookConfiguration", "configurationField": "configuration", "description": "OAuth authorization URL" },
     "oAuthPermissions": { "kind": "property", "displayName": "OAuth Permissions", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.facebook.config.FacebookConfiguration", "configurationField": "configuration", "description": "Default OAuth permissions. Comma separated permission names. See https:\/\/developers.facebook.com\/docs\/reference\/login\/#permissions for the detail" }
+  },
+  "headers": {
+    "CamelFacebook.rawJSON": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The raw json" }
   },
   "properties": {
     "methodName": { "kind": "path", "displayName": "Method Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "What operation to perform" },

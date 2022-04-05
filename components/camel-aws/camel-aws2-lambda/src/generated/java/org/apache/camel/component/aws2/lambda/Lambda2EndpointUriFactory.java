@@ -22,25 +22,25 @@ public class Lambda2EndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(15);
-        props.add("proxyProtocol");
-        props.add("secretKey");
-        props.add("uriEndpointOverride");
-        props.add("useDefaultCredentialsProvider");
+        props.add("accessKey");
+        props.add("awsLambdaClient");
+        props.add("function");
+        props.add("lazyStartProducer");
+        props.add("operation");
+        props.add("overrideEndpoint");
         props.add("pojoRequest");
         props.add("proxyHost");
-        props.add("trustAllCertificates");
-        props.add("awsLambdaClient");
         props.add("proxyPort");
-        props.add("lazyStartProducer");
-        props.add("accessKey");
-        props.add("function");
-        props.add("overrideEndpoint");
+        props.add("proxyProtocol");
         props.add("region");
-        props.add("operation");
+        props.add("secretKey");
+        props.add("trustAllCertificates");
+        props.add("uriEndpointOverride");
+        props.add("useDefaultCredentialsProvider");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("secretKey");
         secretProps.add("accessKey");
+        secretProps.add("secretKey");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptySet();
     }

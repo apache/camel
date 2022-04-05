@@ -62,21 +62,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Message Headers
-
-[width="100%",cols="10%,20%,70%",options="header",]
-|=======================================================================
-|Name |Type |Description
-
-|`CamelCoapMethod` |`String` |The request method that the CoAP producer should use when calling the target CoAP
-server URI. Valid options are DELETE, GET, PING, POST & PUT.
-
-|`CamelCoapResponseCode` |`String` |The CoAP response code sent by the external server. See RFC 7252 for details
-of what each code means.
-
-|`CamelCoapUri` |`String` |The URI of a CoAP server to call. Will override any existing URI configured directly on the endpoint.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Configuring the CoAP producer request method
 

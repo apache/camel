@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.16.0-SNAPSHOT</version>
+        <version>3.17.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-grpc</artifactId>
@@ -35,6 +35,8 @@
     <properties>
         <!-- gRPC requires strong own of the Google Guava version -->
         <google-guava-version>${grpc-guava-version}</google-guava-version>
+        <!-- https://issues.apache.org/jira/browse/CAMEL-17832 -->
+        <netty-version>4.1.72.Final</netty-version>
     </properties>
 
     <dependencies>
@@ -262,6 +264,19 @@
                 <configuration>
                     <skipTests>${skipTests}</skipTests>
                 </configuration>
+            </plugin>
+            <!-- Force the version of guava to camel-package-maven-plugin to prevent build failure due to the
+             usage of an old/incompatible version of guava -->
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.google.guava</groupId>
+                        <artifactId>guava</artifactId>
+                        <version>${google-guava-version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>

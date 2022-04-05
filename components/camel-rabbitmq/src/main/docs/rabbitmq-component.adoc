@@ -96,75 +96,9 @@ The `ConnectionFactory` is auto-detected by default, so you can just do
 
 In case you have multiple connection factories in your application or multiple connection factories in your registry, don't forget to set the `autoDetectConnectionFactory` to false.
 
-== Message Headers
-
-The following headers are set on exchanges when consuming messages.
-
-[width="100%",cols="10%,90%",options="header",]
-|===
-|Property |Value
-
-|`CamelRabbitmqRoutingKey` |The routing key that was used to receive the message, or the routing key
-that will be used when producing a message
-
-|`CamelRabbitmqExchangeName` |The exchange the message was received from
-
-|`CamelRabbitmqDeliveryTag` |The rabbitmq delivery tag of the received message
-
-|`CamelRabbitmqRedeliveryTag` |Whether the message is a redelivered
-
-|`CamelRabbitmqRequeue` |This is used by the consumer to control rejection of the
-message. When the consumer is complete processing the exchange, and if
-the exchange failed, then the consumer is going to reject the message
-from the RabbitMQ broker. The value of this header controls this
-behavior. If the value is false (by default) then the message is
-discarded/dead-lettered. If the value is true, then the message is
-re-queued. 
-|===
-
-The following headers are used by the producer. If these are set on the
-camel exchange then they will be set on the RabbitMQ message.
-
-[width="100%",cols="10%,90%",options="header",]
-|===
-|Property |Value
-
-|`CamelRabbitmqRoutingKey` |The routing key that will be used when sending the message
-
-|`CamelRabbitmqExchangeName` |The exchange the message was received from
-
-|`CamelRabbitmqExchangeOverrideName` |Used for force sending the message to this exchange instead of the endpoint configured name on the producer
-
-|`CamelRabbitmqContentType` |The contentType to set on the RabbitMQ message
-
-|`CamelRabbitmqPriority` |The priority header to set on the RabbitMQ message
-
-|`CamelRabbitmqCorrelationId` |The correlationId to set on the RabbitMQ message
-
-|`CamelRabbitmqMessageId` |The message id to set on the RabbitMQ message
-
-|`CamelRabbitmqDeliveryMode` |If the message should be persistent or not
-
-|`CamelRabbitmqUserId` |The userId to set on the RabbitMQ message
-
-|`CamelRabbitmqClusterId` |The clusterId to set on the RabbitMQ message
-
-|`CamelRabbitmqReplyTo` |The replyTo to set on the RabbitMQ message
-
-|`CamelRabbitmqContentEncoding` |The contentEncoding to set on the RabbitMQ message
-
-|`CamelRabbitmqType` |The type to set on the RabbitMQ message
-
-|`CamelRabbitmqExpiration` |The expiration to set on the RabbitMQ message
-
-|`CamelRabbitmqTimestamp` |The timestamp to set on the RabbitMQ message
-
-|`CamelRabbitmqAppId` |The appId to set on the RabbitMQ message
-|===
-
-Headers are set by the consumer once the message is received. The
-producer will also set the headers for downstream processors once the
-exchange has taken place.
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Troubleshooting headers
 

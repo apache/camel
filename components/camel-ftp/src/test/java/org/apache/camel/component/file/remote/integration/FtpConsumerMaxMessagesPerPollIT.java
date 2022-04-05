@@ -29,7 +29,7 @@ public class FtpConsumerMaxMessagesPerPollIT extends FtpServerTestSupport {
     }
 
     @BeforeEach
-    void prepareFtpServer() throws Exception {
+    void prepareFtpServer() {
         sendFile(getFtpUrl(), "Bye World", "bye.txt");
         sendFile(getFtpUrl(), "Hello World", "hello.txt");
         sendFile(getFtpUrl(), "Godday World", "godday.txt");
@@ -55,9 +55,9 @@ public class FtpConsumerMaxMessagesPerPollIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).noAutoStartup().routeId("foo").to("mock:result");
             }
         };

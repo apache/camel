@@ -55,46 +55,12 @@ For more information about Producer/Consumer configuration:
 http://kafka.apache.org/documentation.html#newconsumerconfigs[http://kafka.apache.org/documentation.html#newconsumerconfigs]
 http://kafka.apache.org/documentation.html#producerconfigs[http://kafka.apache.org/documentation.html#producerconfigs]
 
-== Message headers
-
-=== Consumer headers
-
-The following headers are available when consuming messages from Kafka.
-[width="100%",cols="2m,2m,1m,5",options="header"]
-|===
-| Header constant                          | Header value                      | Type    | Description
-| KafkaConstants.TOPIC                     | "kafka.TOPIC"                     | String  | The topic from where the message originated
-| KafkaConstants.PARTITION                 | "kafka.PARTITION"                 | Integer | The partition where the message was stored
-| KafkaConstants.OFFSET                    | "kafka.OFFSET"                    | Long    | The offset of the message
-| KafkaConstants.KEY                       | "kafka.KEY"                       | Object  | The key of the message if configured
-| KafkaConstants.HEADERS                   | "kafka.HEADERS"                   | org.apache.kafka.common.header.Headers  | The record headers
-| KafkaConstants.LAST_RECORD_BEFORE_COMMIT | "kafka.LAST_RECORD_BEFORE_COMMIT" | Boolean | Whether or not it's the last record before commit (only available if `autoCommitEnable` endpoint parameter is `false`)
-| KafkaConstants.LAST_POLL_RECORD | "kafka.LAST_POLL_RECORD" | Boolean | Indicates the last record within the current poll request (only available if `autoCommitEnable` endpoint parameter is `false` or `allowManualCommit` is `true`)
-| KafkaConstants.MANUAL_COMMIT             | "CamelKafkaManualCommit"          | KafkaManualCommit | Can be used for forcing manual offset commit when using Kafka consumer. |
-|===
-
-=== Producer headers
-
-Before sending a message to Kafka you can configure the following headers.
-[width="100%",cols="2m,2m,1m,5",options="header"]
-|===
-| Header constant              | Header value          | Type    | Description
-| KafkaConstants.KEY           | "kafka.KEY"           | Object  | *Required* The key of the message in order to ensure that all related message goes in the same partition
-| KafkaConstants.OVERRIDE_TOPIC | "kafka.OVERRIDE_TOPIC" | String  | The topic to which send the message (override and takes precedence), and the header is not preserved.
-| KafkaConstants.OVERRIDE_TIMESTAMP | "kafka.OVERRIDE_TIMESTAMP" | Long | The ProducerRecord also has an associated timestamp. If the user did provide a timestamp, the producer will stamp the  record with the provided timestamp and the header is not preserved. 
-| KafkaConstants.PARTITION_KEY | "kafka.PARTITION_KEY" | Integer | Explicitly specify the partition
-|===
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 If you want to send a message to a dynamic topic then use `KafkaConstants.OVERRIDE_TOPIC` as its used as a one-time header
-that are not send along the message, as its removed in the producer.
-
-After the message is sent to Kafka, the following headers are available
-[width="100%",cols="2m,2m,1m,5",options="header"]
-|===
-| Header constant                 | Header value                                       | Type                 | Description
-| KafkaConstants.KAFKA_RECORDMETA | "org.apache.kafka.clients.producer.RecordMetadata" | List<RecordMetadata> | The metadata (only configured if `recordMetadata` endpoint parameter is `true`
-|===
-
+that are not send along the message, as it's removed in the producer.
 
 == Consumer error handling
 

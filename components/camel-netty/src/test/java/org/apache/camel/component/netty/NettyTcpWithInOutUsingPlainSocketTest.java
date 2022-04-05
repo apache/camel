@@ -129,13 +129,13 @@ public class NettyTcpWithInOutUsingPlainSocketTest extends BaseNettyTest {
                         String in = e.getIn().getBody(String.class);
                         if ("force-null-out-body".equals(in)) {
                             // forcing a null out body
-                            e.getOut().setBody(null);
+                            e.getMessage().setBody(null);
                         } else if ("force-exception".equals(in)) {
                             // clear out before throwing exception
-                            e.getOut().setBody(null);
+                            e.getMessage().setBody(null);
                             throw new IllegalArgumentException("Forced exception");
                         } else {
-                            e.getOut().setBody("Hello " + in);
+                            e.getMessage().setBody("Hello " + in);
                         }
                     }
                 });

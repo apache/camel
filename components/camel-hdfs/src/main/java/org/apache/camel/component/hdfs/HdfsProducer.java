@@ -193,11 +193,11 @@ public class HdfsProducer extends DefaultProducer {
 
     void doProcess(Exchange exchange) throws IOException {
         Object body = exchange.getIn().getBody();
-        Object key = exchange.getIn().getHeader(HdfsHeader.KEY.name());
+        Object key = exchange.getIn().getHeader(HdfsConstants.KEY);
 
         HdfsInfoFactory hdfsInfoFactory = new HdfsInfoFactory(config);
         // if an explicit filename is specified, close any existing stream and append the filename to the hdfsPath
-        if (exchange.getIn().getHeader(Exchange.FILE_NAME) != null) {
+        if (exchange.getIn().getHeader(HdfsConstants.FILE_NAME) != null) {
             if (oStream != null) {
                 IOHelper.close(oStream, "output stream", LOG);
             }
@@ -250,7 +250,7 @@ public class HdfsProducer extends DefaultProducer {
     private StringBuilder getHdfsPathUsingFileNameHeader(Exchange exchange) {
         StringBuilder actualPath = new StringBuilder(hdfsPath);
         String fileName = "";
-        Object value = exchange.getIn().getHeader(Exchange.FILE_NAME);
+        Object value = exchange.getIn().getHeader(HdfsConstants.FILE_NAME);
         if (value instanceof String) {
             fileName = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
         } else if (value instanceof Expression) {

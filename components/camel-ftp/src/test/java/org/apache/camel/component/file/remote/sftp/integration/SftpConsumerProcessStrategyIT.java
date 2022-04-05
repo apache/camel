@@ -36,7 +36,7 @@ public class SftpConsumerProcessStrategyIT extends SftpServerTestSupport {
     private MyStrategy myStrategy = new MyStrategy();
 
     @Test
-    public void testSftpConsume() throws Exception {
+    public void testSftpConsume() {
         // create file using regular file
         template.sendBodyAndHeader("file://" + service.getFtpRootDir(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
@@ -54,33 +54,30 @@ public class SftpConsumerProcessStrategyIT extends SftpServerTestSupport {
         private volatile int invoked;
 
         @Override
-        public void prepareOnStartup(GenericFileOperations operations, GenericFileEndpoint endpoint) throws Exception {
+        public void prepareOnStartup(GenericFileOperations operations, GenericFileEndpoint endpoint) {
             // noop
         }
 
         @Override
         public boolean begin(
-                GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
-                throws Exception {
+                GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) {
             return true;
         }
 
         @Override
-        public void abort(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
-                throws Exception {
+        public void abort(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) {
             // noop
         }
 
         @Override
-        public void commit(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
-                throws Exception {
+        public void commit(
+                GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) {
             invoked++;
         }
 
         @Override
         public void rollback(
-                GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
-                throws Exception {
+                GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) {
             // noop
         }
 

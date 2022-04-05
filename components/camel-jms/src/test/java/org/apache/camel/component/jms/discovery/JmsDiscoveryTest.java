@@ -62,15 +62,15 @@ public class JmsDiscoveryTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("service1", new MyService("service1"));
         registry.bind("registry", myRegistry);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // lets setup the heartbeats
                 from("timer:heartbeats?delay=100")
                         .to("bean:service1?method=status")

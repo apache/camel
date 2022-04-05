@@ -45,6 +45,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.camel.Message;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.InputStreamDataSource;
@@ -176,7 +177,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
         if (base instanceof Response) {
             response = Response.fromResponse((Response) base);
         } else {
-            int status = m.getHeader(org.apache.camel.Exchange.HTTP_RESPONSE_CODE, Status.OK.getStatusCode(), Integer.class);
+            int status = m.getHeader(CxfConstants.HTTP_RESPONSE_CODE, Status.OK.getStatusCode(), Integer.class);
             response = Response.status(status);
 
             // avoid using the request MessageContentsList as the entity; it simply doesn't make sense

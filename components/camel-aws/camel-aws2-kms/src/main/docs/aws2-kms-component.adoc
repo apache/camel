@@ -66,20 +66,9 @@ You have the possibility of avoiding the usage of explicit static credentials, b
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
-=== Message headers evaluated by the KMS producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelAwsKMSLimit` |`Integer` |The limit number of keys to return while performing a listKeys operation
-
-|`CamelAwsKMSOperation` |`String` |The operation we want to perform
-
-|`CamelAwsKMSDescription` |`String` |A key description to use while performing a createKey operation
-
-|`CamelAwsKMSKeyId` |`String` |The key Id 
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === KMS Producer operations
 

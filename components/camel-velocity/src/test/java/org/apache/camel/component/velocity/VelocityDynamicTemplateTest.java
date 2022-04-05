@@ -57,9 +57,9 @@ public class VelocityDynamicTemplateTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 MyBean bean = new MyBean();
                 from("direct:a").bean(bean).to("mock:result");
             }
@@ -70,7 +70,7 @@ public class VelocityDynamicTemplateTest extends CamelTestSupport {
         ProducerTemplate template;
         boolean useLetter2;
 
-        public void sendToNewTemplate(Exchange exchange) throws Exception {
+        public void sendToNewTemplate(Exchange exchange) {
             if (template == null) {
                 template = exchange.getContext().createProducerTemplate();
             }

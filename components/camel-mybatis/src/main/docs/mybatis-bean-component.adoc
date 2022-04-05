@@ -51,22 +51,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
-
-
-== Message Headers
-
-Camel will populate the result message, either IN or OUT with a header
-with the statement used:
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|===
-|Header |Type |Description
-
-|`CamelMyBatisResult` |`Object` |The *response* returned from MtBatis in any of the operations. For
-instance an `INSERT` could return the auto-generated key, or number of
-rows etc.
-|===
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Message Body
 

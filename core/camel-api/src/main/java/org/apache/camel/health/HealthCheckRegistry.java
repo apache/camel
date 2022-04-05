@@ -108,7 +108,7 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      * could integrate such checks within its health endpoint or make it available only as separate endpoint.
      */
     static HealthCheckRegistry get(CamelContext context) {
-        return context.getExtension(HealthCheckRegistry.class);
+        return context != null ? context.getExtension(HealthCheckRegistry.class) : null;
     }
 
     /**
@@ -155,5 +155,27 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      * The exposure level
      */
     String getExposureLevel();
+
+    /**
+     * The initial state of health-checks (readiness). There are the following states: UP, DOWN, UNKNOWN.
+     *
+     * By default, the state is DOWN, is regarded as being pessimistic/careful. This means that the overall health
+     * checks may report as DOWN during startup and then only if everything is up and running flip to being UP.
+     *
+     * Setting the initial state to UP, is regarded as being optimistic. This means that the overall health checks may
+     * report as UP during startup and then if a consumer or other service is in fact un-healthy, then the health-checks
+     * can flip being DOWN.
+     *
+     * Setting the state to UNKNOWN means that some health-check would be reported in unknown state, especially during
+     * early bootstrap where a consumer may not be fully initialized or validated a connection to a remote system.
+     *
+     * This option allows to pre-configure the state for different modes.
+     */
+    void setInitialState(HealthCheck.State initialState);
+
+    /**
+     * The initial state of health-checks.
+     */
+    HealthCheck.State getInitialState();
 
 }

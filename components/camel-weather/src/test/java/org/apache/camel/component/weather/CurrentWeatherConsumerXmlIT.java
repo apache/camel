@@ -34,10 +34,10 @@ public class CurrentWeatherConsumerXmlIT extends BaseWeatherConsumerIT {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("weather:foo?mode=XML&appid=9162755b2efa555823cfe0451d7fff38&ids=2747373").to("mock:result");
             }
         };

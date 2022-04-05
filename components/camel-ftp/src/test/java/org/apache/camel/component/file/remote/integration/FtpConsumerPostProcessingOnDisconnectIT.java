@@ -78,10 +78,10 @@ public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("ftp://admin@localhost:{{ftp.server.port}}?password=admin&delete=true").routeId("foo").noAutoStartup()
                         .process(new Processor() {
                             @Override

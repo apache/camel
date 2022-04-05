@@ -37,7 +37,7 @@ public class NettyHttpBridgeRouteUsingHttpClientTest extends BaseNettyTest {
     AvailablePortFinder.Port port2 = AvailablePortFinder.find();
 
     @Test
-    public void testBridge() throws Exception {
+    public void testBridge() {
         String response = template.requestBodyAndHeader("http://localhost:" + port2 + "/test/hello",
                 new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml", String.class);
         assertEquals("/", response, "Get a wrong response");
@@ -50,14 +50,14 @@ public class NettyHttpBridgeRouteUsingHttpClientTest extends BaseNettyTest {
     }
 
     @Test
-    public void testSendFormRequestMessage() throws Exception {
+    public void testSendFormRequestMessage() {
         String out = template.requestBodyAndHeader("http://localhost:" + port2 + "/form", "username=abc&pass=password",
                 Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded", String.class);
         assertEquals("username=abc&pass=password", out, "Get a wrong response message");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());

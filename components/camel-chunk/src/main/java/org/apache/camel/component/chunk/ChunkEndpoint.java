@@ -45,7 +45,7 @@ import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
  * Transform messages using Chunk templating engine.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true,
-             category = { Category.TRANSFORMATION })
+             category = { Category.TRANSFORMATION }, headersClass = ChunkConstants.class)
 public class ChunkEndpoint extends ResourceEndpoint {
 
     private Theme theme;

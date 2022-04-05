@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class NettyTCPSyncTest extends BaseNettyTest {
 
     @Test
-    public void testTCPStringInOutWithNettyConsumer() throws Exception {
+    public void testTCPStringInOutWithNettyConsumer() {
         String response = template.requestBody(
                 "netty:tcp://localhost:{{port}}?sync=true",
                 "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds",
@@ -35,7 +35,7 @@ public class NettyTCPSyncTest extends BaseNettyTest {
     }
 
     @Test
-    public void testTCPStringInOutWithNettyConsumer2Times() throws Exception {
+    public void testTCPStringInOutWithNettyConsumer2Times() {
         String response = template.requestBody(
                 "netty:tcp://localhost:{{port}}?sync=true",
                 "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds",
@@ -49,14 +49,14 @@ public class NettyTCPSyncTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://localhost:{{port}}?sync=true")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody(
+                            public void process(Exchange exchange) {
+                                exchange.getMessage().setBody(
                                         "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                             }
                         });

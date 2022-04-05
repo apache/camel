@@ -23,15 +23,15 @@ public class ExecEndpointUriFactory extends org.apache.camel.support.component.E
     static {
         Set<String> props = new HashSet<>(10);
         props.add("args");
-        props.add("lazyStartProducer");
-        props.add("useStderrOnEmptyStdout");
-        props.add("outFile");
-        props.add("workingDir");
         props.add("binding");
-        props.add("commandLogLevel");
         props.add("commandExecutor");
+        props.add("commandLogLevel");
         props.add("executable");
+        props.add("lazyStartProducer");
+        props.add("outFile");
         props.add("timeout");
+        props.add("useStderrOnEmptyStdout");
+        props.add("workingDir");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

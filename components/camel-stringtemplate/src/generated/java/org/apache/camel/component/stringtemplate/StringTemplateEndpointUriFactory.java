@@ -22,12 +22,12 @@ public class StringTemplateEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(7);
+        props.add("allowContextMapAll");
         props.add("allowTemplateFromHeader");
+        props.add("contentCache");
+        props.add("delimiterStart");
         props.add("delimiterStop");
         props.add("lazyStartProducer");
-        props.add("delimiterStart");
-        props.add("contentCache");
-        props.add("allowContextMapAll");
         props.add("resourceUri");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

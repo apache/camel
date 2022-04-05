@@ -51,7 +51,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Exchange data types
 
@@ -67,16 +69,6 @@ a `SyndFeed` with one `SyndEntry` or a `java.util.List` of `SyndEntrys`.
 
 |`splitEntries` |`false` |The entire list of entries from the current feed is set in the exchange.
 |=======================================================================
-
-== Message Headers
-
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Header |Description
-
-|`CamelRssFeed` |The entire `SyncFeed` object.
-|=======================================================================
-
 
 == Example
 

@@ -21,9 +21,9 @@ import org.apache.camel.builder.RouteBuilder;
 public class VelocityFileLetterTest extends VelocityLetterTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").to("velocity:file:src/test/resources/org/apache/camel/component/velocity/letter.vm")
                         .to("mock:result");
             }

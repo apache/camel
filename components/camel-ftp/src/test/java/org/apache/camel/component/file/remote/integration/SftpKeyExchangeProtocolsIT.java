@@ -55,7 +55,7 @@ public class SftpKeyExchangeProtocolsIT extends SftpServerTestSupport {
     }
 
     @Test
-    public void testNonExistingKey() throws Exception {
+    public void testNonExistingKey() {
         Throwable exception = Assertions.assertThrows(CamelExecutionException.class,
                 () -> template
                         .sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/keyExchangeProtocols?" +
@@ -102,10 +102,10 @@ public class SftpKeyExchangeProtocolsIT extends SftpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).routeId("myRoute").to("mock:result");
             }
         };

@@ -53,7 +53,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
 
                         if (exchange.getPattern().isOutCapable()) {
                             Object result = exchange.getIn().getBody();
-                            exchange.getOut().setBody(result);
+                            exchange.getMessage().setBody(result);
                         }
                     }
                 });

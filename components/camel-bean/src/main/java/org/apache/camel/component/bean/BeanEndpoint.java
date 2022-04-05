@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Invoke methods of Java beans stored in Camel registry.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true,
-             category = { Category.CORE, Category.JAVA })
+             category = { Category.CORE, Category.JAVA }, headersClass = BeanConstants.class)
 public class BeanEndpoint extends DefaultEndpoint {
     private transient BeanHolder beanHolder;
     private transient BeanProcessor processor;

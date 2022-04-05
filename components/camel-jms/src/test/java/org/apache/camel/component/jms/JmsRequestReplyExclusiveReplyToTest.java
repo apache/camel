@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
 
     @Test
-    public void testJmsRequestReplyExclusiveFixedReplyTo() throws Exception {
+    public void testJmsRequestReplyExclusiveFixedReplyTo() {
         StopWatch watch = new StopWatch();
 
         assertEquals("Hello A", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive", "A"));
@@ -52,7 +52,7 @@ public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInvalidConfiguration() throws Exception {
+    public void testInvalidConfiguration() {
         try {
             template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Temporary", "Hello World");
             fail("Should have thrown exception");
@@ -73,10 +73,10 @@ public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("activemq:queue:foo")
                         .transform(body().prepend("Hello "));
             }

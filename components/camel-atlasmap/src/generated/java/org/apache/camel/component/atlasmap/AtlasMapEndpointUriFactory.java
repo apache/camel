@@ -22,14 +22,14 @@ public class AtlasMapEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(8);
-        props.add("targetMapMode");
-        props.add("lazyStartProducer");
-        props.add("sourceMapName");
-        props.add("contentCache");
         props.add("allowContextMapAll");
-        props.add("targetMapName");
-        props.add("resourceUri");
+        props.add("contentCache");
         props.add("forceReload");
+        props.add("lazyStartProducer");
+        props.add("resourceUri");
+        props.add("sourceMapName");
+        props.add("targetMapMode");
+        props.add("targetMapName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

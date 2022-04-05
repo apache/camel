@@ -50,7 +50,8 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
     }
 
     private String getUri(String systemId) {
-        if (resourcePath != null) {
+        if (resourcePath != null && !systemId.toLowerCase().startsWith("http:")
+                && !systemId.toLowerCase().startsWith("https:")) {
             return FileUtil.onlyPath(resourceUri) + "/" + systemId;
         } else {
             return systemId;

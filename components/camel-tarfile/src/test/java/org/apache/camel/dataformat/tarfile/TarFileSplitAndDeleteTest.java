@@ -75,10 +75,10 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 TarFileDataFormat dataFormat = new TarFileDataFormat();
                 dataFormat.setUsingIterator(true);
 

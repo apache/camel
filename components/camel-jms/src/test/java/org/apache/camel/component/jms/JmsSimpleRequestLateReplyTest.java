@@ -104,9 +104,9 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getQueueEndpointName())
                         .process(exchange -> {
                             // set the MEP to InOnly as we are not able to send a reply right now but will do it later

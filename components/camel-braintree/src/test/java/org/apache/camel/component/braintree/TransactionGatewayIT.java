@@ -61,13 +61,13 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Override
-    protected void doPostSetup() throws Exception {
+    protected void doPostSetup() {
         this.gateway = getGateway();
     }
 
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (this.gateway != null) {
             for (String token : this.transactionIds) {
                 // TODO: cleanup
@@ -81,7 +81,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     // *************************************************************************
 
     @Test
-    public void testSale() throws Exception {
+    public void testSale() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> result = requestBody(
@@ -103,7 +103,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testCloneTransaction() throws Exception {
+    public void testCloneTransaction() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
@@ -146,7 +146,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testFind() throws Exception {
+    public void testFind() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
@@ -174,7 +174,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testSubmitForSettlementWithId() throws Exception {
+    public void testSubmitForSettlementWithId() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
@@ -204,7 +204,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testSubmitForSettlementWithIdAndAmount() throws Exception {
+    public void testSubmitForSettlementWithIdAndAmount() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
@@ -238,7 +238,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testSubmitForSettlementWithRequest() throws Exception {
+    public void testSubmitForSettlementWithRequest() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
@@ -273,7 +273,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testRefund() throws Exception {
+    public void testRefund() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
@@ -307,7 +307,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testRefundWithAmount() throws Exception {
+    public void testRefundWithAmount() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
@@ -345,7 +345,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Test
-    public void testRefundWithRequest() throws Exception {
+    public void testRefundWithRequest() {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
@@ -390,7 +390,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for cancelRelease
     @Disabled
     @Test
-    public void testCancelRelease() throws Exception {
+    public void testCancelRelease() {
         // using String message body for single parameter "id"
         final com.braintreegateway.Result result = requestBody("direct://CANCELRELEASE", null);
 
@@ -401,7 +401,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for credit
     @Disabled
     @Test
-    public void testCredit() throws Exception {
+    public void testCredit() {
         // using com.braintreegateway.TransactionRequest message body for single parameter "request"
         final com.braintreegateway.Result result = requestBody("direct://CREDIT", null);
 
@@ -412,7 +412,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for holdInEscrow
     @Disabled
     @Test
-    public void testHoldInEscrow() throws Exception {
+    public void testHoldInEscrow() {
         // using String message body for single parameter "id"
         final com.braintreegateway.Result result = requestBody("direct://HOLDINESCROW", null);
 
@@ -423,7 +423,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for releaseFromEscrow
     @Disabled
     @Test
-    public void testReleaseFromEscrow() throws Exception {
+    public void testReleaseFromEscrow() {
         // using String message body for single parameter "id"
         final com.braintreegateway.Result result = requestBody("direct://RELEASEFROMESCROW", null);
 
@@ -434,7 +434,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for search
     @Disabled
     @Test
-    public void testSearch() throws Exception {
+    public void testSearch() {
         // using com.braintreegateway.TransactionSearchRequest message body for single parameter "query"
         final com.braintreegateway.ResourceCollection result = requestBody("direct://SEARCH", null);
 
@@ -445,7 +445,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for submitForPartialSettlement
     @Disabled
     @Test
-    public void testSubmitForPartialSettlement() throws Exception {
+    public void testSubmitForPartialSettlement() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBraintree.id", null);
@@ -461,7 +461,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     // TODO provide parameter values for voidTransaction
     @Disabled
     @Test
-    public void testVoidTransaction() throws Exception {
+    public void testVoidTransaction() {
         // using String message body for single parameter "id"
         final com.braintreegateway.Result result = requestBody("direct://VOIDTRANSACTION", null);
 
@@ -474,7 +474,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for cancelRelease

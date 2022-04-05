@@ -24,6 +24,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.FileSystems;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -45,6 +46,10 @@ import picocli.CommandLine.Parameters;
 
 @Command(name = "run", description = "Run Camel")
 class Run implements Callable<Integer> {
+
+    private static final String[] ACCEPTED_FILE_EXT
+            = new String[] { "properties", "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
+
     private CamelContext context;
     private File lockFile;
     private ScheduledExecutorService executor;
@@ -63,7 +68,7 @@ class Run implements Callable<Integer> {
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     private String name;
 
-    @Option(names = { "--logging" }, description = "Can be used to turn of logging")
+    @Option(names = { "--logging" }, description = "Can be used to turn off logging")
     private boolean logging = true;
 
     @Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
@@ -111,10 +116,10 @@ class Run implements Callable<Integer> {
     @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
     private int port;
 
-    @Option(names = { "--console" }, description = "Developer console at /dev on local HTTP server (port 8080 by default)")
+    @Option(names = { "--console" }, description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
     private boolean console;
 
-    @Option(names = { "--health" }, description = "Health check at /health on local HTTP server (port 8080 by default)")
+    @Option(names = { "--health" }, description = "Health check at /q/health on local HTTP server (port 8080 by default)")
     private boolean health;
 
     @Option(names = { "--modeline" }, description = "Enables Camel-K style modeline")
@@ -224,7 +229,18 @@ class Run implements Callable<Integer> {
 
         StringJoiner js = new StringJoiner(",");
         StringJoiner sjReload = new StringJoiner(",");
+        StringJoiner sjClasspathFiles = new StringJoiner(",");
+
         for (String file : files) {
+
+            if (!knownFile(file)) {
+                // non known files to be added on classpath
+                sjClasspathFiles.add(file);
+                continue;
+            }
+
+            // process known files as its likely DSLs or configuration files
+
             // check for properties files
             if (file.endsWith(".properties")) {
                 if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
@@ -293,6 +309,9 @@ class Run implements Callable<Integer> {
             }
         }
         main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
+        if (sjClasspathFiles.length() > 0) {
+            main.addInitialProperty("camel.jbang.classpathFiles", sjClasspathFiles.toString());
+        }
 
         // we can only reload if file based
         if (reload && sjReload.length() > 0) {
@@ -442,6 +461,11 @@ class Run implements Callable<Integer> {
                 }
             }
         }
+    }
+
+    private boolean knownFile(String file) {
+        String ext = FileUtil.onlyExt(file, true);
+        return Arrays.stream(ACCEPTED_FILE_EXT).anyMatch(e -> e.equalsIgnoreCase(ext));
     }
 
 }

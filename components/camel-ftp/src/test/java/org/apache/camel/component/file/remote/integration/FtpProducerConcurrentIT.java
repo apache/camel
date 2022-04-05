@@ -53,7 +53,7 @@ public class FtpProducerConcurrentIT extends FtpServerTestSupport {
 
             final int index = i;
             executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
+                public Object call() {
                     sendFile("direct:start", "Hello World", index + ".txt");
                     return null;
                 }
@@ -65,10 +65,10 @@ public class FtpProducerConcurrentIT extends FtpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(getFtpUrl(), "mock:result");
             }
         };

@@ -55,7 +55,7 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/JavaDSLTransactionTest.xml");
     }
 
-    protected void assertResult() throws InterruptedException {
+    protected void assertResult() {
         // should be 1 completed and 1 failed
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 

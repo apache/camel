@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cassandra;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Cassandra QL Endpoint constants
  */
@@ -24,6 +26,7 @@ public final class CassandraConstants {
     /**
      * In Message header: CQL Query
      */
+    @Metadata(label = "producer", description = "The CQL query to execute.", javaType = "String")
     public static final String CQL_QUERY = "CamelCqlQuery";
 
     private CassandraConstants() {

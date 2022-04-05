@@ -228,25 +228,6 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether to perform an explicit auto commit when the consumer stops to
-         * ensure the broker has a commit from the last consumed message. This
-         * requires the option autoCommitEnable is turned on. The possible
-         * values are: sync, async, or none. And sync is the default value.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: sync
-         * Group: consumer
-         * 
-         * @param autoCommitOnStop the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder autoCommitOnStop(
-                java.lang.String autoCommitOnStop) {
-            doSetProperty("autoCommitOnStop", autoCommitOnStop);
-            return this;
-        }
-        /**
          * What to do when there is no initial offset in ZooKeeper or if an
          * offset is out of range: earliest : automatically reset the offset to
          * the earliest offset latest : automatically reset the offset to the
@@ -758,6 +739,49 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * The delay in millis seconds to wait before trying again to create the
+         * kafka consumer (kafka-client).
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer (advanced)
+         * 
+         * @param createConsumerBackoffInterval the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder createConsumerBackoffInterval(
+                long createConsumerBackoffInterval) {
+            doSetProperty("createConsumerBackoffInterval", createConsumerBackoffInterval);
+            return this;
+        }
+        /**
+         * Maximum attempts to create the kafka consumer (kafka-client), before
+         * eventually giving up and failing. Error during creating the consumer
+         * may be fatal due to invalid configuration and as such recovery is not
+         * possible. However, one part of the validation is DNS resolution of
+         * the bootstrap broker hostnames. This may be a temporary networking
+         * problem, and could potentially be recoverable. While other errors are
+         * fatal such as some invalid kafka configurations. Unfortunately
+         * kafka-client does not separate this kind of errors. Camel will by
+         * default retry forever, and therefore never give up. If you want to
+         * give up after many attempts then set this option and Camel will then
+         * when giving up terminate the consumer. You can manually restart the
+         * consumer by stopping and starting the route, to try again.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param createConsumerBackoffMaxAttempts the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder createConsumerBackoffMaxAttempts(
+                int createConsumerBackoffMaxAttempts) {
+            doSetProperty("createConsumerBackoffMaxAttempts", createConsumerBackoffMaxAttempts);
+            return this;
+        }
+        /**
          * Factory to use for creating KafkaManualCommit instances. This allows
          * to plugin a custom factory to create custom KafkaManualCommit
          * instances in case special logic is needed when doing manual commits
@@ -792,6 +816,46 @@ public interface KafkaComponentBuilderFactory {
         default KafkaComponentBuilder pollExceptionStrategy(
                 org.apache.camel.component.kafka.PollExceptionStrategy pollExceptionStrategy) {
             doSetProperty("pollExceptionStrategy", pollExceptionStrategy);
+            return this;
+        }
+        /**
+         * The delay in millis seconds to wait before trying again to subscribe
+         * to the kafka broker.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer (advanced)
+         * 
+         * @param subscribeConsumerBackoffInterval the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder subscribeConsumerBackoffInterval(
+                long subscribeConsumerBackoffInterval) {
+            doSetProperty("subscribeConsumerBackoffInterval", subscribeConsumerBackoffInterval);
+            return this;
+        }
+        /**
+         * Maximum number the kafka consumer will attempt to subscribe to the
+         * kafka broker, before eventually giving up and failing. Error during
+         * subscribing the consumer to the kafka topic could be temporary errors
+         * due to network issues, and could potentially be recoverable. Camel
+         * will by default retry forever, and therefore never give up. If you
+         * want to give up after many attempts then set this option and Camel
+         * will then when giving up terminate the consumer. You can manually
+         * restart the consumer by stopping and starting the route, to try
+         * again.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param subscribeConsumerBackoffMaxAttempts the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder subscribeConsumerBackoffMaxAttempts(
+                int subscribeConsumerBackoffMaxAttempts) {
+            doSetProperty("subscribeConsumerBackoffMaxAttempts", subscribeConsumerBackoffMaxAttempts);
             return this;
         }
         /**
@@ -1993,7 +2057,6 @@ public interface KafkaComponentBuilderFactory {
             case "allowManualCommit": getOrCreateConfiguration((KafkaComponent) component).setAllowManualCommit((boolean) value); return true;
             case "autoCommitEnable": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitEnable((boolean) value); return true;
             case "autoCommitIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitIntervalMs((java.lang.Integer) value); return true;
-            case "autoCommitOnStop": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitOnStop((java.lang.String) value); return true;
             case "autoOffsetReset": getOrCreateConfiguration((KafkaComponent) component).setAutoOffsetReset((java.lang.String) value); return true;
             case "breakOnFirstError": getOrCreateConfiguration((KafkaComponent) component).setBreakOnFirstError((boolean) value); return true;
             case "bridgeErrorHandler": ((KafkaComponent) component).setBridgeErrorHandler((boolean) value); return true;
@@ -2021,8 +2084,12 @@ public interface KafkaComponentBuilderFactory {
             case "specificAvroReader": getOrCreateConfiguration((KafkaComponent) component).setSpecificAvroReader((boolean) value); return true;
             case "topicIsPattern": getOrCreateConfiguration((KafkaComponent) component).setTopicIsPattern((boolean) value); return true;
             case "valueDeserializer": getOrCreateConfiguration((KafkaComponent) component).setValueDeserializer((java.lang.String) value); return true;
+            case "createConsumerBackoffInterval": ((KafkaComponent) component).setCreateConsumerBackoffInterval((long) value); return true;
+            case "createConsumerBackoffMaxAttempts": ((KafkaComponent) component).setCreateConsumerBackoffMaxAttempts((int) value); return true;
             case "kafkaManualCommitFactory": ((KafkaComponent) component).setKafkaManualCommitFactory((org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory) value); return true;
             case "pollExceptionStrategy": ((KafkaComponent) component).setPollExceptionStrategy((org.apache.camel.component.kafka.PollExceptionStrategy) value); return true;
+            case "subscribeConsumerBackoffInterval": ((KafkaComponent) component).setSubscribeConsumerBackoffInterval((long) value); return true;
+            case "subscribeConsumerBackoffMaxAttempts": ((KafkaComponent) component).setSubscribeConsumerBackoffMaxAttempts((int) value); return true;
             case "bufferMemorySize": getOrCreateConfiguration((KafkaComponent) component).setBufferMemorySize((java.lang.Integer) value); return true;
             case "compressionCodec": getOrCreateConfiguration((KafkaComponent) component).setCompressionCodec((java.lang.String) value); return true;
             case "connectionMaxIdleMs": getOrCreateConfiguration((KafkaComponent) component).setConnectionMaxIdleMs((java.lang.Integer) value); return true;

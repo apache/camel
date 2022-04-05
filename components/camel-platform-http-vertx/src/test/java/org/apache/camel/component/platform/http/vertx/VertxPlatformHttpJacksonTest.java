@@ -36,7 +36,7 @@ public class VertxPlatformHttpJacksonTest {
 
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("platform-http:/hello")
                             .setBody().constant("{\"hello\": \"world\"}")
                             .unmarshal().json();

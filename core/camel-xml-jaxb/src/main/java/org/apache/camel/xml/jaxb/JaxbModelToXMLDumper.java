@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.xml.XmlLineNumberParser;
 
@@ -182,16 +184,22 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
                     if (resolvePlaceholders) {
                         PropertiesComponent pc = context.getPropertiesComponent();
+                        Properties prop = new Properties();
+                        Iterator<?> it = null;
                         if (definition instanceof RouteDefinition) {
-                            RouteDefinition routeDefinition = (RouteDefinition) definition;
+                            it = ObjectHelper.createIterator(definition);
+                        } else if (definition instanceof RoutesDefinition) {
+                            it = ObjectHelper.createIterator(((RoutesDefinition) definition).getRoutes());
+                        }
+                        while (it != null && it.hasNext()) {
+                            RouteDefinition routeDefinition = (RouteDefinition) it.next();
                             // if the route definition was created via a route template then we need to prepare its parameters when the route is being created and started
                             if (routeDefinition.isTemplate() != null && routeDefinition.isTemplate()
                                     && routeDefinition.getTemplateParameters() != null) {
-                                Properties prop = new Properties();
                                 prop.putAll(routeDefinition.getTemplateParameters());
-                                pc.setLocalProperties(prop);
                             }
                         }
+                        pc.setLocalProperties(prop);
                         try {
                             after = context.resolvePropertyPlaceholders(after);
                         } catch (Exception e) {

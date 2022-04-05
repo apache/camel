@@ -89,10 +89,10 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends C
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jms:queue:start?mapJmsMessage=false")
                         .loadBalance().failover(-1, false, true)
                         .to("jms:queue:one?forceSendOriginalMessage=" + forceSendOriginalMessage)

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-eventbridge",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "aws2-eventbridge",
     "extendsScheme": "",
     "syntax": "aws2-eventbridge:\/\/eventbusNameOrArn",
@@ -39,6 +39,15 @@
     "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "accessKey": { "kind": "property", "displayName": "Access Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration", "configurationField": "configuration", "description": "Amazon AWS Access Key" },
     "secretKey": { "kind": "property", "displayName": "Secret Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration", "configurationField": "configuration", "description": "Amazon AWS Secret Key" }
+  },
+  "headers": {
+    "CamelAwsEventbridgeOperation": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation we want to perform" },
+    "CamelAwsEventbridgeRuleName": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the rule." },
+    "CamelAwsEventbridgeRuleNamePrefix": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The prefix matching the rule name." },
+    "CamelAwsEventbridgeEventPattern": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The event pattern." },
+    "CamelAwsEventbridgeTargets": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Collection<Target>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The targets to update or add to the rule." },
+    "CamelAwsEventbridgeTargetsIds": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Collection<String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The IDs of the targets to remove from the rule." },
+    "CamelAwsEventbridgeTargetArn": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Amazon Resource Name (ARN) of the target resource." }
   },
   "properties": {
     "eventbusNameOrArn": { "kind": "path", "displayName": "Eventbus Name Or Arn", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Event bus name or ARN" },

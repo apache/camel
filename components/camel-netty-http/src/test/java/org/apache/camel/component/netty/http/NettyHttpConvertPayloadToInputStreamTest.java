@@ -54,7 +54,7 @@ public class NettyHttpConvertPayloadToInputStreamTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("netty-http:http://localhost:{{port}}/test").convertBodyTo(InputStream.class).to("mock:result");

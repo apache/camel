@@ -58,14 +58,14 @@ public class FtpConsumerWithNoFileOptionIT extends FtpServerTestSupport {
         assertEquals("hello.txt", file.getFileName());
     }
 
-    private void prepareFtpServer() throws Exception {
+    private void prepareFtpServer() {
         sendFile(getFtpUrl(), "Hello World", "hello.txt");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(getFtpUrl()).to("mock:result");
             }
         };

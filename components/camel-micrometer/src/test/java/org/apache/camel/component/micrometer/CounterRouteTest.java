@@ -66,10 +66,10 @@ public class CounterRouteTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in-1")
                         .to("micrometer:counter:A?increment=5")
                         .to("mock:out");

@@ -199,6 +199,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.vault.aws.";
                 } else if (file.getName().contains("GcpVault")) {
                     prefix = "camel.vault.gcp.";
+                } else if (file.getName().contains("AzureVault")) {
+                    prefix = "camel.vault.azure.";
                     // TODO: add more vault providers here
                 } else if (file.getName().contains("Health")) {
                     prefix = "camel.health.";
@@ -250,6 +252,15 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             throw new MojoFailureException("Error parsing file " + gcpVaultConfig + " due " + e.getMessage(), e);
         }
 
+        File azureVaultConfig = new File(camelApiDir, "src/main/java/org/apache/camel/vault/AzureVaultConfiguration.java");
+        try {
+            List<MainModel.MainOptionModel> model = parseConfigurationSource(azureVaultConfig);
+            model.forEach(m -> m.setName("camel.vault.azure." + m.getName()));
+            data.addAll(model);
+        } catch (Exception e) {
+            throw new MojoFailureException("Error parsing file " + azureVaultConfig + " due " + e.getMessage(), e);
+        }
+
         // lets sort so they are always ordered (but camel.main in top)
         data.sort((o1, o2) -> {
             if (o1.getName().startsWith("camel.main.") && !o2.getName().startsWith("camel.main.")) {
@@ -284,6 +295,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     new MainGroupModel(
                             "camel.vault.gcp", "Camel GCP Vault configurations",
                             "org.apache.camel.vault.GcpVaultConfiguration"));
+            model.getGroups().add(
+                    new MainGroupModel(
+                            "camel.vault.azure", "Camel Azure Key Vault configurations",
+                            "org.apache.camel.vault.AzureVaultConfiguration"));
             // TODO: add more vault providers here
             model.getGroups()
                     .add(new MainGroupModel(

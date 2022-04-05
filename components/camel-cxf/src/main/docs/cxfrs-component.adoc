@@ -64,7 +64,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 You can also configure the CXF REST endpoint through the spring
 configuration. Since there are lots of difference between the CXF REST

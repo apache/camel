@@ -31,6 +31,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.jms.JmsMessageHelper;
@@ -205,7 +206,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     // restore correlation id in case the remote server messed with it
                     if (holder.getOriginalCorrelationId() != null) {
                         JmsMessageHelper.setCorrelationId(message, holder.getOriginalCorrelationId());
-                        exchange.getOut().setHeader("JMSCorrelationID", holder.getOriginalCorrelationId());
+                        exchange.getOut().setHeader(JmsConstants.JMS_HEADER_CORRELATION_ID, holder.getOriginalCorrelationId());
                     }
                 }
             } finally {

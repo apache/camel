@@ -30,7 +30,7 @@ public class ReflectionInOutProcessor implements Processor {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         Object body = exchange.getIn().getBody();
         if (body instanceof Object[] && ((Object[]) body).length == 0) {
             exchange.getMessage().setBody(testReflection.getTestPojo());

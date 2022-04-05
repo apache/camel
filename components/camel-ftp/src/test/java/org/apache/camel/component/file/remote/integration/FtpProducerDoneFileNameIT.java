@@ -35,7 +35,7 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testProducerConstantDoneFileName() throws Exception {
+    public void testProducerConstantDoneFileName() {
         template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = ftpFile("done/hello.txt").toFile();
@@ -46,7 +46,7 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testProducerPrefixDoneFileName() throws Exception {
+    public void testProducerPrefixDoneFileName() {
         template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
@@ -58,7 +58,7 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testProducerExtDoneFileName() throws Exception {
+    public void testProducerExtDoneFileName() {
         template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.done", "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
@@ -70,7 +70,7 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testProducerReplaceExtDoneFileName() throws Exception {
+    public void testProducerReplaceExtDoneFileName() {
         template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name.noext}.done", "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
@@ -82,7 +82,7 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testProducerInvalidDoneFileName() throws Exception {
+    public void testProducerInvalidDoneFileName() {
         String uri = getFtpUrl() + "&doneFileName=${file:parent}/foo";
 
         Exception ex = assertThrows(CamelExecutionException.class,
@@ -95,7 +95,7 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testProducerEmptyDoneFileName() throws Exception {
+    public void testProducerEmptyDoneFileName() {
         String uri = getFtpUrl() + "&doneFileName=";
         Exception ex = assertThrows(CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt"));

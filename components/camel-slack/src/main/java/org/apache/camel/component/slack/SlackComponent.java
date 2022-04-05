@@ -65,7 +65,8 @@ public class SlackComponent extends DefaultComponent {
     }
 
     /**
-     * The token to use
+     * The token to access Slack. This app needs to have channels:history, groups:history, im:history, mpim:history,
+     * channels:read, groups:read, im:read and mpim:read permissions. The User OAuth Token is the kind of token needed.
      */
     public void setToken(String token) {
         this.token = token;

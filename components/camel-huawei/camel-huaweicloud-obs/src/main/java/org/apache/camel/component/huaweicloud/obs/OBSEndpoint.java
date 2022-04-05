@@ -24,6 +24,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
+import org.apache.camel.component.huaweicloud.obs.constants.OBSHeaders;
 import org.apache.camel.component.huaweicloud.obs.models.OBSRegion;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -37,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-obs", title = "Huawei Object Storage Service (OBS)",
              syntax = "hwcloud-obs:operation",
-             category = { Category.CLOUD })
+             category = { Category.CLOUD }, headersClass = OBSHeaders.class)
 public class OBSEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")

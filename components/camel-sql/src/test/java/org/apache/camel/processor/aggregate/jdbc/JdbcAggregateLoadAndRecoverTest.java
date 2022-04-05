@@ -71,10 +71,10 @@ public class JdbcAggregateLoadAndRecoverTest extends AbstractJdbcAggregationTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalStateException.class)
                         .maximumRedeliveries(3)
                         .redeliveryDelay(100L);
@@ -87,7 +87,7 @@ public class JdbcAggregateLoadAndRecoverTest extends AbstractJdbcAggregationTest
                         .to("log:output?showHeaders=true")
                         // have every 10th exchange fail which should then be recovered
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 //Avoid same message to be discarded twice
                                 if (exchange.getIn().getHeader(Exchange.REDELIVERED) == null) {
                                     int num = counter.incrementAndGet();

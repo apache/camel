@@ -47,10 +47,10 @@ public class JmsInOnlyWithReplyToTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("activemq:queue:foo?replyTo=queue:bar&preserveMessageQos=true")
                         .to("mock:done");

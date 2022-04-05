@@ -34,7 +34,7 @@ public class EndpointValidatorReifier extends ValidatorReifier<EndpointValidator
     @Override
     protected Validator doCreateValidator() {
         Endpoint endpoint = definition.getUri() != null
-                ? camelContext.getEndpoint(definition.getUri()) : lookup(definition.getRef(), Endpoint.class);
+                ? camelContext.getEndpoint(definition.getUri()) : lookupByNameAndType(definition.getRef(), Endpoint.class);
         SendProcessor processor = new SendProcessor(endpoint, ExchangePattern.InOut);
         return new ProcessorValidator(camelContext).setProcessor(processor).setType(definition.getType());
     }

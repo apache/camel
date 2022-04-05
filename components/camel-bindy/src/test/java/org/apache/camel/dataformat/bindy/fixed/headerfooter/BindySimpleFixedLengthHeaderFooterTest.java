@@ -206,11 +206,11 @@ public class BindySimpleFixedLengthHeaderFooterTest extends CamelTestSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         RouteBuilder routeBuilder = new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 BindyDataFormat bindy = new BindyDataFormat()
                         .classType(Order.class)
                         .locale("en")

@@ -50,7 +50,7 @@ public class PublishTemplatedMessageWithCustomEndpointFunctionalTest extends Cam
     ServiceKeys serviceKeys
             = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         // populating tag values. user has to adjust the map entries according to the structure of their respective templates
         Map<String, String> tags = new HashMap<>();
 

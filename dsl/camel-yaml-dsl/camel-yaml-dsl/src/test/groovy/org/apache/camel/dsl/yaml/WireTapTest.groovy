@@ -37,4 +37,21 @@ class WireTapTest extends YamlTestSupport {
                 uri == "direct:wt"
             }
     }
+
+    def "wire-tap uri parameters (#resource.location)"() {
+        when:
+            loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - wire-tap:
+                         uri: direct
+                         parameters:
+                           name: wt2  
+            '''
+        then:
+            with(context.routeDefinitions[0].outputs[0], WireTapDefinition) {
+                uri == "direct:wt2"
+            }
+    }
 }

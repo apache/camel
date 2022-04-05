@@ -129,6 +129,23 @@ You can now use the Slack API model to create blocks. You can read more about it
     }
 ---------------------------------------------------------------------------------------------------------------------------
 
+You'll need to create a Slack app and use it on your workspace.
+
+For token usage, set the 'OAuth Token'.
+
+IMPORTANT: Add the corresponding (`channels:history`, `chat:write`) user token scopes to your app to grant it permission to
+write messages in the corresponding channel. You'll also need to invite the Bot or User to the corresponding channel.
+
+For Bot tokens you'll need the following permissions:
+
+- channels:history
+- chat:write
+
+For User tokens you'll need the following permissions:
+
+- channels:history
+- chat:write
+
 == Consumer
 
 You can use also a consumer for messages in channel
@@ -143,17 +160,38 @@ In this way you'll get the last message from general channel. The consumer will 
 
 You'll need to create a Slack app and use it on your workspace.
 
-Use the 'Bot User OAuth Access Token' as token for the consumer endpoint.
+Use the 'User OAuth Token' as token for the consumer endpoint.
 
-IMPORTANT: Add the corresponding history (`channels:history` or `groups:history` or `mpim:history` or `im:history`) and
-read (`channels:read` or `groups:read` or `mpim:read` or `im:read`) user token scope to your app to grant it permission to
-view messages in the corresponding channel. You will need to use the conversationType option to set it up too (`PUBLIC_CHANNEL`, `PRIVATE_CHANNEL`, `MPIM`, `IM`)
+IMPORTANT: Add the corresponding history (`channels:history`, `groups:history`, `mpim:history` and `im:history`) and
+read (`channels:read`, `groups:read`, `mpim:read` and `im:read`) user token scope to your app to grant it permission to
+view messages in the corresponding channel.
+
+For Bot tokens you'll need the following permissions:
+
+- channels:history
+- groups:history
+- im:history
+- mpim:history
+- channels:read
+- groups:read
+- im:read
+- mpim:read
+
+For User tokens you'll need the following permissions:
+
+- channels:history
+- groups:history
+- im:history
+- mpim:history
+- channels:read
+- groups:read
+- im:read
+- mpim:read
 
 The naturalOrder option allows consuming messages from the oldest to the newest.
 Originally you would get the newest first and consume backward (message 3 => message 2 => message 1)
 
 IMPORTANT: You can use the conversationType option to read history and messages from a channel that is not only public
 (`PUBLIC_CHANNEL`,`PRIVATE_CHANNEL`, `MPIM`, `IM`)
-
 
 include::spring-boot:partial$starter.adoc[]

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-freemarker",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "freemarker",
     "extendsScheme": "",
     "syntax": "freemarker:resourceUri",
@@ -28,6 +28,11 @@
     "localizedLookup": { "kind": "property", "displayName": "Localized Lookup", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Enables\/disables localized template lookup. Disabled by default." },
     "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "configuration": { "kind": "property", "displayName": "Configuration", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "freemarker.template.Configuration", "deprecated": false, "autowired": false, "secret": false, "description": "To use an existing freemarker.template.Configuration instance as the configuration." }
+  },
+  "headers": {
+    "CamelFreemarkerResourceUri": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A URI for the template resource to use instead of the endpoint configured." },
+    "CamelFreemarkerTemplate": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The template to use instead of the endpoint configured." },
+    "CamelFreemarkerDataModel": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The data model" }
   },
   "properties": {
     "resourceUri": { "kind": "path", "displayName": "Resource Uri", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod." },

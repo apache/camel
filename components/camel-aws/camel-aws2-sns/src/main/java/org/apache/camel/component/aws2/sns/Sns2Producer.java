@@ -115,6 +115,11 @@ public class Sns2Producer extends DefaultProducer {
                     mav.dataType("Binary");
                     mav.binaryValue(SdkBytes.fromByteBuffer((ByteBuffer) value));
                     result.put(entry.getKey(), mav.build());
+                } else if (value instanceof byte[]) {
+                    MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
+                    mav.dataType("Binary");
+                    mav.binaryValue(SdkBytes.fromByteArray((byte[]) value));
+                    result.put(entry.getKey(), mav.build());
                 } else if (value instanceof Date) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType("String");

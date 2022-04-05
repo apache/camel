@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support;
 
+import java.util.Objects;
+
 import org.apache.camel.spi.Resource;
 
 /**
@@ -42,6 +44,28 @@ public abstract class ResourceSupport implements Resource {
 
     @Override
     public String toString() {
-        return "Resource[" + scheme + ":" + location + "]";
+        String prefix = scheme + ":";
+        if (location.startsWith(prefix)) {
+            return "Resource[" + location + "]";
+        } else {
+            return "Resource[" + prefix + location + "]";
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ResourceSupport that = (ResourceSupport) o;
+        return scheme.equals(that.scheme) && location.equals(that.location);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(scheme, location);
     }
 }

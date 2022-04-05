@@ -16,12 +16,18 @@
  */
 package org.apache.camel.component.aws2.translate;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants used in Camel AWS2 Translate module
  */
 public interface Translate2Constants {
+    @Metadata(description = "The text source language", javaType = "String")
     String SOURCE_LANGUAGE = "CamelAwsTranslateSourceLanguage";
+    @Metadata(description = "The text target language", javaType = "String")
     String TARGET_LANGUAGE = "CamelAwsTranslateTargetLanguage";
+    @Metadata(description = "The terminologies to use", javaType = "Collection<String>")
     String TERMINOLOGY_NAMES = "CamelAwsTranslateTerminologyNames";
+    @Metadata(description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsTranslateOperation";
 }

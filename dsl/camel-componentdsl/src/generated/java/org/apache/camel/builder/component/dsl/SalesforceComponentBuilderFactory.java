@@ -277,6 +277,22 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Timeout value for HTTP requests.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 60000
+         * Group: common
+         * 
+         * @param httpRequestTimeout the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder httpRequestTimeout(
+                long httpRequestTimeout) {
+            doSetProperty("httpRequestTimeout", httpRequestTimeout);
+            return this;
+        }
+        /**
          * Include details in Salesforce1 Analytics report, defaults to false.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -836,6 +852,24 @@ public interface SalesforceComponentBuilderFactory {
         default SalesforceComponentBuilder sObjectSearch(
                 java.lang.String sObjectSearch) {
             doSetProperty("sObjectSearch", sObjectSearch);
+            return this;
+        }
+        /**
+         * If true, streams SOQL query result and transparently handles
+         * subsequent requests if there are multiple pages. Otherwise, results
+         * are returned one page at a time.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streamQueryResult the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder streamQueryResult(
+                java.lang.Boolean streamQueryResult) {
+            doSetProperty("streamQueryResult", streamQueryResult);
             return this;
         }
         /**
@@ -1569,6 +1603,7 @@ public interface SalesforceComponentBuilderFactory {
             case "httpClientIdleTimeout": ((SalesforceComponent) component).setHttpClientIdleTimeout((long) value); return true;
             case "httpMaxContentLength": ((SalesforceComponent) component).setHttpMaxContentLength((java.lang.Integer) value); return true;
             case "httpRequestBufferSize": ((SalesforceComponent) component).setHttpRequestBufferSize((java.lang.Integer) value); return true;
+            case "httpRequestTimeout": ((SalesforceComponent) component).setHttpRequestTimeout((long) value); return true;
             case "includeDetails": getOrCreateConfiguration((SalesforceComponent) component).setIncludeDetails((java.lang.Boolean) value); return true;
             case "initialReplayIdMap": getOrCreateConfiguration((SalesforceComponent) component).setInitialReplayIdMap((java.util.Map) value); return true;
             case "instanceId": getOrCreateConfiguration((SalesforceComponent) component).setInstanceId((java.lang.String) value); return true;
@@ -1604,6 +1639,7 @@ public interface SalesforceComponentBuilderFactory {
             case "sObjectName": getOrCreateConfiguration((SalesforceComponent) component).setSObjectName((java.lang.String) value); return true;
             case "sObjectQuery": getOrCreateConfiguration((SalesforceComponent) component).setSObjectQuery((java.lang.String) value); return true;
             case "sObjectSearch": getOrCreateConfiguration((SalesforceComponent) component).setSObjectSearch((java.lang.String) value); return true;
+            case "streamQueryResult": getOrCreateConfiguration((SalesforceComponent) component).setStreamQueryResult((java.lang.Boolean) value); return true;
             case "updateTopic": getOrCreateConfiguration((SalesforceComponent) component).setUpdateTopic((boolean) value); return true;
             case "config": ((SalesforceComponent) component).setConfig((org.apache.camel.component.salesforce.SalesforceEndpointConfig) value); return true;
             case "httpClientProperties": ((SalesforceComponent) component).setHttpClientProperties((java.util.Map) value); return true;

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -60,6 +61,7 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
     private Consumer<K, V> consumer;
     private Producer<K, V> producer;
     private long errorCount;
+    private Duration pollDuration = Duration.ofSeconds(1);
 
     private final List<Future<RecordMetadata>> sentItems = new ArrayList<>();
     private final ResumeCache<K, V> resumeCache;
@@ -202,7 +204,6 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
         }
     }
 
-    // TODO: bad method ...
     /**
      * @param topic the topic to consume the messages from
      */
@@ -260,7 +261,7 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
 
     public ConsumerRecords<K, V> consume(int retries) {
         while (retries > 0) {
-            ConsumerRecords<K, V> records = consumer.poll(Duration.ofMillis(100));
+            ConsumerRecords<K, V> records = consumer.poll(pollDuration);
             if (!records.isEmpty()) {
                 return records;
             }
@@ -316,5 +317,21 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
         } catch (Exception e) {
             LOG.error("Failed to load already processed items: {}", e.getMessage(), e);
         }
+    }
+
+    public Duration getPollDuration() {
+        return pollDuration;
+    }
+
+    public void setPollDuration(Duration pollDuration) {
+        this.pollDuration = Objects.requireNonNull(pollDuration, "The poll duration cannot be null");
+    }
+
+    protected Consumer<K, V> getConsumer() {
+        return consumer;
+    }
+
+    protected Producer<K, V> getProducer() {
+        return producer;
     }
 }

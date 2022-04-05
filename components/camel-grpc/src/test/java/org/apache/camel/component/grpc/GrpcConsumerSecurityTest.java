@@ -26,6 +26,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyChannelBuilder;
 import io.grpc.stub.StreamObserver;
+import io.netty.handler.ssl.JdkSslContext;
 import io.netty.handler.ssl.OpenSslClientContext;
 import io.netty.handler.ssl.SslContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -36,6 +37,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -43,7 +45,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GrpcConsumerSecurityTest extends CamelTestSupport {
 
@@ -77,7 +78,7 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
                 .trustManager(new File("src/test/resources/certs/ca.pem"))
                 .build();
 
-        assertTrue(sslContext instanceof OpenSslClientContext);
+        Assumptions.assumeTrue(sslContext instanceof OpenSslClientContext || sslContext instanceof JdkSslContext);
 
         tlsChannel = NettyChannelBuilder.forAddress("localhost", GRPC_TLS_TEST_PORT)
                 .sslContext(sslContext)

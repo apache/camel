@@ -280,7 +280,7 @@ public interface ExecutorServiceManager extends ShutdownableService, StaticServi
     /**
      * Shutdown the given executor service (<b>not</b> graceful).
      * <p/>
-     * This implementation will issues a regular shutdown of the executor service, ie calling
+     * This implementation will issue a regular shutdown of the executor service, ie calling
      * {@link java.util.concurrent.ExecutorService#shutdown()} and return.
      *
      * @param executorService the executor service to shutdown

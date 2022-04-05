@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-milo",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "milo-client",
     "extendsScheme": "",
     "syntax": "milo-client:endpointUri",
@@ -47,6 +47,10 @@
     "requestTimeout": { "kind": "property", "displayName": "Request Timeout", "group": "client", "label": "client", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.milo.client.MiloClientConfiguration", "configurationField": "configuration", "description": "Request timeout in milliseconds" },
     "sessionName": { "kind": "property", "displayName": "Session Name", "group": "client", "label": "client", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.milo.client.MiloClientConfiguration", "configurationField": "configuration", "description": "Session name" },
     "sessionTimeout": { "kind": "property", "displayName": "Session Timeout", "group": "client", "label": "client", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.milo.client.MiloClientConfiguration", "configurationField": "configuration", "description": "Session timeout in milliseconds" }
+  },
+  "headers": {
+    "CamelMiloNodeIds": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "List", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The node ids." },
+    "await": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The await setting for writes." }
   },
   "properties": {
     "endpointUri": { "kind": "path", "displayName": "Endpoint Uri", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The OPC UA server endpoint" },

@@ -153,7 +153,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         if (config.getTimeoutExecutorService() != null) {
             String ref = config.getTimeoutExecutorService();
             boolean shutdownThreadPool = false;
-            ExecutorService executorService = lookup(ref, ExecutorService.class);
+            ExecutorService executorService = lookupByNameAndType(ref, ExecutorService.class);
             if (executorService == null) {
                 executorService = lookupExecutorServiceRef("CircuitBreaker", definition, ref);
                 shutdownThreadPool = true;
@@ -178,7 +178,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         // camel context takes the precedence over those in the registry
         loadProperties(properties, Suppliers.firstNotNull(
                 () -> camelContext.getExtension(Model.class).getResilience4jConfiguration(null),
-                () -> lookup(ResilienceConstants.DEFAULT_RESILIENCE_CONFIGURATION_ID,
+                () -> lookupByNameAndType(ResilienceConstants.DEFAULT_RESILIENCE_CONFIGURATION_ID,
                         Resilience4jConfigurationDefinition.class)),
                 configurer);
 

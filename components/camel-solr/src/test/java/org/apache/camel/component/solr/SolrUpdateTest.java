@@ -154,7 +154,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
     }
 
     @Test
-    public void caughtSolrExceptionIsHandledElegantly() throws Exception {
+    public void caughtSolrExceptionIsHandledElegantly() {
         Exchange exchange = createExchangeWithBody(null);
         exchange.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
         exchange.getIn().setHeader("SolrField.name", "Missing required field throws exception.");
@@ -264,7 +264,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
     }
 
     @Test
-    public void queryDocumentsToCSVUpdateHandlerWithoutParameters() throws Exception {
+    public void queryDocumentsToCSVUpdateHandlerWithoutParameters() {
         solrEndpoint.setRequestHandler("/update/csv");
 
         Exchange exchange = createExchangeWithBody(new File("src/test/resources/data/books.csv"));

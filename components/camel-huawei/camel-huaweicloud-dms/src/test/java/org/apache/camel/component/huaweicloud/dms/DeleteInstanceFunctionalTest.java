@@ -38,9 +38,9 @@ public class DeleteInstanceFunctionalTest extends CamelTestSupport {
     @BindToRegistry("serviceKeys")
     ServiceKeys serviceKeys = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:operation")
                         .setProperty(DMSProperties.OPERATION, constant("deleteInstance"))
                         .setProperty(DMSProperties.INSTANCE_ID, constant(INSTANCE_ID))

@@ -125,7 +125,9 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand(getScpCommand(cfg, file));
             channel.connect(timeout);
-            LOG.trace("Channel connected to {}", cfg.remoteServerInformation());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Channel connected to {}", cfg.remoteServerInformation());
+            }
 
             try {
                 if (is == null) {
@@ -147,7 +149,10 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 LOG.trace("Disconnecting 'exec' scp channel");
                 channel.disconnect();
                 channel = null;
-                LOG.trace("Channel disconnected from {}", cfg.remoteServerInformation());
+
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Channel disconnected from {}", cfg.remoteServerInformation());
+                }
             }
         }
         return true;
@@ -311,8 +316,11 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             }
 
             int timeout = config.getConnectTimeout();
-            LOG.debug("Connecting to {} with {} timeout...", config.remoteServerInformation(),
-                    timeout > 0 ? (Integer.toString(timeout) + " ms") : "no");
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Connecting to {} with {} timeout...", config.remoteServerInformation(),
+                        timeout > 0 ? (timeout + " ms") : "no");
+            }
             if (timeout > 0) {
                 session.connect(timeout);
             } else {

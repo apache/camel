@@ -41,10 +41,10 @@ public class KameletDiscoveryTest extends CamelTestSupport {
                     }
 
                     @Override
-                    public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
+                    public RoutesBuilder loadRoutesBuilder(Resource resource) {
                         return new RouteBuilder() {
                             @Override
-                            public void configure() throws Exception {
+                            public void configure() {
                                 routeTemplate("mySetBody")
                                         .from("kamelet:source")
                                         .setBody().constant("discovered");
@@ -56,7 +56,7 @@ public class KameletDiscoveryTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:discovery")
                         .toF("kamelet:mySetBody");
             }
@@ -66,7 +66,7 @@ public class KameletDiscoveryTest extends CamelTestSupport {
     }
 
     @Test
-    public void kameletNotFound() throws Exception {
+    public void kameletNotFound() {
         context.getRegistry().bind(
                 DefaultRoutesLoader.ROUTES_LOADER_KEY_PREFIX + "kamelet.yaml",
                 new RoutesBuilderLoaderSupport() {
@@ -76,10 +76,10 @@ public class KameletDiscoveryTest extends CamelTestSupport {
                     }
 
                     @Override
-                    public RoutesBuilder loadRoutesBuilder(Resource resource) throws Exception {
+                    public RoutesBuilder loadRoutesBuilder(Resource resource) {
                         return new RouteBuilder() {
                             @Override
-                            public void configure() throws Exception {
+                            public void configure() {
                             }
                         };
                     }
@@ -87,7 +87,7 @@ public class KameletDiscoveryTest extends CamelTestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:discovery")
                         .toF("kamelet:mySetBody");
             }

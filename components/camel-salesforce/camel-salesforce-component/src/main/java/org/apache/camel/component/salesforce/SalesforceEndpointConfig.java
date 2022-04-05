@@ -59,6 +59,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String SOBJECT_BLOB_FIELD_NAME = "sObjectBlobFieldName";
     public static final String SOBJECT_CLASS = "sObjectClass";
     public static final String SOBJECT_QUERY = "sObjectQuery";
+    public static final String STREAM_QUERY_RESULT = "streamQueryResult";
     public static final String SOBJECT_SEARCH = "sObjectSearch";
     public static final String APEX_METHOD = "apexMethod";
     public static final String APEX_URL = "apexUrl";
@@ -138,6 +139,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String sObjectClass;
     @UriParam(displayName = "SObject Query")
     private String sObjectQuery;
+    @UriParam(displayName = "Stream query result", defaultValue = "false")
+    private Boolean streamQueryResult = false;
     @UriParam(displayName = "SObject Search")
     private String sObjectSearch;
     @UriParam
@@ -385,6 +388,18 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     public String getSObjectSearch() {
         return sObjectSearch;
+    }
+
+    public Boolean getStreamQueryResult() {
+        return streamQueryResult;
+    }
+
+    /**
+     * If true, streams SOQL query result and transparently handles subsequent requests if there are multiple pages.
+     * Otherwise, results are returned one page at a time.
+     */
+    public void setStreamQueryResult(Boolean streamQueryResult) {
+        this.streamQueryResult = streamQueryResult;
     }
 
     /**
@@ -771,6 +786,7 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(SOBJECT_EXT_ID_VALUE, sObjectIdValue);
         valueMap.put(SOBJECT_CLASS, sObjectClass);
         valueMap.put(SOBJECT_QUERY, sObjectQuery);
+        valueMap.put(STREAM_QUERY_RESULT, streamQueryResult);
         valueMap.put(SOBJECT_SEARCH, sObjectSearch);
         valueMap.put(APEX_METHOD, apexMethod);
         valueMap.put(APEX_URL, apexUrl);

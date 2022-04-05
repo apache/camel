@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-crypto",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "crypto",
     "extendsScheme": "",
     "syntax": "crypto:cryptoOperation:name",
@@ -43,6 +43,12 @@
     "publicKey": { "kind": "property", "displayName": "Public Key", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "java.security.PublicKey", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.crypto.DigitalSignatureConfiguration", "configurationField": "configuration", "description": "Set the PublicKey that should be used to verify the signature in the exchange." },
     "secureRandom": { "kind": "property", "displayName": "Secure Random", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "java.security.SecureRandom", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.crypto.DigitalSignatureConfiguration", "configurationField": "configuration", "description": "Set the SecureRandom used to initialize the Signature service" },
     "password": { "kind": "property", "displayName": "Password", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.crypto.DigitalSignatureConfiguration", "configurationField": "configuration", "description": "Sets the password used to access an aliased PrivateKey in the KeyStore." }
+  },
+  "headers": {
+    "CamelSignaturePrivateKey": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "java.security.PrivateKey", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The PrivateKey that should be used to sign the message" },
+    "CamelSignaturePublicKeyOrCert": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Certificate or PublicKey", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Certificate or PublicKey that should be used to verify the signature" },
+    "CamelSignatureKeyStoreAlias": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The alias used to query the KeyStore for keys and Certificates to be used in signing and verifying exchanges" },
+    "CamelSignatureKeyStorePassword": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "char[]", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The password used to access an aliased PrivateKey in the KeyStore." }
   },
   "properties": {
     "cryptoOperation": { "kind": "path", "displayName": "Crypto Operation", "group": "producer", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.crypto.CryptoOperation", "enum": [ "sign", "verify" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.crypto.DigitalSignatureConfiguration", "configurationField": "configuration", "description": "Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto:sign sets sign as the operation." },

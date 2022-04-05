@@ -22,9 +22,9 @@ public class SchematronEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(5);
-        props.add("path");
-        props.add("lazyStartProducer");
         props.add("abort");
+        props.add("lazyStartProducer");
+        props.add("path");
         props.add("rules");
         props.add("uriResolver");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

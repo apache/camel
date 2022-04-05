@@ -20,13 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Message;
+import org.apache.camel.component.hbase.HBaseConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CellMappingStrategyFactory {
-
-    public static final String STRATEGY = "CamelMappingStrategy";
-    public static final String STRATEGY_CLASS_NAME = "CamelMappingStrategyClassName";
 
     public static final String HEADER = "header";
     public static final String BODY = "body";
@@ -43,12 +41,12 @@ public class CellMappingStrategyFactory {
         CellMappingStrategy strategy = null;
 
         //Check if strategy has been explicitly set.
-        if (message.getHeader(STRATEGY) != null) {
-            strategy = DEFAULT_STRATEGIES.get(message.getHeader(STRATEGY, String.class));
+        if (message.getHeader(HBaseConstants.STRATEGY) != null) {
+            strategy = DEFAULT_STRATEGIES.get(message.getHeader(HBaseConstants.STRATEGY, String.class));
         }
 
-        if (strategy == null && message.getHeader(STRATEGY_CLASS_NAME) != null) {
-            strategy = loadStrategyFromClassName(message.getHeader(STRATEGY_CLASS_NAME, String.class));
+        if (strategy == null && message.getHeader(HBaseConstants.STRATEGY_CLASS_NAME) != null) {
+            strategy = loadStrategyFromClassName(message.getHeader(HBaseConstants.STRATEGY_CLASS_NAME, String.class));
         }
 
         if (strategy != null) {

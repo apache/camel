@@ -26,17 +26,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SnakeYAMLUnmarshalTypeTest extends CamelTestSupport {
     @Test
-    public void testUnmarshal() throws Exception {
+    public void testUnmarshal() {
         Object result = template.requestBody("direct:unmarshal", "name: Camel");
         assertNotNull(result);
         assertTrue(result instanceof TestPojo);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 SnakeYAMLDataFormat format = new SnakeYAMLDataFormat();
                 format.setUnmarshalType(TestPojo.class);
 

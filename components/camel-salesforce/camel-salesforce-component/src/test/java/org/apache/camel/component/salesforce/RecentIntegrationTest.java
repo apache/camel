@@ -34,17 +34,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertListSize;
 @Tag("standalone")
 public class RecentIntegrationTest extends AbstractSalesforceTestBase {
 
-    public static class Accounts extends AbstractQueryRecordsBase {
-        private List<Account> records;
-
-        public List<Account> getRecords() {
-            return records;
-        }
-
-        public void setRecords(final List<Account> records) {
-            this.records = records;
-        }
-
+    public static class Accounts extends AbstractQueryRecordsBase<Account> {
     }
 
     private static final Object NOT_USED = null;

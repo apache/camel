@@ -98,10 +98,10 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(ExchangePattern.InOut,
                         "jms:queue:foo?replyToConcurrentConsumers=10&replyToMaxConcurrentConsumers=20&recoveryInterval=10")
                         .process(exchange -> {

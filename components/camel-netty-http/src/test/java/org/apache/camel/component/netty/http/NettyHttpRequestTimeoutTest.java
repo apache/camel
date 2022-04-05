@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class NettyHttpRequestTimeoutTest extends BaseNettyTest {
 
     @Test
-    public void testRequestTimeout() throws Exception {
+    public void testRequestTimeout() {
         try {
             template.requestBody("netty-http:http://localhost:{{port}}/timeout?requestTimeout=1000", "Hello Camel",
                     String.class);
@@ -42,10 +42,10 @@ public class NettyHttpRequestTimeoutTest extends BaseNettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://localhost:{{port}}/timeout")
                         .process(new Processor() {
                             @Override

@@ -21,13 +21,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
+import org.apache.camel.dsl.yaml.common.exception.InvalidEndpointException;
+import org.apache.camel.dsl.yaml.common.exception.InvalidNodeTypeException;
+import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedNodeTypeException;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
@@ -45,13 +47,14 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
 import org.snakeyaml.engine.v2.nodes.NodeType;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
 
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asScalarMap;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.parseParameters;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setSteps;
 
 public final class YamlSupport {
+
     private YamlSupport() {
     }
 
@@ -121,7 +124,7 @@ public final class YamlSupport {
         };
     }
 
-    public static String createEndpointUri(CamelContext context, String uri, Map<String, Object> parameters) {
+    public static String createEndpointUri(CamelContext context, Node node, String uri, Map<String, Object> parameters) {
         String answer = uri;
 
         if (parameters == null || parameters.isEmpty()) {
@@ -141,10 +144,9 @@ public final class YamlSupport {
             //     parameters:
             //         option2: value2
             //
-            // is not supported and leads to the an IllegalArgumentException being
-            // thrown.
+            // is not supported and leads to an InvalidEndpointException being thrown.
             //
-            throw new IllegalArgumentException("Uri should not contains query params (uri: " + uri + ")");
+            throw new InvalidEndpointException(node, "Uri should not contains query parameters (uri: " + uri + ")");
         }
 
         final String scheme = uri.contains(":") ? StringHelper.before(uri, ":") : uri;
@@ -181,7 +183,7 @@ public final class YamlSupport {
                 answer += "?" + URISupport.createQueryString(parameters, false);
             }
         } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(e);
+            throw new InvalidEndpointException(node, "Error creating query", e);
         }
 
         return answer;
@@ -203,7 +205,7 @@ public final class YamlSupport {
         return node;
     }
 
-    public static String creteEndpointUri(Node node, BiFunction<String, Node, String> endpointResolver, RouteDefinition route) {
+    public static String creteEndpointUri(Node node, RouteDefinition route) {
         String answer = null;
 
         if (node.getNodeType() == NodeType.SCALAR) {
@@ -223,43 +225,21 @@ public final class YamlSupport {
 
                 switch (key) {
                     case "uri":
-                        if (answer != null) {
-                            throw new IllegalArgumentException(
-                                    "uri and properties are not supported when using Endpoint DSL ");
-                        }
-
                         uri = asText(val);
                         break;
                     case "parameters":
-                        if (answer != null) {
-                            throw new IllegalArgumentException(
-                                    "uri and properties are not supported when using Endpoint DSL ");
-                        }
-
-                        parameters = asScalarMap(tuple.getValueNode());
+                        parameters = parseParameters(route, tuple);
                         break;
                     case "steps":
                         // steps must be set on the route
                         setSteps(route, val);
                         break;
                     default:
-                        String endpointUri = endpointResolver.apply(key, val);
-                        if (endpointUri != null) {
-                            if (uri != null || parameters != null) {
-                                throw new IllegalArgumentException(
-                                        "uri and parameters are not supported when using Endpoint DSL ");
-                            }
-                            answer = endpointUri;
-                        } else {
-                            throw new IllegalArgumentException("Unsupported field: " + key);
-                        }
+                        throw new UnsupportedFieldException(val, key);
                 }
             }
 
-            if (answer == null) {
-                ObjectHelper.notNull(uri, "The uri must set");
-                answer = YamlSupport.createEndpointUri(dc.getCamelContext(), uri, parameters);
-            }
+            answer = YamlSupport.createEndpointUri(dc.getCamelContext(), node, uri, parameters);
         }
 
         return answer;
@@ -281,11 +261,11 @@ public final class YamlSupport {
                     if (val.getNodeType() == NodeType.SCALAR) {
                         parameters.put(StringHelper.dashToCamelCase(key), YamlDeserializerSupport.asText(val));
                     } else {
-                        throw new UnsupportedNodeTypeException(node);
+                        throw new InvalidNodeTypeException(node, NodeType.SCALAR);
                     }
                 }
 
-                return YamlSupport.createEndpointUri(dc.getCamelContext(), scheme, parameters);
+                return YamlSupport.createEndpointUri(dc.getCamelContext(), node, scheme, parameters);
             default:
                 throw new UnsupportedNodeTypeException(node);
         }

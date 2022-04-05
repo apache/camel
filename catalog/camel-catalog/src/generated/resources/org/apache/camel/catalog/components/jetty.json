@@ -12,7 +12,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jetty",
-    "version": "3.16.0-SNAPSHOT",
+    "version": "3.17.0-SNAPSHOT",
     "scheme": "jetty",
     "extendsScheme": "http",
     "syntax": "jetty:httpUri",
@@ -56,6 +56,10 @@
     "sslSocketConnectorProperties": { "kind": "property", "displayName": "Ssl Socket Connector Properties", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.String, java.lang.Object>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A map which contains general SSL connector properties." },
     "sslSocketConnectors": { "kind": "property", "displayName": "Ssl Socket Connectors", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.Integer, org.eclipse.jetty.server.Connector>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A map which contains per port number specific SSL connectors." },
     "useGlobalSslContextParameters": { "kind": "property", "displayName": "Use Global Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "defaultValue": false, "description": "Enable usage of global SSL context parameters" }
+  },
+  "headers": {
+    "CamelServletContextPath": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The servlet context path used" },
+    "CamelHttpPath": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Request URI's path, the header will be used to build the request URI with the HTTP_URI." }
   },
   "properties": {
     "httpUri": { "kind": "path", "displayName": "Http Uri", "group": "common", "label": "common", "required": true, "type": "string", "javaType": "java.net.URI", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The url of the HTTP endpoint to call." },

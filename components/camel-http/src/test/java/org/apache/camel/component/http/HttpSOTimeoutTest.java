@@ -21,6 +21,7 @@ import org.apache.camel.component.http.handler.DelayValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -75,12 +76,16 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
 
     @Test
     public void httpGetUriOption() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":"
-                                             + localServer.getLocalPort() + "?socketTimeout=5000",
+        HttpEndpoint endpoint = context.getEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
+                                                    + localServer.getLocalPort() + "?socketTimeout=5000",
+                HttpEndpoint.class);
+        Exchange exchange = template.request(endpoint,
                 exchange1 -> {
                 });
 
         assertExchange(exchange);
+
+        Assertions.assertEquals(5000, endpoint.getSocketTimeout());
     }
 
     @Test

@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  * Integrate with <a href="https://www.consul.io/">Consul</a> service discovery and configuration store.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "consul", title = "Consul", syntax = "consul:apiEndpoint",
-             category = { Category.CLOUD, Category.API })
+             category = { Category.CLOUD, Category.API }, headersClass = ConsulConstants.class)
 public class ConsulEndpoint extends DefaultEndpoint {
 
     @UriParam

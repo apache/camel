@@ -22,17 +22,17 @@ public class WekaEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(11);
-        props.add("xval");
-        props.add("path");
-        props.add("lazyStartProducer");
-        props.add("folds");
-        props.add("saveTo");
-        props.add("seed");
         props.add("apply");
         props.add("build");
-        props.add("dsname");
-        props.add("loadFrom");
         props.add("command");
+        props.add("dsname");
+        props.add("folds");
+        props.add("lazyStartProducer");
+        props.add("loadFrom");
+        props.add("path");
+        props.add("saveTo");
+        props.add("seed");
+        props.add("xval");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

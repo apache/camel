@@ -33,10 +33,10 @@ public class BucketMetadataFunctionalTest extends CamelTestSupport {
     private static final String REGION = "replace_this_with_region";
     private static final String BUCKET_NAME = "replace_this_with_bucket_name";
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:bucket_metadata")
                         .setProperty("CamelHwCloudObsBucketName", constant(BUCKET_NAME))
                         .to("hwcloud-obs:getBucketMetadata?" +

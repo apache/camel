@@ -24,6 +24,7 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
     private MainConfigurationProperties parent;
     private AwsVaultConfigurationProperties aws;
     private GcpVaultConfigurationProperties gcp;
+    private AzureVaultConfigurationProperties azure;
 
     public VaultConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -41,6 +42,9 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
         }
         if (gcp != null) {
             gcp.close();
+        }
+        if (azure != null) {
+            azure.close();
         }
     }
 
@@ -66,5 +70,13 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
             gcp = new GcpVaultConfigurationProperties(parent);
         }
         return gcp;
+    }
+
+    @Override
+    public AzureVaultConfigurationProperties azure() {
+        if (azure == null) {
+            azure = new AzureVaultConfigurationProperties(parent);
+        }
+        return azure;
     }
 }

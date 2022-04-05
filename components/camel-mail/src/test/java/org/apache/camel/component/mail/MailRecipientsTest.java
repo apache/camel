@@ -126,9 +126,9 @@ public class MailRecipientsTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // all the recipients of this mail are:
                 // to: camel@riders.org , easy@riders.org

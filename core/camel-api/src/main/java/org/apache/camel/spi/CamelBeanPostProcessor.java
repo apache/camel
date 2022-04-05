@@ -83,4 +83,13 @@ public interface CamelBeanPostProcessor {
         return false;
     }
 
+    /**
+     * Adds a custom bean post injector
+     *
+     * @param injector the custom injector
+     */
+    default void addCamelBeanPostProjectInjector(CamelBeanPostProcessorInjector injector) {
+        // noop
+    }
+
 }

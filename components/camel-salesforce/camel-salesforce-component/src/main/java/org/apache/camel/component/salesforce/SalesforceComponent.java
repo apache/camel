@@ -82,10 +82,12 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     public static final String HTTP_PROXY_REALM = "httpProxyRealm";
     public static final String HTTP_CONNECTION_TIMEOUT = "httpConnectionTimeout";
     public static final String HTTP_IDLE_TIMEOUT = "httpIdleTimeout";
+    public static final String HTTP_REQUEST_TIMEOUT = "httpRequestTimeout";
     public static final String HTTP_MAX_CONTENT_LENGTH = "httpMaxContentLength";
     public static final String HTTP_REQUEST_BUFFER_SIZE = "httpRequestBufferSize";
 
     static final int CONNECTION_TIMEOUT = 60000;
+    static final int REQUEST_TIMEOUT = 60000;
     static final int IDLE_TIMEOUT = 10000;
     static final int REQUEST_BUFFER_SIZE = 8192;
 
@@ -173,6 +175,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     @Metadata(description = "Connection timeout used by the HttpClient when connecting to the Salesforce server.",
               label = "common", defaultValue = "" + CONNECTION_TIMEOUT)
     private long httpClientConnectionTimeout = CONNECTION_TIMEOUT;
+
+    @Metadata(description = "Timeout value for HTTP requests.",
+              label = "common", defaultValue = "" + REQUEST_TIMEOUT)
+    private long httpRequestTimeout = REQUEST_TIMEOUT;
 
     @Metadata(description = "Max content length of an HTTP response.", label = "common")
     private Integer httpMaxContentLength;
@@ -625,6 +631,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         this.httpClientConnectionTimeout = httpClientConnectionTimeout;
     }
 
+    public long getHttpRequestTimeout() {
+        return httpRequestTimeout;
+    }
+
+    public void setHttpRequestTimeout(long httpRequestTimeout) {
+        this.httpRequestTimeout = httpRequestTimeout;
+    }
+
     public Integer getHttpMaxContentLength() {
         return httpMaxContentLength;
     }
@@ -857,6 +871,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         final Long httpConnectionTimeout
                 = typeConverter.convertTo(Long.class, httpClientProperties.get(HTTP_CONNECTION_TIMEOUT));
         final Long httpIdleTimeout = typeConverter.convertTo(Long.class, httpClientProperties.get(HTTP_IDLE_TIMEOUT));
+        final Long httpRequestTimeout = typeConverter.convertTo(Long.class, httpClientProperties.get(HTTP_REQUEST_TIMEOUT));
         final Integer maxContentLength
                 = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_MAX_CONTENT_LENGTH));
         Integer requestBufferSize
@@ -891,6 +906,9 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         }
         if (maxContentLength != null) {
             httpClient.setMaxContentLength(maxContentLength);
+        }
+        if (httpRequestTimeout != null) {
+            httpClient.setTimeout(httpRequestTimeout);
         }
         httpClient.setRequestBufferSize(requestBufferSize);
 
@@ -932,6 +950,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             final Map<String, Object> httpClientProperties, final SalesforceComponent salesforce) {
         putValueIfGivenTo(httpClientProperties, HTTP_IDLE_TIMEOUT, salesforce::getHttpClientIdleTimeout);
         putValueIfGivenTo(httpClientProperties, HTTP_CONNECTION_TIMEOUT, salesforce::getHttpClientConnectionTimeout);
+        putValueIfGivenTo(httpClientProperties, HTTP_REQUEST_TIMEOUT, salesforce::getHttpRequestTimeout);
 
         putValueIfGivenTo(httpClientProperties, HTTP_PROXY_HOST, salesforce::getHttpProxyHost);
         putValueIfGivenTo(httpClientProperties, HTTP_PROXY_PORT, salesforce::getHttpProxyPort);

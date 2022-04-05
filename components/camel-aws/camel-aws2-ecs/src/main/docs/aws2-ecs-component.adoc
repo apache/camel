@@ -67,18 +67,9 @@ You have the possibility of avoiding the usage of explicit static credentials, b
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
-=== Message headers evaluated by the ECS producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|`CamelAwsECSMaxResults` |`Integer` |The limit number of results while listing clusters
-
-|`CamelAwsECSOperation` |`String` |The operation we want to perform
-
-|`CamelAwsECSClusterName` |`String` |The cluster name
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === ECS Producer operations
 

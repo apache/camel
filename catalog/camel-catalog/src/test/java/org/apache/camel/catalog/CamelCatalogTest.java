@@ -675,16 +675,6 @@ public class CamelCatalogTest {
                 "yammer:MESSAGES?accessToken=aaa&consumerKey=bbb&consumerSecret=ccc&useJson=true&initialDelay=500");
         assertTrue(result.isSuccess());
 
-        // required / boolean / integer
-        result = catalog
-                .validateEndpointProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
-        assertFalse(result.isSuccess());
-        assertEquals(4, result.getNumberOfErrors());
-        assertTrue(result.getRequired().contains("consumerKey"));
-        assertTrue(result.getRequired().contains("consumerSecret"));
-        assertEquals("no", result.getInvalidBoolean().get("useJson"));
-        assertEquals("five", result.getInvalidInteger().get("initialDelay"));
-
         // unknown component
         result = catalog.validateEndpointProperties("foo:bar?me=you");
         assertTrue(result.isSuccess());
@@ -810,7 +800,7 @@ public class CamelCatalogTest {
     @Test
     public void validatePropertiesSummary() {
         EndpointValidationResult result = catalog.validateEndpointProperties(
-                "yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five&pollStrategy=myStrategy");
+                "file:foo?blah=yada");
         assertFalse(result.isSuccess());
         String reason = result.summaryErrorMessage(true);
         LOG.info(reason);

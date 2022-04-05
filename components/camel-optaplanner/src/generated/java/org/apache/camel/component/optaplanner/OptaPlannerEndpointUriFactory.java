@@ -23,15 +23,15 @@ public class OptaPlannerEndpointUriFactory extends org.apache.camel.support.comp
     static {
         Set<String> props = new HashSet<>(10);
         props.add("async");
-        props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
-        props.add("threadPoolSize");
         props.add("configFile");
-        props.add("exchangePattern");
-        props.add("useSolverManager");
-        props.add("solverId");
-        props.add("problemId");
         props.add("exceptionHandler");
+        props.add("exchangePattern");
+        props.add("lazyStartProducer");
+        props.add("problemId");
+        props.add("solverId");
+        props.add("threadPoolSize");
+        props.add("useSolverManager");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

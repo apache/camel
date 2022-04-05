@@ -35,6 +35,7 @@ import io.vertx.ext.auth.User;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.impl.RouteImpl;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
@@ -64,6 +65,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
 
     private final List<Handler<RoutingContext>> handlers;
     private final String fileNameExtWhitelist;
+    private final boolean muteExceptions;
     private Set<Method> methods;
     private String path;
     private Route route;
@@ -77,6 +79,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         this.handlers = handlers;
         this.fileNameExtWhitelist
                 = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
+        this.muteExceptions = endpoint.isMuteException();
     }
 
     @Override
@@ -97,6 +100,10 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         super.doStart();
 
         final Route newRoute = router.route(path);
+
+        if (getEndpoint().getCamelContext().getRestConfiguration().isEnableCORS() && getEndpoint().getConsumes() != null) {
+            ((RouteImpl) newRoute).setEmptyBodyPermittedWithConsumes(true);
+        }
 
         if (!methods.equals(Method.getAll())) {
             methods.forEach(m -> newRoute.method(HttpMethod.valueOf(m.name())));
@@ -165,7 +172,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         // for the rest dsl, then the following code may result in a blocking operation that could
         // block Vert.x event-loop for too long if the target service takes long to respond, as
         // example in case the service is a knative service scaled to zero that could take some time
-        // to be come available:
+        // to become available:
         //
         //     rest("/results")
         //         .get("/{id}")
@@ -183,11 +190,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                     }
 
                     getAsyncProcessor().process(exchange, c -> {
-                        if (!exchange.isFailed()) {
-                            promise.complete();
-                        } else {
-                            promise.fail(exchange.getException());
-                        }
+                        promise.complete();
                     });
                 },
                 false,
@@ -196,7 +199,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                     try {
                         if (result.succeeded()) {
                             try {
-                                writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy());
+                                writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy(), muteExceptions);
                             } catch (Exception e) {
                                 failure = e;
                             }

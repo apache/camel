@@ -52,10 +52,10 @@ public class PutObjectTest extends CamelTestSupport {
             testConfiguration.getProperty("accessKey"),
             testConfiguration.getProperty("secretKey"));
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:put_object")
                         .setBody(constant(new File("src/test/resources/files/test_file.txt")))
                         .setProperty(OBSProperties.BUCKET_NAME, constant("reji-abc"))
