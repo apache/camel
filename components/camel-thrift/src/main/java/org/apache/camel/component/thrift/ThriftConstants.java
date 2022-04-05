@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.thrift;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Thrift component constants
  */
@@ -36,7 +38,8 @@ public interface ThriftConstants {
     int THRIFT_CONSUMER_POOL_SIZE = 1;
     int THRIFT_CONSUMER_MAX_POOL_SIZE = 10;
     /*
-     * This headers will be set after Thrift consumer method is invoked
+     * This header will be set after Thrift consumer method is invoked
      */
+    @Metadata(label = "consumer", description = "Method name handled by the consumer service", javaType = "String")
     String THRIFT_METHOD_NAME_HEADER = "CamelThriftMethodName";
 }
