@@ -12,6 +12,7 @@
     "output": false
   },
   "properties": {
+    "errorHandlerType": { "kind": "element", "displayName": "Error Handler Type", "required": true, "type": "object", "javaType": "org.apache.camel.model.errorhandler.BaseErrorHandlerDefinition", "oneOf": [ "deadLetterChannel", "defaultErrorHandler", "noErrorHandler", "transactionErrorHandler" ], "deprecated": false, "autowired": false, "secret": false },
     "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
   }
 }

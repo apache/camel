@@ -18,11 +18,16 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.model.errorhandler.BaseErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.TransactionErrorHandlerDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -33,7 +38,11 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ErrorHandlerDefinition extends IdentifiedType implements ErrorHandlerFactory {
 
-    @XmlElementRef
+    @XmlElements({
+            @XmlElement(name = "deadLetterChannel", type = DeadLetterChannelDefinition.class),
+            @XmlElement(name = "defaultErrorHandler", type = DefaultErrorHandlerDefinition.class),
+            @XmlElement(name = "noErrorHandler", type = NoErrorHandlerDefinition.class),
+            @XmlElement(name = "transactionErrorHandler", type = TransactionErrorHandlerDefinition.class) })
     private BaseErrorHandlerDefinition errorHandlerType;
 
     public BaseErrorHandlerDefinition getErrorHandlerType() {

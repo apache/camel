@@ -392,6 +392,10 @@ public class ModelParser extends BaseParser {
             return true;
         }, noValueHandler());
     }
+    protected BaseErrorHandlerDefinition doParseBaseErrorHandlerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new BaseErrorHandlerDefinition(), 
+            identifiedTypeAttributeHandler(),  noElementHandler(), noValueHandler());
+    }
     protected <T extends FaultToleranceConfigurationCommon> AttributeHandler<T> faultToleranceConfigurationCommonAttributeHandler() {
         return (def, key, val) -> {
             switch (key) {
