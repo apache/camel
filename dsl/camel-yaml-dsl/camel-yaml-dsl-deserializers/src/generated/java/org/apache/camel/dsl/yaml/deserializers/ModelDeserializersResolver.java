@@ -125,9 +125,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "enrich": return new ModelDeserializers.EnrichDefinitionDeserializer();
             case "org.apache.camel.model.EnrichDefinition": return new ModelDeserializers.EnrichDefinitionDeserializer();
             case "org.apache.camel.builder.ErrorHandlerBuilderRef": return new ModelDeserializers.ErrorHandlerBuilderRefDeserializer();
-            case "etcd-service-discovery": return new ModelDeserializers.EtcdServiceCallServiceDiscoveryConfigurationDeserializer();
-            case "etcdServiceDiscovery": return new ModelDeserializers.EtcdServiceCallServiceDiscoveryConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.EtcdServiceCallServiceDiscoveryConfigurationDeserializer();
             case "exchange-property": return new ModelDeserializers.ExchangePropertyExpressionDeserializer();
             case "exchangeProperty": return new ModelDeserializers.ExchangePropertyExpressionDeserializer();
             case "org.apache.camel.model.language.ExchangePropertyExpression": return new ModelDeserializers.ExchangePropertyExpressionDeserializer();

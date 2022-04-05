@@ -55,7 +55,6 @@
         <module>camel-test-infra-arangodb</module>
         <module>camel-test-infra-consul</module>
         <module>camel-test-infra-google-pubsub</module>
-        <module>camel-test-infra-etcd</module>
         <module>camel-test-infra-hbase</module>
         <module>camel-test-infra-infinispan</module>
         <module>camel-test-infra-minio</module>

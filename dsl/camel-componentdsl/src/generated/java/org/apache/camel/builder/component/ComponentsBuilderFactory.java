@@ -1297,48 +1297,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ElasticsearchRestComponentBuilderFactory.elasticsearchRest();
     }
     /**
-     * Etcd Keys (camel-etcd)
-     * Get, set or delete keys in etcd key-value store.
-     * 
-     * Category: clustering,database
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-etcd
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.EtcdKeysComponentBuilderFactory.EtcdKeysComponentBuilder etcdKeys() {
-        return org.apache.camel.builder.component.dsl.EtcdKeysComponentBuilderFactory.etcdKeys();
-    }
-    /**
-     * Etcd Stats (camel-etcd)
-     * Access etcd cluster statistcs.
-     * 
-     * Category: clustering,database
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-etcd
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.EtcdStatsComponentBuilderFactory.EtcdStatsComponentBuilder etcdStats() {
-        return org.apache.camel.builder.component.dsl.EtcdStatsComponentBuilderFactory.etcdStats();
-    }
-    /**
-     * Etcd Watch (camel-etcd)
-     * Watch specific etcd keys or directories for changes.
-     * 
-     * Category: clustering,database
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-etcd
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.EtcdWatchComponentBuilderFactory.EtcdWatchComponentBuilder etcdWatch() {
-        return org.apache.camel.builder.component.dsl.EtcdWatchComponentBuilderFactory.etcdWatch();
-    }
-    /**
      * Exec (camel-exec)
      * Execute commands on the underlying operating system.
      * 

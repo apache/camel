@@ -74,7 +74,6 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
             @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "zookeeperServiceDiscovery", type = ZooKeeperServiceCallServiceDiscoveryConfiguration.class) })
@@ -498,13 +497,6 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         setServiceDiscoveryConfiguration(conf);
 
         return this;
-    }
-
-    public EtcdServiceCallServiceDiscoveryConfiguration etcdServiceDiscovery() {
-        EtcdServiceCallServiceDiscoveryConfiguration conf = new EtcdServiceCallServiceDiscoveryConfiguration();
-        setServiceDiscoveryConfiguration(conf);
-
-        return conf;
     }
 
     public KubernetesServiceCallServiceDiscoveryConfiguration kubernetesServiceDiscovery() {

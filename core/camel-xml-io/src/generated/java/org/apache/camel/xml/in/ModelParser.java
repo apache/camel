@@ -1563,7 +1563,6 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "consulServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseConsulServiceCallServiceDiscoveryConfiguration()); break;
                 case "dnsServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseDnsServiceCallServiceDiscoveryConfiguration()); break;
-                case "etcdServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseEtcdServiceCallServiceDiscoveryConfiguration()); break;
                 case "kubernetesServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseKubernetesServiceCallServiceDiscoveryConfiguration()); break;
                 case "combinedServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseCombinedServiceCallServiceDiscoveryConfiguration()); break;
                 case "staticServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseStaticServiceCallServiceDiscoveryConfiguration()); break;
@@ -1582,7 +1581,6 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "consulServiceDiscovery": doAdd(doParseConsulServiceCallServiceDiscoveryConfiguration(), def.getServiceDiscoveryConfigurations(), def::setServiceDiscoveryConfigurations); break;
                 case "dnsServiceDiscovery": doAdd(doParseDnsServiceCallServiceDiscoveryConfiguration(), def.getServiceDiscoveryConfigurations(), def::setServiceDiscoveryConfigurations); break;
-                case "etcdServiceDiscovery": doAdd(doParseEtcdServiceCallServiceDiscoveryConfiguration(), def.getServiceDiscoveryConfigurations(), def::setServiceDiscoveryConfigurations); break;
                 case "kubernetesServiceDiscovery": doAdd(doParseKubernetesServiceCallServiceDiscoveryConfiguration(), def.getServiceDiscoveryConfigurations(), def::setServiceDiscoveryConfigurations); break;
                 case "staticServiceDiscovery": doAdd(doParseStaticServiceCallServiceDiscoveryConfiguration(), def.getServiceDiscoveryConfigurations(), def::setServiceDiscoveryConfigurations); break;
                 case "cachingServiceDiscovery": doAdd(doParseCachingServiceCallServiceDiscoveryConfiguration(), def.getServiceDiscoveryConfigurations(), def::setServiceDiscoveryConfigurations); break;
@@ -1648,20 +1646,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, serviceCallConfigurationElementHandler(), noValueHandler());
     }
-    protected EtcdServiceCallServiceDiscoveryConfiguration doParseEtcdServiceCallServiceDiscoveryConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new EtcdServiceCallServiceDiscoveryConfiguration(), (def, key, val) -> {
-            switch (key) {
-                case "password": def.setPassword(val); break;
-                case "servicePath": def.setServicePath(val); break;
-                case "timeout": def.setTimeout(val); break;
-                case "type": def.setType(val); break;
-                case "uris": def.setUris(val); break;
-                case "userName": def.setUserName(val); break;
-                default: return identifiedTypeAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        }, serviceCallConfigurationElementHandler(), noValueHandler());
-    }
     protected HealthyServiceCallServiceFilterConfiguration doParseHealthyServiceCallServiceFilterConfiguration() throws IOException, XmlPullParserException {
         return doParse(new HealthyServiceCallServiceFilterConfiguration(),
             identifiedTypeAttributeHandler(), serviceCallConfigurationElementHandler(), noValueHandler());
@@ -1718,7 +1702,6 @@ public class ModelParser extends BaseParser {
                 case "combinedServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseCombinedServiceCallServiceDiscoveryConfiguration()); break;
                 case "consulServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseConsulServiceCallServiceDiscoveryConfiguration()); break;
                 case "dnsServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseDnsServiceCallServiceDiscoveryConfiguration()); break;
-                case "etcdServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseEtcdServiceCallServiceDiscoveryConfiguration()); break;
                 case "kubernetesServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseKubernetesServiceCallServiceDiscoveryConfiguration()); break;
                 case "staticServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseStaticServiceCallServiceDiscoveryConfiguration()); break;
                 case "zookeeperServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseZooKeeperServiceCallServiceDiscoveryConfiguration()); break;
@@ -1773,7 +1756,6 @@ public class ModelParser extends BaseParser {
                 case "combinedServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseCombinedServiceCallServiceDiscoveryConfiguration()); break;
                 case "consulServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseConsulServiceCallServiceDiscoveryConfiguration()); break;
                 case "dnsServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseDnsServiceCallServiceDiscoveryConfiguration()); break;
-                case "etcdServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseEtcdServiceCallServiceDiscoveryConfiguration()); break;
                 case "kubernetesServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseKubernetesServiceCallServiceDiscoveryConfiguration()); break;
                 case "staticServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseStaticServiceCallServiceDiscoveryConfiguration()); break;
                 case "zookeeperServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseZooKeeperServiceCallServiceDiscoveryConfiguration()); break;
