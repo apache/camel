@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * The JAXB POJOs for the <a href="https://camel.apache.org/manual/error-handler.html">Error Handler</a>.
+ */
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
+                                     elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.model.errorhandler;
-
-import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.model.IdentifiedType;
-
-public abstract class BaseErrorHandlerDefinition extends IdentifiedType implements ErrorHandlerFactory {
-
-}

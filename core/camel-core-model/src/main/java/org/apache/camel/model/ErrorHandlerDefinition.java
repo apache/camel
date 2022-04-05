@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.model.errorhandler.BaseErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
@@ -43,13 +42,13 @@ public class ErrorHandlerDefinition extends IdentifiedType implements ErrorHandl
             @XmlElement(name = "defaultErrorHandler", type = DefaultErrorHandlerDefinition.class),
             @XmlElement(name = "noErrorHandler", type = NoErrorHandlerDefinition.class),
             @XmlElement(name = "transactionErrorHandler", type = TransactionErrorHandlerDefinition.class) })
-    private BaseErrorHandlerDefinition errorHandlerType;
+    private ErrorHandlerFactory errorHandlerType;
 
-    public BaseErrorHandlerDefinition getErrorHandlerType() {
+    public ErrorHandlerFactory getErrorHandlerType() {
         return errorHandlerType;
     }
 
-    public void setErrorHandlerType(BaseErrorHandlerDefinition errorHandlerType) {
+    public void setErrorHandlerType(ErrorHandlerFactory errorHandlerType) {
         this.errorHandlerType = errorHandlerType;
     }
 
