@@ -17,7 +17,10 @@
 package org.apache.camel.component.google.bigquery.unit.sql;
 
 import com.google.cloud.bigquery.BigQuery;
+import com.google.cloud.bigquery.Job;
 import com.google.cloud.bigquery.JobId;
+import com.google.cloud.bigquery.JobInfo;
+import com.google.cloud.bigquery.JobStatistics;
 import com.google.cloud.bigquery.QueryJobConfiguration;
 import com.google.cloud.bigquery.TableResult;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLConfiguration;
@@ -37,6 +40,8 @@ public abstract class GoogleBigQuerySQLProducerBaseTest extends CamelTestSupport
     protected GoogleBigQuerySQLConfiguration configuration = new GoogleBigQuerySQLConfiguration();
     protected BigQuery bigquery;
     protected TableResult tableResult;
+    protected Job job;
+    protected JobStatistics.QueryStatistics statistics;
 
     protected GoogleBigQuerySQLProducer createAndStartProducer() {
         configuration.setProjectId(projectId);
@@ -50,6 +55,13 @@ public abstract class GoogleBigQuerySQLProducerBaseTest extends CamelTestSupport
     protected void setupBigqueryMock() throws Exception {
         bigquery = mock(BigQuery.class);
         tableResult = mock(TableResult.class);
+        job = mock(Job.class);
+        statistics = mock(JobStatistics.QueryStatistics.class);
         when(bigquery.query(any(QueryJobConfiguration.class), any(JobId.class))).thenReturn(tableResult);
+        when(bigquery.create(any(JobInfo.class))).thenReturn(job);
+        when(job.waitFor()).thenReturn(job);
+        when(job.getQueryResults()).thenReturn(tableResult);
+        when(job.getStatistics()).thenReturn(statistics);
+        when(statistics.getNumDmlAffectedRows()).thenReturn(1L);
     }
 }

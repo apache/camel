@@ -30,10 +30,18 @@ public class GoogleBigQuerySQLComponent extends DefaultComponent {
 
     @Metadata
     private String projectId;
+
+    @Metadata
+    private GoogleBigQuerySQLConfiguration configuration;
+
     @Metadata(autowired = true)
     private GoogleBigQueryConnectionFactory connectionFactory;
 
     public GoogleBigQuerySQLComponent() {
+    }
+
+    public GoogleBigQuerySQLComponent(GoogleBigQuerySQLConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     public GoogleBigQuerySQLComponent(CamelContext camelContext) {
@@ -49,17 +57,11 @@ public class GoogleBigQuerySQLComponent extends DefaultComponent {
             throw new IllegalArgumentException("Google BigQuery Endpoint format \"projectId:<query>\"");
         }
 
-        GoogleBigQuerySQLConfiguration configuration = new GoogleBigQuerySQLConfiguration();
-        configuration.parseRemaining(remaining);
+        GoogleBigQuerySQLConfiguration conf
+                = configuration != null ? configuration.copy() : new GoogleBigQuerySQLConfiguration();
+        conf.parseRemaining(remaining);
 
-        if (configuration.getConnectionFactory() == null) {
-            if (connectionFactory == null) {
-                connectionFactory = new GoogleBigQueryConnectionFactory();
-            }
-            configuration.setConnectionFactory(getConnectionFactory());
-        }
-
-        GoogleBigQuerySQLEndpoint endpoint = new GoogleBigQuerySQLEndpoint(uri, this, configuration);
+        GoogleBigQuerySQLEndpoint endpoint = new GoogleBigQuerySQLEndpoint(uri, this, conf);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -84,5 +86,9 @@ public class GoogleBigQuerySQLComponent extends DefaultComponent {
      */
     public void setConnectionFactory(GoogleBigQueryConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
+    }
+
+    public GoogleBigQuerySQLConfiguration getConfiguration() {
+        return configuration;
     }
 }
