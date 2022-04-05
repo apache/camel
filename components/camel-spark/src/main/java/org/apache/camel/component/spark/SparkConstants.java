@@ -16,14 +16,18 @@
  */
 package org.apache.camel.component.spark;
 
+import org.apache.camel.spi.Metadata;
+
 public final class SparkConstants {
-
+    @Metadata(description = "The RDD.", javaType = "Object")
     public static final String SPARK_RDD_HEADER = "CAMEL_SPARK_RDD";
-
+    @Metadata(description = "The function performing action against an RDD.",
+              javaType = "org.apache.camel.component.spark.RddCallback")
     public static final String SPARK_RDD_CALLBACK_HEADER = "CAMEL_SPARK_RDD_CALLBACK";
-
+    @Metadata(description = "The data frame to compute against.", javaType = "Dataset<Row>")
     public static final String SPARK_DATAFRAME_HEADER = "CAMEL_SPARK_DATAFRAME";
-
+    @Metadata(description = "The function performing action against a data frame.",
+              javaType = "org.apache.camel.component.spark.DataFrameCallback")
     public static final String SPARK_DATAFRAME_CALLBACK_HEADER = "CAMEL_SPARK_DATAFRAME_CALLBACK";
 
     private SparkConstants() {

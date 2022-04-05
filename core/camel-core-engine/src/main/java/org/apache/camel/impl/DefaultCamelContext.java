@@ -49,7 +49,6 @@ import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
-import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
@@ -537,38 +536,6 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             throw new IllegalStateException("Access to model not supported in lightweight mode");
         }
         model.setValidators(validators);
-    }
-
-    @Override
-    public HystrixConfigurationDefinition getHystrixConfiguration(String id) {
-        if (model == null && isLightweight()) {
-            throw new IllegalStateException("Access to model not supported in lightweight mode");
-        }
-        return model.getHystrixConfiguration(id);
-    }
-
-    @Override
-    public void setHystrixConfiguration(HystrixConfigurationDefinition configuration) {
-        if (model == null && isLightweight()) {
-            throw new IllegalStateException("Access to model not supported in lightweight mode");
-        }
-        model.setHystrixConfiguration(configuration);
-    }
-
-    @Override
-    public void setHystrixConfigurations(List<HystrixConfigurationDefinition> configurations) {
-        if (model == null && isLightweight()) {
-            throw new IllegalStateException("Access to model not supported in lightweight mode");
-        }
-        model.setHystrixConfigurations(configurations);
-    }
-
-    @Override
-    public void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration) {
-        if (model == null && isLightweight()) {
-            throw new IllegalStateException("Access to model not supported in lightweight mode");
-        }
-        model.addHystrixConfiguration(id, configuration);
     }
 
     @Override

@@ -28,7 +28,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Send and receive messages from Redis.
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port",
-             category = { Category.SPRING, Category.NOSQL })
+             category = { Category.SPRING, Category.NOSQL }, headersClass = RedisConstants.class)
 public class RedisEndpoint extends DefaultEndpoint {
 
     @UriParam

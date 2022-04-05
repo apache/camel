@@ -63,7 +63,7 @@
     <avro-ipc-netty-version>1.11.0</avro-ipc-netty-version>
     <avro-version>1.11.0</avro-version>
     <awaitility-version>4.2.0</awaitility-version>
-    <aws-java-sdk2-version>2.17.162</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.17.163</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-cosmos-version>4.26.0</azure-cosmos-version>
@@ -187,7 +187,6 @@
     <elasticsearch-rest-sniffer-version>7.10.2</elasticsearch-rest-sniffer-version>
     <elasticsearch-rest-version>7.10.2</elasticsearch-rest-version>
     <elytron-web>1.8.0.Final</elytron-web>
-    <etcd4j-version>2.18.0</etcd4j-version>
     <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
     <facebook4j-core-version>2.4.13</facebook4j-core-version>
     <fastjson-version>1.2.80</fastjson-version>
@@ -263,7 +262,6 @@
     <httpunit-version>1.7</httpunit-version>
     <huaweicloud-obs-version>3.21.4.1</huaweicloud-obs-version>
     <huaweicloud-sdk-version>3.0.76</huaweicloud-sdk-version>
-    <hystrix-version>1.5.18</hystrix-version>
     <ical4j-version>1.0.7</ical4j-version>
     <icu4j-version>70.1</icu4j-version>
     <ignite-version>2.12.0</ignite-version>
@@ -368,7 +366,7 @@
     <leveldb-guava-version>21.0</leveldb-guava-version>
     <leveldb-version>0.12</leveldb-version>
     <leveldbjni-version>1.8</leveldbjni-version>
-    <libphonenumber-version>8.12.44</libphonenumber-version>
+    <libphonenumber-version>8.12.45</libphonenumber-version>
     <libthrift-version>0.14.1</libthrift-version>
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <lightcouch-version>0.2.0</lightcouch-version>
@@ -425,7 +423,6 @@
     <networknt-json-schema-validator-version>1.0.68</networknt-json-schema-validator-version>
     <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
     <nitrite-version>3.4.3</nitrite-version>
-    <nsq-client-version>1.0.0.RC4</nsq-client-version>
     <ognl-version>3.1.12</ognl-version>
     <okclient-version>3.14.9</okclient-version>
     <olingo2-version>2.0.11</olingo2-version>

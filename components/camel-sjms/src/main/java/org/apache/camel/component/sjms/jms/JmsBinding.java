@@ -133,7 +133,7 @@ public class JmsBinding {
         if (jmsMessage != null) {
             // lets populate the standard JMS message headers
             try {
-                map.put("JMSCorrelationID", jmsMessage.getJMSCorrelationID());
+                map.put(JmsConstants.JMS_CORRELATION_ID, jmsMessage.getJMSCorrelationID());
                 map.put("JMSCorrelationIDAsBytes", JmsMessageHelper.getJMSCorrelationIDAsBytes(jmsMessage));
                 map.put("JMSDeliveryMode", jmsMessage.getJMSDeliveryMode());
                 map.put("JMSDestination", jmsMessage.getJMSDestination());
@@ -143,7 +143,7 @@ public class JmsBinding {
                 map.put("JMSRedelivered", jmsMessage.getJMSRedelivered());
                 map.put("JMSTimestamp", jmsMessage.getJMSTimestamp());
 
-                map.put("JMSReplyTo", JmsMessageHelper.getJMSReplyTo(jmsMessage));
+                map.put(JmsConstants.JMS_REPLY_TO, JmsMessageHelper.getJMSReplyTo(jmsMessage));
                 map.put("JMSType", JmsMessageHelper.getJMSType(jmsMessage));
 
                 // this works around a bug in the ActiveMQ property handling
@@ -251,9 +251,9 @@ public class JmsBinding {
     public void appendJmsProperty(Message jmsMessage, Exchange exchange, String headerName, Object headerValue)
             throws JMSException {
         if (isStandardJMSHeader(headerName)) {
-            if (headerName.equals("JMSCorrelationID")) {
+            if (headerName.equals(JmsConstants.JMS_CORRELATION_ID)) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-            } else if (headerName.equals("JMSReplyTo") && headerValue != null) {
+            } else if (headerName.equals(JmsConstants.JMS_REPLY_TO) && headerValue != null) {
                 if (headerValue instanceof String) {
                     // if the value is a String we must normalize it first, and must include the prefix
                     // as ActiveMQ requires that when converting the String to a javax.jms.Destination type

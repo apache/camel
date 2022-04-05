@@ -59,7 +59,6 @@ import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
-import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.model.ProcessorDefinition;
@@ -1974,26 +1973,6 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setValidators(List<ValidatorDefinition> validators) {
         getModelCamelContext().setValidators(validators);
-    }
-
-    @Override
-    public HystrixConfigurationDefinition getHystrixConfiguration(String id) {
-        return getModelCamelContext().getHystrixConfiguration(id);
-    }
-
-    @Override
-    public void setHystrixConfiguration(HystrixConfigurationDefinition configuration) {
-        getModelCamelContext().setHystrixConfiguration(configuration);
-    }
-
-    @Override
-    public void setHystrixConfigurations(List<HystrixConfigurationDefinition> configurations) {
-        getModelCamelContext().setHystrixConfigurations(configurations);
-    }
-
-    @Override
-    public void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration) {
-        getModelCamelContext().addHystrixConfiguration(id, configuration);
     }
 
     @Override

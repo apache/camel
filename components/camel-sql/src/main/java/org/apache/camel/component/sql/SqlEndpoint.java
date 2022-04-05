@@ -30,7 +30,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  * Perform SQL queries using Spring JDBC.
  */
 @UriEndpoint(firstVersion = "1.4.0", scheme = "sql", title = "SQL", syntax = "sql:query",
-             category = { Category.DATABASE, Category.SQL })
+             category = { Category.DATABASE, Category.SQL }, headersClass = SqlConstants.class)
 public class SqlEndpoint extends DefaultSqlEndpoint {
 
     @UriPath(description = "Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.")

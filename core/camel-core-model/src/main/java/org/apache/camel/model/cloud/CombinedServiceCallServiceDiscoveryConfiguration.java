@@ -39,7 +39,6 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
     @XmlElements({
             @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class) })
@@ -124,13 +123,6 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
 
     public DnsServiceCallServiceDiscoveryConfiguration dnsServiceDiscovery() {
         DnsServiceCallServiceDiscoveryConfiguration conf = new DnsServiceCallServiceDiscoveryConfiguration();
-        addServiceDiscoveryConfigurations(conf);
-
-        return conf;
-    }
-
-    public EtcdServiceCallServiceDiscoveryConfiguration etcdServiceDiscovery() {
-        EtcdServiceCallServiceDiscoveryConfiguration conf = new EtcdServiceCallServiceDiscoveryConfiguration();
         addServiceDiscoveryConfigurations(conf);
 
         return conf;

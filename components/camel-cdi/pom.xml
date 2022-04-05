@@ -84,18 +84,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- deprecated xml -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-xml</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-xml-jaxb</artifactId>
-            <optional>true</optional>
-        </dependency>
-
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>

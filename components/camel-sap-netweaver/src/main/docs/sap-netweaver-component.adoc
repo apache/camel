@@ -63,19 +63,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Message Headers
-
-The following headers can be used by the producer.
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
-
-|`CamelNetWeaverCommand` |`String` |*Mandatory*: The command to execute in
-http://msdn.microsoft.com/en-us/library/cc956153.aspx[MS ADO.Net Data
-Service] format.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Examples
 

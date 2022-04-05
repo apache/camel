@@ -16,28 +16,38 @@
  */
 package org.apache.camel.component.google.bigquery;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class GoogleBigQueryConfiguration {
+public class GoogleBigQueryConfiguration implements Cloneable {
 
     @UriParam(description = "ConnectionFactory to obtain connection to Bigquery Service. If not provided the default one will be used")
     @Metadata(autowired = true)
     private GoogleBigQueryConnectionFactory connectionFactory;
+
     @UriParam(description = "Field name to use as insert id")
     private String useAsInsertId;
+
     @UriPath(label = "common", description = "Google Cloud Project Id")
     @Metadata(required = true)
     private String projectId;
+
     @UriPath(label = "common", description = "BigQuery Dataset Id")
     @Metadata(required = true)
     private String datasetId;
+
     @UriPath(label = "common", description = "BigQuery table id")
     @Metadata(required = false)
     private String tableId;
+
+    @UriParam(label = "security",
+              description = "Service account key in json format to authenticate an application as a service account to google cloud platform")
+    @Metadata(required = false)
+    private String serviceAccountKey;
 
     public void parseRemaining(String remaining) {
         String[] parts = remaining.split(":");
@@ -100,4 +110,22 @@ public class GoogleBigQueryConfiguration {
         this.tableId = tableId;
         return this;
     }
+
+    public String getServiceAccountKey() {
+        return serviceAccountKey;
+    }
+
+    public GoogleBigQueryConfiguration setServiceAccountKey(String serviceAccountKey) {
+        this.serviceAccountKey = serviceAccountKey;
+        return this;
+    }
+
+    public GoogleBigQueryConfiguration copy() {
+        try {
+            return (GoogleBigQueryConfiguration) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
 }

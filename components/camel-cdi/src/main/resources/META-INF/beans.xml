@@ -24,10 +24,6 @@
             <if-class-not-available name="javax.transaction.Transaction"/>
         </exclude>
         <exclude name="org.apache.camel.cdi.xml.*"/>
-        <exclude name="org.apache.camel.cdi.XmlCdiBeanFactory"/>
-        <exclude name="org.apache.camel.cdi.XmlCdiJaxbContexts"/>
-        <exclude name="org.apache.camel.cdi.XmlErrorHandlerFactoryBean"/>
-        <exclude name="org.apache.camel.cdi.XmlFactoryBeanInjectionTarget"/>
     </scan>
 
 </beans>

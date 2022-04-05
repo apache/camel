@@ -92,12 +92,15 @@ function main() {
   local components=$(git diff "${startCommit}^..${endCommit}" --name-only --pretty=format:"" | grep -e '^components' | grep -v -e '^$' | cut -d / -f 1-2 | uniq | sort)
   local total=$(echo "${components}" | grep -v -e '^$' | wc -l)
 
+  echo "${total}" > "${logDir}/total"
   if [[ ${total} -eq 0 ]]; then
-    echo "result=:no_entry_sign: There are (likely) no components to be tested in this PR" > "${logDir}/results.txt"
+    echo "0" > "${logDir}/tested"
+    echo "0" > "${logDir}/failures"
     exit 0
   else
     if [[ ${total} -gt 10 ]]; then
-      echo "result=:no_entry_sign: There are too many components to be tested in this PR, components were removed or the code needs a rebase: (${total} likely to be tested)"  > "${logDir}/results.txt"
+      echo "0" > "${logDir}/tested"
+      echo "0" > "${logDir}/failures"
       exit 0
     fi
   fi
@@ -111,13 +114,8 @@ function main() {
     componentTest "${component}" "${total}" "${current}"
   done
 
-  # This is the comment that is displayed on the PR
-  if [[ ${failures} -eq 0 ]]; then
-    echo "result=:heavy_check_mark: Finished component verification: ${failures} component(s) test failed out of **${total} component(s) tested**" > "${logDir}/results.txt"
-  else
-    echo "result=:x: Finished component verification: **${failures} component(s) test failed** out of ${total} component(s) tested" > "${logDir}/results.txt"
-  fi
-
+  echo "${total}" > "${logDir}/tested"
+  echo "${failures}" > "${logDir}/failures"
   exit "${failures}"
 }
 

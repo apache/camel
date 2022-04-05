@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.spring.integration.SpringIntegrationBinding;
+import org.apache.camel.component.spring.integration.SpringIntegrationConstants;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,6 @@ import org.springframework.integration.channel.DirectChannel;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.MessageHeaders;
 
 /**
  * A CamelContext will be injected into CameSourceAdapter which will let Spring Integration channel talk to the
@@ -66,7 +66,7 @@ public class CamelSourceAdapter extends AbstractCamelAdapter implements Initiali
                     = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
 
             if (exchange.getPattern().isOutCapable()) {
-                exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL, replyChannel);
+                exchange.getIn().getHeaders().put(SpringIntegrationConstants.REPLY_CHANNEL, replyChannel);
 
                 // we want to do in-out so the inputChannel is mandatory (used to receive reply from spring integration)
                 if (replyChannel == null) {

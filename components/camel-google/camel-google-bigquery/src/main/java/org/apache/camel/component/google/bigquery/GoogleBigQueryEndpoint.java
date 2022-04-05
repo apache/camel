@@ -47,6 +47,8 @@ public class GoogleBigQueryEndpoint extends DefaultEndpoint {
     @UriParam
     protected final GoogleBigQueryConfiguration configuration;
 
+    private BigQuery bigQuery;
+
     protected GoogleBigQueryEndpoint(String endpointUri, GoogleBigQueryComponent component,
                                      GoogleBigQueryConfiguration configuration) {
         super(endpointUri, component);
@@ -55,9 +57,20 @@ public class GoogleBigQueryEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        BigQuery bigquery = getConfiguration().getConnectionFactory().getDefaultClient();
-        GoogleBigQueryProducer producer = new GoogleBigQueryProducer(bigquery, this, configuration);
-        return producer;
+        return new GoogleBigQueryProducer(bigQuery, this, configuration);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        GoogleBigQueryConnectionFactory connFactory = configuration.getConnectionFactory();
+        if (connFactory == null) {
+            connFactory = new GoogleBigQueryConnectionFactory()
+                    .setCamelContext(getCamelContext())
+                    .setServiceAccountKeyFile(configuration.getServiceAccountKey());
+            configuration.setConnectionFactory(connFactory);
+        }
+        bigQuery = connFactory.getDefaultClient();
     }
 
     @Override

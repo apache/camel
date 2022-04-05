@@ -45,9 +45,6 @@ for this component:
 stitch:[tableName]//[?options]
 ------------------------------
 
-
-
-
 // component-configure options: START
 
 // component-configure options: END
@@ -60,7 +57,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Async Producer
 
@@ -92,30 +91,6 @@ from("direct:sendStitch")
 .to("stitch:table_1?token=RAW({{token}})");
 --------------------------------------------------------------------------------
 
-=== Message headers evaluated by the component producer
-Before sending a message to Stitch component you can configure the following headers.
-
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Description
-
-|`CamelStitchTableName`| `StitchConstants.TABLE_NAME`|`String`| The name of the destination table the data is being pushed to. Table names must be unique in each destination schema, or loading issues will occur. Note: The number of characters in the table name should be within the destinations allowed limits or data will rejected.
-|`CamelStitchSchema`| `StitchConstants.SCHEMA`|`StitchSchema`| The schema that describes the Stitch message of type `org.apache.camel.component.stitch.client.models.StitchSchema`
-|`CamelStitchKeyNames`| `StitchConstants.KEY_NAMES`|`Collection<String>`| A collection of strings representing the Primary Key fields in the source table. Stitch use these Primary Keys to de-dupe data during loading If not provided, the table will be loaded in an append-only manner.
-|=======================================================================
-
-=== Message headers set by the component producer
-After the message is sent to Stitch, the following headers are available
-
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Description
-
-|`CamelStitchCode`| `StitchConstants.CODE`|`Integer`| HTTP Status code that is returned from Stitch Import HTTP API.
-|`CamelStitchHeaders`| `StitchConstants.HEADERS`|`Map`| HTTP headers that are returned from Stitch Import HTTP API.
-|`CamelStitchStatus`| `StitchConstants.STATUS`|`String`| The status message that Stitch returns after sending the data through Stitch Import API.
-|=======================================================================
-
 === Message body type
 Currently, the component supports the following types for the body message on the producer side when producing a message to Stitch component:
 
@@ -131,8 +106,6 @@ If you choose to send your message as `StitchMessage`, *you will need* to add `t
 
 * `Iterable`: You can send multiple Stitch messages that are aggregated by Camel or aggregated through custom processor. These aggregated messages
 can be type of `StitchMessage`, `StitchRequestBody` or `Map` but this Map here is similar to `StitchMessage`.
-
-
 
 === Examples
 
@@ -202,8 +175,6 @@ from("direct:sendStitch")
      })
 .to("stitch:table_1?token=RAW({{token}})");
 --------------------------------------------------------------------------------
-
-
 
 ==== Input body type `Iterable`:
 [source,java]

@@ -79,13 +79,15 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Declaring the stored procedure template
 
 The template is declared using a syntax that would be similar to a Java
 method signature. The name of the stored procedure, and then the
-arguments enclosed in parenthesis. An example explains this well:
+arguments enclosed in parentheses. An example explains this well:
 
 [source,xml]
 ----

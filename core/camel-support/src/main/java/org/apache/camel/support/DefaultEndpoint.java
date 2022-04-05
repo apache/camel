@@ -58,7 +58,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     @Metadata(label = "advanced", defaultValue = "true",
               description = "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired)"
                             + " by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component."
-                            + " This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc.")
+                            + " This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc."
+                            + " Important: If a component has the same option defined on both component and endpoint level, then disabling"
+                            + " autowiring on endpoint level would not affect that the component will still be autowired, and therefore the endpoint"
+                            + " will be configured with option from the component level. In other words turning off autowiring would then require to turn it off on the component level.")
     private boolean autowiredEnabled = true;
     @UriParam(label = "producer",
               description = "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup"
@@ -266,7 +269,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as
      * autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets
      * configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection
-     * factories, AWS Clients, etc.
+     * factories, AWS Clients, etc. Important: If a component has the same option defined on both component and endpoint
+     * level, then disabling autowiring on endpoint level would not affect that the component will still be autowired,
+     * and therefore the endpoint will be configured with option from the component level. In other words turning off
+     * autowiring would then require to turn it off on the component level.
      */
     public void setAutowiredEnabled(boolean autowiredEnabled) {
         this.autowiredEnabled = autowiredEnabled;

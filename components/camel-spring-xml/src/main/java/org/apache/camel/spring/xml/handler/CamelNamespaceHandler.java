@@ -455,8 +455,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("beans", factoryBean.getBeans());
                 builder.addPropertyValue("defaultServiceCallConfiguration", factoryBean.getDefaultServiceCallConfiguration());
                 builder.addPropertyValue("serviceCallConfigurations", factoryBean.getServiceCallConfigurations());
-                builder.addPropertyValue("defaultHystrixConfiguration", factoryBean.getDefaultHystrixConfiguration());
-                builder.addPropertyValue("hystrixConfigurations", factoryBean.getHystrixConfigurations());
                 // add any depends-on
                 addDependsOn(factoryBean, builder);
             }

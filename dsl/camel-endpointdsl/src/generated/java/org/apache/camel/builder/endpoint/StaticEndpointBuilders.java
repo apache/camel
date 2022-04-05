@@ -10506,55 +10506,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GridFsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * MSV (camel-msv)
-     * Validate XML payloads using Multi-Schema Validator (MSV).
-     * 
-     * Category: validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-msv
-     * 
-     * Syntax: <code>msv:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * URL to a local resource on the classpath, or a reference to lookup a bean
-     * in the Registry, or a full URL to a remote resource or resource on the
-     * file system which contains the XSD to validate against.
-     * 
-     * @param path resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.MsvEndpointBuilder msv(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.endpointBuilder("msv", path);
-    }
-    /**
-     * MSV (camel-msv)
-     * Validate XML payloads using Multi-Schema Validator (MSV).
-     * 
-     * Category: validation
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-msv
-     * 
-     * Syntax: <code>msv:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * URL to a local resource on the classpath, or a reference to lookup a bean
-     * in the Registry, or a full URL to a remote resource or resource on the
-     * file system which contains the XSD to validate against.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.MsvEndpointBuilder msv(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Mustache (camel-mustache)
      * Transform messages using a Mustache template.
      * 
@@ -10967,53 +10918,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.NitriteEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * NSQ (camel-nsq)
-     * Send and receive messages from NSQ realtime distributed messaging
-     * platform.
-     * 
-     * Category: messaging
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-nsq
-     * 
-     * Syntax: <code>nsq:topic</code>
-     * 
-     * Path parameter: topic (required)
-     * The NSQ topic
-     * 
-     * @param path topic
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.NsqEndpointBuilder nsq(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.endpointBuilder("nsq", path);
-    }
-    /**
-     * NSQ (camel-nsq)
-     * Send and receive messages from NSQ realtime distributed messaging
-     * platform.
-     * 
-     * Category: messaging
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-nsq
-     * 
-     * Syntax: <code>nsq:topic</code>
-     * 
-     * Path parameter: topic (required)
-     * The NSQ topic
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path topic
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.NsqEndpointBuilder nsq(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * OAI-PMH (camel-oaipmh)

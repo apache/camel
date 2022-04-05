@@ -29,7 +29,6 @@ import org.springframework.integration.support.channel.BeanFactoryChannelResolve
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.core.DestinationResolver;
 
 /**
@@ -95,7 +94,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
             if (inputChannel == null) {
                 throw new IllegalArgumentException("InputChannel has not been configured on " + getEndpoint());
             }
-            exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL, inputChannel);
+            exchange.getIn().getHeaders().put(SpringIntegrationConstants.REPLY_CHANNEL, inputChannel);
 
             // subscribe so we can receive the reply from spring integration
             inputChannel.subscribe(new MessageHandler() {
