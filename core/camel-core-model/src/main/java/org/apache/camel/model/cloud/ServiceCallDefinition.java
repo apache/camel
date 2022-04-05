@@ -81,7 +81,6 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
             @XmlElement(name = "zookeeperServiceDiscovery", type = ZooKeeperServiceCallServiceDiscoveryConfiguration.class) })
@@ -566,32 +565,6 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         DnsServiceCallServiceDiscoveryConfiguration conf = new DnsServiceCallServiceDiscoveryConfiguration(this);
         conf.setDomain(domain);
         conf.setProto(protocol);
-
-        setServiceDiscoveryConfiguration(conf);
-
-        return this;
-    }
-
-    public EtcdServiceCallServiceDiscoveryConfiguration etcdServiceDiscovery() {
-        EtcdServiceCallServiceDiscoveryConfiguration conf = new EtcdServiceCallServiceDiscoveryConfiguration(this);
-        setServiceDiscoveryConfiguration(conf);
-
-        return conf;
-    }
-
-    public ServiceCallDefinition etcdServiceDiscovery(String uris) {
-        EtcdServiceCallServiceDiscoveryConfiguration conf = new EtcdServiceCallServiceDiscoveryConfiguration(this);
-        conf.setUris(uris);
-
-        setServiceDiscoveryConfiguration(conf);
-
-        return this;
-    }
-
-    public ServiceCallDefinition etcdServiceDiscovery(String uris, String servicePath) {
-        EtcdServiceCallServiceDiscoveryConfiguration conf = new EtcdServiceCallServiceDiscoveryConfiguration(this);
-        conf.setUris(uris);
-        conf.setServicePath(servicePath);
 
         setServiceDiscoveryConfiguration(conf);
 
