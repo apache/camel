@@ -116,7 +116,6 @@ function main() {
 
   echo "${total}" > "${logDir}/tested"
   echo "${failures}" > "${logDir}/failures"
-  # This is the comment that is displayed on the PR
   exit "${failures}"
 }
 
