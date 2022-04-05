@@ -22,10 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.Metadata;
-
-import java.io.Serializable;
 
 /**
  * To configure re-delivery for error handling
