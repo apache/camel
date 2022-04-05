@@ -76,11 +76,6 @@ jobs:
       - run: unzip test-logs.zip
         if: |
           github.event_name == 'workflow_run'
-      - name: Get the test result
-        if: |
-          github.event_name == 'workflow_run'
-        run: |
-          cat results.txt >> $GITHUB_ENV
       - uses: actions/github-script@v6
         if: |
           github.event_name == 'workflow_run'
@@ -89,9 +84,31 @@ jobs:
           script: |
             let fs = require('fs');
             let issue_number = Number(fs.readFileSync('./pr_number'));
+            let total = Number(fs.readFileSync('./total'));
+            let tested = Number(fs.readFileSync('./tested'));
+            let failures = Number(fs.readFileSync('./failures'));
+
+            var message = ""
+
+            if (tested === 0) {
+              if (total === 0) {
+                message = ":no_entry_sign: There are (likely) no components to be tested in this PR"
+              } else {
+                if (total > 10) {
+                  message = `There are too many components to be tested in this PR, components were removed or the code needs a rebase: (${total} likely to be tested)`
+                }
+              }
+            } else {
+              if (failures === 0) {
+                message = `:heavy_check_mark: Finished component verification: ${failures} component(s) test failed out of **${tested} component(s) tested**`
+              } else {
+                message = `:x: Finished component verification: **${failures} component(s) test failed** out of ${tested} component(s) tested`
+              }
+            }
+
             await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue_number,
-              body: "${{ env.result }}"
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue_number,
+                  body: message
             });
