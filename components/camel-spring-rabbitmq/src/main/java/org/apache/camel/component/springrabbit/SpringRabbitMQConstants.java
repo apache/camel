@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.springrabbit;
 
+import org.apache.camel.spi.Metadata;
+
 public final class SpringRabbitMQConstants {
 
     public static final String DEFAULT_EXCHANGE_NAME = "default";
 
     public static final String CHANNEL = "CamelSpringRabbitmqChannel";
+    @Metadata(description = "The exchange key.", javaType = "String")
     public static final String ROUTING_OVERRIDE_KEY = "CamelSpringRabbitmqRoutingOverrideKey";
+    @Metadata(description = "The exchange name.", javaType = "String")
     public static final String EXCHANGE_OVERRIDE_NAME = "CamelSpringRabbitmqExchangeOverrideName";
     public static final String DIRECT_MESSAGE_LISTENER_CONTAINER = "DMLC";
     public static final String SIMPLE_MESSAGE_LISTENER_CONTAINER = "SMLC";
