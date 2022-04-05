@@ -50,79 +50,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Headers
-
-[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
-|===
-|Name |Type |ServiceNow API Parameter |Endpoint option |Description
-|CamelServiceNowResource |String | - | - | The resource to access
-|CamelServiceNowAction |String | - | - | The action to perform
-|CamelServiceNowActionSubject | - | - | String |The subject to which the action should be applied
-|CamelServiceNowModel |Class | - | - | The data model
-|CamelServiceNowRequestModel |Class | - | - | The request data model
-|CamelServiceNowResponseModel |Class | - | - | The response data model
-|CamelServiceNowOffsetNext | - | - | - | -
-|CamelServiceNowOffsetPrev | - | - | - | -
-|CamelServiceNowOffsetFirst | - | - | - | -
-|CamelServiceNowOffsetLast | - | - | - | -
-|CamelServiceNowContentType | - | - | - | -
-|CamelServiceNowContentEncoding | - | - | - | -
-|CamelServiceNowContentMeta | - | - | - | -
-|CamelServiceNowSysId |String | sys_id | - | -
-|CamelServiceNowUserSysId |String | user_sysid | - | -
-|CamelServiceNowUserId |String | user_id | - | -
-|CamelServiceNowCartItemId |String | cart_item_id | - | -
-|CamelServiceNowFileName |String | file_name | - | -
-|CamelServiceNowTable |String | table_name | - | -
-|CamelServiceNowTableSysId |String | table_sys_id | - | -
-|CamelServiceNowEncryptionContext | String | encryption_context | - | -
-|CamelServiceNowCategory | String | sysparm_category  | - | -
-|CamelServiceNowType |String | sysparm_type | - | -
-|CamelServiceNowCatalog | String | sysparm_catalog | - | -
-|CamelServiceNowQuery |String | sysparm_query | - | -
-|CamelServiceNowDisplayValue |String | sysparm_display_value | displayValue  | -
-|CamelServiceNowInputDisplayValue |Boolean | sysparm_input_display_value | inputDisplayValue  | -
-|CamelServiceNowExcludeReferenceLink |Boolean | sysparm_exclude_reference_link | excludeReferenceLink  | -
-|CamelServiceNowFields |String | sysparm_fields | - | -
-|CamelServiceNowLimit |Integer | sysparm_limit | - | -
-|CamelServiceNowText | String | sysparm_text | - | -
-|CamelServiceNowOffset | Integer | sysparm_offset | - | -
-|CamelServiceNowView |String | sysparm_view | - | -
-|CamelServiceNowSuppressAutoSysField |Boolean | sysparm_suppress_auto_sys_field | suppressAutoSysField | -
-|CamelServiceNowSuppressPaginationHeader | Booleab | sysparm_suppress_pagination_header | suppressPaginationHeader | -
-|CamelServiceNowMinFields |String | sysparm_min_fields | - | -
-|CamelServiceNowMaxFields |String | sysparm_max_fields | - | -
-|CamelServiceNowSumFields |String | sysparm_sum_fields | - | -
-|CamelServiceNowAvgFields |String | sysparm_avg_fields | - | -
-|CamelServiceNowCount |Boolean | sysparm_count | - | -
-|CamelServiceGroupBy |String | sysparm_group_by | - | -
-|CamelServiceOrderBy |String | sysparm_order_by | - | -
-|CamelServiceHaving |String | sysparm_having | - | -
-|CamelServiceNowUUID |String | sysparm_uuid | - | -
-|CamelServiceNowBreakdown| String| sysparm_breakdown | - | -
-|CamelServiceNowIncludeScores| Boolean | sysparm_include_scores | includeScores | -
-|CamelServiceNowIncludeScoreNotes | Boolean | sysparm_include_score_notes | includeScoreNotes | -
-|CamelServiceNowIncludeAggregates | Boolean | sysparm_include_aggregates | includeAggregates | -
-|CamelServiceNowIncludeAvailableBreakdowns | Boolean | sysparm_include_available_breakdowns | includeAvailableBreakdowns | -
-|CamelServiceNowIncludeAvailableAggregates | Boolean | sysparm_include_available_aggregates | includeAvailableAggregates | -
-|CamelServiceNowFavorites | Boolean | sysparm_favorites | favorites | -
-|CamelServiceNowKey  | Boolean | sysparm_key | key | -
-|CamelServiceNowTarget | Boolean | sysparm_target | target | -
-|CamelServiceNowDisplay | String | sysparm_display | display | -
-|CamelServiceNowPerPage | Integer | sysparm_per_page | perPage | -
-|CamelServiceNowSortBy | String | sysparm_sortby | sortBy | -
-|CamelServiceNowSortDir | String | sysparm_sortdit | sortDir | -
-|CamelServiceNowContains | String | sysparm_contains | - | -
-|CamelServiceNowTags | String | sysparm_tags | - | -
-|CamelServiceNowPage | String | sysparm_page | - | -
-|CamelServiceNowElementsFilter | String | sysparm_elements_filter | - | -
-|CamelServiceNowBreakdownRelation | String | sysparm_breakdown_relation | - | -
-|CamelServiceNowDataSource | String | sysparm_data_source | - | -
-|CamelServiceNowTopLevelOnly | Boolean | sysparm_top_level_only | topLevelOnly | -
-|CamelServiceNowApiVersion | String | - | - | The REST API version
-|CamelServiceNowResponseMeta | Map | - | - | Meta data provided along with a response
-|===
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 [[ServiceNow-Fuji]]
 [cols="10%a,10%a,10%a,70%a", options="header"]
