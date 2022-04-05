@@ -251,7 +251,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.NeutronEndpointBuilderFactory.NeutronBuilders,
             org.apache.camel.builder.endpoint.dsl.NitriteEndpointBuilderFactory.NitriteBuilders,
             org.apache.camel.builder.endpoint.dsl.NovaEndpointBuilderFactory.NovaBuilders,
-            org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.NsqBuilders,
             org.apache.camel.builder.endpoint.dsl.OAIPMHEndpointBuilderFactory.OAIPMHBuilders,
             org.apache.camel.builder.endpoint.dsl.OBSEndpointBuilderFactory.OBSBuilders,
             org.apache.camel.builder.endpoint.dsl.Olingo2EndpointBuilderFactory.Olingo2Builders,

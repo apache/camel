@@ -10920,53 +10920,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.NitriteEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * NSQ (camel-nsq)
-     * Send and receive messages from NSQ realtime distributed messaging
-     * platform.
-     * 
-     * Category: messaging
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-nsq
-     * 
-     * Syntax: <code>nsq:topic</code>
-     * 
-     * Path parameter: topic (required)
-     * The NSQ topic
-     * 
-     * @param path topic
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.NsqEndpointBuilder nsq(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.endpointBuilder("nsq", path);
-    }
-    /**
-     * NSQ (camel-nsq)
-     * Send and receive messages from NSQ realtime distributed messaging
-     * platform.
-     * 
-     * Category: messaging
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-nsq
-     * 
-     * Syntax: <code>nsq:topic</code>
-     * 
-     * Path parameter: topic (required)
-     * The NSQ topic
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path topic
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.NsqEndpointBuilder nsq(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * OAI-PMH (camel-oaipmh)
      * Harvest metadata using OAI-PMH protocol
      * 

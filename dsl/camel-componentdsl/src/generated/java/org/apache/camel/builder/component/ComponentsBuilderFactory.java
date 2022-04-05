@@ -3174,21 +3174,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.NitriteComponentBuilderFactory.nitrite();
     }
     /**
-     * NSQ (camel-nsq)
-     * Send and receive messages from NSQ realtime distributed messaging
-     * platform.
-     * 
-     * Category: messaging
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-nsq
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.NsqComponentBuilderFactory.NsqComponentBuilder nsq() {
-        return org.apache.camel.builder.component.dsl.NsqComponentBuilderFactory.nsq();
-    }
-    /**
      * OAI-PMH (camel-oaipmh)
      * Harvest metadata using OAI-PMH protocol
      * 
