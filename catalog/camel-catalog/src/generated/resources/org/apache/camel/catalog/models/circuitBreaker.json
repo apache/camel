@@ -12,6 +12,7 @@
     "output": false
   },
   "properties": {
+    "hystrixConfiguration": { "kind": "element", "displayName": "Hystrix Configuration", "required": false, "type": "object", "javaType": "org.apache.camel.model.HystrixConfigurationDefinition", "deprecated": true, "autowired": false, "secret": false, "description": "Configures the circuit breaker to use Hystrix with the given configuration." },
     "resilience4jConfiguration": { "kind": "element", "displayName": "Resilience4j Configuration", "required": false, "type": "object", "javaType": "org.apache.camel.model.Resilience4jConfigurationDefinition", "deprecated": false, "autowired": false, "secret": false, "description": "Configures the circuit breaker to use Resilience4j with the given configuration." },
     "faultToleranceConfiguration": { "kind": "element", "displayName": "Fault Tolerance Configuration", "required": false, "type": "object", "javaType": "org.apache.camel.model.FaultToleranceConfigurationDefinition", "deprecated": false, "autowired": false, "secret": false, "description": "Configures the circuit breaker to use MicroProfile Fault Tolerance with the given configuration." },
     "configuration": { "kind": "attribute", "displayName": "Configuration", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Refers to a circuit breaker configuration (such as hystrix, resillience4j, or microprofile-fault-tolerance) to use for configuring the circuit breaker EIP." },
