@@ -390,14 +390,6 @@ Error handler settings
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="etcdServiceDiscovery" type="tns:etcdServiceCallServiceDiscoveryConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-null
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
   <xs:element name="exchangeProperty" type="tns:exchangePropertyExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -568,14 +560,6 @@ Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.
       <xs:documentation xml:lang="en"><![CDATA[
 Get the value of a HL7 message field specified by terse location specification
 syntax.
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
-  <xs:element name="hystrixConfiguration" type="tns:hystrixConfigurationDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: Hystrix Circuit Breaker EIP configuration
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -3759,7 +3743,6 @@ the branch that matched. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:output">
         <xs:sequence>
-          <xs:element minOccurs="0" ref="tns:hystrixConfiguration"/>
           <xs:element minOccurs="0" ref="tns:resilience4jConfiguration"/>
           <xs:element minOccurs="0" ref="tns:faultToleranceConfiguration"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
@@ -3836,305 +3819,6 @@ the branch that matched. Default value: false
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to a circuit breaker configuration (such as hystrix, resillience4j, or
 microprofile-fault-tolerance) to use for configuring the circuit breaker EIP.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="hystrixConfigurationDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:hystrixConfigurationCommon">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="hystrixConfigurationCommon">
-    <xs:complexContent>
-      <xs:extension base="tns:identifiedType">
-        <xs:sequence/>
-        <xs:attribute name="groupKey" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the group key to use. The default value is CamelHystrix. Default value:
-CamelHystrix
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="threadPoolKey" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the thread pool key to use. Will by default use the same value as groupKey
-has been configured to use. Default value: CamelHystrix
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="circuitBreakerEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether to use a HystrixCircuitBreaker or not. If false no circuit-breaker logic
-will be used and all requests permitted. This is similar in effect to
-circuitBreakerForceClosed() except that continues tracking metrics and knowing
-whether it should be open/closed, this property results in not even
-instantiating a circuit-breaker. Default value: true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="circuitBreakerErrorThresholdPercentage" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Error percentage threshold (as whole number such as 50) at which point the
-circuit breaker will trip open and reject requests. It will stay tripped for the
-duration defined in circuitBreakerSleepWindowInMilliseconds; The error
-percentage this is compared against comes from
-HystrixCommandMetrics.getHealthCounts(). Default value: 50
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="circuitBreakerForceClosed" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-If true the HystrixCircuitBreaker#allowRequest() will always return true to
-allow requests regardless of the error percentage from
-HystrixCommandMetrics.getHealthCounts(). The circuitBreakerForceOpen() property
-takes precedence so if it set to true this property does nothing. Default value:
-false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="circuitBreakerForceOpen" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-If true the HystrixCircuitBreaker.allowRequest() will always return false,
-causing the circuit to be open (tripped) and reject all requests. This property
-takes precedence over circuitBreakerForceClosed();. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="circuitBreakerRequestVolumeThreshold" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Minimum number of requests in the
-metricsRollingStatisticalWindowInMilliseconds() that must exist before the
-HystrixCircuitBreaker will trip. If below this number the circuit will not trip
-regardless of error percentage. Default value: 20
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="circuitBreakerSleepWindowInMilliseconds" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The time in milliseconds after a HystrixCircuitBreaker trips open that it should
-wait before trying requests again. Default value: 5000
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="executionIsolationSemaphoreMaxConcurrentRequests" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Number of concurrent requests permitted to HystrixCommand.run(). Requests beyond
-the concurrent limit will be rejected. Applicable only when
-executionIsolationStrategy == SEMAPHORE. Default value: 20
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="executionIsolationStrategy" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-What isolation strategy HystrixCommand.run() will be executed with. If THREAD
-then it will be executed on a separate thread and concurrent requests limited by
-the number of threads in the thread-pool. If SEMAPHORE then it will be executed
-on the calling thread and concurrent requests limited by the semaphore count.
-Default value: THREAD
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="executionIsolationThreadInterruptOnTimeout" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether the execution thread should attempt an interrupt (using Future#cancel )
-when a thread times out. Applicable only when executionIsolationStrategy() ==
-THREAD. Default value: true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="executionTimeoutInMilliseconds" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Time in milliseconds at which point the command will timeout and halt execution.
-If executionIsolationThreadInterruptOnTimeout == true and the command is
-thread-isolated, the executing thread will be interrupted. If the command is
-semaphore-isolated and a HystrixObservableCommand, that command will get
-unsubscribed. Default value: 1000
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="executionTimeoutEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether the timeout mechanism is enabled for this command. Default value: true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="fallbackIsolationSemaphoreMaxConcurrentRequests" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Number of concurrent requests permitted to HystrixCommand.getFallback().
-Requests beyond the concurrent limit will fail-fast and not attempt retrieving a
-fallback. Default value: 10
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="fallbackEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether HystrixCommand.getFallback() should be attempted when failure occurs.
-Default value: true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="metricsHealthSnapshotIntervalInMilliseconds" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Time in milliseconds to wait between allowing health snapshots to be taken that
-calculate success and error percentages and affect
-HystrixCircuitBreaker.isOpen() status. On high-volume circuits the continual
-calculation of error percentage can become CPU intensive thus this controls how
-often it is calculated. Default value: 500
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="metricsRollingPercentileBucketSize" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Maximum number of values stored in each bucket of the rolling percentile. This
-is passed into HystrixRollingPercentile inside HystrixCommandMetrics. Default
-value: 10
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="metricsRollingPercentileEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether percentile metrics should be captured using HystrixRollingPercentile
-inside HystrixCommandMetrics. Default value: true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="metricsRollingPercentileWindowInMilliseconds" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Duration of percentile rolling window in milliseconds. This is passed into
-HystrixRollingPercentile inside HystrixCommandMetrics. Default value: 10000
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="metricsRollingPercentileWindowBuckets" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Number of buckets the rolling percentile window is broken into. This is passed
-into HystrixRollingPercentile inside HystrixCommandMetrics. Default value: 6
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="metricsRollingStatisticalWindowInMilliseconds" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-This property sets the duration of the statistical rolling window, in
-milliseconds. This is how long metrics are kept for the thread pool. The window
-is divided into buckets and rolls by those increments. Default value: 10000
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="metricsRollingStatisticalWindowBuckets" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Number of buckets the rolling statistical window is broken into. This is passed
-into HystrixRollingNumber inside HystrixCommandMetrics. Default value: 10
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="requestLogEnabled" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether HystrixCommand execution and events should be logged to
-HystrixRequestLog. Default value: true
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="corePoolSize" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Core thread-pool size that gets passed to
-java.util.concurrent.ThreadPoolExecutor#setCorePoolSize(int). Default value: 10
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="maximumSize" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Maximum thread-pool size that gets passed to
-ThreadPoolExecutor#setMaximumPoolSize(int) . This is the maximum amount of
-concurrency that can be supported without starting to reject HystrixCommands.
-Please note that this setting only takes effect if you also set
-allowMaximumSizeToDivergeFromCoreSize. Default value: 10
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="keepAliveTime" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Keep-alive time in minutes that gets passed to
-ThreadPoolExecutor#setKeepAliveTime(long,TimeUnit). Default value: 1
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="maxQueueSize" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Max queue size that gets passed to BlockingQueue in
-HystrixConcurrencyStrategy.getBlockingQueue(int) This should only affect the
-instantiation of a threadpool - it is not eliglible to change a queue size on
-the fly. For that, use queueSizeRejectionThreshold(). Default value: -1
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="queueSizeRejectionThreshold" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Queue size rejection threshold is an artificial max size at which rejections
-will occur even if maxQueueSize has not been reached. This is done because the
-maxQueueSize of a BlockingQueue can not be dynamically changed and we want to
-support dynamically changing the queue size that affects rejections. This is
-used by HystrixCommand when queuing a thread for execution. Default value: 5
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="threadPoolRollingNumberStatisticalWindowInMilliseconds" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Duration of statistical rolling window in milliseconds. This is passed into
-HystrixRollingNumber inside each HystrixThreadPoolMetrics instance. Default
-value: 10000
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="threadPoolRollingNumberStatisticalWindowBuckets" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Number of buckets the rolling statistical window is broken into. This is passed
-into HystrixRollingNumber inside each HystrixThreadPoolMetrics instance. Default
-value: 10
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="allowMaximumSizeToDivergeFromCoreSize" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Allows the configuration for maximumSize to take effect. That value can then be
-equal to, or higher, than coreSize. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -12409,7 +12093,6 @@ properties are defined according to the specific service in use.
           <xs:choice minOccurs="0">
             <xs:element ref="tns:consulServiceDiscovery"/>
             <xs:element ref="tns:dnsServiceDiscovery"/>
-            <xs:element ref="tns:etcdServiceDiscovery"/>
             <xs:element ref="tns:kubernetesServiceDiscovery"/>
             <xs:element ref="tns:combinedServiceDiscovery"/>
             <xs:element ref="tns:staticServiceDiscovery"/>
@@ -12527,57 +12210,6 @@ The transport protocol of the desired service. Default value: _tcp
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The domain name;.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="etcdServiceCallServiceDiscoveryConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceDiscoveryConfiguration">
-        <xs:sequence/>
-        <xs:attribute name="uris" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The URIs the client can connect to.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="userName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The user name to use for basic authentication.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="password" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The password to use for basic authentication.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="timeout" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To set the maximum time an action could take to complete.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="servicePath" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The path to look for for service discovery. Default value: /services/
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="type" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To set the discovery type, valid values are on-demand and watch. Default value:
-on-demand
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -12746,7 +12378,6 @@ Default value: false
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:consulServiceDiscovery"/>
             <xs:element ref="tns:dnsServiceDiscovery"/>
-            <xs:element ref="tns:etcdServiceDiscovery"/>
             <xs:element ref="tns:kubernetesServiceDiscovery"/>
             <xs:element ref="tns:staticServiceDiscovery"/>
             <xs:element ref="tns:cachingServiceDiscovery"/>
@@ -12844,7 +12475,6 @@ Reference of a ServiceFilter.
             <xs:element ref="tns:combinedServiceDiscovery"/>
             <xs:element ref="tns:consulServiceDiscovery"/>
             <xs:element ref="tns:dnsServiceDiscovery"/>
-            <xs:element ref="tns:etcdServiceDiscovery"/>
             <xs:element ref="tns:kubernetesServiceDiscovery"/>
             <xs:element ref="tns:staticServiceDiscovery"/>
             <xs:element ref="tns:zookeeperServiceDiscovery"/>
@@ -13049,7 +12679,6 @@ ServiceCallConstants.SERVICE_PORT. Default value: CamelServiceCallServicePort
             <xs:element ref="tns:combinedServiceDiscovery"/>
             <xs:element ref="tns:consulServiceDiscovery"/>
             <xs:element ref="tns:dnsServiceDiscovery"/>
-            <xs:element ref="tns:etcdServiceDiscovery"/>
             <xs:element ref="tns:kubernetesServiceDiscovery"/>
             <xs:element ref="tns:staticServiceDiscovery"/>
             <xs:element ref="tns:zookeeperServiceDiscovery"/>
@@ -14906,14 +14535,6 @@ ServiceCall EIP default configuration.
             </xs:annotation>
           </xs:element>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:serviceCallConfiguration"/>
-          <xs:element minOccurs="0" name="defaultHystrixConfiguration" type="tns:hystrixConfigurationDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Hystrix EIP default configuration.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:hystrixConfiguration"/>
           <xs:element minOccurs="0" name="defaultResilience4jConfiguration" type="tns:resilience4JConfigurationDefinition">
             <xs:annotation>
               <xs:documentation xml:lang="en"><![CDATA[

@@ -149,24 +149,24 @@ public class SalesforceConsumer extends DefaultConsumer {
         final Map<String, Object> event = (Map<String, Object>) data.get(EVENT_PROPERTY);
         final Object replayId = event.get(REPLAY_ID_PROPERTY);
         if (replayId != null) {
-            in.setHeader("CamelSalesforceReplayId", replayId);
+            in.setHeader(SalesforceConstants.HEADER_SALESFORCE_REPLAY_ID, replayId);
         }
 
-        in.setHeader("CamelSalesforceChangeEventSchema", data.get(SCHEMA_PROPERTY));
-        in.setHeader("CamelSalesforceEventType", topicName.substring(topicName.lastIndexOf('/') + 1));
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_CHANGE_EVENT_SCHEMA, data.get(SCHEMA_PROPERTY));
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_EVENT_TYPE, topicName.substring(topicName.lastIndexOf('/') + 1));
 
         final Map<String, Object> payload = (Map<String, Object>) data.get(PAYLOAD_PROPERTY);
         final Map<String, Object> changeEventHeader = (Map<String, Object>) payload.get("ChangeEventHeader");
-        in.setHeader("CamelSalesforceChangeType", changeEventHeader.get("changeType"));
-        in.setHeader("CamelSalesforceChangeOrigin", changeEventHeader.get("changeOrigin"));
-        in.setHeader("CamelSalesforceTransactionKey", changeEventHeader.get("transactionKey"));
-        in.setHeader("CamelSalesforceSequenceNumber", changeEventHeader.get("sequenceNumber"));
-        in.setHeader("CamelSalesforceIsTransactionEnd", changeEventHeader.get("isTransactionEnd"));
-        in.setHeader("CamelSalesforceCommitTimestamp", changeEventHeader.get("commitTimestamp"));
-        in.setHeader("CamelSalesforceCommitUser", changeEventHeader.get("commitUser"));
-        in.setHeader("CamelSalesforceCommitNumber", changeEventHeader.get("commitNumber"));
-        in.setHeader("CamelSalesforceEntityName", changeEventHeader.get("entityName"));
-        in.setHeader("CamelSalesforceRecordIds", changeEventHeader.get("recordIds"));
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_CHANGE_TYPE, changeEventHeader.get("changeType"));
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_CHANGE_ORIGIN, changeEventHeader.get("changeOrigin"));
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_TRANSACTION_KEY, changeEventHeader.get("transactionKey"));
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_SEQUENCE_NUMBER, changeEventHeader.get("sequenceNumber"));
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_IS_TRANSACTION_END, changeEventHeader.get("isTransactionEnd"));
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_COMMIT_TIMESTAMP, changeEventHeader.get("commitTimestamp"));
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_COMMIT_USER, changeEventHeader.get("commitUser"));
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_COMMIT_NUMBER, changeEventHeader.get("commitNumber"));
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_ENTITY_NAME, changeEventHeader.get("entityName"));
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_RECORD_IDS, changeEventHeader.get("recordIds"));
 
         if (rawPayload) {
             // getJSON is used for raw payload
@@ -187,16 +187,16 @@ public class SalesforceConsumer extends DefaultConsumer {
 
         final Object replayId = event.get(REPLAY_ID_PROPERTY);
         if (replayId != null) {
-            in.setHeader("CamelSalesforceReplayId", replayId);
+            in.setHeader(SalesforceConstants.HEADER_SALESFORCE_REPLAY_ID, replayId);
         }
 
-        in.setHeader("CamelSalesforcePlatformEventSchema", data.get(SCHEMA_PROPERTY));
-        in.setHeader("CamelSalesforceEventType", topicName.substring(topicName.lastIndexOf('/') + 1));
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_PLATFORM_EVENT_SCHEMA, data.get(SCHEMA_PROPERTY));
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_EVENT_TYPE, topicName.substring(topicName.lastIndexOf('/') + 1));
 
         final Object payload = data.get(PAYLOAD_PROPERTY);
 
         final PlatformEvent platformEvent = objectMapper.convertValue(payload, PlatformEvent.class);
-        in.setHeader("CamelSalesforceCreatedDate", platformEvent.getCreated());
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_CREATED_DATE, platformEvent.getCreated());
 
         if (rawPayload) {
             // getJSON is used for raw payload
@@ -218,11 +218,11 @@ public class SalesforceConsumer extends DefaultConsumer {
         final Object createdDate = event.get(CREATED_DATE_PROPERTY);
         final Object replayId = event.get(REPLAY_ID_PROPERTY);
 
-        in.setHeader("CamelSalesforceTopicName", topicName);
-        in.setHeader("CamelSalesforceEventType", eventType);
-        in.setHeader("CamelSalesforceCreatedDate", createdDate);
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_TOPIC_NAME, topicName);
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_EVENT_TYPE, eventType);
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_CREATED_DATE, createdDate);
         if (replayId != null) {
-            in.setHeader("CamelSalesforceReplayId", replayId);
+            in.setHeader(SalesforceConstants.HEADER_SALESFORCE_REPLAY_ID, replayId);
         }
 
         // get SObject
@@ -251,10 +251,10 @@ public class SalesforceConsumer extends DefaultConsumer {
     }
 
     void setHeaders(final org.apache.camel.Message in, final Message message) {
-        in.setHeader("CamelSalesforceChannel", message.getChannel());
+        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_CHANNEL, message.getChannel());
         final String clientId = message.getClientId();
         if (ObjectHelper.isNotEmpty(clientId)) {
-            in.setHeader("CamelSalesforceClientId", clientId);
+            in.setHeader(SalesforceConstants.HEADER_SALESFORCE_CLIENT_ID, clientId);
         }
     }
 

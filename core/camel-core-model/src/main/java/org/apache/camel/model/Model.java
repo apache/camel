@@ -306,37 +306,6 @@ public interface Model {
     void setValidators(List<ValidatorDefinition> validators);
 
     /**
-     * Gets the Hystrix configuration by the given name. If no name is given the default configuration is returned, see
-     * <tt>setHystrixConfiguration</tt>
-     *
-     * @param  id id of the configuration, or <tt>null</tt> to return the default configuration
-     * @return    the configuration, or <tt>null</tt> if no configuration has been registered
-     */
-    HystrixConfigurationDefinition getHystrixConfiguration(String id);
-
-    /**
-     * Sets the default Hystrix configuration
-     *
-     * @param configuration the configuration
-     */
-    void setHystrixConfiguration(HystrixConfigurationDefinition configuration);
-
-    /**
-     * Sets the Hystrix configurations
-     *
-     * @param configurations the configuration list
-     */
-    void setHystrixConfigurations(List<HystrixConfigurationDefinition> configurations);
-
-    /**
-     * Adds the Hystrix configuration
-     *
-     * @param id            name of the configuration
-     * @param configuration the configuration
-     */
-    void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration);
-
-    /**
      * Gets the Resilience4j configuration by the given name. If no name is given the default configuration is returned,
      * see <tt>setResilience4jConfiguration</tt>
      *

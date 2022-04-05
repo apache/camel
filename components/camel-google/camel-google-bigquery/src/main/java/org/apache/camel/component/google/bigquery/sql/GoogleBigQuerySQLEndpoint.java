@@ -20,6 +20,7 @@ import com.google.cloud.bigquery.BigQuery;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -47,6 +48,8 @@ public class GoogleBigQuerySQLEndpoint extends DefaultEndpoint {
     @UriParam
     protected final GoogleBigQuerySQLConfiguration configuration;
 
+    private BigQuery bigQuery;
+
     protected GoogleBigQuerySQLEndpoint(String endpointUri, GoogleBigQuerySQLComponent component,
                                         GoogleBigQuerySQLConfiguration configuration) {
         super(endpointUri, component);
@@ -54,10 +57,21 @@ public class GoogleBigQuerySQLEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Producer createProducer() throws Exception {
-        BigQuery bigquery = getConfiguration().getConnectionFactory().getDefaultClient();
-        GoogleBigQuerySQLProducer producer = new GoogleBigQuerySQLProducer(bigquery, this, configuration);
-        return producer;
+    public Producer createProducer() {
+        return new GoogleBigQuerySQLProducer(bigQuery, this, configuration);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        GoogleBigQueryConnectionFactory connFactory = configuration.getConnectionFactory();
+        if (connFactory == null) {
+            connFactory = new GoogleBigQueryConnectionFactory()
+                    .setCamelContext(getCamelContext())
+                    .setServiceAccountKeyFile(configuration.getServiceAccountKey());
+            configuration.setConnectionFactory(connFactory);
+        }
+        bigQuery = connFactory.getDefaultClient();
     }
 
     @Override

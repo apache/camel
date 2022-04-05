@@ -67,7 +67,6 @@
         <module>camel-http-base</module>
         <module>camel-http-common</module>
         <module>camel-http</module>
-        <module>camel-hystrix</module>
         <module>camel-ipfs</module>
         <module>camel-jetty-common</module>
         <module>camel-jetty</module>
@@ -139,7 +138,6 @@
         <module>camel-ehcache</module>
         <module>camel-elasticsearch-rest</module>
         <module>camel-elytron</module>
-        <module>camel-etcd</module>
         <module>camel-etcd3</module>
         <module>camel-exec</module>
         <module>camel-facebook</module>
@@ -236,7 +234,6 @@
         <module>camel-netty-http</module>
         <module>camel-netty</module>
         <module>camel-nitrite</module>
-        <module>camel-nsq</module>
         <module>camel-oaipmh</module>
         <module>camel-ognl</module>
         <module>camel-olingo2</module>

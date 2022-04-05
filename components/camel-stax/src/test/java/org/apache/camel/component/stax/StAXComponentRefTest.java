@@ -46,10 +46,10 @@ public class StAXComponentRefTest extends CamelTestSupport {
     public RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:target/in").routeId("stax-parser").to("stax:#myHandler").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertEquals(11, exchange.getIn().getBody(CountingHandler.class).getNumber());
                     }
                 }).to("mock:records");

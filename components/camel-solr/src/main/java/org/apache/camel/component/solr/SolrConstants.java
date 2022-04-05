@@ -16,11 +16,17 @@
  */
 package org.apache.camel.component.solr;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.Metadata;
+
 public final class SolrConstants {
 
+    @Metadata(description = "The client.", javaType = "org.apache.solr.client.solrj.SolrClient")
     public static final String CLIENT = "CamelSolrClient";
+    @Metadata(description = "The collection to execute the request again.", javaType = "String")
     public static final String COLLECTION = "CamelSolrCollection";
     public static final String FIELD = "SolrField.";
+    @Metadata(description = "The operation to perform.", javaType = "String")
     public static final String OPERATION = "SolrOperation";
     public static final String OPERATION_COMMIT = "COMMIT";
     public static final String OPERATION_SOFT_COMMIT = "SOFT_COMMIT";
@@ -34,7 +40,10 @@ public final class SolrConstants {
     public static final String OPERATION_DELETE_BY_QUERY = "DELETE_BY_QUERY";
     public static final String OPERATION_QUERY = "QUERY";
     public static final String PARAM = "SolrParam.";
+    @Metadata(description = "The query to execute.", javaType = "String")
     public static final String QUERY_STRING = "CamelSolrQueryString";
+    @Metadata(description = "The content type.", javaType = "String")
+    public static final String CONTENT_TYPE = Exchange.CONTENT_TYPE;
 
     public static final int DEFUALT_STREAMING_QUEUE_SIZE = 10;
     public static final int DEFAULT_STREAMING_THREAD_COUNT = 2;

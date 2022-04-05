@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.bigquery;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,7 +25,11 @@ import com.google.api.services.bigquery.BigqueryScopes;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.bigquery.BigQuery;
 import com.google.cloud.bigquery.BigQueryOptions;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelException;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +37,10 @@ public class GoogleBigQueryConnectionFactory {
 
     private final Logger logger = LoggerFactory.getLogger(GoogleBigQueryConnectionFactory.class);
 
-    private String credentialsFileLocation;
+    private String serviceAccountKeyFile;
     private String serviceURL;
     private BigQuery client;
+    private CamelContext camelContext;
 
     public GoogleBigQueryConnectionFactory() {
     }
@@ -56,9 +60,10 @@ public class GoogleBigQueryConnectionFactory {
 
         GoogleCredentials credentials = null;
 
-        if (credentials == null && !Strings.isNullOrEmpty(credentialsFileLocation)) {
+        if (!Strings.isNullOrEmpty(serviceAccountKeyFile)) {
             logger.debug("Key File Name has been set explicitly. Initialising BigQuery using Key File {}",
-                    credentialsFileLocation);
+                    // limit the output as the value could be a long base64 string, we don't want to show it whole
+                    StringHelper.limitLength(serviceAccountKeyFile, 70));
 
             credentials = createFromFile();
         }
@@ -81,7 +86,11 @@ public class GoogleBigQueryConnectionFactory {
     }
 
     private GoogleCredentials createFromFile() throws Exception {
-        try (InputStream is = new FileInputStream(credentialsFileLocation)) {
+        if (camelContext == null) {
+            throw new CamelException("CamelContext is null, but must be set when creating GoogleBigQueryConnectionFactory.");
+        }
+        try (InputStream is
+                = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, serviceAccountKeyFile);) {
             GoogleCredentials credentials = GoogleCredentials.fromStream(is);
 
             if (credentials.createScopedRequired()) {
@@ -104,12 +113,12 @@ public class GoogleBigQueryConnectionFactory {
         return credentials;
     }
 
-    public String getCredentialsFileLocation() {
-        return credentialsFileLocation;
+    public String getServiceAccountKeyFile() {
+        return serviceAccountKeyFile;
     }
 
-    public GoogleBigQueryConnectionFactory setCredentialsFileLocation(String credentialsFileLocation) {
-        this.credentialsFileLocation = credentialsFileLocation;
+    public GoogleBigQueryConnectionFactory setServiceAccountKeyFile(String serviceAccountKeyFile) {
+        this.serviceAccountKeyFile = serviceAccountKeyFile;
         resetClient();
         return this;
     }
@@ -126,5 +135,10 @@ public class GoogleBigQueryConnectionFactory {
 
     private synchronized void resetClient() {
         this.client = null;
+    }
+
+    public GoogleBigQueryConnectionFactory setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+        return this;
     }
 }

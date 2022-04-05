@@ -104,13 +104,13 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
             if (soapMessageRequest != null) {
                 MimeHeaders mimeHeaders = soapMessageRequest.getMimeHeaders();
                 if (mimeHeaders != null) {
-                    String[] breadcrumbIdHeaderValues = mimeHeaders.getHeader(Exchange.BREADCRUMB_ID);
+                    String[] breadcrumbIdHeaderValues = mimeHeaders.getHeader(SpringWebserviceConstants.BREADCRUMB_ID);
                     // expected to get one token
                     // if more than one token expected, 
                     // presumably breadcrumb generation strategy 
                     // may be required to implement
                     if (breadcrumbIdHeaderValues != null && breadcrumbIdHeaderValues.length >= 1) {
-                        exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbIdHeaderValues[0]);
+                        exchange.getIn().setHeader(SpringWebserviceConstants.BREADCRUMB_ID, breadcrumbIdHeaderValues[0]);
                     }
                 }
             }
@@ -120,9 +120,9 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
     private void populateExchangeWithBreadcrumbFromMessageContext(Exchange exchange, MessageContext messageContext) {
         if (messageContext != null) {
             HttpServletRequest obj = (HttpServletRequest) messageContext.getProperty("transport.http.servletRequest");
-            String breadcrumbId = obj.getHeader(Exchange.BREADCRUMB_ID);
+            String breadcrumbId = obj.getHeader(SpringWebserviceConstants.BREADCRUMB_ID);
             if (breadcrumbId != null) {
-                exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbId);
+                exchange.getIn().setHeader(SpringWebserviceConstants.BREADCRUMB_ID, breadcrumbId);
             }
         }
     }

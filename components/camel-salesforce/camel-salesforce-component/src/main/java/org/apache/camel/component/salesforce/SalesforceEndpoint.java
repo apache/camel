@@ -34,7 +34,8 @@ import org.slf4j.LoggerFactory;
  * Communicate with Salesforce using Java DTOs.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "salesforce", title = "Salesforce",
-             syntax = "salesforce:operationName:topicName", category = { Category.CLOUD, Category.API, Category.CRM })
+             syntax = "salesforce:operationName:topicName", category = { Category.CLOUD, Category.API, Category.CRM },
+             headersClass = SalesforceConstants.class)
 public class SalesforceEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);

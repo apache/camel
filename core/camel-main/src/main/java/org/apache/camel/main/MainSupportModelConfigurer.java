@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
-import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.spi.ThreadPoolProfile;
@@ -48,27 +47,11 @@ public final class MainSupportModelConfigurer {
             CamelContext camelContext,
             MainConfigurationProperties mainConfigurationProperties,
             OrderedLocationProperties autoConfiguredProperties,
-            OrderedLocationProperties hystrixProperties,
             OrderedLocationProperties resilience4jProperties,
             OrderedLocationProperties faultToleranceProperties)
             throws Exception {
 
         ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
-
-        if (!hystrixProperties.isEmpty() || mainConfigurationProperties.hasHystrixConfiguration()) {
-            HystrixConfigurationProperties hystrix = mainConfigurationProperties.hystrix();
-            LOG.debug("Auto-configuring Hystrix Circuit Breaker EIP from loaded properties: {}", hystrixProperties.size());
-            setPropertiesOnTarget(camelContext, hystrix, hystrixProperties, "camel.hystrix.",
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
-            HystrixConfigurationDefinition hystrixModel = model.getHystrixConfiguration(null);
-            if (hystrixModel == null) {
-                hystrixModel = new HystrixConfigurationDefinition();
-                model.setHystrixConfiguration(hystrixModel);
-            }
-            if (hystrix != null) {
-                setPropertiesOnTarget(camelContext, hystrixModel, hystrix);
-            }
-        }
 
         if (!resilience4jProperties.isEmpty() || mainConfigurationProperties.hasResilience4jConfiguration()) {
             Resilience4jConfigurationProperties resilience4j = mainConfigurationProperties.resilience4j();

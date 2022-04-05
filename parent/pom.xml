@@ -80,7 +80,7 @@
         <avro-ipc-jetty-version>1.11.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.0</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.17.162</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.17.163</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-jackson2-version>2.13.1</azure-jackson2-version>
@@ -169,7 +169,6 @@
         <elasticsearch-rest-sniffer-version>7.10.2</elasticsearch-rest-sniffer-version>
         <elasticsearch-rest-version>7.10.2</elasticsearch-rest-version>
         <elytron-web>1.8.0.Final</elytron-web>
-        <etcd4j-version>2.18.0</etcd4j-version>
         <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
         <facebook4j-core-version>2.4.13</facebook4j-core-version>
         <fastjson-version>1.2.80</fastjson-version>
@@ -244,7 +243,6 @@
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.21.4.1</huaweicloud-obs-version>
         <huaweicloud-sdk-version>3.0.76</huaweicloud-sdk-version>
-        <hystrix-version>1.5.18</hystrix-version>
         <ical4j-version>1.0.7</ical4j-version>
         <icu4j-version>70.1</icu4j-version>
         <ignite-version>2.12.0</ignite-version>
@@ -352,7 +350,7 @@
         <leveldb-api-version>0.12</leveldb-api-version>
         <leveldb-version>0.12</leveldb-version>
         <leveldb-guava-version>21.0</leveldb-guava-version>
-        <libphonenumber-version>8.12.44</libphonenumber-version>
+        <libphonenumber-version>8.12.45</libphonenumber-version>
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.17.2</log4j2-version>
@@ -406,7 +404,6 @@
         <narayana-version>5.12.5.Final</narayana-version>
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
-        <nsq-client-version>1.0.0.RC4</nsq-client-version>
         <neoscada-version>0.4.0</neoscada-version>
         <netty-version>4.1.75.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
@@ -1348,11 +1345,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-etcd</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-exec</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -1608,11 +1600,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-hystrix</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-ical</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -1749,11 +1736,6 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-jgroups</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-jing</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -2039,11 +2021,6 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-nitrite</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-nsq</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

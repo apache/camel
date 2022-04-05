@@ -55,7 +55,7 @@ import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.DI
  */
 @UriEndpoint(firstVersion = "3.8.0", scheme = "spring-rabbitmq", title = "Spring RabbitMQ",
              syntax = "spring-rabbitmq:exchangeName",
-             category = { Category.MESSAGING })
+             category = { Category.MESSAGING }, headersClass = SpringRabbitMQConstants.class)
 public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     public static final String ARG_PREFIX = "arg.";

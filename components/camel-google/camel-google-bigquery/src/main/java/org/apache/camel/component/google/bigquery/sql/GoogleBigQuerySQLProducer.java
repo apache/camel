@@ -23,8 +23,11 @@ import java.util.UUID;
 
 import com.google.cloud.bigquery.BigQuery;
 import com.google.cloud.bigquery.BigQueryException;
+import com.google.cloud.bigquery.Job;
 import com.google.cloud.bigquery.JobException;
 import com.google.cloud.bigquery.JobId;
+import com.google.cloud.bigquery.JobInfo;
+import com.google.cloud.bigquery.JobStatistics;
 import com.google.cloud.bigquery.QueryJobConfiguration;
 import com.google.cloud.bigquery.QueryParameterValue;
 import com.google.cloud.bigquery.StandardSQLTypeName;
@@ -102,13 +105,15 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
                 queryJobId = JobId.of(configuration.getProjectId(), UUID.randomUUID().toString());
             }
 
-            TableResult result = bigquery.query(queryJobConfiguration, queryJobId);
+            Job job = bigquery.create(JobInfo.of(queryJobId, queryJobConfiguration)).waitFor();
+            JobStatistics.QueryStatistics statistics = job.getStatistics();
+            TableResult result = job.getQueryResults();
+            long numAffectedRows = statistics.getNumDmlAffectedRows();
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Result of query {} is {}", translatedQuery, result.toString());
+                LOG.trace("Query {} - Affected rows {} - Result {}", translatedQuery, numAffectedRows, result.toString());
             }
-
-            return result.getTotalRows();
+            return numAffectedRows;
         } catch (JobException e) {
             throw new Exception("Query " + translatedQuery + " failed: " + e.getErrors(), e);
         } catch (BigQueryException e) {

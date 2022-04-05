@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.cloud.bigquery.JobId;
+import com.google.cloud.bigquery.JobInfo;
 import com.google.cloud.bigquery.QueryJobConfiguration;
 import com.google.cloud.bigquery.QueryParameterValue;
 import org.apache.camel.Exchange;
@@ -34,8 +35,6 @@ import static org.apache.camel.component.google.bigquery.integration.BigQueryITS
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQLProducerBaseTest {
@@ -54,10 +53,10 @@ public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQL
         body.put("data", "some data");
         producer.process(createExchangeWithBody(body));
 
-        ArgumentCaptor<QueryJobConfiguration> dataCaptor = ArgumentCaptor.forClass(QueryJobConfiguration.class);
-        verify(bigquery).query(dataCaptor.capture(), any(JobId.class));
+        ArgumentCaptor<JobInfo> dataCaptor = ArgumentCaptor.forClass(JobInfo.class);
+        verify(bigquery).create(dataCaptor.capture());
 
-        QueryJobConfiguration request = dataCaptor.getValue();
+        QueryJobConfiguration request = dataCaptor.getValue().getConfiguration();
         assertEquals(sql, request.getQuery());
 
         Map<String, QueryParameterValue> namedParameters = request.getNamedParameters();
@@ -82,10 +81,10 @@ public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQL
 
         producer.process(exchange);
 
-        ArgumentCaptor<QueryJobConfiguration> dataCaptor = ArgumentCaptor.forClass(QueryJobConfiguration.class);
-        verify(bigquery).query(dataCaptor.capture(), any(JobId.class));
+        ArgumentCaptor<JobInfo> dataCaptor = ArgumentCaptor.forClass(JobInfo.class);
+        verify(bigquery).create(dataCaptor.capture());
 
-        QueryJobConfiguration request = dataCaptor.getValue();
+        QueryJobConfiguration request = dataCaptor.getValue().getConfiguration();
         assertEquals(sql, request.getQuery());
 
         Map<String, QueryParameterValue> namedParameters = request.getNamedParameters();
@@ -113,10 +112,10 @@ public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQL
 
         producer.process(exchange);
 
-        ArgumentCaptor<QueryJobConfiguration> dataCaptor = ArgumentCaptor.forClass(QueryJobConfiguration.class);
-        verify(bigquery).query(dataCaptor.capture(), eq(jobId));
+        ArgumentCaptor<JobInfo> dataCaptor = ArgumentCaptor.forClass(JobInfo.class);
+        verify(bigquery).create(dataCaptor.capture());
 
-        QueryJobConfiguration request = dataCaptor.getValue();
+        QueryJobConfiguration request = dataCaptor.getValue().getConfiguration();
         assertEquals(sql, request.getQuery());
 
         Map<String, QueryParameterValue> namedParameters = request.getNamedParameters();

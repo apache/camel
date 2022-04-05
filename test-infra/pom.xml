@@ -55,12 +55,10 @@
         <module>camel-test-infra-arangodb</module>
         <module>camel-test-infra-consul</module>
         <module>camel-test-infra-google-pubsub</module>
-        <module>camel-test-infra-etcd</module>
         <module>camel-test-infra-hbase</module>
         <module>camel-test-infra-infinispan</module>
         <module>camel-test-infra-minio</module>
         <module>camel-test-infra-nats</module>
-        <module>camel-test-infra-nsq</module>
         <module>camel-test-infra-pulsar</module>
         <module>camel-test-infra-redis</module>
         <module>camel-test-infra-solr</module>
