@@ -20,17 +20,11 @@ import java.io.InputStream;
 
 public class SshResult {
 
-    /**
-     * The value of this header is a {@link InputStream} with the standard error stream of the executable.
-     */
-    public static final String STDERR = "CamelSshStderr";
+    @Deprecated
+    public static final String STDERR = SshConstants.EXIT_VALUE;
 
-    /**
-     * The value of this header is the exit value that is returned, after the execution. By convention a non-zero status
-     * exit value indicates abnormal termination. <br>
-     * <b>Note that the exit value is OS dependent.</b>
-     */
-    public static final String EXIT_VALUE = "CamelSshExitValue";
+    @Deprecated
+    public static final String EXIT_VALUE = SshConstants.EXIT_VALUE;
 
     private final String command;
 

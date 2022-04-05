@@ -68,8 +68,8 @@ public class SshConsumer extends ScheduledPollConsumer {
             SshResult result = SshHelper.sendExecCommand(exchange.getIn().getHeaders(), command, endpoint, client);
 
             exchange.getIn().setBody(result.getStdout());
-            exchange.getIn().setHeader(SshResult.EXIT_VALUE, result.getExitValue());
-            exchange.getIn().setHeader(SshResult.STDERR, result.getStderr());
+            exchange.getIn().setHeader(SshConstants.EXIT_VALUE, result.getExitValue());
+            exchange.getIn().setHeader(SshConstants.STDERR, result.getStderr());
 
             // send message to next processor in the route
             getProcessor().process(exchange);
