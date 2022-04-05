@@ -1,1 +1,0 @@
-../../../../../components/camel-nsq/src/main/docs/nsq-component.adoc

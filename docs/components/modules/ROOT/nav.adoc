@@ -238,7 +238,6 @@
 ** xref:netty-component.adoc[Netty]
 ** xref:netty-http-component.adoc[Netty HTTP]
 ** xref:nitrite-component.adoc[Nitrite]
-** xref:nsq-component.adoc[NSQ]
 ** xref:oaipmh-component.adoc[OAI-PMH]
 ** xref:olingo2-component.adoc[Olingo2]
 ** xref:olingo4-component.adoc[Olingo4]
