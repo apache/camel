@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -39,6 +40,24 @@ public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefini
     private String transactionTemplateRef;
     @XmlAttribute
     private String transactionManagerRef;
+
+    @Override
+    public boolean supportTransacted() {
+        return true;
+    }
+
+    @Override
+    public ErrorHandlerBuilder cloneBuilder() {
+        TransactionErrorHandlerDefinition answer = new TransactionErrorHandlerDefinition();
+        cloneBuilder(answer);
+        return answer;
+    }
+
+    protected void cloneBuilder(TransactionErrorHandlerDefinition other) {
+        other.setTransactionManagerRef(getTransactionManagerRef());
+        other.setTransactionTemplateRef(getTransactionTemplateRef());
+        super.cloneBuilder(other);
+    }
 
     public String getTransactionTemplateRef() {
         return transactionTemplateRef;

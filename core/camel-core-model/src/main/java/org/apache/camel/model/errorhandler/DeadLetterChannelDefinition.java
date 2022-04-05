@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration,error")
 @XmlRootElement(name = "deadLetterChannel")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DeadLetterChannelDefinition extends DefaultErrorHandlerDefinition implements ErrorHandlerBuilder {
+public class DeadLetterChannelDefinition extends DefaultErrorHandlerDefinition {
 
     // TODO: fluent builders
     // TODO: label, java type, ref
@@ -84,25 +84,9 @@ public class DeadLetterChannelDefinition extends DefaultErrorHandlerDefinition i
     }
 
     protected void cloneBuilder(DeadLetterChannelDefinition other) {
-        other.setLoggerBean(getLoggerBean());
-        if (getRedeliveryPolicy() != null) {
-            // TODO: copy
-            //            other.setRedeliveryPolicy(getRedeliveryPolicy().copy());
-        }
-        other.setOnRedeliveryProcessor(getOnRedeliveryProcessor());
-        other.setOnRedeliveryRef(getOnRedeliveryRef());
-        other.setRetryWhilePredicate(getRetryWhilePredicate());
-        other.setRetryWhileRef(getRetryWhileRef());
         other.setDeadLetterUri(getDeadLetterUri());
-        other.setOnPrepareFailureProcessor(getOnPrepareFailureProcessor());
-        other.setOnPrepareFailureRef(getOnPrepareFailureRef());
-        other.setOnExceptionOccurredProcessor(getOnExceptionOccurredProcessor());
-        other.setOnExceptionOccurredRef(getOnExceptionOccurredRef());
         other.setDeadLetterHandleNewException(getDeadLetterHandleNewException());
-        other.setUseOriginalMessage(getUseOriginalMessage());
-        other.setUseOriginalBody(getUseOriginalBody());
-        other.setExecutorServiceBean(getExecutorServiceBean());
-        other.setExecutorServiceRef(getExecutorServiceRef());
+        super.cloneBuilder(other);
     }
 
 }

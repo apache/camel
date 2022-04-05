@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
@@ -39,7 +40,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration,error")
 @XmlRootElement(name = "defaultErrorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
+public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition implements ErrorHandlerBuilder {
 
     // TODO: fluent builders
     // TODO: label, java type, ref
@@ -87,6 +88,42 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
     private String executorServiceRef;
     @XmlElement
     private RedeliveryPolicyDefinition redeliveryPolicy;
+
+    @Override
+    public boolean supportTransacted() {
+        return false;
+    }
+
+    @Override
+    public ErrorHandlerBuilder cloneBuilder() {
+        DefaultErrorHandlerDefinition answer = new DefaultErrorHandlerDefinition();
+        cloneBuilder(answer);
+        return answer;
+    }
+
+    protected void cloneBuilder(DefaultErrorHandlerDefinition other) {
+        other.setExecutorServiceBean(getExecutorServiceBean());
+        other.setExecutorServiceRef(getExecutorServiceRef());
+        other.setLevel(getLevel());
+        other.setLogName(getLogName());
+        other.setLoggerBean(getLoggerBean());
+        other.setLoggerRef(getLoggerRef());
+        other.setOnExceptionOccurredProcessor(getOnExceptionOccurredProcessor());
+        other.setOnExceptionOccurredRef(getOnExceptionOccurredRef());
+        other.setOnPrepareFailureProcessor(getOnPrepareFailureProcessor());
+        other.setOnPrepareFailureRef(getOnPrepareFailureRef());
+        other.setOnRedeliveryProcessor(getOnRedeliveryProcessor());
+        other.setOnRedeliveryRef(getOnRedeliveryRef());
+        other.setRedeliveryPolicyRef(getRedeliveryPolicyRef());
+        other.setRetryWhilePredicate(getRetryWhilePredicate());
+        other.setRetryWhileRef(getRetryWhileRef());
+        other.setRollbackLoggingLevel(getRollbackLoggingLevel());
+        other.setUseOriginalBody(getUseOriginalBody());
+        other.setUseOriginalMessage(getUseOriginalMessage());
+        if (getRedeliveryPolicy() != null) {
+            other.setRedeliveryPolicy(getRedeliveryPolicy().copy());
+        }
+    }
 
     public String getLoggerRef() {
         return loggerRef;

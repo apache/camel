@@ -22,7 +22,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.Metadata;
+
+import java.io.Serializable;
 
 /**
  * To configure re-delivery for error handling
@@ -30,7 +33,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration")
 @XmlRootElement(name = "redeliveryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RedeliveryPolicyDefinition {
+public class RedeliveryPolicyDefinition implements Cloneable {
 
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
@@ -108,6 +111,14 @@ public class RedeliveryPolicyDefinition {
     @Override
     public String toString() {
         return "RedeliveryPolicy[maximumRedeliveries: " + maximumRedeliveries + "]";
+    }
+
+    public RedeliveryPolicyDefinition copy() {
+        try {
+            return (RedeliveryPolicyDefinition) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Could not clone: " + e, e);
+        }
     }
 
     // Fluent API
