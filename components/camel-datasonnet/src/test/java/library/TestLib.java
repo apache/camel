@@ -16,14 +16,19 @@
  */
 package library;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import com.datasonnet.header.Header;
 import com.datasonnet.spi.DataFormatService;
 import com.datasonnet.spi.Library;
-import org.springframework.stereotype.Component;
 import sjsonnet.Val;
+
+import org.springframework.stereotype.Component;
 
 @Component
 public class TestLib extends Library {
