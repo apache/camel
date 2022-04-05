@@ -36,7 +36,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * Send RDD or DataFrame jobs to Apache Spark clusters.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "spark", title = "Spark", syntax = "spark:endpointType",
-             producerOnly = true, category = { Category.BIGDATA, Category.IOT })
+             producerOnly = true, category = { Category.BIGDATA, Category.IOT }, headersClass = SparkConstants.class)
 public class SparkEndpoint extends DefaultEndpoint {
 
     // Logger
