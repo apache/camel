@@ -95,7 +95,6 @@ import static org.apache.camel.cdi.CdiSpiHelper.hasAnnotation;
 import static org.apache.camel.cdi.CdiSpiHelper.hasType;
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
 import static org.apache.camel.cdi.Excluded.EXCLUDED;
-import static org.apache.camel.cdi.ResourceHelper.getResource;
 import static org.apache.camel.cdi.Startup.Literal.STARTUP;
 
 public class CdiCamelExtension implements Extension {
@@ -251,29 +250,6 @@ public class CdiCamelExtension implements Extension {
     private void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager manager) {
         // The set of extra Camel CDI beans
         Set<SyntheticBean<?>> extraBeans = new HashSet<>();
-
-        // Add beans from Camel XML resources
-        for (Map.Entry<AnnotatedType<?>, ImportResource> entry : resources.entrySet()) {
-            AnnotatedType<?> annotatedType = entry.getKey();
-            XmlCdiBeanFactory factory = XmlCdiBeanFactory.with(manager, environment, this);
-            ImportResource resource = entry.getValue();
-            for (String path : resource.value()) {
-                try {
-                    extraBeans.addAll(factory.beansFrom(path, annotatedType));
-                } catch (NoClassDefFoundError cause) {
-                    if (cause.getMessage().contains("AbstractCamelContextFactoryBean")) {
-                        logger.error("Importing Camel XML requires to have the 'camel-core-xml' dependency in the classpath!");
-                    }
-                    throw cause;
-                } catch (Exception cause) {
-                    abd.addDefinitionError(
-                            new InjectionException(
-                                    "Error while importing resource ["
-                                                   + getResource(path, annotatedType.getJavaClass().getClassLoader()) + "]",
-                                    cause));
-                }
-            }
-        }
 
         // Camel contexts from the imported Camel XML
         concat(cdiBeans.stream(), extraBeans.stream())
