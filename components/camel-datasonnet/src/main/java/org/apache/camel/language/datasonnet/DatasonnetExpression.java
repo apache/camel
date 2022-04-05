@@ -24,10 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.datasonnet.Mapper;
 import com.datasonnet.MapperBuilder;
@@ -36,6 +33,7 @@ import com.datasonnet.document.Document;
 import com.datasonnet.document.MediaType;
 import com.datasonnet.document.MediaTypes;
 import com.datasonnet.header.Header;
+import com.datasonnet.spi.Library;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExpressionException;
@@ -183,12 +181,19 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
 
         language = (DatasonnetLanguage) context.resolveLanguage("datasonnet");
         // initialize mapper eager
-        language.computeIfMiss(expression, () -> new MapperBuilder(expression)
-                .withInputNames("body")
-                .withImports(resolveImports(language))
-                .withLibrary(CML.getInstance())
-                .withDefaultOutput(MediaTypes.APPLICATION_JAVA)
-                .build());
+        language.computeIfMiss(expression, () -> {
+            MapperBuilder builder = new MapperBuilder(expression)
+                    .withInputNames("body")
+                    .withImports(resolveImports(language))
+                    .withLibrary(CML.getInstance())
+                    .withDefaultOutput(MediaTypes.APPLICATION_JAVA);
+
+            Set<Library> additionalLibraries = context.getRegistry().findByType(com.datasonnet.spi.Library.class);
+            for (Library lib : additionalLibraries) {
+                builder = builder.withLibrary(lib);
+            }
+            return builder.build();
+        });
     }
 
     // Getter/Setter methods

@@ -96,6 +96,13 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
     }
 
     @Test
+    public void testRegistryLibraries() throws Exception {
+        runCamelTest("",
+                "{ \"test\":\"Hello, World\"}",
+                "direct:registryLibraries");
+    }
+
+    @Test
     public void testReadJava() throws Exception {
         Gizmo theGizmo = new Gizmo();
         theGizmo.setName("gizmo");
