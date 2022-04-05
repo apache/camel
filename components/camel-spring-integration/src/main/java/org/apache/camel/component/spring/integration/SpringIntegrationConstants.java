@@ -14,16 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.splunkhec;
+package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.spi.Metadata;
+import org.springframework.messaging.MessageHeaders;
 
-public interface SplunkHECConstants {
+public final class SpringIntegrationConstants {
 
-    @Metadata(description = "Epoch-formatted time.\n" +
-                            "Specify with the time query string parameter. Sets a default for all events in the request.\n" +
-                            "The default time can be overridden.",
-              javaType = "Long")
-    String INDEX_TIME = "CamelSplunkHECIndexTime";
+    @Metadata(description = "The message id.", javaType = "java.util.UUID")
+    public static final String ID = MessageHeaders.ID;
+    @Metadata(description = "The reply channel.", javaType = "org.springframework.integration.channel.DirectChannel")
+    public static final String REPLY_CHANNEL = MessageHeaders.REPLY_CHANNEL;
+    @Metadata(description = "The timestamp of the message.", javaType = "Long")
+    public static final String TIMESTAMP = MessageHeaders.TIMESTAMP;
 
+    private SpringIntegrationConstants() {
+
+    }
 }

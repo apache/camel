@@ -63,7 +63,7 @@ import org.apache.camel.util.StringHelper;
  * This component uses plain JMS API where as the jms component uses Spring JMS.
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "sjms", title = "Simple JMS", syntax = "sjms:destinationType:destinationName",
-             category = { Category.MESSAGING })
+             category = { Category.MESSAGING }, headersClass = SjmsConstants.class)
 public class SjmsEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, MultipleConsumersSupport, HeaderFilterStrategyAware {
 

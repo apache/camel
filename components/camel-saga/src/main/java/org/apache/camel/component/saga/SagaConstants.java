@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.splunkhec;
+package org.apache.camel.component.saga;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 
-public interface SplunkHECConstants {
+public final class SagaConstants {
 
-    @Metadata(description = "Epoch-formatted time.\n" +
-                            "Specify with the time query string parameter. Sets a default for all events in the request.\n" +
-                            "The default time can be overridden.",
-              javaType = "Long")
-    String INDEX_TIME = "CamelSplunkHECIndexTime";
+    @Metadata(description = "The long running action", javaType = "String")
+    public static final String SAGA_LONG_RUNNING_ACTION = Exchange.SAGA_LONG_RUNNING_ACTION;
 
+    private SagaConstants() {
+
+    }
 }

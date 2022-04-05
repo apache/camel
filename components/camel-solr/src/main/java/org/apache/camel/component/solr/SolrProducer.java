@@ -198,8 +198,8 @@ public class SolrProducer extends DefaultProducer {
         if (body instanceof WrappedFile) {
             body = ((WrappedFile<?>) body).getFile();
         }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class))) {
-            String mimeType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SolrConstants.CONTENT_TYPE, String.class))) {
+            String mimeType = exchange.getIn().getHeader(SolrConstants.CONTENT_TYPE, String.class);
             ContentStreamUpdateRequest updateRequest = new ContentStreamUpdateRequest(getRequestHandler(solrConfiguration));
             updateRequest.setParams(solrParams);
             updateRequest.setBasicAuthCredentials(solrConfiguration.getUsername(), solrConfiguration.getPassword());

@@ -112,9 +112,9 @@ public class BasicMessageFilter implements MessageFilter {
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER);
 
         // Replaced local constant 'BreadcrumbId' with the actual constant key in header 'breadcrumbId'
-        // from org.apache.camel.Exchange.BREADCRUMB_ID. Because of this case mismatch, this key never
+        // from org.apache.camel.SpringWebserviceConstants.BREADCRUMB_ID. Because of this case mismatch, this key never
         // gets removed from header rather gets added to soapHeader all the time.
-        headerKeySet.remove(Exchange.BREADCRUMB_ID);
+        headerKeySet.remove(SpringWebserviceConstants.BREADCRUMB_ID);
 
         for (String name : headerKeySet) {
             if (!validHeaderName(name)) {

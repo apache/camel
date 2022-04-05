@@ -29,7 +29,8 @@ import org.apache.sshd.common.keyprovider.KeyPairProvider;
  * Execute commands on remote hosts using SSH.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "ssh", title = "SSH", syntax = "ssh:host:port",
-             alternativeSyntax = "ssh:username:password@host:port", category = { Category.FILE })
+             alternativeSyntax = "ssh:username:password@host:port", category = { Category.FILE },
+             headersClass = SshConstants.class)
 public class SshEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
