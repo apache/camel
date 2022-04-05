@@ -37,8 +37,6 @@ solrs://host[:port]/solr?[options]
 solrCloud://host[:port]/solr?[options]
 --------------------------------------
 
-
-
 // component-configure options: START
 
 // component-configure options: END
@@ -51,6 +49,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Message Operations
 
@@ -149,15 +150,15 @@ delete routes and then call the commit route.
 
 [source,java]
 -----------------------------------------------
-    template.sendBody("direct:insert", "1234");
-    template.sendBody("direct:commit", null);
-    template.sendBody("direct:delete", "1234");
-    template.sendBody("direct:commit", null);
+template.sendBody("direct:insert", "1234");
+template.sendBody("direct:commit", null);
+template.sendBody("direct:delete", "1234");
+template.sendBody("direct:commit", null);
 -----------------------------------------------
 
 == Querying Solr
 
-The components provides a producer operation to query Solr.
+The components provide a producer operation to query Solr.
 
 For more information:
 
