@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.spi.Metadata;
 
@@ -39,6 +40,23 @@ public class DeadLetterChannelDefinition extends DefaultErrorHandlerDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "true")
     private String deadLetterHandleNewException;
+
+    public DeadLetterChannelDefinition() {
+        // DLC do not log exhausted by default
+        getRedeliveryPolicy().setLogExhausted("false");
+    }
+
+    public DeadLetterChannelDefinition(Endpoint deadLetter) {
+        setDeadLetterUri(deadLetter.getEndpointUri());
+        // DLC do not log exhausted by default
+        getRedeliveryPolicy().setLogExhausted("false");
+    }
+
+    public DeadLetterChannelDefinition(String uri) {
+        setDeadLetterUri(uri);
+        // DLC do not log exhausted by default
+        getRedeliveryPolicy().setLogExhausted("false");
+    }
 
     public String getDeadLetterUri() {
         return deadLetterUri;

@@ -36,40 +36,40 @@ public class RedeliveryPolicyDefinition implements Cloneable {
     @Metadata(javaType = "java.lang.Integer")
     private String maximumRedeliveries;
     @XmlAttribute
-    @Metadata(javaType = "java.time.Duration")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "1000")
     private String redeliveryDelay;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String asyncDelayedRedelivery;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Double")
+    @Metadata(javaType = "java.lang.Double", defaultValue = "2.0")
     private String backOffMultiplier;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String useExponentialBackOff;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Double")
+    @Metadata(label = "advanced", javaType = "java.lang.Double", defaultValue = "0.15")
     private String collisionAvoidanceFactor;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String useCollisionAvoidance;
     @XmlAttribute
-    @Metadata(javaType = "java.time.Duration")
+    @Metadata(javaType = "java.time.Duration", defaultValue = "60000")
     private String maximumRedeliveryDelay;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR")
     private String retriesExhaustedLogLevel;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.LoggingLevel")
+    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "DEBUG")
     private String retryAttemptedLogLevel;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "1")
     private String retryAttemptedLogInterval;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String logRetryAttempted;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String logStackTrace;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
@@ -78,13 +78,13 @@ public class RedeliveryPolicyDefinition implements Cloneable {
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String logHandled;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String logNewException;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String logContinued;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String logExhausted;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
@@ -99,7 +99,7 @@ public class RedeliveryPolicyDefinition implements Cloneable {
     @Metadata(label = "advanced")
     private String delayPattern;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String allowRedeliveryWhileStopping;
     @XmlAttribute
     @Metadata(label = "advanced")

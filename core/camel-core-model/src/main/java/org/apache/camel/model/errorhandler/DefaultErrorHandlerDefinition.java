@@ -395,6 +395,9 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition im
     }
 
     public RedeliveryPolicyDefinition getRedeliveryPolicy() {
+        if (redeliveryPolicy == null) {
+            redeliveryPolicy = new RedeliveryPolicyDefinition();
+        }
         return redeliveryPolicy;
     }
 

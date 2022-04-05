@@ -261,35 +261,42 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         }
         Map<RedeliveryOption, String> policy = new HashMap<>();
         setOption(policy, RedeliveryOption.maximumRedeliveries, definition.getMaximumRedeliveries());
-        setOption(policy, RedeliveryOption.redeliveryDelay, definition.getRedeliveryDelay());
+        setOption(policy, RedeliveryOption.redeliveryDelay, definition.getRedeliveryDelay(), "1000");
         setOption(policy, RedeliveryOption.asyncDelayedRedelivery, definition.getAsyncDelayedRedelivery());
-        setOption(policy, RedeliveryOption.backOffMultiplier, definition.getBackOffMultiplier());
+        setOption(policy, RedeliveryOption.backOffMultiplier, definition.getBackOffMultiplier(), "2");
         setOption(policy, RedeliveryOption.useExponentialBackOff, definition.getUseExponentialBackOff());
-        setOption(policy, RedeliveryOption.collisionAvoidanceFactor, definition.getCollisionAvoidanceFactor());
+        setOption(policy, RedeliveryOption.collisionAvoidanceFactor, definition.getCollisionAvoidanceFactor(), "0.15");
         setOption(policy, RedeliveryOption.useCollisionAvoidance, definition.getUseCollisionAvoidance());
-        setOption(policy, RedeliveryOption.maximumRedeliveryDelay, definition.getMaximumRedeliveryDelay());
-        setOption(policy, RedeliveryOption.retriesExhaustedLogLevel, definition.getRetriesExhaustedLogLevel());
-        setOption(policy, RedeliveryOption.retryAttemptedLogLevel, definition.getRetryAttemptedLogLevel());
-        setOption(policy, RedeliveryOption.retryAttemptedLogInterval, definition.getRetryAttemptedLogInterval());
-        setOption(policy, RedeliveryOption.logRetryAttempted, definition.getLogRetryAttempted());
-        setOption(policy, RedeliveryOption.logStackTrace, definition.getLogStackTrace());
+        setOption(policy, RedeliveryOption.maximumRedeliveryDelay, definition.getMaximumRedeliveryDelay(), "60000");
+        setOption(policy, RedeliveryOption.retriesExhaustedLogLevel, definition.getRetriesExhaustedLogLevel(), "ERROR");
+        setOption(policy, RedeliveryOption.retryAttemptedLogLevel, definition.getRetryAttemptedLogLevel(), "DEBUG");
+        setOption(policy, RedeliveryOption.retryAttemptedLogInterval, definition.getRetryAttemptedLogInterval(), "1");
+        setOption(policy, RedeliveryOption.logRetryAttempted, definition.getLogRetryAttempted(), "true");
+        setOption(policy, RedeliveryOption.logStackTrace, definition.getLogStackTrace(), "true");
         setOption(policy, RedeliveryOption.logRetryStackTrace, definition.getLogRetryStackTrace());
         setOption(policy, RedeliveryOption.logHandled, definition.getLogHandled());
-        setOption(policy, RedeliveryOption.logNewException, definition.getLogNewException());
+        setOption(policy, RedeliveryOption.logNewException, definition.getLogNewException(), "true");
         setOption(policy, RedeliveryOption.logContinued, definition.getLogContinued());
-        setOption(policy, RedeliveryOption.logExhausted, definition.getLogExhausted());
+        setOption(policy, RedeliveryOption.logExhausted, definition.getLogExhausted(), "true");
         setOption(policy, RedeliveryOption.logExhaustedMessageHistory, definition.getLogExhaustedMessageHistory());
         setOption(policy, RedeliveryOption.logExhaustedMessageBody, definition.getLogExhaustedMessageBody());
         setOption(policy, RedeliveryOption.disableRedelivery, definition.getDisableRedelivery());
         setOption(policy, RedeliveryOption.delayPattern, definition.getDelayPattern());
-        setOption(policy, RedeliveryOption.allowRedeliveryWhileStopping, definition.getAllowRedeliveryWhileStopping());
+        setOption(policy, RedeliveryOption.allowRedeliveryWhileStopping, definition.getAllowRedeliveryWhileStopping(), "true");
         setOption(policy, RedeliveryOption.exchangeFormatterRef, definition.getExchangeFormatterRef());
         return policy;
     }
 
     private static void setOption(Map<RedeliveryOption, String> policy, RedeliveryOption option, Object value) {
+        setOption(policy, option, value, null);
+    }
+
+    private static void setOption(
+            Map<RedeliveryOption, String> policy, RedeliveryOption option, Object value, Object defaultValue) {
         if (value != null) {
             policy.put(option, value.toString());
+        } else if (defaultValue != null) {
+            policy.put(option, defaultValue.toString());
         }
     }
 
