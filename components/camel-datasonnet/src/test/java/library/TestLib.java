@@ -6,14 +6,10 @@ import java.util.function.Function;
 import com.datasonnet.header.Header;
 import com.datasonnet.spi.DataFormatService;
 import com.datasonnet.spi.Library;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import sjsonnet.Val;
 
 @Component
-@Configuration
 public class TestLib extends Library {
 
     private static final TestLib INSTANCE = new TestLib();
@@ -21,8 +17,6 @@ public class TestLib extends Library {
     public TestLib() {
     }
 
-    @Bean
-    @Scope("singleton")
     public static TestLib getInstance() {
         return INSTANCE;
     }
