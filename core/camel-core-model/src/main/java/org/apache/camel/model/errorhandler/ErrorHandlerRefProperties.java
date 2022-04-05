@@ -18,6 +18,7 @@ package org.apache.camel.model.errorhandler;
 
 import org.apache.camel.ErrorHandlerFactory;
 
+@Deprecated
 public interface ErrorHandlerRefProperties extends ErrorHandlerFactory {
 
     String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";

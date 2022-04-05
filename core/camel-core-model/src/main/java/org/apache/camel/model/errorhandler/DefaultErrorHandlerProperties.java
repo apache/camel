@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 
+@Deprecated
 public interface DefaultErrorHandlerProperties extends ErrorHandlerFactory {
 
     boolean hasLogger();

@@ -14,16 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.errorhandler;
+package org.apache.camel.reifier.errorhandler;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Predicate;
+import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
+import org.apache.camel.processor.errorhandler.NoErrorHandler;
+import org.apache.camel.spi.ErrorHandler;
 
-@Deprecated
-public interface DeadLetterChannelProperties extends DefaultErrorHandlerProperties {
+public class NewNoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerDefinition> {
 
-    // has no additional configurations
+    public NewNoErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
+        super(route, (NoErrorHandlerDefinition) definition);
+    }
 
-    Predicate getRetryWhilePolicy(CamelContext context);
-
+    @Override
+    public Processor createErrorHandler(Processor processor) throws Exception {
+        ErrorHandler answer = new NoErrorHandler(processor);
+        configure(answer);
+        return answer;
+    }
 }
