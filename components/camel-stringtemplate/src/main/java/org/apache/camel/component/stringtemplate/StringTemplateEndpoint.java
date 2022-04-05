@@ -38,7 +38,7 @@ import org.stringtemplate.v4.STGroup;
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "string-template", title = "String Template",
              syntax = "string-template:resourceUri", producerOnly = true,
-             category = { Category.TRANSFORMATION, Category.SCRIPT })
+             category = { Category.TRANSFORMATION, Category.SCRIPT }, headersClass = StringTemplateConstants.class)
 public class StringTemplateEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "false")
