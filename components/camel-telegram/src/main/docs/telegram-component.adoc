@@ -64,29 +64,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
-
-== Message Headers
-
-[width="100%",cols="20%,80%",options="header",]
-|=======================================================================
-|Name |Description
-|`CamelTelegramChatId` |This header is used by the producer endpoint in order to
-resolve the chat id that will receive the message. The recipient chat id can be
-placed (in order of priority) in message body, in the `CamelTelegramChatId` header
-or in the endpoint configuration (`chatId` option).
-This header is also present in all incoming messages.
-
-|`CamelTelegramMediaType` |This header is used to identify the media type when
-the outgoing message is composed of pure binary data. Possible values are strings or enum values
-belonging to the `org.apache.camel.component.telegram.TelegramMediaType` enumeration.
-
-|`CamelTelegramMediaTitleCaption` |This header is used to provide a caption or title
-for outgoing binary messages.
-
-|`CamelTelegramParseMode` |This header is used to format text messages using HTML or Markdown (see `org.apache.camel.component.telegram.TelegramParseMode`).
-
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Usage
 

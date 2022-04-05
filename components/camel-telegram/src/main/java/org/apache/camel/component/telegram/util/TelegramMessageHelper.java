@@ -34,7 +34,7 @@ public final class TelegramMessageHelper {
             }
             if (update.getMessage().getDate() != null) {
                 // convert seconds to millis
-                exchange.getMessage().setHeader(Exchange.MESSAGE_TIMESTAMP,
+                exchange.getMessage().setHeader(TelegramConstants.MESSAGE_TIMESTAMP,
                         update.getMessage().getDate().getEpochSecond() * 1000);
             }
         } else if (update.getChannelPost() != null) {
@@ -45,7 +45,7 @@ public final class TelegramMessageHelper {
             }
             if (update.getChannelPost().getDate() != null) {
                 // convert seconds to millis
-                exchange.getMessage().setHeader(Exchange.MESSAGE_TIMESTAMP,
+                exchange.getMessage().setHeader(TelegramConstants.MESSAGE_TIMESTAMP,
                         update.getChannelPost().getDate().getEpochSecond() * 1000);
             }
         } else if (update.getCallbackQuery() != null) {
