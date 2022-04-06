@@ -21,6 +21,7 @@ import org.apache.camel.component.workday.WorkdayConfiguration;
 import org.apache.camel.component.workday.WorkdayEndpoint;
 import org.apache.camel.component.workday.auth.AuthClientForIntegration;
 import org.apache.camel.component.workday.auth.AutheticationClient;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class WorkdayDefaultProducer extends DefaultProducer {
 
+    @Metadata(description = "The workday URL", javaType = "String")
     public static final String WORKDAY_URL_HEADER = "CamelWorkdayURL";
 
     private static final Logger LOG = LoggerFactory.getLogger(WorkdayReportProducer.class);
