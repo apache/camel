@@ -64,6 +64,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == XML Signature Wrapping Modes
 
@@ -588,30 +591,6 @@ from("direct:xades").to("xmlsecurity-sign://xades?keyAccessor=#keyAccessorDefaul
     </constructor-arg>
 </bean>
 ----
-
-=== Headers
-
-[width="100%",cols="1m,1m,4",options="header",]
-|=======================================================================
-|Header |Type |Description
-|CamelXmlSignatureXAdESQualifyingPropertiesId |String |for the 'Id'
-attribute value of `QualifyingProperties` element
-
-|CamelXmlSignatureXAdESSignedDataObjectPropertiesId |String |for the
-'Id' attribute value of `SignedDataObjectProperties` element
-
-|CamelXmlSignatureXAdESSignedSignaturePropertiesId |String |for the
-'Id' attribute value of `SignedSignatureProperties` element
-
-|CamelXmlSignatureXAdESDataObjectFormatEncoding |String |for the value
-of the Encoding element of the `DataObjectFormat` element
-
-|CamelXmlSignatureXAdESNamespace |String | overwrites the XAdES
-namespace parameter value
-
-|CamelXmlSignatureXAdESPrefix |String |overwrites the XAdES prefix
-parameter value
-|=======================================================================
 
 === Limitations with regard to XAdES version 1.4.2
 
