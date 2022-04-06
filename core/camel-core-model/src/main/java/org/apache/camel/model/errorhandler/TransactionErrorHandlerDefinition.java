@@ -41,6 +41,9 @@ public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefini
     @XmlAttribute
     @Metadata(label = "advanced")
     private String transactionManagerRef;
+    @XmlAttribute
+    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    private String rollbackLoggingLevel;
 
     @Override
     public boolean supportTransacted() {
@@ -58,6 +61,7 @@ public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefini
         other.setTransactedPolicy(getTransactedPolicy());
         other.setTransactionManagerRef(getTransactionManagerRef());
         other.setTransactionTemplateRef(getTransactionTemplateRef());
+        other.setRollbackLoggingLevel(getRollbackLoggingLevel());
         super.cloneBuilder(other);
     }
 
@@ -96,6 +100,19 @@ public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefini
         this.transactionManagerRef = transactionManagerRef;
     }
 
+    public String getRollbackLoggingLevel() {
+        return rollbackLoggingLevel;
+    }
+
+    /**
+     * Sets the logging level to use for logging transactional rollback.
+     * <p/>
+     * This option is default WARN.
+     */
+    public void setRollbackLoggingLevel(String rollbackLoggingLevel) {
+        this.rollbackLoggingLevel = rollbackLoggingLevel;
+    }
+
     /**
      * References to the spring transaction template (org.springframework.transaction.support.TransactionTemplate) to
      * use.
@@ -120,6 +137,15 @@ public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefini
      */
     public TransactionErrorHandlerDefinition transactionManager(String transactionManagerRef) {
         setTransactionManagerRef(transactionManagerRef);
+        return this;
+    }
+
+    /**
+     * References to the spring transaction template (org.springframework.transaction.support.TransactionTemplate) to
+     * use.
+     */
+    public TransactionErrorHandlerDefinition rollbackLoggingLevel(String rollbackLoggingLevel) {
+        setRollbackLoggingLevel(rollbackLoggingLevel);
         return this;
     }
 

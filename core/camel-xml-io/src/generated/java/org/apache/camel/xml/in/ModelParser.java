@@ -2555,7 +2555,6 @@ public class ModelParser extends BaseParser {
                 case "onRedeliveryRef": def.setOnRedeliveryRef(val); break;
                 case "redeliveryPolicyRef": def.setRedeliveryPolicyRef(val); break;
                 case "retryWhileRef": def.setRetryWhileRef(val); break;
-                case "rollbackLoggingLevel": def.setRollbackLoggingLevel(LoggingLevel.valueOf(val)); break;
                 case "useOriginalBody": def.setUseOriginalBody(val); break;
                 case "useOriginalMessage": def.setUseOriginalMessage(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
@@ -2591,6 +2590,7 @@ public class ModelParser extends BaseParser {
     protected TransactionErrorHandlerDefinition doParseTransactionErrorHandlerDefinition() throws IOException, XmlPullParserException {
         return doParse(new TransactionErrorHandlerDefinition(), (def, key, val) -> {
             switch (key) {
+                case "rollbackLoggingLevel": def.setRollbackLoggingLevel(val); break;
                 case "transactedPolicy": def.setTransactedPolicy(val); break;
                 case "transactionManagerRef": def.setTransactionManagerRef(val); break;
                 case "transactionTemplateRef": def.setTransactionTemplateRef(val); break;

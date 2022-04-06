@@ -20,6 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -34,6 +35,7 @@ import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.LoggerFactory;
 
 public class NewDeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChannelDefinition> {
 
@@ -87,6 +89,12 @@ public class NewDeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterC
         CamelLogger answer = definition.getLoggerBean();
         if (answer == null && definition.getLoggerRef() != null) {
             answer = mandatoryLookup(definition.getLoggerRef(), CamelLogger.class);
+        }
+        if (answer == null) {
+            answer = new CamelLogger(LoggerFactory.getLogger(DeadLetterChannel.class), LoggingLevel.ERROR);
+        }
+        if (definition.getLevel() != null) {
+            answer.setLevel(definition.getLevel());
         }
         return answer;
     }

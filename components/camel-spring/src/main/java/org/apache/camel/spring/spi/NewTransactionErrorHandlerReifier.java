@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -50,63 +51,14 @@ public class NewTransactionErrorHandlerReifier extends ErrorHandlerReifier<Trans
 
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
+        // must have a transaction template
         TransactionTemplate transactionTemplate = resolveTransactionTemplate(definition, camelContext);
-        if (transactionTemplate == null) {
-            // lookup in context if no transaction template has been configured
-            LOG.debug("No TransactionTemplate configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
-
-            Map<String, TransactedPolicy> mapPolicy = findByTypeWithName(TransactedPolicy.class);
-            if (mapPolicy != null && mapPolicy.size() == 1) {
-                TransactedPolicy policy = mapPolicy.values().iterator().next();
-                if (policy instanceof SpringTransactionPolicy) {
-                    transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
-                }
-            }
-
-            if (transactionTemplate == null) {
-                TransactedPolicy policy = lookupByNameAndType(PROPAGATION_REQUIRED, TransactedPolicy.class);
-                if (policy instanceof SpringTransactionPolicy) {
-                    transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
-                }
-            }
-
-            if (transactionTemplate == null) {
-                Map<String, TransactionTemplate> mapTemplate = findByTypeWithName(TransactionTemplate.class);
-                if (mapTemplate == null || mapTemplate.isEmpty()) {
-                    LOG.trace("No TransactionTemplate found in registry.");
-                } else if (mapTemplate.size() == 1) {
-                    transactionTemplate = mapTemplate.values().iterator().next();
-                } else {
-                    LOG.debug("Found {} TransactionTemplate in registry. Cannot determine which one to use. "
-                              + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder",
-                            mapTemplate.size());
-                }
-            }
-
-            if (transactionTemplate == null) {
-                Map<String, PlatformTransactionManager> mapManager = findByTypeWithName(PlatformTransactionManager.class);
-                if (mapManager == null || mapManager.isEmpty()) {
-                    LOG.trace("No PlatformTransactionManager found in registry.");
-                } else if (mapManager.size() == 1) {
-                    transactionTemplate = new TransactionTemplate(mapManager.values().iterator().next());
-                } else {
-                    LOG.debug(
-                            "Found {} PlatformTransactionManager in registry. Cannot determine which one to use for TransactionTemplate. "
-                              + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder",
-                            mapManager.size());
-                }
-            }
-
-            if (transactionTemplate != null) {
-                LOG.debug("Found TransactionTemplate in registry to use: {}", transactionTemplate);
-            }
-        }
-
         ObjectHelper.notNull(transactionTemplate, "transactionTemplate", this);
 
         // optimize to use shared default instance if using out of the box settings
         RedeliveryPolicy redeliveryPolicy = resolveRedeliveryPolicy(definition, camelContext);
         CamelLogger logger = resolveLogger(definition, camelContext);
+        LoggingLevel rollbackLoggingLevel = resolveRollbackLoggingLevel(definition, camelContext);
 
         TransactionErrorHandler answer = new TransactionErrorHandler(
                 camelContext, processor, logger,
@@ -115,7 +67,7 @@ public class NewTransactionErrorHandlerReifier extends ErrorHandlerReifier<Trans
                 transactionTemplate,
                 resolveRetryWhilePolicy(definition, camelContext),
                 getExecutorService(definition.getExecutorServiceBean(), definition.getExecutorServiceRef()),
-                definition.getRollbackLoggingLevel(),
+                rollbackLoggingLevel,
                 getProcessor(definition.getOnExceptionOccurredProcessor(), definition.getOnExceptionOccurredRef()));
         // configure error handler before we can use it
         configure(answer);
@@ -124,17 +76,82 @@ public class NewTransactionErrorHandlerReifier extends ErrorHandlerReifier<Trans
 
     private TransactionTemplate resolveTransactionTemplate(
             TransactionErrorHandlerDefinition definition, CamelContext camelContext) {
+
         String ref = definition.getTransactionTemplateRef();
         if (ref != null) {
             return mandatoryLookup(ref, TransactionTemplate.class);
         }
-        return null;
+
+        // lookup in context if no transaction template has been configured
+        LOG.debug("No TransactionTemplate configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
+
+        TransactionTemplate answer = null;
+        Map<String, TransactedPolicy> mapPolicy = findByTypeWithName(TransactedPolicy.class);
+        if (mapPolicy != null && mapPolicy.size() == 1) {
+            TransactedPolicy policy = mapPolicy.values().iterator().next();
+            if (policy instanceof SpringTransactionPolicy) {
+                answer = ((SpringTransactionPolicy) policy).getTransactionTemplate();
+            }
+        }
+
+        if (answer == null) {
+            TransactedPolicy policy = lookupByNameAndType(PROPAGATION_REQUIRED, TransactedPolicy.class);
+            if (policy instanceof SpringTransactionPolicy) {
+                answer = ((SpringTransactionPolicy) policy).getTransactionTemplate();
+            }
+        }
+
+        if (answer == null) {
+            Map<String, TransactionTemplate> mapTemplate = findByTypeWithName(TransactionTemplate.class);
+            if (mapTemplate == null || mapTemplate.isEmpty()) {
+                LOG.trace("No TransactionTemplate found in registry.");
+            } else if (mapTemplate.size() == 1) {
+                answer = mapTemplate.values().iterator().next();
+            } else {
+                LOG.debug("Found {} TransactionTemplate in registry. Cannot determine which one to use. "
+                          + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder",
+                        mapTemplate.size());
+            }
+        }
+
+        if (answer == null) {
+            Map<String, PlatformTransactionManager> mapManager = findByTypeWithName(PlatformTransactionManager.class);
+            if (mapManager == null || mapManager.isEmpty()) {
+                LOG.trace("No PlatformTransactionManager found in registry.");
+            } else if (mapManager.size() == 1) {
+                answer = new TransactionTemplate(mapManager.values().iterator().next());
+            } else {
+                LOG.debug(
+                        "Found {} PlatformTransactionManager in registry. Cannot determine which one to use for TransactionTemplate. "
+                          + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder",
+                        mapManager.size());
+            }
+        }
+
+        if (answer != null) {
+            LOG.debug("Found TransactionTemplate in registry to use: {}", answer);
+        }
+        return answer;
     }
 
     private CamelLogger resolveLogger(TransactionErrorHandlerDefinition definition, CamelContext camelContext) {
         CamelLogger answer = definition.getLoggerBean();
         if (answer == null && definition.getLoggerRef() != null) {
             answer = mandatoryLookup(definition.getLoggerRef(), CamelLogger.class);
+        }
+        if (answer == null) {
+            answer = new CamelLogger(LoggerFactory.getLogger(TransactionErrorHandler.class), LoggingLevel.ERROR);
+        }
+        if (definition.getLevel() != null) {
+            answer.setLevel(definition.getLevel());
+        }
+        return answer;
+    }
+
+    private LoggingLevel resolveRollbackLoggingLevel(TransactionErrorHandlerDefinition definition, CamelContext camelContext) {
+        LoggingLevel answer = LoggingLevel.WARN;
+        if (definition.getRollbackLoggingLevel() != null) {
+            answer = parse(LoggingLevel.class, definition.getRollbackLoggingLevel());
         }
         return answer;
     }

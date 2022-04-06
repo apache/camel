@@ -66,9 +66,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition im
     @Metadata(label = "advanced", defaultValue = "ERROR")
     private LoggingLevel level;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "WARN")
-    private LoggingLevel rollbackLoggingLevel;
-    @XmlAttribute
     @Metadata(label = "advanced")
     private String logName;
     @XmlAttribute
@@ -126,7 +123,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition im
         other.setRedeliveryPolicyRef(getRedeliveryPolicyRef());
         other.setRetryWhilePredicate(getRetryWhilePredicate());
         other.setRetryWhileRef(getRetryWhileRef());
-        other.setRollbackLoggingLevel(getRollbackLoggingLevel());
         other.setUseOriginalBody(getUseOriginalBody());
         other.setUseOriginalMessage(getUseOriginalMessage());
         if (getRedeliveryPolicy() != null) {
@@ -162,19 +158,6 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition im
      */
     public void setLevel(LoggingLevel level) {
         this.level = level;
-    }
-
-    public LoggingLevel getRollbackLoggingLevel() {
-        return rollbackLoggingLevel;
-    }
-
-    /**
-     * Sets the logging level to use for logging transactional rollback.
-     * <p/>
-     * This option is default WARN.
-     */
-    public void setRollbackLoggingLevel(LoggingLevel rollbackLoggingLevel) {
-        this.rollbackLoggingLevel = rollbackLoggingLevel;
     }
 
     public String getLogName() {
