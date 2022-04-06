@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "1.0", scheme = "xmpp", title = "XMPP", syntax = "xmpp:host:port/participant",
              alternativeSyntax = "xmpp:user:password@host:port/participant",
-             category = { Category.CHAT, Category.MESSAGING })
+             category = { Category.CHAT, Category.MESSAGING }, headersClass = XmppConstants.class)
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
