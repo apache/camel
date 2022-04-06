@@ -21,6 +21,8 @@ import java.nio.charset.Charset;
 
 import com.datasonnet.document.Document;
 import com.datasonnet.document.MediaTypes;
+import library.TestLib;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,6 +35,11 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 public class CamelDatasonnetJavaDslTest extends CamelTestSupport {
     private MockEndpoint mock;
+
+    @BindToRegistry
+    public TestLib testLib() {
+        return TestLib.getInstance();
+    }
 
     @Test
     public void testTransform() throws Exception {
@@ -53,6 +60,13 @@ public class CamelDatasonnetJavaDslTest extends CamelTestSupport {
         runCamelTest(loadResourceAsString("payload.csv"),
                 "{\"account\":\"123\"}",
                 "direct:transformCSV");
+    }
+
+    @Test
+    public void testRegistryLibraries() throws Exception {
+        runCamelTest("{}",
+                "{ \"test\":\"Hello, World\"}",
+                "direct:registryLibraries");
     }
 
     @Override
@@ -80,6 +94,12 @@ public class CamelDatasonnetJavaDslTest extends CamelTestSupport {
                         .routeId("transformCSV")
                         .transform(datasonnet("resource:classpath:readCSVTest.ds", String.class,
                                 MediaTypes.APPLICATION_CSV_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
+                        .to("mock:direct:end");
+
+                from("direct:registryLibraries")
+                        .routeId("registryLibraries")
+                        .transform(datasonnet("{test: testlib.sayHello()}", String.class,
+                                MediaTypes.APPLICATION_JSON_VALUE, MediaTypes.APPLICATION_JSON_VALUE))
                         .to("mock:direct:end");
 
             }
