@@ -82,6 +82,16 @@ public interface ExecBinding {
     String EXEC_COMMAND_TIMEOUT = "CamelExecCommandTimeout";
 
     /**
+     * Which exit values of the process are considered a success. When the process exits with a value not in this list,
+     * an ExecuteException is raised. When the list is empty (the default), no exception is raised based on the exit
+     * value. Example:
+     */
+    @Metadata(label = "in", description = "The exit values for successful execution of the process.\n" +
+                                          "Overrides any existing `exitValues` in the URI.",
+              javaType = "String")
+    String EXEC_COMMAND_EXIT_VALUES = "CamelExecExitValues";
+
+    /**
      * The value of this header is a {@link InputStream} with the standard error stream of the executable.
      */
     @Metadata(label = "out", description = "The value of this header points to the standard error stream (stderr) of\n" +

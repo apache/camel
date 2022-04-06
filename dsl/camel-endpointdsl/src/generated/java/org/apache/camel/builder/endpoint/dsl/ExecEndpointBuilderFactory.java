@@ -160,6 +160,23 @@ public interface ExecEndpointBuilderFactory {
             return this;
         }
         /**
+         * The exit values of successful executions. If the process exits with
+         * another value, an exception is raised. Comma-separated list of exit
+         * values. And empty list (the default) sets no expected exit values and
+         * disables the check.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param exitValues the value to set
+         * @return the dsl builder
+         */
+        default ExecEndpointBuilder exitValues(String exitValues) {
+            doSetProperty("exitValues", exitValues);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
