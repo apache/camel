@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
  * A builder of a <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel</a>
  */
 @Configurer
+@Deprecated
 public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder implements DeadLetterChannelProperties {
 
     public DeadLetterChannelBuilder() {

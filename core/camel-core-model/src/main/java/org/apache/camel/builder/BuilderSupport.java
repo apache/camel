@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
@@ -437,10 +438,22 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @param  deadLetterUri uri to the dead letter endpoint storing dead messages
      * @return               the builder
      */
-    public DeadLetterChannelBuilder deadLetterChannel(String deadLetterUri) {
-        return new DeadLetterChannelBuilder(deadLetterUri);
+    public DeadLetterChannelDefinition deadLetterChannel(String deadLetterUri) {
+        return new DeadLetterChannelDefinition(deadLetterUri);
     }
 
+    //    /**
+    //     * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel EIP:</a> is a error handler for
+    //     * handling messages that could not be delivered to it's intended destination.
+    //     *
+    //     * @param  deadLetterUri uri to the dead letter endpoint storing dead messages
+    //     * @return               the builder
+    //     */
+    //    @Deprecated
+    //    public DeadLetterChannelBuilder deadLetterChannel(String deadLetterUri) {
+    //        return new DeadLetterChannelBuilder(deadLetterUri);
+    //    }
+    //
     /**
      * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel EIP:</a> is a error handler for
      * handling messages that could not be delivered to it's intended destination.
