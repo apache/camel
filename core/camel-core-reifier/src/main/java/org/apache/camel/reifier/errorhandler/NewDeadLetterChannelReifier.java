@@ -53,7 +53,7 @@ public class NewDeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterC
 
         DeadLetterChannel answer = new DeadLetterChannel(
                 camelContext, processor, logger,
-                getProcessor(definition.getOnRedeliveryProcessor(), definition.getRedeliveryPolicyRef()),
+                getProcessor(definition.getOnRedeliveryProcessor(), definition.getOnRedeliveryRef()),
                 redeliveryPolicy, deadLetterProcessor,
                 definition.getDeadLetterUri(),
                 parseBoolean(definition.getDeadLetterHandleNewException(), true),
