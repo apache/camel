@@ -33,12 +33,10 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DeadLetterChannelDefinition extends DefaultErrorHandlerDefinition {
 
-    // TODO: label, java type, ref
-
     @XmlAttribute(required = true)
     private String deadLetterUri;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String deadLetterHandleNewException;
 
     public DeadLetterChannelDefinition() {

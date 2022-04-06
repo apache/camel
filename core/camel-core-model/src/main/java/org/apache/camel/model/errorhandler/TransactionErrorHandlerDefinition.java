@@ -25,20 +25,21 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Transactional error handler.
+ * Transactional error handler (requires either camel-spring or camel-jta using traditional JTA transactions).
  */
 @Metadata(label = "configuration,error")
 @XmlRootElement(name = "transactionErrorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefinition {
 
-    // TODO: fluent builders
-    // TODO: label, java type, ref
-    // TODO: spring and jta
-
     @XmlAttribute
+    @Metadata(javaType = "org.apache.camel.spi.TransactedPolicy")
+    private String transactedPolicy;
+    @XmlAttribute
+    @Metadata(label = "advanced")
     private String transactionTemplateRef;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String transactionManagerRef;
 
     @Override
@@ -54,9 +55,21 @@ public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefini
     }
 
     protected void cloneBuilder(TransactionErrorHandlerDefinition other) {
+        other.setTransactedPolicy(getTransactedPolicy());
         other.setTransactionManagerRef(getTransactionManagerRef());
         other.setTransactionTemplateRef(getTransactionTemplateRef());
         super.cloneBuilder(other);
+    }
+
+    public String getTransactedPolicy() {
+        return transactedPolicy;
+    }
+
+    /**
+     * The transacted policy to use that is configured for either Spring or JTA based transactions.
+     */
+    public void setTransactedPolicy(String transactedPolicy) {
+        this.transactedPolicy = transactedPolicy;
     }
 
     public String getTransactionTemplateRef() {
@@ -64,7 +77,8 @@ public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefini
     }
 
     /**
-     * References to the spring transaction template to use.
+     * References to the spring transaction template (org.springframework.transaction.support.TransactionTemplate) to
+     * use.
      */
     public void setTransactionTemplateRef(String transactionTemplateRef) {
         this.transactionTemplateRef = transactionTemplateRef;
@@ -75,10 +89,38 @@ public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefini
     }
 
     /**
-     * References to the spring platform transaction manager to use.
+     * References to the spring platform transaction manager
+     * (org.springframework.transaction.PlatformTransactionManager) to use.
      */
     public void setTransactionManagerRef(String transactionManagerRef) {
         this.transactionManagerRef = transactionManagerRef;
+    }
+
+    /**
+     * References to the spring transaction template (org.springframework.transaction.support.TransactionTemplate) to
+     * use.
+     */
+    public TransactionErrorHandlerDefinition transactedPolicy(String transactedPolicy) {
+        setTransactedPolicy(transactedPolicy);
+        return this;
+    }
+
+    /**
+     * References to the spring transaction template (org.springframework.transaction.support.TransactionTemplate) to
+     * use.
+     */
+    public TransactionErrorHandlerDefinition transactionTemplate(String transactionTemplateRef) {
+        setTransactionTemplateRef(transactionTemplateRef);
+        return this;
+    }
+
+    /**
+     * References to the spring platform transaction manager
+     * (org.springframework.transaction.PlatformTransactionManager) to use.
+     */
+    public TransactionErrorHandlerDefinition transactionManager(String transactionManagerRef) {
+        setTransactionManagerRef(transactionManagerRef);
+        return this;
     }
 
 }

@@ -46,8 +46,6 @@ import org.slf4j.LoggerFactory;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition implements ErrorHandlerBuilder {
 
-    // TODO: label, java type, ref
-
     @XmlTransient
     private CamelLogger loggerBean;
     @XmlTransient
@@ -62,32 +60,40 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition im
     private Predicate retryWhilePredicate;
 
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String loggerRef;
     @XmlAttribute
-    @Metadata(defaultValue = "ERROR")
+    @Metadata(label = "advanced", defaultValue = "ERROR")
     private LoggingLevel level;
     @XmlAttribute
-    @Metadata(defaultValue = "WARN")
+    @Metadata(label = "advanced", defaultValue = "WARN")
     private LoggingLevel rollbackLoggingLevel;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String logName;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String useOriginalMessage;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String useOriginalBody;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
     private String onRedeliveryRef;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
     private String onExceptionOccurredRef;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
     private String onPrepareFailureRef;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
     private String retryWhileRef;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "org.apache.camel.processor.errorhandler.RedeliveryPolicy")
     private String redeliveryPolicyRef;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.util.concurrent.ScheduledExecutorService")
     private String executorServiceRef;
     @XmlElement
     private RedeliveryPolicyDefinition redeliveryPolicy;

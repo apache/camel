@@ -2582,6 +2582,7 @@ public class ModelParser extends BaseParser {
     protected TransactionErrorHandlerDefinition doParseTransactionErrorHandlerDefinition() throws IOException, XmlPullParserException {
         return doParse(new TransactionErrorHandlerDefinition(), (def, key, val) -> {
             switch (key) {
+                case "transactedPolicy": def.setTransactedPolicy(val); break;
                 case "transactionManagerRef": def.setTransactionManagerRef(val); break;
                 case "transactionTemplateRef": def.setTransactionTemplateRef(val); break;
                 default: return defaultErrorHandlerDefinitionAttributeHandler().accept(def, key, val);
