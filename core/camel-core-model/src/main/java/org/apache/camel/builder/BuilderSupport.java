@@ -27,6 +27,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
@@ -417,8 +419,8 @@ public abstract class BuilderSupport implements CamelContextAware {
      *
      * @return the builder
      */
-    public DefaultErrorHandlerBuilder defaultErrorHandler() {
-        return new DefaultErrorHandlerBuilder();
+    public DefaultErrorHandlerDefinition defaultErrorHandler() {
+        return new DefaultErrorHandlerDefinition();
     }
 
     /**
@@ -427,8 +429,8 @@ public abstract class BuilderSupport implements CamelContextAware {
      *
      * @return the builder
      */
-    public NoErrorHandlerBuilder noErrorHandler() {
-        return new NoErrorHandlerBuilder();
+    public NoErrorHandlerDefinition noErrorHandler() {
+        return new NoErrorHandlerDefinition();
     }
 
     /**
@@ -442,18 +444,6 @@ public abstract class BuilderSupport implements CamelContextAware {
         return new DeadLetterChannelDefinition(deadLetterUri);
     }
 
-    //    /**
-    //     * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel EIP:</a> is a error handler for
-    //     * handling messages that could not be delivered to it's intended destination.
-    //     *
-    //     * @param  deadLetterUri uri to the dead letter endpoint storing dead messages
-    //     * @return               the builder
-    //     */
-    //    @Deprecated
-    //    public DeadLetterChannelBuilder deadLetterChannel(String deadLetterUri) {
-    //        return new DeadLetterChannelBuilder(deadLetterUri);
-    //    }
-    //
     /**
      * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel EIP:</a> is a error handler for
      * handling messages that could not be delivered to it's intended destination.
@@ -461,8 +451,8 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @param  deadLetterEndpoint dead letter endpoint storing dead messages
      * @return                    the builder
      */
-    public DeadLetterChannelBuilder deadLetterChannel(Endpoint deadLetterEndpoint) {
-        return new DeadLetterChannelBuilder(deadLetterEndpoint);
+    public DeadLetterChannelDefinition deadLetterChannel(Endpoint deadLetterEndpoint) {
+        return new DeadLetterChannelDefinition(deadLetterEndpoint);
     }
 
     // Properties

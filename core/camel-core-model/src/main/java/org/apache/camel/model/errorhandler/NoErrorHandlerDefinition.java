@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -28,6 +29,16 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration,error")
 @XmlRootElement(name = "noErrorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class NoErrorHandlerDefinition extends BaseErrorHandlerDefinition {
+public class NoErrorHandlerDefinition extends BaseErrorHandlerDefinition implements ErrorHandlerBuilder {
 
+    @Override
+    public boolean supportTransacted() {
+        return false;
+    }
+
+    @Override
+    public ErrorHandlerBuilder cloneBuilder() {
+        // clone is not needed
+        return this;
+    }
 }
