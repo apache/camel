@@ -18,9 +18,8 @@ package org.apache.camel.issues;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
@@ -52,7 +51,7 @@ public class ContextScopedOnExceptionNotHandledErrorHandlerRefIssueTest extends 
     @Override
     protected Registry createRegistry() throws Exception {
         Registry jndi = super.createRegistry();
-        jndi.bind("myDLC", new DeadLetterChannelBuilder("mock:dead"));
+        jndi.bind("myDLC", new DeadLetterChannelDefinition("mock:dead"));
         return jndi;
     }
 
@@ -63,7 +62,7 @@ public class ContextScopedOnExceptionNotHandledErrorHandlerRefIssueTest extends 
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).handled(false).to("mock:handled").end();
 
-                errorHandler(new ErrorHandlerBuilderRef("myDLC"));
+                errorHandler("myDLC");
 
                 from("direct:start").to("mock:a").throwException(new IllegalArgumentException("Damn"));
             }

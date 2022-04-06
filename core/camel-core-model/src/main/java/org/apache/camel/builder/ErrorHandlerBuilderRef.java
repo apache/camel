@@ -22,6 +22,7 @@ import org.apache.camel.model.errorhandler.ErrorHandlerRefProperties;
 /**
  * Represents a proxy to an error handler builder which is resolved by named reference
  */
+@Deprecated
 public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport implements ErrorHandlerRefProperties {
 
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = ErrorHandlerRefProperties.DEFAULT_ERROR_HANDLER_BUILDER;

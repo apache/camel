@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import org.apache.camel.Channel;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultRoute;
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.processor.errorhandler.NoErrorHandler;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +31,7 @@ public class RouteTemplateErrorHandlerTest {
     @Test
     public void testDefineRouteTemplate() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            context.getRegistry().bind("myErrorHandler", new NoErrorHandlerBuilder());
+            context.getRegistry().bind("myErrorHandler", new NoErrorHandlerDefinition());
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {

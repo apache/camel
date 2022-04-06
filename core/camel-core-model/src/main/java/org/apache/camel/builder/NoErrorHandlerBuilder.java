@@ -25,6 +25,7 @@ import org.apache.camel.model.errorhandler.NoErrorHandlerProperties;
  * unsure; however it can be useful sometimes to disable an error handler inside a complex route so that exceptions
  * bubble up to the parent {@link Processor}
  */
+@Deprecated
 public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements NoErrorHandlerProperties {
 
     @Override

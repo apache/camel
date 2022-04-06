@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.junit.jupiter.api.Test;
 
 public class ErrorHandlerRefPropertyPlaceholderTest extends ContextTestSupport {
@@ -43,7 +44,7 @@ public class ErrorHandlerRefPropertyPlaceholderTest extends ContextTestSupport {
                 prop.put("myErrorHandler", "myDead");
                 context.getPropertiesComponent().setOverrideProperties(prop);
 
-                DeadLetterChannelBuilder dlc = new DeadLetterChannelBuilder("mock:dead");
+                DeadLetterChannelDefinition dlc = new DeadLetterChannelDefinition("mock:dead");
                 context.getRegistry().bind("myDead", dlc);
 
                 errorHandler("{{myErrorHandler}}");
