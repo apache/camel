@@ -16,7 +16,11 @@
  */
 package org.apache.camel.websocket.jsr356;
 
+import org.apache.camel.spi.Metadata;
+
 public interface JSR356Constants {
+    @Metadata(description = "The session.", javaType = "javax.websocket.Session")
     String SESSION = "jsr356.session";
+    @Metadata(label = "producer", description = "Use incoming session", javaType = "Boolean")
     String USE_INCOMING_SESSION = "jsr356.producer.session.incoming.use";
 }
