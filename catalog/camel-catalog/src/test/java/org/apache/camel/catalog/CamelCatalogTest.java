@@ -83,11 +83,11 @@ public class CamelCatalogTest {
     public void testFindOtherNames() {
         List<String> names = catalog.findOtherNames();
 
-        assertTrue(names.contains("hystrix"));
         assertTrue(names.contains("leveldb"));
         assertTrue(names.contains("swagger-java"));
         assertTrue(names.contains("test-spring"));
 
+        assertFalse(names.contains("hystrix"));
         assertFalse(names.contains("http-common"));
         assertFalse(names.contains("kura"));
         assertFalse(names.contains("core-osgi"));
