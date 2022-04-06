@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration,error")
 @XmlRootElement(name = "transactionErrorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefinition {
+public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefinition implements ErrorHandlerBuilder {
 
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.spi.TransactedPolicy")
