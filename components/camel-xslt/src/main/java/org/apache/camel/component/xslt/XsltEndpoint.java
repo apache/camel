@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed XsltEndpoint")
 @UriEndpoint(firstVersion = "1.3.0", scheme = "xslt", title = "XSLT", syntax = "xslt:resourceUri", producerOnly = true,
-             label = "core,transformation")
+             label = "core,transformation", headersClass = XsltConstants.class)
 public class XsltEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
@@ -206,7 +206,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
     /**
      * Option to specify which output type to use. Possible values are: string, bytes, DOM, file. The first three
      * options are all in memory based, where as file is streamed directly to a java.io.File. For file you must specify
-     * the filename in the IN header with the key Exchange.XSLT_FILE_NAME which is also CamelXsltFileName. Also any
+     * the filename in the IN header with the key XsltConstants.XSLT_FILE_NAME which is also CamelXsltFileName. Also any
      * paths leading to the filename must be created beforehand, otherwise an exception is thrown at runtime.
      */
     public void setOutput(XsltOutput output) {

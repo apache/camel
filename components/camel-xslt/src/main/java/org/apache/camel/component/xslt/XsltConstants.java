@@ -16,19 +16,15 @@
  */
 package org.apache.camel.component.xslt;
 
-import java.io.File;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.spi.Metadata;
 
-/**
- * Factory for {@link javax.xml.transform.stream.StreamResult} which is streamed to file.
- */
-public class FileResultHandlerFactory implements ResultHandlerFactory {
+public final class XsltConstants {
 
-    @Override
-    public ResultHandler createResult(Exchange exchange) throws Exception {
-        String fileName = ExchangeHelper.getMandatoryHeader(exchange, XsltConstants.XSLT_FILE_NAME, String.class);
-        return new FileResultHandler(new File(fileName));
+    @Metadata(description = "The XSLT file name", javaType = "String")
+    public static final String XSLT_FILE_NAME = Exchange.XSLT_FILE_NAME;
+
+    private XsltConstants() {
+
     }
 }
