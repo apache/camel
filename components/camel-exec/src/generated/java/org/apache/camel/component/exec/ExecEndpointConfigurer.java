@@ -27,6 +27,8 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
         case "commandExecutor": target.setCommandExecutor(property(camelContext, org.apache.camel.component.exec.ExecCommandExecutor.class, value)); return true;
         case "commandloglevel":
         case "commandLogLevel": target.setCommandLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "exitvalues":
+        case "exitValues": target.setExitValues(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "outfile":
@@ -49,6 +51,8 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
         case "commandExecutor": return org.apache.camel.component.exec.ExecCommandExecutor.class;
         case "commandloglevel":
         case "commandLogLevel": return org.apache.camel.LoggingLevel.class;
+        case "exitvalues":
+        case "exitValues": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "outfile":
@@ -72,6 +76,8 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
         case "commandExecutor": return target.getCommandExecutor();
         case "commandloglevel":
         case "commandLogLevel": return target.getCommandLogLevel();
+        case "exitvalues":
+        case "exitValues": return target.getExitValues();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "outfile":

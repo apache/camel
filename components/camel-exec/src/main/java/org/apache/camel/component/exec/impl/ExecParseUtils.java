@@ -109,4 +109,13 @@ public final class ExecParseUtils {
         }
         return input.matches("(^" + QUOTE_CHAR + "{2}([^" + QUOTE_CHAR + "]+)" + QUOTE_CHAR + "{2})");
     }
+
+    public static List<Integer> splitCommaSeparatedToListOfInts(String commaSeparatedInts) {
+        List<Integer> exitValues = new ArrayList<>();
+        StringTokenizer st = new StringTokenizer(commaSeparatedInts, ",");
+        while (st.hasMoreTokens()) {
+            exitValues.add(Integer.valueOf(st.nextToken()));
+        }
+        return exitValues;
+    }
 }

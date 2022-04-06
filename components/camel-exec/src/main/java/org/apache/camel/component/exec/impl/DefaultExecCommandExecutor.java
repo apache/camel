@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.camel.component.exec.ExecCommand;
 import org.apache.camel.component.exec.ExecCommandExecutor;
@@ -112,7 +113,12 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
 
     protected DefaultExecutor prepareDefaultExecutor(ExecCommand execCommand) {
         DefaultExecutor executor = new ExecDefaultExecutor();
+
         executor.setExitValues(null);
+        Set<Integer> exitValues = execCommand.getExitValues();
+        if (exitValues.size() > 0) {
+            executor.setExitValues(exitValues.stream().mapToInt(Integer::intValue).toArray());
+        }
 
         if (execCommand.getWorkingDir() != null) {
             executor.setWorkingDirectory(new File(execCommand.getWorkingDir()).getAbsoluteFile());

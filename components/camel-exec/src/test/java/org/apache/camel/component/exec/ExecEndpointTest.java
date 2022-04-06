@@ -142,6 +142,20 @@ public class ExecEndpointTest {
 
     @Test
     @DirtiesContext
+    public void testCreateEndpointWithExitValues() throws Exception {
+        ExecEndpoint e = createExecEndpoint("exec:test?exitValues=1,2,3");
+        assertEquals("1,2,3", e.getExitValues());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testCreateEndpointWithEmptyExitValues() throws Exception {
+        ExecEndpoint e = createExecEndpoint("exec:test?exitValues=");
+        assertEquals("", e.getExitValues());
+    }
+
+    @Test
+    @DirtiesContext
     public void testCreateEndpointWithOutFile() throws Exception {
         String outFile = "output.txt";
         ExecEndpoint e = createExecEndpoint("exec:test?outFile=" + outFile);

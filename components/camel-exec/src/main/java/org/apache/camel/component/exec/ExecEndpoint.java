@@ -52,6 +52,8 @@ public class ExecEndpoint extends DefaultEndpoint {
     @UriParam(javaType = "java.time.Duration")
     private long timeout;
     @UriParam
+    private String exitValues;
+    @UriParam
     private String outFile;
     @UriParam
     private ExecCommandExecutor commandExecutor;
@@ -126,6 +128,19 @@ public class ExecEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException("The timeout must be a positive long!");
         }
         this.timeout = timeout;
+    }
+
+    public String getExitValues() {
+        return exitValues;
+    }
+
+    /**
+     * The exit values of successful executions. If the process exits with another value, an exception is raised.
+     * Comma-separated list of exit values. And empty list (the default) sets no expected exit values and disables the
+     * check.
+     */
+    public void setExitValues(String exitValues) {
+        this.exitValues = exitValues;
     }
 
     public String getOutFile() {
