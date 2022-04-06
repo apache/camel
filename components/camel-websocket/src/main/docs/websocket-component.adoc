@@ -53,40 +53,10 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
-
-== Message Headers
-
-The WebSocket component uses headers to provide information about incoming messages from consumer endpoints, or as processing instructions for producer endpoints sending outgoing messages.
-
-=== Headers from Consumers
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Header Name |Description
-
-|`WebsocketConstants.CONNECTION_KEY` |Connection key identifying an individual client connection.  You can save this and specify it again when routing to a producer endpoing in order to direct messages to a specific connected client.
-
-|`WebsocketConstants.REMOTE_ADDRESS` |Remote address of the websocket session.
-
-|`WebsocketConstants.SUBPROTOCOL` |If a specific subprotocol was negotiated, it will be specfied in this header.  Note that if you specify the "any" subprotocol to be supported, and a client requests a specific subprotocol, the connection will be accepted without a specific subprotocol being used.  You need to specifically support a given protocol by name if you want it returned to the client and to show up in the message header.
-
-|`WebsocketConstants.RELATIVE_PATH` |If you specify a wildcard URI path for an endpoint, and a websocket client connects to that websocket endpoing, the relative path that the client specified will be provided in this header.
-
-For example, if you specified `websocket://0.0.0.0:80/api/*` as your endpoint URI, and a client connects to the server at `ws://host.com/api/specialized/apipath` then `specialized/apipath` is provided in the relative path header of all messages from that client.
-
-|=======================================================================
-
-=== Headers for Producers
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Header Name |Description
-
-|`WebsocketConstants.SEND_TO_ALL` |Sends the message to all clients which are currently connected. You can
-use the `sendToAll` option on the endpoint instead of using this header.
-
-|`WebsocketConstants.CONNECTION_KEY` |Sends the message to the client with the given connection key.
-
-|=======================================================================
 
 == Usage
 
