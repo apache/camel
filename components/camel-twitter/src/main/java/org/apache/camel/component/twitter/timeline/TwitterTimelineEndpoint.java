@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.twitter.AbstractTwitterEndpoint;
 import org.apache.camel.component.twitter.TwitterConfiguration;
+import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterHelper;
 import org.apache.camel.component.twitter.consumer.AbstractTwitterConsumerHandler;
 import org.apache.camel.component.twitter.data.TimelineType;
@@ -30,14 +31,15 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
+import static org.apache.camel.component.twitter.TwitterConstants.SCHEME_TIMELINE;
 import static org.apache.camel.component.twitter.data.TimelineType.USER;
 
 /**
  * Send tweets and receive tweets from user's timeline.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "twitter-timeline", title = "Twitter Timeline",
+@UriEndpoint(firstVersion = "2.10.0", scheme = SCHEME_TIMELINE, title = "Twitter Timeline",
              syntax = "twitter-timeline:timelineType",
-             category = { Category.API, Category.CLOUD, Category.SOCIAL })
+             category = { Category.API, Category.CLOUD, Category.SOCIAL }, headersClass = TwitterConstants.class)
 public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The timeline type to produce/consume.")
