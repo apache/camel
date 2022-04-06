@@ -32,11 +32,18 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.builder.DeadLetterChannelBuilder;
+import org.apache.camel.builder.DefaultErrorHandlerBuilder;
+import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelRouteControllerDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
+import org.apache.camel.reifier.errorhandler.DeadLetterChannelReifier;
+import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
+import org.apache.camel.reifier.errorhandler.NoErrorHandlerReifier;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.xml.CamelBeanPostProcessor;
@@ -74,6 +81,14 @@ import org.springframework.beans.factory.xml.ParserContext;
  * Camel namespace for the spring XML configuration file.
  */
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
+
+    static {
+        // legacy camel-spring-xml error-handling using its own model and parsers
+        ErrorHandlerReifier.registerReifier(DeadLetterChannelBuilder.class, DeadLetterChannelReifier::new);
+        ErrorHandlerReifier.registerReifier(DefaultErrorHandlerBuilder.class, DefaultErrorHandlerReifier::new);
+        ErrorHandlerReifier.registerReifier(NoErrorHandlerBuilder.class, NoErrorHandlerReifier::new);
+    }
+
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final Logger LOG = LoggerFactory.getLogger(CamelNamespaceHandler.class);
     protected BeanDefinitionParser endpointParser = new EndpointDefinitionParser();
