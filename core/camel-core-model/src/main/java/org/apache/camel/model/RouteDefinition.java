@@ -42,7 +42,7 @@ import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.EndpointConsumerBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilderRef;
+import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
 import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.AsEndpointUri;
@@ -420,11 +420,11 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder.
      *
-     * @param  errorHandlerBuilder the error handler to be used by default for all child routes
-     * @return                     the current builder with the error handler configured
+     * @param  ref reference to existing error handler
+     * @return     the current builder with the error handler configured
      */
-    public RouteDefinition errorHandler2(ErrorHandlerDefinition errorHandlerBuilder) {
-        setErrorHandlerFactory(errorHandlerBuilder);
+    public RouteDefinition errorHandler(String ref) {
+        setErrorHandlerRef(ref);
         // we are now using a route scoped error handler
         contextScopedErrorHandler = false;
         return this;
@@ -989,7 +989,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
             // we use an specific error handler ref (from Spring DSL) then wrap that
             // with a error handler build ref so Camel knows its not just the
             // default one
-            setErrorHandlerFactory(new ErrorHandlerBuilderRef(errorHandlerRef));
+            setErrorHandlerFactory(new ErrorHandlerRefDefinition(errorHandlerRef));
         }
     }
 
@@ -1069,11 +1069,11 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
 
     private ErrorHandlerFactory createErrorHandlerBuilder() {
         if (errorHandlerRef != null) {
-            return new ErrorHandlerBuilderRef(errorHandlerRef);
+            return new ErrorHandlerRefDefinition(errorHandlerRef);
         }
 
         // return a reference to the default error handler
-        return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
+        return new ErrorHandlerRefDefinition(ErrorHandlerRefDefinition.DEFAULT_ERROR_HANDLER_BUILDER);
     }
 
     public ErrorHandlerFactory getErrorHandlerFactory() {

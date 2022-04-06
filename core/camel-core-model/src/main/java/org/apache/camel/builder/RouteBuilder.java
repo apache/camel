@@ -45,6 +45,7 @@ import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
+import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -368,13 +369,12 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      *
      * @param ref reference to the error handler to use
      */
-    @Deprecated
     public void errorHandler(String ref) {
         if (!getRouteCollection().getRoutes().isEmpty()) {
             throw new IllegalArgumentException("errorHandler must be defined before any routes in the RouteBuilder");
         }
         getRouteCollection().setCamelContext(getContext());
-        setErrorHandlerBuilder(new ErrorHandlerBuilderRef(ref));
+        setErrorHandlerBuilder(new ErrorHandlerRefDefinition(ref));
     }
 
     /**

@@ -36,7 +36,7 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
-import org.apache.camel.model.errorhandler.ErrorHandlerRefProperties;
+import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy;
@@ -97,11 +97,11 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         //        } else if (definition instanceof DefaultErrorHandlerProperties) {
         //            return new DefaultErrorHandlerReifier<>(route, definition);
         //        } else if (definition instanceof ErrorHandlerRefProperties) {
-        if (definition instanceof ErrorHandlerRefProperties) {
-            return new ErrorHandlerRefReifier(route, definition);
-            //        } else if (definition instanceof NoErrorHandlerProperties) {
-            //            return new NoErrorHandlerReifier(route, definition);
-        }
+        //        if (definition instanceof ErrorHandlerRefProperties) {
+        //            return new ErrorHandlerRefReifier(route, definition);
+        //        } else if (definition instanceof NoErrorHandlerProperties) {
+        //            return new NoErrorHandlerReifier(route, definition);
+        //        }
 
         if (definition instanceof DeadLetterChannelDefinition) {
             return new NewDeadLetterChannelReifier(route, (DeadLetterChannelDefinition) definition);
@@ -109,10 +109,9 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
             return new NewDefaultErrorHandlerReifier(route, (DefaultErrorHandlerDefinition) definition);
         } else if (definition instanceof NoErrorHandlerDefinition) {
             return new NewNoErrorHandlerReifier(route, definition);
+        } else if (definition instanceof ErrorHandlerRefDefinition) {
+            return new NewErrorHandlerRefReifier(route, definition);
         }
-        // TODO: ref properties? used by spring
-        //        } else if (definition instanceof ErrorHandlerRefProperties) {
-        //            return new ErrorHandlerRefReifier(route, definition);
 
         return null;
     }

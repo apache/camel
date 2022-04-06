@@ -24,6 +24,8 @@ import org.apache.camel.ErrorHandlerFactory;
 @Deprecated
 public interface ErrorHandlerBuilder extends ErrorHandlerFactory {
 
+    // TODO: Move these to ErrorHandlerFactory and remove this
+
     /**
      * Whether this error handler supports transacted exchanges.
      */

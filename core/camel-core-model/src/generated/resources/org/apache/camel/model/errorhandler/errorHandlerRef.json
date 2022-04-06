@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "errorHandlerRef",
+    "title": "Error Handler Ref",
+    "description": "Dead letter channel error handler.",
+    "deprecated": false,
+    "label": "configuration,error",
+    "javaType": "org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "ref": { "kind": "attribute", "displayName": "Ref", "required": false, "type": "object", "javaType": "org.apache.camel.ErrorHandlerFactory", "deprecated": false, "autowired": false, "secret": false, "description": "References to an existing or custom error handler." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+  }
+}

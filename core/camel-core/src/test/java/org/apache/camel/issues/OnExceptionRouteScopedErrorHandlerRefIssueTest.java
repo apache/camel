@@ -17,7 +17,6 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.spi.Registry;
@@ -51,7 +50,7 @@ public class OnExceptionRouteScopedErrorHandlerRefIssueTest extends ContextTestS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").errorHandler(new ErrorHandlerBuilderRef("myDLC"))
+                from("direct:start").errorHandler("myDLC")
                         .onException(IllegalArgumentException.class).handled(true).to("mock:handled").end()
                         .to("mock:a").throwException(new IllegalArgumentException("Damn"));
             }
