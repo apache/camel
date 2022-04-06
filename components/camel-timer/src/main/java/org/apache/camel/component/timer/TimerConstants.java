@@ -14,27 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xmpp;
+package org.apache.camel.component.timer;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 
-/**
- * Constants used in Camel XMPP module
- */
-public interface XmppConstants {
-    String MESSAGE_TYPE = "CamelXmppMessageType";
-    String SUBJECT = "CamelXmppSubject";
-    String THREAD_ID = "CamelXmppThreadID";
-    String FROM = "CamelXmppFrom";
+public final class TimerConstants {
 
-    /**
-     * @deprecated use {@link #STANZA_ID} instead.
-     */
-    @Deprecated
-    String PACKET_ID = "CamelXmppPacketID";
+    @Metadata(description = "The fired time", javaType = "Date")
+    public static final String HEADER_FIRED_TIME = "firedTime";
+    @Metadata(description = "The timestamp of the message", javaType = "long")
+    public static final String HEADER_MESSAGE_TIMESTAMP = Exchange.MESSAGE_TIMESTAMP;
 
-    String STANZA_ID = "CamelXmppStanzaID";
-    String TO = "CamelXmppTo";
-    @Metadata(label = "consumer", description = "The XMPP message", javaType = "org.jivesoftware.smack.packet.Message")
-    String DOC_HEADER = "CamelXmppDoc";
+    private TimerConstants() {
+
+    }
 }

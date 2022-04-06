@@ -49,21 +49,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-
-== Message Headers
-
-The WebSocket component uses 2 headers to indicate to either send
-messages back to a single/current client, or to all clients.
-
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-| Name | Description
-|`VertxWebsocketConstants.SEND_TO_ALL` |Sends the message to all clients which are currently connected. You can
-use the `sendToAll` option on the endpoint instead of using this header.
-|`VertxWebsocketConstants.CONNECTION_KEY` |Sends the message to the client with the given connection key. You can
-use a comma separated list of keys to send a message to multiple clients
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Usage
 The following example shows how to expose a WebSocket on http://localhost:8080/echo and returns an 'echo' response back to the same channel:
@@ -77,7 +65,7 @@ from("vertx-websocket:localhost:8080/echo")
 
 == SSL
 
-By default the `ws://` protocol is used, but secure connections with `wss://` are supported by configuring the consumer or producer
+By default, the `ws://` protocol is used, but secure connections with `wss://` are supported by configuring the consumer or producer
 via the `sslContextParameters` URI parameter and the xref:manual::camel-configuration-utilities.adoc[Camel JSSE Configuration Utility]
 
 

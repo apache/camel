@@ -56,27 +56,18 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Exchange data format
 
 Camel will deliver the body as a json formatted java.lang.String (see
 the `mode` option above).
 
-== Message Headers
-
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Header |Description
-
-|`CamelWeatherQuery` |The original query URL sent to the Open Weather Map site
-
-|`CamelWeatherLocation` |Used by the producer to override the endpoint location and use the
-location from this header instead.
-|=======================================================================
-
 == Samples
 
-In this sample we find the 7 day weather forecast for Madrid, Spain:
+In this sample we find the 7-day weather forecast for Madrid, Spain:
 
 [source,java]
 ---------------------------------------------------------------------------------------------

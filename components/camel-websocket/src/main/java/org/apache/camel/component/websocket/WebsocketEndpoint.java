@@ -38,7 +38,8 @@ import org.eclipse.jetty.server.Handler;
  * Expose websocket endpoints using Jetty.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "websocket", title = "Jetty Websocket",
-             syntax = "websocket:host:port/resourceUri", category = { Category.WEBSOCKET })
+             syntax = "websocket:host:port/resourceUri", category = { Category.WEBSOCKET },
+             headersClass = WebsocketConstants.class)
 public class WebsocketEndpoint extends DefaultEndpoint {
 
     private WebsocketComponent component;

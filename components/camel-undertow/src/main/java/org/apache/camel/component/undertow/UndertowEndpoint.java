@@ -59,7 +59,7 @@ import org.xnio.Options;
  * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket servers.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
-             category = { Category.HTTP, Category.WEBSOCKET }, lenientProperties = true)
+             category = { Category.HTTP, Category.WEBSOCKET }, lenientProperties = true, headersClass = UndertowConstants.class)
 public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, DiscoverableService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);

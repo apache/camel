@@ -34,7 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @ManagedResource(description = "ZooKeeper Endpoint")
 @UriEndpoint(firstVersion = "2.9.0", scheme = "zookeeper", title = "ZooKeeper", syntax = "zookeeper:serverUrls/path",
-             category = { Category.CLUSTERING, Category.MANAGEMENT, Category.BIGDATA })
+             category = { Category.CLUSTERING, Category.MANAGEMENT, Category.BIGDATA }, headersClass = ZooKeeperMessage.class)
 public class ZooKeeperEndpoint extends DefaultEndpoint {
     @UriParam
     private ZooKeeperConfiguration configuration;

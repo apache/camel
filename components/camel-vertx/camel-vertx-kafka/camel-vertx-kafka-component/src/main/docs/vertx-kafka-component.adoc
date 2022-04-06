@@ -71,7 +71,6 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
 For more information about Producer/Consumer configuration:
 
 http://kafka.apache.org/documentation.html#newconsumerconfigs[http://kafka.apache.org/documentation.html#newconsumerconfigs]
@@ -85,47 +84,12 @@ This allows camel route to consume and produce events asynchronously without blo
 
 == Usage
 
-=== Message headers set by the component consumer
-The following headers are available when consuming messages from Kafka.
-
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Description
-
-|`CamelVertxKafkaPartitionId`| `VertxKafkaConstants.PARTITION_ID`|`Integer`| The partition identifier where the message were consumed from.
-|`CamelVertxKafkaMessageKey`| `VertxKafkaConstants.MESSAGE_KEY`|`String`| The message key.
-|`CamelVertxKafkaTopic`| `VertxKafkaConstants.TOPIC`|`String`| The topic from where the message originated.
-|`CamelVertxKafkaOffset`| `VertxKafkaConstants.OFFSET`|`Long`| The offset of the message in Kafka topic.
-|`CamelVertxKafkaHeaders`| `VertxKafkaConstants.HEADERS`|`List<io.vertx.kafka.client.producer.KafkaHeader>`| The record Kafka headers.
-|`CamelVertxKafkaTimestamp`| `VertxKafkaConstants.TIMESTAMP`|`Long`| The timestamp of this record.
-|=======================================================================
-
-=== Message headers evaluated by the component producer
-Before sending a message to Kafka you can configure the following headers.
-
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Description
-
-|`CamelVertxKafkaPartitionId`| `VertxKafkaConstants.PARTITION_ID`|`Integer`| Explicitly specify the partition identifier, for example partition `0`. This will trigger the component to produce all the massages to the specified partition.
-|`CamelVertxKafkaMessageKey`| `VertxKafkaConstants.MESSAGE_KEY`|`String`| Explicitly specify the message key, if partition ID is not specified, this will trigger the messages to go into the same partition.
-|`CamelVertxKafkaTopic`| `VertxKafkaConstants.TOPIC`|`String`| Explicitly specify the topic to where produce the messages, this will be *preserved* in case of header aggregation.
-|`CamelVertxKafkaOverrideTopic`| `VertxKafkaConstants.OVERRIDE_TOPIC`|`String`| Explicitly specify the topic to where produce the messages, this will *not be preserved* in case of header aggregation and it will take *precedence* over `CamelVertxKafkaTopic`.
-| `CamelVertxKafkaOverrideTimestamp` | `VertxKafkaConstants.OVERRIDE_TIMESTAMP` | Long | The ProducerRecord also has an associated timestamp. If the user did provide a timestamp, the producer will stamp the  record with the provided timestamp and the header is not preserved. 
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 If you want to send a message to a dynamic topic then use `VertxKafkaConstants.OVERRIDE_TOPIC` as its used as a one-time header
-that are not send along the message, as its removed in the producer.
-
-=== Message headers set by the component producer
-After the message is sent to Kafka, the following headers are available
-
-[width="100%",cols="10%,10%,10%,70%",options="header",]
-|=======================================================================
-|Header |Variable Name |Type |Description
-
-|`CamelVertxKafkaRecordMetadata`| `VertxKafkaConstants.RECORD_METADATA`|`List<io.vertx.kafka.client.producer.RecordMetadata>`| Produced record metadata.
-|=======================================================================
+that are not send along the message, as it's removed in the producer.
 
 === Message body type
 Currently, the component supports the following value serializers for the body message on the producer side:

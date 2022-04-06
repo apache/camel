@@ -14,27 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xmpp;
+package org.apache.camel.component.xslt;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 
-/**
- * Constants used in Camel XMPP module
- */
-public interface XmppConstants {
-    String MESSAGE_TYPE = "CamelXmppMessageType";
-    String SUBJECT = "CamelXmppSubject";
-    String THREAD_ID = "CamelXmppThreadID";
-    String FROM = "CamelXmppFrom";
+public final class XsltConstants {
 
-    /**
-     * @deprecated use {@link #STANZA_ID} instead.
-     */
-    @Deprecated
-    String PACKET_ID = "CamelXmppPacketID";
+    @Metadata(description = "The XSLT file name", javaType = "String")
+    public static final String XSLT_FILE_NAME = Exchange.XSLT_FILE_NAME;
 
-    String STANZA_ID = "CamelXmppStanzaID";
-    String TO = "CamelXmppTo";
-    @Metadata(label = "consumer", description = "The XMPP message", javaType = "org.jivesoftware.smack.packet.Message")
-    String DOC_HEADER = "CamelXmppDoc";
+    private XsltConstants() {
+
+    }
 }

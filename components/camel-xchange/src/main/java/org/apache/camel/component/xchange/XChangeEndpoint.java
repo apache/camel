@@ -49,7 +49,7 @@ import org.knowm.xchange.utils.Assert;
  * Access market data and trade on Bitcoin and Altcoin exchanges.
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "xchange", title = "XChange", syntax = "xchange:name", producerOnly = true,
-             category = { Category.BITCOIN, Category.BLOCKCHAIN })
+             category = { Category.BITCOIN, Category.BLOCKCHAIN }, headersClass = XChangeConfiguration.class)
 public class XChangeEndpoint extends DefaultEndpoint {
 
     @UriParam

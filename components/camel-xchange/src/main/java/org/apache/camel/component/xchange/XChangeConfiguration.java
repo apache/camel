@@ -48,7 +48,9 @@ public class XChangeConfiguration {
         ticker
     }
 
+    @Metadata(description = "The target currency", javaType = "org.knowm.xchange.currency.Currency")
     public static final String HEADER_CURRENCY = "Currency";
+    @Metadata(description = "The target currency pair", javaType = "org.knowm.xchange.currency.CurrencyPair")
     public static final String HEADER_CURRENCY_PAIR = "CurrencyPair";
 
     @UriPath(description = "The exchange to connect to")

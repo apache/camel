@@ -50,6 +50,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Thrift method parameters mapping
 
@@ -77,17 +80,6 @@ Object responseBody = template.requestBody("direct:thrift-alltypes", requestBody
 -------------------------------------------------------------------------------
 
 Incoming parameters in the service consumer will also be passed to the message body as a list of objects.
-
-
-== Thrift consumer headers (will be installed after the consumer invocation)
-
-[width="100%",cols="25%,50,25%",options="header",]
-|=======================================================================
-|Header name |Description|Possible values
-
-|*CamelThriftMethodName*|Method name handled by the consumer service|
-
-|=======================================================================
 
 == Examples
 

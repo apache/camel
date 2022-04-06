@@ -28,7 +28,7 @@ public class FileResultHandlerFactory implements ResultHandlerFactory {
 
     @Override
     public ResultHandler createResult(Exchange exchange) throws Exception {
-        String fileName = ExchangeHelper.getMandatoryHeader(exchange, Exchange.XSLT_FILE_NAME, String.class);
+        String fileName = ExchangeHelper.getMandatoryHeader(exchange, XsltConstants.XSLT_FILE_NAME, String.class);
         return new FileResultHandler(new File(fileName));
     }
 }

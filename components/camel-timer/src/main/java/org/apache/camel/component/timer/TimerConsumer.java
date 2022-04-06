@@ -196,8 +196,8 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
             Date now = new Date();
             exchange.setProperty(Exchange.TIMER_FIRED_TIME, now);
             // also set now on in header with same key as quartz to be consistent
-            exchange.getIn().setHeader("firedTime", now);
-            exchange.getIn().setHeader(Exchange.MESSAGE_TIMESTAMP, now.getTime());
+            exchange.getIn().setHeader(TimerConstants.HEADER_FIRED_TIME, now);
+            exchange.getIn().setHeader(TimerConstants.HEADER_MESSAGE_TIMESTAMP, now.getTime());
         }
 
         if (LOG.isTraceEnabled()) {

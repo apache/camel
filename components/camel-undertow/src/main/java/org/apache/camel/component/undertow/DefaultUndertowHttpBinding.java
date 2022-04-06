@@ -208,7 +208,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 path = path.substring(endpointPath.length());
             }
         }
-        headersMap.put(Exchange.HTTP_PATH, path);
+        headersMap.put(UndertowConstants.HTTP_PATH, path);
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("HTTP-Method {}", httpExchange.getRequestMethod());
@@ -280,12 +280,12 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         }
 
         // NOTE: these headers is applied using the same logic as camel-http/camel-jetty to be consistent
-        headersMap.put(Exchange.HTTP_METHOD, httpExchange.getRequestMethod().toString());
+        headersMap.put(UndertowConstants.HTTP_METHOD, httpExchange.getRequestMethod().toString());
         // strip query parameters from the uri
         headersMap.put(Exchange.HTTP_URL, httpExchange.getRequestURL());
         // uri is without the host and port
-        headersMap.put(Exchange.HTTP_URI, httpExchange.getRequestURI());
-        headersMap.put(Exchange.HTTP_QUERY, httpExchange.getQueryString());
+        headersMap.put(UndertowConstants.HTTP_URI, httpExchange.getRequestURI());
+        headersMap.put(UndertowConstants.HTTP_QUERY, httpExchange.getQueryString());
         headersMap.put(Exchange.HTTP_RAW_QUERY, httpExchange.getQueryString());
     }
 
@@ -293,7 +293,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     public void populateCamelHeaders(ClientResponse response, Map<String, Object> headersMap, Exchange exchange) {
         LOG.trace("populateCamelHeaders: {}", exchange.getMessage().getHeaders());
 
-        headersMap.put(Exchange.HTTP_RESPONSE_CODE, response.getResponseCode());
+        headersMap.put(UndertowConstants.HTTP_RESPONSE_CODE, response.getResponseCode());
 
         for (HttpString name : response.getResponseHeaders().getHeaderNames()) {
             // mapping the content-type
@@ -331,7 +331,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         Exception exception = camelExchange.getException();
 
         int code = determineResponseCode(camelExchange, body);
-        message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, code);
+        message.getHeaders().put(UndertowConstants.HTTP_RESPONSE_CODE, code);
         httpExchange.setStatusCode(code);
 
         //copy headers from Message to Response
@@ -363,7 +363,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 // the body should be the serialized java object of the exception
                 body = ByteBuffer.wrap(bos.toByteArray());
                 // force content type to be serialized java object
-                message.setHeader(Exchange.CONTENT_TYPE, "application/x-java-serialized-object");
+                message.setHeader(UndertowConstants.CONTENT_TYPE, "application/x-java-serialized-object");
             } else {
                 // we failed due an exception so print it as plain text
                 StringWriter sw = new StringWriter();
@@ -373,7 +373,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 // the body should then be the stacktrace
                 body = ByteBuffer.wrap(sw.toString().getBytes());
                 // force content type to be text/plain as that is what the stacktrace is
-                message.setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                message.setHeader(UndertowConstants.CONTENT_TYPE, "text/plain");
             }
 
             // and mark the exception as failure handled, as we handled it by returning it as the response
@@ -401,7 +401,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         int defaultCode = failed ? 500 : 200;
 
         Message message = camelExchange.getMessage();
-        Integer currentCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+        Integer currentCode = message.getHeader(UndertowConstants.HTTP_RESPONSE_CODE, Integer.class);
         int codeToUse = currentCode == null ? defaultCode : currentCode;
 
         if (codeToUse != 500) {

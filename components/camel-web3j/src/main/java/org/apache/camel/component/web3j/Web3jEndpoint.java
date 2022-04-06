@@ -44,7 +44,7 @@ import org.web3j.quorum.Quorum;
  * Interact with Ethereum nodes using web3j client API.
  */
 @UriEndpoint(firstVersion = "2.22.0", scheme = "web3j", title = "Web3j Ethereum Blockchain", syntax = "web3j:nodeAddress",
-             category = { Category.BITCOIN, Category.BLOCKCHAIN, Category.API })
+             category = { Category.BITCOIN, Category.BLOCKCHAIN, Category.API }, headersClass = Web3jConstants.class)
 public class Web3jEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jEndpoint.class);
 
