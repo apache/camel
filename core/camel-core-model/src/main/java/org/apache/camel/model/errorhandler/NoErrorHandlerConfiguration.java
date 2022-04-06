@@ -16,12 +16,24 @@
  */
 package org.apache.camel.model.errorhandler;
 
-// TODO: Maybe not needed
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.ErrorHandlerFactory;
+
 @XmlTransient
+@Deprecated
 public class NoErrorHandlerConfiguration implements NoErrorHandlerProperties {
 
     // no configuration
 
+    @Override
+    public boolean supportTransacted() {
+        return false;
+    }
+
+    @Override
+    public ErrorHandlerFactory cloneBuilder() {
+        // clone not needed
+        return this;
+    }
 }

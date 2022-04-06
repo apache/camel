@@ -23,6 +23,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 
 @XmlTransient
+@Deprecated
 public class DeadLetterChannelConfiguration extends DefaultErrorHandlerConfiguration implements DeadLetterChannelProperties {
 
     // has no additional configurations

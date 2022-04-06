@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration,error")
 @XmlRootElement(name = "errorHandlerRef")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ErrorHandlerRefDefinition extends BaseErrorHandlerDefinition implements ErrorHandlerBuilder {
+public class ErrorHandlerRefDefinition extends BaseErrorHandlerDefinition {
 
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
 
@@ -51,7 +51,7 @@ public class ErrorHandlerRefDefinition extends BaseErrorHandlerDefinition implem
     }
 
     @Override
-    public ErrorHandlerBuilder cloneBuilder() {
+    public ErrorHandlerFactory cloneBuilder() {
         // clone not needed
         return this;
     }

@@ -24,21 +24,4 @@ import org.apache.camel.ErrorHandlerFactory;
 @Deprecated
 public interface ErrorHandlerBuilder extends ErrorHandlerFactory {
 
-    // TODO: Move these to ErrorHandlerFactory and remove this
-
-    /**
-     * Whether this error handler supports transacted exchanges.
-     */
-    boolean supportTransacted();
-
-    /**
-     * Clones this builder so each {@link RouteBuilder} has its private builder to use, to avoid changes from one
-     * {@link RouteBuilder} to influence the others.
-     * <p/>
-     * This is needed by the current Camel 2.x architecture.
-     *
-     * @return a clone of this {@link ErrorHandlerBuilder}
-     */
-    ErrorHandlerBuilder cloneBuilder();
-
 }

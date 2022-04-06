@@ -30,4 +30,5 @@ public interface ErrorHandlerRefProperties extends ErrorHandlerFactory {
     boolean isSupportTransacted();
 
     void setSupportTransacted(boolean supportTransacted);
+
 }

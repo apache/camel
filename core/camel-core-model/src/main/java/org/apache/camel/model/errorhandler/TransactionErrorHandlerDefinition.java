@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration,error")
 @XmlRootElement(name = "transactionErrorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefinition implements ErrorHandlerBuilder {
+public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefinition {
 
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.spi.TransactedPolicy")
@@ -51,7 +51,7 @@ public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefini
     }
 
     @Override
-    public ErrorHandlerBuilder cloneBuilder() {
+    public ErrorHandlerFactory cloneBuilder() {
         TransactionErrorHandlerDefinition answer = new TransactionErrorHandlerDefinition();
         cloneBuilder(answer);
         return answer;

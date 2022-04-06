@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 @Metadata(label = "configuration,error")
 @XmlRootElement(name = "defaultErrorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition implements ErrorHandlerBuilder {
+public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
 
     @XmlTransient
     private CamelLogger loggerBean;
@@ -101,7 +101,7 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition im
     }
 
     @Override
-    public ErrorHandlerBuilder cloneBuilder() {
+    public ErrorHandlerFactory cloneBuilder() {
         DefaultErrorHandlerDefinition answer = new DefaultErrorHandlerDefinition();
         cloneBuilder(answer);
         return answer;

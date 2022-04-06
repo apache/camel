@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
@@ -43,7 +44,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class BuilderSupport implements CamelContextAware {
     private CamelContext camelContext;
-    private ErrorHandlerBuilder errorHandlerBuilder;
+    private ErrorHandlerFactory errorHandlerFactory;
 
     protected BuilderSupport() {
     }
@@ -479,26 +480,22 @@ public abstract class BuilderSupport implements CamelContextAware {
         return getCamelContext();
     }
 
-    public boolean hasErrorHandlerBuilder() {
-        return this.errorHandlerBuilder != null;
-    }
-
-    public ErrorHandlerBuilder getErrorHandlerBuilder() {
-        if (errorHandlerBuilder == null) {
-            errorHandlerBuilder = createErrorHandlerBuilder();
+    public ErrorHandlerFactory getErrorHandlerFactory() {
+        if (errorHandlerFactory == null) {
+            errorHandlerFactory = createErrorHandlerBuilder();
         }
-        return errorHandlerBuilder;
+        return errorHandlerFactory;
     }
 
-    protected ErrorHandlerBuilder createErrorHandlerBuilder() {
+    protected ErrorHandlerFactory createErrorHandlerBuilder() {
         return new DefaultErrorHandlerDefinition();
     }
 
     /**
      * Sets the error handler to use with processors created by this builder
      */
-    public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
-        this.errorHandlerBuilder = errorHandlerBuilder;
+    public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
+        this.errorHandlerFactory = errorHandlerFactory;
     }
 
 }

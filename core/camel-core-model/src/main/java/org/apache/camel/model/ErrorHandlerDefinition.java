@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration,error")
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ErrorHandlerDefinition extends IdentifiedType implements ErrorHandlerFactory {
+public class ErrorHandlerDefinition extends IdentifiedType {
 
     @XmlElements({
             @XmlElement(name = "deadLetterChannel", type = DeadLetterChannelDefinition.class),

@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -92,7 +92,7 @@ public class DeadLetterChannelDefinition extends DefaultErrorHandlerDefinition {
     }
 
     @Override
-    public ErrorHandlerBuilder cloneBuilder() {
+    public ErrorHandlerFactory cloneBuilder() {
         DeadLetterChannelDefinition answer = new DeadLetterChannelDefinition();
         cloneBuilder(answer);
         return answer;
