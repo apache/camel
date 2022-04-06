@@ -103,6 +103,10 @@ public class NewDeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterC
     private RedeliveryPolicy resolveRedeliveryPolicy(DeadLetterChannelDefinition definition, CamelContext camelContext) {
         RedeliveryPolicy answer = null;
         RedeliveryPolicyDefinition def = definition.getRedeliveryPolicy();
+        if (def == null && definition.getRedeliveryPolicyRef() != null) {
+            // ref may point to a definition
+            def = lookupByNameAndType(definition.getRedeliveryPolicyRef(), RedeliveryPolicyDefinition.class);
+        }
         if (def != null) {
             answer = ErrorHandlerReifier.createRedeliveryPolicy(def, camelContext, null);
         }

@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration")
 @XmlRootElement(name = "redeliveryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RedeliveryPolicyDefinition implements Cloneable {
+public class RedeliveryPolicyDefinition extends IdentifiedType implements Cloneable {
 
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")

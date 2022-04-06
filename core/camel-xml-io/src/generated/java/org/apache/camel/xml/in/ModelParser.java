@@ -682,7 +682,7 @@ public class ModelParser extends BaseParser {
                 case "retryAttemptedLogLevel": def.setRetryAttemptedLogLevel(val); break;
                 case "useCollisionAvoidance": def.setUseCollisionAvoidance(val); break;
                 case "useExponentialBackOff": def.setUseExponentialBackOff(val); break;
-                default: return false;
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
