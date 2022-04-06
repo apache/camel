@@ -94,7 +94,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
     }
 
     private static ErrorHandlerReifier<? extends ErrorHandlerFactory> coreReifier(Route route, ErrorHandlerFactory definition) {
-        // TODO: legacy, should
+        // TODO: old which should be removed when new are working
         if (definition instanceof DeadLetterChannelProperties) {
             return new DeadLetterChannelReifier(route, definition);
         } else if (definition instanceof DefaultErrorHandlerProperties) {
@@ -112,7 +112,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         } else if (definition instanceof NoErrorHandlerDefinition) {
             return new NewNoErrorHandlerReifier(route, definition);
         }
-        // TODO: ref properties?
+        // TODO: ref properties? used by spring
         //        } else if (definition instanceof ErrorHandlerRefProperties) {
         //            return new ErrorHandlerRefReifier(route, definition);
 

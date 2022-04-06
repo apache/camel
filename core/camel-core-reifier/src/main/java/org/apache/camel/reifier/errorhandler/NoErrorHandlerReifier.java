@@ -23,6 +23,7 @@ import org.apache.camel.model.errorhandler.NoErrorHandlerProperties;
 import org.apache.camel.processor.errorhandler.NoErrorHandler;
 import org.apache.camel.spi.ErrorHandler;
 
+@Deprecated
 public class NoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerProperties> {
 
     public NoErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {

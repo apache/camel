@@ -24,6 +24,7 @@ import org.apache.camel.model.errorhandler.ErrorHandlerHelper;
 import org.apache.camel.model.errorhandler.ErrorHandlerRefProperties;
 import org.apache.camel.util.ObjectHelper;
 
+@Deprecated
 public class ErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerRefProperties> {
 
     public ErrorHandlerRefReifier(Route route, ErrorHandlerFactory definition) {

@@ -37,6 +37,8 @@ import org.apache.camel.spi.ThreadPoolProfile;
 
 public class NewDefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultErrorHandlerDefinition> {
 
+    // TODO: Rename when working
+
     public NewDefaultErrorHandlerReifier(Route route, DefaultErrorHandlerDefinition definition) {
         super(route, definition);
     }

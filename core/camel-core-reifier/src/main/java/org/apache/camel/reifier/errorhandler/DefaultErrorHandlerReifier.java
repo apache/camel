@@ -28,6 +28,7 @@ import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ThreadPoolProfile;
 
+@Deprecated
 public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerProperties> extends ErrorHandlerReifier<T> {
 
     public DefaultErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {

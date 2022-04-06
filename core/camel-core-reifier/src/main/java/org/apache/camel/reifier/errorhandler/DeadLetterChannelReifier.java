@@ -28,6 +28,7 @@ import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 
+@Deprecated
 public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLetterChannelProperties> {
 
     public DeadLetterChannelReifier(Route route, ErrorHandlerFactory definition) {
