@@ -35,12 +35,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
-import org.apache.camel.model.errorhandler.DeadLetterChannelProperties;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
-import org.apache.camel.model.errorhandler.DefaultErrorHandlerProperties;
 import org.apache.camel.model.errorhandler.ErrorHandlerRefProperties;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
-import org.apache.camel.model.errorhandler.NoErrorHandlerProperties;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy.RedeliveryOption;
@@ -95,14 +92,15 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
 
     private static ErrorHandlerReifier<? extends ErrorHandlerFactory> coreReifier(Route route, ErrorHandlerFactory definition) {
         // TODO: old which should be removed when new are working
-        if (definition instanceof DeadLetterChannelProperties) {
-            return new DeadLetterChannelReifier(route, definition);
-        } else if (definition instanceof DefaultErrorHandlerProperties) {
-            return new DefaultErrorHandlerReifier<>(route, definition);
-        } else if (definition instanceof ErrorHandlerRefProperties) {
+        //        if (definition instanceof DeadLetterChannelProperties) {
+        //            return new DeadLetterChannelReifier(route, definition);
+        //        } else if (definition instanceof DefaultErrorHandlerProperties) {
+        //            return new DefaultErrorHandlerReifier<>(route, definition);
+        //        } else if (definition instanceof ErrorHandlerRefProperties) {
+        if (definition instanceof ErrorHandlerRefProperties) {
             return new ErrorHandlerRefReifier(route, definition);
-        } else if (definition instanceof NoErrorHandlerProperties) {
-            return new NoErrorHandlerReifier(route, definition);
+            //        } else if (definition instanceof NoErrorHandlerProperties) {
+            //            return new NoErrorHandlerReifier(route, definition);
         }
 
         if (definition instanceof DeadLetterChannelDefinition) {

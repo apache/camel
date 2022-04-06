@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 /**
  * Base class for builders of error handling.
  */
+@Deprecated
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
 
     @Override

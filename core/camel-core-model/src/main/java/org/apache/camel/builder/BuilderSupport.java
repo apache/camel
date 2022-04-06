@@ -491,7 +491,7 @@ public abstract class BuilderSupport implements CamelContextAware {
     }
 
     protected ErrorHandlerBuilder createErrorHandlerBuilder() {
-        return new DefaultErrorHandlerBuilder();
+        return new DefaultErrorHandlerDefinition();
     }
 
     /**

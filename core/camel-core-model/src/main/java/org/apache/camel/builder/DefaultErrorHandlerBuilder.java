@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
  * The default error handler builder.
  */
 @Configurer
+@Deprecated
 public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements DefaultErrorHandlerProperties {
 
     private final DefaultErrorHandlerConfiguration configuration;

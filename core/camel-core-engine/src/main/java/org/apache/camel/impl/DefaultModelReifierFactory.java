@@ -22,9 +22,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
@@ -67,7 +67,7 @@ public class DefaultModelReifierFactory implements ModelReifierFactory {
 
     @Override
     public ErrorHandlerFactory createDefaultErrorHandler() {
-        return new DefaultErrorHandlerBuilder();
+        return new DefaultErrorHandlerDefinition();
     }
 
     @Override
