@@ -21,6 +21,8 @@ Prerequisites
 You must have a valid Windows Azure Key Vault account. More information is available at
 https://docs.microsoft.com/azure/[Azure Documentation Portal].
 
+== URI Format
+
 [source,xml]
 ------------------------------------------------------------
 <dependency>
