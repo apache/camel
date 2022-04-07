@@ -211,6 +211,23 @@
           "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition"
         }
       },
+      "org.apache.camel.dsl.yaml.deserializers.ErrorHandlerBuilderDeserializer" : {
+        "type" : "object",
+        "properties" : {
+          "deadLetterChannel" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DeadLetterChannelDefinition"
+          },
+          "log" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition"
+          },
+          "none" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"
+          },
+          "ref" : {
+            "type" : "string"
+          }
+        }
+      },
       "org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition" : {
         "type" : "object",
         "properties" : {
@@ -5666,19 +5683,14 @@
       "org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition" : {
         "type" : "object",
         "properties" : {
-          "deadLetterChannel" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DeadLetterChannelDefinition"
-          },
-          "log" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition"
-          },
-          "none" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"
+          "id" : {
+            "type" : "string"
           },
           "ref" : {
             "type" : "string"
           }
-        }
+        },
+        "required" : [ "ref" ]
       },
       "org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition" : {
         "type" : "object",
@@ -7598,6 +7610,9 @@
       "beans" : {
         "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.BeansDeserializer"
       },
+      "errorHandler" : {
+        "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.ErrorHandlerBuilderDeserializer"
+      },
       "from" : {
         "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.RouteFromDefinitionDeserializer"
       },
@@ -7612,9 +7627,6 @@
       },
       "templatedRoute" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteDefinition"
-      },
-      "errorHandler" : {
-        "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition"
       },
       "rest" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"

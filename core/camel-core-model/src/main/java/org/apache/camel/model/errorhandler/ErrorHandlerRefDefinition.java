@@ -67,4 +67,12 @@ public class ErrorHandlerRefDefinition extends BaseErrorHandlerDefinition {
         this.ref = ref;
     }
 
+    /**
+     * References to an existing or custom error handler.
+     */
+    public ErrorHandlerRefDefinition ref(String ref) {
+        setRef(ref);
+        return this;
+    }
+
 }

@@ -45,7 +45,6 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeseri
 @YamlIn
 @YamlType(
           nodes = { "error-handler", "errorHandler" },
-          types = ErrorHandlerRefDefinition.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
                   @YamlProperty(name = "ref", type = "string"),
@@ -79,7 +78,9 @@ public class ErrorHandlerBuilderDeserializer implements ConstructNode {
 
             switch (key) {
                 case "ref":
-                    return customizer(asType(val, ErrorHandlerRefDefinition.class));
+                    // special for ref error handler, as it can be manually inlined
+                    ErrorHandlerRefDefinition def = new ErrorHandlerRefDefinition(asText(val));
+                    return customizer(def);
                 case "none":
                     return customizer(asType(val, NoErrorHandlerDefinition.class));
                 case "dead-letter-channel":

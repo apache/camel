@@ -408,6 +408,12 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         // T handledTypeInstance(String value);
         //
         for (MethodInfo ctor: info.constructors()) {
+
+            // do not generate inline for error handlers (only ref error handler is allowed)
+            if (implementType(info, ERROR_HANDLER_DEFINITION_CLASS)) {
+                break;
+            }
+
             if (ctor.parameters().size() == 1 && ctor.parameters().get(0).name().equals(STRING_CLASS)) {
                 if ((ctor.flags() & java.lang.reflect.Modifier.PUBLIC) == 0) {
                     break;

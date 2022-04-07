@@ -4789,7 +4789,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            inline = true,
             types = org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -4809,11 +4808,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected ErrorHandlerRefDefinition newInstance() {
             return new ErrorHandlerRefDefinition();
-        }
-
-        @Override
-        protected ErrorHandlerRefDefinition newInstance(String value) {
-            return new ErrorHandlerRefDefinition(value);
         }
 
         @Override

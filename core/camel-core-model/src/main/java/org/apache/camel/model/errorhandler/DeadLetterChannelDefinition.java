@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.spi.Metadata;
@@ -40,6 +41,14 @@ public class DeadLetterChannelDefinition extends DefaultErrorHandlerDefinition {
     private String deadLetterHandleNewException;
 
     public DeadLetterChannelDefinition() {
+    }
+
+    public DeadLetterChannelDefinition(String deadLetterUri) {
+        this.deadLetterUri = deadLetterUri;
+    }
+
+    public DeadLetterChannelDefinition(Endpoint deadLetterUri) {
+        this.deadLetterUri = deadLetterUri.getEndpointUri();
     }
 
     @Override
@@ -96,6 +105,14 @@ public class DeadLetterChannelDefinition extends DefaultErrorHandlerDefinition {
         other.setDeadLetterUri(getDeadLetterUri());
         other.setDeadLetterHandleNewException(getDeadLetterHandleNewException());
         super.cloneBuilder(other);
+    }
+
+    /**
+     * The dead letter endpoint uri for the Dead Letter error handler.
+     */
+    public DeadLetterChannelDefinition deadLetterUri(String deadLetterUri) {
+        setDeadLetterUri(deadLetterUri);
+        return this;
     }
 
     /**
