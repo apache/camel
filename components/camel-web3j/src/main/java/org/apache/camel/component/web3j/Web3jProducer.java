@@ -730,7 +730,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
     void ethSubmitWork(Message message) throws IOException {
         String nonce = message.getHeader(Web3jConstants.NONCE, configuration::getNonce, String.class);
         String headerPowHash = message.getHeader(Web3jConstants.HEADER_POW_HASH, configuration::getHeaderPowHash, String.class);
-        String mixDigest = message.getHeader(Web3jConstants.MIX_DIGEST, configuration::getHeaderPowHash, String.class);
+        String mixDigest = message.getHeader(Web3jConstants.MIX_DIGEST, configuration::getMixDigest, String.class);
         Request<?, EthSubmitWork> request = web3j.ethSubmitWork(nonce, headerPowHash, mixDigest);
         setRequestId(message, request);
         EthSubmitWork response = request.send();
