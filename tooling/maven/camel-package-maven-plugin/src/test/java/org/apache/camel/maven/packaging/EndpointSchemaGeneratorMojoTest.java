@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.apache.camel.maven.packaging.endpoint.SomeEndpoint;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstants;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstantsByField;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstantsByMethod;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingInterfaceConstants;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadHeaders;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithFilter;
@@ -164,5 +166,17 @@ class EndpointSchemaGeneratorMojoTest {
         header = endpointHeaders.get(1);
         assertEquals("header", header.getKind());
         assertEquals("KEY_FROM_COMMON", header.getName());
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {
+            SomeEndpointUsingEnumConstantsByField.class, SomeEndpointUsingEnumConstantsByMethod.class })
+    void testEndpointWithNameProvider(Class<?> clazz) {
+        mojo.addEndpointHeaders(model, clazz.getAnnotation(UriEndpoint.class), "some");
+        List<EndpointHeaderModel> endpointHeaders = model.getEndpointHeaders();
+        assertEquals(1, endpointHeaders.size());
+        EndpointHeaderModel header = endpointHeaders.get(0);
+        assertEquals("header", header.getKind());
+        assertEquals("SomeName", header.getName());
     }
 }
