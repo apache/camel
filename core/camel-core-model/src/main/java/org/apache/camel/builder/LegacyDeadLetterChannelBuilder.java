@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
 @Deprecated
-public class LegacyDeadLetterChannelBuilder extends DefaultErrorHandlerBuilder implements DeadLetterChannelProperties {
+public class LegacyDeadLetterChannelBuilder extends LegacyDefaultErrorHandlerBuilder implements DeadLetterChannelProperties {
 
     public LegacyDeadLetterChannelBuilder() {
         // no-arg constructor used by Spring DSL
