@@ -26,7 +26,7 @@ public final class SomeEndpointWithJavadocAsDescription {
      * Some description about {@link #NO_DESCRIPTION}.
      */
     @Metadata
-    static final String NO_DESCRIPTION = "no-description";
+    public static final String NO_DESCRIPTION = "no-description";
 
     private SomeEndpointWithJavadocAsDescription() {
 

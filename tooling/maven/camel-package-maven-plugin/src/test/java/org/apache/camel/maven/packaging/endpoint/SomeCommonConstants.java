@@ -21,7 +21,7 @@ import org.apache.camel.spi.Metadata;
 public class SomeCommonConstants {
 
     @Metadata
-    static final String KEY_FROM_COMMON = "KEY_FROM_COMMON";
+    public static final String KEY_FROM_COMMON = "KEY_FROM_COMMON";
 
     protected SomeCommonConstants() {
     }

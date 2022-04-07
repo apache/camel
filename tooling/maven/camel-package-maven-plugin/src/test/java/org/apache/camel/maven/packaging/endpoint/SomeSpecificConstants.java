@@ -21,7 +21,10 @@ import org.apache.camel.spi.Metadata;
 public final class SomeSpecificConstants extends SomeCommonConstants {
 
     @Metadata
-    static final String KEY_FROM_SPECIFIC = "KEY_FROM_SPECIFIC";
+    public static final String KEY_FROM_SPECIFIC = "KEY_FROM_SPECIFIC";
+
+    @Metadata
+    static final String INTERNAL_KEY_FROM_SPECIFIC = "INTERNAL_KEY_FROM_SPECIFIC";
 
     private SomeSpecificConstants() {
     }
