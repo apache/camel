@@ -58,6 +58,24 @@ Or
             brokers: "mykafka:1234"
 ----
 
+=== camel-spring-xml / camel-blueprint
+
+The error handling has been made universal and exposed generally in the `camel-core-model`
+with intent to align error handling across DSLs.
+
+However, the XML DSL for Spring `<beans>` and OSGi blueprint is legacy, and they
+have their own special XML parsing and error handling.
+
+This means the model classes has been renamed, which only affect Camel end users whom
+has defined error handling as `<bean>` in Spring or Blueprint XML files:
+
+- `org.apache.camel.builder.DeadLetterChannelBuilder` to `org.apache.camel.builder.LegacyDeadLetterChannelBuilder`
+- `org.apache.camel.builder.DefaultErrorHandlerBuilder` to `org.apache.camel.builder.LegacyDefaultErrorHandlerBuilder`
+- `org.apache.camel.builder.NoErrorHandlerBuilder` to `org.apache.camel.builder.LegacyNoErrorHandlerBuilder`
+- `org.apache.camel.spring.spi.TransactionErrorHandlerBuilder` to `org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder`
+
+Users who has been configured error handling using `<errorHandler>` in Spring or Blueprint XML files should not be affected.
+
 === camel-kafka
 
 The option `autoCommitOnStop` was removed from the Camel Kafka component. When using `autoCommitEnable` (which is enabled by default) the Kafka consumer will automatically commit on close.
