@@ -42,7 +42,6 @@ public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<Route
     @XmlTransient
     private CamelContext camelContext;
     @XmlTransient
-    @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
 
     @XmlElementRef

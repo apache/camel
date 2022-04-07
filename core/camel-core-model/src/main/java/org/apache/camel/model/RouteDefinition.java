@@ -78,9 +78,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     private String shutdownRoute;
     private String shutdownRunningTask;
     private String errorHandlerRef;
-    @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
-    private ErrorHandlerDefinition errorHandler;
     // keep state whether the error handler is context scoped or not
     // (will by default be context scoped of no explicit error handler
     // configured)
