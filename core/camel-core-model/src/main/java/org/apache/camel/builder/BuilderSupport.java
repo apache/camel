@@ -27,10 +27,8 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
-import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
@@ -423,8 +421,8 @@ public abstract class BuilderSupport implements CamelContextAware {
      *
      * @return the builder
      */
-    public DefaultErrorHandlerDefinition defaultErrorHandler() {
-        return new DefaultErrorHandlerDefinition();
+    public DefaultErrorHandlerBuilder defaultErrorHandler() {
+        return new DefaultErrorHandlerBuilder();
     }
 
     /**
@@ -433,8 +431,8 @@ public abstract class BuilderSupport implements CamelContextAware {
      *
      * @return the builder
      */
-    public NoErrorHandlerDefinition noErrorHandler() {
-        return new NoErrorHandlerDefinition();
+    public NoErrorHandlerBuilder noErrorHandler() {
+        return new NoErrorHandlerBuilder();
     }
 
     /**
@@ -444,8 +442,8 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @param  deadLetterUri uri to the dead letter endpoint storing dead messages
      * @return               the builder
      */
-    public DeadLetterChannelDefinition deadLetterChannel(String deadLetterUri) {
-        DeadLetterChannelDefinition answer = new DeadLetterChannelDefinition();
+    public DeadLetterChannelBuilder deadLetterChannel(String deadLetterUri) {
+        DeadLetterChannelBuilder answer = new DeadLetterChannelBuilder();
         answer.setDeadLetterUri(deadLetterUri);
         return answer;
     }
@@ -457,7 +455,7 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @param  deadLetterEndpoint dead letter endpoint storing dead messages
      * @return                    the builder
      */
-    public DeadLetterChannelDefinition deadLetterChannel(Endpoint deadLetterEndpoint) {
+    public DeadLetterChannelBuilder deadLetterChannel(Endpoint deadLetterEndpoint) {
         return deadLetterChannel(deadLetterEndpoint.getEndpointUri());
     }
 

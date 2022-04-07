@@ -18,7 +18,6 @@ package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.junit.jupiter.api.Test;
 
 public class ErrorHandlerRefTest extends ContextTestSupport {
@@ -38,7 +37,7 @@ public class ErrorHandlerRefTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                DeadLetterChannelDefinition dlc = new DeadLetterChannelDefinition("mock:dead");
+                DeadLetterChannelBuilder dlc = new DeadLetterChannelBuilder("mock:dead");
                 context.getRegistry().bind("myDead", dlc);
 
                 errorHandler("myDead");

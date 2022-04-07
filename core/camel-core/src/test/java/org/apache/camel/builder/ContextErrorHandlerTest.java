@@ -26,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
-import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
@@ -45,7 +44,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
         RedeliveryPolicyDefinition redeliveryPolicy = new RedeliveryPolicyDefinition();
         redeliveryPolicy.maximumRedeliveries(1);
         redeliveryPolicy.setUseExponentialBackOff("true");
-        DeadLetterChannelDefinition deadLetterChannelBuilder = new DeadLetterChannelDefinition("mock:error");
+        DeadLetterChannelBuilder deadLetterChannelBuilder = new DeadLetterChannelBuilder("mock:error");
         deadLetterChannelBuilder.setRedeliveryPolicy(redeliveryPolicy);
         context.adapt(ExtendedCamelContext.class).setErrorHandlerFactory(deadLetterChannelBuilder);
     }

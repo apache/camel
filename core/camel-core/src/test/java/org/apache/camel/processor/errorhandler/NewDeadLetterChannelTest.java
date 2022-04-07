@@ -17,8 +17,8 @@
 package org.apache.camel.processor.errorhandler;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.junit.jupiter.api.Test;
 
 @Deprecated
@@ -38,7 +38,7 @@ public class NewDeadLetterChannelTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                DeadLetterChannelDefinition dlc = new DeadLetterChannelDefinition();
+                DeadLetterChannelBuilder dlc = new DeadLetterChannelBuilder();
                 dlc.setDeadLetterUri("mock:dead");
 
                 errorHandler(dlc);

@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.junit.jupiter.api.Test;
 
 public class OnExceptionContinuedIssueTest extends ContextTestSupport {
@@ -33,7 +33,7 @@ public class OnExceptionContinuedIssueTest extends ContextTestSupport {
 
     @Test
     public void testOnExceptionWrappedMatch() throws Exception {
-        final DeadLetterChannelDefinition defaultErrorHandlerBuilder = new DeadLetterChannelDefinition("direct:dead");
+        final DeadLetterChannelBuilder defaultErrorHandlerBuilder = new DeadLetterChannelBuilder("direct:dead");
         defaultErrorHandlerBuilder.redeliveryDelay(0); // run fast
         defaultErrorHandlerBuilder.maximumRedeliveries(2);
 

@@ -91,18 +91,6 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
     }
 
     private static ErrorHandlerReifier<? extends ErrorHandlerFactory> coreReifier(Route route, ErrorHandlerFactory definition) {
-        // TODO: old which should be removed when new are working
-        //        if (definition instanceof DeadLetterChannelProperties) {
-        //            return new DeadLetterChannelReifier(route, definition);
-        //        } else if (definition instanceof DefaultErrorHandlerProperties) {
-        //            return new DefaultErrorHandlerReifier<>(route, definition);
-        //        } else if (definition instanceof ErrorHandlerRefProperties) {
-        //        if (definition instanceof ErrorHandlerRefProperties) {
-        //            return new ErrorHandlerRefReifier(route, definition);
-        //        } else if (definition instanceof NoErrorHandlerProperties) {
-        //            return new NoErrorHandlerReifier(route, definition);
-        //        }
-
         if (definition instanceof DeadLetterChannelDefinition) {
             return new DeadLetterChannelReifier(route, (DeadLetterChannelDefinition) definition);
         } else if (definition instanceof DefaultErrorHandlerDefinition) {
