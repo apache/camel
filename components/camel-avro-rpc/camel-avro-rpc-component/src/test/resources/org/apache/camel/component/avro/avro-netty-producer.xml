@@ -23,11 +23,11 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <bean id="inOnlyErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <bean id="inOnlyErrorHandler" class="org.apache.camel.builder.LegacyDeadLetterChannelBuilder">
         <property name="deadLetterUri" value="mock:in-message-name-error"/>
     </bean>
 
-    <bean id="inOutErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <bean id="inOutErrorHandler" class="org.apache.camel.builder.LegacyDeadLetterChannelBuilder">
         <property name="deadLetterUri" value="mock:inout-message-name-error"/>
     </bean>
 
