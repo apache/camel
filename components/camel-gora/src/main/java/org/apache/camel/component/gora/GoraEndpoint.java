@@ -30,7 +30,8 @@ import org.apache.gora.store.DataStore;
  * Access NoSQL databases using the Apache Gora framework.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "gora", title = "Gora", syntax = "gora:name",
-             category = { Category.DATABASE, Category.NOSQL, Category.BIGDATA })
+             category = { Category.DATABASE, Category.NOSQL, Category.BIGDATA }, headersClass = GoraAttribute.class,
+             headersNameProvider = "value")
 public class GoraEndpoint extends DefaultEndpoint {
 
     /**
@@ -39,7 +40,7 @@ public class GoraEndpoint extends DefaultEndpoint {
     private final DataStore<Object, Persistent> dataStore;
 
     /**
-     * Camel-Gora Endpoint Configuratopn
+     * Camel-Gora Endpoint Configuration
      */
     @UriParam
     private GoraConfiguration configuration;
