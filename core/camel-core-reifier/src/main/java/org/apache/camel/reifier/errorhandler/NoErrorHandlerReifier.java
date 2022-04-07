@@ -23,11 +23,9 @@ import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.processor.errorhandler.NoErrorHandler;
 import org.apache.camel.spi.ErrorHandler;
 
-public class NewNoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerDefinition> {
+public class NoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerDefinition> {
 
-    // TODO: Rename when working
-
-    public NewNoErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
+    public NoErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
         super(route, (NoErrorHandlerDefinition) definition);
     }
 

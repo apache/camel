@@ -25,7 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.reifier.errorhandler.NewDefaultErrorHandlerReifier;
+import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
 import org.apache.camel.spi.ErrorHandler;
 import org.junit.jupiter.api.Test;
 
@@ -81,7 +81,7 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
 
     private static void addExceptionPolicy(
             ErrorHandlerSupport handlerSupport, Route route, OnExceptionDefinition exceptionType) {
-        new NewDefaultErrorHandlerReifier(route, null).addExceptionPolicy(handlerSupport, exceptionType);
+        new DefaultErrorHandlerReifier(route, null).addExceptionPolicy(handlerSupport, exceptionType);
     }
 
     private static String getExceptionPolicyFor(ErrorHandlerSupport support, Throwable childException, int index) {

@@ -104,13 +104,13 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         //        }
 
         if (definition instanceof DeadLetterChannelDefinition) {
-            return new NewDeadLetterChannelReifier(route, (DeadLetterChannelDefinition) definition);
+            return new DeadLetterChannelReifier(route, (DeadLetterChannelDefinition) definition);
         } else if (definition instanceof DefaultErrorHandlerDefinition) {
-            return new NewDefaultErrorHandlerReifier(route, (DefaultErrorHandlerDefinition) definition);
+            return new DefaultErrorHandlerReifier(route, (DefaultErrorHandlerDefinition) definition);
         } else if (definition instanceof NoErrorHandlerDefinition) {
-            return new NewNoErrorHandlerReifier(route, definition);
+            return new NoErrorHandlerReifier(route, definition);
         } else if (definition instanceof ErrorHandlerRefDefinition) {
-            return new NewErrorHandlerRefReifier(route, definition);
+            return new ErrorHandlerRefReifier(route, definition);
         }
 
         return null;

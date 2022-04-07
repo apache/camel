@@ -24,11 +24,9 @@ import org.apache.camel.model.errorhandler.ErrorHandlerHelper;
 import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
 import org.apache.camel.util.ObjectHelper;
 
-public class NewErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerRefDefinition> {
+public class ErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerRefDefinition> {
 
-    // TODO: Rename when working
-
-    public NewErrorHandlerRefReifier(Route route, ErrorHandlerFactory definition) {
+    public ErrorHandlerRefReifier(Route route, ErrorHandlerFactory definition) {
         super(route, (ErrorHandlerRefDefinition) definition);
     }
 

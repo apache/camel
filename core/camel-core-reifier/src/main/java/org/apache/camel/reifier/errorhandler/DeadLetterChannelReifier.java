@@ -26,37 +26,42 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
-import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
+import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.LoggerFactory;
 
-public class NewDefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultErrorHandlerDefinition> {
+public class DeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChannelDefinition> {
 
-    // TODO: Rename when working
-
-    public NewDefaultErrorHandlerReifier(Route route, DefaultErrorHandlerDefinition definition) {
+    public DeadLetterChannelReifier(Route route, DeadLetterChannelDefinition definition) {
         super(route, definition);
     }
 
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
-        // optimize to use shared default instance if using out of the box settings
+        ObjectHelper.notNull(definition.getDeadLetterUri(), "deadLetterUri", this);
 
+        // optimize to use shared default instance if using out of the box settings
         RedeliveryPolicy redeliveryPolicy = resolveRedeliveryPolicy(definition, camelContext);
         CamelLogger logger = resolveLogger(definition, camelContext);
 
-        DefaultErrorHandler answer = new DefaultErrorHandler(
+        Processor deadLetterProcessor = createDeadLetterChannelProcessor(definition.getDeadLetterUri());
+
+        DeadLetterChannel answer = new DeadLetterChannel(
                 camelContext, processor, logger,
                 getProcessor(definition.getOnRedeliveryProcessor(), definition.getOnRedeliveryRef()),
-                redeliveryPolicy,
-                getPredicate(definition.getRetryWhilePredicate(), definition.getRetryWhileRef()),
+                redeliveryPolicy, deadLetterProcessor,
+                definition.getDeadLetterUri(),
+                parseBoolean(definition.getDeadLetterHandleNewException(), true),
+                parseBoolean(definition.getUseOriginalMessage(), false),
+                parseBoolean(definition.getUseOriginalBody(), false),
+                resolveRetryWhilePolicy(definition, camelContext),
                 getExecutorService(definition.getExecutorServiceBean(), definition.getExecutorServiceRef()),
                 getProcessor(definition.getOnPrepareFailureProcessor(), definition.getOnPrepareFailureRef()),
                 getProcessor(definition.getOnExceptionOccurredProcessor(), definition.getOnExceptionOccurredRef()));
@@ -78,13 +83,13 @@ public class NewDefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultEr
         return answer;
     }
 
-    private CamelLogger resolveLogger(DefaultErrorHandlerDefinition definition, CamelContext camelContext) {
+    private CamelLogger resolveLogger(DeadLetterChannelDefinition definition, CamelContext camelContext) {
         CamelLogger answer = definition.getLoggerBean();
         if (answer == null && definition.getLoggerRef() != null) {
             answer = mandatoryLookup(definition.getLoggerRef(), CamelLogger.class);
         }
         if (answer == null) {
-            answer = new CamelLogger(LoggerFactory.getLogger(DefaultErrorHandler.class), LoggingLevel.ERROR);
+            answer = new CamelLogger(LoggerFactory.getLogger(DeadLetterChannel.class), LoggingLevel.ERROR);
         }
         if (definition.getLevel() != null) {
             answer.setLevel(definition.getLevel());
@@ -101,9 +106,13 @@ public class NewDefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultEr
         return new FatalFallbackErrorHandler(child, true);
     }
 
-    private RedeliveryPolicy resolveRedeliveryPolicy(DefaultErrorHandlerDefinition definition, CamelContext camelContext) {
+    private RedeliveryPolicy resolveRedeliveryPolicy(DeadLetterChannelDefinition definition, CamelContext camelContext) {
         RedeliveryPolicy answer = null;
         RedeliveryPolicyDefinition def = definition.getRedeliveryPolicy();
+        if (def == null && definition.getRedeliveryPolicyRef() != null) {
+            // ref may point to a definition
+            def = lookupByNameAndType(definition.getRedeliveryPolicyRef(), RedeliveryPolicyDefinition.class);
+        }
         if (def != null) {
             answer = ErrorHandlerReifier.createRedeliveryPolicy(def, camelContext, null);
         }
