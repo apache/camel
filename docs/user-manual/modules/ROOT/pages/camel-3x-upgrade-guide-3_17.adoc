@@ -76,6 +76,11 @@ has defined error handling as `<bean>` in Spring or Blueprint XML files:
 
 Users who has been configured error handling using `<errorHandler>` in Spring or Blueprint XML files should not be affected.
 
+=== camel-jta
+
+The class `org.apache.canel.jta.JtaTransactionErrorHandlerBuilder` has been removed, as the JTA error handler builder
+can be used with the `jtaTransactionErrorHandler` from `camel-core-model`.
+
 === camel-kafka
 
 The option `autoCommitOnStop` was removed from the Camel Kafka component. When using `autoCommitEnable` (which is enabled by default) the Kafka consumer will automatically commit on close.
