@@ -77,25 +77,30 @@ public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<Transact
     private TransactionTemplate resolveTransactionTemplate(
             TransactionErrorHandlerDefinition definition, CamelContext camelContext) {
 
-        String ref = definition.getTransactionTemplateRef();
-        if (ref != null) {
-            return mandatoryLookup(ref, TransactionTemplate.class);
-        }
-
-        // lookup in context if no transaction template has been configured
-        LOG.debug("No TransactionTemplate configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
-
         TransactionTemplate answer = null;
-        Map<String, TransactedPolicy> mapPolicy = findByTypeWithName(TransactedPolicy.class);
-        if (mapPolicy != null && mapPolicy.size() == 1) {
-            TransactedPolicy policy = mapPolicy.values().iterator().next();
+
+        TransactedPolicy policy = (TransactedPolicy) definition.getTransactedPolicy();
+        if (policy == null && definition.getTransactedPolicyRef() != null) {
+            policy = mandatoryLookup(definition.getTransactedPolicyRef(), TransactedPolicy.class);
+        }
+        if (policy != null) {
             if (policy instanceof SpringTransactionPolicy) {
                 answer = ((SpringTransactionPolicy) policy).getTransactionTemplate();
             }
         }
 
         if (answer == null) {
-            TransactedPolicy policy = lookupByNameAndType(PROPAGATION_REQUIRED, TransactedPolicy.class);
+            Map<String, TransactedPolicy> mapPolicy = findByTypeWithName(TransactedPolicy.class);
+            if (mapPolicy != null && mapPolicy.size() == 1) {
+                policy = mapPolicy.values().iterator().next();
+                if (policy instanceof SpringTransactionPolicy) {
+                    answer = ((SpringTransactionPolicy) policy).getTransactionTemplate();
+                }
+            }
+        }
+
+        if (answer == null) {
+            policy = lookupByNameAndType(PROPAGATION_REQUIRED, TransactedPolicy.class);
             if (policy instanceof SpringTransactionPolicy) {
                 answer = ((SpringTransactionPolicy) policy).getTransactionTemplate();
             }

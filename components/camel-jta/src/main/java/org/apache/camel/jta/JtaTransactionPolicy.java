@@ -16,16 +16,17 @@
  */
 package org.apache.camel.jta;
 
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.errorhandler.ErrorHandlerHelper;
+import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
+import org.apache.camel.model.errorhandler.TransactionErrorHandlerDefinition;
 import org.apache.camel.spi.TransactedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Sets a proper error handler. This class is based on org.apache.camel.spring.spi.SpringTransactionPolicy.
  * <p>
- * This class requires the resource {@link TransactionManager} to be available through JNDI url
+ * This class requires the resource TransactionManager to be available through JNDI url
  * &quot;java:/TransactionManager&quot;
  */
 public abstract class JtaTransactionPolicy implements TransactedPolicy {
@@ -69,39 +70,39 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
 
         // find the existing error handler builder
         RouteDefinition routeDefinition = (RouteDefinition) route.getRoute();
-        ErrorHandlerBuilder builder = (ErrorHandlerBuilder) routeDefinition.getErrorHandlerFactory();
+        ErrorHandlerFactory builder = routeDefinition.getErrorHandlerFactory();
 
         // check if its a ref if so then do a lookup
-        if (builder instanceof ErrorHandlerBuilderRef) {
+        if (builder instanceof ErrorHandlerRefDefinition) {
             // its a reference to a error handler so lookup the reference
-            ErrorHandlerBuilderRef builderRef = (ErrorHandlerBuilderRef) builder;
+            ErrorHandlerRefDefinition builderRef = (ErrorHandlerRefDefinition) builder;
             String ref = builderRef.getRef();
             // only lookup if there was explicit an error handler builder configured
             // otherwise its just the "default" that has not explicit been configured
             // and if so then we can safely replace that with our transacted error handler
             if (ErrorHandlerHelper.isErrorHandlerFactoryConfigured(ref)) {
                 LOG.debug("Looking up ErrorHandlerBuilder with ref: {}", ref);
-                builder = (ErrorHandlerBuilder) ErrorHandlerHelper.lookupErrorHandlerFactory(route, ref, true);
+                builder = ErrorHandlerHelper.lookupErrorHandlerFactory(route, ref, true);
             }
         }
 
-        JtaTransactionErrorHandlerBuilder txBuilder;
+        TransactionErrorHandlerDefinition txBuilder;
         if (builder != null && builder.supportTransacted()) {
-            if (!(builder instanceof JtaTransactionErrorHandlerBuilder)) {
+            if (!(builder instanceof TransactionErrorHandlerDefinition)) {
                 throw new RuntimeCamelException(
                         "The given transactional error handler builder '" + builder
-                                                + "' is not of type '" + JtaTransactionErrorHandlerBuilder.class.getName()
+                                                + "' is not of type '" + TransactionErrorHandlerDefinition.class.getName()
                                                 + "' which is required in this environment!");
             }
             LOG.debug("The ErrorHandlerBuilder configured is a JtaTransactionErrorHandlerBuilder: {}", builder);
-            txBuilder = (JtaTransactionErrorHandlerBuilder) builder.cloneBuilder();
+            txBuilder = (TransactionErrorHandlerDefinition) builder.cloneBuilder();
         } else {
             LOG.debug(
                     "No or no transactional ErrorHandlerBuilder configured, will use default JtaTransactionErrorHandlerBuilder settings");
-            txBuilder = new JtaTransactionErrorHandlerBuilder();
+            txBuilder = new TransactionErrorHandlerDefinition();
         }
 
-        txBuilder.setTransactionPolicy(this);
+        txBuilder.setTransactedPolicy(this);
 
         // use error handlers from the configured builder
         if (builder != null) {
@@ -119,7 +120,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
 
     protected JtaTransactionErrorHandler createTransactionErrorHandler(
             Route route, Processor processor,
-            ErrorHandlerBuilder builder) {
+            ErrorHandlerFactory builder) {
         JtaTransactionErrorHandler answer;
         try {
             ModelCamelContext mcc = route.getCamelContext().adapt(ModelCamelContext.class);

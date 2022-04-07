@@ -148,6 +148,10 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         this.template = template;
     }
 
+    public TransactionTemplate getTemplate() {
+        return template;
+    }
+
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }

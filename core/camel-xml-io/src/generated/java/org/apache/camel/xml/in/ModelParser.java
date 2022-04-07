@@ -2591,9 +2591,7 @@ public class ModelParser extends BaseParser {
         return doParse(new TransactionErrorHandlerDefinition(), (def, key, val) -> {
             switch (key) {
                 case "rollbackLoggingLevel": def.setRollbackLoggingLevel(val); break;
-                case "transactedPolicy": def.setTransactedPolicy(val); break;
-                case "transactionManagerRef": def.setTransactionManagerRef(val); break;
-                case "transactionTemplateRef": def.setTransactionTemplateRef(val); break;
+                case "transactedPolicyRef": def.setTransactedPolicyRef(val); break;
                 default: return defaultErrorHandlerDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;

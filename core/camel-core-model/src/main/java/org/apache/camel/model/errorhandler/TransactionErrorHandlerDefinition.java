@@ -20,8 +20,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -32,15 +34,12 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefinition {
 
+    @XmlTransient
+    private Object transactedPolicy;
+
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.spi.TransactedPolicy")
-    private String transactedPolicy;
-    @XmlAttribute
-    @Metadata(label = "advanced")
-    private String transactionTemplateRef;
-    @XmlAttribute
-    @Metadata(label = "advanced")
-    private String transactionManagerRef;
+    private String transactedPolicyRef;
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String rollbackLoggingLevel;
@@ -58,46 +57,32 @@ public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefini
     }
 
     protected void cloneBuilder(TransactionErrorHandlerDefinition other) {
-        other.setTransactedPolicy(getTransactedPolicy());
-        other.setTransactionManagerRef(getTransactionManagerRef());
-        other.setTransactionTemplateRef(getTransactionTemplateRef());
+        other.setTransactedPolicyRef(getTransactedPolicyRef());
         other.setRollbackLoggingLevel(getRollbackLoggingLevel());
         super.cloneBuilder(other);
     }
 
-    public String getTransactedPolicy() {
+    public Object getTransactedPolicy() {
         return transactedPolicy;
     }
 
     /**
      * The transacted policy to use that is configured for either Spring or JTA based transactions.
      */
-    public void setTransactedPolicy(String transactedPolicy) {
+    public void setTransactedPolicy(Object transactedPolicy) {
         this.transactedPolicy = transactedPolicy;
     }
 
-    public String getTransactionTemplateRef() {
-        return transactionTemplateRef;
+    public String getTransactedPolicyRef() {
+        return transactedPolicyRef;
     }
 
     /**
-     * References to the spring transaction template (org.springframework.transaction.support.TransactionTemplate) to
-     * use.
+     * The transacted policy to use that is configured for either Spring or JTA based transactions. If no policy has
+     * been configured then Camel will attempt to auto-discover.
      */
-    public void setTransactionTemplateRef(String transactionTemplateRef) {
-        this.transactionTemplateRef = transactionTemplateRef;
-    }
-
-    public String getTransactionManagerRef() {
-        return transactionManagerRef;
-    }
-
-    /**
-     * References to the spring platform transaction manager
-     * (org.springframework.transaction.PlatformTransactionManager) to use.
-     */
-    public void setTransactionManagerRef(String transactionManagerRef) {
-        this.transactionManagerRef = transactionManagerRef;
+    public void setTransactedPolicyRef(String transactedPolicyRef) {
+        this.transactedPolicyRef = transactedPolicyRef;
     }
 
     public String getRollbackLoggingLevel() {
@@ -114,38 +99,38 @@ public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefini
     }
 
     /**
-     * References to the spring transaction template (org.springframework.transaction.support.TransactionTemplate) to
-     * use.
+     * The transacted policy to use that is configured for either Spring or JTA based transactions.
      */
-    public TransactionErrorHandlerDefinition transactedPolicy(String transactedPolicy) {
+    public TransactionErrorHandlerDefinition transactedPolicy(Object transactedPolicy) {
         setTransactedPolicy(transactedPolicy);
         return this;
     }
 
     /**
-     * References to the spring transaction template (org.springframework.transaction.support.TransactionTemplate) to
-     * use.
+     * References to the transacted policy to use that is configured for either Spring or JTA based transactions.
      */
-    public TransactionErrorHandlerDefinition transactionTemplate(String transactionTemplateRef) {
-        setTransactionTemplateRef(transactionTemplateRef);
+    public TransactionErrorHandlerDefinition transactedPolicyRef(String transactedPolicyRef) {
+        setTransactedPolicyRef(transactedPolicyRef);
         return this;
     }
 
     /**
-     * References to the spring platform transaction manager
-     * (org.springframework.transaction.PlatformTransactionManager) to use.
-     */
-    public TransactionErrorHandlerDefinition transactionManager(String transactionManagerRef) {
-        setTransactionManagerRef(transactionManagerRef);
-        return this;
-    }
-
-    /**
-     * References to the spring transaction template (org.springframework.transaction.support.TransactionTemplate) to
-     * use.
+     * Sets the logging level to use for logging transactional rollback.
+     * <p/>
+     * This option is default WARN.
      */
     public TransactionErrorHandlerDefinition rollbackLoggingLevel(String rollbackLoggingLevel) {
         setRollbackLoggingLevel(rollbackLoggingLevel);
+        return this;
+    }
+
+    /**
+     * Sets the logging level to use for logging transactional rollback.
+     * <p/>
+     * This option is default WARN.
+     */
+    public TransactionErrorHandlerDefinition rollbackLoggingLevel(LoggingLevel rollbackLoggingLevel) {
+        setRollbackLoggingLevel(rollbackLoggingLevel.name());
         return this;
     }
 
