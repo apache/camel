@@ -103,11 +103,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.DataFormatsDefinition": return new ModelDeserializers.DataFormatsDefinitionDeserializer();
             case "datasonnet": return new ModelDeserializers.DatasonnetExpressionDeserializer();
             case "org.apache.camel.model.language.DatasonnetExpression": return new ModelDeserializers.DatasonnetExpressionDeserializer();
-            case "org.apache.camel.builder.DeadLetterChannelBuilder": return new ModelDeserializers.DeadLetterChannelBuilderDeserializer();
             case "dead-letter-channel": return new ModelDeserializers.DeadLetterChannelDefinitionDeserializer();
             case "deadLetterChannel": return new ModelDeserializers.DeadLetterChannelDefinitionDeserializer();
             case "org.apache.camel.model.errorhandler.DeadLetterChannelDefinition": return new ModelDeserializers.DeadLetterChannelDefinitionDeserializer();
-            case "org.apache.camel.builder.DefaultErrorHandlerBuilder": return new ModelDeserializers.DefaultErrorHandlerBuilderDeserializer();
             case "default-error-handler": return new ModelDeserializers.DefaultErrorHandlerDefinitionDeserializer();
             case "defaultErrorHandler": return new ModelDeserializers.DefaultErrorHandlerDefinitionDeserializer();
             case "org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition": return new ModelDeserializers.DefaultErrorHandlerDefinitionDeserializer();
@@ -130,7 +128,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.validator.EndpointValidatorDefinition": return new ModelDeserializers.EndpointValidatorDefinitionDeserializer();
             case "enrich": return new ModelDeserializers.EnrichDefinitionDeserializer();
             case "org.apache.camel.model.EnrichDefinition": return new ModelDeserializers.EnrichDefinitionDeserializer();
-            case "org.apache.camel.builder.ErrorHandlerBuilderRef": return new ModelDeserializers.ErrorHandlerBuilderRefDeserializer();
             case "error-handler": return new ModelDeserializers.ErrorHandlerDefinitionDeserializer();
             case "errorHandler": return new ModelDeserializers.ErrorHandlerDefinitionDeserializer();
             case "org.apache.camel.model.ErrorHandlerDefinition": return new ModelDeserializers.ErrorHandlerDefinitionDeserializer();
@@ -254,7 +251,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.rest.MutualTLSDefinition": return new ModelDeserializers.MutualTLSDefinitionDeserializer();
             case "mvel": return new ModelDeserializers.MvelExpressionDeserializer();
             case "org.apache.camel.model.language.MvelExpression": return new ModelDeserializers.MvelExpressionDeserializer();
-            case "org.apache.camel.builder.NoErrorHandlerBuilder": return new ModelDeserializers.NoErrorHandlerBuilderDeserializer();
             case "no-error-handler": return new ModelDeserializers.NoErrorHandlerDefinitionDeserializer();
             case "noErrorHandler": return new ModelDeserializers.NoErrorHandlerDefinitionDeserializer();
             case "org.apache.camel.model.errorhandler.NoErrorHandlerDefinition": return new ModelDeserializers.NoErrorHandlerDefinitionDeserializer();
