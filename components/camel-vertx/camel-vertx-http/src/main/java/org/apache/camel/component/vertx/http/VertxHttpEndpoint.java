@@ -36,7 +36,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 @UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-http", title = "Vert.x HTTP Client", syntax = "vertx-http:httpUri",
-             category = { Category.HTTP }, producerOnly = true, lenientProperties = true)
+             category = { Category.HTTP }, producerOnly = true, lenientProperties = true,
+             headersClass = VertxHttpConstants.class)
 public class VertxHttpEndpoint extends DefaultEndpoint {
 
     @UriParam

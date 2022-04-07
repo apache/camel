@@ -34,19 +34,19 @@ cluster.
 image::camel_spark_cluster.png[image]
 
 While Spark component is primary designed to work as a _long running
-job_ serving as an bridge between Spark cluster and the other endpoints,
+job_ serving as a bridge between Spark cluster and the other endpoints,
 you can also use it as a _fire-once_ short job.   
 
 == Running Spark in OSGi servers
 
-Currently the Spark component doesn't support execution in the OSGi
+Currently, the Spark component doesn't support execution in the OSGi
 container. Spark has been designed to be executed as a fat jar, usually
 submitted as a job to a cluster. For those reasons running Spark in an
 OSGi server is at least challenging and is not support by Camel as well.
 
 == URI format
 
-Currently the Spark component supports only producers - it is intended
+Currently, the Spark component supports only producers - it is intended
 to invoke a Spark job and return results. You can call RDD, data frame
 or Hive SQL job.
 
@@ -55,8 +55,6 @@ or Hive SQL job.
 --------------------------
 spark:{rdd|dataframe|hive}
 --------------------------
-
-
 
 // component-configure options: START
 
@@ -70,7 +68,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == RDD jobs
 

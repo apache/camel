@@ -64,6 +64,7 @@ public class BeanInfo {
     private static final String CGLIB_CLASS_SEPARATOR = "$$";
     private static final String CGLIB_METHOD_MARKER = "CGLIB$";
     private static final String BYTE_BUDDY_METHOD_MARKER = "$accessor$";
+    private static final String CLIENT_PROXY_SUFFIX = "_ClientProxy";
     private static final String[] EXCLUDED_METHOD_NAMES = new String[] {
             "clone", "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "wait", // java.lang.Object
             "getInvocationHandler", "getProxyClass", "isProxyClass", "newProxyInstance" // java.lang.Proxy
@@ -1138,7 +1139,8 @@ public class BeanInfo {
     }
 
     private static Class<?> getTargetClass(Class<?> clazz) {
-        if (clazz != null && clazz.getName().contains(CGLIB_CLASS_SEPARATOR)) {
+        if (clazz != null
+                && (clazz.getName().contains(CGLIB_CLASS_SEPARATOR) || clazz.getName().endsWith(CLIENT_PROXY_SUFFIX))) {
             Class<?> superClass = clazz.getSuperclass();
             if (superClass != null && !Object.class.equals(superClass)) {
                 return superClass;

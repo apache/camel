@@ -25,12 +25,12 @@ public final class SomeConstants {
               defaultValue = "VAL1", deprecationNote = "my deprecated note", secret = true)
     public static final String KEY_FULL = "KEY_FULL";
     @Metadata
-    static final String KEY_EMPTY = "KEY_EMPTY";
+    public static final String KEY_EMPTY = "KEY_EMPTY";
     /**
      * Some description
      */
     @Metadata
-    static final String KEY_EMPTY_WITH_JAVA_DOC = "KEY_EMPTY_WITH_JAVA_DOC";
+    public static final String KEY_EMPTY_WITH_JAVA_DOC = "KEY_EMPTY_WITH_JAVA_DOC";
 
     private SomeConstants() {
     }

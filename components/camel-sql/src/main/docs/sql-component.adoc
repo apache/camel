@@ -120,7 +120,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Treatment of the message body
 
@@ -194,42 +196,6 @@ from("direct:withSplitModel")
             .to("mock:result")
         .end();
 ----
-
-[[sql-component-header-values]]
-== Header values
-
-When performing `update` operations, the SQL Component stores the update
-count in the following message headers:
-
-[cols="1,3"]
-|===
-|Header |Description
-
-|`CamelSqlUpdateCount` |The number of rows updated for `update` operations, returned as an
-`Integer` object. This header is not provided when using
-outputType=StreamList.
-
-|`CamelSqlRowCount` |The number of rows returned for `select` operations, returned as an
-`Integer` object. This header is not provided when using
-outputType=StreamList.
-
-|`CamelSqlQuery` |Query to execute. This query takes precedence over the
-query specified in the endpoint URI. Note that query parameters in the
-header _are_ represented by a `?` instead of a `pass:[#]` symbol
-|===
-
-When performing `insert` operations, the SQL Component stores the rows
-with the generated keys and number of these rows in the following
-message headers:
-
-[cols="1,3"]
-|===
-|Header |Description
-
-|CamelSqlGeneratedKeysRowCount |The number of rows in the header that contains generated keys.
-
-|CamelSqlGeneratedKeyRows |Rows that contains the generated keys (a list of maps of keys).
-|===
 
 == Generated keys
 

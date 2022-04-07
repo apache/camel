@@ -93,4 +93,28 @@ Asynchronous, Synchronous or NO-OP commit policies from the former `autoCommitOn
 * Async can be set using `kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory`
 * Sync can be set using `kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory`
 
+=== camel-cdi
 
+The support for the Camel XML configuration import, that had been marked as deprecated in previous releases, was removed.
+
+=== Deprecated Components
+
+The following components that had been marked as deprecated, were removed in this release:
+
+* camel-atomix
+* camel-beanstalk
+* camel-beanio
+* camel-etcd 
+* camel-elsql 
+* camel-ganglia 
+* camel-nsq 
+* camel-hystrix 
+* camel-jing 
+* camel-leveldb-legacy 
+* camel-msv 
+* camel-nagios 
+* camel-ribbon 
+* camel-sip 
+* camel-soroush 
+* camel-tagsoup 
+* camel-yammer

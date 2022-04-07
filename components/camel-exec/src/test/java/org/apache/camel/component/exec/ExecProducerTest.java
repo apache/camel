@@ -36,11 +36,13 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXECUTABLE;
+import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXIT_VALUES;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_TIMEOUT;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_WORKING_DIR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test the functionality of {@link ExecProducer}
@@ -110,6 +112,32 @@ public class ExecProducerTest {
             }
         });
         assertEquals(1000, execCommandExecutorMock.lastCommandResult.getCommand().getTimeout());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testExitValues() {
+        producerTemplate.send(new Processor() {
+
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("noinput");
+                exchange.getIn().setHeader(EXEC_COMMAND_EXIT_VALUES, "0,1");
+            }
+        });
+        assertTrue(execCommandExecutorMock.lastCommandResult.getCommand().getExitValues().contains(1));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testExitValueNone() {
+        producerTemplate.send(new Processor() {
+
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("noinput");
+                exchange.getIn().setHeader(EXEC_COMMAND_EXIT_VALUES, "");
+            }
+        });
+        assertEquals(0, execCommandExecutorMock.lastCommandResult.getCommand().getExitValues().size());
     }
 
     @Test

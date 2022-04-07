@@ -241,9 +241,9 @@ public interface XsltSaxonEndpointBuilderFactory {
          * string, bytes, DOM, file. The first three options are all in memory
          * based, where as file is streamed directly to a java.io.File. For file
          * you must specify the filename in the IN header with the key
-         * Exchange.XSLT_FILE_NAME which is also CamelXsltFileName. Also any
-         * paths leading to the filename must be created beforehand, otherwise
-         * an exception is thrown at runtime.
+         * XsltConstants.XSLT_FILE_NAME which is also CamelXsltFileName. Also
+         * any paths leading to the filename must be created beforehand,
+         * otherwise an exception is thrown at runtime.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.xslt.XsltOutput&lt;/code&gt;
@@ -265,9 +265,9 @@ public interface XsltSaxonEndpointBuilderFactory {
          * string, bytes, DOM, file. The first three options are all in memory
          * based, where as file is streamed directly to a java.io.File. For file
          * you must specify the filename in the IN header with the key
-         * Exchange.XSLT_FILE_NAME which is also CamelXsltFileName. Also any
-         * paths leading to the filename must be created beforehand, otherwise
-         * an exception is thrown at runtime.
+         * XsltConstants.XSLT_FILE_NAME which is also CamelXsltFileName. Also
+         * any paths leading to the filename must be created beforehand,
+         * otherwise an exception is thrown at runtime.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.xslt.XsltOutput&lt;/code&gt;

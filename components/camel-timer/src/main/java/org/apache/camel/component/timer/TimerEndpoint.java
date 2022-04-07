@@ -41,7 +41,7 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @ManagedResource(description = "Managed TimerEndpoint")
 @UriEndpoint(firstVersion = "1.0.0", scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true,
-             category = { Category.CORE, Category.SCHEDULING })
+             category = { Category.CORE, Category.SCHEDULING }, headersClass = TimerConstants.class)
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath
     @Metadata(required = true)

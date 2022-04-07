@@ -39,7 +39,7 @@ include::partial$eip-options.adoc[]
 
 == Using Service Call
 
-The service to call is looked up in a service registry of some sorts such as Kubernetes, Consul, Etcd, Zookeeper, DNS.
+The service to call is looked up in a service registry of some sorts such as Kubernetes, Consul, Zookeeper, DNS.
 The EIP separates the configuration of the service registry from the calling of the service.
 
 When calling a service you may just refer to the name of the service in the EIP as shown below:
@@ -269,61 +269,6 @@ And in XML:
     <from uri="direct:start"/>
     <serviceCall name="foo">
       <dnsServiceDiscovery domain="my.domain.com"/>
-    </serviceCall>
-    <to uri="mock:result"/>
-  </route>
-</camelContext>
-----
-
-=== Etcd Service Discovery
-
-To leverage Etcd for Service Discovery, maven users will need to add the following dependency to their pom.xml
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-etcd</artifactId>
-    <!-- use the same version as your Camel core version -->
-    <version>x.y.z</version>
-</dependency>
-----
-
-Available options:
-
-[width="100%",cols="3,1m,6",options="header"]
-|===
-| Name | Java Type | Description
-| uris | String | The URIs the client can connect to
-| userName | String | The user name to use for basic authentication
-| password | String | The password to use for basic authentication
-| timeout | Long | To set the maximum time an action could take to complete
-| servicePath | String | The path to look for service discovery, default "/services"
-| type | String | To set the discovery type, valid values are "on-demand" and "watch"
-|===
-
-Example in Java:
-
-[source,java]
-----
-from("direct:start")
-    .serviceCall("foo")
-        .etcdServiceDiscovery()
-            .uris("http://etcd1:4001,http://etcd2:4001")
-            .servicePath("/camel/services")
-            .end()
-    .to("mock:result");
-----
-
-And in XML:
-
-[source,xml]
-----
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="direct:start"/>
-    <serviceCall name="foo">
-      <etcdServiceDiscovery uris="http://etcd1:4001,http://etcd2:4001" servicePath="/camel/services"/>
     </serviceCall>
     <to uri="mock:result"/>
   </route>

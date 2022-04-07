@@ -16,8 +16,14 @@
  */
 package org.apache.camel.component.splunkhec;
 
+import org.apache.camel.spi.Metadata;
+
 public interface SplunkHECConstants {
 
+    @Metadata(description = "Epoch-formatted time.\n" +
+                            "Specify with the time query string parameter. Sets a default for all events in the request.\n" +
+                            "The default time can be overridden.",
+              javaType = "Long")
     String INDEX_TIME = "CamelSplunkHECIndexTime";
 
 }

@@ -32,13 +32,11 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -319,20 +317,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             getLog().debug(String.format("The endpoint %s has not defined any headers class", uriEndpoint.scheme()));
             return;
         }
-        // A header class has been defined
-        boolean foundHeader = false;
-        final Deque<Class<?>> classes = new ArrayDeque<>();
-        classes.add(headersClass);
-        Class<?> currentHeadersClass;
-        while ((currentHeadersClass = classes.poll()) != null) {
-            foundHeader |= addEndpointHeaders(componentModel, scheme, currentHeadersClass);
-            final Class<?> superclass = currentHeadersClass.getSuperclass();
-            if (superclass != null && !superclass.equals(Object.class)) {
-                classes.add(superclass);
-            }
-            classes.addAll(Arrays.asList(currentHeadersClass.getInterfaces()));
-        }
-        if (!foundHeader) {
+        if (!addEndpointHeaders(componentModel, scheme, headersClass, uriEndpoint.headersNameProvider())) {
             getLog().debug(String.format("No headers have been detected in the headers class %s", headersClass.getName()));
         }
     }
@@ -344,21 +329,24 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
      * <p/>
      * Only headers applicable for the given scheme are added.
      *
-     * @param  componentModel the component model to which the headers should be added.
-     * @param  scheme         the scheme for which we want to add the headers.
-     * @param  headersClass   the class from which we extract the headers.
-     * @return                {@code true} if at least one header has been added, {@code false} otherwise.
+     * @param  componentModel      the component model to which the headers should be added.
+     * @param  scheme              the scheme for which we want to add the headers.
+     * @param  headersClass        the class from which we extract the headers.
+     * @param  headersNameProvider the name of the field to get or the name of the method to invoke to get the name of
+     *                             the headers.
+     * @return                     {@code true} if at least one header has been added, {@code false} otherwise.
      */
-    private boolean addEndpointHeaders(ComponentModel componentModel, String scheme, Class<?> headersClass) {
+    private boolean addEndpointHeaders(
+            ComponentModel componentModel, String scheme, Class<?> headersClass, String headersNameProvider) {
         final boolean isEnum = headersClass.isEnum();
         boolean foundHeader = false;
-        for (Field field : headersClass.getDeclaredFields()) {
+        for (Field field : headersClass.getFields()) {
             if ((isEnum || isStatic(field.getModifiers()) && field.getType() == String.class)
                     && field.isAnnotationPresent(Metadata.class)) {
                 getLog().debug(
                         String.format("Trying to add the constant %s in the class %s as header.", field.getName(),
                                 headersClass.getName()));
-                if (addEndpointHeader(componentModel, field, scheme)) {
+                if (addEndpointHeader(componentModel, scheme, field, headersNameProvider)) {
                     foundHeader = true;
                     continue;
                 }
@@ -378,12 +366,14 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
      * <p/>
      * The header is only added if it is applicable for the given scheme.
      * 
-     * @param  componentModel the component to which the header should be added.
-     * @param  field          the field corresponding to the constant from which the metadata should be extracted.
-     * @param  scheme         the scheme for which we want to add the header.
-     * @return                {@code true} if the header has been added, {@code false} otherwise.
+     * @param  componentModel      the component to which the header should be added.
+     * @param  scheme              the scheme for which we want to add the header.
+     * @param  field               the field corresponding to the constant from which the metadata should be extracted.
+     * @param  headersNameProvider the name of the field to get or the name of the method to invoke to get the name of
+     *                             the headers.
+     * @return                     {@code true} if the header has been added, {@code false} otherwise.
      */
-    private boolean addEndpointHeader(ComponentModel componentModel, Field field, String scheme) {
+    private boolean addEndpointHeader(ComponentModel componentModel, String scheme, Field field, String headersNameProvider) {
         final Metadata metadata = field.getAnnotation(Metadata.class);
         if (metadata == null) {
             getLog().debug(String.format("The field %s in class %s has no Metadata", field.getName(),
@@ -419,16 +409,70 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             getLog().debug(String.format("The java type %s could not be found", header.getJavaType()), e);
         }
         try {
-            field.trySetAccessible();
-            // The name of the header is either the name of the field in case of an enum, otherwise it is the value
-            // of the field as we assume that it is a String constant
-            header.setName(field.getType().isEnum() ? field.getName() : (String) field.get(null));
+            header.setName(getHeaderName(field, headersNameProvider));
             componentModel.addEndpointHeader(header);
-        } catch (IllegalAccessException e) {
-            getLog().debug(String.format("The field %s in class %s cannot be accessed", field.getName(),
+        } catch (Exception e) {
+            getLog().debug(String.format("The name of the header corresponding to the field %s in class %s cannot be retrieved",
+                    field.getName(),
                     field.getDeclaringClass().getName()));
         }
         return true;
+    }
+
+    /**
+     * The name of the header is:
+     * <ul>
+     * <li>In case of an interface or a class: The value of the field as we assume that it is a {@code String}
+     * constant</li>
+     * <li>In case of an enum:
+     * <ul>
+     * <li>If headers name provider is set to a name of field: The value of this particular field for the corresponding
+     * enum constant</li>
+     * <li>If headers name provider is set to a name of method: The returned value of this particular method for the
+     * corresponding enum constant</li>
+     * <li>By default: The name of the enum constant</li>
+     * </ul>
+     * </li>
+     * </ul>
+     *
+     * @param  field               the field corresponding to the name of a header.
+     * @param  headersNameProvider the name of the field to get or the name of the method to invoke to get the name of
+     *                             the headers.
+     * @return                     the name of the header corresponding to the given field.
+     * @throws Exception           if an error occurred while getting the name of the header
+     */
+    private String getHeaderName(Field field, String headersNameProvider) throws Exception {
+        if (field.getType().isEnum()) {
+            if (!headersNameProvider.isEmpty()) {
+                final Class<?> declaringClass = field.getDeclaringClass();
+                final Optional<?> value = Arrays.stream(declaringClass.getEnumConstants())
+                        .filter(c -> ((Enum<?>) c).name().equals(field.getName()))
+                        .findAny();
+                if (value.isPresent()) {
+                    getLog().debug(String.format("The headers name provider has been set to %s", headersNameProvider));
+                    final Optional<Field> headersNameProviderField = Arrays.stream(declaringClass.getFields())
+                            .filter(f -> f.getName().equals(headersNameProvider))
+                            .findAny();
+                    if (headersNameProviderField.isPresent()) {
+                        getLog().debug("A field corresponding to the headers name provider has been found");
+                        return (String) headersNameProviderField.get().get(value.get());
+                    }
+                    getLog().debug(
+                            String.format("No field %s could be found in the class %s", headersNameProvider, declaringClass));
+                    final Optional<Method> headersNameProviderMethod = Arrays.stream(declaringClass.getMethods())
+                            .filter(m -> m.getName().equals(headersNameProvider) && m.getParameterCount() == 0)
+                            .findAny();
+                    if (headersNameProviderMethod.isPresent()) {
+                        getLog().debug("A method without parameters corresponding to the headers name provider has been found");
+                        return (String) headersNameProviderMethod.get().invoke(value.get());
+                    }
+                    getLog().debug(String.format("No method %s without parameters could be found in the class %s",
+                            headersNameProvider, declaringClass));
+                }
+            }
+            return field.getName();
+        }
+        return (String) field.get(null);
     }
 
     /**

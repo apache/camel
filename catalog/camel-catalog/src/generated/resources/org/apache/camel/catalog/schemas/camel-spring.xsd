@@ -414,14 +414,6 @@ Dead letter channel error handler.
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="etcdServiceDiscovery" type="tns:etcdServiceCallServiceDiscoveryConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-null
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
   <xs:element name="exchangeProperty" type="tns:exchangePropertyExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -12409,7 +12401,6 @@ properties are defined according to the specific service in use.
           <xs:choice minOccurs="0">
             <xs:element ref="tns:consulServiceDiscovery"/>
             <xs:element ref="tns:dnsServiceDiscovery"/>
-            <xs:element ref="tns:etcdServiceDiscovery"/>
             <xs:element ref="tns:kubernetesServiceDiscovery"/>
             <xs:element ref="tns:combinedServiceDiscovery"/>
             <xs:element ref="tns:staticServiceDiscovery"/>
@@ -12527,57 +12518,6 @@ The transport protocol of the desired service. Default value: _tcp
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 The domain name;.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="etcdServiceCallServiceDiscoveryConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceDiscoveryConfiguration">
-        <xs:sequence/>
-        <xs:attribute name="uris" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The URIs the client can connect to.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="userName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The user name to use for basic authentication.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="password" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The password to use for basic authentication.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="timeout" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To set the maximum time an action could take to complete.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="servicePath" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The path to look for for service discovery. Default value: /services/
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="type" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-To set the discovery type, valid values are on-demand and watch. Default value:
-on-demand
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -12746,7 +12686,6 @@ Default value: false
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:consulServiceDiscovery"/>
             <xs:element ref="tns:dnsServiceDiscovery"/>
-            <xs:element ref="tns:etcdServiceDiscovery"/>
             <xs:element ref="tns:kubernetesServiceDiscovery"/>
             <xs:element ref="tns:staticServiceDiscovery"/>
             <xs:element ref="tns:cachingServiceDiscovery"/>
@@ -12844,7 +12783,6 @@ Reference of a ServiceFilter.
             <xs:element ref="tns:combinedServiceDiscovery"/>
             <xs:element ref="tns:consulServiceDiscovery"/>
             <xs:element ref="tns:dnsServiceDiscovery"/>
-            <xs:element ref="tns:etcdServiceDiscovery"/>
             <xs:element ref="tns:kubernetesServiceDiscovery"/>
             <xs:element ref="tns:staticServiceDiscovery"/>
             <xs:element ref="tns:zookeeperServiceDiscovery"/>
@@ -13049,7 +12987,6 @@ ServiceCallConstants.SERVICE_PORT. Default value: CamelServiceCallServicePort
             <xs:element ref="tns:combinedServiceDiscovery"/>
             <xs:element ref="tns:consulServiceDiscovery"/>
             <xs:element ref="tns:dnsServiceDiscovery"/>
-            <xs:element ref="tns:etcdServiceDiscovery"/>
             <xs:element ref="tns:kubernetesServiceDiscovery"/>
             <xs:element ref="tns:staticServiceDiscovery"/>
             <xs:element ref="tns:zookeeperServiceDiscovery"/>

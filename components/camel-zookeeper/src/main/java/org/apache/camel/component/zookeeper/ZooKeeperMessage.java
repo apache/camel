@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.data.Stat;
@@ -32,20 +33,21 @@ import org.apache.zookeeper.data.Stat;
  */
 public class ZooKeeperMessage extends DefaultMessage {
 
+    @Metadata(description = "The node", javaType = "String")
     public static final String ZOOKEEPER_NODE = "CamelZooKeeperNode";
-
+    @Metadata(description = "The node version", javaType = "Integer", defaultValue = "-1")
     public static final String ZOOKEEPER_NODE_VERSION = "CamelZooKeeperVersion";
 
     public static final String ZOOKEEPER_ERROR_CODE = "CamelZooKeeperErrorCode";
-
+    @Metadata(description = "The ACL", javaType = "List<ACL>", defaultValue = "Ids.OPEN_ACL_UNSAFE")
     public static final String ZOOKEEPER_ACL = "CamelZookeeperAcl";
-
+    @Metadata(description = "The create mode", javaType = "org.apache.zookeeper.CreateMode or String")
     public static final String ZOOKEEPER_CREATE_MODE = "CamelZookeeperCreateMode";
-
+    @Metadata(description = "The statistics", javaType = "org.apache.zookeeper.data.Stat")
     public static final String ZOOKEEPER_STATISTICS = "CamelZookeeperStatistics";
-
+    @Metadata(description = "The event type", javaType = "org.apache.zookeeper.Watcher.Event.EventType")
     public static final String ZOOKEEPER_EVENT_TYPE = "CamelZookeeperEventType";
-
+    @Metadata(label = "producer", description = "The operation to perform", javaType = "String")
     public static final String ZOOKEEPER_OPERATION = "CamelZookeeperOperation";
 
     public ZooKeeperMessage(CamelContext camelContext) {

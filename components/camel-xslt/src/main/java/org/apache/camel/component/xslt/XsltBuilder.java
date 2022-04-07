@@ -95,7 +95,7 @@ public class XsltBuilder implements Processor {
 
         if (isDeleteOutputFile()) {
             // add on completion so we can delete the file when the Exchange is done
-            String fileName = ExchangeHelper.getMandatoryHeader(exchange, Exchange.XSLT_FILE_NAME, String.class);
+            String fileName = ExchangeHelper.getMandatoryHeader(exchange, XsltConstants.XSLT_FILE_NAME, String.class);
             exchange.adapt(ExtendedExchange.class).addOnCompletion(new XsltBuilderOnCompletion(fileName));
         }
 

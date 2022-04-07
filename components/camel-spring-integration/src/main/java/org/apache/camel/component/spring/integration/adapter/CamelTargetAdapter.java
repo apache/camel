@@ -21,13 +21,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.spring.integration.SpringIntegrationBinding;
+import org.apache.camel.component.spring.integration.SpringIntegrationConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.MessageHeaders;
 
 /**
  * CamelTargetAdapter will redirect the Spring Integration message to the Camel context. When we inject the camel
@@ -77,7 +77,8 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageH
             //Check the message header for the return address
             response = SpringIntegrationBinding.storeToSpringIntegrationMessage(outExchange.getOut());
             if (replyChannel == null) {
-                MessageChannel messageReplyChannel = (MessageChannel) message.getHeaders().get(MessageHeaders.REPLY_CHANNEL);
+                MessageChannel messageReplyChannel
+                        = (MessageChannel) message.getHeaders().get(SpringIntegrationConstants.REPLY_CHANNEL);
                 if (messageReplyChannel != null) {
                     result = messageReplyChannel.send(response);
                 } else {

@@ -49,9 +49,9 @@ public class NetWeaverProducer extends DefaultProducer {
         String command = ExchangeHelper.getMandatoryHeader(exchange, NetWeaverConstants.COMMAND, String.class);
 
         Exchange httpExchange = getEndpoint().createExchange();
-        httpExchange.getIn().setHeader(Exchange.HTTP_PATH, command);
+        httpExchange.getIn().setHeader(NetWeaverConstants.HTTP_PATH, command);
         if (getEndpoint().isJson()) {
-            httpExchange.getIn().setHeader("Accept", "application/json");
+            httpExchange.getIn().setHeader(NetWeaverConstants.ACCEPT, "application/json");
         }
 
         LOG.debug("Calling SAP Net-Weaver {} with command {}", http, command);

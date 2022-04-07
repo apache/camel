@@ -106,7 +106,6 @@ import org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfigurati
 import org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration;
 import org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration;
-import org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration;
@@ -1512,7 +1511,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "combined-service-discovery", type = "object:org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration"),
                     @YamlProperty(name = "consul-service-discovery", type = "object:org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration"),
                     @YamlProperty(name = "dns-service-discovery", type = "object:org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration"),
-                    @YamlProperty(name = "etcd-service-discovery", type = "object:org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "kubernetes-service-discovery", type = "object:org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration"),
                     @YamlProperty(name = "properties", type = "array:org.apache.camel.model.PropertyDefinition"),
@@ -1557,11 +1555,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "dns-service-discovery": {
                     org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration val = asType(node, org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration.class);
-                    target.setServiceDiscoveryConfiguration(val);
-                    break;
-                }
-                case "etcd-service-discovery": {
-                    org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration val = asType(node, org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration.class);
                     target.setServiceDiscoveryConfiguration(val);
                     break;
                 }
@@ -1905,7 +1898,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "caching-service-discovery", type = "object:org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration"),
                     @YamlProperty(name = "consul-service-discovery", type = "object:org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration"),
                     @YamlProperty(name = "dns-service-discovery", type = "object:org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration"),
-                    @YamlProperty(name = "etcd-service-discovery", type = "object:org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "kubernetes-service-discovery", type = "object:org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration"),
                     @YamlProperty(name = "properties", type = "array:org.apache.camel.model.PropertyDefinition"),
@@ -1953,16 +1945,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "dns-service-discovery": {
                     org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration val = asType(node, org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration.class);
-                    java.util.List<org.apache.camel.model.cloud.ServiceCallServiceDiscoveryConfiguration> existing = target.getServiceDiscoveryConfigurations();
-                    if (existing == null) {
-                        existing = new java.util.ArrayList<>();
-                    }
-                    existing.add(val);
-                    target.setServiceDiscoveryConfigurations(existing);
-                    break;
-                }
-                case "etcd-service-discovery": {
-                    org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration val = asType(node, org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration.class);
                     java.util.List<org.apache.camel.model.cloud.ServiceCallServiceDiscoveryConfiguration> existing = target.getServiceDiscoveryConfigurations();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -4822,86 +4804,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "ref": {
                     String val = asText(node);
                     target.setRef(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            nodes = {
-                    "etcd-service-discovery",
-                    "etcdServiceDiscovery"
-            },
-            properties = {
-                    @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "password", type = "string"),
-                    @YamlProperty(name = "properties", type = "array:org.apache.camel.model.PropertyDefinition"),
-                    @YamlProperty(name = "service-path", type = "string"),
-                    @YamlProperty(name = "timeout", type = "number"),
-                    @YamlProperty(name = "type", type = "string"),
-                    @YamlProperty(name = "uris", type = "string"),
-                    @YamlProperty(name = "user-name", type = "string")
-            }
-    )
-    public static class EtcdServiceCallServiceDiscoveryConfigurationDeserializer extends YamlDeserializerBase<EtcdServiceCallServiceDiscoveryConfiguration> {
-        public EtcdServiceCallServiceDiscoveryConfigurationDeserializer() {
-            super(EtcdServiceCallServiceDiscoveryConfiguration.class);
-        }
-
-        @Override
-        protected EtcdServiceCallServiceDiscoveryConfiguration newInstance() {
-            return new EtcdServiceCallServiceDiscoveryConfiguration();
-        }
-
-        @Override
-        protected boolean setProperty(EtcdServiceCallServiceDiscoveryConfiguration target,
-                String propertyKey, String propertyName, Node node) {
-            switch(propertyKey) {
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "password": {
-                    String val = asText(node);
-                    target.setPassword(val);
-                    break;
-                }
-                case "properties": {
-                    java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
-                    target.setProperties(val);
-                    break;
-                }
-                case "service-path": {
-                    String val = asText(node);
-                    target.setServicePath(val);
-                    break;
-                }
-                case "timeout": {
-                    String val = asText(node);
-                    target.setTimeout(val);
-                    break;
-                }
-                case "type": {
-                    String val = asText(node);
-                    target.setType(val);
-                    break;
-                }
-                case "uris": {
-                    String val = asText(node);
-                    target.setUris(val);
-                    break;
-                }
-                case "user-name": {
-                    String val = asText(node);
-                    target.setUserName(val);
                     break;
                 }
                 default: {
@@ -13417,7 +13319,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "custom-service-filter", type = "object:org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration"),
                     @YamlProperty(name = "default-load-balancer", type = "object:org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration"),
                     @YamlProperty(name = "dns-service-discovery", type = "object:org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration"),
-                    @YamlProperty(name = "etcd-service-discovery", type = "object:org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.cloud.ServiceCallExpressionConfiguration"),
                     @YamlProperty(name = "expression-ref", type = "string"),
                     @YamlProperty(name = "healthy-service-filter", type = "object:org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration"),
@@ -13513,11 +13414,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setServiceDiscoveryConfiguration(val);
                     break;
                 }
-                case "etcd-service-discovery": {
-                    org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration val = asType(node, org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration.class);
-                    target.setServiceDiscoveryConfiguration(val);
-                    break;
-                }
                 case "kubernetes-service-discovery": {
                     org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration val = asType(node, org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration.class);
                     target.setServiceDiscoveryConfiguration(val);
@@ -13606,7 +13502,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "default-load-balancer", type = "object:org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration"),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "dns-service-discovery", type = "object:org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration"),
-                    @YamlProperty(name = "etcd-service-discovery", type = "object:org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.cloud.ServiceCallExpressionConfiguration"),
                     @YamlProperty(name = "expression-ref", type = "string"),
                     @YamlProperty(name = "healthy-service-filter", type = "object:org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration"),
@@ -13716,11 +13611,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "dns-service-discovery": {
                     org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration val = asType(node, org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration.class);
-                    target.setServiceDiscoveryConfiguration(val);
-                    break;
-                }
-                case "etcd-service-discovery": {
-                    org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration val = asType(node, org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration.class);
                     target.setServiceDiscoveryConfiguration(val);
                     break;
                 }

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.sql.stored;
 
+import org.apache.camel.spi.Metadata;
+
 public final class SqlStoredConstants {
-
+    @Metadata(label = "producer", description = "The template", javaType = "String")
     public static final String SQL_STORED_TEMPLATE = "CamelSqlStoredTemplate";
-
+    @Metadata(label = "producer", description = "The parameters", javaType = "Iterator")
     public static final String SQL_STORED_PARAMETERS = "CamelSqlStoredParameters";
-
+    @Metadata(label = "producer", description = "The update count", javaType = "Integer")
     public static final String SQL_STORED_UPDATE_COUNT = "CamelSqlStoredUpdateCount";
 
     private SqlStoredConstants() {

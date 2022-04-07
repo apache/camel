@@ -36,7 +36,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,7 +188,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         XmlSignatureHelper.transformToOutputStream(node, os, omitXmlDeclaration(output, input), input.getOutputXmlEncoding());
         output.setBody(os.toByteArray());
         if (input.getOutputXmlEncoding() != null) {
-            output.setHeader(Exchange.CHARSET_NAME, input.getOutputXmlEncoding());
+            output.setHeader(XmlSignatureConstants.CHARSET_NAME, input.getOutputXmlEncoding());
         }
     }
 

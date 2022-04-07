@@ -54,7 +54,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Headers
 
@@ -75,16 +77,6 @@ Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
 headers is set then Camel uses this over the endpoint configured
 resource. This allows you to provide a dynamic template at runtime.
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-
-|CamelStringTemplateResourceUri |String |A URI for the template resource to use instead of the
-endpoint configured.
-
-|CamelStringTemplateTemplate |String |The template to use instead of the endpoint configured.
-|=======================================================================
 
 == StringTemplate Attributes
 
@@ -130,7 +122,5 @@ Regards Camel Riders Bookstore
 --------------------------------------------
 
 And the java code is as follows:
-
-
 
 include::spring-boot:partial$starter.adoc[]

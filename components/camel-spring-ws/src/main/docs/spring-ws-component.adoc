@@ -86,7 +86,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Accessing web services
 
@@ -150,7 +152,7 @@ exchange.getIn().setHeader(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER, soap
 And then send the Exchange to a `spring-ws` endpoint to call the Web
 Service.
 
-Likewise the spring-ws consumer will also enrich the Camel Message with
+Likewise, the spring-ws consumer will also enrich the Camel Message with
 the SOAP header.
 
 For an example see this
@@ -189,7 +191,7 @@ the header transformation filter, see the below example:
 ------------------------------------------------------------------
 <bean id="headerTransformationFilter" class="org.apache.camel.component.spring.ws.filter.impl.HeaderTransformationMessageFilter">
     <constructor-arg index="0" value="org/apache/camel/component/spring/ws/soap-header-transform.xslt"/>
-</bean
+</bean>
 ------------------------------------------------------------------
 Use the bead defined above in the camel endpoint
 

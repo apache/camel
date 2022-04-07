@@ -23,11 +23,11 @@ import org.apache.camel.spi.UriEndpoint;
 public final class SomeEndpointWithFilter {
 
     @Metadata(description = "some description")
-    static final String KEEP_1 = "keep-1";
+    public static final String KEEP_1 = "keep-1";
     @Metadata(description = "some description", applicableFor = "some")
-    static final String KEEP_2 = "keep-2";
+    public static final String KEEP_2 = "keep-2";
     @Metadata(description = "some description", applicableFor = "other")
-    static final String IGNORE = "ignore";
+    public static final String IGNORE = "ignore";
 
     private SomeEndpointWithFilter() {
     }

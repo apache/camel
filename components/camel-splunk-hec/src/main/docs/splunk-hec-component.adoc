@@ -49,19 +49,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-
-== Message Headers
-
-[width="100%",cols="10%,20%,70%",options="header",]
-|=======================================================================
-|Name |Type |Description
-
-|`SplunkHECConstants.INDEX_TIME` |`Long` | Epoch-formatted time.
-Specify with the time query string parameter. Sets a default for all events in the request.
-The default time can be overridden.
-
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Message body
 The body must be serializable to JSON so it may be sent to Splunk.

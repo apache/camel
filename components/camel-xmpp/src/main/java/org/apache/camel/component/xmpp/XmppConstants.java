@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xmpp;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants used in Camel XMPP module
  */
@@ -33,5 +35,6 @@ public interface XmppConstants {
 
     String STANZA_ID = "CamelXmppStanzaID";
     String TO = "CamelXmppTo";
+    @Metadata(label = "consumer", description = "The XMPP message", javaType = "org.jivesoftware.smack.packet.Message")
     String DOC_HEADER = "CamelXmppDoc";
 }

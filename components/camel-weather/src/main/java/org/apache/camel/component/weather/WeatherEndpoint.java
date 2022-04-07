@@ -29,7 +29,7 @@ import org.apache.http.client.utils.HttpClientUtils;
  * Poll the weather information from Open Weather Map.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "weather", title = "Weather", syntax = "weather:name",
-             category = { Category.API })
+             category = { Category.API }, headersClass = WeatherConstants.class)
 public class WeatherEndpoint extends DefaultPollingEndpoint {
 
     @UriParam

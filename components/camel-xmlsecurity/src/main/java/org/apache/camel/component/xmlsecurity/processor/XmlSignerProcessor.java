@@ -894,7 +894,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
 
     protected void setOutputEncodingToMessageHeader(Message message) {
         if (getConfiguration().getOutputXmlEncoding() != null) {
-            message.setHeader(Exchange.CHARSET_NAME, getConfiguration().getOutputXmlEncoding());
+            message.setHeader(XmlSignatureConstants.CHARSET_NAME, getConfiguration().getOutputXmlEncoding());
         }
     }
 

@@ -132,7 +132,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
 
         // Set the Host header
         final Message message = camelExchange.getIn();
-        final String host = message.getHeader(Headers.HOST_STRING, String.class);
+        final String host = message.getHeader(UndertowConstants.HOST_STRING, String.class);
         if (endpoint.isPreserveHostHeader()) {
             requestHeaders.put(Headers.HOST, Optional.ofNullable(host).orElseGet(uri::getAuthority));
         } else {

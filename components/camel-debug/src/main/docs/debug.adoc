@@ -5,6 +5,8 @@
 :description: Enables Camel Route Debugging
 :since: 3.15
 :supportlevel: Stable
+//Manually maintained attributes
+:camel-spring-boot-name: debug
 
 *Since Camel {since}*
 

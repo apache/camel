@@ -70,7 +70,7 @@ _Java DSL_
 to("gora:foobar?keyClass=java.lang.Long&valueClass=org.apache.camel.component.gora.generated.Pageview&dataStoreClass=org.apache.gora.hbase.store.HBaseStore")
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-== Configuratiion
+== Configuration
 
 Using camel-gora needs some configuration. This mainly involve to
 configure the _AvroStore_ through the _gora.properties_ file and to
@@ -96,6 +96,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 
 == Supported Gora Operations
@@ -104,7 +107,7 @@ Supported operations include : *put*, *get*, *delete*, *getSchemaName*,
 *deleteSchema*, *createSchema*, *query*, *deleteByQuery*,
 *schemaExists*.
 
-Some of the operations require arguments while some others no. The
+Some operations require arguments while some others no. The
 arguments to operations could be either the _body_ of the _in_ message
 or defined in a header property. Below there is a list with some
 additional info for each operation.
@@ -134,17 +137,6 @@ hold the objects._
 
 |schemaExists |_Returns whether the schema that holds the data exists in the
 datastore._
-|=======================================================================
-
-== Gora Headers
-
-[width="100%",cols="20%,80%",options="header",]
-|=======================================================================
-|Property |Description
-
-|GoraOperation |_Used in order to define the operation to execute._
-
-|GoraKey | _Used in order to define the datum key for the operations need it._
 |=======================================================================
 
 == Usage examples

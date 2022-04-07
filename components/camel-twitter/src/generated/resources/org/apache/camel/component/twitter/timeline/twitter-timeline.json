@@ -35,6 +35,9 @@
     "consumerKey": { "kind": "property", "displayName": "Consumer Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "description": "The consumer key" },
     "consumerSecret": { "kind": "property", "displayName": "Consumer Secret", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "description": "The consumer secret" }
   },
+  "headers": {
+    "CamelTwitterEventType": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The type of event. The supported values are the values of the enum org.apache.camel.component.twitter.consumer.TwitterEventType" }
+  },
   "properties": {
     "timelineType": { "kind": "path", "displayName": "Timeline Type", "group": "common", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.twitter.data.TimelineType", "enum": [ "PUBLIC", "HOME", "USER", "MENTIONS", "RETWEETSOFME", "LIST", "UNKNOWN" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The timeline type to produce\/consume." },
     "list": { "kind": "parameter", "displayName": "List", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The list name when using timelineType=list" },

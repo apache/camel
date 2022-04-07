@@ -31,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Sent and receive messages to/from an Apache Kafka broker using vert.x Kafka client
  */
 @UriEndpoint(firstVersion = "3.7.0", scheme = "vertx-kafka", title = "Vert.x Kafka", syntax = "vertx-kafka:topic",
-             category = { Category.MESSAGING })
+             category = { Category.MESSAGING }, headersClass = VertxKafkaConstants.class)
 public class VertxKafkaEndpoint extends DefaultEndpoint {
 
     @UriParam

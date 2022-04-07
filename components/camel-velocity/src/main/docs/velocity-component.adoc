@@ -57,26 +57,12 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Message Headers
-
-You can use the following headers on the message:
-
-[width="100%",cols="10%,90%",options="header",]
-|=======================================================================
-|Header |Description
-
-|`CamelVelocityResourceUri` |The *templateName* as a `String` object.
-
-|`CamelVelocitySupplementalContext` |To add additional information to the used VelocityContext.
-The value of this header should be a `Map` with key/values that will
-added (override any existing key with the same name). +
-This can be used to pre setup some common key/values you want to reuse
-in your velocity endpoints.
-|=======================================================================
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 Headers set during the Velocity evaluation are returned to the message
-and added as headers. Then its kinda possible to return values from
+and added as headers. Then it is possible to return values from
 Velocity to the Message.
 
 For example, to set the header value of `fruit` in the Velocity template

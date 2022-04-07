@@ -38,8 +38,6 @@ See also the xref:quartz-component.adoc[Quartz] component that supports much mor
 advanced scheduling.
 ====
 
-
-
 // component-configure options: START
 
 // component-configure options: END
@@ -52,7 +50,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
-
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Exchange Properties
 
