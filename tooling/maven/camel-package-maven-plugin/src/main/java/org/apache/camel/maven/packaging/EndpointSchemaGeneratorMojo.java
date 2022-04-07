@@ -32,13 +32,11 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -319,20 +317,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             getLog().debug(String.format("The endpoint %s has not defined any headers class", uriEndpoint.scheme()));
             return;
         }
-        // A header class has been defined
-        boolean foundHeader = false;
-        final Deque<Class<?>> classes = new ArrayDeque<>();
-        classes.add(headersClass);
-        Class<?> currentHeadersClass;
-        while ((currentHeadersClass = classes.poll()) != null) {
-            foundHeader |= addEndpointHeaders(componentModel, scheme, currentHeadersClass, uriEndpoint.headersNameProvider());
-            final Class<?> superclass = currentHeadersClass.getSuperclass();
-            if (superclass != null && !superclass.equals(Object.class)) {
-                classes.add(superclass);
-            }
-            classes.addAll(Arrays.asList(currentHeadersClass.getInterfaces()));
-        }
-        if (!foundHeader) {
+        if (!addEndpointHeaders(componentModel, scheme, headersClass, uriEndpoint.headersNameProvider())) {
             getLog().debug(String.format("No headers have been detected in the headers class %s", headersClass.getName()));
         }
     }
@@ -355,7 +340,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             ComponentModel componentModel, String scheme, Class<?> headersClass, String headersNameProvider) {
         final boolean isEnum = headersClass.isEnum();
         boolean foundHeader = false;
-        for (Field field : headersClass.getDeclaredFields()) {
+        for (Field field : headersClass.getFields()) {
             if ((isEnum || isStatic(field.getModifiers()) && field.getType() == String.class)
                     && field.isAnnotationPresent(Metadata.class)) {
                 getLog().debug(
@@ -487,7 +472,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
             return field.getName();
         }
-        field.trySetAccessible();
         return (String) field.get(null);
     }
 
