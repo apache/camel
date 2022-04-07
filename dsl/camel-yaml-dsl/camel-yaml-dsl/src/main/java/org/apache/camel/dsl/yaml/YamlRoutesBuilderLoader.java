@@ -29,13 +29,10 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
-import org.apache.camel.builder.DefaultErrorHandlerBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.component.properties.PropertiesLocation;
@@ -52,7 +49,9 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.model.errorhandler.DefaultErrorHandlerProperties;
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
@@ -171,12 +170,12 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
                     getRouteCollection().getOnExceptions().add((OnExceptionDefinition) item);
                     return true;
-                } else if (item instanceof ErrorHandlerBuilder) {
+                } else if (item instanceof ErrorHandlerFactory) {
                     if (!getRouteCollection().getRoutes().isEmpty()) {
                         throw new IllegalArgumentException(
                                 "errorHandler must be defined before any routes in the RouteBuilder");
                     }
-                    errorHandler((ErrorHandlerBuilder) item);
+                    errorHandler((ErrorHandlerFactory) item);
                     return true;
                 } else if (item instanceof RouteTemplateDefinition) {
                     CamelContextAware.trySetCamelContext(getRouteTemplateCollection(), getCamelContext());
@@ -573,23 +572,23 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 NodeTuple nt = errorHandler.getValue().get(0);
                 String ehName = asText(nt.getKeyNode());
 
-                DefaultErrorHandlerProperties ehb = null;
+                ErrorHandlerFactory ehf = null;
                 if ("sink".equals(ehName)) {
                     // a sink is a dead letter queue
-                    DeadLetterChannelBuilder dlch = new DeadLetterChannelBuilder();
+                    DeadLetterChannelDefinition dlcd = new DeadLetterChannelDefinition();
                     MappingNode endpoint = asMappingNode(nodeAt(nt.getValueNode(), "/endpoint"));
                     String dlq = extractCamelEndpointUri(endpoint);
-                    dlch.setDeadLetterUri(dlq);
-                    ehb = dlch;
+                    dlcd.setDeadLetterUri(dlq);
+                    ehf = dlcd;
                 } else if ("log".equals(ehName)) {
                     // log is the default error handler
-                    ehb = new DefaultErrorHandlerBuilder();
+                    ehf = new DefaultErrorHandlerDefinition();
                 } else if ("none".equals(ehName)) {
-                    route.errorHandler(new NoErrorHandlerBuilder());
+                    route.errorHandler(new NoErrorHandlerDefinition());
                 }
 
                 // some error handlers support additional parameters
-                if (ehb != null) {
+                if (ehf != null) {
                     // properties that are general for all kind of error handlers
                     MappingNode prop = asMappingNode(nodeAt(nt.getValueNode(), "/parameters"));
                     Map<String, Object> params = asMap(prop);
@@ -599,11 +598,11 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                                 .withFluentBuilder(true)
                                 .withRemoveParameters(true)
                                 .withCamelContext(getCamelContext())
-                                .withTarget(ehb)
+                                .withTarget(ehf)
                                 .withProperties(params)
                                 .bind();
                     }
-                    route.errorHandler(ehb);
+                    route.errorHandler(ehf);
                 }
             }
 

@@ -874,6 +874,29 @@
           }
         }
       },
+      "org.apache.camel.model.ErrorHandlerDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "dead-letter-channel" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DeadLetterChannelDefinition"
+          },
+          "default-error-handler" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "jta-transaction-error-handler" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition"
+          },
+          "no-error-handler" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"
+          },
+          "spring-transaction-error-handler" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition"
+          }
+        }
+      },
       "org.apache.camel.model.ExpressionSubElementDefinition" : {
         "type" : "object",
         "properties" : {
@@ -2024,6 +2047,9 @@
             "type" : "boolean"
           },
           "exchange-formatter-ref" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "log-continued" : {
@@ -5720,6 +5746,233 @@
             "type" : "boolean"
           },
           "using-iterator" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "org.apache.camel.model.errorhandler.DeadLetterChannelDefinition" : {
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "dead-letter-handle-new-exception" : {
+              "type" : "boolean"
+            },
+            "dead-letter-uri" : {
+              "type" : "string"
+            },
+            "executor-service-ref" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
+            "level" : {
+              "type" : "string",
+              "enum" : [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ]
+            },
+            "log-name" : {
+              "type" : "string"
+            },
+            "logger-ref" : {
+              "type" : "string"
+            },
+            "on-exception-occurred-ref" : {
+              "type" : "string"
+            },
+            "on-prepare-failure-ref" : {
+              "type" : "string"
+            },
+            "on-redelivery-ref" : {
+              "type" : "string"
+            },
+            "redelivery-policy" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
+            },
+            "redelivery-policy-ref" : {
+              "type" : "string"
+            },
+            "retry-while-ref" : {
+              "type" : "string"
+            },
+            "use-original-body" : {
+              "type" : "boolean"
+            },
+            "use-original-message" : {
+              "type" : "boolean"
+            }
+          }
+        } ],
+        "required" : [ "dead-letter-uri" ]
+      },
+      "org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "executor-service-ref" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "level" : {
+            "type" : "string",
+            "enum" : [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ]
+          },
+          "log-name" : {
+            "type" : "string"
+          },
+          "logger-ref" : {
+            "type" : "string"
+          },
+          "on-exception-occurred-ref" : {
+            "type" : "string"
+          },
+          "on-prepare-failure-ref" : {
+            "type" : "string"
+          },
+          "on-redelivery-ref" : {
+            "type" : "string"
+          },
+          "redelivery-policy" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
+          },
+          "redelivery-policy-ref" : {
+            "type" : "string"
+          },
+          "retry-while-ref" : {
+            "type" : "string"
+          },
+          "use-original-body" : {
+            "type" : "boolean"
+          },
+          "use-original-message" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition" : {
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "type" : "string"
+            },
+            "ref" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "required" : [ "ref" ]
+      },
+      "org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "executor-service-ref" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "level" : {
+            "type" : "string",
+            "enum" : [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ]
+          },
+          "log-name" : {
+            "type" : "string"
+          },
+          "logger-ref" : {
+            "type" : "string"
+          },
+          "on-exception-occurred-ref" : {
+            "type" : "string"
+          },
+          "on-prepare-failure-ref" : {
+            "type" : "string"
+          },
+          "on-redelivery-ref" : {
+            "type" : "string"
+          },
+          "redelivery-policy" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
+          },
+          "redelivery-policy-ref" : {
+            "type" : "string"
+          },
+          "retry-while-ref" : {
+            "type" : "string"
+          },
+          "rollback-logging-level" : {
+            "type" : "string"
+          },
+          "transacted-policy-ref" : {
+            "type" : "string"
+          },
+          "use-original-body" : {
+            "type" : "boolean"
+          },
+          "use-original-message" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "org.apache.camel.model.errorhandler.NoErrorHandlerDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          }
+        }
+      },
+      "org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "executor-service-ref" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "level" : {
+            "type" : "string",
+            "enum" : [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ]
+          },
+          "log-name" : {
+            "type" : "string"
+          },
+          "logger-ref" : {
+            "type" : "string"
+          },
+          "on-exception-occurred-ref" : {
+            "type" : "string"
+          },
+          "on-prepare-failure-ref" : {
+            "type" : "string"
+          },
+          "on-redelivery-ref" : {
+            "type" : "string"
+          },
+          "redelivery-policy" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
+          },
+          "redelivery-policy-ref" : {
+            "type" : "string"
+          },
+          "retry-while-ref" : {
+            "type" : "string"
+          },
+          "rollback-logging-level" : {
+            "type" : "string"
+          },
+          "transacted-policy-ref" : {
+            "type" : "string"
+          },
+          "use-original-body" : {
+            "type" : "boolean"
+          },
+          "use-original-message" : {
             "type" : "boolean"
           }
         }

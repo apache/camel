@@ -104,7 +104,13 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "datasonnet": return new ModelDeserializers.DatasonnetExpressionDeserializer();
             case "org.apache.camel.model.language.DatasonnetExpression": return new ModelDeserializers.DatasonnetExpressionDeserializer();
             case "org.apache.camel.builder.DeadLetterChannelBuilder": return new ModelDeserializers.DeadLetterChannelBuilderDeserializer();
+            case "dead-letter-channel": return new ModelDeserializers.DeadLetterChannelDefinitionDeserializer();
+            case "deadLetterChannel": return new ModelDeserializers.DeadLetterChannelDefinitionDeserializer();
+            case "org.apache.camel.model.errorhandler.DeadLetterChannelDefinition": return new ModelDeserializers.DeadLetterChannelDefinitionDeserializer();
             case "org.apache.camel.builder.DefaultErrorHandlerBuilder": return new ModelDeserializers.DefaultErrorHandlerBuilderDeserializer();
+            case "default-error-handler": return new ModelDeserializers.DefaultErrorHandlerDefinitionDeserializer();
+            case "defaultErrorHandler": return new ModelDeserializers.DefaultErrorHandlerDefinitionDeserializer();
+            case "org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition": return new ModelDeserializers.DefaultErrorHandlerDefinitionDeserializer();
             case "default-load-balancer": return new ModelDeserializers.DefaultServiceCallServiceLoadBalancerConfigurationDeserializer();
             case "defaultLoadBalancer": return new ModelDeserializers.DefaultServiceCallServiceLoadBalancerConfigurationDeserializer();
             case "org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration": return new ModelDeserializers.DefaultServiceCallServiceLoadBalancerConfigurationDeserializer();
@@ -125,6 +131,12 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "enrich": return new ModelDeserializers.EnrichDefinitionDeserializer();
             case "org.apache.camel.model.EnrichDefinition": return new ModelDeserializers.EnrichDefinitionDeserializer();
             case "org.apache.camel.builder.ErrorHandlerBuilderRef": return new ModelDeserializers.ErrorHandlerBuilderRefDeserializer();
+            case "error-handler": return new ModelDeserializers.ErrorHandlerDefinitionDeserializer();
+            case "errorHandler": return new ModelDeserializers.ErrorHandlerDefinitionDeserializer();
+            case "org.apache.camel.model.ErrorHandlerDefinition": return new ModelDeserializers.ErrorHandlerDefinitionDeserializer();
+            case "error-handler-ref": return new ModelDeserializers.ErrorHandlerRefDefinitionDeserializer();
+            case "errorHandlerRef": return new ModelDeserializers.ErrorHandlerRefDefinitionDeserializer();
+            case "org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition": return new ModelDeserializers.ErrorHandlerRefDefinitionDeserializer();
             case "etcd-service-discovery": return new ModelDeserializers.EtcdServiceCallServiceDiscoveryConfigurationDeserializer();
             case "etcdServiceDiscovery": return new ModelDeserializers.EtcdServiceCallServiceDiscoveryConfigurationDeserializer();
             case "org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.EtcdServiceCallServiceDiscoveryConfigurationDeserializer();
@@ -211,6 +223,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.JsonDataFormat": return new ModelDeserializers.JsonDataFormatDeserializer();
             case "jsonpath": return new ModelDeserializers.JsonPathExpressionDeserializer();
             case "org.apache.camel.model.language.JsonPathExpression": return new ModelDeserializers.JsonPathExpressionDeserializer();
+            case "jta-transaction-error-handler": return new ModelDeserializers.JtaTransactionErrorHandlerDefinitionDeserializer();
+            case "jtaTransactionErrorHandler": return new ModelDeserializers.JtaTransactionErrorHandlerDefinitionDeserializer();
+            case "org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition": return new ModelDeserializers.JtaTransactionErrorHandlerDefinitionDeserializer();
             case "kubernetes-service-discovery": return new ModelDeserializers.KubernetesServiceCallServiceDiscoveryConfigurationDeserializer();
             case "kubernetesServiceDiscovery": return new ModelDeserializers.KubernetesServiceCallServiceDiscoveryConfigurationDeserializer();
             case "org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.KubernetesServiceCallServiceDiscoveryConfigurationDeserializer();
@@ -240,6 +255,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "mvel": return new ModelDeserializers.MvelExpressionDeserializer();
             case "org.apache.camel.model.language.MvelExpression": return new ModelDeserializers.MvelExpressionDeserializer();
             case "org.apache.camel.builder.NoErrorHandlerBuilder": return new ModelDeserializers.NoErrorHandlerBuilderDeserializer();
+            case "no-error-handler": return new ModelDeserializers.NoErrorHandlerDefinitionDeserializer();
+            case "noErrorHandler": return new ModelDeserializers.NoErrorHandlerDefinitionDeserializer();
+            case "org.apache.camel.model.errorhandler.NoErrorHandlerDefinition": return new ModelDeserializers.NoErrorHandlerDefinitionDeserializer();
             case "oauth2": return new ModelDeserializers.OAuth2DefinitionDeserializer();
             case "org.apache.camel.model.rest.OAuth2Definition": return new ModelDeserializers.OAuth2DefinitionDeserializer();
             case "ognl": return new ModelDeserializers.OgnlExpressionDeserializer();
@@ -428,6 +446,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.language.SpELExpression": return new ModelDeserializers.SpELExpressionDeserializer();
             case "split": return new ModelDeserializers.SplitDefinitionDeserializer();
             case "org.apache.camel.model.SplitDefinition": return new ModelDeserializers.SplitDefinitionDeserializer();
+            case "spring-transaction-error-handler": return new ModelDeserializers.SpringTransactionErrorHandlerDefinitionDeserializer();
+            case "springTransactionErrorHandler": return new ModelDeserializers.SpringTransactionErrorHandlerDefinitionDeserializer();
+            case "org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition": return new ModelDeserializers.SpringTransactionErrorHandlerDefinitionDeserializer();
             case "static-service-discovery": return new ModelDeserializers.StaticServiceCallServiceDiscoveryConfigurationDeserializer();
             case "staticServiceDiscovery": return new ModelDeserializers.StaticServiceCallServiceDiscoveryConfigurationDeserializer();
             case "org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.StaticServiceCallServiceDiscoveryConfigurationDeserializer();
