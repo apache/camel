@@ -134,7 +134,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "error-handler-ref": return new ModelDeserializers.ErrorHandlerRefDefinitionDeserializer();
             case "errorHandlerRef": return new ModelDeserializers.ErrorHandlerRefDefinitionDeserializer();
             case "org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition": return new ModelDeserializers.ErrorHandlerRefDefinitionDeserializer();
-            case "org.apache.camel.builder.ErrorHandlerBuilderRef": return new ModelDeserializers.ErrorHandlerBuilderRefDeserializer();
             case "exchange-property": return new ModelDeserializers.ExchangePropertyExpressionDeserializer();
             case "exchangeProperty": return new ModelDeserializers.ExchangePropertyExpressionDeserializer();
             case "org.apache.camel.model.language.ExchangePropertyExpression": return new ModelDeserializers.ExchangePropertyExpressionDeserializer();
