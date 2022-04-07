@@ -209,8 +209,26 @@ http://java.sun.com/javaee/5/docs/api/javax/mail/internet/MimeMessage.html[MimeM
 can be configured using a header property on the IN message. The code
 below demonstrates this:
 
+[source,java]
+------------------------------------------------------------------------------------------------------------
+from("direct:a").setHeader("subject", constant(subject)).to("smtp://james2@localhost");
+------------------------------------------------------------------------------------------------------------
+
 The same applies for other MimeMessage headers such as recipients, so
 you can use a header property as `To`:
+
+[source,java]
+------------------------------------------------------------------------------------------------------------
+Map<String, Object> headers = new HashMap<String, Object>();
+headers.put("To", "davsclaus@apache.org");
+headers.put("From", "jstrachan@apache.org");
+headers.put("Subject", "Camel rocks");
+headers.put("CamelFileName", "fileOne");
+headers.put("org.apache.camel.test", "value");
+ 
+String body = "Hello Claus.\nYes it does.\n\nRegards James.";
+template.sendBodyAndHeaders("smtp://davsclaus@apache.org", body, headers);
+------------------------------------------------------------------------------------------------------------
 
 When using the MailProducer to send the mail to
 server, you should be able to get the message id of the
@@ -330,6 +348,27 @@ endpoint.
 The mail component supports attachments. In the sample below, we send a
 mail message containing a plain text message with a logo file
 attachment.
+
+[source,java]
+-------------------------------------------------------
+// create an exchange with a normal body and attachment to be produced as email
+Endpoint endpoint = context.getEndpoint("smtp://james@mymailserver.com?password=secret");
+ 
+// create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
+Exchange exchange = endpoint.createExchange();
+AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
+in.setBody("Hello World");
+DefaultAttachment att = new DefaultAttachment(new FileDataSource("src/test/data/logo.jpeg"));
+att.addHeader("Content-Description", "some sample content");
+in.addAttachmentObject("logo.jpeg", att);
+ 
+// create a producer that can produce the exchange (= send the mail)
+Producer producer = endpoint.createProducer();
+// start the producer
+producer.start();
+// and let it go (processes the exchange by sending the email)
+producer.process(exchange);
+-------------------------------------------------------
 
 == SSL sample
 
