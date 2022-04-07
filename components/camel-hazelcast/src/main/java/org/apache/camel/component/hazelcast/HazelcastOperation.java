@@ -27,7 +27,7 @@ public enum HazelcastOperation {
     GET_ALL("getAll"),
     CLEAR("clear"),
     PUT_IF_ABSENT("putIfAbsent"),
-    ADD_ALL("allAll"),
+    ADD_ALL("addAll"),
     REMOVE_ALL("removeAll"),
     RETAIN_ALL("retainAll"),
     EVICT("evict"),
@@ -35,15 +35,15 @@ public enum HazelcastOperation {
     VALUE_COUNT("valueCount"),
     CONTAINS_KEY("containsKey"),
     CONTAINS_VALUE("containsValue"),
-    GET_KEYS("keySet"),
+    GET_KEYS("getKeys"),
 
     // multimap
-    REMOVE_VALUE("removevalue"),
+    REMOVE_VALUE("removeValue"),
 
     // atomic numbers
     INCREMENT("increment"),
     DECREMENT("decrement"),
-    SET_VALUE("setvalue"),
+    SET_VALUE("setValue"),
     DESTROY("destroy"),
     COMPARE_AND_SET("compareAndSet"),
     GET_AND_ADD("getAndAdd"),
@@ -62,7 +62,7 @@ public enum HazelcastOperation {
     PUBLISH("publish"),
 
     // ring_buffer
-    READ_ONCE_HEAD("readOnceHeal"),
+    READ_ONCE_HEAD("readOnceHead"),
     READ_ONCE_TAIL("readOnceTail"),
     CAPACITY("capacity");
 
