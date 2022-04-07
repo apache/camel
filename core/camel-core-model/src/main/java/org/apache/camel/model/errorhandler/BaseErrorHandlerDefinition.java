@@ -22,6 +22,6 @@ import org.apache.camel.model.IdentifiedType;
 /**
  * Base class for error handler models.
  */
-public abstract class BaseErrorHandlerDefinition extends IdentifiedType implements ErrorHandlerFactory {
+abstract class BaseErrorHandlerDefinition extends IdentifiedType implements ErrorHandlerFactory {
 
 }

@@ -31,7 +31,7 @@ import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefiniti
 import org.apache.camel.spi.Metadata;
 
 /**
- * Base class for error handler definitions.
+ * Camel error handling.
  */
 @Metadata(label = "configuration,error")
 @XmlRootElement(name = "errorHandler")
