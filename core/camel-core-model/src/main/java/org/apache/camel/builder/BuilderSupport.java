@@ -29,12 +29,15 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.XPathExpression;
+import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.util.ObjectHelper;
 
@@ -454,6 +457,72 @@ public abstract class BuilderSupport implements CamelContextAware {
      */
     public DeadLetterChannelDefinition deadLetterChannel(Endpoint deadLetterEndpoint) {
         return new DeadLetterChannelDefinition(deadLetterEndpoint);
+    }
+
+    /**
+     * Error handler using JTA transactions (requires camel-jta).
+     *
+     * @return the builder
+     */
+    public JtaTransactionErrorHandlerDefinition jtaTransactionErrorHandler() {
+        return new JtaTransactionErrorHandlerDefinition();
+    }
+
+    /**
+     * Error handler using JTA transactions (requires camel-jta).
+     *
+     * @param  policy the transaction policy
+     * @return        the builder
+     */
+    public JtaTransactionErrorHandlerDefinition jtaTransactionErrorHandler(TransactedPolicy policy) {
+        JtaTransactionErrorHandlerDefinition answer = new JtaTransactionErrorHandlerDefinition();
+        answer.setTransactedPolicy(policy);
+        return answer;
+    }
+
+    /**
+     * Error handler using JTA transactions (requires camel-jta).
+     *
+     * @param  policyRef references to the transaction policy
+     * @return           the builder
+     */
+    public JtaTransactionErrorHandlerDefinition jtaTransactionErrorHandler(String policyRef) {
+        JtaTransactionErrorHandlerDefinition answer = new JtaTransactionErrorHandlerDefinition();
+        answer.setTransactedPolicyRef(policyRef);
+        return answer;
+    }
+
+    /**
+     * Error handler using Spring transactions (requires camel-spring).
+     *
+     * @return the builder
+     */
+    public SpringTransactionErrorHandlerDefinition springTransactionErrorHandler() {
+        return new SpringTransactionErrorHandlerDefinition();
+    }
+
+    /**
+     * Error handler using Spring transactions (requires camel-spring).
+     *
+     * @param  policy the transaction policy
+     * @return        the builder
+     */
+    public SpringTransactionErrorHandlerDefinition springTransactionErrorHandler(TransactedPolicy policy) {
+        SpringTransactionErrorHandlerDefinition answer = new SpringTransactionErrorHandlerDefinition();
+        answer.setTransactedPolicy(policy);
+        return answer;
+    }
+
+    /**
+     * Error handler using Spring transactions (requires camel-spring).
+     *
+     * @param  policyRef references to the transaction policy
+     * @return           the builder
+     */
+    public SpringTransactionErrorHandlerDefinition springTransactionErrorHandler(String policyRef) {
+        SpringTransactionErrorHandlerDefinition answer = new SpringTransactionErrorHandlerDefinition();
+        answer.setTransactedPolicyRef(policyRef);
+        return answer;
     }
 
     // Properties
