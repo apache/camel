@@ -16,12 +16,12 @@
  */
 package org.apache.camel.dsl.kotlin
 
+import org.apache.camel.ErrorHandlerFactory
 import org.apache.camel.Exchange
 import org.apache.camel.Predicate
 import org.apache.camel.Processor
 import org.apache.camel.builder.BuilderSupport
 import org.apache.camel.builder.EndpointConsumerBuilder
-import org.apache.camel.builder.ErrorHandlerBuilder
 import org.apache.camel.builder.endpoint.EndpointBuilderFactory
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder
 import org.apache.camel.dsl.kotlin.model.BeansConfiguration
@@ -83,7 +83,7 @@ abstract class KotlinDSL(
         return builder.interceptSendToEndpoint(uri)
     }
 
-    fun errorHandler(handler: ErrorHandlerBuilder) {
+    fun errorHandler(handler: ErrorHandlerFactory) {
         builder.errorHandler(handler)
     }
 

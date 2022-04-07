@@ -16,13 +16,13 @@
  */
 package org.apache.camel.dsl.groovy.common
 
+import org.apache.camel.ErrorHandlerFactory
 import org.apache.camel.Exchange
 import org.apache.camel.Expression
 import org.apache.camel.Predicate
 import org.apache.camel.Processor
 import org.apache.camel.builder.BuilderSupport
 import org.apache.camel.builder.EndpointConsumerBuilder
-import org.apache.camel.builder.ErrorHandlerBuilder
 import org.apache.camel.builder.endpoint.EndpointBuilderFactory
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder
 import org.apache.camel.dsl.groovy.common.model.BeansConfiguration
@@ -114,7 +114,7 @@ class GroovyDSL extends BuilderSupport implements EndpointBuilderFactory {
         return builder.interceptSendToEndpoint(uri)
     }
 
-    void errorHandler(ErrorHandlerBuilder handler) {
+    void errorHandler(ErrorHandlerFactory handler) {
         builder.errorHandler(handler)
     }
 
