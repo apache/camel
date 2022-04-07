@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.gora;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Camel-Gora attributes
  */
@@ -24,11 +26,14 @@ public enum GoraAttribute {
     /**
      * Gora KEY attribute
      */
+    @Metadata(label = "producer", description = "Used in order to define the datum key for the operations need it.",
+              javaType = "Object")
     GORA_KEY("goraKey"),
 
     /**
      * Gora operation header name
      */
+    @Metadata(label = "producer", description = "Used in order to define the operation to execute.", javaType = "String")
     GORA_OPERATION("goraOperation"),
 
     /**
