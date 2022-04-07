@@ -593,17 +593,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         return new TypeSpecHolder(builder.build(), attributes);
     }
 
-    private boolean acceptErrorHandlerBuilderMethod(ClassInfo ci, MethodInfo mi) {
-        String name = mi.name();
-        if ("supportTransacted".equals(name)) {
-            return false;
-        } else if (name.toLowerCase(Locale.ROOT).contains("deadletter")) {
-            String cn = ci.simpleName();
-            return "DeadLetterChannelBuilder".equals(cn);
-        }
-        return true;
-    }
-
     @SuppressWarnings("MethodLength")
     private boolean generateSetValue(CodeBlock.Builder cb, FieldInfo field, Collection<AnnotationSpec> annotations) {
         if (hasAnnotation(field, XML_TRANSIENT_CLASS) && !hasAnnotation(field, DSL_PROPERTY_ANNOTATION)) {
