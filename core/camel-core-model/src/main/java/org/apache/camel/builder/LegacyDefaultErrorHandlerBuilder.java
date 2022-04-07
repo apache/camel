@@ -36,11 +36,12 @@ import org.slf4j.LoggerFactory;
  * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
 @Deprecated
-public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport implements DefaultErrorHandlerProperties {
+public class LegacyDefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
+        implements DefaultErrorHandlerProperties {
 
     private final DefaultErrorHandlerConfiguration configuration;
 
-    public DefaultErrorHandlerBuilder() {
+    public LegacyDefaultErrorHandlerBuilder() {
         configuration = createConfiguration();
     }
 
@@ -55,12 +56,12 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
 
     @Override
     public LegacyErrorHandlerBuilder cloneBuilder() {
-        DefaultErrorHandlerBuilder answer = new DefaultErrorHandlerBuilder();
+        LegacyDefaultErrorHandlerBuilder answer = new LegacyDefaultErrorHandlerBuilder();
         cloneBuilder(answer);
         return answer;
     }
 
-    protected void cloneBuilder(DefaultErrorHandlerBuilder other) {
+    protected void cloneBuilder(LegacyDefaultErrorHandlerBuilder other) {
         other.setLogger(configuration.getLogger());
         if (configuration.getRedeliveryPolicy() != null) {
             other.setRedeliveryPolicy(configuration.getRedeliveryPolicy().copy());
@@ -83,107 +84,107 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
 
     // Builder methods
     // -------------------------------------------------------------------------
-    public DefaultErrorHandlerBuilder backOffMultiplier(double backOffMultiplier) {
+    public LegacyDefaultErrorHandlerBuilder backOffMultiplier(double backOffMultiplier) {
         getRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder collisionAvoidancePercent(double collisionAvoidancePercent) {
+    public LegacyDefaultErrorHandlerBuilder collisionAvoidancePercent(double collisionAvoidancePercent) {
         getRedeliveryPolicy().collisionAvoidancePercent(collisionAvoidancePercent);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder redeliveryDelay(long delay) {
+    public LegacyDefaultErrorHandlerBuilder redeliveryDelay(long delay) {
         getRedeliveryPolicy().redeliveryDelay(delay);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder delayPattern(String delayPattern) {
+    public LegacyDefaultErrorHandlerBuilder delayPattern(String delayPattern) {
         getRedeliveryPolicy().delayPattern(delayPattern);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder maximumRedeliveries(int maximumRedeliveries) {
+    public LegacyDefaultErrorHandlerBuilder maximumRedeliveries(int maximumRedeliveries) {
         getRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder disableRedelivery() {
+    public LegacyDefaultErrorHandlerBuilder disableRedelivery() {
         getRedeliveryPolicy().maximumRedeliveries(0);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder maximumRedeliveryDelay(long maximumRedeliveryDelay) {
+    public LegacyDefaultErrorHandlerBuilder maximumRedeliveryDelay(long maximumRedeliveryDelay) {
         getRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder useCollisionAvoidance() {
+    public LegacyDefaultErrorHandlerBuilder useCollisionAvoidance() {
         getRedeliveryPolicy().useCollisionAvoidance();
         return this;
     }
 
-    public DefaultErrorHandlerBuilder useExponentialBackOff() {
+    public LegacyDefaultErrorHandlerBuilder useExponentialBackOff() {
         getRedeliveryPolicy().useExponentialBackOff();
         return this;
     }
 
-    public DefaultErrorHandlerBuilder retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
+    public LegacyDefaultErrorHandlerBuilder retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
         getRedeliveryPolicy().setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
+    public LegacyDefaultErrorHandlerBuilder retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         getRedeliveryPolicy().setRetryAttemptedLogLevel(retryAttemptedLogLevel);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder retryAttemptedLogInterval(int retryAttemptedLogInterval) {
+    public LegacyDefaultErrorHandlerBuilder retryAttemptedLogInterval(int retryAttemptedLogInterval) {
         getRedeliveryPolicy().setRetryAttemptedLogInterval(retryAttemptedLogInterval);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder logStackTrace(boolean logStackTrace) {
+    public LegacyDefaultErrorHandlerBuilder logStackTrace(boolean logStackTrace) {
         getRedeliveryPolicy().setLogStackTrace(logStackTrace);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder logRetryStackTrace(boolean logRetryStackTrace) {
+    public LegacyDefaultErrorHandlerBuilder logRetryStackTrace(boolean logRetryStackTrace) {
         getRedeliveryPolicy().setLogRetryStackTrace(logRetryStackTrace);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder logHandled(boolean logHandled) {
+    public LegacyDefaultErrorHandlerBuilder logHandled(boolean logHandled) {
         getRedeliveryPolicy().setLogHandled(logHandled);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder logNewException(boolean logNewException) {
+    public LegacyDefaultErrorHandlerBuilder logNewException(boolean logNewException) {
         getRedeliveryPolicy().setLogNewException(logNewException);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder logExhausted(boolean logExhausted) {
+    public LegacyDefaultErrorHandlerBuilder logExhausted(boolean logExhausted) {
         getRedeliveryPolicy().setLogExhausted(logExhausted);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder logRetryAttempted(boolean logRetryAttempted) {
+    public LegacyDefaultErrorHandlerBuilder logRetryAttempted(boolean logRetryAttempted) {
         getRedeliveryPolicy().setLogRetryAttempted(logRetryAttempted);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder logExhaustedMessageHistory(boolean logExhaustedMessageHistory) {
+    public LegacyDefaultErrorHandlerBuilder logExhaustedMessageHistory(boolean logExhaustedMessageHistory) {
         getRedeliveryPolicy().setLogExhaustedMessageHistory(logExhaustedMessageHistory);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder logExhaustedMessageBody(boolean logExhaustedMessageBody) {
+    public LegacyDefaultErrorHandlerBuilder logExhaustedMessageBody(boolean logExhaustedMessageBody) {
         getRedeliveryPolicy().setLogExhaustedMessageBody(logExhaustedMessageBody);
         return this;
     }
 
-    public DefaultErrorHandlerBuilder exchangeFormatterRef(String exchangeFormatterRef) {
+    public LegacyDefaultErrorHandlerBuilder exchangeFormatterRef(String exchangeFormatterRef) {
         getRedeliveryPolicy().setExchangeFormatterRef(exchangeFormatterRef);
         return this;
     }
@@ -195,7 +196,7 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @see    RedeliveryPolicy#setAsyncDelayedRedelivery(boolean)
      * @return the builder
      */
-    public DefaultErrorHandlerBuilder asyncDelayedRedelivery() {
+    public LegacyDefaultErrorHandlerBuilder asyncDelayedRedelivery() {
         getRedeliveryPolicy().setAsyncDelayedRedelivery(true);
         return this;
     }
@@ -206,7 +207,7 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @param  allowRedeliveryWhileStopping <tt>true</tt> to allow redelivery, <tt>false</tt> to reject redeliveries
      * @return                              the builder
      */
-    public DefaultErrorHandlerBuilder allowRedeliveryWhileStopping(boolean allowRedeliveryWhileStopping) {
+    public LegacyDefaultErrorHandlerBuilder allowRedeliveryWhileStopping(boolean allowRedeliveryWhileStopping) {
         getRedeliveryPolicy().setAllowRedeliveryWhileStopping(allowRedeliveryWhileStopping);
         return this;
     }
@@ -217,7 +218,7 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @param  executorService the scheduled thread pool to use
      * @return                 the builder.
      */
-    public DefaultErrorHandlerBuilder executorService(ScheduledExecutorService executorService) {
+    public LegacyDefaultErrorHandlerBuilder executorService(ScheduledExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
@@ -228,7 +229,7 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @param  ref reference to a scheduled thread pool
      * @return     the builder.
      */
-    public DefaultErrorHandlerBuilder executorServiceRef(String ref) {
+    public LegacyDefaultErrorHandlerBuilder executorServiceRef(String ref) {
         setExecutorServiceRef(ref);
         return this;
     }
@@ -239,7 +240,7 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @param  logger the logger
      * @return        the builder
      */
-    public DefaultErrorHandlerBuilder logger(CamelLogger logger) {
+    public LegacyDefaultErrorHandlerBuilder logger(CamelLogger logger) {
         setLogger(logger);
         return this;
     }
@@ -250,7 +251,7 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @param  level the logging level
      * @return       the builder
      */
-    public DefaultErrorHandlerBuilder loggingLevel(LoggingLevel level) {
+    public LegacyDefaultErrorHandlerBuilder loggingLevel(LoggingLevel level) {
         getLogger().setLevel(level);
         return this;
     }
@@ -261,7 +262,7 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @param  log the logger
      * @return     the builder
      */
-    public DefaultErrorHandlerBuilder log(org.slf4j.Logger log) {
+    public LegacyDefaultErrorHandlerBuilder log(org.slf4j.Logger log) {
         getLogger().setLog(log);
         return this;
     }
@@ -272,7 +273,7 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @param  log the log name
      * @return     the builder
      */
-    public DefaultErrorHandlerBuilder log(String log) {
+    public LegacyDefaultErrorHandlerBuilder log(String log) {
         return log(LoggerFactory.getLogger(log));
     }
 
@@ -282,7 +283,7 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @param  log the log class
      * @return     the builder
      */
-    public DefaultErrorHandlerBuilder log(Class<?> log) {
+    public LegacyDefaultErrorHandlerBuilder log(Class<?> log) {
         return log(LoggerFactory.getLogger(log));
     }
 
@@ -294,7 +295,7 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @param  processor the processor
      * @return           the builder
      */
-    public DefaultErrorHandlerBuilder onRedelivery(Processor processor) {
+    public LegacyDefaultErrorHandlerBuilder onRedelivery(Processor processor) {
         setOnRedelivery(processor);
         return this;
     }
@@ -306,7 +307,7 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @return                 the builder
      * @see                    #onRedelivery(Processor)
      */
-    public DefaultErrorHandlerBuilder onRedeliveryRef(String onRedeliveryRef) {
+    public LegacyDefaultErrorHandlerBuilder onRedeliveryRef(String onRedeliveryRef) {
         setOnRedeliveryRef(onRedeliveryRef);
         return this;
     }
@@ -319,12 +320,12 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @param  retryWhile expression that determines when to stop retrying
      * @return            the builder
      */
-    public DefaultErrorHandlerBuilder retryWhile(Expression retryWhile) {
+    public LegacyDefaultErrorHandlerBuilder retryWhile(Expression retryWhile) {
         setRetryWhile(ExpressionToPredicateAdapter.toPredicate(retryWhile));
         return this;
     }
 
-    public DefaultErrorHandlerBuilder retryWhileRef(String retryWhileRef) {
+    public LegacyDefaultErrorHandlerBuilder retryWhileRef(String retryWhileRef) {
         setRetryWhileRef(retryWhileRef);
         return this;
     }
@@ -361,7 +362,7 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @return the builder
      * @see    #useOriginalBody()
      */
-    public DefaultErrorHandlerBuilder useOriginalMessage() {
+    public LegacyDefaultErrorHandlerBuilder useOriginalMessage() {
         setUseOriginalMessage(true);
         return this;
     }
@@ -398,7 +399,7 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @return the builder
      * @see    #useOriginalMessage()
      */
-    public DefaultErrorHandlerBuilder useOriginalBody() {
+    public LegacyDefaultErrorHandlerBuilder useOriginalBody() {
         setUseOriginalBody(true);
         return this;
     }
@@ -418,20 +419,20 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      *                            exception on the {@link org.apache.camel.Exchange}
      * @return                    the builder
      */
-    public DefaultErrorHandlerBuilder deadLetterHandleNewException(boolean handleNewException) {
+    public LegacyDefaultErrorHandlerBuilder deadLetterHandleNewException(boolean handleNewException) {
         setDeadLetterHandleNewException(handleNewException);
         return this;
     }
 
     /**
-     * Sets a custom {@link org.apache.camel.Processor} to prepare the {@link org.apache.camel.Exchange} before handled
-     * by the failure processor / dead letter channel. This allows for example to enrich the message before sending to a
-     * dead letter queue.
+     * Sets a custom {@link Processor} to prepare the {@link org.apache.camel.Exchange} before handled by the failure
+     * processor / dead letter channel. This allows for example to enrich the message before sending to a dead letter
+     * queue.
      *
      * @param  processor the processor
      * @return           the builder
      */
-    public DefaultErrorHandlerBuilder onPrepareFailure(Processor processor) {
+    public LegacyDefaultErrorHandlerBuilder onPrepareFailure(Processor processor) {
         setOnPrepareFailure(processor);
         return this;
     }
@@ -443,21 +444,21 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @return                     the builder
      * @see                        #onPrepareFailure(Processor)
      */
-    public DefaultErrorHandlerBuilder onPrepareFailureRef(String onPrepareFailureRef) {
+    public LegacyDefaultErrorHandlerBuilder onPrepareFailureRef(String onPrepareFailureRef) {
         setOnPrepareFailureRef(onPrepareFailureRef);
         return this;
     }
 
     /**
-     * Sets a custom {@link org.apache.camel.Processor} to process the {@link org.apache.camel.Exchange} just after an
-     * exception was thrown. This allows to execute the processor at the same time the exception was thrown.
+     * Sets a custom {@link Processor} to process the {@link org.apache.camel.Exchange} just after an exception was
+     * thrown. This allows to execute the processor at the same time the exception was thrown.
      * <p/>
      * Important: Any exception thrown from this processor will be ignored.
      *
      * @param  processor the processor
      * @return           the builder
      */
-    public DefaultErrorHandlerBuilder onExceptionOccurred(Processor processor) {
+    public LegacyDefaultErrorHandlerBuilder onExceptionOccurred(Processor processor) {
         setOnExceptionOccurred(processor);
         return this;
     }
@@ -469,7 +470,7 @@ public class DefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport
      * @return                        the builder
      * @see                           #onExceptionOccurred(Processor)
      */
-    public DefaultErrorHandlerBuilder onExceptionOccurredRef(String onExceptionOccurredRef) {
+    public LegacyDefaultErrorHandlerBuilder onExceptionOccurredRef(String onExceptionOccurredRef) {
         setOnExceptionOccurredRef(onExceptionOccurredRef);
         return this;
     }

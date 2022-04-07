@@ -35,7 +35,8 @@ import static org.apache.camel.model.TransactedDefinition.PROPAGATION_REQUIRED;
  * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
 @Deprecated
-public class LegacyTransactionErrorHandlerReifier extends LegacyDefaultErrorHandlerReifier<TransactionErrorHandlerBuilder> {
+public class LegacyTransactionErrorHandlerReifier
+        extends LegacyDefaultErrorHandlerReifier<LegacyTransactionErrorHandlerBuilder> {
 
     private static final Logger LOG = LoggerFactory.getLogger(LegacyTransactionErrorHandlerReifier.class);
 

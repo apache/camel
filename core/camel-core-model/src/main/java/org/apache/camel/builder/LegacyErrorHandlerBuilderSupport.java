@@ -17,10 +17,10 @@
 package org.apache.camel.builder;
 
 /**
- * Base class for builders of error handling.
+ * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
 @Deprecated
-public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
+public abstract class LegacyErrorHandlerBuilderSupport implements LegacyErrorHandlerBuilder {
 
     @Override
     public boolean supportTransacted() {

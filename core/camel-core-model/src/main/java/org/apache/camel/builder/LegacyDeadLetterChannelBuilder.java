@@ -29,19 +29,19 @@ import org.slf4j.LoggerFactory;
  * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
 @Deprecated
-public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder implements DeadLetterChannelProperties {
+public class LegacyDeadLetterChannelBuilder extends DefaultErrorHandlerBuilder implements DeadLetterChannelProperties {
 
-    public DeadLetterChannelBuilder() {
+    public LegacyDeadLetterChannelBuilder() {
         // no-arg constructor used by Spring DSL
     }
 
-    public DeadLetterChannelBuilder(Endpoint deadLetter) {
+    public LegacyDeadLetterChannelBuilder(Endpoint deadLetter) {
         setDeadLetterUri(deadLetter.getEndpointUri());
         // DLC do not log exhausted by default
         getRedeliveryPolicy().setLogExhausted(false);
     }
 
-    public DeadLetterChannelBuilder(String uri) {
+    public LegacyDeadLetterChannelBuilder(String uri) {
         setDeadLetterUri(uri);
         // DLC do not log exhausted by default
         getRedeliveryPolicy().setLogExhausted(false);
@@ -54,7 +54,7 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder impleme
 
     @Override
     public LegacyErrorHandlerBuilder cloneBuilder() {
-        DeadLetterChannelBuilder answer = new DeadLetterChannelBuilder();
+        LegacyDeadLetterChannelBuilder answer = new LegacyDeadLetterChannelBuilder();
         super.cloneBuilder(answer);
         return answer;
     }

@@ -16,21 +16,12 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.model.errorhandler.NoErrorHandlerProperties;
+import org.apache.camel.ErrorHandlerFactory;
 
 /**
  * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
 @Deprecated
-public class NoErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport implements NoErrorHandlerProperties {
+public interface LegacyErrorHandlerBuilder extends ErrorHandlerFactory {
 
-    @Override
-    public boolean supportTransacted() {
-        return false;
-    }
-
-    @Override
-    public LegacyErrorHandlerBuilder cloneBuilder() {
-        return new NoErrorHandlerBuilder();
-    }
 }

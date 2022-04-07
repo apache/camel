@@ -32,9 +32,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.apache.camel.builder.DeadLetterChannelBuilder;
-import org.apache.camel.builder.DefaultErrorHandlerBuilder;
-import org.apache.camel.builder.NoErrorHandlerBuilder;
+import org.apache.camel.builder.LegacyDeadLetterChannelBuilder;
+import org.apache.camel.builder.LegacyDefaultErrorHandlerBuilder;
+import org.apache.camel.builder.LegacyNoErrorHandlerBuilder;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelRouteControllerDefinition;
@@ -84,9 +84,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     static {
         // legacy camel-spring-xml error-handling using its own model and parsers
-        ErrorHandlerReifier.registerReifier(DeadLetterChannelBuilder.class, LegacyDeadLetterChannelReifier::new);
-        ErrorHandlerReifier.registerReifier(DefaultErrorHandlerBuilder.class, LegacyDefaultErrorHandlerReifier::new);
-        ErrorHandlerReifier.registerReifier(NoErrorHandlerBuilder.class, LegacyNoErrorHandlerReifier::new);
+        ErrorHandlerReifier.registerReifier(LegacyDeadLetterChannelBuilder.class, LegacyDeadLetterChannelReifier::new);
+        ErrorHandlerReifier.registerReifier(LegacyDefaultErrorHandlerBuilder.class, LegacyDefaultErrorHandlerReifier::new);
+        ErrorHandlerReifier.registerReifier(LegacyNoErrorHandlerBuilder.class, LegacyNoErrorHandlerReifier::new);
         // note: spring transaction error handler is registered in camel-spring
     }
 

@@ -101,7 +101,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             } else {
                 LOG.debug("No ErrorHandlerBuilder configured, will use default TransactionErrorHandlerBuilder settings");
             }
-            TransactionErrorHandlerBuilder txBuilder = new TransactionErrorHandlerBuilder();
+            LegacyTransactionErrorHandlerBuilder txBuilder = new LegacyTransactionErrorHandlerBuilder();
             txBuilder.setTransactionTemplate(getTransactionTemplate());
             txBuilder.setSpringTransactionPolicy(this);
             if (builder != null) {

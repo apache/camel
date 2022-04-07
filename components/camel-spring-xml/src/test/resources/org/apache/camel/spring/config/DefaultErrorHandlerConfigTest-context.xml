@@ -37,7 +37,7 @@
         </route>
     </camelContext>
 
-    <bean id="dlc" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <bean id="dlc" class="org.apache.camel.builder.LegacyDeadLetterChannelBuilder">
         <property name="deadLetterUri" value="mock:dead"/>
     </bean>
 

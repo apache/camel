@@ -25,7 +25,7 @@
 
     <import resource="transactionalClientDataSource.xml"/>
 
-    <bean id="errorHandler" class="org.apache.camel.spring.spi.TransactionErrorHandlerBuilder">
+    <bean id="errorHandler" class="org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder">
         <property name="springTransactionPolicy" ref="PROPAGATION_REQUIRED"/>
     </bean>
 
