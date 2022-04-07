@@ -2,5 +2,6 @@
 DeadLetterChannelDefinition
 DefaultErrorHandlerDefinition
 ErrorHandlerRefDefinition
+JtaTransactionErrorHandlerDefinition
 NoErrorHandlerDefinition
-TransactionErrorHandlerDefinition
+SpringTransactionErrorHandlerDefinition

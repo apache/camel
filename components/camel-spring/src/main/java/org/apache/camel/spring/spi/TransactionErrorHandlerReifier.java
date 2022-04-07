@@ -25,6 +25,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
+import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.TransactionErrorHandlerDefinition;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
@@ -32,7 +33,6 @@ import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ThreadPoolProfile;
-import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +41,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.apache.camel.model.TransactedDefinition.PROPAGATION_REQUIRED;
 
-public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<TransactionErrorHandlerDefinition> {
+public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTransactionErrorHandlerDefinition> {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionErrorHandlerReifier.class);
 
-    public TransactionErrorHandlerReifier(Route route, TransactionErrorHandlerDefinition definition) {
+    public TransactionErrorHandlerReifier(Route route, SpringTransactionErrorHandlerDefinition definition) {
         super(route, definition);
     }
 
@@ -79,30 +79,28 @@ public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<Transact
 
         TransactionTemplate answer = null;
 
-        TransactedPolicy policy = (TransactedPolicy) definition.getTransactedPolicy();
+        SpringTransactionPolicy policy = (SpringTransactionPolicy) definition.getTransactedPolicy();
         if (policy == null && definition.getTransactedPolicyRef() != null) {
-            policy = mandatoryLookup(definition.getTransactedPolicyRef(), TransactedPolicy.class);
+            policy = mandatoryLookup(definition.getTransactedPolicyRef(), SpringTransactionPolicy.class);
         }
         if (policy != null) {
-            if (policy instanceof SpringTransactionPolicy) {
-                answer = ((SpringTransactionPolicy) policy).getTransactionTemplate();
-            }
+            answer = ((SpringTransactionPolicy) policy).getTransactionTemplate();
         }
 
         if (answer == null) {
-            Map<String, TransactedPolicy> mapPolicy = findByTypeWithName(TransactedPolicy.class);
+            Map<String, SpringTransactionPolicy> mapPolicy = findByTypeWithName(SpringTransactionPolicy.class);
             if (mapPolicy != null && mapPolicy.size() == 1) {
                 policy = mapPolicy.values().iterator().next();
-                if (policy instanceof SpringTransactionPolicy) {
-                    answer = ((SpringTransactionPolicy) policy).getTransactionTemplate();
+                if (policy != null) {
+                    answer = policy.getTransactionTemplate();
                 }
             }
         }
 
         if (answer == null) {
-            policy = lookupByNameAndType(PROPAGATION_REQUIRED, TransactedPolicy.class);
-            if (policy instanceof SpringTransactionPolicy) {
-                answer = ((SpringTransactionPolicy) policy).getTransactionTemplate();
+            policy = lookupByNameAndType(PROPAGATION_REQUIRED, SpringTransactionPolicy.class);
+            if (policy != null) {
+                answer = policy.getTransactionTemplate();
             }
         }
 

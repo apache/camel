@@ -33,7 +33,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * Wraps the processor in a Spring transaction
+ * Spring transaction policy when using spring based transactions.
  */
 public class SpringTransactionPolicy implements TransactedPolicy {
     private static final Logger LOG = LoggerFactory.getLogger(SpringTransactionPolicy.class);

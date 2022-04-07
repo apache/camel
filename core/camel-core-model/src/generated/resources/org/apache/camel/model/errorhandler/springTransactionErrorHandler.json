@@ -1,12 +1,12 @@
 {
   "model": {
     "kind": "model",
-    "name": "transactionErrorHandler",
-    "title": "Transaction Error Handler",
-    "description": "Transactional error handler (requires either camel-spring or camel-jta using traditional JTA transactions).",
+    "name": "springTransactionErrorHandler",
+    "title": "Spring Transaction Error Handler",
+    "description": "Spring based transactional error handler (requires camel-spring).",
     "deprecated": false,
     "label": "configuration,error",
-    "javaType": "org.apache.camel.model.errorhandler.TransactionErrorHandlerDefinition",
+    "javaType": "org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition",
     "abstract": false,
     "input": false,
     "output": false

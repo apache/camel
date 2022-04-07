@@ -26,14 +26,14 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.errorhandler.ErrorHandlerHelper;
 import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
-import org.apache.camel.model.errorhandler.TransactionErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
 import org.apache.camel.spi.TransactedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Sets a proper error handler. This class is based on org.apache.camel.spring.spi.SpringTransactionPolicy.
- * <p>
+ * JTA transaction policy when using JTA based transactions.
+ *
  * This class requires the resource TransactionManager to be available through JNDI url
  * &quot;java:/TransactionManager&quot;
  */
@@ -86,20 +86,20 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
             }
         }
 
-        TransactionErrorHandlerDefinition txBuilder;
+        JtaTransactionErrorHandlerDefinition txBuilder;
         if (builder != null && builder.supportTransacted()) {
-            if (!(builder instanceof TransactionErrorHandlerDefinition)) {
+            if (!(builder instanceof JtaTransactionErrorHandlerDefinition)) {
                 throw new RuntimeCamelException(
                         "The given transactional error handler builder '" + builder
-                                                + "' is not of type '" + TransactionErrorHandlerDefinition.class.getName()
+                                                + "' is not of type '" + JtaTransactionErrorHandlerDefinition.class.getName()
                                                 + "' which is required in this environment!");
             }
-            LOG.debug("The ErrorHandlerBuilder configured is a JtaTransactionErrorHandlerBuilder: {}", builder);
-            txBuilder = (TransactionErrorHandlerDefinition) builder.cloneBuilder();
+            LOG.debug("The ErrorHandlerBuilder configured is a JtaTransactionErrorHandlerDefinition: {}", builder);
+            txBuilder = (JtaTransactionErrorHandlerDefinition) builder.cloneBuilder();
         } else {
             LOG.debug(
-                    "No or no transactional ErrorHandlerBuilder configured, will use default JtaTransactionErrorHandlerBuilder settings");
-            txBuilder = new TransactionErrorHandlerDefinition();
+                    "No or no transactional ErrorHandlerBuilder configured, will use default JtaTransactionErrorHandlerDefinition settings");
+            txBuilder = new JtaTransactionErrorHandlerDefinition();
         }
 
         txBuilder.setTransactedPolicy(this);

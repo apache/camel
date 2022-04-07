@@ -25,6 +25,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
+import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.TransactionErrorHandlerDefinition;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
@@ -32,18 +33,17 @@ import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ThreadPoolProfile;
-import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<TransactionErrorHandlerDefinition> {
+public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTransactionErrorHandlerDefinition> {
 
     private static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
 
     private static final Logger LOG = LoggerFactory.getLogger(JtaTransactionErrorHandlerReifier.class);
 
-    public JtaTransactionErrorHandlerReifier(Route route, TransactionErrorHandlerDefinition definition) {
+    public JtaTransactionErrorHandlerReifier(Route route, JtaTransactionErrorHandlerDefinition definition) {
         super(route, definition);
     }
 
@@ -73,7 +73,7 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<Trans
     }
 
     private JtaTransactionPolicy resolveTransactionPolicy(
-            TransactionErrorHandlerDefinition definition, CamelContext camelContext) {
+            JtaTransactionErrorHandlerDefinition definition, CamelContext camelContext) {
 
         JtaTransactionPolicy answer = (JtaTransactionPolicy) definition.getTransactedPolicy();
         if (answer == null && definition.getTransactedPolicyRef() != null) {
@@ -84,18 +84,18 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<Trans
         if (answer == null) {
             LOG.debug("No transaction policy configured on error handler. Will try find it in the registry.");
 
-            Map<String, TransactedPolicy> mapPolicy = findByTypeWithName(TransactedPolicy.class);
+            Map<String, JtaTransactionPolicy> mapPolicy = findByTypeWithName(JtaTransactionPolicy.class);
             if (mapPolicy != null && mapPolicy.size() == 1) {
-                TransactedPolicy policy = mapPolicy.values().iterator().next();
-                if (policy instanceof JtaTransactionPolicy) {
-                    answer = (JtaTransactionPolicy) policy;
+                JtaTransactionPolicy policy = mapPolicy.values().iterator().next();
+                if (policy != null) {
+                    answer = policy;
                 }
             }
 
             if (answer == null) {
-                TransactedPolicy policy = lookupByNameAndType(PROPAGATION_REQUIRED, TransactedPolicy.class);
-                if (policy instanceof JtaTransactionPolicy) {
-                    answer = (JtaTransactionPolicy) policy;
+                JtaTransactionPolicy policy = lookupByNameAndType(PROPAGATION_REQUIRED, JtaTransactionPolicy.class);
+                if (policy != null) {
+                    answer = policy;
                 }
             }
 

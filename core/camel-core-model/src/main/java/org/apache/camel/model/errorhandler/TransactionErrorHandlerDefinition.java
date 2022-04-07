@@ -16,23 +16,16 @@
  */
 package org.apache.camel.model.errorhandler;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Transactional error handler (requires either camel-spring or camel-jta using traditional JTA transactions).
  */
-@Metadata(label = "configuration,error")
-@XmlRootElement(name = "transactionErrorHandler")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefinition {
+public abstract class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefinition {
 
     @XmlTransient
     private Object transactedPolicy;
@@ -47,13 +40,6 @@ public class TransactionErrorHandlerDefinition extends DefaultErrorHandlerDefini
     @Override
     public boolean supportTransacted() {
         return true;
-    }
-
-    @Override
-    public ErrorHandlerFactory cloneBuilder() {
-        TransactionErrorHandlerDefinition answer = new TransactionErrorHandlerDefinition();
-        cloneBuilder(answer);
-        return answer;
     }
 
     protected void cloneBuilder(TransactionErrorHandlerDefinition other) {

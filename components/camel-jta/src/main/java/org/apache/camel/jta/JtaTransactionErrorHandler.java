@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.model.errorhandler.TransactionErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
@@ -42,9 +42,9 @@ public class JtaTransactionErrorHandler extends RedeliveryErrorHandler {
 
     static {
         // register camel-jta as transaction error handler
-        ErrorHandlerReifier.registerReifier(TransactionErrorHandlerDefinition.class,
+        ErrorHandlerReifier.registerReifier(JtaTransactionErrorHandlerDefinition.class,
                 (route, errorHandlerFactory) -> new JtaTransactionErrorHandlerReifier(
-                        route, (TransactionErrorHandlerDefinition) errorHandlerFactory));
+                        route, (JtaTransactionErrorHandlerDefinition) errorHandlerFactory));
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(JtaTransactionErrorHandler.class);
