@@ -20,7 +20,7 @@ import org.apache.camel.model.errorhandler.ErrorHandlerRefConfiguration;
 import org.apache.camel.model.errorhandler.ErrorHandlerRefProperties;
 
 /**
- * Represents a proxy to an error handler builder which is resolved by named reference
+ * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
 @Deprecated
 public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport implements ErrorHandlerRefProperties {

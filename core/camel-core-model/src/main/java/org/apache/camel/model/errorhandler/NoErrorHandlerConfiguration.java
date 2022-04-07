@@ -20,6 +20,9 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ErrorHandlerFactory;
 
+/**
+ * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ */
 @XmlTransient
 @Deprecated
 public class NoErrorHandlerConfiguration implements NoErrorHandlerProperties {
