@@ -17,8 +17,8 @@
 
 package org.apache.camel.itest;
 
+import org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.springframework.transaction.support.TransactionTemplate;
 
 public final class TransactionSupport {
@@ -31,7 +31,7 @@ public final class TransactionSupport {
      * @param  policy using this transaction policy (eg: required, supports, ...)
      * @return        the created error handler
      */
-    public static TransactionErrorHandlerBuilder transactionErrorHandler(SpringTransactionPolicy policy) {
+    public static LegacyTransactionErrorHandlerBuilder transactionErrorHandler(SpringTransactionPolicy policy) {
         return transactionErrorHandler(policy.getTransactionTemplate());
     }
 
@@ -41,8 +41,8 @@ public final class TransactionSupport {
      * @param  template the spring transaction template
      * @return          the created error handler
      */
-    private static TransactionErrorHandlerBuilder transactionErrorHandler(TransactionTemplate template) {
-        TransactionErrorHandlerBuilder answer = new TransactionErrorHandlerBuilder();
+    private static LegacyTransactionErrorHandlerBuilder transactionErrorHandler(TransactionTemplate template) {
+        LegacyTransactionErrorHandlerBuilder answer = new LegacyTransactionErrorHandlerBuilder();
         answer.setTransactionTemplate(template);
         return answer;
     }

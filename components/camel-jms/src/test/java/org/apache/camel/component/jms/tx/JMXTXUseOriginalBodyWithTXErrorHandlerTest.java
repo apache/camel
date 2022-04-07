@@ -23,7 +23,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
+import org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -91,7 +91,7 @@ public class JMXTXUseOriginalBodyWithTXErrorHandlerTest extends JMXTXUseOriginal
 
         @Override
         public void configure() {
-            errorHandler(new TransactionErrorHandlerBuilder());
+            errorHandler(new LegacyTransactionErrorHandlerBuilder());
 
             onException(Exception.class)
                     .handled(true)

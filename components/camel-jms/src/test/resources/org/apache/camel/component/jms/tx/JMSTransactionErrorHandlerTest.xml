@@ -56,7 +56,7 @@
 
     <!-- START SNIPPET: e3 -->
     <!-- use a transaction error handler -->
-    <bean id="myErrorHandler" class="org.apache.camel.spring.spi.TransactionErrorHandlerBuilder">
+    <bean id="myErrorHandler" class="org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder">
         <property name="redeliveryPolicy" ref="myPolicy"/>
     </bean>
     <!-- and let it try to redeliver up till 4 times -->
