@@ -274,21 +274,19 @@
         }
       },
       "org.apache.camel.builder.ErrorHandlerBuilderRef" : {
-        "type" : "object",
-        "properties" : {
-          "deadLetterChannel" : {
-            "$ref" : "#/items/definitions/org.apache.camel.builder.DeadLetterChannelBuilder"
-          },
-          "log" : {
-            "$ref" : "#/items/definitions/org.apache.camel.builder.DefaultErrorHandlerBuilder"
-          },
-          "none" : {
-            "$ref" : "#/items/definitions/org.apache.camel.builder.NoErrorHandlerBuilder"
-          },
-          "ref" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "ref" : {
+              "type" : "string"
+            },
+            "supportTransacted" : {
+              "type" : "boolean"
+            }
           }
-        }
+        } ]
       },
       "org.apache.camel.builder.NoErrorHandlerBuilder" : {
         "type" : "object"
@@ -5756,20 +5754,21 @@
         }
       },
       "org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "id" : {
-              "type" : "string"
-            },
-            "ref" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "deadLetterChannel" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DeadLetterChannelDefinition"
+          },
+          "log" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition"
+          },
+          "none" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"
+          },
+          "ref" : {
+            "type" : "string"
           }
-        } ],
-        "required" : [ "ref" ]
+        }
       },
       "org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition" : {
         "type" : "object",
@@ -7686,9 +7685,6 @@
       }
     },
     "properties" : {
-      "errorHandler" : {
-        "$ref" : "#/items/definitions/org.apache.camel.builder.ErrorHandlerBuilderRef"
-      },
       "beans" : {
         "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.BeansDeserializer"
       },
@@ -7706,6 +7702,9 @@
       },
       "templatedRoute" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteDefinition"
+      },
+      "errorHandler" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition"
       },
       "rest" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"

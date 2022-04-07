@@ -17,16 +17,16 @@
 package org.apache.camel.dsl.yaml.deserializers;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
-import org.apache.camel.builder.DefaultErrorHandlerBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilderRef;
-import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
@@ -45,18 +45,19 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeseri
 @YamlIn
 @YamlType(
           nodes = { "error-handler", "errorHandler" },
-          types = ErrorHandlerBuilderRef.class,
+          types = ErrorHandlerRefDefinition.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
                   @YamlProperty(name = "ref", type = "string"),
-                  @YamlProperty(name = "none", type = "object:org.apache.camel.builder.NoErrorHandlerBuilder"),
-                  @YamlProperty(name = "log", type = "object:org.apache.camel.builder.DefaultErrorHandlerBuilder"),
+                  @YamlProperty(name = "none", type = "object:org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"),
+                  @YamlProperty(name = "log",
+                                type = "object:org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition"),
                   @YamlProperty(name = "dead-letter-channel",
-                                type = "object:org.apache.camel.builder.DeadLetterChannelBuilder"),
+                                type = "object:org.apache.camel.model.errorhandler.DeadLetterChannelDefinition"),
           })
 public class ErrorHandlerBuilderDeserializer implements ConstructNode {
 
-    private static CamelContextCustomizer customizer(ErrorHandlerBuilder builder) {
+    private static CamelContextCustomizer customizer(ErrorHandlerFactory builder) {
         return new CamelContextCustomizer() {
             @Override
             public void configure(CamelContext camelContext) {
@@ -78,13 +79,13 @@ public class ErrorHandlerBuilderDeserializer implements ConstructNode {
 
             switch (key) {
                 case "ref":
-                    return customizer(asType(val, ErrorHandlerBuilderRef.class));
+                    return customizer(asType(val, ErrorHandlerRefDefinition.class));
                 case "none":
-                    return customizer(asType(val, NoErrorHandlerBuilder.class));
+                    return customizer(asType(val, NoErrorHandlerDefinition.class));
                 case "dead-letter-channel":
-                    return customizer(asType(val, DeadLetterChannelBuilder.class));
+                    return customizer(asType(val, DeadLetterChannelDefinition.class));
                 case "log":
-                    return customizer(asType(val, DefaultErrorHandlerBuilder.class));
+                    return customizer(asType(val, DefaultErrorHandlerDefinition.class));
                 default:
                     throw new UnsupportedFieldException(val, key);
             }
