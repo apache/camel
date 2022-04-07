@@ -43,6 +43,13 @@ import static org.apache.camel.model.TransactedDefinition.PROPAGATION_REQUIRED;
 
 public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTransactionErrorHandlerDefinition> {
 
+    static {
+        // register camel-spring as transaction error handler
+        ErrorHandlerReifier.registerReifier(SpringTransactionErrorHandlerDefinition.class,
+                (route, errorHandlerFactory) -> new TransactionErrorHandlerReifier(
+                        route, (SpringTransactionErrorHandlerDefinition) errorHandlerFactory));
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(TransactionErrorHandlerReifier.class);
 
     public TransactionErrorHandlerReifier(Route route, SpringTransactionErrorHandlerDefinition definition) {
