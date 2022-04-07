@@ -28,10 +28,13 @@ import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ThreadPoolProfile;
 
+/**
+ * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ */
 @Deprecated
-public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerProperties> extends ErrorHandlerReifier<T> {
+public class LegacyDefaultErrorHandlerReifier<T extends DefaultErrorHandlerProperties> extends ErrorHandlerReifier<T> {
 
-    public DefaultErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
+    public LegacyDefaultErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
         super(route, (T) definition);
     }
 

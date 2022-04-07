@@ -23,10 +23,13 @@ import org.apache.camel.model.errorhandler.NoErrorHandlerProperties;
 import org.apache.camel.processor.errorhandler.NoErrorHandler;
 import org.apache.camel.spi.ErrorHandler;
 
+/**
+ * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ */
 @Deprecated
-public class NoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerProperties> {
+public class LegacyNoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerProperties> {
 
-    public NoErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
+    public LegacyNoErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
         super(route, (NoErrorHandlerProperties) definition);
     }
 

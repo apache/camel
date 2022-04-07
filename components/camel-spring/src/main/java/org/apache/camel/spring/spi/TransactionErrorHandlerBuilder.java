@@ -32,7 +32,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 
     static {
-        ErrorHandlerReifier.registerReifier(TransactionErrorHandlerBuilder.class, TransactionErrorHandlerReifier::new);
+        // legacy camel-spring-xml error-handling using its own model and parsers
+        ErrorHandlerReifier.registerReifier(TransactionErrorHandlerBuilder.class, LegacyTransactionErrorHandlerReifier::new);
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionErrorHandlerBuilder.class);

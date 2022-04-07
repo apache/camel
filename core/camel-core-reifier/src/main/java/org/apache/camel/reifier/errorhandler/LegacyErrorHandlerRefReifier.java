@@ -24,10 +24,13 @@ import org.apache.camel.model.errorhandler.ErrorHandlerHelper;
 import org.apache.camel.model.errorhandler.ErrorHandlerRefProperties;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ */
 @Deprecated
-public class ErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerRefProperties> {
+public class LegacyErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerRefProperties> {
 
-    public ErrorHandlerRefReifier(Route route, ErrorHandlerFactory definition) {
+    public LegacyErrorHandlerRefReifier(Route route, ErrorHandlerFactory definition) {
         super(route, (ErrorHandlerRefProperties) definition);
     }
 

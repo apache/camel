@@ -36,7 +36,7 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.errorhandler.DefaultExceptionPolicyStrategy;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy;
 import org.apache.camel.processor.errorhandler.ExceptionPolicyKey;
-import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
+import org.apache.camel.reifier.errorhandler.NewDefaultErrorHandlerReifier;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,7 +56,7 @@ public class DefaultExceptionPolicyStrategyTest {
     private ExceptionPolicy exceptionPolicy(Class<? extends Throwable> exceptionClass) {
         CamelContext cc = new DefaultCamelContext();
         Route context = new DefaultRoute(cc, null, null, null, null, null);
-        return new DefaultErrorHandlerReifier<>(context, null)
+        return new NewDefaultErrorHandlerReifier(context, null)
                 .createExceptionPolicy(new OnExceptionDefinition(exceptionClass));
     }
 

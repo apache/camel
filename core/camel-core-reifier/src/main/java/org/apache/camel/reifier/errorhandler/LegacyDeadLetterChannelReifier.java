@@ -28,10 +28,13 @@ import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ */
 @Deprecated
-public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLetterChannelProperties> {
+public class LegacyDeadLetterChannelReifier extends LegacyDefaultErrorHandlerReifier<DeadLetterChannelProperties> {
 
-    public DeadLetterChannelReifier(Route route, ErrorHandlerFactory definition) {
+    public LegacyDeadLetterChannelReifier(Route route, ErrorHandlerFactory definition) {
         super(route, definition);
     }
 
