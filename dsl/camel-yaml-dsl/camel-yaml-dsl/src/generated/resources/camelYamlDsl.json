@@ -5567,59 +5567,55 @@
         }
       },
       "org.apache.camel.model.errorhandler.DeadLetterChannelDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "deadLetterHandleNewException" : {
-              "type" : "boolean"
-            },
-            "deadLetterUri" : {
-              "type" : "string"
-            },
-            "executorServiceRef" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "level" : {
-              "type" : "string",
-              "enum" : [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ]
-            },
-            "logName" : {
-              "type" : "string"
-            },
-            "loggerRef" : {
-              "type" : "string"
-            },
-            "onExceptionOccurredRef" : {
-              "type" : "string"
-            },
-            "onPrepareFailureRef" : {
-              "type" : "string"
-            },
-            "onRedeliveryRef" : {
-              "type" : "string"
-            },
-            "redeliveryPolicy" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
-            },
-            "redeliveryPolicyRef" : {
-              "type" : "string"
-            },
-            "retryWhileRef" : {
-              "type" : "string"
-            },
-            "useOriginalBody" : {
-              "type" : "boolean"
-            },
-            "useOriginalMessage" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "deadLetterHandleNewException" : {
+            "type" : "boolean"
+          },
+          "deadLetterUri" : {
+            "type" : "string"
+          },
+          "executorServiceRef" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "level" : {
+            "type" : "string",
+            "enum" : [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ]
+          },
+          "logName" : {
+            "type" : "string"
+          },
+          "loggerRef" : {
+            "type" : "string"
+          },
+          "onExceptionOccurredRef" : {
+            "type" : "string"
+          },
+          "onPrepareFailureRef" : {
+            "type" : "string"
+          },
+          "onRedeliveryRef" : {
+            "type" : "string"
+          },
+          "redeliveryPolicy" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
+          },
+          "redeliveryPolicyRef" : {
+            "type" : "string"
+          },
+          "retryWhileRef" : {
+            "type" : "string"
+          },
+          "useOriginalBody" : {
+            "type" : "boolean"
+          },
+          "useOriginalMessage" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "deadLetterUri" ]
       },
       "org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition" : {

@@ -445,7 +445,9 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @return               the builder
      */
     public DeadLetterChannelDefinition deadLetterChannel(String deadLetterUri) {
-        return new DeadLetterChannelDefinition(deadLetterUri);
+        DeadLetterChannelDefinition answer = new DeadLetterChannelDefinition();
+        answer.setDeadLetterUri(deadLetterUri);
+        return answer;
     }
 
     /**
@@ -456,7 +458,7 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @return                    the builder
      */
     public DeadLetterChannelDefinition deadLetterChannel(Endpoint deadLetterEndpoint) {
-        return new DeadLetterChannelDefinition(deadLetterEndpoint);
+        return deadLetterChannel(deadLetterEndpoint.getEndpointUri());
     }
 
     /**

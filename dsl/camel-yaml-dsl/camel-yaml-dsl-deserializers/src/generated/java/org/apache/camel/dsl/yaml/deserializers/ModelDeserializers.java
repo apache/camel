@@ -3828,7 +3828,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            inline = true,
             types = org.apache.camel.model.errorhandler.DeadLetterChannelDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -3861,11 +3860,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected DeadLetterChannelDefinition newInstance() {
             return new DeadLetterChannelDefinition();
-        }
-
-        @Override
-        protected DeadLetterChannelDefinition newInstance(String value) {
-            return new DeadLetterChannelDefinition(value);
         }
 
         @Override

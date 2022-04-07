@@ -130,6 +130,10 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         }
     }
 
+    protected RedeliveryPolicyDefinition createRedeliveryPolicy() {
+        return new RedeliveryPolicyDefinition();
+    }
+
     public String getLoggerRef() {
         return loggerRef;
     }
@@ -385,7 +389,7 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
 
     public RedeliveryPolicyDefinition getRedeliveryPolicy() {
         if (redeliveryPolicy == null) {
-            redeliveryPolicy = new RedeliveryPolicyDefinition();
+            redeliveryPolicy = createRedeliveryPolicy();
         }
         return redeliveryPolicy;
     }
