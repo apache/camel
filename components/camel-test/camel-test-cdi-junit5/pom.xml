@@ -36,6 +36,7 @@
         <firstVersion>3.16.0</firstVersion>
         <label>testing,java</label>
         <title>Test CDI JUnit5</title>
+        <supportLevel>Preview</supportLevel>
     </properties>
 
     <dependencies>

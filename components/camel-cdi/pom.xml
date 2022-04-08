@@ -36,6 +36,7 @@
         <firstVersion>2.10.0</firstVersion>
         <label>java</label>
         <title>CDI</title>
+        <supportLevel>Preview</supportLevel>
     </properties>
 
     <dependencyManagement>
