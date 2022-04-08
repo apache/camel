@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.eventhubs;
 
+import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.azure.messaging.eventhubs.EventProcessorClient;
@@ -32,30 +33,30 @@ import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.azure.eventhubs.EventHubsConstants.*;
+
 public class EventHubsConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventHubsConsumer.class);
 
-    private static final String COMPLETED_BY_SIZE = "size";
-    private static final String COMPLETED_BY_TIMEOUT = "timeout";
-
     // we use the EventProcessorClient as recommended by Azure docs to consume from all partitions
     private EventProcessorClient processorClient;
 
-    private AtomicInteger processedEvents;
+    private final AtomicInteger processedEvents;
+    private final Timer timer;
 
-    private Long checkpointCompletionTimeout;
+    private EventHubsCheckpointUpdaterTimerTask lastTask;
 
     public EventHubsConsumer(final EventHubsEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
+
+        this.processedEvents = new AtomicInteger(0);
+        this.timer = new Timer();
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        checkpointCompletionTimeout = System.currentTimeMillis();
-        processedEvents = new AtomicInteger(0);
 
         // create the client
         processorClient = EventHubsClientFactory.createEventProcessorClient(getConfiguration(),
@@ -157,13 +158,25 @@ public class EventHubsConsumer extends DefaultConsumer {
      * @param exchange the exchange
      */
     private void processCommit(final Exchange exchange, final EventContext eventContext) {
+        if (lastTask == null || System.currentTimeMillis() > lastTask.scheduledExecutionTime()) {
+            lastTask = new EventHubsCheckpointUpdaterTimerTask(eventContext, processedEvents);
+            // delegate the checkpoint update to a dedicated Thread
+            timer.schedule(lastTask, getConfiguration().getCheckpointBatchTimeout());
+        } else {
+            // updates the eventContext to use for the offset to be the most accurate
+            lastTask.setEventContext(eventContext);
+        }
+
         try {
-            if (processCheckpoint(exchange, eventContext)) {
+            var completionCondition = processCheckpoint(exchange);
+            if (completionCondition.equals(COMPLETED_BY_SIZE)) {
                 eventContext.updateCheckpoint();
                 processedEvents.set(0);
-            } else {
+            } else if (!completionCondition.equals(COMPLETED_BY_TIMEOUT)) {
                 processedEvents.incrementAndGet();
             }
+            // we assume that the timer task has done the update by its side
+
         } catch (Exception ex) {
             getExceptionHandler().handleException("Error occurred during updating the checkpoint. This exception is ignored.",
                     exchange, ex);
@@ -183,29 +196,37 @@ public class EventHubsConsumer extends DefaultConsumer {
     }
 
     /**
-     * Checks whether we need to update the checkpoint or not
+     * Checks either the batch size or the batch timeout is reached
      *
      * @param  exchange the exchange
-     *
-     * @return          true if at least one of the two conditions (batch size or batch timeout) are met, else false
+     * @return          the completion condition (batch size or batch timeout) if one of them is reached, else the
+     *                  'uncompleted' state adds a header {@value EventHubsConstants#CHECKPOINT_UPDATED_BY} with the
+     *                  completion condition (
      */
-    private boolean processCheckpoint(Exchange exchange, EventContext eventContext) {
-        var checkpointByBatchSize = processedEvents.get() % getEndpoint().getConfiguration().getCheckpointBatchSize() == 0;
-        if (checkpointByBatchSize) {
+    private String processCheckpoint(Exchange exchange) {
+        // Check if the batch size is reached
+        if (processedEvents.get() % getConfiguration().getCheckpointBatchSize() == 0) {
             exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_SIZE);
+            LOG.debug("eventhub consumer batch size of reached");
+            // no need to run task if the batch size already did the checkpointing
+            if (lastTask != null) {
+                lastTask.cancel();
+            }
+
+            return COMPLETED_BY_SIZE;
+        } else {
+            LOG.debug("eventhub consumer batch size of {}/{} not reached yet", processedEvents.get(),
+                    getConfiguration().getCheckpointBatchSize());
         }
 
-        var now = System.currentTimeMillis();
-        var checkpointByBatchTimeout = false;
-        if (now >= checkpointCompletionTimeout + getEndpoint().getConfiguration().getCheckpointBatchTimeout()) {
-            checkpointCompletionTimeout = now;
-            checkpointByBatchTimeout = true;
-        }
-
-        if (checkpointByBatchTimeout) {
+        // Check if the batch timeout is reached
+        if (System.currentTimeMillis() >= lastTask.scheduledExecutionTime()) {
             exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_TIMEOUT);
+            LOG.debug("eventhub consumer batch timeout reached");
+
+            return COMPLETED_BY_TIMEOUT;
         }
 
-        return checkpointByBatchSize || checkpointByBatchTimeout;
+        return UNCOMPLETED;
     }
 }
