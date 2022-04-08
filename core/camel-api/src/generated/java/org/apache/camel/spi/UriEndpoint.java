@@ -189,8 +189,8 @@ public @interface UriEndpoint {
     Class<?> headersClass() default void.class;
 
     /**
-     * The name of the field to get or the name of the method to invoke to get the name of the headers defined in an
-     * enum.
+     * The name of the field to get or the name of the method without parameters to invoke to get the name of the
+     * headers defined in an enum.
      * <p/>
      * Only took into account if and only if the class defined as {@code headersClass} is an enum.
      * <p/>

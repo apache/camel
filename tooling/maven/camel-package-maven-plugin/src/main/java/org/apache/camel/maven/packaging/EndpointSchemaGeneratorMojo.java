@@ -409,7 +409,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             getLog().debug(String.format("The java type %s could not be found", header.getJavaType()), e);
         }
         try {
-            header.setName(getHeaderName(field, headersNameProvider));
+            setHeaderNames(header, field, headersNameProvider);
             componentModel.addEndpointHeader(header);
         } catch (Exception e) {
             getLog().debug(String.format("The name of the header corresponding to the field %s in class %s cannot be retrieved",
@@ -420,31 +420,38 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     /**
-     * The name of the header is:
+     * Set the name of the header and the name of the constant corresponding to the header.
+     * <p/>
+     * The name of the header and the name of the constant are set as follows:
      * <ul>
-     * <li>In case of an interface or a class: The value of the field as we assume that it is a {@code String}
-     * constant</li>
-     * <li>In case of an enum:
+     * <li><u>In case of an interface or a class:</u> <b>The name of the header</b> is the value of the field as we
+     * assume that it is a {@code String} constant and <b>the name of the constant</b> is in the following format
+     * <i>${declaring-class-name}#${constant-name}</i></li>
+     * <li><u>In case of an enum:</u>
      * <ul>
-     * <li>If headers name provider is set to a name of field: The value of this particular field for the corresponding
-     * enum constant</li>
-     * <li>If headers name provider is set to a name of method: The returned value of this particular method for the
-     * corresponding enum constant</li>
-     * <li>By default: The name of the enum constant</li>
+     * <li><u>If {@code headersNameProvider} is set to a name of field:</u> <b>The name of the header</b> is the value
+     * of this particular field for the corresponding enum constant and <b>the name of the constant</b> is in the
+     * following format <i>${declaring-class-name}#${enum-constant-name}@${field-name}</i></li>
+     * <li><u>If {@code headersNameProvider} is set to a name of method:</u> <b>The name of the header</b> is the
+     * returned value of this particular method for the corresponding enum constant and <b>the name of the constant</b>
+     * is in the following format <i>${declaring-class-name}#${enum-constant-name}@${method-name}()</i></li>
+     * <li><u>Otherwise:</u> <b>The name of the header</b> is the name of the enum constant and <b>the name of the
+     * constant</b> is in the following format <i>${declaring-class-name}#${enum-constant-name}</i></li>
      * </ul>
      * </li>
      * </ul>
      *
+     * @param  header              the header in which the name of the header and its corresponding constant should be
+     *                             set.
      * @param  field               the field corresponding to the name of a header.
      * @param  headersNameProvider the name of the field to get or the name of the method to invoke to get the name of
      *                             the headers.
-     * @return                     the name of the header corresponding to the given field.
      * @throws Exception           if an error occurred while getting the name of the header
      */
-    private String getHeaderName(Field field, String headersNameProvider) throws Exception {
+    private void setHeaderNames(EndpointHeaderModel header, Field field, String headersNameProvider) throws Exception {
+        final Class<?> declaringClass = field.getDeclaringClass();
         if (field.getType().isEnum()) {
             if (!headersNameProvider.isEmpty()) {
-                final Class<?> declaringClass = field.getDeclaringClass();
                 final Optional<?> value = Arrays.stream(declaringClass.getEnumConstants())
                         .filter(c -> ((Enum<?>) c).name().equals(field.getName()))
                         .findAny();
@@ -455,7 +462,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                             .findAny();
                     if (headersNameProviderField.isPresent()) {
                         getLog().debug("A field corresponding to the headers name provider has been found");
-                        return (String) headersNameProviderField.get().get(value.get());
+                        header.setConstantName(
+                                String.format("%s#%s@%s", declaringClass.getName(), field.getName(), headersNameProvider));
+                        header.setName((String) headersNameProviderField.get().get(value.get()));
+                        return;
                     }
                     getLog().debug(
                             String.format("No field %s could be found in the class %s", headersNameProvider, declaringClass));
@@ -464,15 +474,21 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                             .findAny();
                     if (headersNameProviderMethod.isPresent()) {
                         getLog().debug("A method without parameters corresponding to the headers name provider has been found");
-                        return (String) headersNameProviderMethod.get().invoke(value.get());
+                        header.setConstantName(
+                                String.format("%s#%s@%s()", declaringClass.getName(), field.getName(), headersNameProvider));
+                        header.setName((String) headersNameProviderMethod.get().invoke(value.get()));
+                        return;
                     }
                     getLog().debug(String.format("No method %s without parameters could be found in the class %s",
                             headersNameProvider, declaringClass));
                 }
             }
-            return field.getName();
+            header.setConstantName(String.format("%s#%s", declaringClass.getName(), field.getName()));
+            header.setName(field.getName());
+            return;
         }
-        return (String) field.get(null);
+        header.setConstantName(String.format("%s#%s", declaringClass.getName(), field.getName()));
+        header.setName((String) field.get(null));
     }
 
     /**

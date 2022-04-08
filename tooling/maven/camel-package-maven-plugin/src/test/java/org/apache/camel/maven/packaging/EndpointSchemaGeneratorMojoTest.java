@@ -65,7 +65,8 @@ class EndpointSchemaGeneratorMojoTest {
     @ValueSource(classes = {
             SomeEndpoint.class, SomeEndpointUsingEnumConstants.class, SomeEndpointUsingInterfaceConstants.class })
     void testCanRetrieveMetadataOfHeaders(Class<?> clazz) {
-        mojo.addEndpointHeaders(model, clazz.getAnnotation(UriEndpoint.class), "some");
+        UriEndpoint endpoint = clazz.getAnnotation(UriEndpoint.class);
+        mojo.addEndpointHeaders(model, endpoint, "some");
         List<EndpointHeaderModel> endpointHeaders = model.getEndpointHeaders();
         assertEquals(3, endpointHeaders.size());
         // Full
@@ -83,6 +84,8 @@ class EndpointSchemaGeneratorMojoTest {
         assertEquals("my label", headerFull.getLabel());
         assertEquals(3, headerFull.getEnums().size());
         assertEquals("my label", headerFull.getGroup());
+        assertEquals(String.format("%s#%s", endpoint.headersClass().getName(), headerFull.getName()),
+                headerFull.getConstantName());
         // Empty
         EndpointHeaderModel headerEmpty = endpointHeaders.get(1);
         assertEquals("header", headerEmpty.getKind());
@@ -99,6 +102,8 @@ class EndpointSchemaGeneratorMojoTest {
         assertTrue(headerEmpty.getLabel().isEmpty());
         assertNull(headerEmpty.getEnums());
         assertEquals("common", headerEmpty.getGroup());
+        assertEquals(String.format("%s#%s", endpoint.headersClass().getName(), headerEmpty.getName()),
+                headerEmpty.getConstantName());
         // Empty with Javadoc as description
         EndpointHeaderModel headerEmptyWithJavadoc = endpointHeaders.get(2);
         assertEquals("header", headerEmptyWithJavadoc.getKind());
@@ -115,6 +120,8 @@ class EndpointSchemaGeneratorMojoTest {
         assertTrue(headerEmptyWithJavadoc.getLabel().isEmpty());
         assertNull(headerEmptyWithJavadoc.getEnums());
         assertEquals("common", headerEmptyWithJavadoc.getGroup());
+        assertEquals(String.format("%s#%s", endpoint.headersClass().getName(), headerEmptyWithJavadoc.getName()),
+                headerEmptyWithJavadoc.getConstantName());
     }
 
     @Test
@@ -172,11 +179,16 @@ class EndpointSchemaGeneratorMojoTest {
     @ValueSource(classes = {
             SomeEndpointUsingEnumConstantsByField.class, SomeEndpointUsingEnumConstantsByMethod.class })
     void testEndpointWithNameProvider(Class<?> clazz) {
-        mojo.addEndpointHeaders(model, clazz.getAnnotation(UriEndpoint.class), "some");
+        UriEndpoint endpoint = clazz.getAnnotation(UriEndpoint.class);
+        mojo.addEndpointHeaders(model, endpoint, "some");
         List<EndpointHeaderModel> endpointHeaders = model.getEndpointHeaders();
         assertEquals(1, endpointHeaders.size());
         EndpointHeaderModel header = endpointHeaders.get(0);
         assertEquals("header", header.getKind());
         assertEquals("SomeName", header.getName());
+        assertEquals(
+                String.format("%s#SOME_VALUE@%s", endpoint.headersClass().getName(),
+                        endpoint.headersNameProvider() + (clazz.getName().contains("Method") ? "()" : "")),
+                header.getConstantName());
     }
 }

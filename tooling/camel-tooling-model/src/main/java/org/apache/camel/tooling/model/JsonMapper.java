@@ -97,6 +97,7 @@ public final class JsonMapper {
                 JsonObject mp = (JsonObject) entry.getValue();
                 EndpointHeaderModel header = new EndpointHeaderModel();
                 parseOption(mp, header, entry.getKey());
+                header.setConstantName(mp.getString("constantName"));
                 model.addEndpointHeader(header);
             }
         }
@@ -531,6 +532,8 @@ public final class JsonMapper {
         prop.put("setterMethod", option.getSetterMethod());
         if (option instanceof ComponentModel.ApiOptionModel) {
             prop.put("optional", ((ComponentModel.ApiOptionModel) option).isOptional());
+        } else if (option instanceof ComponentModel.EndpointHeaderModel) {
+            prop.put("constantName", ((ComponentModel.EndpointHeaderModel) option).getConstantName());
         }
         prop.entrySet().removeIf(e -> e.getValue() == null);
         prop.remove("prefix", "");
