@@ -48,7 +48,7 @@ public class FreemarkerOverrideHeaderTest extends CamelTestSupport {
     public void testFreemarkerLetter() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a")
                         .to("freemarker:org/apache/camel/component/freemarker/example.ftl")
                         .to("mock:result");
@@ -66,7 +66,7 @@ public class FreemarkerOverrideHeaderTest extends CamelTestSupport {
     public void testFreemarkerLetterAllowed() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a")
                         .to("freemarker:org/apache/camel/component/freemarker/example.ftl?allowTemplateFromHeader=true")
                         .to("mock:result");
