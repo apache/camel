@@ -43,7 +43,7 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirDeleteApiMethod.class).getName();
 
     @Test
-    public void testDeleteResource() throws Exception {
+    public void testDeleteResource() {
         assertTrue(patientExists());
         // using org.hl7.fhir.instance.model.api.IBaseResource message body for single parameter "resource"
         IBaseOperationOutcome result = requestBody("direct://RESOURCE", this.patient);
@@ -54,7 +54,7 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testDeleteResourceById() throws Exception {
+    public void testDeleteResourceById() {
         assertTrue(patientExists());
 
         // using org.hl7.fhir.instance.model.api.IIdType message body for single parameter "id"
@@ -66,7 +66,7 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testDeleteResourceByStringId() throws Exception {
+    public void testDeleteResourceByStringId() {
         assertTrue(patientExists());
 
         Map<String, Object> headers = new HashMap<>();
@@ -83,7 +83,7 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testDeleteResourceConditionalByUrl() throws Exception {
+    public void testDeleteResourceConditionalByUrl() {
         assertTrue(patientExists());
 
         IBaseOperationOutcome result
@@ -95,7 +95,7 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testDeleteResourceConditionalByUrlCacheControlDirective() throws Exception {
+    public void testDeleteResourceConditionalByUrlCacheControlDirective() {
         assertTrue(patientExists());
         Map<String, Object> headers = new HashMap<>();
         headers.put(ExtraParameters.CACHE_CONTROL_DIRECTIVE.getHeaderName(), new CacheControlDirective().setNoCache(true));
@@ -109,7 +109,7 @@ public class FhirDeleteIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for resource

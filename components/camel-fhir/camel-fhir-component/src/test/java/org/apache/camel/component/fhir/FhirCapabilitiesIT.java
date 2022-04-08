@@ -43,7 +43,7 @@ public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
             = FhirApiCollection.getCollection().getApiName(FhirCapabilitiesApiMethod.class).getName();
 
     @Test
-    public void testOfType() throws Exception {
+    public void testOfType() {
         org.hl7.fhir.instance.model.api.IBaseConformance result = requestBody("direct://OF_TYPE", CapabilityStatement.class);
 
         LOG.debug("ofType: " + result);
@@ -52,7 +52,7 @@ public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testEncodeJSON() throws Exception {
+    public void testEncodeJSON() {
         Map<String, Object> headers = new HashMap<>();
         headers.put(ExtraParameters.ENCODE_JSON.getHeaderName(), Boolean.TRUE);
 
@@ -65,7 +65,7 @@ public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for ofType

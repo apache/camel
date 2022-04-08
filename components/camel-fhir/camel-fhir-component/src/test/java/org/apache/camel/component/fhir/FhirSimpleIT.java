@@ -49,7 +49,7 @@ public class FhirSimpleIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testCreateResource() throws Exception {
+    public void testCreateResource() {
         Patient patient = new Patient().addName(new HumanName().addGiven(GIVEN_NAME).setFamily(FAMILY_NAME));
 
         MethodOutcome result = requestBody("direct://RESOURCE", patient);
@@ -72,7 +72,7 @@ public class FhirSimpleIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://RESOURCE")

@@ -44,7 +44,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
             = FhirApiCollection.getCollection().getApiName(FhirOperationApiMethod.class).getName();
 
     @Test
-    public void testOnInstance() throws Exception {
+    public void testOnInstance() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is org.hl7.fhir.instance.model.api.IIdType
         headers.put("CamelFhir.id", this.patient.getIdElement());
@@ -71,7 +71,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testOnInstanceVersion() throws Exception {
+    public void testOnInstanceVersion() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is org.hl7.fhir.instance.model.api.IIdType
         headers.put("CamelFhir.id", this.patient.getIdElement());
@@ -98,7 +98,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testOnServer() throws Exception {
+    public void testOnServer() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelFhir.name", "$get-resource-counts");
@@ -117,7 +117,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testOnType() throws Exception {
+    public void testOnType() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.resourceType", Patient.class);
@@ -142,7 +142,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
     @Disabled("Not implemented yet in HAPI FHIR server side, see"
               + " https://github.com/jamesagnew/hapi-fhir/blob/master/hapi-fhir-jpaserver-base/src/main/java/ca/uhn/fhir/jpa/dao/dstu3/FhirResourceDaoMessageHeaderDstu3.java#L33")
     @Test
-    public void testProcessMessage() throws Exception {
+    public void testProcessMessage() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelFhir.respondToUri", null);
@@ -162,7 +162,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for onInstance

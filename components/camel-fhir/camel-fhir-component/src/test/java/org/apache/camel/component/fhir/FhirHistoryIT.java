@@ -43,7 +43,7 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
             = FhirApiCollection.getCollection().getApiName(FhirHistoryApiMethod.class).getName();
 
     @Test
-    public void testOnInstance() throws Exception {
+    public void testOnInstance() {
         final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelFhir.id", this.patient.getIdElement());
         // parameter type is Class
@@ -59,7 +59,7 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testOnServer() throws Exception {
+    public void testOnServer() {
         Map<String, Object> headers = new HashMap<>();
         headers.put("CamelFhir.returnType", Bundle.class);
         headers.put("CamelFhir.count", 1);
@@ -71,7 +71,7 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testOnType() throws Exception {
+    public void testOnType() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.resourceType", Patient.class);
@@ -88,7 +88,7 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testOnTypeWithSubsetElements() throws Exception {
+    public void testOnTypeWithSubsetElements() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.resourceType", Patient.class);
@@ -107,7 +107,7 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for onInstance

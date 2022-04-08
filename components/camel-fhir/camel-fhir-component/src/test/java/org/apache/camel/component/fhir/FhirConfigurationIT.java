@@ -83,7 +83,7 @@ public class FhirConfigurationIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testConfiguration() throws Exception {
+    public void testConfiguration() {
         FhirEndpoint endpoint = getMandatoryEndpoint(TEST_URI, FhirEndpoint.class);
         GenericClient client = (GenericClient) endpoint.getClient();
         FhirConfiguration configuration = endpoint.getConfiguration();
@@ -106,7 +106,7 @@ public class FhirConfigurationIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

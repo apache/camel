@@ -46,7 +46,7 @@ public class FhirValidateIT extends AbstractFhirTestSupport {
             = FhirApiCollection.getCollection().getApiName(FhirValidateApiMethod.class).getName();
 
     @Test
-    public void testResource() throws Exception {
+    public void testResource() {
         Patient bobbyHebb = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
         bobbyHebb.getText().setStatus(Narrative.NarrativeStatus.GENERATED);
         bobbyHebb.getText().setDivAsString("<div>This is the narrative text</div>");
@@ -67,7 +67,7 @@ public class FhirValidateIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testResourceAsString() throws Exception {
+    public void testResourceAsString() {
         Patient bobbyHebb = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
         bobbyHebb.getText().setStatus(Narrative.NarrativeStatus.GENERATED);
         bobbyHebb.getText().setDivAsString("<div>This is the narrative text</div>");
@@ -89,7 +89,7 @@ public class FhirValidateIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for resource

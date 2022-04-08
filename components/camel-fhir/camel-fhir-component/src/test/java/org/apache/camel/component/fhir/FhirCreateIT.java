@@ -74,7 +74,7 @@ public class FhirCreateIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testCreateResource() throws Exception {
+    public void testCreateResource() {
         Patient patient = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
 
         MethodOutcome result = requestBody("direct://RESOURCE", patient);
@@ -85,7 +85,7 @@ public class FhirCreateIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testCreateStringResource() throws Exception {
+    public void testCreateStringResource() {
         Patient patient = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
         String patientString = this.fhirContext.newXmlParser().encodeResourceToString(patient);
 
@@ -97,7 +97,7 @@ public class FhirCreateIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testCreateStringResourceEncodeXml() throws Exception {
+    public void testCreateStringResourceEncodeXml() {
         Patient patient = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
         String patientString = this.fhirContext.newXmlParser().encodeResourceToString(patient);
         Map<String, Object> headers = new HashMap<>();
@@ -110,7 +110,7 @@ public class FhirCreateIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for resource
