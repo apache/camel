@@ -37,7 +37,7 @@ public class GeoCoderCurrentAddressTest extends GeoCoderApiKeyTestBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("geocoder:address:current?headersOnly=true&apiKey=" + getApiKey()).to("log:result")

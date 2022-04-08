@@ -38,7 +38,7 @@ public class GeoCoderLatLngComponentTest extends GeoCoderApiKeyTestBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("geocoder:latlng:40.714224,-73.961452?apiKey=" + getApiKey()).to("log:result")
