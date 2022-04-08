@@ -38,7 +38,7 @@ public class FacebookComponentPageIdProducerIT extends CamelFacebookTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("timer:period=20000")

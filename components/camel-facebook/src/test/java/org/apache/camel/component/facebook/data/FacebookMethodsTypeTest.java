@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class FacebookMethodsTypeTest {
 
     @Test
-    public void areAllMethodsMapped() throws Exception {
+    public void areAllMethodsMapped() {
         final Class<?>[] interfaces = Facebook.class.getInterfaces();
         for (Class<?> clazz : interfaces) {
             if (clazz.getName().endsWith("Methods")) {

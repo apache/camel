@@ -46,7 +46,7 @@ public class FacebookComponentProducerIT extends CamelFacebookTestSupport {
     private final List<String> idExcludes;
     private final List<String> readingExcludes;
 
-    public FacebookComponentProducerIT() throws Exception {
+    public FacebookComponentProducerIT() {
         for (Class<?> clazz : Facebook.class.getInterfaces()) {
             final String clazzName = clazz.getSimpleName();
             if (clazzName.endsWith("Methods") && !clazzName.equals("GameMethods")) {
@@ -118,14 +118,14 @@ public class FacebookComponentProducerIT extends CamelFacebookTestSupport {
     }
 
     @Test
-    public void testJsonStoreEnabled() throws Exception {
+    public void testJsonStoreEnabled() {
         final String rawJSON = template().requestBody("direct://testJsonStoreEnabled", new String[] { "me" }, String.class);
         assertNotNull("NULL rawJSON", rawJSON);
         assertFalse(rawJSON.isEmpty(), "Empty rawJSON");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // Deprecated exceptions are ignored in the tests since this depends on the

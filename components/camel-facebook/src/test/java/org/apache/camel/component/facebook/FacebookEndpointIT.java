@@ -29,7 +29,7 @@ import org.junit.jupiter.api.condition.EnabledIf;
            disabledReason = "Facebook credentials were not provided")
 public class FacebookEndpointIT extends CamelFacebookTestSupport {
 
-    public FacebookEndpointIT() throws Exception {
+    public FacebookEndpointIT() {
     }
 
     @Test
@@ -53,10 +53,10 @@ public class FacebookEndpointIT extends CamelFacebookTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:testNoArgs")
                         .to("facebook:getuserlikes")
                         .to("mock://testNoArgs");

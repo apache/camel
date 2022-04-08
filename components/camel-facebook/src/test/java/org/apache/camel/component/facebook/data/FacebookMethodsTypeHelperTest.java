@@ -51,7 +51,7 @@ public class FacebookMethodsTypeHelperTest {
     }
 
     @Test
-    public void testGetCandidateMethods() throws Exception {
+    public void testGetCandidateMethods() {
         for (FacebookMethodsType method : FacebookMethodsType.values()) {
             final String name = method.getName();
             final String shortName = getShortName(method.getName());
@@ -72,7 +72,7 @@ public class FacebookMethodsTypeHelperTest {
     }
 
     @Test
-    public void testGetArguments() throws Exception {
+    public void testGetArguments() {
         final Class<?>[] interfaces = Facebook.class.getInterfaces();
         for (Class<?> clazz : interfaces) {
             if (clazz.getName().endsWith("Methods")) {
@@ -93,7 +93,7 @@ public class FacebookMethodsTypeHelperTest {
     }
 
     @Test
-    public void testAllArguments() throws Exception {
+    public void testAllArguments() {
         assertFalse(FacebookMethodsTypeHelper.allArguments().isEmpty(), "Missing arguments");
     }
 
@@ -118,13 +118,13 @@ public class FacebookMethodsTypeHelperTest {
     }
 
     @Test
-    public void testConvertToGetMethod() throws Exception {
+    public void testConvertToGetMethod() {
         assertEquals(FacebookMethodsType.GET_ACCOUNTS.getName(), FacebookMethodsTypeHelper.convertToGetMethod("accounts"),
                 "Invalid get method name");
     }
 
     @Test
-    public void testConvertToSearchMethod() throws Exception {
+    public void testConvertToSearchMethod() {
         assertEquals(FacebookMethodsType.SEARCHPOSTS.getName(), FacebookMethodsTypeHelper.convertToSearchMethod("posts"),
                 "Invalid search method name");
     }
