@@ -43,7 +43,7 @@ public class ZendeskTicketIT extends AbstractZendeskTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ZendeskTicketIT.class);
 
     @Test
-    public void testGetTickets() throws Exception {
+    public void testGetTickets() {
         final Iterable<?> result = requestBody("direct://GETTICKETS", null);
 
         assertNotNull(result, "getTickets result");
@@ -135,7 +135,7 @@ public class ZendeskTicketIT extends AbstractZendeskTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://GETTICKETS")
