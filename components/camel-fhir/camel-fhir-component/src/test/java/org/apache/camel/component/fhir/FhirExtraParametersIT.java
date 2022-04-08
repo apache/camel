@@ -42,7 +42,7 @@ public class FhirExtraParametersIT extends AbstractFhirTestSupport {
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirSearchApiMethod.class).getName();
 
     @Test
-    public void testEncodeRequestToXml() throws Exception {
+    public void testEncodeRequestToXml() {
         final Map<String, Object> headers = new HashMap<>();
         // encode request to XML
         headers.put(ExtraParameters.ENCODE_XML.getHeaderName(), Boolean.TRUE);
@@ -58,7 +58,7 @@ public class FhirExtraParametersIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for searchByUrl

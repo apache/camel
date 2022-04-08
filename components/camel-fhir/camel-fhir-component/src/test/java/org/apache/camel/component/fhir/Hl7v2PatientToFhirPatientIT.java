@@ -76,9 +76,9 @@ public class Hl7v2PatientToFhirPatientIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 Processor patientProcessor = new PatientProcessor();
                 from("direct:input")
                         .unmarshal().hl7()

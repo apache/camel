@@ -29,7 +29,7 @@ import org.hl7.fhir.r4.model.Patient;
 public class PatientProcessor implements Processor {
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         ORU_R01 msg = exchange.getIn().getBody(ORU_R01.class);
         //map to Patient
         Patient patient = getPatient(msg);

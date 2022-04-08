@@ -38,7 +38,7 @@ public class FhirSearchIT extends AbstractFhirTestSupport {
     private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirSearchApiMethod.class).getName();
 
     @Test
-    public void testSearchByUrl() throws Exception {
+    public void testSearchByUrl() {
         String url = "Patient?given=Vincent&family=Freeman&_format=json";
         Bundle result = requestBody("direct://SEARCH_BY_URL", url);
 
@@ -50,7 +50,7 @@ public class FhirSearchIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for searchByUrl

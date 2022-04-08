@@ -46,7 +46,7 @@ public class FhirJsonDataformatErrorHandlerSpringTest extends CamelSpringTestSup
     }
 
     @Test
-    public void unmarshalParserErrorHandler() throws Throwable {
+    public void unmarshalParserErrorHandler() {
         try {
             template.sendBody("direct:unmarshalErrorHandlerStrict", INPUT);
             fail("Expected a DataFormatException");

@@ -48,7 +48,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
     private static final String PATCH = "[ { \"op\":\"replace\", \"path\":\"/active\", \"value\":true } ]";
 
     @Test
-    public void testPatchById() throws Exception {
+    public void testPatchById() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelFhir.patchBody", PATCH);
@@ -63,7 +63,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testPatchByStringId() throws Exception {
+    public void testPatchByStringId() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelFhir.patchBody", PATCH);
@@ -77,7 +77,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testPatchByStringIdPreferResponseTypes() throws Exception {
+    public void testPatchByStringIdPreferResponseTypes() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelFhir.patchBody", PATCH);
@@ -96,7 +96,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
 
     @Test
     @Disabled(value = "https://github.com/jamesagnew/hapi-fhir/issues/955")
-    public void testPatchByUrl() throws Exception {
+    public void testPatchByUrl() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelFhir.patchBody", PATCH);
@@ -113,7 +113,7 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for patchById

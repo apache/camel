@@ -78,14 +78,14 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
     private CustomClientFactory clientFactory = new CustomClientFactory();
 
     @Test
-    public void testConfigurationWithCustomClient() throws Exception {
+    public void testConfigurationWithCustomClient() {
         FhirEndpoint endpoint = getMandatoryEndpoint(TEST_URI_CUSTOM_CLIENT, FhirEndpoint.class);
         IGenericClient client = endpoint.getClient();
         assertTrue(client instanceof CustomClient);
     }
 
     @Test
-    public void testConfigurationWithCustomFactory() throws Exception {
+    public void testConfigurationWithCustomFactory() {
         FhirEndpoint endpoint = getMandatoryEndpoint(TEST_URI_CUSTOM_CLIENT_FACTORY, FhirEndpoint.class);
         IGenericClient client = endpoint.getClient();
         assertTrue(client instanceof CustomClient);
@@ -97,7 +97,7 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
