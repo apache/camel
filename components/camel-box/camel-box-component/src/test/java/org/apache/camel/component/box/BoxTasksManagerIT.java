@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.box;
 
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
