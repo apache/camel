@@ -59,10 +59,10 @@ public class GzipDataFormatFileDeleteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:target/data/gzip?initialDelay=0&delay=10&delete=true")
                         .marshal().gzipDeflater()
                         .to("file:target/data/gzip/out?fileName=${file:name}.gz")
