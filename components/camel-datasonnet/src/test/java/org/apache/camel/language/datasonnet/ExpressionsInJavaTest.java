@@ -42,10 +42,10 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
     protected ProducerTemplate fluentBuilderProducer;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:expressionsInJava")
                                 .choice()
                                     .when(datasonnet("payload == 'World'"))
@@ -81,7 +81,7 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExpressionLanguageInJava() throws Exception {
+    public void testExpressionLanguageInJava() {
         endEndpoint.expectedMessageCount(1);
         expressionsInJavaProducer.sendBody("World");
         Exchange exchange = endEndpoint.assertExchangeReceived(endEndpoint.getReceivedCounter() - 1);
@@ -90,7 +90,7 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
     }
 
     @Test
-    public void testFluentBuilder() throws Exception {
+    public void testFluentBuilder() {
         endEndpoint.expectedMessageCount(1);
         fluentBuilderProducer.sendBody(Collections.singletonList("datasonnet"));
         Exchange exchange = endEndpoint.assertExchangeReceived(endEndpoint.getReceivedCounter() - 1);
