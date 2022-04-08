@@ -27,7 +27,7 @@ public class UnmarshalThenMarshalJSONTest extends UnmarshalThenMarshalTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().json(JsonLibrary.XStream, PurchaseOrder.class).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         log.debug("marshalled: " + exchange.getIn().getBody(String.class));
                     }
                 }).unmarshal().json(JsonLibrary.XStream, PurchaseOrder.class).to("mock:result");

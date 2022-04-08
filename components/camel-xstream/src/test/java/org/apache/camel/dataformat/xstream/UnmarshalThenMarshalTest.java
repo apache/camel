@@ -61,7 +61,7 @@ public class UnmarshalThenMarshalTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().xstream(PurchaseOrder.class).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         log.debug("marshalled: " + exchange.getIn().getBody(String.class));
                     }
                 }).unmarshal().xstream(PurchaseOrder.class).to("mock:result");
