@@ -53,7 +53,7 @@ public class CsvMarshalHeaderTest extends CamelTestSupport {
     File outputFile;
 
     @Override
-    protected void doPreSetup() throws Exception {
+    protected void doPreSetup() {
         outputFile = new File(folder, "output.csv");
     }
 

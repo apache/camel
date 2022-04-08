@@ -103,7 +103,7 @@ public class CsvRouteTest extends CamelTestSupport {
     }
 
     @Test
-    void testPresetConfig() throws Exception {
+    void testPresetConfig() {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMultiCustom",
                 MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
