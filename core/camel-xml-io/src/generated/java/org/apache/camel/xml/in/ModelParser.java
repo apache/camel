@@ -29,7 +29,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.model.*;
 import org.apache.camel.model.cloud.*;
 import org.apache.camel.model.config.BatchResequencerConfig;
@@ -2530,7 +2529,7 @@ public class ModelParser extends BaseParser {
         return (def, key, val) -> {
             switch (key) {
                 case "executorServiceRef": def.setExecutorServiceRef(val); break;
-                case "level": def.setLevel(LoggingLevel.valueOf(val)); break;
+                case "level": def.setLevel(val); break;
                 case "logName": def.setLogName(val); break;
                 case "loggerRef": def.setLoggerRef(val); break;
                 case "onExceptionOccurredRef": def.setOnExceptionOccurredRef(val); break;

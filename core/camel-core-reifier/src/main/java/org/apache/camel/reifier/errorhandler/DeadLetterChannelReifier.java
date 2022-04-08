@@ -92,7 +92,7 @@ public class DeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChan
             answer = new CamelLogger(LoggerFactory.getLogger(DeadLetterChannel.class), LoggingLevel.ERROR);
         }
         if (definition.getLevel() != null) {
-            answer.setLevel(definition.getLevel());
+            answer.setLevel(parse(LoggingLevel.class, definition.getLevel()));
         }
         return answer;
     }

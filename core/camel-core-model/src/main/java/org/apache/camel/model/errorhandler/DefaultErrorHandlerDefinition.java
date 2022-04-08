@@ -63,8 +63,9 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
     @Metadata(label = "advanced")
     private String loggerRef;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "ERROR")
-    private LoggingLevel level;
+    @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR",
+              enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    private String level;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String logName;
@@ -153,14 +154,14 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         this.loggerBean = loggerBean;
     }
 
-    public LoggingLevel getLevel() {
+    public String getLevel() {
         return level;
     }
 
     /**
      * Logging level to use when using the logging error handler type.
      */
-    public void setLevel(LoggingLevel level) {
+    public void setLevel(String level) {
         this.level = level;
     }
 
@@ -570,8 +571,19 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
      * @param  level the logging level
      * @return       the builder
      */
-    public DefaultErrorHandlerDefinition loggingLevel(LoggingLevel level) {
+    public DefaultErrorHandlerDefinition loggingLevel(String level) {
         setLevel(level);
+        return this;
+    }
+
+    /**
+     * Sets the logging level of exceptions caught
+     *
+     * @param  level the logging level
+     * @return       the builder
+     */
+    public DefaultErrorHandlerDefinition loggingLevel(LoggingLevel level) {
+        setLevel(level.name());
         return this;
     }
 

@@ -5555,8 +5555,7 @@
             "type" : "string"
           },
           "level" : {
-            "type" : "string",
-            "enum" : [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ]
+            "type" : "string"
           },
           "logName" : {
             "type" : "string"
@@ -5601,8 +5600,7 @@
             "type" : "string"
           },
           "level" : {
-            "type" : "string",
-            "enum" : [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ]
+            "type" : "string"
           },
           "logName" : {
             "type" : "string"
@@ -5658,8 +5656,7 @@
             "type" : "string"
           },
           "level" : {
-            "type" : "string",
-            "enum" : [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ]
+            "type" : "string"
           },
           "logName" : {
             "type" : "string"
@@ -5717,8 +5714,7 @@
             "type" : "string"
           },
           "level" : {
-            "type" : "string",
-            "enum" : [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ]
+            "type" : "string"
           },
           "logName" : {
             "type" : "string"

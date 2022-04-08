@@ -3821,7 +3821,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "dead-letter-uri", type = "string", required = true),
                     @YamlProperty(name = "executor-service-ref", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "level", type = "enum:DEBUG,ERROR,INFO,OFF,TRACE,WARN"),
+                    @YamlProperty(name = "level", type = "string"),
                     @YamlProperty(name = "log-name", type = "string"),
                     @YamlProperty(name = "logger-ref", type = "string"),
                     @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
@@ -3869,7 +3869,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "level": {
-                    target.setLevel(asEnum(node, org.apache.camel.LoggingLevel.class));
+                    String val = asText(node);
+                    target.setLevel(val);
                     break;
                 }
                 case "log-name": {
@@ -3940,7 +3941,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "executor-service-ref", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "level", type = "enum:DEBUG,ERROR,INFO,OFF,TRACE,WARN"),
+                    @YamlProperty(name = "level", type = "string"),
                     @YamlProperty(name = "log-name", type = "string"),
                     @YamlProperty(name = "logger-ref", type = "string"),
                     @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
@@ -3978,7 +3979,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "level": {
-                    target.setLevel(asEnum(node, org.apache.camel.LoggingLevel.class));
+                    String val = asText(node);
+                    target.setLevel(val);
                     break;
                 }
                 case "log-name": {
@@ -7438,7 +7440,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "executor-service-ref", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "level", type = "enum:DEBUG,ERROR,INFO,OFF,TRACE,WARN"),
+                    @YamlProperty(name = "level", type = "string"),
                     @YamlProperty(name = "log-name", type = "string"),
                     @YamlProperty(name = "logger-ref", type = "string"),
                     @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
@@ -7478,7 +7480,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "level": {
-                    target.setLevel(asEnum(node, org.apache.camel.LoggingLevel.class));
+                    String val = asText(node);
+                    target.setLevel(val);
                     break;
                 }
                 case "log-name": {
@@ -14628,7 +14631,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "executor-service-ref", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "level", type = "enum:DEBUG,ERROR,INFO,OFF,TRACE,WARN"),
+                    @YamlProperty(name = "level", type = "string"),
                     @YamlProperty(name = "log-name", type = "string"),
                     @YamlProperty(name = "logger-ref", type = "string"),
                     @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
@@ -14668,7 +14671,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "level": {
-                    target.setLevel(asEnum(node, org.apache.camel.LoggingLevel.class));
+                    String val = asText(node);
+                    target.setLevel(val);
                     break;
                 }
                 case "log-name": {
