@@ -30,10 +30,10 @@ import org.junit.jupiter.api.Test;
 public class FileWatchComponentRecursiveTest extends FileWatchComponentTestBase {
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file-watch://" + testPath() + "?recursive=true").to("mock:recursive");
                 from("file-watch://" + testPath() + "?recursive=false").to("mock:nonRecursive");
             }
