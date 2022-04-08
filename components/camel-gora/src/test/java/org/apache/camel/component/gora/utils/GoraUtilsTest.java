@@ -36,7 +36,7 @@ public class GoraUtilsTest {
     }
 
     @Test
-    public void configurationExistShouldThrowExceptionIfMethodDoesNotExist() throws Exception {
+    public void configurationExistShouldThrowExceptionIfMethodDoesNotExist() {
         final GoraConfiguration conf = new GoraConfiguration();
         assertThrows(NoSuchMethodException.class,
                 () -> GoraUtils.configurationExist(GoraAttribute.GORA_KEY, conf));
