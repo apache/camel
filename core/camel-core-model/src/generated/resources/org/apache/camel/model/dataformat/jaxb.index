@@ -6,7 +6,6 @@ AvroDataFormat
 AvroLibrary
 BarcodeDataFormat
 Base64DataFormat
-BeanioDataFormat
 BindyDataFormat
 BindyType
 CBORDataFormat
