@@ -67,10 +67,10 @@ public class FastjsonMarshalTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 FastjsonDataFormat format = new FastjsonDataFormat();
 
                 from("direct:in").marshal(format);
