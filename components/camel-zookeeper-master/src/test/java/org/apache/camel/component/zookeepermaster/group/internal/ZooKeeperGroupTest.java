@@ -44,7 +44,7 @@ public class ZooKeeperGroupTest {
     private CuratorFramework curator;
     private ZooKeeperGroup<NodeState> group;
 
-    private int findFreePort() throws Exception {
+    private int findFreePort() {
         return AvailablePortFinder.getNextAvailable();
     }
 
