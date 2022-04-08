@@ -28,13 +28,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorNoConsumerTest extends CamelTestSupport {
     @Test
-    void testInOnly() throws Exception {
+    void testInOnly() {
         // no problem for in only as we do not expect a reply
         assertDoesNotThrow(() -> template.sendBody("direct:start", "Hello World"));
     }
 
     @Test
-    void testInOut() throws Exception {
+    void testInOut() {
         try {
             template.requestBody("direct:start", "Hello World");
             fail("Should throw an exception");

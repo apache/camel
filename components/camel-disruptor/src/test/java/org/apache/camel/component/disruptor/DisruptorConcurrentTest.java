@@ -79,7 +79,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
             final int num = i;
             final Object out = executors.submit(new Callable<Object>() {
                 @Override
-                public Object call() throws Exception {
+                public Object call() {
                     return template.requestBody("disruptor:bar", "Message " + num);
                 }
             });

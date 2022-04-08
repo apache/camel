@@ -41,7 +41,7 @@ public class DisruptorVmWaitForTaskIfReplyExpectedTest extends AbstractVmTestSup
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         Exchange out = template2.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOnly);
             }

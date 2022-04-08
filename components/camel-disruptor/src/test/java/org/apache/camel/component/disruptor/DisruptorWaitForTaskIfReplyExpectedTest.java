@@ -41,7 +41,7 @@ public class DisruptorWaitForTaskIfReplyExpectedTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         final Exchange out = template.send("direct:start", new Processor() {
             @Override
-            public void process(final Exchange exchange) throws Exception {
+            public void process(final Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOnly);
             }
