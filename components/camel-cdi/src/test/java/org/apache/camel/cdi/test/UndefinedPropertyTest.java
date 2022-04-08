@@ -66,7 +66,7 @@ public class UndefinedPropertyTest {
     }
 
     @Test
-    public void lookupDefinedProperty(CamelContext context) throws Exception {
+    public void lookupDefinedProperty(CamelContext context) {
         assertThat("Resolved property value is incorrect",
                 context.resolvePropertyPlaceholders("{{from}}"), is(equalTo("inbound")));
     }
