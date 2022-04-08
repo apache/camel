@@ -603,6 +603,20 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
                                 .orElse(false);
     }
 
+    protected String getEnums(FieldInfo fi) {
+        return annotationValue(fi, METADATA_ANNOTATION_CLASS, "enums")
+                        .map(AnnotationValue::asString).orElse("");
+    }
+
+    protected String getJavaType(FieldInfo fi) {
+        return annotationValue(fi, METADATA_ANNOTATION_CLASS, "javaType")
+                        .map(AnnotationValue::asString).orElse("");
+    }
+
+    protected boolean isEnum(FieldInfo fi) {
+        return !getEnums(fi).isBlank();
+    }
+
     protected boolean isDeprecated(FieldInfo fi) {
         return fi.hasAnnotation(DEPRECATED_ANNOTATION_CLASS);
     }

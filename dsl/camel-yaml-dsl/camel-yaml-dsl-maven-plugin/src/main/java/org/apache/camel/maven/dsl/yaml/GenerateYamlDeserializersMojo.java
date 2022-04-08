@@ -841,6 +841,19 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             }
 
             annotations.add(builder.build());
+        } else if (isEnum(field)) {
+            // this is a fake enum where the model is text based by have enum values to represent the user to choose between
+            cb.addStatement("String val = asText(node)");
+            cb.addStatement("target.set$L(val)", StringHelper.capitalize(field.name()));
+            cb.addStatement("break");
+
+            AnnotationSpec.Builder builder = AnnotationSpec.builder(CN_YAML_PROPERTY);
+            builder.addMember("name", "$S", fieldName);
+            builder.addMember("type", "$S", "enum:" + getEnums(field));
+            if (isRequired(field)) {
+                builder.addMember("required", "$L", isRequired(field));
+            }
+            annotations.add(builder.build());
         } else {
             switch (field.type().name().toString()) {
                 case "[B":
