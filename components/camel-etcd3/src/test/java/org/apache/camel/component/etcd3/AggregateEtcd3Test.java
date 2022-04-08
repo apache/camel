@@ -49,10 +49,10 @@ public class AggregateEtcd3Test extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .log("Sending ${body} with correlation key ${header.myId}")
                         .aggregate(header("myId"), new MyAggregationStrategy())
