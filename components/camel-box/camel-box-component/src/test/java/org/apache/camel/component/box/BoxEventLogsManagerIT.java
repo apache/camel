@@ -46,7 +46,7 @@ public class BoxEventLogsManagerIT extends AbstractBoxITSupport {
 
     @Disabled // Requires enterprise admin account to test
     @Test
-    public void testGetEnterpriseEvents() throws Exception {
+    public void testGetEnterpriseEvents() {
         Date before = new Date();
         Date after = new Date();
         after.setTime(before.getTime() - ONE_MINUTE_OF_MILLISECONDS);
@@ -69,7 +69,7 @@ public class BoxEventLogsManagerIT extends AbstractBoxITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for getEnterpriseEvents

@@ -59,7 +59,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     private static final String CAMEL_TEST_DESTINATION_FOLDER_ID = "0";
 
     @Test
-    public void testCreateFolder() throws Exception {
+    public void testCreateFolder() {
 
         // delete folder created in test setup.
         deleteTestFolder();
@@ -78,7 +78,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testCreateFolderByPath() throws Exception {
+    public void testCreateFolderByPath() {
 
         // delete folder created in test setup.
         deleteTestFolder();
@@ -97,7 +97,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testDeleteFolder() throws Exception {
+    public void testDeleteFolder() {
         // using String message body for single parameter "folderId"
         requestBody("direct://DELETEFOLDER", testFolder.getID());
 
@@ -108,7 +108,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testCopyFolder() throws Exception {
+    public void testCopyFolder() {
         com.box.sdk.BoxFolder result = null;
         try {
             final Map<String, Object> headers = new HashMap<>();
@@ -133,7 +133,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testCreateSharedLink() throws Exception {
+    public void testCreateSharedLink() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.folderId", testFolder.getID());
@@ -152,7 +152,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testGetFolder() throws Exception {
+    public void testGetFolder() {
         // using String[] message body for single parameter "path"
         final com.box.sdk.BoxFolder result = requestBody("direct://GETFOLDER", new String[] { CAMEL_TEST_FOLDER });
 
@@ -162,7 +162,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testGetFolderInfo() throws Exception {
+    public void testGetFolderInfo() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.folderId", testFolder.getID());
@@ -178,7 +178,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testGetFolderItems() throws Exception {
+    public void testGetFolderItems() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.folderId", CAMEL_TEST_ROOT_FOLDER_ID);
@@ -197,7 +197,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testGetRootFolder() throws Exception {
+    public void testGetRootFolder() {
         final com.box.sdk.BoxFolder result = requestBody("direct://GETROOTFOLDER", null);
 
         assertNotNull(result, "getRootFolder result");
@@ -205,7 +205,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testMoveFolder() throws Exception {
+    public void testMoveFolder() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.folderId", testFolder.getID());
@@ -222,7 +222,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testRenameFolder() throws Exception {
+    public void testRenameFolder() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.folderId", testFolder.getID());
@@ -237,7 +237,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testUpdateInfo() throws Exception {
+    public void testUpdateInfo() {
         final BoxFolder.Info testFolderInfo = testFolder.getInfo();
 
         final Map<String, Object> headers = new HashMap<>();
@@ -255,7 +255,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for copyFolder
@@ -296,7 +296,7 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     }
 
     @BeforeEach
-    public void setupTest() throws Exception {
+    public void setupTest() {
         createTestFolder();
     }
 
