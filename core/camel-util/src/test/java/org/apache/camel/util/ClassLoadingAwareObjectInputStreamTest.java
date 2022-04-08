@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.aggregate.jdbc;
+package org.apache.camel.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,15 +22,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Objects;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.DefaultExchangeHolder;
-import org.apache.camel.util.ClassLoadingAwareObjectInputStream;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,43 +32,24 @@ public class ClassLoadingAwareObjectInputStreamTest {
 
     @Test
     public void deserialize() throws IOException, ClassNotFoundException {
-        CamelContext context = new DefaultCamelContext();
-
-        final DefaultExchange exchange = new DefaultExchange(context);
-
-        final List<MyObject> objects = new ArrayList<>();
-        final MyObject o = new MyObject("leb", "hello".getBytes());
-        objects.add(o);
-
-        exchange.getIn().setBody(objects);
-        final DefaultExchangeHolder deh = DefaultExchangeHolder.marshal(exchange);
-
+        final MyObject myObject = new MyObject("Test content");
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(deh);
+        oos.writeObject(myObject);
         oos.flush();
         final byte[] serialized = baos.toByteArray();
 
-        final ObjectInputStream bis = new ClassLoadingAwareObjectInputStream(
-                context.getApplicationContextClassLoader(), new ByteArrayInputStream(serialized));
-        final DefaultExchangeHolder deserialized = (DefaultExchangeHolder) bis.readObject();
+        final ObjectInputStream bis = new ClassLoadingAwareObjectInputStream(new ByteArrayInputStream(serialized));
+        final MyObject deserialized = (MyObject) bis.readObject();
 
-        final DefaultExchange exchange2 = new DefaultExchange(context);
-        DefaultExchangeHolder.unmarshal(exchange2, deserialized);
-
-        List<MyObject> receivedObjects = exchange2.getIn().getBody(List.class);
-        assertEquals(1, receivedObjects.size());
-        assertEquals(o, receivedObjects.get(0));
+        assertEquals(myObject, deserialized);
     }
-
 }
 
 class MyObject implements Serializable {
-    final String name;
-    final byte[] content;
+    final String content;
 
-    MyObject(String name, byte[] content) {
-        this.name = name;
+    MyObject(String content) {
         this.content = content;
     }
 
@@ -87,19 +61,12 @@ class MyObject implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         MyObject myObject = (MyObject) o;
-
-        if (name != null ? !name.equals(myObject.name) : myObject.name != null) {
-            return false;
-        }
-        return Arrays.equals(content, myObject.content);
+        return Objects.equals(content, myObject.content);
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + Arrays.hashCode(content);
-        return result;
+        return Objects.hash(content);
     }
 }
