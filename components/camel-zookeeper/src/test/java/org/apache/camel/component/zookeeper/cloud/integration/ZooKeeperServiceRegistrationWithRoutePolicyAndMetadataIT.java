@@ -23,10 +23,10 @@ import org.apache.camel.impl.cloud.ServiceRegistrationRoutePolicy;
 
 public class ZooKeeperServiceRegistrationWithRoutePolicyAndMetadataIT extends ZooKeeperServiceRegistrationITBase {
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT)
                         .routeId(SERVICE_ID)
                         .routeProperty(ServiceDefinition.SERVICE_META_ID, SERVICE_ID)

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class NaturalSortComparatorTest {
 
     @Test
-    public void testSortOrder() throws Exception {
+    public void testSortOrder() {
 
         List<String> sorted = Arrays
                 .asList(new String[] {

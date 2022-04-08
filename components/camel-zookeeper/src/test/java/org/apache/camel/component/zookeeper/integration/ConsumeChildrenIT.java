@@ -38,9 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 public class ConsumeChildrenIT extends ZooKeeperITSupport {
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] { new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("zookeeper://{{zookeeper.connection.string}}/grimm?repeat=true&listChildren=true")
                         .sort(body(), new NaturalSortComparator(Order.Descending))
                         .to("mock:zookeeper-data");

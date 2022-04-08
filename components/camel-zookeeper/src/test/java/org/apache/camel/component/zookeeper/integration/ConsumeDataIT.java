@@ -31,9 +31,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ConsumeDataIT extends ZooKeeperITSupport {
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] { new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("zookeeper://{{zookeeper.connection.string}}/camel?repeat=true")
                         .to("mock:zookeeper-data");
             }
