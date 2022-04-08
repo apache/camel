@@ -34,10 +34,10 @@ public class SchedulerConfigurationConsumerTest extends GitHubComponentTestBase 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("github://commit/master?repoOwner=anotherguy&repoName=somerepo&repeatCount=5&sendEmptyMessageWhenIdle=true&delay=1")
                         .to(mockCommitsEndpoint);
             }

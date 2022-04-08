@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.github.services;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class MockRepositoryService extends RepositoryService {
     }
 
     @Override
-    public Repository getRepository(final String owner, final String name) throws IOException {
+    public Repository getRepository(final String owner, final String name) {
         Repository repository = new Repository();
         User user = new User();
         user.setName(owner);
@@ -53,7 +52,7 @@ public class MockRepositoryService extends RepositoryService {
     }
 
     @Override
-    public List<RepositoryTag> getTags(IRepositoryIdProvider repository) throws IOException {
+    public List<RepositoryTag> getTags(IRepositoryIdProvider repository) {
         LOG.debug("in MockRepositoryService returning " + tags.size() + " tags");
         return tags;
     }

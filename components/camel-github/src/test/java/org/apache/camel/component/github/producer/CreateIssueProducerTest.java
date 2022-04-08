@@ -34,11 +34,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CreateIssueProducerTest extends GitHubComponentTestBase {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:createIssue")
                         .process(new MockIssueCreateProducerProcessor())
                         .to("github://createissue?state=success&repoOwner=anotherguy&repoName=somerepo");
@@ -67,7 +67,7 @@ public class CreateIssueProducerTest extends GitHubComponentTestBase {
 
     public class MockIssueCreateProducerProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Message in = exchange.getIn();
             Map<String, Object> headers = in.getHeaders();
             headers.put(GitHubConstants.GITHUB_ISSUE_TITLE, "Error");
