@@ -133,10 +133,10 @@ public class XStreamConfigurationTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 XStreamDataFormat xstreamDefinition = new XStreamDataFormat();
                 Map<String, String> aliases = new HashMap<>();
                 aliases.put("purchase-order", PurchaseOrder.class.getName());

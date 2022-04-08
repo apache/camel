@@ -85,9 +85,9 @@ public class MarshalListTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").marshal().xstream().to(mock);
                 from("direct:in-UTF-8").marshal().xstream("UTF-8").to(mock);
             }

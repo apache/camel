@@ -62,9 +62,9 @@ public class MarshalDomainObjectJSONDropRootNodeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:reverse").unmarshal().json(JsonLibrary.XStream, PurchaseOrder.class).to("mock:reverse");
 
                 JsonDataFormat df = new JsonDataFormat().library(JsonLibrary.XStream).dropRootNode(true).prettyPrint(true);

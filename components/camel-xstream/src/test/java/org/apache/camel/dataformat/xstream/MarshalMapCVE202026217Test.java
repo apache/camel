@@ -43,7 +43,7 @@ public class MarshalMapCVE202026217Test extends CamelTestSupport {
 
     @Test
     @EnabledOnJre({ JRE.JAVA_11 })
-    public void testMarshalListJDK11() throws Exception {
+    public void testMarshalListJDK11() {
 
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("<?xml version='1.0' encoding='ISO-8859-1'?>"
@@ -59,14 +59,14 @@ public class MarshalMapCVE202026217Test extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
 
                 from("direct:in").marshal(xStreamDataFormat).process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getIn().setBody("<map>\n" +
                                                  "  <entry>\n" +
                                                  "    <jdk.nashorn.internal.objects.NativeString>\n" +
