@@ -78,12 +78,13 @@ public final class MongoDbConstants {
     @Metadata(label = "producer bulkWrite", description = "Perform an ordered or unordered operation execution. ",
               javaType = "Boolean", defaultValue = "TRUE")
     public static final String BULK_ORDERED = "CamelMongoDbBulkOrdered";
-    @Metadata(label = "consumer changeStreams",
-              description = "A document that contains the _id of the document created or modified by the insert,\n" +
-                            "replace, delete, update operations (i.e. CRUD operations). For sharded collections, also displays the full shard key for\n"
-                            +
-                            "the document. The _id field is not repeated if it is already a part of the shard key.",
-              javaType = "org.bson.types.ObjectId")
+    // TODO: https://issues.apache.org/jira/browse/CAMEL-17931
+    //    @Metadata(label = "consumer changeStreams",
+    //              description = "A document that contains the _id of the document created or modified by the insert,\n" +
+    //                            "replace, delete, update operations (i.e. CRUD operations). For sharded collections, also displays the full shard key for\n"
+    //                            +
+    //                            "the document. The _id field is not repeated if it is already a part of the shard key.",
+    //              javaType = "org.bson.types.ObjectId")
     public static final String MONGO_ID = "_id"; // default id field
     @Metadata(label = "consumer changeStreams", description = "The type of operation that occurred. Can\n" +
                                                               "be any of the following values: insert, delete, replace, update, drop, rename, dropDatabase, invalidate.",
