@@ -39,10 +39,10 @@ public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Unzip file and Split it according to FileEntry
                 ZipFileDataFormat zipFile = new ZipFileDataFormat();
                 zipFile.setUsingIterator(true);

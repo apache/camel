@@ -37,10 +37,10 @@ public class ZipFileSplitIteratorCorruptTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 ZipFileDataFormat zf = new ZipFileDataFormat();
                 zf.setUsingIterator(true);
 

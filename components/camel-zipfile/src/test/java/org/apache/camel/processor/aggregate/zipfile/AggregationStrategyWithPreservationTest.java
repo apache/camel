@@ -84,10 +84,10 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Unzip file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/aggregate/zipfile/data?delay=1000&noop=true&recursive=true")
                         .aggregate(new ZipAggregationStrategy(true, true))
