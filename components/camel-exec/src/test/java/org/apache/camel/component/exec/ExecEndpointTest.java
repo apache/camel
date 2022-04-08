@@ -56,7 +56,7 @@ public class ExecEndpointTest {
     private Component component;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         component = camelContext.getComponent("exec");
     }
 

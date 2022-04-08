@@ -80,7 +80,7 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExecJavaProcessExitCode1Direct() throws Exception {
+    public void testExecJavaProcessExitCode1Direct() {
         Exchange out = sendExchange("direct:direct", EXIT_WITH_VALUE_1, NO_TIMEOUT);
 
         assertNotNull(out);
@@ -265,7 +265,7 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
         final String javaAbsolutePath = buildJavaExecutablePath();
 
         return producerTemplate.send(endpoint, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(body);
                 exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, javaAbsolutePath);
                 exchange.getIn().setHeader(EXEC_COMMAND_TIMEOUT, timeout);

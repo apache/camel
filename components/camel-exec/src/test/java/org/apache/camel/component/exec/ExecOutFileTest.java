@@ -84,7 +84,7 @@ public class ExecOutFileTest {
 
     @Test
     @DirtiesContext
-    public void testOutFileConvertToDocument() throws Exception {
+    public void testOutFileConvertToDocument() {
         Exchange e = sendWithMockedExecutor();
         Document body = e.getIn().getBody(Document.class);
         assertNotNull(body); // do not parse it
@@ -92,14 +92,14 @@ public class ExecOutFileTest {
 
     @Test
     @DirtiesContext
-    public void testOutFileConvertToString() throws Exception {
+    public void testOutFileConvertToString() {
         Exchange e = sendWithMockedExecutor();
         assertEquals(FILE_CONTENT, e.getIn().getBody(String.class));
     }
 
     @Test
     @DirtiesContext
-    public void testOutFileConvertToByteArray() throws Exception {
+    public void testOutFileConvertToByteArray() {
         Exchange e = sendWithMockedExecutor();
         byte[] body = e.getIn().getBody(byte[].class);
         assertEquals(FILE_CONTENT, new String(body));
@@ -107,7 +107,7 @@ public class ExecOutFileTest {
 
     private Exchange sendWithMockedExecutor() {
         Exchange e = producerTemplate.send(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(EXEC_COMMAND_OUT_FILE, FILE.getPath());
                 exchange.getIn().setBody(FILE_CONTENT);
             }
