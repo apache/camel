@@ -145,7 +145,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnzipWithEmptyDirectorySupported() throws Exception {
+    public void testUnzipWithEmptyDirectorySupported() {
         deleteDirectory(new File("hello_out"));
         zip.setUsingIterator(true);
         zip.setAllowEmptyDirectory(true);
@@ -155,7 +155,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnzipWithEmptyDirectoryUnsupported() throws Exception {
+    public void testUnzipWithEmptyDirectoryUnsupported() {
         deleteDirectory(new File("hello_out"));
         zip.setUsingIterator(true);
         zip.setAllowEmptyDirectory(false);
@@ -165,7 +165,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnzipWithCorruptedZipFile() throws Exception {
+    public void testUnzipWithCorruptedZipFile() {
         deleteDirectory(new File("hello_out"));
 
         assertThrows(CamelExecutionException.class,
@@ -252,7 +252,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnzipMaxDecompressedSize() throws Exception {
+    public void testUnzipMaxDecompressedSize() {
         // We are only allowing 10 bytes to be decompressed, so we expect an error
         assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:unzipMaxDecompressedSize", getZippedText("file")));
@@ -289,10 +289,10 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("file:*").to("mock:intercepted");
 
                 zip = new ZipFileDataFormat();
