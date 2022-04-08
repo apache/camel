@@ -78,13 +78,13 @@ public class ExecJava8IssueTest {
         DefaultCamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:source")
                         .to("file:" + tempDir.getAbsolutePath() + "?fileName=" + tempFileName)
                         .to("exec:" + exec)
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String output = exchange.getIn().getBody(String.class);
                                 assertEquals("hello world\n", output);
                             }

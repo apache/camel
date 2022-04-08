@@ -72,7 +72,7 @@ public class ExecProducerTest {
 
         producerTemplate.send(new Processor() {
 
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("noinput");
                 exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, command);
             }
@@ -90,7 +90,7 @@ public class ExecProducerTest {
         final String[] args = { "-version", "classpath:c:/program files/test/" };
         producerTemplate.send(new Processor() {
 
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("noinput");
                 exchange.getIn().setHeader(EXEC_COMMAND_ARGS, Arrays.asList(args));
             }
@@ -106,7 +106,7 @@ public class ExecProducerTest {
     public void testOverrideTimeout() {
         producerTemplate.send(new Processor() {
 
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("noinput");
                 exchange.getIn().setHeader(EXEC_COMMAND_TIMEOUT, "1000");
             }
@@ -119,7 +119,7 @@ public class ExecProducerTest {
     public void testExitValues() {
         producerTemplate.send(new Processor() {
 
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("noinput");
                 exchange.getIn().setHeader(EXEC_COMMAND_EXIT_VALUES, "0,1");
             }
@@ -132,7 +132,7 @@ public class ExecProducerTest {
     public void testExitValueNone() {
         producerTemplate.send(new Processor() {
 
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("noinput");
                 exchange.getIn().setHeader(EXEC_COMMAND_EXIT_VALUES, "");
             }
@@ -147,7 +147,7 @@ public class ExecProducerTest {
         final String input = "line1" + System.lineSeparator() + "line2";
         producerTemplate.send(new Processor() {
 
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(input);
             }
         });
@@ -157,12 +157,12 @@ public class ExecProducerTest {
 
     @Test
     @DirtiesContext
-    public void testInputLinesNotConvertibleToInputStream() throws IOException {
+    public void testInputLinesNotConvertibleToInputStream() {
         // String must be convertible to InputStream
         final Integer notConvertibleToInputStreamBody = Integer.valueOf(1);
         Exchange e = producerTemplate.send(new Processor() {
 
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(notConvertibleToInputStreamBody);
             }
         });
@@ -173,11 +173,11 @@ public class ExecProducerTest {
 
     @Test
     @DirtiesContext
-    public void testNullInBody() throws IOException {
+    public void testNullInBody() {
         // Null body must also be supported
         Exchange e = producerTemplate.send(new Processor() {
 
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(null);
             }
         });
@@ -192,7 +192,7 @@ public class ExecProducerTest {
         final String workingDir = "c:/program files/test";
 
         producerTemplate.send(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("");
                 exchange.getIn().setHeader(EXEC_COMMAND_WORKING_DIR, workingDir);
             }
@@ -202,9 +202,9 @@ public class ExecProducerTest {
 
     @Test
     @DirtiesContext
-    public void testInInOnlyExchange() throws Exception {
+    public void testInInOnlyExchange() {
         Exchange exchange = producerTemplate.send(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setPattern(ExchangePattern.InOnly);
                 exchange.getIn().setBody("inonly");
             }
@@ -216,9 +216,9 @@ public class ExecProducerTest {
 
     @Test
     @DirtiesContext
-    public void testOutCapableExchange() throws Exception {
+    public void testOutCapableExchange() {
         Exchange exchange = producerTemplate.send(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setPattern(ExchangePattern.InOut);
                 exchange.getIn().setBody("inout");
             }
