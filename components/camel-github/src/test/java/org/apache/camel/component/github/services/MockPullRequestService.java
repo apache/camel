@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.github.services;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -101,13 +100,13 @@ public class MockPullRequestService extends PullRequestService {
     }
 
     @Override
-    public PullRequest getPullRequest(IRepositoryIdProvider repository, int id) throws IOException {
+    public PullRequest getPullRequest(IRepositoryIdProvider repository, int id) {
         PullRequest pullRequest = pullRequests.get((long) id);
         return pullRequest;
     }
 
     @Override
-    public PullRequest editPullRequest(IRepositoryIdProvider repository, PullRequest request) throws IOException {
+    public PullRequest editPullRequest(IRepositoryIdProvider repository, PullRequest request) {
         pullRequests.put(request.getId(), request);
         return request;
     }
@@ -132,7 +131,7 @@ public class MockPullRequestService extends PullRequestService {
     }
 
     @Override
-    public List<CommitFile> getFiles(IRepositoryIdProvider repository, int id) throws IOException {
+    public List<CommitFile> getFiles(IRepositoryIdProvider repository, int id) {
         return files.get(id);
     }
 }

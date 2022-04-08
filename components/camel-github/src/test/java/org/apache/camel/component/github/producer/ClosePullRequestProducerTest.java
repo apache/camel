@@ -40,11 +40,11 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
     private long latestPullRequestId;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(PULL_REQUEST_PRODUCER_ENDPOINT)
                         .process(new ClosePullRequestProducerProcessor())
                         .to("github://closePullRequest?repoOwner=anotherguy&repoName=somerepo");
@@ -83,7 +83,7 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
 
     public class ClosePullRequestProducerProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Message in = exchange.getIn();
             Map<String, Object> headers = in.getHeaders();
             headers.put(GitHubConstants.GITHUB_PULLREQUEST, latestPullRequestId);
