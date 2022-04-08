@@ -50,7 +50,7 @@ public class WorkdayReportProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerNoHostConfiguration() throws Exception {
+    public void createProducerNoHostConfiguration() {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
         try {
