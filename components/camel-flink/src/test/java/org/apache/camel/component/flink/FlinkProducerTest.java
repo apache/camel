@@ -198,7 +198,7 @@ public class FlinkProducerTest extends CamelTestSupport {
         template.sendBodyAndHeader(flinkDataStreamUri, null, FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
                 new VoidDataStreamCallback() {
                     @Override
-                    public void doOnDataStream(DataStream ds, Object... payloads) throws Exception {
+                    public void doOnDataStream(DataStream ds, Object... payloads) {
                         ds.writeAsText(output.getAbsolutePath());
                     }
                 });
