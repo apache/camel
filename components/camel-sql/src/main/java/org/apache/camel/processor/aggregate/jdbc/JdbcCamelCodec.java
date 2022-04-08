@@ -31,6 +31,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
+import org.apache.camel.util.ClassLoadingAwareObjectInputStream;
 import org.apache.camel.util.IOHelper;
 
 /**
@@ -104,7 +105,7 @@ public class JdbcCamelCodec {
         ObjectInputStream objectIn = null;
         Object obj = null;
         try {
-            objectIn = new ClassLoadingAwareObjectInputStream(camelContext, bytesIn);
+            objectIn = new ClassLoadingAwareObjectInputStream(camelContext.getApplicationContextClassLoader(), bytesIn);
             obj = objectIn.readObject();
         } finally {
             IOHelper.close(objectIn);

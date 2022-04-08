@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.aggregate.jdbc;
+package org.apache.camel.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,8 +22,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
-
-import org.apache.camel.CamelContext;
 
 /**
  * This class is copied from the Apache ActiveMQ project.
@@ -38,7 +36,6 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
      */
     private static final HashMap<String, Class> PRIM_CLASSES = new HashMap<>(8, 1.0F);
 
-    private CamelContext camelContext;
     private final ClassLoader inLoader;
 
     public ClassLoadingAwareObjectInputStream(InputStream in) throws IOException {
@@ -46,9 +43,13 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
         inLoader = in.getClass().getClassLoader();
     }
 
-    public ClassLoadingAwareObjectInputStream(CamelContext camelContext, InputStream in) throws IOException {
+    public ClassLoadingAwareObjectInputStream(ClassLoader classLoader, InputStream in) throws IOException {
         super(in);
-        inLoader = camelContext.getApplicationContextClassLoader();
+        if (classLoader != null) {
+            inLoader = classLoader;
+        } else {
+            inLoader = in.getClass().getClassLoader();
+        }
     }
 
     @Override

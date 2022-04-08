@@ -30,6 +30,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
+import org.apache.camel.util.ClassLoadingAwareObjectInputStream;
 
 /**
  * Marshall/unmarshall Exchange to/from a ByteBuffer. Inspired from JdbcCamelCodec.
@@ -64,7 +65,7 @@ public class CassandraCamelCodec {
 
     public Exchange unmarshallExchange(CamelContext camelContext, ByteBuffer buffer)
             throws IOException, ClassNotFoundException {
-        DefaultExchangeHolder pe = (DefaultExchangeHolder) deserialize(new ByteBufferInputStream(buffer));
+        DefaultExchangeHolder pe = (DefaultExchangeHolder) deserialize(camelContext, new ByteBufferInputStream(buffer));
         Exchange answer = new DefaultExchange(camelContext);
         DefaultExchangeHolder.unmarshal(answer, pe);
         // restore the from endpoint
@@ -86,8 +87,9 @@ public class CassandraCamelCodec {
         return bytesOut.toByteArray();
     }
 
-    private Object deserialize(InputStream bytes) throws IOException, ClassNotFoundException {
-        ObjectInputStream objectIn = new ObjectInputStream(bytes);
+    private Object deserialize(CamelContext camelContext, InputStream bytes) throws IOException, ClassNotFoundException {
+        ClassLoader classLoader = camelContext.getApplicationContextClassLoader();
+        ObjectInputStream objectIn = new ClassLoadingAwareObjectInputStream(classLoader, bytes);
         Object object = objectIn.readObject();
         objectIn.close();
         return object;
