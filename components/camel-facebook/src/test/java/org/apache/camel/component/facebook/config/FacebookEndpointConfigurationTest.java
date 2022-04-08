@@ -38,7 +38,7 @@ public class FacebookEndpointConfigurationTest extends CamelTestSupport {
     }
 
     @BindToRegistry("configuration")
-    public FacebookEndpointConfiguration createConf() throws Exception {
+    public FacebookEndpointConfiguration createConf() {
         FacebookEndpointConfiguration facebookEndpointConfiguration = new FacebookEndpointConfiguration();
         facebookEndpointConfiguration.setOAuthAppId("fakeId");
         facebookEndpointConfiguration.setOAuthAppSecret("fakeSecret");

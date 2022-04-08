@@ -40,7 +40,7 @@ public class TestUserMethodsIT extends CamelFacebookTestSupport {
     private static final String TEST_USER1 = "test one";
     private static final String TEST_USER2 = "test two";
 
-    public TestUserMethodsIT() throws Exception {
+    public TestUserMethodsIT() {
     }
 
     @Test
@@ -77,10 +77,10 @@ public class TestUserMethodsIT extends CamelFacebookTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:createTestUser")
                         .to("facebook://createTestUser?inBody=name&appId=" + properties.get("oAuthAppId")
                             + "&userLocale=" + Locale.getDefault().toString()

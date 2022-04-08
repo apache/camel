@@ -34,7 +34,7 @@ public abstract class CamelFacebookTestSupport extends CamelTestSupport {
     protected Properties properties;
     protected FacebookConfiguration configuration;
 
-    protected void loadProperties(CamelContext context) throws Exception {
+    protected void loadProperties(CamelContext context) {
         loadProperties();
 
         Map<String, Object> options = new HashMap<>();

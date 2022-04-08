@@ -48,7 +48,7 @@ public class FacebookComponentConsumerIT extends CamelFacebookTestSupport {
     private final Set<String> searchNames = new HashSet<>();
     private List<String> excludedNames;
 
-    public FacebookComponentConsumerIT() throws Exception {
+    public FacebookComponentConsumerIT() {
         // find search methods for consumer tests
         for (Method method : SearchMethods.class.getDeclaredMethods()) {
             String name = getShortName(method.getName());
@@ -95,7 +95,7 @@ public class FacebookComponentConsumerIT extends CamelFacebookTestSupport {
     }
 
     @Override
-    protected void doPostSetup() throws Exception {
+    protected void doPostSetup() {
         ignoreDeprecatedApiError();
     }
 
@@ -124,9 +124,9 @@ public class FacebookComponentConsumerIT extends CamelFacebookTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // start with a 30 day window for the first delayed poll
                 String since = "RAW(" + new SimpleDateFormat(FacebookConstants.FACEBOOK_DATE_FORMAT).format(
                         new Date(System.currentTimeMillis() - TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS))) + ")";
