@@ -89,7 +89,7 @@ public final class ZooKeeperClusteredRoutePolicyFactoryIT {
             context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("timer:zookeeper?delay=1000&period=1000")
                             .routeId("route-" + id)
                             .log("From ${routeId}")

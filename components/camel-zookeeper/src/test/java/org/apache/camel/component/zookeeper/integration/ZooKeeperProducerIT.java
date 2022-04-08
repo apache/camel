@@ -42,10 +42,10 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
     private String testPayload = "TestPayload";
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {
                 new RouteBuilder() {
-                    public void configure() throws Exception {
+                    public void configure() {
                         zookeeperUri
                                 = "zookeeper://{{zookeeper.connection.string}}/node?create=true";
                         from("direct:roundtrip")
@@ -56,13 +56,13 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
                     }
                 },
                 new RouteBuilder() {
-                    public void configure() throws Exception {
+                    public void configure() {
                         from("direct:no-create-fails-set")
                                 .to("zookeeper://{{zookeeper.connection.string}}/doesnotexist");
                     }
                 },
                 new RouteBuilder() {
-                    public void configure() throws Exception {
+                    public void configure() {
                         from("direct:node-from-header")
                                 .to("zookeeper://{{zookeeper.connection.string}}/notset?create=true");
                         from("zookeeper://{{zookeeper.connection.string}}/set?create=true")
@@ -70,14 +70,14 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
                     }
                 },
                 new RouteBuilder() {
-                    public void configure() throws Exception {
+                    public void configure() {
                         from("direct:create-mode")
                                 .to("zookeeper://{{zookeeper.connection.string}}/persistent?create=true&createMode=PERSISTENT")
                                 .to("mock:create-mode");
                     }
                 },
                 new RouteBuilder() {
-                    public void configure() throws Exception {
+                    public void configure() {
                         from("direct:delete")
                                 .to("zookeeper://{{zookeeper.connection.string}}/to-be-deleted")
                                 .to("mock:delete");

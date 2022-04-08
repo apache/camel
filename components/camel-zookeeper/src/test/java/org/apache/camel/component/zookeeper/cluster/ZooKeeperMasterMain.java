@@ -55,7 +55,7 @@ public final class ZooKeeperMasterMain {
 
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 final int delay = 1 + ThreadLocalRandom.current().nextInt(10);
                 final int period = 1 + ThreadLocalRandom.current().nextInt(5);
 
