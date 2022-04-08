@@ -65,10 +65,10 @@ public class GrokPatternsTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
             }
         };
     }
@@ -78,7 +78,7 @@ public class GrokPatternsTest extends CamelTestSupport {
     public void testPattern(String pattern, String input, Consumer<Map> expectedOutputTest) throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:input")
                         .unmarshal().grok(pattern);
             }
