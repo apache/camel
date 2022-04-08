@@ -44,7 +44,7 @@ public class GzipDataFormatTest extends CamelTestSupport {
         return false;
     }
 
-    private byte[] sendText() throws Exception {
+    private byte[] sendText() {
         return (byte[]) template.requestBody("direct:start", TEXT.getBytes(StandardCharsets.UTF_8));
     }
 

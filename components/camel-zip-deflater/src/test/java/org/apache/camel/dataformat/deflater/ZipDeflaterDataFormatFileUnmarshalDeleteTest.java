@@ -56,10 +56,10 @@ public class ZipDeflaterDataFormatFileUnmarshalDeleteTest extends CamelTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:target/data/zip?initialDelay=0&delay=10&delete=true")
                         .marshal().zipDeflater()
                         .to("file:target/data/zip/out?fileName=${file:name}.zip");
