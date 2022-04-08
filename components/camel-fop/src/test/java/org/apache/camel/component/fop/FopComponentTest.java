@@ -46,7 +46,7 @@ public class FopComponentTest extends CamelTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         deleteDirectory("target/data");
 
         try {
