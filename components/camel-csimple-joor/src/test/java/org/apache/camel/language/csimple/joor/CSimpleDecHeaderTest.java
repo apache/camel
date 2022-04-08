@@ -36,10 +36,10 @@ public class CSimpleDecHeaderTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("myCounter", csimple("${header.myCounter}--")).to("mock:result");
             }
         };

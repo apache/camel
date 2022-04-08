@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 public class JoorCSimpleCompilerTest extends CamelTestSupport {
 
     @Test
-    public void testCompiler() throws Exception {
+    public void testCompiler() {
         JoorCSimpleCompiler compiler = new JoorCSimpleCompiler();
         compiler.start();
 
@@ -42,7 +42,7 @@ public class JoorCSimpleCompilerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testCompilerPredicate() throws Exception {
+    public void testCompilerPredicate() {
         JoorCSimpleCompiler compiler = new JoorCSimpleCompiler();
         compiler.start();
 
