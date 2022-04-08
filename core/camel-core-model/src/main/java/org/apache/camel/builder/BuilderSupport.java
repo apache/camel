@@ -27,9 +27,6 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
-import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
-import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
@@ -464,8 +461,8 @@ public abstract class BuilderSupport implements CamelContextAware {
      *
      * @return the builder
      */
-    public JtaTransactionErrorHandlerDefinition jtaTransactionErrorHandler() {
-        return new JtaTransactionErrorHandlerDefinition();
+    public JtaTransactionErrorHandlerBuilder jtaTransactionErrorHandler() {
+        return new JtaTransactionErrorHandlerBuilder();
     }
 
     /**
@@ -474,8 +471,8 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @param  policy the transaction policy
      * @return        the builder
      */
-    public JtaTransactionErrorHandlerDefinition jtaTransactionErrorHandler(TransactedPolicy policy) {
-        JtaTransactionErrorHandlerDefinition answer = new JtaTransactionErrorHandlerDefinition();
+    public JtaTransactionErrorHandlerBuilder jtaTransactionErrorHandler(TransactedPolicy policy) {
+        JtaTransactionErrorHandlerBuilder answer = new JtaTransactionErrorHandlerBuilder();
         answer.setTransactedPolicy(policy);
         return answer;
     }
@@ -486,8 +483,8 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @param  policyRef references to the transaction policy
      * @return           the builder
      */
-    public JtaTransactionErrorHandlerDefinition jtaTransactionErrorHandler(String policyRef) {
-        JtaTransactionErrorHandlerDefinition answer = new JtaTransactionErrorHandlerDefinition();
+    public JtaTransactionErrorHandlerBuilder jtaTransactionErrorHandler(String policyRef) {
+        JtaTransactionErrorHandlerBuilder answer = new JtaTransactionErrorHandlerBuilder();
         answer.setTransactedPolicyRef(policyRef);
         return answer;
     }
@@ -497,8 +494,8 @@ public abstract class BuilderSupport implements CamelContextAware {
      *
      * @return the builder
      */
-    public SpringTransactionErrorHandlerDefinition springTransactionErrorHandler() {
-        return new SpringTransactionErrorHandlerDefinition();
+    public SpringTransactionErrorHandlerBuilder springTransactionErrorHandler() {
+        return new SpringTransactionErrorHandlerBuilder();
     }
 
     /**
@@ -507,8 +504,8 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @param  policy the transaction policy
      * @return        the builder
      */
-    public SpringTransactionErrorHandlerDefinition springTransactionErrorHandler(TransactedPolicy policy) {
-        SpringTransactionErrorHandlerDefinition answer = new SpringTransactionErrorHandlerDefinition();
+    public SpringTransactionErrorHandlerBuilder springTransactionErrorHandler(TransactedPolicy policy) {
+        SpringTransactionErrorHandlerBuilder answer = new SpringTransactionErrorHandlerBuilder();
         answer.setTransactedPolicy(policy);
         return answer;
     }
@@ -519,8 +516,8 @@ public abstract class BuilderSupport implements CamelContextAware {
      * @param  policyRef references to the transaction policy
      * @return           the builder
      */
-    public SpringTransactionErrorHandlerDefinition springTransactionErrorHandler(String policyRef) {
-        SpringTransactionErrorHandlerDefinition answer = new SpringTransactionErrorHandlerDefinition();
+    public SpringTransactionErrorHandlerBuilder springTransactionErrorHandler(String policyRef) {
+        SpringTransactionErrorHandlerBuilder answer = new SpringTransactionErrorHandlerBuilder();
         answer.setTransactedPolicyRef(policyRef);
         return answer;
     }
@@ -557,7 +554,7 @@ public abstract class BuilderSupport implements CamelContextAware {
     }
 
     protected ErrorHandlerFactory createErrorHandlerBuilder() {
-        return new DefaultErrorHandlerDefinition();
+        return new DefaultErrorHandlerBuilder();
     }
 
     /**
