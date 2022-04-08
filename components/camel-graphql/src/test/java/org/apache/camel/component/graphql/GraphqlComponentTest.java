@@ -59,7 +59,7 @@ public class GraphqlComponentTest extends CamelTestSupport {
     }
 
     @AfterAll
-    public static void tearDownAfterClass() throws Exception {
+    public static void tearDownAfterClass() {
         server.shutdown();
     }
 
@@ -81,10 +81,10 @@ public class GraphqlComponentTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start1")
                         .to("graphql://http://localhost:" + server.getPort() + "/graphql?query={books{id name}}")
                         .to("mock:result");
