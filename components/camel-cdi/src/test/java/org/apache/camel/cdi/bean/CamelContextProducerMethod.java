@@ -27,14 +27,14 @@ public class CamelContextProducerMethod {
 
     @Produces
     @ApplicationScoped
-    CamelContext createAndStartContext() throws Exception {
+    CamelContext createAndStartContext() {
         DefaultCamelContext context = new DefaultCamelContext();
         context.setName("camel-producer-method");
         context.start();
         return context;
     }
 
-    void stopContext(@Disposes CamelContext context) throws Exception {
+    void stopContext(@Disposes CamelContext context) {
         context.stop();
     }
 }

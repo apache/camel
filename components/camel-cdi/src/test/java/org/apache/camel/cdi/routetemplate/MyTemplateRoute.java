@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class MyTemplateRoute extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         routeTemplate("myTemplate")
                 .templateParameter("start")
                 .templateParameter("append")

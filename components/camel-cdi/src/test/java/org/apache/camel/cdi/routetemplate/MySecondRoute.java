@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class MySecondRoute extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("direct:start2")
                 .to("direct:bar")
                 .to("direct:foo")

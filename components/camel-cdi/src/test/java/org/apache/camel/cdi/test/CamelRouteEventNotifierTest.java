@@ -196,8 +196,7 @@ public class CamelRouteEventNotifierTest {
             CamelContext context,
             @Named("all") List<CamelEvent> all,
             @Named("simple") List<CamelEvent> simple,
-            @Named("other") List<CamelEvent> other)
-            throws Exception {
+            @Named("other") List<CamelEvent> other) {
         context.stop();
 
         assertThat("Events fired are incorrect!", all,

@@ -46,7 +46,7 @@ public final class ExpectedDeploymentException implements TestRule {
                 .outerRule(log)
                 .around((base, description) -> new Statement() {
                     @Override
-                    public void evaluate() throws Throwable {
+                    public void evaluate() {
                         try {
                             base.evaluate();
                         } catch (Throwable exception) {

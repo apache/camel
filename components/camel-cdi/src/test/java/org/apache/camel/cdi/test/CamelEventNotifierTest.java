@@ -146,7 +146,7 @@ public class CamelEventNotifierTest {
 
     @Test
     @InSequence(3)
-    public void stopCamelContext(CamelContext context, List<Class> events) throws Exception {
+    public void stopCamelContext(CamelContext context, List<Class> events) {
         context.stop();
 
         assertThat("Events fired are incorrect!", events,

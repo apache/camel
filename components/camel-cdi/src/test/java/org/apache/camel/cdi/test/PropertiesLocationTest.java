@@ -67,7 +67,7 @@ public class PropertiesLocationTest {
 
     @Test
     @OperateOnDeployment("single-location")
-    public void resolvePropertyFromLocation(CamelContext context) throws Exception {
+    public void resolvePropertyFromLocation(CamelContext context) {
         assertThat("Property from classpath location does not resolve!",
                 context.resolvePropertyPlaceholders("{{header.message}}"), is(equalTo("message from file")));
     }

@@ -48,7 +48,7 @@ public class PropertiesMultipleLocationTest {
 
     @Test
     @OperateOnDeployment("multiple-locations")
-    public void resolvePropertyFromLocations(CamelContext context) throws Exception {
+    public void resolvePropertyFromLocations(CamelContext context) {
         assertThat("Property from classpath locations does not resolve!",
                 context.resolvePropertyPlaceholders("{{foo.property}}"), is(equalTo("foo.value")));
         assertThat("Property from classpath locations does not resolve!",

@@ -34,7 +34,7 @@ public final class InjectedTestTypeConverter {
     }
 
     @Converter
-    public TypeConverterOutput convert(TypeConverterInput input) throws Exception {
+    public TypeConverterOutput convert(TypeConverterInput input) {
         TypeConverterOutput output = new TypeConverterOutput();
         output.setProperty(context.resolvePropertyPlaceholders(input.getProperty()));
         return output;
