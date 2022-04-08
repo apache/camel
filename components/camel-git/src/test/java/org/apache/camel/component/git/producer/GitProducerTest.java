@@ -52,14 +52,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class GitProducerTest extends GitTestSupport {
 
     @Test
-    public void cloneTest() throws Exception {
+    public void cloneTest() {
         template.sendBody("direct:clone", "");
         File gitDir = new File(gitLocalRepo, ".git");
         assertEquals(true, gitDir.exists());
     }
 
     @Test
-    public void initTest() throws Exception {
+    public void initTest() {
         template.sendBody("direct:init", "");
         File gitDir = new File(gitLocalRepo, ".git");
         assertEquals(true, gitDir.exists());
@@ -145,7 +145,7 @@ public class GitProducerTest extends GitTestSupport {
     }
 
     @Test
-    public void pullTest() throws Exception {
+    public void pullTest() {
         template.sendBody("direct:clone", "");
         File gitDir = new File(gitLocalRepo, ".git");
         assertEquals(true, gitDir.exists());
@@ -291,7 +291,7 @@ public class GitProducerTest extends GitTestSupport {
         // Test camel-git commit (with branch)
         template.send("direct:commit-branch", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageBranch);
             }
         });
@@ -308,7 +308,7 @@ public class GitProducerTest extends GitTestSupport {
 
         template.send("direct:commit-all", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageAll);
             }
         });
@@ -336,14 +336,14 @@ public class GitProducerTest extends GitTestSupport {
         // Test camel-git add and commit (different branches)
         template.send("direct:add-on-branch", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, filenameBranchToAdd);
             }
         });
 
         template.send("direct:commit-all-branch", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageAll);
             }
         });
@@ -376,7 +376,7 @@ public class GitProducerTest extends GitTestSupport {
         // Test camel-git remove
         template.send("direct:remove-on-branch", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, filenameToAdd);
             }
         });
@@ -845,7 +845,7 @@ public class GitProducerTest extends GitTestSupport {
         // Test camel-git commit (with branch)
         template.send("direct:commit-branch", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageBranch);
             }
         });
@@ -886,10 +886,10 @@ public class GitProducerTest extends GitTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:clone").to("git://" + gitLocalRepo
                                         + "?remotePath=https://github.com/oscerd/json-webserver-example.git&operation=clone");
                 from("direct:init").to("git://" + gitLocalRepo + "?operation=init");

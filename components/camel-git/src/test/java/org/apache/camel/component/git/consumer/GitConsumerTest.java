@@ -161,10 +161,10 @@ public class GitConsumerTest extends GitTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:clone").to("git://" + gitLocalRepo
                                         + "?remotePath=https://github.com/oscerd/json-webserver-example.git&operation=clone");
                 from("direct:init").to("git://" + gitLocalRepo + "?operation=init");
