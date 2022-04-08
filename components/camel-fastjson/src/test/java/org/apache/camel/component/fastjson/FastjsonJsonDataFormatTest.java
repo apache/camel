@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FastjsonJsonDataFormatTest extends FastjsonMarshalTest {
 
     @Test
-    public void testUnmarshalMap() throws Exception {
+    public void testUnmarshalMap() {
         Map<?, ?> unmarshalled = template.requestBody("direct:json",
                 "{\"pointsOfSale\":{\"pointOfSale\":{\"prodcut\":\"newpad\"}}}", Map.class);
         Map<?, ?> map1 = (Map<?, ?>) unmarshalled.get("pointsOfSale");
@@ -36,10 +36,10 @@ public class FastjsonJsonDataFormatTest extends FastjsonMarshalTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").marshal().json(JsonLibrary.Fastjson);
                 from("direct:back").unmarshal().json(JsonLibrary.Fastjson).to("mock:reverse");
 
