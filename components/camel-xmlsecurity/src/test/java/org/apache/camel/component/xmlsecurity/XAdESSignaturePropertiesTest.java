@@ -35,7 +35,6 @@ import javax.xml.crypto.dsig.DigestMethod;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.spec.XPathFilterParameterSpec;
 import javax.xml.namespace.NamespaceContext;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
@@ -51,7 +50,6 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import org.xml.sax.SAXException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -852,19 +850,19 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
     }
 
     private Document testEnveloping()
-            throws InterruptedException, SAXException, IOException, ParserConfigurationException, Exception {
+            throws Exception {
         return testEnveloping("direct:enveloping");
     }
 
     protected Document testEnveloping(String fromUri)
-            throws InterruptedException, SAXException, IOException, ParserConfigurationException,
+            throws
             Exception {
         return testEnveloping(fromUri, Collections.<String, Object> emptyMap());
     }
 
     protected Document testEnveloping(String fromUri, Map<String, Object> headers)
-            throws InterruptedException, SAXException, IOException,
-            ParserConfigurationException, Exception {
+            throws
+            Exception {
         MockEndpoint mock = setupMock();
         sendBody(fromUri, payload, headers);
         assertMockEndpointsSatisfied();
