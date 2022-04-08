@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.http.Header;
-import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -54,7 +53,7 @@ public class WordpressServerHttpRequestHandler implements HttpRequestHandler {
     }
 
     @Override
-    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
+    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws IOException {
         LOGGER.debug("received request {}", request);
         final HttpRequestWrapper requestWrapper = HttpRequestWrapper.wrap(request);
         // make sure that our writing operations have authentication header
