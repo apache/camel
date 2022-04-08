@@ -34,7 +34,7 @@ public class DisruptorConfigureTest extends CamelTestSupport {
     }
 
     @Test
-    void testIllegalSizeZeroConfigured() throws Exception {
+    void testIllegalSizeZeroConfigured() {
         try {
             resolveMandatoryEndpoint("disruptor:foo?size=0", DisruptorEndpoint.class);
             fail("Should have thrown exception");
@@ -63,7 +63,7 @@ public class DisruptorConfigureTest extends CamelTestSupport {
     }
 
     @Test
-    void testDefaultMultipleConsumersComponentProperty() throws Exception {
+    void testDefaultMultipleConsumersComponentProperty() {
         final DisruptorComponent disruptor = context.getComponent("disruptor", DisruptorComponent.class);
         disruptor.setDefaultMultipleConsumers(true);
         assertEquals(true, disruptor.isDefaultMultipleConsumers());
@@ -80,7 +80,7 @@ public class DisruptorConfigureTest extends CamelTestSupport {
     }
 
     @Test
-    void testDefaultProducerTypeComponentProperty() throws Exception {
+    void testDefaultProducerTypeComponentProperty() {
         final DisruptorComponent disruptor = context.getComponent("disruptor", DisruptorComponent.class);
         disruptor.setDefaultProducerType(DisruptorProducerType.Single);
         assertEquals(DisruptorProducerType.Single, disruptor.getDefaultProducerType());
@@ -97,7 +97,7 @@ public class DisruptorConfigureTest extends CamelTestSupport {
     }
 
     @Test
-    void testDefaultWaitStrategyComponentProperty() throws Exception {
+    void testDefaultWaitStrategyComponentProperty() {
         final DisruptorComponent disruptor = context.getComponent("disruptor", DisruptorComponent.class);
         disruptor.setDefaultWaitStrategy(DisruptorWaitStrategy.BusySpin);
         assertEquals(DisruptorWaitStrategy.BusySpin, disruptor.getDefaultWaitStrategy());
@@ -114,7 +114,7 @@ public class DisruptorConfigureTest extends CamelTestSupport {
     }
 
     @Test
-    void testDefaultConcurrentConsumersComponentProperty() throws Exception {
+    void testDefaultConcurrentConsumersComponentProperty() {
         final DisruptorComponent disruptor = context.getComponent("disruptor", DisruptorComponent.class);
         disruptor.setDefaultConcurrentConsumers(5);
         assertEquals(5, disruptor.getDefaultConcurrentConsumers());

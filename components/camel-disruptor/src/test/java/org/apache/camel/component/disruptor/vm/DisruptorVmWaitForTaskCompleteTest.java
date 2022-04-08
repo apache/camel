@@ -43,7 +43,7 @@ public class DisruptorVmWaitForTaskCompleteTest extends AbstractVmTestSupport {
         // we send an in only but we use Always to wait for it to complete
         // and since the route changes the payload we can get the response anyway
         Exchange out = template2.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOnly);
             }

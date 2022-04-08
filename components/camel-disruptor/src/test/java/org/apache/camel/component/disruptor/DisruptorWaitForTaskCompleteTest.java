@@ -44,7 +44,7 @@ public class DisruptorWaitForTaskCompleteTest extends CamelTestSupport {
         // and since the route changes the payload we can get the response anyway
         final Exchange out = template.send("direct:start", new Processor() {
             @Override
-            public void process(final Exchange exchange) throws Exception {
+            public void process(final Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOnly);
             }

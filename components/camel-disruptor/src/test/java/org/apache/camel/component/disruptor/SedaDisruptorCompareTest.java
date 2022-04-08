@@ -260,8 +260,7 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         }
     }
 
-    private void outputExchangeAwaitersResult(String componentName, final long start, ExchangeAwaiter[] exchangeAwaiters)
-            throws InterruptedException {
+    private void outputExchangeAwaitersResult(String componentName, final long start, ExchangeAwaiter[] exchangeAwaiters) {
         for (final ExchangeAwaiter exchangeAwaiter : exchangeAwaiters) {
             final long stop = exchangeAwaiter.getCountDownReachedTime();
             final Histogram histogram = exchangeAwaiter.getLatencyHistogram();
