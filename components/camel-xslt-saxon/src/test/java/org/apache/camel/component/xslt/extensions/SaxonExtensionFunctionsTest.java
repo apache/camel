@@ -37,16 +37,16 @@ public class SaxonExtensionFunctionsTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("function1", new MyExtensionFunction1());
         registry.bind("function2", new MyExtensionFunction2());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:extensions")
                         .toF("xslt-saxon:%s?saxonExtensionFunctions=#function1,#function2", XSLT_PATH)
                         .to("log:org.apache.camel.component.xslt.extensions?level=INFO");

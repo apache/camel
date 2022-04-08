@@ -52,10 +52,10 @@ public class XsltAggregationStrategyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:src/test/resources/org/apache/camel/util/toolbox?noop=true&sortBy=file:name&antInclude=*.xml")
                         .routeId("route1").noAutoStartup()
                         .aggregate(new XsltSaxonAggregationStrategy("org/apache/camel/util/toolbox/aggregate.xsl"))
