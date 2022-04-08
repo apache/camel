@@ -64,7 +64,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     @Disabled
     //needs https://community.box.com/t5/custom/page/page-id/BoxViewTicketDetail?ticket_id=1895413 to be solved
     @Test
-    public void testAddAssignmentToTask() throws Exception {
+    public void testAddAssignmentToTask() {
         com.box.sdk.BoxTask result = null;
 
         final Map<String, Object> headers = new HashMap<>();
@@ -80,7 +80,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testAddFileTask() throws Exception {
+    public void testAddFileTask() {
         com.box.sdk.BoxTask result = null;
 
         try {
@@ -111,7 +111,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testDeleteTask() throws Exception {
+    public void testDeleteTask() {
         // using String message body for single parameter "taskId"
         requestBody("direct://DELETETASK", testTask.getID());
 
@@ -121,7 +121,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
 
     @Disabled // Receiving "not found" exception from Box API
     @Test
-    public void testDeleteTaskAssignment() throws Exception {
+    public void testDeleteTaskAssignment() {
         BoxTaskAssignment.Info info = testTask.addAssignment(getCurrentUser());
 
         // using String message body for single parameter "taskAssignmentId"
@@ -132,7 +132,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testGetFileTasks() throws Exception {
+    public void testGetFileTasks() {
         // using String message body for single parameter "fileId"
         @SuppressWarnings("rawtypes")
         final java.util.List result = requestBody("direct://GETFILETASKS", testFile.getID());
@@ -143,7 +143,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
 
     @Disabled
     @Test
-    public void testGetTaskAssignmentInfo() throws Exception {
+    public void testGetTaskAssignmentInfo() {
         BoxTaskAssignment.Info info = testTask.addAssignment(getCurrentUser());
         com.box.sdk.BoxTaskAssignment.Info result = null;
 
@@ -166,7 +166,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     @Disabled
     //needs https://community.box.com/t5/custom/page/page-id/BoxViewTicketDetail?ticket_id=1895413 to be solved
     @Test
-    public void testGetTaskAssignments() throws Exception {
+    public void testGetTaskAssignments() {
         // using String message body for single parameter "taskId"
 
         //add assignment to task -> to be able to search for assignments
@@ -186,7 +186,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testGetTaskInfo() throws Exception {
+    public void testGetTaskInfo() {
         // using String message body for single parameter "taskId"
         final com.box.sdk.BoxTask.Info result = requestBody("direct://GETTASKINFO", testTask.getID());
 
@@ -196,7 +196,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
 
     @Disabled // No way to change BoxTask.Info parameters
     @Test
-    public void testUpdateTaskInfo() throws Exception {
+    public void testUpdateTaskInfo() {
         BoxTask.Info info = testTask.getInfo();
 
         final Map<String, Object> headers = new HashMap<>();
@@ -212,7 +212,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for addAssignmentToTask
@@ -279,7 +279,7 @@ public class BoxTasksManagerIT extends AbstractBoxITSupport {
         testTask = null;
     }
 
-    private void createTestFile() throws FileNotFoundException {
+    private void createTestFile() {
         BoxFolder rootFolder = BoxFolder.getRootFolder(getConnection());
         InputStream stream = getClass().getResourceAsStream(CAMEL_TEST_FILE);
         testFile = rootFolder.uploadFile(stream, CAMEL_TEST_FILE_NAME).getResource();

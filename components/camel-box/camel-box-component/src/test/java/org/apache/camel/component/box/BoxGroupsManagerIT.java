@@ -57,7 +57,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
     private BoxUser testUser;
 
     @Test
-    public void testAddGroupMembership() throws Exception {
+    public void testAddGroupMembership() {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelBox.groupId", testGroup.getID());
@@ -74,7 +74,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testCreateGroup() throws Exception {
+    public void testCreateGroup() {
         com.box.sdk.BoxGroup result = null;
 
         try {
@@ -94,7 +94,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testDeleteGroup() throws Exception {
+    public void testDeleteGroup() {
         // using String message body for single parameter "groupId"
         requestBody("direct://DELETEGROUP", testGroup.getID());
 
@@ -106,7 +106,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testDeleteGroupMembership() throws Exception {
+    public void testDeleteGroupMembership() {
         BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.Role.MEMBER);
 
         // using String message body for single parameter "groupMembershipId"
@@ -118,7 +118,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testGetAllGroups() throws Exception {
+    public void testGetAllGroups() {
         @SuppressWarnings("rawtypes")
         final java.util.Collection result = requestBody("direct://GETALLGROUPS", null);
 
@@ -127,7 +127,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testGetGroupInfo() throws Exception {
+    public void testGetGroupInfo() {
         // using String message body for single parameter "groupId"
         final com.box.sdk.BoxGroup.Info result = requestBody("direct://GETGROUPINFO", testGroup.getID());
 
@@ -136,7 +136,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testUpdateGroupInfo() throws Exception {
+    public void testUpdateGroupInfo() {
         BoxGroup.Info info = testGroup.getInfo();
         info.setDescription(CAMEL_TEST_GROUP_DESCRIPTION);
 
@@ -157,7 +157,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testGetGroupMembershipInfo() throws Exception {
+    public void testGetGroupMembershipInfo() {
         BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.Role.MEMBER);
 
         // using String message body for single parameter "groupMembershipId"
@@ -168,7 +168,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testGetGroupMemberships() throws Exception {
+    public void testGetGroupMemberships() {
         // using String message body for single parameter "groupId"
         @SuppressWarnings("rawtypes")
         final java.util.Collection result = requestBody("direct://GETGROUPMEMBERSHIPS", testGroup.getID());
@@ -178,7 +178,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
     }
 
     @Test
-    public void testUpdateGroupMembershipInfo() throws Exception {
+    public void testUpdateGroupMembershipInfo() {
         BoxGroupMembership.Info info = testGroup.addMembership(testUser, BoxGroupMembership.Role.MEMBER);
         info.setRole(BoxGroupMembership.Role.ADMIN);
 
@@ -196,7 +196,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test route for addGroupMembership
@@ -237,7 +237,7 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
     }
 
     @BeforeEach
-    public void setupTest() throws Exception {
+    public void setupTest() {
         createTestGroup();
         createTestUser();
     }
