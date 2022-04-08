@@ -50,7 +50,6 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
@@ -855,14 +854,12 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
     }
 
     protected Document testEnveloping(String fromUri)
-            throws
-            Exception {
+            throws Exception {
         return testEnveloping(fromUri, Collections.<String, Object> emptyMap());
     }
 
     protected Document testEnveloping(String fromUri, Map<String, Object> headers)
-            throws
-            Exception {
+            throws Exception {
         MockEndpoint mock = setupMock();
         sendBody(fromUri, payload, headers);
         assertMockEndpointsSatisfied();
