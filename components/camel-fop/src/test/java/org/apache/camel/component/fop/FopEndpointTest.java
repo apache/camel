@@ -62,7 +62,7 @@ public class FopEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void specifyCustomUserConfigurationFile() throws Exception {
+    public void specifyCustomUserConfigurationFile() {
         if (!canTest()) {
             // cannot run on CI
             return;
@@ -76,7 +76,7 @@ public class FopEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void specifyCustomUserConfigurationFileClasspath() throws Exception {
+    public void specifyCustomUserConfigurationFileClasspath() {
         if (!canTest()) {
             // cannot run on CI
             return;
