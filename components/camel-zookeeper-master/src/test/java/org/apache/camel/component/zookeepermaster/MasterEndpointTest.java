@@ -69,7 +69,7 @@ public class MasterEndpointTest {
     }
 
     @Test
-    public void testRawPropertiesOnChild() throws Exception {
+    public void testRawPropertiesOnChild() {
         final String uri
                 = "zookeeper-master://name:sftp://myhost/inbox?password=RAW(_BEFORE_AMPERSAND_&_AFTER_AMPERSAND_)&username=jdoe";
 

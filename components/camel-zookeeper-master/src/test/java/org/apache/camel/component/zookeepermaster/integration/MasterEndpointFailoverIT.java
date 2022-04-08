@@ -64,7 +64,7 @@ public class MasterEndpointFailoverIT {
         // Add the vm:start endpoint to avoid the NPE before starting the consumerContext1
         producerContext.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("vm:start");
             }
         });
@@ -74,7 +74,7 @@ public class MasterEndpointFailoverIT {
         consumerContext1 = new DefaultCamelContext(registry);
         consumerContext1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("zookeeper-master:MasterEndpointFailoverTest:vm:start")
                         .to("log:result1")
                         .to("mock:result1");
@@ -83,7 +83,7 @@ public class MasterEndpointFailoverIT {
         consumerContext2 = new DefaultCamelContext(registry);
         consumerContext2.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("zookeeper-master:MasterEndpointFailoverTest:vm:start")
                         .to("log:result2")
                         .to("mock:result2");

@@ -54,7 +54,7 @@ public class CuratorFactoryBean implements FactoryBean<CuratorFramework>, Dispos
     // FactoryBean interface
     //-------------------------------------------------------------------------
     @Override
-    public CuratorFramework getObject() throws Exception {
+    public CuratorFramework getObject() {
         LOG.debug("Connecting to ZooKeeper on " + connectString);
 
         CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
@@ -79,7 +79,7 @@ public class CuratorFactoryBean implements FactoryBean<CuratorFramework>, Dispos
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         if (curator != null) {
             // Note we cannot use zkClient.close()
             // since you cannot currently close a client which is not connected
