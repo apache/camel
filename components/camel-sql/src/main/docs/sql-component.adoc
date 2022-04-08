@@ -642,7 +642,7 @@ multiple Camel applications shared the same database for the aggregation
 repository. If there is a race condition there JDBC driver will throw a
 vendor specific exception which the `JdbcAggregationRepository` can
 react upon. To know which caused exceptions from the JDBC driver is
-regarded as an optimistick locking error we need a mapper to do this.
+regarded as an optimistic locking error we need a mapper to do this.
 Therefore there is a
 `org.apache.camel.processor.aggregate.jdbc.JdbcOptimisticLockingExceptionMapper`
 allows you to implement your custom logic if needed. There is a default
@@ -662,7 +662,7 @@ configured.
 
 You can in addition add FQN classnames, and if any of the caused
 exception (or any nested) equals any of the FQN class names, then its an
-optimistick locking error.
+optimistic locking error.
 
 Here is an example, where we define 2 extra FQN class names from the
 JDBC vendor.
