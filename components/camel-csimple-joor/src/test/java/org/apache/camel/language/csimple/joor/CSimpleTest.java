@@ -39,10 +39,10 @@ public class CSimpleTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .choice()
                         .when(csimple("${bodyAs(int)} > 10")).to("mock:high")
