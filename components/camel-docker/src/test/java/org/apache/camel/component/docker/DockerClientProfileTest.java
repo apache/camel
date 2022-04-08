@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.docker;
 
-import org.apache.camel.component.docker.exception.DockerException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -65,7 +64,7 @@ public class DockerClientProfileTest {
     }
 
     @Test
-    void clientProfileUrlTest() throws DockerException {
+    void clientProfileUrlTest() {
         DockerClientProfile profile = new DockerClientProfile();
         profile.setHost("localhost");
         profile.setPort(2375);
@@ -73,7 +72,7 @@ public class DockerClientProfileTest {
     }
 
     @Test
-    void clientProfileNoPortSpecifiedUrlTest() throws DockerException {
+    void clientProfileNoPortSpecifiedUrlTest() {
         DockerClientProfile profile = new DockerClientProfile();
         profile.setHost("localhost");
 
@@ -82,7 +81,7 @@ public class DockerClientProfileTest {
     }
 
     @Test
-    void clientProfileWithSocketUrlTest() throws DockerException {
+    void clientProfileWithSocketUrlTest() {
         DockerClientProfile profile = new DockerClientProfile();
         profile.setHost("/var/run/docker.sock");
         // Port should be ignored

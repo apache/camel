@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.docker.it;
 
-import java.io.IOException;
-
 import com.github.dockerjava.api.command.AttachContainerCmd;
 import com.github.dockerjava.api.command.AuthCmd;
 import com.github.dockerjava.api.command.BuildImageCmd;
@@ -452,7 +450,7 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         // Noop
     }
 
