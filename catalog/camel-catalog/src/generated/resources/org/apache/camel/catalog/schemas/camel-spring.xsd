@@ -4574,7 +4574,7 @@ References to a logger to use as logger for the error handler.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="level" type="tns:loggingLevel">
+        <xs:attribute name="level" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Logging level to use when using the logging error handler type. Default value:
