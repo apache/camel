@@ -20,18 +20,19 @@ import org.apache.camel.model.errorhandler.ErrorHandlerRefConfiguration;
 import org.apache.camel.model.errorhandler.ErrorHandlerRefProperties;
 
 /**
- * Represents a proxy to an error handler builder which is resolved by named reference
+ * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
-public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport implements ErrorHandlerRefProperties {
+@Deprecated
+public class LegacyErrorHandlerBuilderRef extends LegacyErrorHandlerBuilderSupport implements ErrorHandlerRefProperties {
 
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = ErrorHandlerRefProperties.DEFAULT_ERROR_HANDLER_BUILDER;
 
     private final ErrorHandlerRefConfiguration configuration = new ErrorHandlerRefConfiguration();
 
-    public ErrorHandlerBuilderRef() {
+    public LegacyErrorHandlerBuilderRef() {
     }
 
-    public ErrorHandlerBuilderRef(String ref) {
+    public LegacyErrorHandlerBuilderRef(String ref) {
         this.configuration.setRef(ref);
     }
 
@@ -41,13 +42,13 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport implement
     }
 
     @Override
-    public ErrorHandlerBuilder cloneBuilder() {
-        ErrorHandlerBuilderRef answer = new ErrorHandlerBuilderRef(configuration.getRef());
+    public LegacyErrorHandlerBuilder cloneBuilder() {
+        LegacyErrorHandlerBuilderRef answer = new LegacyErrorHandlerBuilderRef(configuration.getRef());
         cloneBuilder(answer);
         return answer;
     }
 
-    protected void cloneBuilder(ErrorHandlerBuilderRef other) {
+    protected void cloneBuilder(LegacyErrorHandlerBuilderRef other) {
         other.setSupportTransacted(configuration.isSupportTransacted());
     }
 

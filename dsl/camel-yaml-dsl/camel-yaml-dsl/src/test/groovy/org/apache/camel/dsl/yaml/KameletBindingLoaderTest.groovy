@@ -18,13 +18,13 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.Exchange
 import org.apache.camel.Processor
-import org.apache.camel.builder.DeadLetterChannelBuilder
-import org.apache.camel.builder.DefaultErrorHandlerBuilder
-import org.apache.camel.builder.NoErrorHandlerBuilder
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.KameletDefinition
 import org.apache.camel.model.ToDefinition
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition
 
 class KameletBindingLoaderTest extends YamlTestSupport {
     @Override
@@ -351,11 +351,11 @@ class KameletBindingLoaderTest extends YamlTestSupport {
 
         with (context.routeDefinitions[0]) {
             errorHandlerFactory != null
-            errorHandlerFactory instanceof DeadLetterChannelBuilder
-            var eh = errorHandlerFactory as DeadLetterChannelBuilder
+            errorHandlerFactory instanceof DeadLetterChannelDefinition
+            var eh = errorHandlerFactory as DeadLetterChannelDefinition
             eh.deadLetterUri == 'kamelet:error-handler?kafkaTopic=my-first-test&logMessage=ERROR%21&kafkaServiceAccountId=scott&kafkaBrokers=my-broker&kafkaServiceAccountSecret=tiger'
-            eh.redeliveryPolicy.maximumRedeliveries == 1
-            eh.redeliveryPolicy.redeliveryDelay == 2000
+            eh.redeliveryPolicy.maximumRedeliveries == "1"
+            eh.redeliveryPolicy.redeliveryDelay == "2000"
             routeId == 'timer-event-source'
             input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
             outputs.size() == 1
@@ -413,11 +413,11 @@ class KameletBindingLoaderTest extends YamlTestSupport {
 
         with (context.routeDefinitions[0]) {
             errorHandlerFactory != null
-            errorHandlerFactory instanceof DeadLetterChannelBuilder
-            var eh = errorHandlerFactory as DeadLetterChannelBuilder
+            errorHandlerFactory instanceof DeadLetterChannelDefinition
+            var eh = errorHandlerFactory as DeadLetterChannelDefinition
             eh.deadLetterUri == 'mock:dead'
-            eh.redeliveryPolicy.maximumRedeliveries == 3
-            eh.redeliveryPolicy.redeliveryDelay == 100
+            eh.redeliveryPolicy.maximumRedeliveries == "3"
+            eh.redeliveryPolicy.redeliveryDelay == "100"
         }
     }
 
@@ -457,11 +457,11 @@ class KameletBindingLoaderTest extends YamlTestSupport {
 
         with (context.routeDefinitions[0]) {
             errorHandlerFactory != null
-            errorHandlerFactory instanceof DefaultErrorHandlerBuilder
-            var eh = errorHandlerFactory as DefaultErrorHandlerBuilder
-            eh.redeliveryPolicy.maximumRedeliveries == 1
-            eh.redeliveryPolicy.redeliveryDelay == 2000
-            eh.isUseOriginalMessage() == true
+            errorHandlerFactory instanceof DefaultErrorHandlerDefinition
+            var eh = errorHandlerFactory as DefaultErrorHandlerDefinition
+            eh.redeliveryPolicy.maximumRedeliveries == "1"
+            eh.redeliveryPolicy.redeliveryDelay == "2000"
+            eh.getUseOriginalMessage() == "true"
             routeId == 'timer-event-source'
             input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
             outputs.size() == 1
@@ -503,7 +503,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
 
         with (context.routeDefinitions[0]) {
             errorHandlerFactory != null
-            errorHandlerFactory instanceof NoErrorHandlerBuilder
+            errorHandlerFactory instanceof NoErrorHandlerDefinition
             routeId == 'timer-event-source'
             input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
             outputs.size() == 1

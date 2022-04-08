@@ -17,7 +17,7 @@
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.builder.DefaultErrorHandlerBuilder;
+import org.apache.camel.builder.LegacyDefaultErrorHandlerBuilder;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.CamelLogger;
 import org.slf4j.Logger;
@@ -28,18 +28,21 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * A transactional error handler that supports leveraging Spring TransactionManager.
  */
-public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
+@Deprecated
+public class LegacyTransactionErrorHandlerBuilder extends LegacyDefaultErrorHandlerBuilder {
 
     static {
-        ErrorHandlerReifier.registerReifier(TransactionErrorHandlerBuilder.class, TransactionErrorHandlerReifier::new);
+        // legacy camel-spring-xml error-handling using its own model and parsers
+        ErrorHandlerReifier.registerReifier(LegacyTransactionErrorHandlerBuilder.class,
+                LegacyTransactionErrorHandlerReifier::new);
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(TransactionErrorHandlerBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LegacyTransactionErrorHandlerBuilder.class);
     private static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
     private TransactionTemplate transactionTemplate;
     private LoggingLevel rollbackLoggingLevel = LoggingLevel.WARN;
 
-    public TransactionErrorHandlerBuilder() {
+    public LegacyTransactionErrorHandlerBuilder() {
         // no-arg constructor used by Spring DSL
     }
 
@@ -89,7 +92,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
      *
      * @param rollbackLoggingLevel the logging level
      */
-    public TransactionErrorHandlerBuilder rollbackLoggingLevel(LoggingLevel rollbackLoggingLevel) {
+    public LegacyTransactionErrorHandlerBuilder rollbackLoggingLevel(LoggingLevel rollbackLoggingLevel) {
         setRollbackLoggingLevel(rollbackLoggingLevel);
         return this;
     }
@@ -104,7 +107,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 
     @Override
     public String toString() {
-        return "TransactionErrorHandlerBuilder";
+        return "LegacyTransactionErrorHandlerBuilder";
     }
 
 }

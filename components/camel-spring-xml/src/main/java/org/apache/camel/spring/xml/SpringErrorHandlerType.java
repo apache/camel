@@ -19,11 +19,11 @@ package org.apache.camel.spring.xml;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.builder.DeadLetterChannelBuilder;
-import org.apache.camel.builder.DefaultErrorHandlerBuilder;
-import org.apache.camel.builder.NoErrorHandlerBuilder;
+import org.apache.camel.builder.LegacyDeadLetterChannelBuilder;
+import org.apache.camel.builder.LegacyDefaultErrorHandlerBuilder;
+import org.apache.camel.builder.LegacyNoErrorHandlerBuilder;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
+import org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder;
 
 /**
  * Used to configure the error handler type
@@ -31,7 +31,7 @@ import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 @Metadata(label = "spring,configuration,error")
 @XmlType
 @XmlEnum
-public enum ErrorHandlerType {
+public enum SpringErrorHandlerType {
 
     DefaultErrorHandler,
     DeadLetterChannel,
@@ -46,13 +46,13 @@ public enum ErrorHandlerType {
     public Class<?> getTypeAsClass() {
         switch (this) {
             case DefaultErrorHandler:
-                return DefaultErrorHandlerBuilder.class;
+                return LegacyDefaultErrorHandlerBuilder.class;
             case DeadLetterChannel:
-                return DeadLetterChannelBuilder.class;
+                return LegacyDeadLetterChannelBuilder.class;
             case NoErrorHandler:
-                return NoErrorHandlerBuilder.class;
+                return LegacyNoErrorHandlerBuilder.class;
             case TransactionErrorHandler:
-                return TransactionErrorHandlerBuilder.class;
+                return LegacyTransactionErrorHandlerBuilder.class;
             default:
                 throw new IllegalArgumentException("Unknown error handler: " + this);
         }

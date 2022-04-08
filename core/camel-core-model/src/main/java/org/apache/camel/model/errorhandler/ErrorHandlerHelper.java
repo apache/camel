@@ -54,8 +54,8 @@ public final class ErrorHandlerHelper {
             // see if there has been configured a error handler builder on the route
             source = route.getErrorHandlerFactory();
             // check if its also a ref with no error handler configuration like me
-            if (source instanceof ErrorHandlerRefProperties) {
-                ErrorHandlerRefProperties other = (ErrorHandlerRefProperties) source;
+            if (source instanceof ErrorHandlerRefDefinition) {
+                ErrorHandlerRefDefinition other = (ErrorHandlerRefDefinition) source;
                 String otherRef = other.getRef();
                 if (!isErrorHandlerFactoryConfigured(otherRef)) {
                     // the other has also no explicit error handler configured
@@ -90,8 +90,8 @@ public final class ErrorHandlerHelper {
 
     protected static ErrorHandlerFactory lookupErrorHandlerFactory(CamelContext camelContext) {
         ErrorHandlerFactory answer = camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
-        if (answer instanceof ErrorHandlerRefProperties) {
-            ErrorHandlerRefProperties other = (ErrorHandlerRefProperties) answer;
+        if (answer instanceof ErrorHandlerRefDefinition) {
+            ErrorHandlerRefDefinition other = (ErrorHandlerRefDefinition) answer;
             String otherRef = other.getRef();
             if (isErrorHandlerFactoryConfigured(otherRef)) {
                 answer = CamelContextHelper.lookup(camelContext, otherRef, ErrorHandlerFactory.class);
@@ -112,7 +112,7 @@ public final class ErrorHandlerHelper {
      * This is for instance used by the transacted policy to setup a TransactedErrorHandlerBuilder in camel-spring.
      */
     public static boolean isErrorHandlerFactoryConfigured(String ref) {
-        return !ErrorHandlerRefProperties.DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
+        return !ErrorHandlerRefDefinition.DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
     }
 
 }

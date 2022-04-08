@@ -29,12 +29,14 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.model.*;
 import org.apache.camel.model.cloud.*;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.ResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.dataformat.*;
+import org.apache.camel.model.errorhandler.*;
 import org.apache.camel.model.language.*;
 import org.apache.camel.model.loadbalancer.*;
 import org.apache.camel.model.rest.*;
@@ -377,6 +379,20 @@ public class ModelParser extends BaseParser {
             return true;
         }, expressionNodeElementHandler(), noValueHandler());
     }
+    protected ErrorHandlerDefinition doParseErrorHandlerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ErrorHandlerDefinition(),
+            identifiedTypeAttributeHandler(), (def, key) -> {
+            switch (key) {
+                case "deadLetterChannel": def.setErrorHandlerType(doParseDeadLetterChannelDefinition()); break;
+                case "defaultErrorHandler": def.setErrorHandlerType(doParseDefaultErrorHandlerDefinition()); break;
+                case "noErrorHandler": def.setErrorHandlerType(doParseNoErrorHandlerDefinition()); break;
+                case "jtaTransactionErrorHandler": def.setErrorHandlerType(doParseJtaTransactionErrorHandlerDefinition()); break;
+                case "springTransactionErrorHandler": def.setErrorHandlerType(doParseSpringTransactionErrorHandlerDefinition()); break;
+                default: return false;
+            }
+            return true;
+        }, noValueHandler());
+    }
     protected <T extends FaultToleranceConfigurationCommon> AttributeHandler<T> faultToleranceConfigurationCommonAttributeHandler() {
         return (def, key, val) -> {
             switch (key) {
@@ -667,7 +683,7 @@ public class ModelParser extends BaseParser {
                 case "retryAttemptedLogLevel": def.setRetryAttemptedLogLevel(val); break;
                 case "useCollisionAvoidance": def.setUseCollisionAvoidance(val); break;
                 case "useExponentialBackOff": def.setUseExponentialBackOff(val); break;
-                default: return false;
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -2499,6 +2515,78 @@ public class ModelParser extends BaseParser {
             }
             return true;
         }, noElementHandler(), noValueHandler());
+    }
+    protected DeadLetterChannelDefinition doParseDeadLetterChannelDefinition() throws IOException, XmlPullParserException {
+        return doParse(new DeadLetterChannelDefinition(), (def, key, val) -> {
+            switch (key) {
+                case "deadLetterHandleNewException": def.setDeadLetterHandleNewException(val); break;
+                case "deadLetterUri": def.setDeadLetterUri(val); break;
+                default: return defaultErrorHandlerDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, defaultErrorHandlerDefinitionElementHandler(), noValueHandler());
+    }
+    protected <T extends DefaultErrorHandlerDefinition> AttributeHandler<T> defaultErrorHandlerDefinitionAttributeHandler() {
+        return (def, key, val) -> {
+            switch (key) {
+                case "executorServiceRef": def.setExecutorServiceRef(val); break;
+                case "level": def.setLevel(LoggingLevel.valueOf(val)); break;
+                case "logName": def.setLogName(val); break;
+                case "loggerRef": def.setLoggerRef(val); break;
+                case "onExceptionOccurredRef": def.setOnExceptionOccurredRef(val); break;
+                case "onPrepareFailureRef": def.setOnPrepareFailureRef(val); break;
+                case "onRedeliveryRef": def.setOnRedeliveryRef(val); break;
+                case "redeliveryPolicyRef": def.setRedeliveryPolicyRef(val); break;
+                case "retryWhileRef": def.setRetryWhileRef(val); break;
+                case "useOriginalBody": def.setUseOriginalBody(val); break;
+                case "useOriginalMessage": def.setUseOriginalMessage(val); break;
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        };
+    }
+    protected <T extends DefaultErrorHandlerDefinition> ElementHandler<T> defaultErrorHandlerDefinitionElementHandler() {
+        return (def, key) -> {
+            if ("redeliveryPolicy".equals(key)) {
+                def.setRedeliveryPolicy(doParseRedeliveryPolicyDefinition());
+                return true;
+            }
+            return false;
+        };
+    }
+    protected DefaultErrorHandlerDefinition doParseDefaultErrorHandlerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new DefaultErrorHandlerDefinition(), defaultErrorHandlerDefinitionAttributeHandler(), defaultErrorHandlerDefinitionElementHandler(), noValueHandler());
+    }
+    protected ErrorHandlerRefDefinition doParseErrorHandlerRefDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ErrorHandlerRefDefinition(), (def, key, val) -> {
+            if ("ref".equals(key)) {
+                def.setRef(val);
+                return true;
+            }
+            return identifiedTypeAttributeHandler().accept(def, key, val);
+        }, noElementHandler(), noValueHandler());
+    }
+    protected JtaTransactionErrorHandlerDefinition doParseJtaTransactionErrorHandlerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new JtaTransactionErrorHandlerDefinition(),
+            transactionErrorHandlerDefinitionAttributeHandler(), defaultErrorHandlerDefinitionElementHandler(), noValueHandler());
+    }
+    protected <T extends TransactionErrorHandlerDefinition> AttributeHandler<T> transactionErrorHandlerDefinitionAttributeHandler() {
+        return (def, key, val) -> {
+            switch (key) {
+                case "rollbackLoggingLevel": def.setRollbackLoggingLevel(val); break;
+                case "transactedPolicyRef": def.setTransactedPolicyRef(val); break;
+                default: return defaultErrorHandlerDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        };
+    }
+    protected NoErrorHandlerDefinition doParseNoErrorHandlerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new NoErrorHandlerDefinition(),
+            identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
+    }
+    protected SpringTransactionErrorHandlerDefinition doParseSpringTransactionErrorHandlerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new SpringTransactionErrorHandlerDefinition(),
+            transactionErrorHandlerDefinitionAttributeHandler(), defaultErrorHandlerDefinitionElementHandler(), noValueHandler());
     }
     protected CSimpleExpression doParseCSimpleExpression() throws IOException, XmlPullParserException {
         return doParse(new CSimpleExpression(), (def, key, val) -> {

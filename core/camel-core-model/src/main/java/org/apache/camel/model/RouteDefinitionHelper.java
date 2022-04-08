@@ -31,7 +31,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.support.CamelContextHelper;
@@ -452,12 +451,8 @@ public final class RouteDefinitionHelper {
             // multiple RouteBuilders
             ErrorHandlerFactory builder = context.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
             if (builder != null) {
-                if (builder instanceof ErrorHandlerBuilder) {
-                    builder = ((ErrorHandlerBuilder) builder).cloneBuilder();
-                    route.setErrorHandlerFactoryIfNull(builder);
-                } else {
-                    throw new UnsupportedOperationException("The ErrorHandlerFactory must implement ErrorHandlerBuilder");
-                }
+                ErrorHandlerFactory clone = builder.cloneBuilder();
+                route.setErrorHandlerFactoryIfNull(clone);
             }
         }
 

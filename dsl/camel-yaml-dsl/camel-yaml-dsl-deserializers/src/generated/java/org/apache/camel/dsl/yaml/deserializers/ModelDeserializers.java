@@ -6,10 +6,6 @@ import java.lang.Override;
 import java.lang.String;
 import java.util.Map;
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
-import org.apache.camel.builder.DefaultErrorHandlerBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilderRef;
-import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerEndpointAwareBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
@@ -26,6 +22,7 @@ import org.apache.camel.model.DelayDefinition;
 import org.apache.camel.model.DescriptionDefinition;
 import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.EnrichDefinition;
+import org.apache.camel.model.ErrorHandlerDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.FinallyDefinition;
@@ -166,6 +163,12 @@ import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLTypeFilterDefinition;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
+import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition;
 import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
@@ -3807,48 +3810,46 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            inline = true,
-            types = org.apache.camel.builder.DeadLetterChannelBuilder.class,
+            types = org.apache.camel.model.errorhandler.DeadLetterChannelDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = {
+                    "dead-letter-channel",
+                    "deadLetterChannel"
+            },
             properties = {
-                    @YamlProperty(name = "async-delayed-redelivery", type = "boolean"),
                     @YamlProperty(name = "dead-letter-handle-new-exception", type = "boolean"),
-                    @YamlProperty(name = "dead-letter-uri", type = "string"),
+                    @YamlProperty(name = "dead-letter-uri", type = "string", required = true),
                     @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "level", type = "enum:DEBUG,ERROR,INFO,OFF,TRACE,WARN"),
+                    @YamlProperty(name = "log-name", type = "string"),
+                    @YamlProperty(name = "logger-ref", type = "string"),
                     @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
                     @YamlProperty(name = "on-prepare-failure-ref", type = "string"),
                     @YamlProperty(name = "on-redelivery-ref", type = "string"),
+                    @YamlProperty(name = "redelivery-policy", type = "object:org.apache.camel.model.RedeliveryPolicyDefinition"),
+                    @YamlProperty(name = "redelivery-policy-ref", type = "string"),
                     @YamlProperty(name = "retry-while-ref", type = "string"),
                     @YamlProperty(name = "use-original-body", type = "boolean"),
                     @YamlProperty(name = "use-original-message", type = "boolean")
             }
     )
-    public static class DeadLetterChannelBuilderDeserializer extends YamlDeserializerBase<DeadLetterChannelBuilder> {
-        public DeadLetterChannelBuilderDeserializer() {
-            super(DeadLetterChannelBuilder.class);
+    public static class DeadLetterChannelDefinitionDeserializer extends YamlDeserializerBase<DeadLetterChannelDefinition> {
+        public DeadLetterChannelDefinitionDeserializer() {
+            super(DeadLetterChannelDefinition.class);
         }
 
         @Override
-        protected DeadLetterChannelBuilder newInstance() {
-            return new DeadLetterChannelBuilder();
+        protected DeadLetterChannelDefinition newInstance() {
+            return new DeadLetterChannelDefinition();
         }
 
         @Override
-        protected DeadLetterChannelBuilder newInstance(String value) {
-            return new DeadLetterChannelBuilder(value);
-        }
-
-        @Override
-        protected boolean setProperty(DeadLetterChannelBuilder target, String propertyKey,
+        protected boolean setProperty(DeadLetterChannelDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "async-delayed-redelivery": {
-                    boolean val = asBoolean(node);
-                    target.setAsyncDelayedRedelivery(val);
-                    break;
-                }
                 case "dead-letter-handle-new-exception": {
-                    boolean val = asBoolean(node);
+                    String val = asText(node);
                     target.setDeadLetterHandleNewException(val);
                     break;
                 }
@@ -3862,6 +3863,25 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setExecutorServiceRef(val);
                     break;
                 }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "level": {
+                    target.setLevel(asEnum(node, org.apache.camel.LoggingLevel.class));
+                    break;
+                }
+                case "log-name": {
+                    String val = asText(node);
+                    target.setLogName(val);
+                    break;
+                }
+                case "logger-ref": {
+                    String val = asText(node);
+                    target.setLoggerRef(val);
+                    break;
+                }
                 case "on-exception-occurred-ref": {
                     String val = asText(node);
                     target.setOnExceptionOccurredRef(val);
@@ -3877,18 +3897,28 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setOnRedeliveryRef(val);
                     break;
                 }
+                case "redelivery-policy": {
+                    org.apache.camel.model.RedeliveryPolicyDefinition val = asType(node, org.apache.camel.model.RedeliveryPolicyDefinition.class);
+                    target.setRedeliveryPolicy(val);
+                    break;
+                }
+                case "redelivery-policy-ref": {
+                    String val = asText(node);
+                    target.setRedeliveryPolicyRef(val);
+                    break;
+                }
                 case "retry-while-ref": {
                     String val = asText(node);
                     target.setRetryWhileRef(val);
                     break;
                 }
                 case "use-original-body": {
-                    boolean val = asBoolean(node);
+                    String val = asText(node);
                     target.setUseOriginalBody(val);
                     break;
                 }
                 case "use-original-message": {
-                    boolean val = asBoolean(node);
+                    String val = asText(node);
                     target.setUseOriginalMessage(val);
                     break;
                 }
@@ -3901,41 +3931,64 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.builder.DefaultErrorHandlerBuilder.class,
+            types = org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = {
+                    "default-error-handler",
+                    "defaultErrorHandler"
+            },
             properties = {
-                    @YamlProperty(name = "async-delayed-redelivery", type = "boolean"),
                     @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "level", type = "enum:DEBUG,ERROR,INFO,OFF,TRACE,WARN"),
+                    @YamlProperty(name = "log-name", type = "string"),
+                    @YamlProperty(name = "logger-ref", type = "string"),
                     @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
                     @YamlProperty(name = "on-prepare-failure-ref", type = "string"),
                     @YamlProperty(name = "on-redelivery-ref", type = "string"),
+                    @YamlProperty(name = "redelivery-policy", type = "object:org.apache.camel.model.RedeliveryPolicyDefinition"),
+                    @YamlProperty(name = "redelivery-policy-ref", type = "string"),
                     @YamlProperty(name = "retry-while-ref", type = "string"),
                     @YamlProperty(name = "use-original-body", type = "boolean"),
                     @YamlProperty(name = "use-original-message", type = "boolean")
             }
     )
-    public static class DefaultErrorHandlerBuilderDeserializer extends YamlDeserializerBase<DefaultErrorHandlerBuilder> {
-        public DefaultErrorHandlerBuilderDeserializer() {
-            super(DefaultErrorHandlerBuilder.class);
+    public static class DefaultErrorHandlerDefinitionDeserializer extends YamlDeserializerBase<DefaultErrorHandlerDefinition> {
+        public DefaultErrorHandlerDefinitionDeserializer() {
+            super(DefaultErrorHandlerDefinition.class);
         }
 
         @Override
-        protected DefaultErrorHandlerBuilder newInstance() {
-            return new DefaultErrorHandlerBuilder();
+        protected DefaultErrorHandlerDefinition newInstance() {
+            return new DefaultErrorHandlerDefinition();
         }
 
         @Override
-        protected boolean setProperty(DefaultErrorHandlerBuilder target, String propertyKey,
+        protected boolean setProperty(DefaultErrorHandlerDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "async-delayed-redelivery": {
-                    boolean val = asBoolean(node);
-                    target.setAsyncDelayedRedelivery(val);
-                    break;
-                }
                 case "executor-service-ref": {
                     String val = asText(node);
                     target.setExecutorServiceRef(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "level": {
+                    target.setLevel(asEnum(node, org.apache.camel.LoggingLevel.class));
+                    break;
+                }
+                case "log-name": {
+                    String val = asText(node);
+                    target.setLogName(val);
+                    break;
+                }
+                case "logger-ref": {
+                    String val = asText(node);
+                    target.setLoggerRef(val);
                     break;
                 }
                 case "on-exception-occurred-ref": {
@@ -3953,18 +4006,28 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setOnRedeliveryRef(val);
                     break;
                 }
+                case "redelivery-policy": {
+                    org.apache.camel.model.RedeliveryPolicyDefinition val = asType(node, org.apache.camel.model.RedeliveryPolicyDefinition.class);
+                    target.setRedeliveryPolicy(val);
+                    break;
+                }
+                case "redelivery-policy-ref": {
+                    String val = asText(node);
+                    target.setRedeliveryPolicyRef(val);
+                    break;
+                }
                 case "retry-while-ref": {
                     String val = asText(node);
                     target.setRetryWhileRef(val);
                     break;
                 }
                 case "use-original-body": {
-                    boolean val = asBoolean(node);
+                    String val = asText(node);
                     target.setUseOriginalBody(val);
                     break;
                 }
                 case "use-original-message": {
-                    boolean val = asBoolean(node);
+                    String val = asText(node);
                     target.setUseOriginalMessage(val);
                     break;
                 }
@@ -4635,41 +4698,112 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            inline = true,
-            types = org.apache.camel.builder.ErrorHandlerBuilderRef.class,
+            types = org.apache.camel.model.ErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = {
+                    "error-handler",
+                    "errorHandler"
+            },
             properties = {
-                    @YamlProperty(name = "ref", type = "string"),
-                    @YamlProperty(name = "support-transacted", type = "boolean")
+                    @YamlProperty(name = "dead-letter-channel", type = "object:org.apache.camel.model.errorhandler.DeadLetterChannelDefinition"),
+                    @YamlProperty(name = "default-error-handler", type = "object:org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition"),
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "jta-transaction-error-handler", type = "object:org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition"),
+                    @YamlProperty(name = "no-error-handler", type = "object:org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"),
+                    @YamlProperty(name = "spring-transaction-error-handler", type = "object:org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition")
             }
     )
-    public static class ErrorHandlerBuilderRefDeserializer extends YamlDeserializerBase<ErrorHandlerBuilderRef> {
-        public ErrorHandlerBuilderRefDeserializer() {
-            super(ErrorHandlerBuilderRef.class);
+    public static class ErrorHandlerDefinitionDeserializer extends YamlDeserializerBase<ErrorHandlerDefinition> {
+        public ErrorHandlerDefinitionDeserializer() {
+            super(ErrorHandlerDefinition.class);
         }
 
         @Override
-        protected ErrorHandlerBuilderRef newInstance() {
-            return new ErrorHandlerBuilderRef();
+        protected ErrorHandlerDefinition newInstance() {
+            return new ErrorHandlerDefinition();
         }
 
         @Override
-        protected ErrorHandlerBuilderRef newInstance(String value) {
-            return new ErrorHandlerBuilderRef(value);
-        }
-
-        @Override
-        protected boolean setProperty(ErrorHandlerBuilderRef target, String propertyKey,
+        protected boolean setProperty(ErrorHandlerDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "error-handler-type": {
+                    MappingNode val = asMappingNode(node);
+                    setProperties(target, val);
+                    break;
+                }
+                case "dead-letter-channel": {
+                    org.apache.camel.model.errorhandler.DeadLetterChannelDefinition val = asType(node, org.apache.camel.model.errorhandler.DeadLetterChannelDefinition.class);
+                    target.setErrorHandlerType(val);
+                    break;
+                }
+                case "default-error-handler": {
+                    org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition val = asType(node, org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition.class);
+                    target.setErrorHandlerType(val);
+                    break;
+                }
+                case "no-error-handler": {
+                    org.apache.camel.model.errorhandler.NoErrorHandlerDefinition val = asType(node, org.apache.camel.model.errorhandler.NoErrorHandlerDefinition.class);
+                    target.setErrorHandlerType(val);
+                    break;
+                }
+                case "jta-transaction-error-handler": {
+                    org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition val = asType(node, org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition.class);
+                    target.setErrorHandlerType(val);
+                    break;
+                }
+                case "spring-transaction-error-handler": {
+                    org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition val = asType(node, org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition.class);
+                    target.setErrorHandlerType(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = {
+                    "error-handler-ref",
+                    "errorHandlerRef"
+            },
+            properties = {
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "ref", type = "string", required = true)
+            }
+    )
+    public static class ErrorHandlerRefDefinitionDeserializer extends YamlDeserializerBase<ErrorHandlerRefDefinition> {
+        public ErrorHandlerRefDefinitionDeserializer() {
+            super(ErrorHandlerRefDefinition.class);
+        }
+
+        @Override
+        protected ErrorHandlerRefDefinition newInstance() {
+            return new ErrorHandlerRefDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(ErrorHandlerRefDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 case "ref": {
                     String val = asText(node);
                     target.setRef(val);
-                    break;
-                }
-                case "support-transacted": {
-                    boolean val = asBoolean(node);
-                    target.setSupportTransacted(val);
                     break;
                 }
                 default: {
@@ -7295,6 +7429,127 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            types = org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = {
+                    "jta-transaction-error-handler",
+                    "jtaTransactionErrorHandler"
+            },
+            properties = {
+                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "level", type = "enum:DEBUG,ERROR,INFO,OFF,TRACE,WARN"),
+                    @YamlProperty(name = "log-name", type = "string"),
+                    @YamlProperty(name = "logger-ref", type = "string"),
+                    @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
+                    @YamlProperty(name = "on-prepare-failure-ref", type = "string"),
+                    @YamlProperty(name = "on-redelivery-ref", type = "string"),
+                    @YamlProperty(name = "redelivery-policy", type = "object:org.apache.camel.model.RedeliveryPolicyDefinition"),
+                    @YamlProperty(name = "redelivery-policy-ref", type = "string"),
+                    @YamlProperty(name = "retry-while-ref", type = "string"),
+                    @YamlProperty(name = "rollback-logging-level", type = "string"),
+                    @YamlProperty(name = "transacted-policy-ref", type = "string"),
+                    @YamlProperty(name = "use-original-body", type = "boolean"),
+                    @YamlProperty(name = "use-original-message", type = "boolean")
+            }
+    )
+    public static class JtaTransactionErrorHandlerDefinitionDeserializer extends YamlDeserializerBase<JtaTransactionErrorHandlerDefinition> {
+        public JtaTransactionErrorHandlerDefinitionDeserializer() {
+            super(JtaTransactionErrorHandlerDefinition.class);
+        }
+
+        @Override
+        protected JtaTransactionErrorHandlerDefinition newInstance() {
+            return new JtaTransactionErrorHandlerDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(JtaTransactionErrorHandlerDefinition target,
+                String propertyKey, String propertyName, Node node) {
+            switch(propertyKey) {
+                case "executor-service-ref": {
+                    String val = asText(node);
+                    target.setExecutorServiceRef(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "level": {
+                    target.setLevel(asEnum(node, org.apache.camel.LoggingLevel.class));
+                    break;
+                }
+                case "log-name": {
+                    String val = asText(node);
+                    target.setLogName(val);
+                    break;
+                }
+                case "logger-ref": {
+                    String val = asText(node);
+                    target.setLoggerRef(val);
+                    break;
+                }
+                case "on-exception-occurred-ref": {
+                    String val = asText(node);
+                    target.setOnExceptionOccurredRef(val);
+                    break;
+                }
+                case "on-prepare-failure-ref": {
+                    String val = asText(node);
+                    target.setOnPrepareFailureRef(val);
+                    break;
+                }
+                case "on-redelivery-ref": {
+                    String val = asText(node);
+                    target.setOnRedeliveryRef(val);
+                    break;
+                }
+                case "redelivery-policy": {
+                    org.apache.camel.model.RedeliveryPolicyDefinition val = asType(node, org.apache.camel.model.RedeliveryPolicyDefinition.class);
+                    target.setRedeliveryPolicy(val);
+                    break;
+                }
+                case "redelivery-policy-ref": {
+                    String val = asText(node);
+                    target.setRedeliveryPolicyRef(val);
+                    break;
+                }
+                case "retry-while-ref": {
+                    String val = asText(node);
+                    target.setRetryWhileRef(val);
+                    break;
+                }
+                case "rollback-logging-level": {
+                    String val = asText(node);
+                    target.setRollbackLoggingLevel(val);
+                    break;
+                }
+                case "transacted-policy-ref": {
+                    String val = asText(node);
+                    target.setTransactedPolicyRef(val);
+                    break;
+                }
+                case "use-original-body": {
+                    String val = asText(node);
+                    target.setUseOriginalBody(val);
+                    break;
+                }
+                case "use-original-message": {
+                    String val = asText(node);
+                    target.setUseOriginalMessage(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             types = org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = {
@@ -8497,27 +8752,38 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            types = org.apache.camel.builder.NoErrorHandlerBuilder.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1
+            types = org.apache.camel.model.errorhandler.NoErrorHandlerDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = {
+                    "no-error-handler",
+                    "noErrorHandler"
+            },
+            properties = @YamlProperty(name = "id", type = "string")
     )
-    public static class NoErrorHandlerBuilderDeserializer extends YamlDeserializerBase<NoErrorHandlerBuilder> {
-        public NoErrorHandlerBuilderDeserializer() {
-            super(NoErrorHandlerBuilder.class);
+    public static class NoErrorHandlerDefinitionDeserializer extends YamlDeserializerBase<NoErrorHandlerDefinition> {
+        public NoErrorHandlerDefinitionDeserializer() {
+            super(NoErrorHandlerDefinition.class);
         }
 
         @Override
-        protected NoErrorHandlerBuilder newInstance() {
-            return new NoErrorHandlerBuilder();
+        protected NoErrorHandlerDefinition newInstance() {
+            return new NoErrorHandlerDefinition();
         }
 
         @Override
-        protected boolean setProperty(NoErrorHandlerBuilder target, String propertyKey,
+        protected boolean setProperty(NoErrorHandlerDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
                 default: {
                     return false;
                 }
             }
+            return true;
         }
     }
 
@@ -10664,6 +10930,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "delay-pattern", type = "string"),
                     @YamlProperty(name = "disable-redelivery", type = "boolean"),
                     @YamlProperty(name = "exchange-formatter-ref", type = "string"),
+                    @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "log-continued", type = "boolean"),
                     @YamlProperty(name = "log-exhausted", type = "boolean"),
                     @YamlProperty(name = "log-exhausted-message-body", type = "boolean"),
@@ -10730,6 +10997,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "exchange-formatter-ref": {
                     String val = asText(node);
                     target.setExchangeFormatterRef(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
                     break;
                 }
                 case "log-continued": {
@@ -14340,6 +14612,127 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     } else {
                         return false;
                     }
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            nodes = {
+                    "spring-transaction-error-handler",
+                    "springTransactionErrorHandler"
+            },
+            properties = {
+                    @YamlProperty(name = "executor-service-ref", type = "string"),
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "level", type = "enum:DEBUG,ERROR,INFO,OFF,TRACE,WARN"),
+                    @YamlProperty(name = "log-name", type = "string"),
+                    @YamlProperty(name = "logger-ref", type = "string"),
+                    @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
+                    @YamlProperty(name = "on-prepare-failure-ref", type = "string"),
+                    @YamlProperty(name = "on-redelivery-ref", type = "string"),
+                    @YamlProperty(name = "redelivery-policy", type = "object:org.apache.camel.model.RedeliveryPolicyDefinition"),
+                    @YamlProperty(name = "redelivery-policy-ref", type = "string"),
+                    @YamlProperty(name = "retry-while-ref", type = "string"),
+                    @YamlProperty(name = "rollback-logging-level", type = "string"),
+                    @YamlProperty(name = "transacted-policy-ref", type = "string"),
+                    @YamlProperty(name = "use-original-body", type = "boolean"),
+                    @YamlProperty(name = "use-original-message", type = "boolean")
+            }
+    )
+    public static class SpringTransactionErrorHandlerDefinitionDeserializer extends YamlDeserializerBase<SpringTransactionErrorHandlerDefinition> {
+        public SpringTransactionErrorHandlerDefinitionDeserializer() {
+            super(SpringTransactionErrorHandlerDefinition.class);
+        }
+
+        @Override
+        protected SpringTransactionErrorHandlerDefinition newInstance() {
+            return new SpringTransactionErrorHandlerDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(SpringTransactionErrorHandlerDefinition target,
+                String propertyKey, String propertyName, Node node) {
+            switch(propertyKey) {
+                case "executor-service-ref": {
+                    String val = asText(node);
+                    target.setExecutorServiceRef(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "level": {
+                    target.setLevel(asEnum(node, org.apache.camel.LoggingLevel.class));
+                    break;
+                }
+                case "log-name": {
+                    String val = asText(node);
+                    target.setLogName(val);
+                    break;
+                }
+                case "logger-ref": {
+                    String val = asText(node);
+                    target.setLoggerRef(val);
+                    break;
+                }
+                case "on-exception-occurred-ref": {
+                    String val = asText(node);
+                    target.setOnExceptionOccurredRef(val);
+                    break;
+                }
+                case "on-prepare-failure-ref": {
+                    String val = asText(node);
+                    target.setOnPrepareFailureRef(val);
+                    break;
+                }
+                case "on-redelivery-ref": {
+                    String val = asText(node);
+                    target.setOnRedeliveryRef(val);
+                    break;
+                }
+                case "redelivery-policy": {
+                    org.apache.camel.model.RedeliveryPolicyDefinition val = asType(node, org.apache.camel.model.RedeliveryPolicyDefinition.class);
+                    target.setRedeliveryPolicy(val);
+                    break;
+                }
+                case "redelivery-policy-ref": {
+                    String val = asText(node);
+                    target.setRedeliveryPolicyRef(val);
+                    break;
+                }
+                case "retry-while-ref": {
+                    String val = asText(node);
+                    target.setRetryWhileRef(val);
+                    break;
+                }
+                case "rollback-logging-level": {
+                    String val = asText(node);
+                    target.setRollbackLoggingLevel(val);
+                    break;
+                }
+                case "transacted-policy-ref": {
+                    String val = asText(node);
+                    target.setTransactedPolicyRef(val);
+                    break;
+                }
+                case "use-original-body": {
+                    String val = asText(node);
+                    target.setUseOriginalBody(val);
+                    break;
+                }
+                case "use-original-message": {
+                    String val = asText(node);
+                    target.setUseOriginalMessage(val);
+                    break;
+                }
+                default: {
+                    return false;
                 }
             }
             return true;

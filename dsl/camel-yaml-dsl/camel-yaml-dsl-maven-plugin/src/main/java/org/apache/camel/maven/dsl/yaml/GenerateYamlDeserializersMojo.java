@@ -305,7 +305,8 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         all()
             .filter(ci -> {
                 return !ci.name().equals(EXPRESSION_DEFINITION_CLASS)
-                    && !ci.name().equals(EXPRESSION_SUBELEMENT_DEFINITION_CLASS);
+                    && !ci.name().equals(EXPRESSION_SUBELEMENT_DEFINITION_CLASS)
+                    && !implementType(ci, ERROR_HANDLER_BUILDER_CLASS);
             })
             .map(this::generateParser)
             .sorted(Comparator.comparing(o -> o.type.name))
@@ -407,6 +408,12 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         // T handledTypeInstance(String value);
         //
         for (MethodInfo ctor: info.constructors()) {
+
+            // do not generate inline for error handlers (only ref error handler is allowed)
+            if (implementType(info, ERROR_HANDLER_DEFINITION_CLASS)) {
+                break;
+            }
+
             if (ctor.parameters().size() == 1 && ctor.parameters().get(0).name().equals(STRING_CLASS)) {
                 if ((ctor.flags() & java.lang.reflect.Modifier.PUBLIC) == 0) {
                     break;
@@ -437,29 +444,9 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         CodeBlock.Builder setProperty = CodeBlock.builder();
         setProperty.beginControlFlow("switch(propertyKey)");
 
-        if (implementType(info, ERROR_HANDLER_BUILDER_CLASS)) {
-            List<MethodInfo> methods = methods(info).stream()
-                .filter(mi -> java.lang.reflect.Modifier.isPublic(mi.flags()))
-                .filter(mi -> mi.name().matches("^set[1-9A-Z].*$"))
-                .filter(mi -> mi.parameters().size() == 1)
-                .filter(mi -> PRIMITIVE_CLASSES.contains(mi.parameters().get(0).name().toString()))
-                .filter(mi -> mi.returnType().kind() == Type.Kind.VOID)
-                .filter(mi -> acceptErrorHandlerBuilderMethod(info, mi))
-                .collect(Collectors.toList());
-
-            // error handler is special so we need to filter out specific methods which we should not include
-
-
-            for (MethodInfo method : methods) {
-                if (generateSetValue(setProperty, method, properties)) {
-                    caseAdded = true;
-                }
-            }
-        } else {
-            for (FieldInfo field : fields(info)) {
-                if (generateSetValue(setProperty, field, properties)) {
-                    caseAdded = true;
-                }
+        for (FieldInfo field : fields(info)) {
+            if (generateSetValue(setProperty, field, properties)) {
+                caseAdded = true;
             }
         }
 
@@ -604,17 +591,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         builder.addAnnotation(yamlTypeAnnotation.build());
 
         return new TypeSpecHolder(builder.build(), attributes);
-    }
-
-    private boolean acceptErrorHandlerBuilderMethod(ClassInfo ci, MethodInfo mi) {
-        String name = mi.name();
-        if ("supportTransacted".equals(name)) {
-            return false;
-        } else if (name.toLowerCase(Locale.ROOT).contains("deadletter")) {
-            String cn = ci.simpleName();
-            return "DeadLetterChannelBuilder".equals(cn);
-        }
-        return true;
     }
 
     @SuppressWarnings("MethodLength")

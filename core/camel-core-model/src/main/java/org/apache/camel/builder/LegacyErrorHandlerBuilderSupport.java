@@ -14,22 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.cdi.transaction;
+package org.apache.camel.builder;
 
-import org.apache.camel.LoggingLevel;
-import org.apache.camel.jta.JtaTransactionErrorHandlerBuilder;
-import org.apache.camel.jta.JtaTransactionPolicy;
+/**
+ * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ */
+@Deprecated
+public abstract class LegacyErrorHandlerBuilderSupport implements LegacyErrorHandlerBuilder {
 
-public interface CdiTransactionalErrorHandlerBuilder {
-    String getPolicyRef();
+    @Override
+    public boolean supportTransacted() {
+        return false;
+    }
 
-    JtaTransactionErrorHandlerBuilder setTransactionPolicy(String ref);
-
-    JtaTransactionPolicy getTransactionPolicy();
-
-    JtaTransactionErrorHandlerBuilder setTransactionPolicy(JtaTransactionPolicy transactionPolicy);
-
-    LoggingLevel getRollbackLoggingLevel();
-
-    JtaTransactionErrorHandlerBuilder setRollbackLoggingLevel(LoggingLevel rollbackLoggingLevel);
 }

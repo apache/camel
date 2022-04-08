@@ -35,7 +35,7 @@
 
     <bean id="myFailureProcessor" class="org.apache.camel.component.jms.issues.TransactionErrorHandlerRedeliveryDelayTest$MyFailureProcessor"/>
 
-    <bean id="myTransactionErrorHandler" class="org.apache.camel.spring.spi.TransactionErrorHandlerBuilder">
+    <bean id="myTransactionErrorHandler" class="org.apache.camel.spring.spi.LegacyTransactionErrorHandlerBuilder">
         <property name="transactionTemplate" ref="PROPAGATION_REQUIRED"/>
     </bean>
 

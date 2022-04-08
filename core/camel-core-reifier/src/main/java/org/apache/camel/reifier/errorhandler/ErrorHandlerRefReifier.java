@@ -21,13 +21,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.errorhandler.ErrorHandlerHelper;
-import org.apache.camel.model.errorhandler.ErrorHandlerRefProperties;
+import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
 import org.apache.camel.util.ObjectHelper;
 
-public class ErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerRefProperties> {
+public class ErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerRefDefinition> {
 
     public ErrorHandlerRefReifier(Route route, ErrorHandlerFactory definition) {
-        super(route, (ErrorHandlerRefProperties) definition);
+        super(route, (ErrorHandlerRefDefinition) definition);
     }
 
     @Override
@@ -43,5 +43,4 @@ public class ErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerRefP
         route.addErrorHandlerFactoryReference(definition, handler);
         return handler;
     }
-
 }

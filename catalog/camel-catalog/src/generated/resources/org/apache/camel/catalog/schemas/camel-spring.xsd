@@ -294,6 +294,22 @@ To use DataSonnet scripts for message transformations.
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="deadLetterChannel" type="tns:deadLetterChannelDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Dead letter channel error handler.
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="defaultErrorHandler" type="tns:defaultErrorHandlerDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Default error handler.
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="defaultLoadBalancer" type="tns:defaultServiceCallServiceLoadBalancerConfiguration">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -382,10 +398,18 @@ Enriches a message with data from a secondary resource
     </xs:annotation>
   </xs:element>
 
-  <xs:element name="errorHandler" type="tns:errorHandlerDefinition">
+  <xs:element name="errorHandler" nillable="true" type="xs:anyType">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Error handler settings
+Camel error handling.
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="errorHandlerRef" type="tns:errorHandlerRefDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Dead letter channel error handler.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -693,6 +717,14 @@ Evaluates a JSONPath expression against a JSON message body.
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="jtaTransactionErrorHandler" type="tns:jtaTransactionErrorHandlerDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+JTA based transactional error handler (requires camel-jta).
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="kamelet" type="tns:kameletDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -810,6 +842,14 @@ Rest security mutual TLS authentication definition
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Evaluates a MVEL template.
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="noErrorHandler" type="tns:noErrorHandlerDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+No error handler.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1507,6 +1547,14 @@ Evaluates a Spring expression (SpEL).
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
 Splits a single message into many sub-messages.
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="springTransactionErrorHandler" type="tns:springTransactionErrorHandlerDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Spring based transactional error handler (requires camel-spring).
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -4461,6 +4509,456 @@ org.apache.camel.spi.SendDynamicAware . Default value: true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="errorHandlerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:identifiedType">
+        <xs:sequence>
+          <xs:choice minOccurs="0">
+            <xs:element ref="tns:deadLetterChannel"/>
+            <xs:element ref="tns:defaultErrorHandler"/>
+            <xs:element ref="tns:noErrorHandler"/>
+            <xs:element ref="tns:jtaTransactionErrorHandler"/>
+            <xs:element ref="tns:springTransactionErrorHandler"/>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="deadLetterChannelDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:defaultErrorHandlerDefinition">
+        <xs:sequence/>
+        <xs:attribute name="deadLetterUri" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The dead letter endpoint uri for the Dead Letter error handler.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="deadLetterHandleNewException" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the dead letter channel should handle (and ignore) any new exception
+that may been thrown during sending the message to the dead letter endpoint. The
+default value is true which means any such kind of exception is handled and
+ignored. Set this to false to let the exception be propagated back on the
+org.apache.camel.Exchange . This can be used in situations where you use
+transactions, and want to use Camel's dead letter channel to deal with
+exceptions during routing, but if the dead letter channel itself fails because
+of a new exception being thrown, then by setting this to false the new
+exceptions is propagated back and set on the org.apache.camel.Exchange , which
+allows the transaction to detect the exception, and rollback. Default value:
+true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="defaultErrorHandlerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:baseErrorHandlerDefinition">
+        <xs:sequence>
+          <xs:element minOccurs="0" ref="tns:redeliveryPolicy"/>
+        </xs:sequence>
+        <xs:attribute name="loggerRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+References to a logger to use as logger for the error handler.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="level" type="tns:loggingLevel">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Logging level to use when using the logging error handler type. Default value:
+ERROR
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="logName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Name of the logger to use for the logging error handler.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useOriginalMessage" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Will use the original input org.apache.camel.Message (original body and headers)
+when an org.apache.camel.Exchange is moved to the dead letter queue. Notice:
+this only applies when all redeliveries attempt have failed and the
+org.apache.camel.Exchange is doomed for failure. Instead of using the current
+inprogress org.apache.camel.Exchange IN message we use the original IN message
+instead. This allows you to store the original input in the dead letter queue
+instead of the inprogress snapshot of the IN message. For instance if you route
+transform the IN body during routing and then failed. With the original exchange
+store in the dead letter queue it might be easier to manually re submit the
+org.apache.camel.Exchange again as the IN message is the same as when Camel
+received it. So you should be able to send the org.apache.camel.Exchange to the
+same input. The difference between useOriginalMessage and useOriginalBody is
+that the former includes both the original body and headers, where as the latter
+only includes the original body. You can use the latter to enrich the message
+with custom headers and include the original message body. The former wont let
+you do this, as its using the original message body and headers as they are. You
+cannot enable both useOriginalMessage and useOriginalBody. Important: The
+original input means the input message that are bounded by the current
+org.apache.camel.spi.UnitOfWork . An unit of work typically spans one route, or
+multiple routes if they are connected using internal endpoints such as direct or
+seda. When messages is passed via external endpoints such as JMS or HTTP then
+the consumer will create a new unit of work, with the message it received as
+input as the original input. Also some EIP patterns such as splitter, multicast,
+will create a new unit of work boundary for the messages in their sub-route (eg
+the splitted message); however these EIPs have an option named shareUnitOfWork
+which allows to combine with the parent unit of work in regard to error handling
+and therefore use the parent original message. By default this feature is off.
+Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useOriginalBody" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Will use the original input org.apache.camel.Message body (original body only)
+when an org.apache.camel.Exchange is moved to the dead letter queue. Notice:
+this only applies when all redeliveries attempt have failed and the
+org.apache.camel.Exchange is doomed for failure. Instead of using the current
+inprogress org.apache.camel.Exchange IN message we use the original IN message
+instead. This allows you to store the original input in the dead letter queue
+instead of the inprogress snapshot of the IN message. For instance if you route
+transform the IN body during routing and then failed. With the original exchange
+store in the dead letter queue it might be easier to manually re submit the
+org.apache.camel.Exchange again as the IN message is the same as when Camel
+received it. So you should be able to send the org.apache.camel.Exchange to the
+same input. The difference between useOriginalMessage and useOriginalBody is
+that the former includes both the original body and headers, where as the latter
+only includes the original body. You can use the latter to enrich the message
+with custom headers and include the original message body. The former wont let
+you do this, as its using the original message body and headers as they are. You
+cannot enable both useOriginalMessage and useOriginalBody. Important: The
+original input means the input message that are bounded by the current
+org.apache.camel.spi.UnitOfWork . An unit of work typically spans one route, or
+multiple routes if they are connected using internal endpoints such as direct or
+seda. When messages is passed via external endpoints such as JMS or HTTP then
+the consumer will create a new unit of work, with the message it received as
+input as the original input. Also some EIP patterns such as splitter, multicast,
+will create a new unit of work boundary for the messages in their sub-route (eg
+the splitted message); however these EIPs have an option named shareUnitOfWork
+which allows to combine with the parent unit of work in regard to error handling
+and therefore use the parent original message. By default this feature is off.
+Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="onRedeliveryRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets a reference to a processor that should be processed before a redelivery
+attempt. Can be used to change the org.apache.camel.Exchange before its being
+redelivered.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="onExceptionOccurredRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets a reference to a processor that should be processed just after an exception
+occurred. Can be used to perform custom logging about the occurred exception at
+the exact time it happened. Important: Any exception thrown from this processor
+will be ignored.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="onPrepareFailureRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets a reference to a processor to prepare the org.apache.camel.Exchange before
+handled by the failure processor / dead letter channel. This allows for example
+to enrich the message before sending to a dead letter queue.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="retryWhileRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets a retry while predicate. Will continue retrying until the predicate
+evaluates to false.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="redeliveryPolicyRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets a reference to a RedeliveryPolicy to be used for redelivery settings.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="executorServiceRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets a reference to a thread pool to be used by the error handler.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType abstract="true" name="baseErrorHandlerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:identifiedType">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="redeliveryPolicyDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:identifiedType">
+        <xs:sequence/>
+        <xs:attribute name="maximumRedeliveries" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the maximum redeliveries x = redeliver at most x times 0 = no redeliveries
+-1 = redeliver forever.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="redeliveryDelay" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the initial redelivery delay. Default value: 1000
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="asyncDelayedRedelivery" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Allow asynchronous delayed redelivery. The route, in particular the consumer's
+component, must support the Asynchronous Routing Engine (e.g. seda). Default
+value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="backOffMultiplier" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the back off multiplier. Default value: 2.0
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useExponentialBackOff" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Turn on exponential backk off. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="collisionAvoidanceFactor" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the collision avoidance factor. Default value: 0.15
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useCollisionAvoidance" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Turn on collision avoidance. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="maximumRedeliveryDelay" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the maximum delay between redelivery. Default value: 60000
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="retriesExhaustedLogLevel" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the logging level to use when retries have been exhausted. Default value:
+ERROR
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="retryAttemptedLogLevel" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the logging level to use for logging retry attempts. Default value: DEBUG
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="retryAttemptedLogInterval" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the interval to use for logging retry attempts. Default value: 1
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="logRetryAttempted" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets whether retry attempts should be logged or not. Can be used to include or
+reduce verbose. Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="logStackTrace" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets whether stack traces should be logged. Can be used to include or reduce
+verbose. Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="logRetryStackTrace" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets whether stack traces should be logged when an retry attempt failed. Can be
+used to include or reduce verbose. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="logHandled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets whether handled exceptions should be logged or not. Can be used to include
+or reduce verbose. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="logNewException" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets whether new exceptions should be logged or not. Can be used to include or
+reduce verbose. A new exception is an exception that was thrown while handling a
+previous exception. Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="logContinued" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets whether continued exceptions should be logged or not. Can be used to
+include or reduce verbose. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="logExhausted" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets whether exhausted exceptions should be logged or not. Can be used to
+include or reduce verbose. Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="logExhaustedMessageHistory" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets whether exhausted exceptions should be logged including message history or
+not (supports property placeholders). Can be used to include or reduce verbose.
+Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="logExhaustedMessageBody" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets whether exhausted message body should be logged including message history
+or not (supports property placeholders). Can be used to include or reduce
+verbose. Requires logExhaustedMessageHistory to be enabled. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="disableRedelivery" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Disables redelivery (same as setting maximum redeliveries to 0). Default value:
+false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="delayPattern" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the delay pattern with delay intervals.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="allowRedeliveryWhileStopping" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Controls whether to allow redelivery while stopping/shutting down a route that
+uses error handling. Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="exchangeFormatterRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the reference of the instance of org.apache.camel.spi.ExchangeFormatter to
+generate the log message from exchange.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="noErrorHandlerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:baseErrorHandlerDefinition">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="jtaTransactionErrorHandlerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:transactionErrorHandlerDefinition">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType abstract="true" name="transactionErrorHandlerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:defaultErrorHandlerDefinition">
+        <xs:sequence/>
+        <xs:attribute name="transactedPolicyRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The transacted policy to use that is configured for either Spring or JTA based
+transactions. If no policy has been configured then Camel will attempt to
+auto-discover.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="rollbackLoggingLevel" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the logging level to use for logging transactional rollback. This option is
+default WARN. Default value: WARN
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="springTransactionErrorHandlerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:transactionErrorHandlerDefinition">
+        <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -9047,196 +9545,6 @@ Default value: false
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="redeliveryPolicyDefinition">
-    <xs:sequence/>
-    <xs:attribute name="maximumRedeliveries" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the maximum redeliveries x = redeliver at most x times 0 = no redeliveries
--1 = redeliver forever.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="redeliveryDelay" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the initial redelivery delay.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="asyncDelayedRedelivery" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Allow asynchronous delayed redelivery. The route, in particular the consumer's
-component, must support the Asynchronous Routing Engine (e.g. seda). Default
-value: false
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="backOffMultiplier" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the back off multiplier.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="useExponentialBackOff" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Turn on exponential backk off. Default value: false
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="collisionAvoidanceFactor" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the collision avoidance factor.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="useCollisionAvoidance" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Turn on collision avoidance. Default value: false
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="maximumRedeliveryDelay" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the maximum delay between redelivery.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="retriesExhaustedLogLevel" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the logging level to use when retries have been exhausted.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="retryAttemptedLogLevel" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the logging level to use for logging retry attempts.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="retryAttemptedLogInterval" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the interval to use for logging retry attempts.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="logRetryAttempted" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets whether retry attempts should be logged or not. Can be used to include or
-reduce verbose. Default value: false
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="logStackTrace" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets whether stack traces should be logged. Can be used to include or reduce
-verbose. Default value: false
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="logRetryStackTrace" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets whether stack traces should be logged when an retry attempt failed. Can be
-used to include or reduce verbose. Default value: false
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="logHandled" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets whether handled exceptions should be logged or not. Can be used to include
-or reduce verbose. Default value: false
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="logNewException" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets whether new exceptions should be logged or not. Can be used to include or
-reduce verbose. A new exception is an exception that was thrown while handling a
-previous exception. Default value: false
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="logContinued" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets whether continued exceptions should be logged or not. Can be used to
-include or reduce verbose. Default value: false
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="logExhausted" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets whether exhausted exceptions should be logged or not. Can be used to
-include or reduce verbose. Default value: false
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="logExhaustedMessageHistory" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets whether exhausted exceptions should be logged including message history or
-not (supports property placeholders). Can be used to include or reduce verbose.
-Default value: false
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="logExhaustedMessageBody" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets whether exhausted message body should be logged including message history
-or not (supports property placeholders). Can be used to include or reduce
-verbose. Requires logExhaustedMessageHistory to be enabled. Default value: false
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="disableRedelivery" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Disables redelivery (same as setting maximum redeliveries to 0). Default value:
-false
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="delayPattern" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the delay pattern with delay intervals.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="allowRedeliveryWhileStopping" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Controls whether to allow redelivery while stopping/shutting down a route that
-uses error handling. Default value: false
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="exchangeFormatterRef" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en"><![CDATA[
-Sets the reference of the instance of org.apache.camel.spi.ExchangeFormatter to
-generate the log message from exchange.
-        ]]></xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-
   <xs:complexType name="onFallbackDefinition">
     <xs:complexContent>
       <xs:extension base="tns:output">
@@ -12833,6 +13141,21 @@ Set a reference to a custom Expression to use.
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="errorHandlerRefDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:baseErrorHandlerDefinition">
+        <xs:sequence/>
+        <xs:attribute name="ref" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+References to an existing or custom error handler.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="cSimpleExpression">
     <xs:simpleContent>
       <xs:extension base="tns:expression">
@@ -14934,205 +15257,28 @@ DEBUG. Default value: DEBUG
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="errorHandlerDefinition">
+  <xs:complexType name="springErrorHandlerDefinition">
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
         <xs:sequence>
-          <xs:element minOccurs="0" name="redeliveryPolicy" type="tns:camelRedeliveryPolicyFactoryBean">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Sets the redelivery settings.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" name="redeliveryPolicy" type="tns:camelRedeliveryPolicyFactoryBean"/>
         </xs:sequence>
-        <xs:attribute name="type" type="tns:errorHandlerType">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The type of the error handler. Default value: DefaultErrorHandler
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="deadLetterUri" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The dead letter endpoint uri for the Dead Letter error handler.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="deadLetterHandleNewException" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether the dead letter channel should handle (and ignore) any new exception
-that may been thrown during sending the message to the dead letter endpoint. The
-default value is true which means any such kind of exception is handled and
-ignored. Set this to false to let the exception be propagated back on the
-org.apache.camel.Exchange . This can be used in situations where you use
-transactions, and want to use Camel's dead letter channel to deal with
-exceptions during routing, but if the dead letter channel itself fails because
-of a new exception being thrown, then by setting this to false the new
-exceptions is propagated back and set on the org.apache.camel.Exchange , which
-allows the transaction to detect the exception, and rollback.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="level" type="tns:loggingLevel">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Logging level to use when using the logging error handler type. Default value:
-ERROR
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="rollbackLoggingLevel" type="tns:loggingLevel">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets the logging level to use for logging transactional rollback. This option is
-default WARN. Default value: WARN
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="logName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Name of the logger to use for the logging error handler.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="useOriginalMessage" type="xs:boolean">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Will use the original input org.apache.camel.Message (original body and headers)
-when an org.apache.camel.Exchange is moved to the dead letter queue. Notice:
-this only applies when all redeliveries attempt have failed and the
-org.apache.camel.Exchange is doomed for failure. Instead of using the current
-inprogress org.apache.camel.Exchange IN message we use the original IN message
-instead. This allows you to store the original input in the dead letter queue
-instead of the inprogress snapshot of the IN message. For instance if you route
-transform the IN body during routing and then failed. With the original exchange
-store in the dead letter queue it might be easier to manually re submit the
-org.apache.camel.Exchange again as the IN message is the same as when Camel
-received it. So you should be able to send the org.apache.camel.Exchange to the
-same input. The difference between useOriginalMessage and useOriginalBody is
-that the former includes both the original body and headers, where as the latter
-only includes the original body. You can use the latter to enrich the message
-with custom headers and include the original message body. The former wont let
-you do this, as its using the original message body and headers as they are. You
-cannot enable both useOriginalMessage and useOriginalBody. Important: The
-original input means the input message that are bounded by the current
-org.apache.camel.spi.UnitOfWork . An unit of work typically spans one route, or
-multiple routes if they are connected using internal endpoints such as direct or
-seda. When messages is passed via external endpoints such as JMS or HTTP then
-the consumer will create a new unit of work, with the message it received as
-input as the original input. Also some EIP patterns such as splitter, multicast,
-will create a new unit of work boundary for the messages in their sub-route (eg
-the splitted message); however these EIPs have an option named shareUnitOfWork
-which allows to combine with the parent unit of work in regard to error handling
-and therefore use the parent original message. By default this feature is off.
-Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="useOriginalBody" type="xs:boolean">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Will use the original input org.apache.camel.Message body (original body only)
-when an org.apache.camel.Exchange is moved to the dead letter queue. Notice:
-this only applies when all redeliveries attempt have failed and the
-org.apache.camel.Exchange is doomed for failure. Instead of using the current
-inprogress org.apache.camel.Exchange IN message we use the original IN message
-instead. This allows you to store the original input in the dead letter queue
-instead of the inprogress snapshot of the IN message. For instance if you route
-transform the IN body during routing and then failed. With the original exchange
-store in the dead letter queue it might be easier to manually re submit the
-org.apache.camel.Exchange again as the IN message is the same as when Camel
-received it. So you should be able to send the org.apache.camel.Exchange to the
-same input. The difference between useOriginalMessage and useOriginalBody is
-that the former includes both the original body and headers, where as the latter
-only includes the original body. You can use the latter to enrich the message
-with custom headers and include the original message body. The former wont let
-you do this, as its using the original message body and headers as they are. You
-cannot enable both useOriginalMessage and useOriginalBody. Important: The
-original input means the input message that are bounded by the current
-org.apache.camel.spi.UnitOfWork . An unit of work typically spans one route, or
-multiple routes if they are connected using internal endpoints such as direct or
-seda. When messages is passed via external endpoints such as JMS or HTTP then
-the consumer will create a new unit of work, with the message it received as
-input as the original input. Also some EIP patterns such as splitter, multicast,
-will create a new unit of work boundary for the messages in their sub-route (eg
-the splitted message); however these EIPs have an option named shareUnitOfWork
-which allows to combine with the parent unit of work in regard to error handling
-and therefore use the parent original message. By default this feature is off.
-Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="transactionTemplateRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-References to the org.springframework.transaction.support.TransactionTemplate to
-use with the transaction error handler.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="transactionManagerRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-References to the org.springframework.transaction.PlatformTransactionManager to
-use with the transaction error handler.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="onRedeliveryRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to a processor that should be processed before a redelivery
-attempt. Can be used to change the org.apache.camel.Exchange before its being
-redelivered.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="onExceptionOccurredRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to a processor that should be processed just after an exception
-occurred. Can be used to perform custom logging about the occurred exception at
-the exact time it happened. Important: Any exception thrown from this processor
-will be ignored.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="onPrepareFailureRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to a processor to prepare the org.apache.camel.Exchange before
-handled by the failure processor / dead letter channel. This allows for example
-to enrich the message before sending to a dead letter queue.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="retryWhileRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to an retry while expression. Will continue retrying until
-expression evaluates to false.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="redeliveryPolicyRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to a RedeliveryPolicy to be used for redelivery settings.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="executorServiceRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to a thread pool to be used by the error handler.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="type" type="tns:springErrorHandlerType"/>
+        <xs:attribute name="deadLetterUri" type="xs:string"/>
+        <xs:attribute name="deadLetterHandleNewException" type="xs:string"/>
+        <xs:attribute name="level" type="tns:loggingLevel"/>
+        <xs:attribute name="rollbackLoggingLevel" type="tns:loggingLevel"/>
+        <xs:attribute name="logName" type="xs:string"/>
+        <xs:attribute name="useOriginalMessage" type="xs:boolean"/>
+        <xs:attribute name="useOriginalBody" type="xs:boolean"/>
+        <xs:attribute name="transactionTemplateRef" type="xs:string"/>
+        <xs:attribute name="transactionManagerRef" type="xs:string"/>
+        <xs:attribute name="onRedeliveryRef" type="xs:string"/>
+        <xs:attribute name="onExceptionOccurredRef" type="xs:string"/>
+        <xs:attribute name="onPrepareFailureRef" type="xs:string"/>
+        <xs:attribute name="retryWhileRef" type="xs:string"/>
+        <xs:attribute name="redeliveryPolicyRef" type="xs:string"/>
+        <xs:attribute name="executorServiceRef" type="xs:string"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -15525,7 +15671,7 @@ multiple certificates.
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="errorHandlerType">
+  <xs:simpleType name="springErrorHandlerType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="DefaultErrorHandler"/>
       <xs:enumeration value="DeadLetterChannel"/>

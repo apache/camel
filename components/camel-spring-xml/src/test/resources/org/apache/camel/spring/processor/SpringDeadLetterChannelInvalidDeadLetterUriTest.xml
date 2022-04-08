@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="myDLC" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <bean id="myDLC" class="org.apache.camel.builder.LegacyDeadLetterChannelBuilder">
         <!-- invalid uri -->
         <property name="deadLetterUri" value="xxx"/>
     </bean>

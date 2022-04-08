@@ -219,7 +219,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class) })
     private List<AbstractCamelFactoryBean<?>> beansFactory;
     @XmlElements({
-            @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class) })
+            @XmlElement(name = "errorHandler", type = SpringErrorHandlerDefinition.class) })
     private List<?> beans;
     @XmlElement(name = "defaultServiceCallConfiguration")
     private ServiceCallConfigurationDefinition defaultServiceCallConfiguration;

@@ -18,9 +18,9 @@ package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -45,11 +45,10 @@ public class BodyOnlyAggregationStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                DeadLetterChannelBuilder deadLetterChannelBuilder = deadLetterChannel("direct:error");
-                deadLetterChannelBuilder.setUseOriginalMessage(true);
+                ErrorHandlerFactory dh = deadLetterChannel("direct:error").useOriginalMessage();
 
                 from("direct:failingRoute")
-                        .errorHandler(deadLetterChannelBuilder)
+                        .errorHandler(dh)
                         .to("mock:failingRoute")
                         .throwException(new RuntimeException("Boem!"));
 

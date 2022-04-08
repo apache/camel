@@ -26,6 +26,7 @@ public final class Constants {
                                                        + "org.apache.camel.model.cloud:"
                                                        + "org.apache.camel.model.config:"
                                                        + "org.apache.camel.model.dataformat:"
+                                                       + "org.apache.camel.model.errorhandler:"
                                                        + "org.apache.camel.model.language:"
                                                        + "org.apache.camel.model.loadbalancer:"
                                                        + "org.apache.camel.model.rest:"

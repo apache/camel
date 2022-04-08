@@ -16,13 +16,13 @@
  */
 package org.apache.camel.dsl.yaml
 
-import org.apache.camel.builder.DeadLetterChannelBuilder
-import org.apache.camel.builder.DefaultErrorHandlerBuilder
-import org.apache.camel.builder.ErrorHandlerBuilderRef
-import org.apache.camel.builder.NoErrorHandlerBuilder
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.model.MyFailingProcessor
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition
+import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition
 
 class ErrorHandlerTest extends YamlTestSupport {
 
@@ -33,7 +33,7 @@ class ErrorHandlerTest extends YamlTestSupport {
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
                   - name: myErrorHandler
-                    type: org.apache.camel.builder.DeadLetterChannelBuilder
+                    type: org.apache.camel.model.errorhandler.DeadLetterChannelDefinition
                     properties:
                       dead-letter-uri: "mock:on-error"
                       redelivery-delay: 0
@@ -57,7 +57,7 @@ class ErrorHandlerTest extends YamlTestSupport {
                 to('direct:start').withBody('hello').send()
             }
         then:
-            context.errorHandlerFactory instanceof ErrorHandlerBuilderRef
+            context.errorHandlerFactory instanceof ErrorHandlerRefDefinition
             MockEndpoint.assertIsSatisfied(context)
     }
 
@@ -70,7 +70,7 @@ class ErrorHandlerTest extends YamlTestSupport {
         when:
             context.start()
         then:
-            with(context.errorHandlerFactory, ErrorHandlerBuilderRef) {
+            with(context.errorHandlerFactory, ErrorHandlerRefDefinition) {
                 ref == 'myErrorHandler'
             }
     }
@@ -85,7 +85,7 @@ class ErrorHandlerTest extends YamlTestSupport {
         when:
             context.start()
         then:
-            with(context.errorHandlerFactory, DefaultErrorHandlerBuilder) {
+            with(context.errorHandlerFactory, DefaultErrorHandlerDefinition) {
                 useOriginalMessage
             }
     }
@@ -100,7 +100,7 @@ class ErrorHandlerTest extends YamlTestSupport {
         when:
             context.start()
         then:
-            with(context.errorHandlerFactory, DeadLetterChannelBuilder) {
+            with(context.errorHandlerFactory, DeadLetterChannelDefinition) {
                 deadLetterUri == 'mock:on-error'
             }
     }
@@ -114,7 +114,7 @@ class ErrorHandlerTest extends YamlTestSupport {
         when:
             context.start()
         then:
-            context.errorHandlerFactory instanceof NoErrorHandlerBuilder
+            context.errorHandlerFactory instanceof NoErrorHandlerDefinition
     }
 
 }

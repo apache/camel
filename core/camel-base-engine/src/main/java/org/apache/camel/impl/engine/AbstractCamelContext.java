@@ -282,6 +282,7 @@ public abstract class AbstractCamelContext extends BaseService
     private String basePackageScan;
     private boolean lightweight;
     private Long delay;
+    @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     private Map<String, String> globalOptions = new HashMap<>();
     private volatile String version;

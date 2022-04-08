@@ -298,98 +298,27 @@
           }
         }
       },
-      "org.apache.camel.builder.DeadLetterChannelBuilder" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "async-delayed-redelivery" : {
-              "type" : "boolean"
-            },
-            "dead-letter-handle-new-exception" : {
-              "type" : "boolean"
-            },
-            "dead-letter-uri" : {
-              "type" : "string"
-            },
-            "executor-service-ref" : {
-              "type" : "string"
-            },
-            "on-exception-occurred-ref" : {
-              "type" : "string"
-            },
-            "on-prepare-failure-ref" : {
-              "type" : "string"
-            },
-            "on-redelivery-ref" : {
-              "type" : "string"
-            },
-            "retry-while-ref" : {
-              "type" : "string"
-            },
-            "use-original-body" : {
-              "type" : "boolean"
-            },
-            "use-original-message" : {
-              "type" : "boolean"
-            }
-          }
-        } ]
-      },
-      "org.apache.camel.builder.DefaultErrorHandlerBuilder" : {
-        "type" : "object",
-        "properties" : {
-          "async-delayed-redelivery" : {
-            "type" : "boolean"
-          },
-          "executor-service-ref" : {
-            "type" : "string"
-          },
-          "on-exception-occurred-ref" : {
-            "type" : "string"
-          },
-          "on-prepare-failure-ref" : {
-            "type" : "string"
-          },
-          "on-redelivery-ref" : {
-            "type" : "string"
-          },
-          "retry-while-ref" : {
-            "type" : "string"
-          },
-          "use-original-body" : {
-            "type" : "boolean"
-          },
-          "use-original-message" : {
-            "type" : "boolean"
-          }
-        }
-      },
-      "org.apache.camel.builder.ErrorHandlerBuilderRef" : {
-        "type" : "object",
-        "properties" : {
-          "dead-letter-channel" : {
-            "$ref" : "#/items/definitions/org.apache.camel.builder.DeadLetterChannelBuilder"
-          },
-          "log" : {
-            "$ref" : "#/items/definitions/org.apache.camel.builder.DefaultErrorHandlerBuilder"
-          },
-          "none" : {
-            "$ref" : "#/items/definitions/org.apache.camel.builder.NoErrorHandlerBuilder"
-          },
-          "ref" : {
-            "type" : "string"
-          }
-        }
-      },
-      "org.apache.camel.builder.NoErrorHandlerBuilder" : {
-        "type" : "object"
-      },
       "org.apache.camel.dsl.yaml.deserializers.BeansDeserializer" : {
         "type" : "array",
         "items" : {
           "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition"
+        }
+      },
+      "org.apache.camel.dsl.yaml.deserializers.ErrorHandlerBuilderDeserializer" : {
+        "type" : "object",
+        "properties" : {
+          "dead-letter-channel" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DeadLetterChannelDefinition"
+          },
+          "log" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition"
+          },
+          "none" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"
+          },
+          "ref" : {
+            "type" : "string"
+          }
         }
       },
       "org.apache.camel.dsl.yaml.deserializers.NamedBeanDefinition" : {
@@ -871,6 +800,29 @@
           },
           "share-unit-of-work" : {
             "type" : "boolean"
+          }
+        }
+      },
+      "org.apache.camel.model.ErrorHandlerDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "dead-letter-channel" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DeadLetterChannelDefinition"
+          },
+          "default-error-handler" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "jta-transaction-error-handler" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition"
+          },
+          "no-error-handler" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"
+          },
+          "spring-transaction-error-handler" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition"
           }
         }
       },
@@ -2024,6 +1976,9 @@
             "type" : "boolean"
           },
           "exchange-formatter-ref" : {
+            "type" : "string"
+          },
+          "id" : {
             "type" : "string"
           },
           "log-continued" : {
@@ -5680,6 +5635,225 @@
           }
         }
       },
+      "org.apache.camel.model.errorhandler.DeadLetterChannelDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "dead-letter-handle-new-exception" : {
+            "type" : "boolean"
+          },
+          "dead-letter-uri" : {
+            "type" : "string"
+          },
+          "executor-service-ref" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "level" : {
+            "type" : "string",
+            "enum" : [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ]
+          },
+          "log-name" : {
+            "type" : "string"
+          },
+          "logger-ref" : {
+            "type" : "string"
+          },
+          "on-exception-occurred-ref" : {
+            "type" : "string"
+          },
+          "on-prepare-failure-ref" : {
+            "type" : "string"
+          },
+          "on-redelivery-ref" : {
+            "type" : "string"
+          },
+          "redelivery-policy" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
+          },
+          "redelivery-policy-ref" : {
+            "type" : "string"
+          },
+          "retry-while-ref" : {
+            "type" : "string"
+          },
+          "use-original-body" : {
+            "type" : "boolean"
+          },
+          "use-original-message" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "dead-letter-uri" ]
+      },
+      "org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "executor-service-ref" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "level" : {
+            "type" : "string",
+            "enum" : [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ]
+          },
+          "log-name" : {
+            "type" : "string"
+          },
+          "logger-ref" : {
+            "type" : "string"
+          },
+          "on-exception-occurred-ref" : {
+            "type" : "string"
+          },
+          "on-prepare-failure-ref" : {
+            "type" : "string"
+          },
+          "on-redelivery-ref" : {
+            "type" : "string"
+          },
+          "redelivery-policy" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
+          },
+          "redelivery-policy-ref" : {
+            "type" : "string"
+          },
+          "retry-while-ref" : {
+            "type" : "string"
+          },
+          "use-original-body" : {
+            "type" : "boolean"
+          },
+          "use-original-message" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "ref" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "ref" ]
+      },
+      "org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "executor-service-ref" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "level" : {
+            "type" : "string",
+            "enum" : [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ]
+          },
+          "log-name" : {
+            "type" : "string"
+          },
+          "logger-ref" : {
+            "type" : "string"
+          },
+          "on-exception-occurred-ref" : {
+            "type" : "string"
+          },
+          "on-prepare-failure-ref" : {
+            "type" : "string"
+          },
+          "on-redelivery-ref" : {
+            "type" : "string"
+          },
+          "redelivery-policy" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
+          },
+          "redelivery-policy-ref" : {
+            "type" : "string"
+          },
+          "retry-while-ref" : {
+            "type" : "string"
+          },
+          "rollback-logging-level" : {
+            "type" : "string"
+          },
+          "transacted-policy-ref" : {
+            "type" : "string"
+          },
+          "use-original-body" : {
+            "type" : "boolean"
+          },
+          "use-original-message" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "org.apache.camel.model.errorhandler.NoErrorHandlerDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          }
+        }
+      },
+      "org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "executor-service-ref" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "level" : {
+            "type" : "string",
+            "enum" : [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ]
+          },
+          "log-name" : {
+            "type" : "string"
+          },
+          "logger-ref" : {
+            "type" : "string"
+          },
+          "on-exception-occurred-ref" : {
+            "type" : "string"
+          },
+          "on-prepare-failure-ref" : {
+            "type" : "string"
+          },
+          "on-redelivery-ref" : {
+            "type" : "string"
+          },
+          "redelivery-policy" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RedeliveryPolicyDefinition"
+          },
+          "redelivery-policy-ref" : {
+            "type" : "string"
+          },
+          "retry-while-ref" : {
+            "type" : "string"
+          },
+          "rollback-logging-level" : {
+            "type" : "string"
+          },
+          "transacted-policy-ref" : {
+            "type" : "string"
+          },
+          "use-original-body" : {
+            "type" : "boolean"
+          },
+          "use-original-message" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "org.apache.camel.model.language.CSimpleExpression" : {
         "oneOf" : [ {
           "type" : "string"
@@ -7488,14 +7662,14 @@
       }
     },
     "properties" : {
-      "error-handler" : {
-        "$ref" : "#/items/definitions/org.apache.camel.builder.ErrorHandlerBuilderRef"
-      },
-      "errorHandler" : {
-        "$ref" : "#/items/definitions/org.apache.camel.builder.ErrorHandlerBuilderRef"
-      },
       "beans" : {
         "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.BeansDeserializer"
+      },
+      "error-handler" : {
+        "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.ErrorHandlerBuilderDeserializer"
+      },
+      "errorHandler" : {
+        "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.ErrorHandlerBuilderDeserializer"
       },
       "from" : {
         "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.RouteFromDefinitionDeserializer"

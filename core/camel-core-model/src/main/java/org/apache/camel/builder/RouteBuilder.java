@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Route;
@@ -45,6 +46,7 @@ import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
+import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -353,14 +355,14 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     /**
      * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder
      *
-     * @param errorHandlerBuilder the error handler to be used by default for all child routes
+     * @param errorHandlerFactory the error handler to be used by default for all child routes
      */
-    public void errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
+    public void errorHandler(ErrorHandlerFactory errorHandlerFactory) {
         if (!getRouteCollection().getRoutes().isEmpty()) {
             throw new IllegalArgumentException("errorHandler must be defined before any routes in the RouteBuilder");
         }
         getRouteCollection().setCamelContext(getContext());
-        setErrorHandlerBuilder(errorHandlerBuilder);
+        setErrorHandlerFactory(errorHandlerFactory);
     }
 
     /**
@@ -373,7 +375,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             throw new IllegalArgumentException("errorHandler must be defined before any routes in the RouteBuilder");
         }
         getRouteCollection().setCamelContext(getContext());
-        setErrorHandlerBuilder(new ErrorHandlerBuilderRef(ref));
+        setErrorHandlerFactory(new ErrorHandlerRefDefinition(ref));
     }
 
     /**
@@ -596,10 +598,10 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     @Override
-    public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
-        super.setErrorHandlerBuilder(errorHandlerBuilder);
-        getRouteCollection().setErrorHandlerFactory(getErrorHandlerBuilder());
-        getRouteTemplateCollection().setErrorHandlerFactory(getErrorHandlerBuilder());
+    public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
+        super.setErrorHandlerFactory(errorHandlerFactory);
+        getRouteCollection().setErrorHandlerFactory(getErrorHandlerFactory());
+        getRouteTemplateCollection().setErrorHandlerFactory(getErrorHandlerFactory());
     }
 
     /**
@@ -622,9 +624,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         if (initialized.compareAndSet(false, true)) {
             // Set the CamelContext ErrorHandler here
             CamelContext camelContext = getContext();
-            if (camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory() instanceof ErrorHandlerBuilder) {
-                setErrorHandlerBuilder(
-                        (ErrorHandlerBuilder) camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory());
+            if (camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory() != null) {
+                setErrorHandlerFactory(
+                        camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory());
             }
 
             for (RouteBuilderLifecycleStrategy interceptor : lifecycleInterceptors) {

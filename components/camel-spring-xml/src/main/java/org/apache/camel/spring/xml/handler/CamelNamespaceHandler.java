@@ -32,11 +32,18 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.builder.LegacyDeadLetterChannelBuilder;
+import org.apache.camel.builder.LegacyDefaultErrorHandlerBuilder;
+import org.apache.camel.builder.LegacyNoErrorHandlerBuilder;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelRouteControllerDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
+import org.apache.camel.reifier.errorhandler.LegacyDeadLetterChannelReifier;
+import org.apache.camel.reifier.errorhandler.LegacyDefaultErrorHandlerReifier;
+import org.apache.camel.reifier.errorhandler.LegacyNoErrorHandlerReifier;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.xml.CamelBeanPostProcessor;
@@ -74,6 +81,15 @@ import org.springframework.beans.factory.xml.ParserContext;
  * Camel namespace for the spring XML configuration file.
  */
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
+
+    static {
+        // legacy camel-spring-xml error-handling using its own model and parsers
+        ErrorHandlerReifier.registerReifier(LegacyDeadLetterChannelBuilder.class, LegacyDeadLetterChannelReifier::new);
+        ErrorHandlerReifier.registerReifier(LegacyDefaultErrorHandlerBuilder.class, LegacyDefaultErrorHandlerReifier::new);
+        ErrorHandlerReifier.registerReifier(LegacyNoErrorHandlerBuilder.class, LegacyNoErrorHandlerReifier::new);
+        // note: spring transaction error handler is registered in camel-spring
+    }
+
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final Logger LOG = LoggerFactory.getLogger(CamelNamespaceHandler.class);
     protected BeanDefinitionParser endpointParser = new EndpointDefinitionParser();

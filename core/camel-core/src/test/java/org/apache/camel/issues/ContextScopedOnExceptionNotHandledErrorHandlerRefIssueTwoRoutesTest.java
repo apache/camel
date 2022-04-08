@@ -21,7 +21,6 @@ import java.io.IOException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
@@ -74,7 +73,7 @@ public class ContextScopedOnExceptionNotHandledErrorHandlerRefIssueTwoRoutesTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(new ErrorHandlerBuilderRef("myDLC"));
+                errorHandler("myDLC");
 
                 onException(IllegalArgumentException.class).handled(false).to("mock:handled").end();
 
