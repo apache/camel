@@ -514,7 +514,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "configuration", type = "array:org.apache.camel.model.PropertyDefinition"),
                     @YamlProperty(name = "extractors", type = "array:string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "output-format", type = "string")
+                    @YamlProperty(name = "output-format", type = "enum:NTRIPLES,TURTLE,NQUADS,RDFXML,JSONLD,RDFJSON,RDF4JMODEL")
             }
     )
     public static class Any23DataFormatDeserializer extends YamlDeserializerBase<Any23DataFormat> {
@@ -1024,7 +1024,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "ref", type = "string"),
-                    @YamlProperty(name = "scope", type = "string")
+                    @YamlProperty(name = "scope", type = "enum:Singleton,Request,Prototype")
             }
     )
     public static class BeanDefinitionDeserializer extends YamlDeserializerBase<BeanDefinition> {
@@ -1231,7 +1231,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "class-type", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "locale", type = "string"),
-                    @YamlProperty(name = "type", type = "string", required = true),
+                    @YamlProperty(name = "type", type = "enum:Csv,Fixed,KeyValue", required = true),
                     @YamlProperty(name = "unwrap-single-instance", type = "boolean")
             }
     )
@@ -1516,7 +1516,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "properties", type = "array:org.apache.camel.model.PropertyDefinition"),
                     @YamlProperty(name = "static-service-discovery", type = "object:org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration"),
                     @YamlProperty(name = "timeout", type = "number"),
-                    @YamlProperty(name = "units", type = "string")
+                    @YamlProperty(name = "units", type = "enum:NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
             }
     )
     public static class CachingServiceCallServiceDiscoveryConfigurationDeserializer extends YamlDeserializerBase<CachingServiceCallServiceDiscoveryConfiguration> {
@@ -1822,7 +1822,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "key", type = "string"),
-                    @YamlProperty(name = "operation", type = "string", required = true)
+                    @YamlProperty(name = "operation", type = "enum:Get,GetAndRemove,Set,Push,Pop", required = true)
             }
     )
     public static class ClaimCheckDefinitionDeserializer extends YamlDeserializerBase<ClaimCheckDefinition> {
@@ -2476,7 +2476,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "delimiter", type = "string"),
                     @YamlProperty(name = "escape", type = "string"),
                     @YamlProperty(name = "escape-disabled", type = "boolean"),
-                    @YamlProperty(name = "format-name", type = "string"),
+                    @YamlProperty(name = "format-name", type = "enum:DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MYSQL,RFC4180"),
                     @YamlProperty(name = "format-ref", type = "string"),
                     @YamlProperty(name = "header", type = "array:string"),
                     @YamlProperty(name = "header-disabled", type = "boolean"),
@@ -2490,7 +2490,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "null-string-disabled", type = "boolean"),
                     @YamlProperty(name = "quote", type = "string"),
                     @YamlProperty(name = "quote-disabled", type = "boolean"),
-                    @YamlProperty(name = "quote-mode", type = "string"),
+                    @YamlProperty(name = "quote-mode", type = "enum:ALL,ALL_NON_NULL,MINIMAL,NON_NUMERIC,NONE"),
                     @YamlProperty(name = "record-converter-ref", type = "string"),
                     @YamlProperty(name = "record-separator", type = "string"),
                     @YamlProperty(name = "record-separator-disabled", type = "string"),
@@ -3821,7 +3821,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "dead-letter-uri", type = "string", required = true),
                     @YamlProperty(name = "executor-service-ref", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "level", type = "string"),
+                    @YamlProperty(name = "level", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF"),
                     @YamlProperty(name = "log-name", type = "string"),
                     @YamlProperty(name = "logger-ref", type = "string"),
                     @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
@@ -3941,7 +3941,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "executor-service-ref", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "level", type = "string"),
+                    @YamlProperty(name = "level", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF"),
                     @YamlProperty(name = "log-name", type = "string"),
                     @YamlProperty(name = "logger-ref", type = "string"),
                     @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
@@ -4172,7 +4172,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "delete",
             properties = {
                     @YamlProperty(name = "api-docs", type = "boolean"),
-                    @YamlProperty(name = "binding-mode", type = "string"),
+                    @YamlProperty(name = "binding-mode", type = "enum:off,auto,json,xml,json_xml"),
                     @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
@@ -5069,7 +5069,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "dont-strip-versions-from-references-at-paths", type = "array:string"),
                     @YamlProperty(name = "encode-elements", type = "array:string"),
                     @YamlProperty(name = "encode-elements-applies-to-child-resources-only", type = "boolean"),
-                    @YamlProperty(name = "fhir-version", type = "string"),
+                    @YamlProperty(name = "fhir-version", type = "enum:DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "omit-resource-id", type = "boolean"),
                     @YamlProperty(name = "override-resource-id-with-bundle-entry-full-url", type = "boolean"),
@@ -5185,7 +5185,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "dont-strip-versions-from-references-at-paths", type = "array:string"),
                     @YamlProperty(name = "encode-elements", type = "array:string"),
                     @YamlProperty(name = "encode-elements-applies-to-child-resources-only", type = "boolean"),
-                    @YamlProperty(name = "fhir-version", type = "string"),
+                    @YamlProperty(name = "fhir-version", type = "enum:DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "omit-resource-id", type = "boolean"),
                     @YamlProperty(name = "override-resource-id-with-bundle-entry-full-url", type = "boolean"),
@@ -5506,7 +5506,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "get",
             properties = {
                     @YamlProperty(name = "api-docs", type = "boolean"),
-                    @YamlProperty(name = "binding-mode", type = "string"),
+                    @YamlProperty(name = "binding-mode", type = "enum:off,auto,json,xml,json_xml"),
                     @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
@@ -5915,7 +5915,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "head",
             properties = {
                     @YamlProperty(name = "api-docs", type = "boolean"),
-                    @YamlProperty(name = "binding-mode", type = "string"),
+                    @YamlProperty(name = "binding-mode", type = "enum:off,auto,json,xml,json_xml"),
                     @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
@@ -6899,7 +6899,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "pretty-print", type = "boolean"),
                     @YamlProperty(name = "schema", type = "string"),
                     @YamlProperty(name = "schema-location", type = "string"),
-                    @YamlProperty(name = "schema-severity-level", type = "number"),
+                    @YamlProperty(name = "schema-severity-level", type = "enum:0,1,2"),
                     @YamlProperty(name = "xml-stream-writer-wrapper", type = "string")
             }
     )
@@ -7337,7 +7337,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true),
                     @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "option", type = "string"),
+                    @YamlProperty(name = "option", type = "enum:DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES"),
                     @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "suppress-exceptions", type = "boolean"),
                     @YamlProperty(name = "trim", type = "boolean"),
@@ -7440,7 +7440,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "executor-service-ref", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "level", type = "string"),
+                    @YamlProperty(name = "level", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF"),
                     @YamlProperty(name = "log-name", type = "string"),
                     @YamlProperty(name = "logger-ref", type = "string"),
                     @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
@@ -7449,7 +7449,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "redelivery-policy", type = "object:org.apache.camel.model.RedeliveryPolicyDefinition"),
                     @YamlProperty(name = "redelivery-policy-ref", type = "string"),
                     @YamlProperty(name = "retry-while-ref", type = "string"),
-                    @YamlProperty(name = "rollback-logging-level", type = "string"),
+                    @YamlProperty(name = "rollback-logging-level", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF"),
                     @YamlProperty(name = "transacted-policy-ref", type = "string"),
                     @YamlProperty(name = "use-original-body", type = "boolean"),
                     @YamlProperty(name = "use-original-message", type = "boolean")
@@ -7571,7 +7571,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "client-key-passphrase", type = "string"),
                     @YamlProperty(name = "dns-domain", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "lookup", type = "string"),
+                    @YamlProperty(name = "lookup", type = "enum:environment,dns,client"),
                     @YamlProperty(name = "master-url", type = "string"),
                     @YamlProperty(name = "namespace", type = "string"),
                     @YamlProperty(name = "oauth-token", type = "string"),
@@ -7926,7 +7926,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "log-name", type = "string"),
                     @YamlProperty(name = "logger", type = "string"),
-                    @YamlProperty(name = "logging-level", type = "string"),
+                    @YamlProperty(name = "logging-level", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF"),
                     @YamlProperty(name = "marker", type = "string"),
                     @YamlProperty(name = "message", type = "string", required = true)
             }
@@ -8387,7 +8387,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "ref", type = "string"),
-                    @YamlProperty(name = "scope", type = "string"),
+                    @YamlProperty(name = "scope", type = "enum:Singleton,Request,Prototype"),
                     @YamlProperty(name = "trim", type = "boolean")
             }
     )
@@ -8797,7 +8797,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "authorization-url", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "flow", type = "string"),
+                    @YamlProperty(name = "flow", type = "enum:implicit,password,application,clientCredentials,accessCode,authorizationCode"),
                     @YamlProperty(name = "key", type = "string", required = true),
                     @YamlProperty(name = "refresh-url", type = "string"),
                     @YamlProperty(name = "scopes", type = "array:org.apache.camel.model.rest.RestPropertyDefinition"),
@@ -8935,7 +8935,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "mode", type = "string"),
+                    @YamlProperty(name = "mode", type = "enum:AfterConsumer,BeforeConsumer"),
                     @YamlProperty(name = "on-complete-only", type = "boolean"),
                     @YamlProperty(name = "on-failure-only", type = "boolean"),
                     @YamlProperty(name = "on-when", type = "object:org.apache.camel.model.WhenDefinition"),
@@ -9786,7 +9786,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "patch",
             properties = {
                     @YamlProperty(name = "api-docs", type = "boolean"),
-                    @YamlProperty(name = "binding-mode", type = "string"),
+                    @YamlProperty(name = "binding-mode", type = "enum:off,auto,json,xml,json_xml"),
                     @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
@@ -10135,7 +10135,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "post",
             properties = {
                     @YamlProperty(name = "api-docs", type = "boolean"),
-                    @YamlProperty(name = "binding-mode", type = "string"),
+                    @YamlProperty(name = "binding-mode", type = "enum:off,auto,json,xml,json_xml"),
                     @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
@@ -10449,7 +10449,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "auto-discover-object-mapper", type = "boolean"),
                     @YamlProperty(name = "auto-discover-schema-resolver", type = "boolean"),
                     @YamlProperty(name = "collection-type", type = "string"),
-                    @YamlProperty(name = "content-type-format", type = "string"),
+                    @YamlProperty(name = "content-type-format", type = "enum:native,json"),
                     @YamlProperty(name = "content-type-header", type = "boolean"),
                     @YamlProperty(name = "disable-features", type = "string"),
                     @YamlProperty(name = "enable-features", type = "string"),
@@ -10610,7 +10610,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "put",
             properties = {
                     @YamlProperty(name = "api-docs", type = "boolean"),
-                    @YamlProperty(name = "binding-mode", type = "string"),
+                    @YamlProperty(name = "binding-mode", type = "enum:off,auto,json,xml,json_xml"),
                     @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
@@ -11523,7 +11523,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "minimum-number-of-calls", type = "number"),
                     @YamlProperty(name = "permitted-number-of-calls-in-half-open-state", type = "number"),
                     @YamlProperty(name = "sliding-window-size", type = "number"),
-                    @YamlProperty(name = "sliding-window-type", type = "string"),
+                    @YamlProperty(name = "sliding-window-type", type = "enum:TIME_BASED,COUNT_BASED"),
                     @YamlProperty(name = "slow-call-duration-threshold", type = "number"),
                     @YamlProperty(name = "slow-call-rate-threshold", type = "number"),
                     @YamlProperty(name = "wait-duration-in-open-state", type = "number"),
@@ -11766,7 +11766,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "restBinding"
             },
             properties = {
-                    @YamlProperty(name = "binding-mode", type = "string"),
+                    @YamlProperty(name = "binding-mode", type = "enum:off,auto,json,xml,json_xml"),
                     @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "component", type = "string"),
                     @YamlProperty(name = "consumes", type = "string"),
@@ -11864,14 +11864,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "restConfiguration"
             },
             properties = {
-                    @YamlProperty(name = "api-component", type = "string"),
+                    @YamlProperty(name = "api-component", type = "enum:openapi,swagger"),
                     @YamlProperty(name = "api-context-path", type = "string"),
                     @YamlProperty(name = "api-host", type = "string"),
                     @YamlProperty(name = "api-property", type = "array:org.apache.camel.model.rest.RestPropertyDefinition"),
                     @YamlProperty(name = "api-vendor-extension", type = "boolean"),
                     @YamlProperty(name = "binding-mode", type = "enum:auto,json,json_xml,off,xml"),
                     @YamlProperty(name = "client-request-validation", type = "boolean"),
-                    @YamlProperty(name = "component", type = "string"),
+                    @YamlProperty(name = "component", type = "enum:platform-http,servlet,jetty,undertow,netty-http,coap"),
                     @YamlProperty(name = "component-property", type = "array:org.apache.camel.model.rest.RestPropertyDefinition"),
                     @YamlProperty(name = "consumer-property", type = "array:org.apache.camel.model.rest.RestPropertyDefinition"),
                     @YamlProperty(name = "context-path", type = "string"),
@@ -11884,7 +11884,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "json-data-format", type = "string"),
                     @YamlProperty(name = "port", type = "string"),
                     @YamlProperty(name = "producer-api-doc", type = "string"),
-                    @YamlProperty(name = "producer-component", type = "string"),
+                    @YamlProperty(name = "producer-component", type = "enum:vertx-http,http,undertow,netty-http"),
                     @YamlProperty(name = "scheme", type = "string"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "use-x-forward-headers", type = "boolean"),
@@ -12085,7 +12085,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "rest",
             properties = {
                     @YamlProperty(name = "api-docs", type = "boolean"),
-                    @YamlProperty(name = "binding-mode", type = "string"),
+                    @YamlProperty(name = "binding-mode", type = "enum:off,auto,json,xml,json_xml"),
                     @YamlProperty(name = "client-request-validation", type = "boolean"),
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "delete", type = "array:org.apache.camel.model.rest.DeleteDefinition"),
@@ -13049,12 +13049,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "compensation", type = "object:org.apache.camel.model.SagaActionUriDefinition"),
                     @YamlProperty(name = "completion", type = "object:org.apache.camel.model.SagaActionUriDefinition"),
-                    @YamlProperty(name = "completion-mode", type = "string"),
+                    @YamlProperty(name = "completion-mode", type = "enum:AUTO,MANUAL"),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "option", type = "array:org.apache.camel.model.PropertyExpressionDefinition"),
-                    @YamlProperty(name = "propagation", type = "string"),
+                    @YamlProperty(name = "propagation", type = "enum:REQUIRED,REQUIRES_NEW,MANDATORY,SUPPORTS,NOT_SUPPORTED,NEVER"),
                     @YamlProperty(name = "saga-service", type = "string"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "timeout", type = "string")
@@ -13329,7 +13329,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "kubernetes-service-discovery", type = "object:org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration"),
                     @YamlProperty(name = "load-balancer-ref", type = "string"),
                     @YamlProperty(name = "pass-through-service-filter", type = "object:org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration"),
-                    @YamlProperty(name = "pattern", type = "string"),
+                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut,InOptionalOut"),
                     @YamlProperty(name = "service-chooser-ref", type = "string"),
                     @YamlProperty(name = "service-discovery-ref", type = "string"),
                     @YamlProperty(name = "service-filter-ref", type = "string"),
@@ -13514,7 +13514,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "load-balancer-ref", type = "string"),
                     @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "pass-through-service-filter", type = "object:org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration"),
-                    @YamlProperty(name = "pattern", type = "string"),
+                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut,InOptionalOut"),
                     @YamlProperty(name = "service-chooser-ref", type = "string"),
                     @YamlProperty(name = "service-discovery-ref", type = "string"),
                     @YamlProperty(name = "service-filter-ref", type = "string"),
@@ -14011,7 +14011,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "pattern", type = "string", required = true)
+                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut,InOptionalOut", required = true)
             }
     )
     public static class SetExchangePatternDefinitionDeserializer extends YamlDeserializerBase<SetExchangePatternDefinition> {
@@ -14285,7 +14285,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "namespace-prefix-ref", type = "string"),
                     @YamlProperty(name = "schema", type = "string"),
-                    @YamlProperty(name = "version", type = "string")
+                    @YamlProperty(name = "version", type = "enum:1.1,1.2")
             }
     )
     public static class SoapDataFormatDeserializer extends YamlDeserializerBase<SoapDataFormat> {
@@ -14631,7 +14631,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "executor-service-ref", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "level", type = "string"),
+                    @YamlProperty(name = "level", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF"),
                     @YamlProperty(name = "log-name", type = "string"),
                     @YamlProperty(name = "logger-ref", type = "string"),
                     @YamlProperty(name = "on-exception-occurred-ref", type = "string"),
@@ -14640,7 +14640,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "redelivery-policy", type = "object:org.apache.camel.model.RedeliveryPolicyDefinition"),
                     @YamlProperty(name = "redelivery-policy-ref", type = "string"),
                     @YamlProperty(name = "retry-while-ref", type = "string"),
-                    @YamlProperty(name = "rollback-logging-level", type = "string"),
+                    @YamlProperty(name = "rollback-logging-level", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF"),
                     @YamlProperty(name = "transacted-policy-ref", type = "string"),
                     @YamlProperty(name = "use-original-body", type = "boolean"),
                     @YamlProperty(name = "use-original-message", type = "boolean")
@@ -15153,8 +15153,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "max-pool-size", type = "number"),
                     @YamlProperty(name = "max-queue-size", type = "number"),
                     @YamlProperty(name = "pool-size", type = "number"),
-                    @YamlProperty(name = "rejected-policy", type = "string"),
-                    @YamlProperty(name = "time-unit", type = "string")
+                    @YamlProperty(name = "rejected-policy", type = "enum:Abort,CallerRuns,DiscardOldest,Discard"),
+                    @YamlProperty(name = "time-unit", type = "enum:NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
             }
     )
     public static class ThreadPoolProfileDefinitionDeserializer extends YamlDeserializerBase<ThreadPoolProfileDefinition> {
@@ -15244,9 +15244,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "max-pool-size", type = "number"),
                     @YamlProperty(name = "max-queue-size", type = "number"),
                     @YamlProperty(name = "pool-size", type = "number"),
-                    @YamlProperty(name = "rejected-policy", type = "string"),
+                    @YamlProperty(name = "rejected-policy", type = "enum:Abort,CallerRuns,DiscardOldest,Discard"),
                     @YamlProperty(name = "thread-name", type = "string"),
-                    @YamlProperty(name = "time-unit", type = "string")
+                    @YamlProperty(name = "time-unit", type = "enum:NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
             }
     )
     public static class ThreadsDefinitionDeserializer extends YamlDeserializerBase<ThreadsDefinition> {
@@ -15342,7 +15342,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             nodes = "thrift",
             properties = {
-                    @YamlProperty(name = "content-type-format", type = "string"),
+                    @YamlProperty(name = "content-type-format", type = "enum:binary,json,sjson"),
                     @YamlProperty(name = "content-type-header", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "instance-class", type = "string")
@@ -15570,7 +15570,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "tidyMarkup"
             },
             properties = {
-                    @YamlProperty(name = "data-object-type", type = "string"),
+                    @YamlProperty(name = "data-object-type", type = "enum:org.w3c.dom.Node,java.lang.String"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "omit-xml-declaration", type = "boolean")
             }
@@ -15622,7 +15622,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "parameters", type = "object"),
-                    @YamlProperty(name = "pattern", type = "string"),
+                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut,InOptionalOut"),
                     @YamlProperty(name = "uri", type = "string", required = true)
             }
     )
@@ -15701,7 +15701,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "ignore-invalid-endpoint", type = "boolean"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "parameters", type = "object"),
-                    @YamlProperty(name = "pattern", type = "string"),
+                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut,InOptionalOut"),
                     @YamlProperty(name = "uri", type = "string", required = true)
             }
     )
@@ -17297,7 +17297,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "on-prepare", type = "string"),
                     @YamlProperty(name = "parameters", type = "object"),
-                    @YamlProperty(name = "pattern", type = "string"),
+                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut,InOptionalOut"),
                     @YamlProperty(name = "uri", type = "string", required = true)
             }
     )
@@ -17403,18 +17403,18 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             },
             properties = {
                     @YamlProperty(name = "add-key-value-for-encrypted-key", type = "boolean"),
-                    @YamlProperty(name = "digest-algorithm", type = "string"),
+                    @YamlProperty(name = "digest-algorithm", type = "enum:SHA1,SHA256,SHA512"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "key-cipher-algorithm", type = "string"),
+                    @YamlProperty(name = "key-cipher-algorithm", type = "enum:RSA_v1dot5,RSA_OAEP,RSA_OAEP_11"),
                     @YamlProperty(name = "key-or-trust-store-parameters-ref", type = "string"),
                     @YamlProperty(name = "key-password", type = "string"),
-                    @YamlProperty(name = "mgf-algorithm", type = "string"),
+                    @YamlProperty(name = "mgf-algorithm", type = "enum:MGF1_SHA1,MGF1_SHA256,MGF1_SHA512"),
                     @YamlProperty(name = "pass-phrase", type = "string"),
                     @YamlProperty(name = "pass-phrase-byte", type = "string", format = "binary"),
                     @YamlProperty(name = "recipient-key-alias", type = "string"),
                     @YamlProperty(name = "secure-tag", type = "string"),
                     @YamlProperty(name = "secure-tag-contents", type = "boolean"),
-                    @YamlProperty(name = "xml-cipher-algorithm", type = "string")
+                    @YamlProperty(name = "xml-cipher-algorithm", type = "enum:TRIPLEDES,AES_128,AES_128_GCM,AES_192,AES_192_GCM,AES_256,AES_256_GCM,SEED_128,CAMELLIA_128,CAMELLIA_192,CAMELLIA_256")
             }
     )
     public static class XMLSecurityDataFormatDeserializer extends YamlDeserializerBase<XMLSecurityDataFormat> {
@@ -17514,7 +17514,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "group", type = "number"),
                     @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "mode", type = "string"),
+                    @YamlProperty(name = "mode", type = "enum:i,w,u,t"),
                     @YamlProperty(name = "trim", type = "boolean")
             }
     )
@@ -17598,7 +17598,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "log-namespaces", type = "boolean"),
                     @YamlProperty(name = "object-model", type = "string"),
                     @YamlProperty(name = "pre-compile", type = "boolean"),
-                    @YamlProperty(name = "result-type", type = "string"),
+                    @YamlProperty(name = "result-type", type = "enum:NUMBER,STRING,BOOLEAN,NODESET,NODE"),
                     @YamlProperty(name = "saxon", type = "boolean"),
                     @YamlProperty(name = "thread-safety", type = "boolean"),
                     @YamlProperty(name = "trim", type = "boolean")
@@ -17794,7 +17794,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "encoding", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "implicit-collections", type = "array:org.apache.camel.model.PropertyDefinition"),
-                    @YamlProperty(name = "mode", type = "string"),
+                    @YamlProperty(name = "mode", type = "enum:NO_REFERENCES,ID_REFERENCES,XPATH_RELATIVE_REFERENCES,XPATH_ABSOLUTE_REFERENCES,SINGLE_NODE_XPATH_RELATIVE_REFERENCES,SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES"),
                     @YamlProperty(name = "omit-fields", type = "array:org.apache.camel.model.PropertyDefinition"),
                     @YamlProperty(name = "permissions", type = "string")
             }
@@ -18039,7 +18039,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "zipDeflater"
             },
             properties = {
-                    @YamlProperty(name = "compression-level", type = "number"),
+                    @YamlProperty(name = "compression-level", type = "enum:-1,0,1,2,3,4,5,6,7,8,9"),
                     @YamlProperty(name = "id", type = "string")
             }
     )

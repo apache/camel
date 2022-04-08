@@ -502,7 +502,8 @@
               "type" : "string"
             },
             "scope" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "Singleton", "Request", "Prototype" ]
             }
           }
         } ]
@@ -625,7 +626,8 @@
             "type" : "string"
           },
           "operation" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "Get", "GetAndRemove", "Set", "Push", "Pop" ]
           }
         },
         "required" : [ "operation" ]
@@ -1310,7 +1312,8 @@
               "type" : "string"
             },
             "logging-level" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
             },
             "marker" : {
               "type" : "string"
@@ -1560,7 +1563,8 @@
             "type" : "boolean"
           },
           "mode" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "AfterConsumer", "BeforeConsumer" ]
           },
           "on-complete-only" : {
             "type" : "boolean"
@@ -2189,7 +2193,8 @@
             "type" : "number"
           },
           "sliding-window-type" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "TIME_BASED", "COUNT_BASED" ]
           },
           "slow-call-duration-threshold" : {
             "type" : "number"
@@ -2517,7 +2522,8 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.SagaActionUriDefinition"
           },
           "completion-mode" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "AUTO", "MANUAL" ]
           },
           "description" : {
             "type" : "string"
@@ -2535,7 +2541,8 @@
             }
           },
           "propagation" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "REQUIRED", "REQUIRES_NEW", "MANDATORY", "SUPPORTS", "NOT_SUPPORTED", "NEVER" ]
           },
           "saga-service" : {
             "type" : "string"
@@ -2631,7 +2638,8 @@
               "type" : "boolean"
             },
             "pattern" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
             }
           }
         } ],
@@ -2895,10 +2903,12 @@
             "type" : "number"
           },
           "rejected-policy" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "Abort", "CallerRuns", "DiscardOldest", "Discard" ]
           },
           "time-unit" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "NANOSECONDS", "MICROSECONDS", "MILLISECONDS", "SECONDS", "MINUTES", "HOURS", "DAYS" ]
           }
         }
       },
@@ -2936,13 +2946,15 @@
             "type" : "number"
           },
           "rejected-policy" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "Abort", "CallerRuns", "DiscardOldest", "Discard" ]
           },
           "thread-name" : {
             "type" : "string"
           },
           "time-unit" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "NANOSECONDS", "MICROSECONDS", "MILLISECONDS", "SECONDS", "MINUTES", "HOURS", "DAYS" ]
           }
         }
       },
@@ -3026,7 +3038,8 @@
               "type" : "object"
             },
             "pattern" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
             },
             "uri" : {
               "type" : "string"
@@ -3066,7 +3079,8 @@
               "type" : "object"
             },
             "pattern" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
             },
             "uri" : {
               "type" : "string"
@@ -3399,7 +3413,8 @@
             "type" : "object"
           },
           "pattern" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
           },
           "uri" : {
             "type" : "string"
@@ -3458,7 +3473,8 @@
             "type" : "number"
           },
           "units" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "NANOSECONDS", "MICROSECONDS", "MILLISECONDS", "SECONDS", "MINUTES", "HOURS", "DAYS" ]
           }
         }
       },
@@ -3660,7 +3676,8 @@
             "type" : "string"
           },
           "lookup" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "environment", "dns", "client" ]
           },
           "master-url" : {
             "type" : "string"
@@ -3760,7 +3777,8 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration"
           },
           "pattern" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
           },
           "service-chooser-ref" : {
             "type" : "string"
@@ -3849,7 +3867,8 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration"
             },
             "pattern" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
             },
             "service-chooser-ref" : {
               "type" : "string"
@@ -4097,7 +4116,8 @@
               "type" : "string"
             },
             "output-format" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "NTRIPLES", "TURTLE", "NQUADS", "RDFXML", "JSONLD", "RDFJSON", "RDF4JMODEL" ]
             }
           }
         } ]
@@ -4261,7 +4281,8 @@
             "type" : "string"
           },
           "type" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "Csv", "Fixed", "KeyValue" ]
           },
           "unwrap-single-instance" : {
             "type" : "boolean"
@@ -4370,7 +4391,8 @@
               "type" : "boolean"
             },
             "format-name" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "DEFAULT", "EXCEL", "INFORMIX_UNLOAD", "INFORMIX_UNLOAD_CSV", "MYSQL", "RFC4180" ]
             },
             "format-ref" : {
               "type" : "string"
@@ -4415,7 +4437,8 @@
               "type" : "boolean"
             },
             "quote-mode" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "ALL", "ALL_NON_NULL", "MINIMAL", "NON_NUMERIC", "NONE" ]
             },
             "record-converter-ref" : {
               "type" : "string"
@@ -4613,7 +4636,8 @@
             "type" : "boolean"
           },
           "fhir-version" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "DSTU2", "DSTU2_HL7ORG", "DSTU2_1", "DSTU3", "R4", "R5" ]
           },
           "id" : {
             "type" : "string"
@@ -4669,7 +4693,8 @@
             "type" : "boolean"
           },
           "fhir-version" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "DSTU2", "DSTU2_HL7ORG", "DSTU2_1", "DSTU3", "R4", "R5" ]
           },
           "id" : {
             "type" : "string"
@@ -4894,7 +4919,8 @@
             "type" : "string"
           },
           "schema-severity-level" : {
-            "type" : "number"
+            "type" : "string",
+            "enum" : [ "0", "1", "2" ]
           },
           "xml-stream-writer-wrapper" : {
             "type" : "string"
@@ -5097,7 +5123,8 @@
               "type" : "string"
             },
             "content-type-format" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "native", "json" ]
             },
             "content-type-header" : {
               "type" : "boolean"
@@ -5184,7 +5211,8 @@
               "type" : "string"
             },
             "version" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "1.1", "1.2" ]
             }
           }
         } ],
@@ -5225,7 +5253,8 @@
           "type" : "object",
           "properties" : {
             "content-type-format" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "binary", "json", "sjson" ]
             },
             "content-type-header" : {
               "type" : "boolean"
@@ -5243,7 +5272,8 @@
         "type" : "object",
         "properties" : {
           "data-object-type" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "org.w3c.dom.Node", "java.lang.String" ]
           },
           "id" : {
             "type" : "string"
@@ -5454,13 +5484,15 @@
             "type" : "boolean"
           },
           "digest-algorithm" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "SHA1", "SHA256", "SHA512" ]
           },
           "id" : {
             "type" : "string"
           },
           "key-cipher-algorithm" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "RSA_v1dot5", "RSA_OAEP", "RSA_OAEP_11" ]
           },
           "key-or-trust-store-parameters-ref" : {
             "type" : "string"
@@ -5469,7 +5501,8 @@
             "type" : "string"
           },
           "mgf-algorithm" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "MGF1_SHA1", "MGF1_SHA256", "MGF1_SHA512" ]
           },
           "pass-phrase" : {
             "type" : "string"
@@ -5487,7 +5520,8 @@
             "type" : "boolean"
           },
           "xml-cipher-algorithm" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "TRIPLEDES", "AES_128", "AES_128_GCM", "AES_192", "AES_192_GCM", "AES_256", "AES_256_GCM", "SEED_128", "CAMELLIA_128", "CAMELLIA_192", "CAMELLIA_256" ]
           }
         }
       },
@@ -5531,7 +5565,8 @@
               }
             },
             "mode" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "NO_REFERENCES", "ID_REFERENCES", "XPATH_RELATIVE_REFERENCES", "XPATH_ABSOLUTE_REFERENCES", "SINGLE_NODE_XPATH_RELATIVE_REFERENCES", "SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES" ]
             },
             "omit-fields" : {
               "type" : "array",
@@ -5608,7 +5643,8 @@
         "type" : "object",
         "properties" : {
           "compression-level" : {
-            "type" : "number"
+            "type" : "string",
+            "enum" : [ "-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ]
           },
           "id" : {
             "type" : "string"
@@ -5651,7 +5687,8 @@
             "type" : "string"
           },
           "level" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
           "log-name" : {
             "type" : "string"
@@ -5696,7 +5733,8 @@
             "type" : "string"
           },
           "level" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
           "log-name" : {
             "type" : "string"
@@ -5752,7 +5790,8 @@
             "type" : "string"
           },
           "level" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
           "log-name" : {
             "type" : "string"
@@ -5779,7 +5818,8 @@
             "type" : "string"
           },
           "rollback-logging-level" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
           "transacted-policy-ref" : {
             "type" : "string"
@@ -5810,7 +5850,8 @@
             "type" : "string"
           },
           "level" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
           "log-name" : {
             "type" : "string"
@@ -5837,7 +5878,8 @@
             "type" : "string"
           },
           "rollback-logging-level" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
           "transacted-policy-ref" : {
             "type" : "string"
@@ -6116,7 +6158,8 @@
               "type" : "string"
             },
             "option" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "DEFAULT_PATH_LEAF_TO_NULL", "ALWAYS_RETURN_LIST", "AS_PATH_LIST", "SUPPRESS_EXCEPTIONS", "REQUIRE_PROPERTIES" ]
             },
             "result-type" : {
               "type" : "string"
@@ -6174,7 +6217,8 @@
               "type" : "string"
             },
             "scope" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "Singleton", "Request", "Prototype" ]
             },
             "trim" : {
               "type" : "boolean"
@@ -6349,7 +6393,8 @@
               "type" : "string"
             },
             "mode" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "i", "w", "u", "t" ]
             },
             "trim" : {
               "type" : "boolean"
@@ -6389,7 +6434,8 @@
               "type" : "boolean"
             },
             "result-type" : {
-              "type" : "string"
+              "type" : "string",
+              "enum" : [ "NUMBER", "STRING", "BOOLEAN", "NODESET", "NODE" ]
             },
             "saxon" : {
               "type" : "boolean"
@@ -6582,7 +6628,8 @@
             "type" : "boolean"
           },
           "binding-mode" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
           "client-request-validation" : {
             "type" : "boolean"
@@ -6647,7 +6694,8 @@
             "type" : "boolean"
           },
           "binding-mode" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
           "client-request-validation" : {
             "type" : "boolean"
@@ -6712,7 +6760,8 @@
             "type" : "boolean"
           },
           "binding-mode" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
           "client-request-validation" : {
             "type" : "boolean"
@@ -6792,7 +6841,8 @@
             "type" : "string"
           },
           "flow" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "implicit", "password", "application", "clientCredentials", "accessCode", "authorizationCode" ]
           },
           "key" : {
             "type" : "string"
@@ -6881,7 +6931,8 @@
             "type" : "boolean"
           },
           "binding-mode" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
           "client-request-validation" : {
             "type" : "boolean"
@@ -6946,7 +6997,8 @@
             "type" : "boolean"
           },
           "binding-mode" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
           "client-request-validation" : {
             "type" : "boolean"
@@ -7011,7 +7063,8 @@
             "type" : "boolean"
           },
           "binding-mode" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
           "client-request-validation" : {
             "type" : "boolean"
@@ -7134,7 +7187,8 @@
         "type" : "object",
         "properties" : {
           "binding-mode" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
           "client-request-validation" : {
             "type" : "boolean"
@@ -7172,7 +7226,8 @@
         "type" : "object",
         "properties" : {
           "api-component" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "openapi", "swagger" ]
           },
           "api-context-path" : {
             "type" : "string"
@@ -7197,7 +7252,8 @@
             "type" : "boolean"
           },
           "component" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "platform-http", "servlet", "jetty", "undertow", "netty-http", "coap" ]
           },
           "component-property" : {
             "type" : "array",
@@ -7252,7 +7308,8 @@
             "type" : "string"
           },
           "producer-component" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "vertx-http", "http", "undertow", "netty-http" ]
           },
           "scheme" : {
             "type" : "string"
@@ -7275,7 +7332,8 @@
             "type" : "boolean"
           },
           "binding-mode" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "off", "auto", "json", "xml", "json_xml" ]
           },
           "client-request-validation" : {
             "type" : "boolean"
