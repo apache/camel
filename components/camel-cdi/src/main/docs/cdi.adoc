@@ -4,7 +4,7 @@
 :artifactid: camel-cdi
 :description: Using Camel with CDI
 :since: 2.10
-:supportlevel: Stable
+:supportlevel: Preview
 
 *Since Camel {since}*
 
