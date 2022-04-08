@@ -31,7 +31,7 @@ public class DropboxConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("dropbox://get?accessToken=accessToken&remotePath=/path").to("mock:test1");
 
                 from("dropbox://get?accessToken=accessToken&remotePath=/path with spaces/file").to("mock:test2");
