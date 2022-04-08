@@ -78,7 +78,7 @@ public abstract class BaseElytronTest extends CamelTestSupport {
     }
 
     @BindToRegistry("prop")
-    public Properties loadProperties() throws Exception {
+    public Properties loadProperties() {
 
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
