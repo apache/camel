@@ -57,8 +57,19 @@ public final class EventHubsConstants {
     public static final String MESSAGE_TIMESTAMP = Exchange.MESSAGE_TIMESTAMP;
     @Metadata(label = "consumer",
               description = "It sets the reason for the checkpoint to have been updated. This is only present on a received `EventData`.",
-              javaType = "Boolean")
+              javaType = "String")
     public static final String CHECKPOINT_UPDATED_BY = HEADER_PREFIX + "CheckpointUpdatedBy";
+
+    @Metadata(label = "consumer",
+              description = "Completion condition header's value for the checkpoint to be updated when batch size is reached",
+              javaType = "String")
+    public static final String COMPLETED_BY_SIZE = "size";
+
+    @Metadata(label = "consumer",
+              description = "Completion condition header's value for the checkpoint to be updated when batch timeout is reached",
+              javaType = "String")
+    public static final String COMPLETED_BY_TIMEOUT = "timeout";
+    public static final String UNCOMPLETED = "uncompleted";
 
     private EventHubsConstants() {
     }
