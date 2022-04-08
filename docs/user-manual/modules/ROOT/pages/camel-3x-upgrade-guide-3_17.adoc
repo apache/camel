@@ -76,7 +76,10 @@ has defined error handling as `<bean>` in Spring or Blueprint XML files:
 
 Users who has been configured error handling using `<errorHandler>` in Spring or Blueprint XML files should not be affected.
 
-=== camel-jta
+=== camel-cdi / camel-cdi-jta
+
+The class `org.apache.camel.cdi.CdiRouteBuilder` has been removed as you can use `jtaTransactionErrorHandler` builder
+methods from `camel-core` instead.
 
 The class `org.apache.canel.jta.JtaTransactionErrorHandlerBuilder` has been removed, as the JTA error handler builder
 can be used with the `jtaTransactionErrorHandler` from `camel-core-model`.
@@ -93,28 +96,4 @@ Asynchronous, Synchronous or NO-OP commit policies from the former `autoCommitOn
 * Async can be set using `kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory`
 * Sync can be set using `kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory`
 
-=== camel-cdi
 
-The support for the Camel XML configuration import, that had been marked as deprecated in previous releases, was removed.
-
-=== Deprecated Components
-
-The following components that had been marked as deprecated, were removed in this release:
-
-* camel-atomix
-* camel-beanstalk
-* camel-beanio
-* camel-etcd 
-* camel-elsql 
-* camel-ganglia 
-* camel-nsq 
-* camel-hystrix 
-* camel-jing 
-* camel-leveldb-legacy 
-* camel-msv 
-* camel-nagios 
-* camel-ribbon 
-* camel-sip 
-* camel-soroush 
-* camel-tagsoup 
-* camel-yammer
