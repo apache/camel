@@ -49,7 +49,7 @@ public class EhcacheSpringConfigurationFactory extends AbstractFactoryBean<Cache
     }
 
     @Override
-    protected CacheConfiguration createInstance() throws Exception {
+    protected CacheConfiguration createInstance() {
         return CacheConfigurationBuilder.newCacheConfigurationBuilder(
                 keyType,
                 valueType,
