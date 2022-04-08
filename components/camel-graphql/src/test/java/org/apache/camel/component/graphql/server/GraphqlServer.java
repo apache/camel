@@ -27,7 +27,6 @@ import graphql.ExecutionResult;
 import graphql.GraphQL;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.StringEntity;
@@ -66,7 +65,7 @@ public class GraphqlServer {
         private final ObjectMapper objectMapper = new ObjectMapper();
 
         public void handle(HttpRequest request, HttpResponse response, HttpContext context)
-                throws HttpException, IOException {
+                throws IOException {
             if (request instanceof HttpEntityEnclosingRequest) {
                 HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
                 String json = EntityUtils.toString(entity);
