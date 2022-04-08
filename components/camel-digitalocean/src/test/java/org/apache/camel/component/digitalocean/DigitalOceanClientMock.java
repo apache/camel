@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.digitalocean;
 
-import com.myjeeva.digitalocean.exception.DigitalOceanException;
-import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
 import com.myjeeva.digitalocean.impl.DigitalOceanClient;
 import com.myjeeva.digitalocean.pojo.Account;
 
@@ -28,7 +26,7 @@ public class DigitalOceanClientMock extends DigitalOceanClient {
     }
 
     @Override
-    public Account getAccountInfo() throws DigitalOceanException, RequestUnsuccessfulException {
+    public Account getAccountInfo() {
         Account account = new Account();
         account.setEmail("camel@apache.org");
 
