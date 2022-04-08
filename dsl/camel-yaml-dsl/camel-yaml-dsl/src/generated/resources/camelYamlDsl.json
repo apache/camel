@@ -1282,9 +1282,6 @@
           "base64" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Base64DataFormat"
           },
-          "beanio" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.BeanioDataFormat"
-          },
           "bindy" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.BindyDataFormat"
           },
@@ -3086,9 +3083,6 @@
           "base64" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Base64DataFormat"
           },
-          "beanio" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.BeanioDataFormat"
-          },
           "bindy" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.BindyDataFormat"
           },
@@ -4136,39 +4130,6 @@
           }
         }
       },
-      "org.apache.camel.model.dataformat.BeanioDataFormat" : {
-        "type" : "object",
-        "properties" : {
-          "beanReaderErrorHandlerType" : {
-            "type" : "string"
-          },
-          "encoding" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "ignoreInvalidRecords" : {
-            "type" : "boolean"
-          },
-          "ignoreUnexpectedRecords" : {
-            "type" : "boolean"
-          },
-          "ignoreUnidentifiedRecords" : {
-            "type" : "boolean"
-          },
-          "mapping" : {
-            "type" : "string"
-          },
-          "streamName" : {
-            "type" : "string"
-          },
-          "unmarshalSingleObject" : {
-            "type" : "boolean"
-          }
-        },
-        "required" : [ "mapping", "streamName" ]
-      },
       "org.apache.camel.model.dataformat.BindyDataFormat" : {
         "type" : "object",
         "properties" : {
@@ -4404,9 +4365,6 @@
           },
           "base64" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Base64DataFormat"
-          },
-          "beanio" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.BeanioDataFormat"
           },
           "bindy" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.BindyDataFormat"
@@ -7411,9 +7369,6 @@
           },
           "base64" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Base64DataFormat"
-          },
-          "beanio" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.BeanioDataFormat"
           },
           "bindy" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.BindyDataFormat"

@@ -1920,22 +1920,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
-    protected BeanioDataFormat doParseBeanioDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new BeanioDataFormat(), (def, key, val) -> {
-            switch (key) {
-                case "beanReaderErrorHandlerType": def.setBeanReaderErrorHandlerType(val); break;
-                case "encoding": def.setEncoding(val); break;
-                case "ignoreInvalidRecords": def.setIgnoreInvalidRecords(val); break;
-                case "ignoreUnexpectedRecords": def.setIgnoreUnexpectedRecords(val); break;
-                case "ignoreUnidentifiedRecords": def.setIgnoreUnidentifiedRecords(val); break;
-                case "mapping": def.setMapping(val); break;
-                case "streamName": def.setStreamName(val); break;
-                case "unmarshalSingleObject": def.setUnmarshalSingleObject(val); break;
-                default: return identifiedTypeAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        }, noElementHandler(), noValueHandler());
-    }
     protected BindyDataFormat doParseBindyDataFormat() throws IOException, XmlPullParserException {
         return doParse(new BindyDataFormat(), (def, key, val) -> {
             switch (key) {
@@ -3320,7 +3304,6 @@ public class ModelParser extends BaseParser {
             case "avro": return doParseAvroDataFormat();
             case "barcode": return doParseBarcodeDataFormat();
             case "base64": return doParseBase64DataFormat();
-            case "beanio": return doParseBeanioDataFormat();
             case "bindy": return doParseBindyDataFormat();
             case "cbor": return doParseCBORDataFormat();
             case "crypto": return doParseCryptoDataFormat();

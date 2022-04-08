@@ -37,8 +37,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.config.BatchResequencerConfig": return new ModelDeserializers.BatchResequencerConfigDeserializer();
             case "bean": return new ModelDeserializers.BeanDefinitionDeserializer();
             case "org.apache.camel.model.BeanDefinition": return new ModelDeserializers.BeanDefinitionDeserializer();
-            case "beanio": return new ModelDeserializers.BeanioDataFormatDeserializer();
-            case "org.apache.camel.model.dataformat.BeanioDataFormat": return new ModelDeserializers.BeanioDataFormatDeserializer();
             case "bearer-token": return new ModelDeserializers.BearerTokenDefinitionDeserializer();
             case "bearerToken": return new ModelDeserializers.BearerTokenDefinitionDeserializer();
             case "org.apache.camel.model.rest.BearerTokenDefinition": return new ModelDeserializers.BearerTokenDefinitionDeserializer();

@@ -31,7 +31,6 @@ import org.apache.camel.model.dataformat.Any23Type;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.AvroLibrary;
 import org.apache.camel.model.dataformat.Base64DataFormat;
-import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.model.dataformat.CBORDataFormat;
@@ -177,55 +176,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         dataFormat.setLineLength(Integer.toString(lineLength));
         dataFormat.setLineSeparator(lineSeparator);
         dataFormat.setUrlSafe(Boolean.toString(urlSafe));
-        return dataFormat(dataFormat);
-    }
-
-    /**
-     * Uses the beanio data format
-     */
-    public T beanio(String mapping, String streamName) {
-        BeanioDataFormat dataFormat = new BeanioDataFormat();
-        dataFormat.setMapping(mapping);
-        dataFormat.setStreamName(streamName);
-        return dataFormat(dataFormat);
-    }
-
-    /**
-     * Uses the beanio data format
-     */
-    public T beanio(String mapping, String streamName, String encoding) {
-        BeanioDataFormat dataFormat = new BeanioDataFormat();
-        dataFormat.setMapping(mapping);
-        dataFormat.setStreamName(streamName);
-        dataFormat.setEncoding(encoding);
-        return dataFormat(dataFormat);
-    }
-
-    /**
-     * Uses the beanio data format
-     */
-    public T beanio(
-            String mapping, String streamName, String encoding, boolean ignoreUnidentifiedRecords,
-            boolean ignoreUnexpectedRecords, boolean ignoreInvalidRecords) {
-        BeanioDataFormat dataFormat = new BeanioDataFormat();
-        dataFormat.setMapping(mapping);
-        dataFormat.setStreamName(streamName);
-        dataFormat.setEncoding(encoding);
-        dataFormat.setIgnoreUnidentifiedRecords(Boolean.toString(ignoreUnidentifiedRecords));
-        dataFormat.setIgnoreUnexpectedRecords(Boolean.toString(ignoreUnexpectedRecords));
-        dataFormat.setIgnoreInvalidRecords(Boolean.toString(ignoreInvalidRecords));
-        return dataFormat(dataFormat);
-    }
-
-    /**
-     * Uses the beanio data format
-     */
-    public T beanio(String mapping, String streamName, String encoding, String beanReaderErrorHandlerType) {
-        BeanioDataFormat dataFormat = new BeanioDataFormat();
-        dataFormat.setMapping(mapping);
-        dataFormat.setStreamName(streamName);
-        dataFormat.setEncoding(encoding);
-        dataFormat.setBeanReaderErrorHandlerType(beanReaderErrorHandlerType);
         return dataFormat(dataFormat);
     }
 
