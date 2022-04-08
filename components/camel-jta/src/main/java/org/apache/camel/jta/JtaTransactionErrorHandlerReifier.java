@@ -116,7 +116,7 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
             answer = new CamelLogger(LoggerFactory.getLogger(TransactionErrorHandler.class), LoggingLevel.ERROR);
         }
         if (definition.getLevel() != null) {
-            answer.setLevel(definition.getLevel());
+            answer.setLevel(parse(LoggingLevel.class, definition.getLevel()));
         }
         return answer;
     }
