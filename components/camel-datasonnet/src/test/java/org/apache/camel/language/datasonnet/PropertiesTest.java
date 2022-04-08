@@ -36,9 +36,9 @@ public class PropertiesTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 Properties prop = new Properties();
                 prop.setProperty("foo", "bar");
                 context.getPropertiesComponent().setInitialProperties(prop);
