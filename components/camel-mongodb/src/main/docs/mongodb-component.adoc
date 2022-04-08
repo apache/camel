@@ -259,7 +259,9 @@ collection.
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------------------------------
-// from("direct:count").to("mongodb:myDb?database=tickets&collection=flights&operation=count&dynamicity=true");
+from("direct:count")
+  .to("mongodb:myDb?database=tickets&collection=flights&operation=count&dynamicity=true");
+
 Long result = template.requestBodyAndHeader("direct:count", "irrelevantBody", MongoDbConstants.COLLECTION, "dynamicCollectionName");
 assertTrue("Result is not of type Long", result instanceof Long);
 ------------------------------------------------------------------------------------------------------------------------------------
