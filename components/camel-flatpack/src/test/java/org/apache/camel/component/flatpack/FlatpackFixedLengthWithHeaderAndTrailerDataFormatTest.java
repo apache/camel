@@ -65,14 +65,14 @@ public class FlatpackFixedLengthWithHeaderAndTrailerDataFormatTest extends Camel
         assertEquals("SUCCESS", trailer.get("STATUS"));
     }
 
-    public void testMarshalWithDefinition() throws Exception {
+    public void testMarshalWithDefinition() {
         // TODO: header and trailer not supported for FlatpackWriter
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 FlatpackDataFormat df = new FlatpackDataFormat();
                 df.setDefinition("PEOPLE-HeaderAndTrailer.pzmap.xml");
                 df.setFixed(true);
