@@ -28,7 +28,7 @@
     "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
   },
   "headers": {
-    "CamelXmppDoc": { "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "org.jivesoftware.smack.packet.Message", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The XMPP message" }
+    "CamelXmppDoc": { "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "org.jivesoftware.smack.packet.Message", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The XMPP message", "constantName": "org.apache.camel.component.xmpp.XmppConstants#DOC_HEADER" }
   },
   "properties": {
     "host": { "kind": "path", "displayName": "Host", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Hostname for the chat server" },

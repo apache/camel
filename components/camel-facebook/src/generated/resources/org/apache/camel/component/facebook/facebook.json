@@ -55,7 +55,7 @@
     "oAuthPermissions": { "kind": "property", "displayName": "OAuth Permissions", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.facebook.config.FacebookConfiguration", "configurationField": "configuration", "description": "Default OAuth permissions. Comma separated permission names. See https:\/\/developers.facebook.com\/docs\/reference\/login\/#permissions for the detail" }
   },
   "headers": {
-    "CamelFacebook.rawJSON": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The raw json" }
+    "CamelFacebook.rawJSON": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The raw json", "constantName": "org.apache.camel.component.facebook.FacebookConstants#RAW_JSON_HEADER" }
   },
   "properties": {
     "methodName": { "kind": "path", "displayName": "Method Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "What operation to perform" },

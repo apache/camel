@@ -36,8 +36,8 @@
     "consumerSecret": { "kind": "property", "displayName": "Consumer Secret", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "description": "The consumer secret" }
   },
   "headers": {
-    "CamelTwitterUser": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The user" },
-    "CamelTwitterEventType": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The type of event. The supported values are the values of the enum org.apache.camel.component.twitter.consumer.TwitterEventType" }
+    "CamelTwitterUser": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The user", "constantName": "org.apache.camel.component.twitter.TwitterConstants#TWITTER_USER" },
+    "CamelTwitterEventType": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The type of event. The supported values are the values of the enum org.apache.camel.component.twitter.consumer.TwitterEventType", "constantName": "org.apache.camel.component.twitter.TwitterConstants#TWITTER_EVENT_TYPE" }
   },
   "properties": {
     "user": { "kind": "path", "displayName": "User", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The user name to send a direct message. This will be ignored for consumer." },

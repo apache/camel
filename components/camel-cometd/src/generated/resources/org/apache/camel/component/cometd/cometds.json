@@ -35,8 +35,8 @@
     "useGlobalSslContextParameters": { "kind": "property", "displayName": "Use Global Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Enable usage of global SSL context parameters." }
   },
   "headers": {
-    "CometdClientId": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The clientId of the session" },
-    "subscription": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The subscription" }
+    "CometdClientId": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The clientId of the session", "constantName": "org.apache.camel.component.cometd.CometdBinding#COMETD_CLIENT_ID_HEADER_NAME" },
+    "subscription": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The subscription", "constantName": "org.apache.camel.component.cometd.CometdBinding#COMETD_SUBSCRIPTION_HEADER_NAME" }
   },
   "properties": {
     "host": { "kind": "path", "displayName": "Host", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Hostname" },

@@ -29,7 +29,7 @@
     "exchangeFormatter": { "kind": "property", "displayName": "Exchange Formatter", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.spi.ExchangeFormatter", "deprecated": false, "autowired": true, "secret": false, "description": "Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified, we default to DefaultExchangeFormatter." }
   },
   "headers": {
-    "CamelDataSetIndex": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The dataset index" }
+    "CamelDataSetIndex": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The dataset index", "constantName": "org.apache.camel.component.dataset.DataSetConstants#DATASET_INDEX" }
   },
   "properties": {
     "name": { "kind": "path", "displayName": "Name", "group": "common", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.dataset.DataSet", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of DataSet to lookup in the registry" },

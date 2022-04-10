@@ -43,7 +43,7 @@
     "useGlobalSslContextParameters": { "kind": "property", "displayName": "Use Global Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Enable usage of global SSL context parameters." }
   },
   "headers": {
-    "CamelOlingo2.responseHttpHeaders": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Map<String, String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The response Http headers" }
+    "CamelOlingo2.responseHttpHeaders": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Map<String, String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The response Http headers", "constantName": "org.apache.camel.component.olingo2.internal.Olingo2Constants#RESPONSE_HTTP_HEADERS" }
   },
   "properties": {
     "apiName": { "kind": "path", "displayName": "Api Name", "group": "common", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.olingo2.internal.Olingo2ApiName", "enum": [ "DEFAULT" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.olingo2.Olingo2Configuration", "configurationField": "configuration", "description": "What kind of operation to perform" },

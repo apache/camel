@@ -28,7 +28,7 @@
     "sqlSessionFactory": { "kind": "property", "displayName": "Sql Session Factory", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.ibatis.session.SqlSessionFactory", "deprecated": false, "autowired": false, "secret": false, "description": "To use the SqlSessionFactory" }
   },
   "headers": {
-    "CamelMyBatisResult": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The response returned from MtBatis in any of the operations. For instance an INSERT could return the auto-generated key, or number of rows etc." }
+    "CamelMyBatisResult": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Object", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The response returned from MtBatis in any of the operations. For instance an INSERT could return the auto-generated key, or number of rows etc.", "constantName": "org.apache.camel.component.mybatis.MyBatisConstants#MYBATIS_RESULT" }
   },
   "properties": {
     "beanName": { "kind": "path", "displayName": "Bean Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of the bean with the MyBatis annotations. This can either by a type alias or a FQN class name." },

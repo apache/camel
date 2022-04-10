@@ -34,7 +34,7 @@
     "configuration": { "kind": "property", "displayName": "Configuration", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.component.avro.AvroConfiguration", "deprecated": false, "autowired": false, "secret": false, "description": "To use a shared AvroConfiguration to configure options once" }
   },
   "headers": {
-    "CamelAvroMessageName": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the message to send. In consumer overrides message name from URI (if any)" }
+    "CamelAvroMessageName": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the message to send. In consumer overrides message name from URI (if any)", "constantName": "org.apache.camel.component.avro.AvroConstants#AVRO_MESSAGE_NAME" }
   },
   "properties": {
     "transport": { "kind": "path", "displayName": "Transport", "group": "common", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.avro.AvroTransport", "enum": [ "http", "netty" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.avro.AvroConfiguration", "configurationField": "configuration", "description": "Transport to use, can be either http or netty" },
