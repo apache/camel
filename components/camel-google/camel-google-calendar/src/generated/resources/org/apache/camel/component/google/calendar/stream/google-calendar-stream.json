@@ -45,7 +45,7 @@
     "user": { "kind": "property", "displayName": "User", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration", "configurationField": "configuration", "description": "The email address of the user the application is trying to impersonate in the service account flow." }
   },
   "headers": {
-    "CamelGoogleCalendarEventId": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The calendar event id" }
+    "CamelGoogleCalendarEventId": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The calendar event id", "constantName": "org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConstants#EVENT_ID" }
   },
   "properties": {
     "index": { "kind": "path", "displayName": "Index", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration", "configurationField": "configuration", "description": "Specifies an index for the endpoint" },

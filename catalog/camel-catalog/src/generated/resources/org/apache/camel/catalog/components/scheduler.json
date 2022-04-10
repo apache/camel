@@ -27,7 +27,7 @@
     "poolSize": { "kind": "property", "displayName": "Pool Size", "group": "scheduler", "label": "scheduler", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1, "description": "Number of core threads in the thread pool used by the scheduling thread pool. Is by default using a single thread" }
   },
   "headers": {
-    "CamelMessageTimestamp": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The timestamp of the message" }
+    "CamelMessageTimestamp": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The timestamp of the message", "constantName": "org.apache.camel.component.scheduler.SchedulerConstants#MESSAGE_TIMESTAMP" }
   },
   "properties": {
     "name": { "kind": "path", "displayName": "Name", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the scheduler" },

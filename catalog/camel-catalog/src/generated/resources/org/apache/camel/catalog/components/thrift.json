@@ -28,7 +28,7 @@
     "useGlobalSslContextParameters": { "kind": "property", "displayName": "Use Global Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Determine if the thrift component is using global SSL context parameters" }
   },
   "headers": {
-    "CamelThriftMethodName": { "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Method name handled by the consumer service" }
+    "CamelThriftMethodName": { "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Method name handled by the consumer service", "constantName": "org.apache.camel.component.thrift.ThriftConstants#THRIFT_METHOD_NAME_HEADER" }
   },
   "properties": {
     "host": { "kind": "path", "displayName": "Host", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.thrift.ThriftConfiguration", "configurationField": "configuration", "description": "The Thrift server host name. This is localhost or 0.0.0.0 (if not defined) when being a consumer or remote server host name when using producer." },

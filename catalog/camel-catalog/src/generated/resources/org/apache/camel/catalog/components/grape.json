@@ -27,7 +27,7 @@
     "patchesRepository": { "kind": "property", "displayName": "Patches Repository", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.component.grape.PatchesRepository", "deprecated": false, "autowired": false, "secret": false, "description": "Implementation of org.apache.camel.component.grape.PatchesRepository, by default: FilePatchesRepository" }
   },
   "headers": {
-    "CamelGrapeCommand": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "org.apache.camel.component.grape.GrapeCommand", "enum": [ "grab", "listPatches", "clearPatches" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "defaultValue": "grab", "description": "The command to be performed by the Grape endpoint." }
+    "CamelGrapeCommand": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "org.apache.camel.component.grape.GrapeCommand", "enum": [ "grab", "listPatches", "clearPatches" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "defaultValue": "grab", "description": "The command to be performed by the Grape endpoint.", "constantName": "org.apache.camel.component.grape.GrapeConstants#GRAPE_COMMAND" }
   },
   "properties": {
     "defaultCoordinates": { "kind": "path", "displayName": "Default Coordinates", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Maven coordinates to use as default to grab if the message body is empty." },

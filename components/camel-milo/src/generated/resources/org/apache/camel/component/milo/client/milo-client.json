@@ -49,8 +49,8 @@
     "sessionTimeout": { "kind": "property", "displayName": "Session Timeout", "group": "client", "label": "client", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.milo.client.MiloClientConfiguration", "configurationField": "configuration", "description": "Session timeout in milliseconds" }
   },
   "headers": {
-    "CamelMiloNodeIds": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "List", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The node ids." },
-    "await": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The await setting for writes." }
+    "CamelMiloNodeIds": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "List", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The node ids.", "constantName": "org.apache.camel.component.milo.MiloConstants#HEADER_NODE_IDS" },
+    "await": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The await setting for writes.", "constantName": "org.apache.camel.component.milo.MiloConstants#HEADER_AWAIT" }
   },
   "properties": {
     "endpointUri": { "kind": "path", "displayName": "Endpoint Uri", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The OPC UA server endpoint" },

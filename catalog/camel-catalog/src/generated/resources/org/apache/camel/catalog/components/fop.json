@@ -26,7 +26,7 @@
     "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
   },
   "headers": {
-    "CamelFop.Output.Format": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The output format" }
+    "CamelFop.Output.Format": { "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The output format", "constantName": "org.apache.camel.component.fop.FopConstants#CAMEL_FOP_OUTPUT_FORMAT" }
   },
   "properties": {
     "outputType": { "kind": "path", "displayName": "Output Type", "group": "producer", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.fop.FopOutputType", "enum": [ "pdf", "ps", "pcl", "png", "jpeg", "svg", "xml", "mif", "rtf", "txt" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The primary output format is PDF but other output formats are also supported." },

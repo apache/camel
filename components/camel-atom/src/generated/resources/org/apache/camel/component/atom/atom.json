@@ -26,7 +26,7 @@
     "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
   },
   "headers": {
-    "CamelAtomFeed": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "org.apache.abdera.model.Feed", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "When consuming the org.apache.abdera.model.Feed object is set to this header." }
+    "CamelAtomFeed": { "kind": "header", "displayName": "", "group": "consumer", "label": "", "required": false, "javaType": "org.apache.abdera.model.Feed", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "When consuming the org.apache.abdera.model.Feed object is set to this header.", "constantName": "org.apache.camel.component.atom.AtomConstants#ATOM_FEED" }
   },
   "properties": {
     "feedUri": { "kind": "path", "displayName": "Feed Uri", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The URI to the feed to poll." },
