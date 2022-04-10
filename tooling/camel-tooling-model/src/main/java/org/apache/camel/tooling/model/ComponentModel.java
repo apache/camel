@@ -187,6 +187,18 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
 
     public static class EndpointHeaderModel extends BaseOptionModel {
 
+        /**
+         * The name of the constant that defines the header.
+         */
+        private String constantName;
+
+        public String getConstantName() {
+            return constantName;
+        }
+
+        public void setConstantName(String constantName) {
+            this.constantName = constantName;
+        }
     }
 
     public static class ComponentOptionModel extends BaseOptionModel {

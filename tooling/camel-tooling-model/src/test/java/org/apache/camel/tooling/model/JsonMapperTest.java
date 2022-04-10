@@ -45,6 +45,7 @@ class JsonMapperTest {
         EndpointHeaderModel header = new EndpointHeaderModel();
         header.setName("Some Name");
         header.setDescription("Some Description");
+        header.setConstantName("Some constant Name");
         model.addEndpointHeader(header);
         String json = JsonMapper.createParameterJsonSchema(model);
         ComponentModel model2 = JsonMapper.generateComponentModel(json);
@@ -52,6 +53,7 @@ class JsonMapperTest {
         assertEquals(1, headers.size());
         assertEquals(header.getName(), headers.get(0).getName());
         assertEquals(header.getDescription(), headers.get(0).getDescription());
+        assertEquals(header.getConstantName(), headers.get(0).getConstantName());
     }
 
     @Test
@@ -60,10 +62,12 @@ class JsonMapperTest {
         EndpointHeaderModel header1 = new EndpointHeaderModel();
         header1.setName("Some Name");
         header1.setDescription("Some Description");
+        header1.setConstantName("Some constant Name");
         model.addEndpointHeader(header1);
         EndpointHeaderModel header2 = new EndpointHeaderModel();
         header2.setName("Some Name 2");
         header2.setDescription("Some Description 2");
+        header2.setConstantName("Some constant Name 2");
         model.addEndpointHeader(header2);
         String json = JsonMapper.createParameterJsonSchema(model);
         ComponentModel model2 = JsonMapper.generateComponentModel(json);
@@ -71,7 +75,9 @@ class JsonMapperTest {
         assertEquals(2, headers.size());
         assertEquals(header1.getName(), headers.get(0).getName());
         assertEquals(header1.getDescription(), headers.get(0).getDescription());
+        assertEquals(header1.getConstantName(), headers.get(0).getConstantName());
         assertEquals(header2.getName(), headers.get(1).getName());
         assertEquals(header2.getDescription(), headers.get(1).getDescription());
+        assertEquals(header2.getConstantName(), headers.get(1).getConstantName());
     }
 }
