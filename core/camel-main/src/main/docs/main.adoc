@@ -458,6 +458,32 @@ and not just a text value that happens to start with a `+#+` sign:
 camel.component.sql.dataSource = #bean:myDS
 ----
 
+=== Creating a custom map bean
+
+When creating a bean as a `java.util.Map` type, then you can use the `[]` syntax as shown below:
+
+[source,properties]
+----
+camel.beans.myApp[id] = 123
+camel.beans.myApp[name] = Demo App
+camel.beans.myApp[version] = 1.0.1
+camel.beans.myApp[username] = goofy
+----
+
+Camel will then create this as a `LinkedHashMap` type with the name `myApp` which is
+bound to the Camel xref:manual::registry.adoc[Registry], with the data defined in the properties.
+
+If you desire a different `java.util.Map` implementation, then you can use `#class` style as shown:
+
+[source,properties]
+----
+camel.beans.myApp = #class:com.foo.MyMapImplementation
+camel.beans.myApp[id] = 123
+camel.beans.myApp[name] = Demo App
+camel.beans.myApp[version] = 1.0.1
+camel.beans.myApp[username] = goofy
+----
+
 === Creating a custom bean with constructor parameters
 
 When creating a bean then parameters to the constructor can be provided.
