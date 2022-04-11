@@ -21,10 +21,13 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.SpringTransactionErrorHandlerBuilder;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.errorhandler.ErrorHandlerHelper;
 import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
+import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -36,11 +39,22 @@ import org.springframework.transaction.support.TransactionTemplate;
  * Spring transaction policy when using spring based transactions.
  */
 public class SpringTransactionPolicy implements TransactedPolicy {
+
     private static final Logger LOG = LoggerFactory.getLogger(SpringTransactionPolicy.class);
     private TransactionTemplate template;
     private String name;
     private String propagationBehaviorName;
     private PlatformTransactionManager transactionManager;
+
+    static {
+        // register camel-spring as transaction error handler (both builder and definition)
+        ErrorHandlerReifier.registerReifier(SpringTransactionErrorHandlerBuilder.class,
+                (route, errorHandlerFactory) -> new TransactionErrorHandlerReifier(
+                        route, (SpringTransactionErrorHandlerDefinition) errorHandlerFactory));
+        ErrorHandlerReifier.registerReifier(SpringTransactionErrorHandlerDefinition.class,
+                (route, errorHandlerFactory) -> new TransactionErrorHandlerReifier(
+                        route, (SpringTransactionErrorHandlerDefinition) errorHandlerFactory));
+    }
 
     /**
      * Default constructor for easy spring configuration.
@@ -99,8 +113,9 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             if (builder != null) {
                 LOG.debug("The ErrorHandlerBuilder configured is not a TransactionErrorHandlerBuilder: {}", builder);
             } else {
-                LOG.debug("No ErrorHandlerBuilder configured, will use default TransactionErrorHandlerBuilder settings");
+                LOG.debug("No ErrorHandlerBuilder configured, will use default LegacyTransactionErrorHandlerBuilder settings");
             }
+            // use legacy transaction to also support camel-spring-xml
             LegacyTransactionErrorHandlerBuilder txBuilder = new LegacyTransactionErrorHandlerBuilder();
             txBuilder.setTransactionTemplate(getTransactionTemplate());
             txBuilder.setSpringTransactionPolicy(this);

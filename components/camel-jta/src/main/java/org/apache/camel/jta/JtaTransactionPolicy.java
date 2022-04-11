@@ -21,12 +21,14 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.JtaTransactionErrorHandlerBuilder;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.errorhandler.ErrorHandlerHelper;
 import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
 import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.TransactedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,16 @@ import org.slf4j.LoggerFactory;
  * &quot;java:/TransactionManager&quot;
  */
 public abstract class JtaTransactionPolicy implements TransactedPolicy {
+
+    static {
+        // register camel-jta as transaction error handler (both builder and definition)
+        ErrorHandlerReifier.registerReifier(JtaTransactionErrorHandlerBuilder.class,
+                (route, errorHandlerFactory) -> new JtaTransactionErrorHandlerReifier(
+                        route, (JtaTransactionErrorHandlerDefinition) errorHandlerFactory));
+        ErrorHandlerReifier.registerReifier(JtaTransactionErrorHandlerDefinition.class,
+                (route, errorHandlerFactory) -> new JtaTransactionErrorHandlerReifier(
+                        route, (JtaTransactionErrorHandlerDefinition) errorHandlerFactory));
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(JtaTransactionPolicy.class);
 
