@@ -14,7 +14,7 @@
 *{component-header}*
 
 The ZooKeeper component allows interaction with a
-http://hadoop.apache.org/zookeeper/[ZooKeeper] cluster and exposes the
+https://zookeeper.apache.org/[ZooKeeper] cluster and exposes the
 following features to Camel:
 
 1.  Creation of nodes in any of the ZooKeeper create modes.
