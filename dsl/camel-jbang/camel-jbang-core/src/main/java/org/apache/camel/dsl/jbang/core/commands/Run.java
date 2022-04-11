@@ -308,7 +308,9 @@ class Run implements Callable<Integer> {
                 sjReload.add(file.substring(5));
             }
         }
-        main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
+        if (js.length() > 0) {
+            main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
+        }
         if (sjClasspathFiles.length() > 0) {
             main.addInitialProperty("camel.jbang.classpathFiles", sjClasspathFiles.toString());
         }
@@ -371,9 +373,11 @@ class Run implements Callable<Integer> {
         // strip https://github.com/
         url = url.substring(19);
         // https://github.com/apache/camel-k/blob/main/examples/languages/routes.kts
-        // https://github.com/apache/camel-k/blob/v1.7.0/examples/languages/routes.kts
+        // https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/hello-java/Hey.java
+        // https://github.com/apache/camel-kamelets-examples/blob/main/jbang/hello-java/Hey.java
         url = url.replaceFirst("/", ":");
         url = url.replaceFirst("/", ":");
+        url = url.replaceFirst("tree/", "");
         url = url.replaceFirst("blob/", "");
         url = url.replaceFirst("/", ":");
         return "github:" + url;
@@ -465,7 +469,12 @@ class Run implements Callable<Integer> {
 
     private boolean knownFile(String file) {
         String ext = FileUtil.onlyExt(file, true);
-        return Arrays.stream(ACCEPTED_FILE_EXT).anyMatch(e -> e.equalsIgnoreCase(ext));
+        if (ext != null) {
+            return Arrays.stream(ACCEPTED_FILE_EXT).anyMatch(e -> e.equalsIgnoreCase(ext));
+        } else {
+            // assume match as it can be wildcard or dir
+            return true;
+        }
     }
 
 }

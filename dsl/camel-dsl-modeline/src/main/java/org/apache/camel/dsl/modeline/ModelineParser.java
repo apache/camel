@@ -56,12 +56,14 @@ public class ModelineParser {
     public List<CamelContextCustomizer> parse(Resource resource) throws Exception {
         List<CamelContextCustomizer> answer = new ArrayList<>();
 
-        try (LineNumberReader reader = new LineNumberReader(resource.getReader())) {
-            String line = reader.readLine();
-            while (line != null) {
-                List<CamelContextCustomizer> list = parse(resource, line);
-                answer.addAll(list);
-                line = reader.readLine();
+        if (resource.exists()) {
+            try (LineNumberReader reader = new LineNumberReader(resource.getReader())) {
+                String line = reader.readLine();
+                while (line != null) {
+                    List<CamelContextCustomizer> list = parse(resource, line);
+                    answer.addAll(list);
+                    line = reader.readLine();
+                }
             }
         }
 

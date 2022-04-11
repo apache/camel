@@ -433,25 +433,25 @@ public abstract class BaseMainSupport extends BaseService {
                 MainHelper::optionKey);
 
         Object value = prop.remove("camel.main.startupRecorder");
-        if (value != null) {
+        if (ObjectHelper.isNotEmpty(value)) {
             mainConfigurationProperties.setStartupRecorder(value.toString());
         }
 
         value = prop.remove("camel.main.startupRecorderRecording");
-        if (value != null) {
+        if (ObjectHelper.isNotEmpty(value)) {
             mainConfigurationProperties.setStartupRecorderRecording("true".equalsIgnoreCase(value.toString()));
         }
         value = prop.remove("camel.main.startupRecorderProfile");
-        if (value != null) {
+        if (ObjectHelper.isNotEmpty(value)) {
             mainConfigurationProperties.setStartupRecorderProfile(
                     CamelContextHelper.parseText(camelContext, value.toString()));
         }
         value = prop.remove("camel.main.startupRecorderDuration");
-        if (value != null) {
+        if (ObjectHelper.isNotEmpty(value)) {
             mainConfigurationProperties.setStartupRecorderDuration(Long.parseLong(value.toString()));
         }
         value = prop.remove("camel.main.startupRecorderMaxDepth");
-        if (value != null) {
+        if (ObjectHelper.isNotEmpty(value)) {
             mainConfigurationProperties.setStartupRecorderMaxDepth(Integer.parseInt(value.toString()));
         }
 
@@ -600,7 +600,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         // special for environment-variable-enabled as we need to know this early before we set all the other options
         Object envEnabled = prop.remove("camel.main.autoConfigurationEnvironmentVariablesEnabled");
-        if (envEnabled != null) {
+        if (ObjectHelper.isNotEmpty(envEnabled)) {
             mainConfigurationProperties.setAutoConfigurationEnvironmentVariablesEnabled(
                     CamelContextHelper.parseBoolean(camelContext, envEnabled.toString()));
             String loc = prop.getLocation("camel.main.autoConfigurationEnvironmentVariablesEnabled");
@@ -609,7 +609,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
         // special for system-properties-enabled as we need to know this early before we set all the other options
         Object jvmEnabled = prop.remove("camel.main.autoConfigurationSystemPropertiesEnabled");
-        if (jvmEnabled != null) {
+        if (ObjectHelper.isNotEmpty(jvmEnabled)) {
             mainConfigurationProperties.setAutoConfigurationSystemPropertiesEnabled(
                     CamelContextHelper.parseBoolean(camelContext, jvmEnabled.toString()));
             String loc = prop.getLocation("camel.main.autoConfigurationSystemPropertiesEnabled");
@@ -645,21 +645,21 @@ public abstract class BaseMainSupport extends BaseService {
         // special for fail-fast as we need to know this early before we set all the other options
         String loc = "ENV";
         Object failFast = propENV != null ? propENV.remove("camel.main.autoconfigurationfailfast") : null;
-        if (propJVM != null) {
+        if (ObjectHelper.isNotEmpty(propJVM)) {
             Object val = propJVM.remove("camel.main.autoconfigurationfailfast");
-            if (val != null) {
+            if (ObjectHelper.isNotEmpty(val)) {
                 loc = "SYS";
                 failFast = val;
             }
         }
-        if (failFast != null) {
+        if (ObjectHelper.isNotEmpty(failFast)) {
             mainConfigurationProperties
                     .setAutoConfigurationFailFast(CamelContextHelper.parseBoolean(camelContext, failFast.toString()));
             autoConfiguredProperties.put(loc, "camel.main.autoConfigurationFailFast", failFast.toString());
         } else {
             loc = prop.getLocation("camel.main.autoConfigurationFailFast");
             failFast = prop.remove("camel.main.autoConfigurationFailFast");
-            if (failFast != null) {
+            if (ObjectHelper.isNotEmpty(failFast)) {
                 mainConfigurationProperties
                         .setAutoConfigurationFailFast(CamelContextHelper.parseBoolean(camelContext, failFast.toString()));
                 autoConfiguredProperties.put(loc, "camel.main.autoConfigurationFailFast", failFast.toString());
@@ -671,7 +671,7 @@ public abstract class BaseMainSupport extends BaseService {
             CamelContext camelContext, OrderedLocationProperties autoConfiguredProperties) {
 
         Object pattern = getInitialProperties().getProperty("camel.main.routesIncludePattern");
-        if (pattern != null) {
+        if (ObjectHelper.isNotEmpty(pattern)) {
             mainConfigurationProperties
                     .setRoutesIncludePattern(CamelContextHelper.parseText(camelContext, pattern.toString()));
             autoConfiguredProperties.put("initial", "camel.main.routesIncludePattern", pattern.toString());
@@ -688,7 +688,7 @@ public abstract class BaseMainSupport extends BaseService {
         // special for environment-variable-enabled as we need to know this early before we set all the other options
         String loc = prop.getLocation("camel.main.routesIncludePattern");
         pattern = prop.remove("camel.main.routesIncludePattern");
-        if (pattern != null) {
+        if (ObjectHelper.isNotEmpty(pattern)) {
             mainConfigurationProperties.setRoutesIncludePattern(
                     CamelContextHelper.parseText(camelContext, pattern.toString()));
             autoConfiguredProperties.put(loc, "camel.main.routesIncludePattern",
@@ -697,7 +697,7 @@ public abstract class BaseMainSupport extends BaseService {
         // special for system-properties-enabled as we need to know this early before we set all the other options
         loc = prop.getLocation("camel.main.routesIncludePattern");
         Object jvmEnabled = prop.remove("camel.main.routesIncludePattern");
-        if (jvmEnabled != null) {
+        if (ObjectHelper.isNotEmpty(jvmEnabled)) {
             mainConfigurationProperties.setRoutesIncludePattern(
                     CamelContextHelper.parseText(camelContext, jvmEnabled.toString()));
             autoConfiguredProperties.put(loc, "camel.main.routesIncludePattern",
@@ -732,21 +732,21 @@ public abstract class BaseMainSupport extends BaseService {
         // special for fail-fast as we need to know this early before we set all the other options
         loc = "ENV";
         pattern = propENV != null ? propENV.remove("camel.main.routesincludepattern") : null;
-        if (propJVM != null) {
+        if (ObjectHelper.isNotEmpty(propJVM)) {
             Object val = propJVM.remove("camel.main.routesincludepattern");
-            if (val != null) {
+            if (ObjectHelper.isNotEmpty(val)) {
                 loc = "SYS";
                 pattern = val;
             }
         }
-        if (pattern != null) {
+        if (ObjectHelper.isNotEmpty(pattern)) {
             mainConfigurationProperties
                     .setRoutesIncludePattern(CamelContextHelper.parseText(camelContext, pattern.toString()));
             autoConfiguredProperties.put(loc, "camel.main.routesIncludePattern", pattern.toString());
         } else {
             loc = prop.getLocation("camel.main.routesIncludePattern");
             pattern = prop.remove("camel.main.routesIncludePattern");
-            if (pattern != null) {
+            if (ObjectHelper.isNotEmpty(pattern)) {
                 mainConfigurationProperties
                         .setRoutesIncludePattern(CamelContextHelper.parseText(camelContext, pattern.toString()));
                 autoConfiguredProperties.put(loc, "camel.main.routesIncludePattern", pattern.toString());
@@ -762,7 +762,7 @@ public abstract class BaseMainSupport extends BaseService {
             OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
 
-        if (config.getFileConfigurations() != null) {
+        if (ObjectHelper.isNotEmpty(config.getFileConfigurations())) {
             String[] locs = config.getFileConfigurations().split(",");
             for (String loc : locs) {
                 String path = FileUtil.onlyPath(loc);
@@ -1143,7 +1143,7 @@ public abstract class BaseMainSupport extends BaseService {
             throws Exception {
 
         Object obj = lraProperties.remove("enabled");
-        if (obj != null) {
+        if (ObjectHelper.isNotEmpty(obj)) {
             String loc = lraProperties.getLocation("enabled");
             autoConfiguredProperties.put(loc, "camel.lra.enabled", obj.toString());
         }
