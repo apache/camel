@@ -1215,13 +1215,23 @@ public abstract class BaseMainSupport extends BaseService {
 
         // make defensive copy as we mutate the map
         Set<String> keys = new LinkedHashSet(properties.keySet());
-        // find names of beans
-        final Set<String> beans
-                = properties.keySet().stream().map(k -> StringHelper.before(k.toString(), ".", k.toString()))
+        // find names of beans (dot style)
+        final Set<String> beansDot
+                = properties.keySet().stream()
+                        .map(k -> StringHelper.before(k.toString(), ".", k.toString()))
+                        .filter(k -> k.indexOf('[') == -1)
                         .collect(Collectors.toSet());
-        // create beans first
+
+        // find names of beans (map style)
+        final Set<String> beansMap
+                = properties.keySet().stream()
+                        .map(k -> StringHelper.before(k.toString(), "[", k.toString()))
+                        .filter(k -> k.indexOf('.') == -1)
+                        .collect(Collectors.toSet());
+
+        // then create beans first (beans with #class values etc)
         for (String key : keys) {
-            if (key.indexOf('.') == -1) {
+            if (key.indexOf('.') == -1 && key.indexOf('[') == -1) {
                 String name = key;
                 Object value = properties.remove(key);
                 Object bean = PropertyBindingSupport.resolveBean(camelContext, value);
@@ -1238,8 +1248,22 @@ public abstract class BaseMainSupport extends BaseService {
                 camelContext.getRegistry().bind(name, bean);
             }
         }
-        // then set properties per bean
-        for (String name : beans) {
+        // create map beans if none already exists
+        for (String name : beansMap) {
+            if (camelContext.getRegistry().lookupByName(name) == null) {
+                // register bean as a map
+                Map<String, Object> bean = new LinkedHashMap<>();
+                if (logSummary) {
+                    LOG.info("Binding bean: {} (type: {}) to the registry", name, ObjectHelper.classCanonicalName(bean));
+                } else {
+                    LOG.debug("Binding bean: {} (type: {}) to the registry", name, ObjectHelper.classCanonicalName(bean));
+                }
+                camelContext.getRegistry().bind(name, bean);
+            }
+        }
+
+        // then set properties per bean (dot style)
+        for (String name : beansDot) {
             Object bean = camelContext.getRegistry().lookupByName(name);
             if (bean == null) {
                 throw new IllegalArgumentException(
@@ -1247,6 +1271,18 @@ public abstract class BaseMainSupport extends BaseService {
             }
             // configure all the properties on the bean at once (to ensure they are configured in right order)
             OrderedLocationProperties config = MainHelper.extractProperties(properties, name + ".");
+            setPropertiesOnTarget(camelContext, bean, config, optionPrefix + name + ".", failIfNotSet, ignoreCase,
+                    autoConfiguredProperties);
+        }
+        // then set properties per bean (map style)
+        for (String name : beansMap) {
+            Object bean = camelContext.getRegistry().lookupByName(name);
+            if (bean == null) {
+                throw new IllegalArgumentException(
+                        "Cannot resolve bean with name " + name);
+            }
+            // configure all the properties on the bean at once (to ensure they are configured in right order)
+            OrderedLocationProperties config = MainHelper.extractProperties(properties, name + "[", "]");
             setPropertiesOnTarget(camelContext, bean, config, optionPrefix + name + ".", failIfNotSet, ignoreCase,
                     autoConfiguredProperties);
         }

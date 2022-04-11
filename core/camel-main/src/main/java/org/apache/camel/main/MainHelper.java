@@ -514,4 +514,30 @@ public final class MainHelper {
         return rc;
     }
 
+    public static OrderedLocationProperties extractProperties(
+            OrderedLocationProperties properties, String optionPrefix, String optionSuffix) {
+        if (properties == null) {
+            return new OrderedLocationProperties();
+        }
+        OrderedLocationProperties rc = new OrderedLocationProperties();
+
+        Set<Object> toRemove = new HashSet<>();
+        for (var entry : properties.entrySet()) {
+            String key = entry.getKey().toString();
+            String loc = properties.getLocation(key);
+            if (key.startsWith(optionPrefix)) {
+                Object value = properties.get(key);
+                key = key.substring(optionPrefix.length());
+                if (key.endsWith(optionSuffix)) {
+                    key = key.substring(0, key.length() - optionSuffix.length());
+                }
+                rc.put(loc, key, value);
+                toRemove.add(entry.getKey());
+            }
+        }
+        toRemove.forEach(properties::remove);
+
+        return rc;
+    }
+
 }

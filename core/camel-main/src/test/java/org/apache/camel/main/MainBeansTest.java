@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -55,6 +57,86 @@ public class MainBeansTest {
 
         assertEquals(123, myBQF.getCounter());
         assertEquals("Donkey", myFoo.getName());
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansMap() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // create by class
+        main.addProperty("camel.beans.foo", "#class:java.util.HashMap");
+        main.addProperty("camel.beans.foo.database", "mydb");
+        main.addProperty("camel.beans.foo.username", "scott");
+        main.addProperty("camel.beans.foo.password", "tiger");
+
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Map foo = camelContext.getRegistry().lookupByNameAndType("foo", Map.class);
+        assertNotNull(foo);
+
+        assertEquals(3, foo.size());
+        assertEquals("mydb", foo.get("database"));
+        assertEquals("scott", foo.get("username"));
+        assertEquals("tiger", foo.get("password"));
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansMapSquareClass() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // create by class
+        main.addProperty("camel.beans.foo", "#class:java.util.HashMap");
+        main.addProperty("camel.beans.foo[database]", "mydb");
+        main.addProperty("camel.beans.foo[username]", "scott");
+        main.addProperty("camel.beans.foo[password]", "tiger");
+
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Map foo = camelContext.getRegistry().lookupByNameAndType("foo", Map.class);
+        assertNotNull(foo);
+
+        assertEquals(3, foo.size());
+        assertEquals("mydb", foo.get("database"));
+        assertEquals("scott", foo.get("username"));
+        assertEquals("tiger", foo.get("password"));
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansMapSquare() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // create by class
+        main.addProperty("camel.beans.foo[database]", "mydb");
+        main.addProperty("camel.beans.foo[username]", "scott");
+        main.addProperty("camel.beans.foo[password]", "tiger");
+
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Map foo = camelContext.getRegistry().lookupByNameAndType("foo", Map.class);
+        assertNotNull(foo);
+
+        assertEquals(3, foo.size());
+        assertEquals("mydb", foo.get("database"));
+        assertEquals("scott", foo.get("username"));
+        assertEquals("tiger", foo.get("password"));
 
         main.stop();
     }
