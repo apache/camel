@@ -46,7 +46,7 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
     private MyHL7BusinessLogic logic = new MyHL7BusinessLogic();
 
     @BindToRegistry("hl7decoder")
-    public HL7MLLPNettyDecoderFactory addDecoder() throws Exception {
+    public HL7MLLPNettyDecoderFactory addDecoder() {
 
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setProduceString(false);
@@ -123,9 +123,9 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 DataFormat hl7 = new HL7DataFormat();
                 // we setup or HL7 listener on port 8888 (using the hl7codec)

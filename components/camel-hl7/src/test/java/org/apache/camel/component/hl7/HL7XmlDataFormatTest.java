@@ -63,7 +63,7 @@ public class HL7XmlDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         HapiContext hapiContext = new DefaultHapiContext();
         hapiContext.setValidationContext(new NoValidation());
         Parser p = new GenericParser(hapiContext);
@@ -71,7 +71,7 @@ public class HL7XmlDataFormatTest extends CamelTestSupport {
         hl7.setParser(p);
 
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:unmarshalOk").unmarshal().hl7(false).to("mock:unmarshal");
                 from("direct:unmarshalOkXml").unmarshal(hl7).to("mock:unmarshal");
             }

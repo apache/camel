@@ -43,9 +43,9 @@ public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty:tcp://127.0.0.1:" + getPort() + "?decoders=#hl7decoder&encoders=#hl7encoder")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
@@ -58,7 +58,7 @@ public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
     }
 
     @Test
-    public void testSendHL7Message() throws Exception {
+    public void testSendHL7Message() {
         assertDoesNotThrow(() -> sendHL7Message());
     }
 

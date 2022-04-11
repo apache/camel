@@ -118,7 +118,7 @@ public class HL7ValidateTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         HapiContext hapiContext = new DefaultHapiContext();
         hapiContext.setValidationContext(new NoValidation());
         Parser p = new GenericParser(hapiContext);
@@ -145,7 +145,7 @@ public class HL7ValidateTest extends CamelTestSupport {
         final Parser customParser = new GenericParser(customContext);
 
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:unmarshalFailed").unmarshal().hl7().to("mock:unmarshal");
                 from("direct:unmarshalOk").unmarshal().hl7(false).to("mock:unmarshal");
                 from("direct:unmarshalOkCustom").unmarshal(hl7).to("mock:unmarshal");

@@ -180,10 +180,10 @@ public class HL7DataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:marshal").marshal().hl7().to("mock:marshal");
                 from("direct:unmarshal").unmarshal(hl7).to("mock:unmarshal");

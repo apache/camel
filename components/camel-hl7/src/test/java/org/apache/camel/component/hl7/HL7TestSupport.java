@@ -25,7 +25,7 @@ public abstract class HL7TestSupport extends CamelTestSupport {
     private static int port;
 
     @BeforeAll
-    public static void initPort() throws Exception {
+    public static void initPort() {
         port = AvailablePortFinder.getNextAvailable();
     }
 

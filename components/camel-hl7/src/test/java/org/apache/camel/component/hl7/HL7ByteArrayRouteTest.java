@@ -40,14 +40,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class HL7ByteArrayRouteTest extends HL7TestSupport {
 
     @BindToRegistry("hl7codec")
-    public HL7MLLPCodec addHl7MllpCodec() throws Exception {
+    public HL7MLLPCodec addHl7MllpCodec() {
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setProduceString(false);
         return codec;
     }
 
     @BindToRegistry("hl7service")
-    public MyHL7BusinessLogic addHl7MllpService() throws Exception {
+    public MyHL7BusinessLogic addHl7MllpService() {
 
         return new MyHL7BusinessLogic();
     }
@@ -119,9 +119,9 @@ public class HL7ByteArrayRouteTest extends HL7TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 DataFormat hl7 = new HL7DataFormat();
                 // we setup or HL7 listener on port 8888 (using the hl7codec)

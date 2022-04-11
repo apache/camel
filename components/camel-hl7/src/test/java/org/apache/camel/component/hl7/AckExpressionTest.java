@@ -88,10 +88,10 @@ public class AckExpressionTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test1").transform(ack());
                 from("direct:test2").transform(ack(AcknowledgmentCode.CA));
                 from("direct:test3").onException(HL7Exception.class).handled(true).transform(ack()).end()
