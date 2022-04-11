@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.grpc;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -60,7 +59,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
     }
 
     @AfterAll
-    public static void stopGrpcServer() throws IOException {
+    public static void stopGrpcServer() {
         if (grpcServer != null) {
             grpcServer.shutdown();
             LOG.info("gRPC server stopped");
@@ -181,7 +180,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

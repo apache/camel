@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.grpc;
 
-import java.io.IOException;
 import java.util.List;
 
 import io.grpc.Server;
@@ -57,7 +56,7 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
     }
 
     @AfterAll
-    public static void stopGrpcServer() throws IOException {
+    public static void stopGrpcServer() {
         if (grpcServer != null) {
             grpcServer.shutdown();
             LOG.info("gRPC server stopped");
@@ -65,7 +64,7 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
     }
 
     @Test
-    public void testPingSyncSyncMethodInvocation() throws Exception {
+    public void testPingSyncSyncMethodInvocation() {
         LOG.info("gRPC PingSyncSync method test start");
         // Testing simple sync method invoke with host and port parameters
         PingRequest pingRequest
@@ -85,7 +84,7 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
     }
 
     @Test
-    public void testPingSyncSyncMultipleInvocation() throws Exception {
+    public void testPingSyncSyncMultipleInvocation() {
         final StopWatch stopwatch = new StopWatch();
         // Multiple sync methods call for average performance estimation
         for (int id = 0; id < MULTIPLE_RUN_TEST_COUNT; id++) {
@@ -100,7 +99,7 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testPingSyncAsyncMethodInvocation() throws Exception {
+    public void testPingSyncAsyncMethodInvocation() {
         LOG.info("gRPC PingSyncAsync method test start");
         // Testing simple method with sync request and asyc response in synchronous invocation style
         PingRequest pingRequest
@@ -114,7 +113,7 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

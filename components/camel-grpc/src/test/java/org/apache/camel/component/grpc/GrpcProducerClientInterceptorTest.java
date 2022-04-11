@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.grpc;
 
-import java.io.IOException;
-
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
@@ -59,7 +57,7 @@ public class GrpcProducerClientInterceptorTest extends CamelTestSupport {
     }
 
     @AfterAll
-    public static void stopGrpcServer() throws IOException {
+    public static void stopGrpcServer() {
         if (grpcServer != null) {
             grpcServer.shutdown();
             LOG.info("gRPC server stopped");
@@ -67,7 +65,7 @@ public class GrpcProducerClientInterceptorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testClientInterceptors() throws Exception {
+    public void testClientInterceptors() {
         when(mockClientInterceptor.interceptCall(any(), any(), any())).thenCallRealMethod();
         when(mockClientInterceptor2.interceptCall(any(), any(), any())).thenCallRealMethod();
         LOG.info("gRPC PingSyncSync method test start");
@@ -91,7 +89,7 @@ public class GrpcProducerClientInterceptorTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         // This needs to be here because if it's any earlier the context won't be set up and if it's any later, we'll
         // put it in the registry after the component is already set up.
         context.getRegistry().bind("grpcMockClientInterceptor", mockClientInterceptor);

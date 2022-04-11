@@ -17,7 +17,6 @@
 package org.apache.camel.component.grpc;
 
 import java.io.File;
-import java.io.IOException;
 
 import io.grpc.Server;
 import io.grpc.StatusRuntimeException;
@@ -87,7 +86,7 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
     }
 
     @AfterAll
-    public static void stopGrpcServer() throws IOException {
+    public static void stopGrpcServer() {
         if (grpcServerWithTLS != null) {
             grpcServerWithTLS.shutdown();
             LOG.info("gRPC server with TLS stopped");
@@ -100,7 +99,7 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
     }
 
     @Test
-    public void testWithEnableTLS() throws Exception {
+    public void testWithEnableTLS() {
         LOG.info("gRPC PingSyncSync method test start with TLS enable");
         // Testing simple sync method invoke using TLS negotiation
         PingRequest pingRequest
@@ -114,7 +113,7 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
     }
 
     @Test
-    public void testWithCorrectJWT() throws Exception {
+    public void testWithCorrectJWT() {
         LOG.info("gRPC PingSyncSync method test start with correct JWT authentication");
         // Testing simple sync method invoke using correct JWT authentication
         PingRequest pingRequest
@@ -128,7 +127,7 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
     }
 
     @Test
-    public void testWithIncorrectJWT() throws Exception {
+    public void testWithIncorrectJWT() {
         LOG.info("gRPC PingSyncSync method test start with incorrect JWT authentication");
         // Testing simple sync method invoke using incorrect JWT authentication
         PingRequest pingRequest
@@ -146,7 +145,7 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
