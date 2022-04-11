@@ -33,17 +33,17 @@ public class GuavaEventBusProducerTest extends CamelTestSupport {
     Object receivedEvent;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("guava-eventbus:eventBus");
             }
         };
     }
 
     @Test
-    public void shouldReceiveMessageFromCamel() throws InterruptedException {
+    public void shouldReceiveMessageFromCamel() {
         // Given
         String message = "message";
         eventBus.register(this);
