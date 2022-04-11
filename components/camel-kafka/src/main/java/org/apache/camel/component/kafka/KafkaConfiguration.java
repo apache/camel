@@ -246,19 +246,19 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     // SSL
     // ssl.key.password
-    @UriParam(label = "producer,security", secret = true)
+    @UriParam(label = "common,security", secret = true)
     private String sslKeyPassword;
     // ssl.keystore.location
-    @UriParam(label = "producer,security")
+    @UriParam(label = "common,security")
     private String sslKeystoreLocation;
     // ssl.keystore.password
-    @UriParam(label = "producer,security", secret = true)
+    @UriParam(label = "common,security", secret = true)
     private String sslKeystorePassword;
     // ssl.truststore.location
-    @UriParam(label = "producer,security")
+    @UriParam(label = "common,security")
     private String sslTruststoreLocation;
     // ssl.truststore.password
-    @UriParam(label = "producer,security", secret = true)
+    @UriParam(label = "common,security", secret = true)
     private String sslTruststorePassword;
     // SSL
     // ssl.enabled.protocols
