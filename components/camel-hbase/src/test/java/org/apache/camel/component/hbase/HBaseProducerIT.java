@@ -78,7 +78,7 @@ public class HBaseProducerIT extends CamelHBaseTestSupport {
     }
 
     @Test
-    public void testPutAndGetWithModel() throws Exception {
+    public void testPutAndGetWithModel() {
         Map<String, Object> headers = new HashMap<>();
         headers.put(HBaseConstants.OPERATION, HBaseConstants.PUT);
         int index = 1;
@@ -310,7 +310,7 @@ public class HBaseProducerIT extends CamelHBaseTestSupport {
      * the routes for testing
      */
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
