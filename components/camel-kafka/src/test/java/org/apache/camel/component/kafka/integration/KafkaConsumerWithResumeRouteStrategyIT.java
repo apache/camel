@@ -222,10 +222,11 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
             public void configure() {
                 from("kafka:" + TOPIC + "?groupId=" + TOPIC + "_GROUP&autoCommitIntervalMs=1000"
                      + "&autoOffsetReset=earliest&consumersCount=1")
+                             .resumable().resumeStrategy("resumeStrategy", "DEBUG")
                              .routeId("resume-strategy-route")
-                             .setHeader(Exchange.OFFSET,
-                                     constant(Resumables.of("key", RANDOM_VALUE)))
-                             .resumable().resumeStrategy("resumeStrategy")
+                             .setHeader(Exchange.OFFSET, constant(Resumables.of("key", RANDOM_VALUE)))
+                             // Note: this is for manually testing the ResumableCompletion onFailure exception logging. Uncomment it for testing it
+                             // .process(e -> e.setException(new RuntimeCamelException("Mock error in test")))
                              .to("mock:result");
             }
         };

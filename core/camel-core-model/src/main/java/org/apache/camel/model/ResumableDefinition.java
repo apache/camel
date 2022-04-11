@@ -40,6 +40,10 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
     @Metadata(required = true, javaType = "org.apache.camel.ResumeStrategy")
     private String resumeStrategy;
 
+    @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR",
+              enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    private String loggingLevel;
+
     @Override
     public String getShortName() {
         return "resumable";
@@ -66,6 +70,14 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
         this.resumeStrategyBean = resumeStrategyBean;
     }
 
+    public String getLoggingLevel() {
+        return loggingLevel;
+    }
+
+    public void setLoggingLevel(String loggingLevelRef) {
+        this.loggingLevel = loggingLevelRef;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -80,8 +92,26 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
     /**
      * Sets the resume strategy to use
      */
+    public ResumableDefinition resumeStrategy(String resumeStrategyRef, String loggingLevelRef) {
+        setResumeStrategy(resumeStrategyRef);
+        setLoggingLevel(loggingLevelRef);
+        return this;
+    }
+
+    /**
+     * Sets the resume strategy to use
+     */
     public ResumableDefinition resumeStrategy(ResumeStrategy resumeStrategy) {
         setResumeStrategy(resumeStrategy);
+        return this;
+    }
+
+    /**
+     * Sets the resume strategy to use
+     */
+    public ResumableDefinition resumeStrategy(ResumeStrategy resumeStrategy, String loggingLevelRef) {
+        setResumeStrategy(resumeStrategy);
+        setLoggingLevel(loggingLevelRef);
         return this;
     }
 }

@@ -10416,7 +10416,9 @@ Reference to the rest-dsl.
   <xs:complexType name="resumableDefinition">
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
-        <xs:sequence/>
+        <xs:sequence>
+          <xs:element minOccurs="0" name="loggingLevel" type="xs:string"/>
+        </xs:sequence>
         <xs:attribute name="resumeStrategy" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
