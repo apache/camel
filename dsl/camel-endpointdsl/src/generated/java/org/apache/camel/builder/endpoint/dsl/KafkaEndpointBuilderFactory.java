@@ -1619,6 +1619,54 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The password of the private key in the key store file. This is
+         * optional for client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeyPassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder sslKeyPassword(
+                String sslKeyPassword) {
+            doSetProperty("sslKeyPassword", sslKeyPassword);
+            return this;
+        }
+        /**
+         * The location of the key store file. This is optional for client and
+         * can be used for two-way authentication for client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystoreLocation the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder sslKeystoreLocation(
+                String sslKeystoreLocation) {
+            doSetProperty("sslKeystoreLocation", sslKeystoreLocation);
+            return this;
+        }
+        /**
+         * The store password for the key store file.This is optional for client
+         * and only needed if ssl.keystore.location is configured.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystorePassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder sslKeystorePassword(
+                String sslKeystorePassword) {
+            doSetProperty("sslKeystorePassword", sslKeystorePassword);
+            return this;
+        }
+        /**
          * The file format of the key store file. This is optional for client.
          * Default value is JKS.
          * 
@@ -1684,6 +1732,36 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointConsumerBuilder sslTrustmanagerAlgorithm(
                 String sslTrustmanagerAlgorithm) {
             doSetProperty("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
+            return this;
+        }
+        /**
+         * The location of the trust store file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslTruststoreLocation the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder sslTruststoreLocation(
+                String sslTruststoreLocation) {
+            doSetProperty("sslTruststoreLocation", sslTruststoreLocation);
+            return this;
+        }
+        /**
+         * The password for the trust store file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslTruststorePassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder sslTruststorePassword(
+                String sslTruststorePassword) {
+            doSetProperty("sslTruststorePassword", sslTruststorePassword);
             return this;
         }
         /**
@@ -4439,6 +4517,53 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The password of the private key in the key store file. This is
+         * optional for client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeyPassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder sslKeyPassword(String sslKeyPassword) {
+            doSetProperty("sslKeyPassword", sslKeyPassword);
+            return this;
+        }
+        /**
+         * The location of the key store file. This is optional for client and
+         * can be used for two-way authentication for client.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystoreLocation the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder sslKeystoreLocation(
+                String sslKeystoreLocation) {
+            doSetProperty("sslKeystoreLocation", sslKeystoreLocation);
+            return this;
+        }
+        /**
+         * The store password for the key store file.This is optional for client
+         * and only needed if ssl.keystore.location is configured.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystorePassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder sslKeystorePassword(
+                String sslKeystorePassword) {
+            doSetProperty("sslKeystorePassword", sslKeystorePassword);
+            return this;
+        }
+        /**
          * The file format of the key store file. This is optional for client.
          * Default value is JKS.
          * 
@@ -4503,6 +4628,36 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointBuilder sslTrustmanagerAlgorithm(
                 String sslTrustmanagerAlgorithm) {
             doSetProperty("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
+            return this;
+        }
+        /**
+         * The location of the trust store file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslTruststoreLocation the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder sslTruststoreLocation(
+                String sslTruststoreLocation) {
+            doSetProperty("sslTruststoreLocation", sslTruststoreLocation);
+            return this;
+        }
+        /**
+         * The password for the trust store file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslTruststorePassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder sslTruststorePassword(
+                String sslTruststorePassword) {
+            doSetProperty("sslTruststorePassword", sslTruststorePassword);
             return this;
         }
         /**
