@@ -59,7 +59,7 @@ public class FromFileToHdfsTest extends HdfsTestSupport {
     }
 
     @Test
-    public void testFileToHdfs() throws Exception {
+    public void testFileToHdfs() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
         template.sendBodyAndHeader("file:target/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
@@ -74,7 +74,7 @@ public class FromFileToHdfsTest extends HdfsTestSupport {
     }
 
     @Test
-    public void testTwoFilesToHdfs() throws Exception {
+    public void testTwoFilesToHdfs() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 
         template.sendBodyAndHeader("file:target/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
@@ -92,10 +92,10 @@ public class FromFileToHdfsTest extends HdfsTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:target/inbox?delete=true")
                         .to("hdfs:localhost/" + TEMP_DIR.toUri() + "/output.txt?fileSystemType=LOCAL");
             }
