@@ -35,16 +35,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HL7MLLPCodecLongTest extends HL7TestSupport {
 
     @BindToRegistry("hl7codec")
-    public HL7MLLPCodec addHl7MllpCodec() throws Exception {
+    public HL7MLLPCodec addHl7MllpCodec() {
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("iso-8859-1");
         return codec;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(exchange -> {
                     assertEquals(70010, exchange.getIn().getBody(byte[].class).length);
                     MDM_T02 input = (MDM_T02) exchange.getIn().getBody(Message.class);

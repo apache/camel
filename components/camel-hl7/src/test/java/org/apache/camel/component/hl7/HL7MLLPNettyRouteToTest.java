@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HL7MLLPNettyRouteToTest extends HL7TestSupport {
 
     @BindToRegistry("hl7decoder")
-    public HL7MLLPNettyDecoderFactory addDecoder() throws Exception {
+    public HL7MLLPNettyDecoderFactory addDecoder() {
 
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setCharset("iso-8859-1");
@@ -44,7 +44,7 @@ public class HL7MLLPNettyRouteToTest extends HL7TestSupport {
     }
 
     @BindToRegistry("hl7encoder")
-    public HL7MLLPNettyEncoderFactory addEncoder() throws Exception {
+    public HL7MLLPNettyEncoderFactory addEncoder() {
 
         HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
         encoder.setCharset("iso-8859-1");
@@ -53,9 +53,9 @@ public class HL7MLLPNettyRouteToTest extends HL7TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder")
                         // because HL7 message contains a bunch of control chars

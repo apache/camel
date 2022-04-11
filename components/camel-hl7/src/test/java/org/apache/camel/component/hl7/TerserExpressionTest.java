@@ -68,7 +68,7 @@ public class TerserExpressionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testTerserInvalidMessage() throws Exception {
+    public void testTerserInvalidMessage() {
         assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:test4", "text instead of message"));
     }
@@ -83,12 +83,12 @@ public class TerserExpressionTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         final TerserBean terserBean = new TerserBean();
 
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test1").transform(hl7terser("PID-3-1")).to("mock:test1");
                 from("direct:test2").filter(hl7terser("PID-3-1").isEqualTo(PATIENT_ID)).to("mock:test2");
                 from("direct:test3").filter(hl7terser("PID-4-1").isNull()).to("mock:test3");

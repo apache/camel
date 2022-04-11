@@ -43,7 +43,7 @@ public class MessageValidatorTest extends CamelTestSupport {
     private HapiContext customContext;
 
     @Override
-    protected void doPreSetup() throws Exception {
+    protected void doPreSetup() {
         defaultValidationContext = ValidationContextFactory.defaultValidation();
         defaultContext = new DefaultHapiContext(defaultValidationContext);
         // we validate separately, not during parsing or rendering
@@ -134,9 +134,9 @@ public class MessageValidatorTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test1").validate(messageConformsTo(defaultValidationContext)).to("mock:test1");
                 from("direct:test2").validate(messageConformsTo(customValidationContext)).to("mock:test2");
                 from("direct:test3").validate(messageConformsTo(header("validator"))).to("mock:test3");
