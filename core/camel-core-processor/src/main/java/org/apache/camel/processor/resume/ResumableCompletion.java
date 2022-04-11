@@ -18,9 +18,11 @@
 package org.apache.camel.processor.resume;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Resumable;
 import org.apache.camel.ResumeStrategy;
 import org.apache.camel.UpdatableConsumerResumeStrategy;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
@@ -30,9 +32,11 @@ public class ResumableCompletion implements Synchronization {
     private static final Logger LOG = LoggerFactory.getLogger(ResumableCompletion.class);
 
     private final ResumeStrategy resumeStrategy;
+    private final LoggingLevel loggingLevel;
 
-    public ResumableCompletion(ResumeStrategy resumeStrategy) {
+    public ResumableCompletion(ResumeStrategy resumeStrategy, LoggingLevel loggingLevel) {
         this.resumeStrategy = resumeStrategy;
+        this.loggingLevel = loggingLevel;
     }
 
     @Override
@@ -70,6 +74,34 @@ public class ResumableCompletion implements Synchronization {
 
     @Override
     public void onFailure(Exchange exchange) {
-        LOG.warn("Skipping offset update for due to failure in processing");
+        Exception e = exchange.getException();
+        Object offset = exchange.getMessage().getHeader(Exchange.OFFSET);
+
+        if (offset instanceof Resumable) {
+            Resumable<?, ?> resumable = (Resumable<?, ?>) offset;
+
+            String logMessage = String.format(
+                    "Skipping offset update with address '%s' and offset value '%s' due to failure in processing: %s",
+                    resumable.getAddressable(), resumable.getLastOffset().offset(), e.getMessage());
+
+            if (LOG.isDebugEnabled() || CamelLogger.shouldLog(LOG, loggingLevel)) {
+                CamelLogger.log(LOG, LoggingLevel.DEBUG, logMessage, e);
+            } else {
+                logMessage += " (stacktrace available in DEBUG logging level)";
+
+                CamelLogger.log(LOG, loggingLevel, logMessage);
+            }
+        } else {
+            String logMessage = String.format("Skipping offset update of '%s' due to failure in processing: %s",
+                    offset == null ? "type null" : "unspecified type", e.getMessage());
+
+            if (LOG.isDebugEnabled() || CamelLogger.shouldLog(LOG, loggingLevel)) {
+                CamelLogger.log(LOG, LoggingLevel.DEBUG, logMessage, e);
+            } else {
+                logMessage += " (stacktrace available in DEBUG logging level)";
+
+                CamelLogger.log(LOG, loggingLevel, logMessage);
+            }
+        }
     }
 }

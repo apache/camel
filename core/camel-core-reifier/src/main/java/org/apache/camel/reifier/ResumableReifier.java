@@ -16,6 +16,7 @@
  */
 package org.apache.camel.reifier;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.ResumeStrategy;
 import org.apache.camel.Route;
@@ -38,7 +39,8 @@ public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
         ObjectHelper.notNull(resumeStrategy, "resumeStrategy", definition);
 
         route.setResumeStrategy(resumeStrategy);
-        return new ResumableProcessor(resumeStrategy, childProcessor);
+        LoggingLevel loggingLevel = resolveLoggingLevel();
+        return new ResumableProcessor(resumeStrategy, childProcessor, loggingLevel);
     }
 
     protected ResumeStrategy resolveResumeStrategy() {
@@ -47,6 +49,17 @@ public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
             String ref = parseString(definition.getResumeStrategy());
             strategy = mandatoryLookup(ref, ResumeStrategy.class);
         }
+
         return strategy;
+    }
+
+    protected LoggingLevel resolveLoggingLevel() {
+        LoggingLevel loggingLevel = parse(LoggingLevel.class, definition.getLoggingLevel());
+
+        if (loggingLevel == null) {
+            loggingLevel = LoggingLevel.ERROR;
+        }
+
+        return loggingLevel;
     }
 }

@@ -922,7 +922,13 @@ public class ModelParser extends BaseParser {
                 return true;
             }
             return processorDefinitionAttributeHandler().accept(def, key, val);
-        }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+        }, (def, key) -> {
+            if ("loggingLevel".equals(key)) {
+                def.setLoggingLevel(doParseText());
+                return true;
+            }
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        }, noValueHandler());
     }
     protected RollbackDefinition doParseRollbackDefinition() throws IOException, XmlPullParserException {
         return doParse(new RollbackDefinition(), (def, key, val) -> {

@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.ResumeStrategy;
@@ -48,12 +49,14 @@ public class ResumableProcessor extends AsyncProcessorSupport
     private CamelContext camelContext;
     private final ResumeStrategy resumeStrategy;
     private final AsyncProcessor processor;
+    private final LoggingLevel loggingLevel;
     private String id;
     private String routeId;
 
-    public ResumableProcessor(ResumeStrategy resumeStrategy, Processor processor) {
+    public ResumableProcessor(ResumeStrategy resumeStrategy, Processor processor, LoggingLevel loggingLevel) {
         this.resumeStrategy = Objects.requireNonNull(resumeStrategy);
         this.processor = AsyncProcessorConverterHelper.convert(processor);
+        this.loggingLevel = loggingLevel;
     }
 
     @Override
@@ -66,7 +69,7 @@ public class ResumableProcessor extends AsyncProcessorSupport
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        final Synchronization onCompletion = new ResumableCompletion(resumeStrategy);
+        final Synchronization onCompletion = new ResumableCompletion(resumeStrategy, loggingLevel);
 
         exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
 
