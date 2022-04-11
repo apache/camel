@@ -422,7 +422,7 @@
     <netty-version>4.1.75.Final</netty-version>
     <networknt-json-schema-validator-version>1.0.68</networknt-json-schema-validator-version>
     <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
-    <nitrite-version>3.4.3</nitrite-version>
+    <nitrite-version>3.4.4</nitrite-version>
     <ognl-version>3.1.12</ognl-version>
     <okclient-version>3.14.9</okclient-version>
     <olingo2-version>2.0.11</olingo2-version>
