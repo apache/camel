@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 public class GroovyLanguageTest extends LanguageTestSupport {
 
     @Test
-    public void testGroovyExpressions() throws Exception {
+    public void testGroovyExpressions() {
         assertExpression("exchange.in.headers.foo", "abc");
         assertExpression("request.headers.foo", "abc");
         assertExpression("headers.foo", "abc");

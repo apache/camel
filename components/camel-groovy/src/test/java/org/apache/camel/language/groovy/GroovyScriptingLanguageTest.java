@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class GroovyScriptingLanguageTest extends CamelTestSupport {
 
     @Test
-    public void testScripting() throws Exception {
+    public void testScripting() {
         Language lan = context.resolveLanguage("groovy");
         Assertions.assertTrue(lan instanceof ScriptingLanguage);
         ScriptingLanguage slan = (ScriptingLanguage) lan;
@@ -43,7 +43,7 @@ public class GroovyScriptingLanguageTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExternalScripting() throws Exception {
+    public void testExternalScripting() {
         Language lan = context.resolveLanguage("groovy");
         Assertions.assertTrue(lan instanceof ScriptingLanguage);
         ScriptingLanguage slan = (ScriptingLanguage) lan;

@@ -35,10 +35,10 @@ public class GroovyResourceTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .transform().groovy("resource:classpath:mygroovy.groovy")
                         .to("mock:result");

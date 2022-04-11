@@ -47,9 +47,9 @@ public class GroovyListMapTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .filter().groovy("request.body.get(0).get('foo') == 'bar'")
                         .to("mock:result");
