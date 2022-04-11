@@ -59,7 +59,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testAsyncWithConcurrentThreads() throws Exception {
+    public void testAsyncWithConcurrentThreads() {
         RunnableAssert ra = new RunnableAssert("foo") {
 
             @Override
@@ -99,7 +99,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testHeadersWithConcurrentThreads() throws Exception {
+    public void testHeadersWithConcurrentThreads() {
         RunnableAssert ra = new RunnableAssert("foo") {
 
             @Override
@@ -140,7 +140,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
@@ -195,7 +195,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
 
         @Override
         @SuppressWarnings("unchecked")
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             List<PingRequest> pingRequests = (List<PingRequest>) exchange.getIn().getBody();
             String userAgentName = (String) exchange.getIn().getHeader(GrpcConstants.GRPC_USER_AGENT_HEADER);
 

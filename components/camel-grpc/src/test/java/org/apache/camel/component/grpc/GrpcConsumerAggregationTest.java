@@ -73,7 +73,7 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSyncSyncMethodInSync() throws Exception {
+    public void testSyncSyncMethodInSync() {
         LOG.info("gRPC pingSyncSync method blocking test start");
         PingRequest pingRequest
                 = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
@@ -85,7 +85,7 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSyncAsyncMethodInSync() throws Exception {
+    public void testSyncAsyncMethodInSync() {
         LOG.info("gRPC pingSyncAsync method blocking test start");
         PingRequest pingRequest
                 = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
@@ -177,7 +177,7 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.grpc;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,7 +53,7 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
     }
 
     @AfterEach
-    public void stopGrpcServer() throws IOException {
+    public void stopGrpcServer() {
         if (grpcServer != null) {
             grpcServer.shutdown();
             LOG.info("gRPC server stopped");
@@ -115,7 +114,7 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
