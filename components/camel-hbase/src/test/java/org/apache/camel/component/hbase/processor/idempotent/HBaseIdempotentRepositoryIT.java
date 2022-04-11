@@ -55,7 +55,7 @@ public class HBaseIdempotentRepositoryIT extends CamelHBaseTestSupport {
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         // add first key
         assertTrue(repository.add(key01));
         assertTrue(repository.contains(key01));
@@ -69,7 +69,7 @@ public class HBaseIdempotentRepositoryIT extends CamelHBaseTestSupport {
     }
 
     @Test
-    public void testContains() throws Exception {
+    public void testContains() {
         assertFalse(repository.contains(key01));
 
         // add key and check again
@@ -78,7 +78,7 @@ public class HBaseIdempotentRepositoryIT extends CamelHBaseTestSupport {
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         // add key to remove
         assertTrue(repository.add(key01));
         assertTrue(repository.contains(key01));
@@ -93,7 +93,7 @@ public class HBaseIdempotentRepositoryIT extends CamelHBaseTestSupport {
     }
 
     @Test
-    public void testClear() throws Exception {
+    public void testClear() {
         // add key to remove
         assertTrue(repository.add(key01));
         assertTrue(repository.add(key02));
@@ -108,7 +108,7 @@ public class HBaseIdempotentRepositoryIT extends CamelHBaseTestSupport {
     }
 
     @Test
-    public void testConfirm() throws Exception {
+    public void testConfirm() {
         // it always return true
         assertTrue(repository.confirm(key01));
     }
@@ -128,10 +128,10 @@ public class HBaseIdempotentRepositoryIT extends CamelHBaseTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in")
                         .idempotentConsumer(header("messageId"), repository)
                         .to("mock:out");
