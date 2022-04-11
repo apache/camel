@@ -102,7 +102,11 @@ public abstract class XmlSignatureProcessor implements Processor {
         if (getConfiguration().getClearHeaders() != null && getConfiguration().getClearHeaders()) {
             Map<String, Object> headers = message.getHeaders();
             for (Field f : XmlSignatureConstants.class.getFields()) {
-                headers.remove(ObjectHelper.lookupConstantFieldValue(XmlSignatureConstants.class, f.getName()));
+                String key = ObjectHelper.lookupConstantFieldValue(XmlSignatureConstants.class, f.getName());
+                if (!XmlSignatureConstants.CHARSET_NAME.equals(key)) {
+                    // keep charset header
+                    headers.remove(key);
+                }
             }
         }
     }
