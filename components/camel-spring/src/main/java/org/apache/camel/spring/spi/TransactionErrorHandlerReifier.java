@@ -24,6 +24,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.builder.SpringTransactionErrorHandlerBuilder;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.TransactionErrorHandlerDefinition;
@@ -44,7 +45,10 @@ import static org.apache.camel.model.TransactedDefinition.PROPAGATION_REQUIRED;
 public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTransactionErrorHandlerDefinition> {
 
     static {
-        // register camel-spring as transaction error handler
+        // register camel-spring as transaction error handler (both builder and definition)
+        ErrorHandlerReifier.registerReifier(SpringTransactionErrorHandlerBuilder.class,
+                (route, errorHandlerFactory) -> new TransactionErrorHandlerReifier(
+                        route, (SpringTransactionErrorHandlerDefinition) errorHandlerFactory));
         ErrorHandlerReifier.registerReifier(SpringTransactionErrorHandlerDefinition.class,
                 (route, errorHandlerFactory) -> new TransactionErrorHandlerReifier(
                         route, (SpringTransactionErrorHandlerDefinition) errorHandlerFactory));
