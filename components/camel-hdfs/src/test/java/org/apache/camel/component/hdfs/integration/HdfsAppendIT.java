@@ -79,7 +79,7 @@ public class HdfsAppendIT extends CamelTestSupport {
     public void testAppend() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start1")
                         .toF("hdfs://%s:%d/tmp/test/test-camel-simple-write-file1?append=true&fileSystemType=HDFS",
                                 service.getHDFSHost(), service.getPort());
@@ -113,7 +113,7 @@ public class HdfsAppendIT extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start1").toF("hdfs://%s:%d/tmp/test-dynamic/?append=true&fileSystemType=HDFS",
                         service.getHDFSHost(), service.getPort());
             }

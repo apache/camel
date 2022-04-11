@@ -51,12 +51,12 @@ public class MockDataInputStream extends FSInputStream implements Seekable, Posi
     }
 
     @Override
-    public long getPos() throws IOException {
+    public long getPos() {
         return this.position;
     }
 
     @Override
-    public boolean seekToNewSource(long targetPos) throws IOException {
+    public boolean seekToNewSource(long targetPos) {
         return false;
     }
 

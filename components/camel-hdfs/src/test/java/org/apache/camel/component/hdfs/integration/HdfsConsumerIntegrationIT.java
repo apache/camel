@@ -126,7 +126,7 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
         MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.whenAnyExchangeReceived(new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 fileNames.add(exchange.getIn().getHeader(Exchange.FILE_NAME, String.class));
                 latch.countDown();
             }
