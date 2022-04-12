@@ -42,12 +42,12 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         server.expect().withPath("/apis/extensions/v1beta1/namespaces/test/deployments")
                 .andReturn(200, new DeploymentListBuilder().addNewItem().and().build()).once();
         List<Deployment> result = template.requestBody("direct:list", "", List.class);
@@ -75,7 +75,7 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void createAndDeleteDeployment() throws Exception {
+    public void createAndDeleteDeployment() {
         Deployment de1 = new DeploymentBuilder().withNewMetadata().withNamespace("test").withName("de1")
                 .withResourceVersion("1").withGeneration(2L).endMetadata().withNewSpec()
                 .withReplicas(0).endSpec().withNewStatus().withReplicas(1).withObservedGeneration(1L).endStatus().build();
@@ -97,7 +97,7 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void createScaleAndDeleteDeployment() throws Exception {
+    public void createScaleAndDeleteDeployment() {
         server.expect().withPath("/apis/extensions/v1beta1/namespaces/test/deployments/de1")
                 .andReturn(200, new DeploymentBuilder().withNewMetadata().withName("de1")
                         .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
@@ -122,10 +122,10 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list")
                         .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=listDeployments");
                 from("direct:listByLabels")

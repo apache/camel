@@ -43,12 +43,12 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         server.expect().withPath("/api/v1/configmaps")
                 .andReturn(200, new ConfigMapListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
@@ -74,7 +74,7 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void getConfigMapTestDefaultNamespace() throws Exception {
+    public void getConfigMapTestDefaultNamespace() {
         ObjectMeta meta = new ObjectMeta();
         meta.setName("cm1");
         server.expect().withPath("/api/v1/namespaces/test/configmaps/cm1")
@@ -90,7 +90,7 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void getConfigMapTestCustomNamespace() throws Exception {
+    public void getConfigMapTestCustomNamespace() {
         ObjectMeta meta = new ObjectMeta();
         meta.setName("cm1");
         server.expect().withPath("/api/v1/namespaces/custom/configmaps/cm1")
@@ -108,7 +108,7 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void createGetAndDeleteConfigMap() throws Exception {
+    public void createGetAndDeleteConfigMap() {
         ConfigMap cm1 = new ConfigMapBuilder().withNewMetadata().withName("cm1").withNamespace("test").and().build();
         server.expect().withPath("/api/v1/namespaces/test/configmaps/cm1").andReturn(200, cm1).once();
 
@@ -123,10 +123,10 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list")
                         .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=listConfigMaps");
                 from("direct:listConfigMapsByLabels")

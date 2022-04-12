@@ -107,10 +107,10 @@ public class KubernetesReplicationControllersConsumerIT extends KubernetesTestSu
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").toF(
                         "kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllers", host,
                         authToken);
@@ -134,7 +134,7 @@ public class KubernetesReplicationControllersConsumerIT extends KubernetesTestSu
 
     public class KubernetesProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Message in = exchange.getIn();
             log.info("Got event with body: " + in.getBody() + " and action "
                      + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));

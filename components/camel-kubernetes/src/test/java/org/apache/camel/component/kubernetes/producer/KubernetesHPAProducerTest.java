@@ -44,12 +44,12 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         server.expect().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers")
                 .andReturn(200, new HorizontalPodAutoscalerListBuilder().addNewItem().and().addNewItem().and().addNewItem()
                         .and().build())
@@ -68,7 +68,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
         Exchange ex = template.request("direct:listByLabels", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Map<String, String> labels = new HashMap<>();
                 labels.put("key1", "value1");
                 labels.put("key2", "value2");
@@ -82,7 +82,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void getHPATest() throws Exception {
+    public void getHPATest() {
         HorizontalPodAutoscaler hpa1
                 = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa1").withNamespace("test").and().build();
         HorizontalPodAutoscaler hpa2
@@ -95,7 +95,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
         Exchange ex = template.request("direct:getHPA", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_NAME, "hpa1");
             }
@@ -107,7 +107,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void deleteHPATest() throws Exception {
+    public void deleteHPATest() {
         HorizontalPodAutoscaler hpa1
                 = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa1").withNamespace("test").and().build();
         server.expect().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers/hpa1").andReturn(200, hpa1)
@@ -116,7 +116,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
         Exchange ex = template.request("direct:deleteHPA", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_NAME, "hpa1");
             }
@@ -128,10 +128,10 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPA");
                 from("direct:listByLabels")
                         .to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPAByLabels");

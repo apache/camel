@@ -44,12 +44,12 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends KubernetesTes
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         server.expect().withPath("/api/v1/namespaces/test/persistentvolumeclaims")
                 .andReturn(200,
                         new PersistentVolumeClaimListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
@@ -80,7 +80,7 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends KubernetesTes
     }
 
     @Test
-    public void createListAndDeletePersistentVolumeClaim() throws Exception {
+    public void createListAndDeletePersistentVolumeClaim() {
         ObjectMeta meta = new ObjectMeta();
         meta.setName("pvc1");
         server.expect().withPath("/api/v1/namespaces/test/persistentvolumeclaims/pvc1")
@@ -96,10 +96,10 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends KubernetesTes
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").to(
                         "kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesClaims");
                 from("direct:listByLabels").to(

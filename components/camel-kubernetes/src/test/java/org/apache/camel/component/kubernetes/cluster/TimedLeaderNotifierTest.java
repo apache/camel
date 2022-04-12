@@ -46,7 +46,7 @@ public class TimedLeaderNotifierTest {
     private volatile Set<String> currentMembers;
 
     @BeforeEach
-    public void init() throws Exception {
+    public void init() {
         this.context = new DefaultCamelContext();
         this.context.start();
 
@@ -61,7 +61,7 @@ public class TimedLeaderNotifierTest {
     }
 
     @AfterEach
-    public void destroy() throws Exception {
+    public void destroy() {
         this.notifier.stop();
         this.context.stop();
     }

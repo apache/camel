@@ -42,12 +42,12 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         server.expect().withPath("/api/v1/serviceaccounts")
                 .andReturn(200,
                         new ServiceAccountListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
@@ -76,7 +76,7 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
     }
 
     @Test
-    public void createAndDeleteServiceAccount() throws Exception {
+    public void createAndDeleteServiceAccount() {
         ServiceAccount pod1 = new ServiceAccountBuilder().withNewMetadata().withName("sa1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/serviceaccounts/sa1").andReturn(200, pod1).once();
@@ -91,10 +91,10 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list")
                         .to("kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=listServiceAccounts");
                 from("direct:listByLabels").to(

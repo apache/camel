@@ -92,7 +92,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
     @ParameterizedTest
     @EnumSource(LeaseResourceType.class)
-    public void testSimpleLeaderElection(LeaseResourceType type) throws Exception {
+    public void testSimpleLeaderElection(LeaseResourceType type) {
         LeaderRecorder mypod1 = addMember("mypod1", type);
         LeaderRecorder mypod2 = addMember("mypod2", type);
         context.start();
@@ -108,7 +108,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
     @ParameterizedTest
     @EnumSource(LeaseResourceType.class)
-    public void testMultipleMembersLeaderElection(LeaseResourceType type) throws Exception {
+    public void testMultipleMembersLeaderElection(LeaseResourceType type) {
         int number = 5;
         List<LeaderRecorder> members
                 = IntStream.range(0, number).mapToObj(i -> addMember("mypod" + i, type)).collect(Collectors.toList());
@@ -125,7 +125,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSimpleLeaderElectionWithExistingConfigMap() throws Exception {
+    public void testSimpleLeaderElectionWithExistingConfigMap() {
         this.configMapLockSimulator = new ConfigMapLockSimulator("leaders");
         configMapLockSimulator.setResource(new ConfigMapBuilder().withNewMetadata().withName("leaders").and().build(), true);
 
@@ -142,7 +142,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSimpleLeaderElectionWithExistingLeases() throws Exception {
+    public void testSimpleLeaderElectionWithExistingLeases() {
         LeaseLockSimulator simulator = new LeaseLockSimulator("leaders-mygroup");
         simulator.setResource(new LeaseBuilder()
                 .withNewMetadata().withName("leaders-mygroup")
@@ -164,7 +164,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
     @ParameterizedTest
     @EnumSource(LeaseResourceType.class)
-    public void testLeadershipLoss(LeaseResourceType type) throws Exception {
+    public void testLeadershipLoss(LeaseResourceType type) {
         LeaderRecorder mypod1 = addMember("mypod1", type);
         LeaderRecorder mypod2 = addMember("mypod2", type);
         context.start();
@@ -240,7 +240,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSharedConfigMap() throws Exception {
+    public void testSharedConfigMap() {
         LeaderRecorder a1 = addMember("a1", LeaseResourceType.ConfigMap);
         LeaderRecorder a2 = addMember("a2", LeaseResourceType.ConfigMap);
         LeaderRecorder b1 = addMember("b1", "app2", LeaseResourceType.ConfigMap);
@@ -276,8 +276,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
     @ParameterizedTest
     @MethodSource("rebalancingProvider")
-    public void testRebalancing(LeaseResourceType type, int pods, int partitions, int expectedPartitionsPerPod, int tolerance)
-            throws Exception {
+    public void testRebalancing(LeaseResourceType type, int pods, int partitions, int expectedPartitionsPerPod, int tolerance) {
         Map<String, List<LeaderRecorder>> recorders = createCluster(type, pods, partitions);
         context.start();
 

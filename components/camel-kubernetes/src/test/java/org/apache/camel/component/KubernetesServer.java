@@ -52,7 +52,7 @@ public class KubernetesServer implements BeforeEachCallback, AfterEachCallback {
     }
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) {
         this.mock = this.crudMode
                 ? new KubernetesMockServer(
                         new Context(), new MockWebServer(), new HashMap(), new KubernetesCrudDispatcher(), true)
@@ -62,7 +62,7 @@ public class KubernetesServer implements BeforeEachCallback, AfterEachCallback {
     }
 
     @Override
-    public void afterEach(ExtensionContext context) throws Exception {
+    public void afterEach(ExtensionContext context) {
         this.mock.destroy();
         this.client.close();
     }

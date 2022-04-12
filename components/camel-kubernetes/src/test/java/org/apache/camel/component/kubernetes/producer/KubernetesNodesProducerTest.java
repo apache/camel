@@ -45,12 +45,12 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         server.expect().withPath("/api/v1/nodes").andReturn(200, new NodeListBuilder().addNewItem().and().build()).once();
         List<Node> result = template.requestBody("direct:list", "", List.class);
 
@@ -74,7 +74,7 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void createNodeTest() throws Exception {
+    public void createNodeTest() {
         ObjectMeta meta = new ObjectMeta();
         meta.setName("test");
         server.expect().withPath("/api/v1/nodes").andReturn(200, new NodeBuilder().withMetadata(meta).build()).once();
@@ -94,7 +94,7 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void deleteNode() throws Exception {
+    public void deleteNode() {
         Node node1 = new NodeBuilder().withNewMetadata().withName("node1").withNamespace("test").and().build();
         server.expect().withPath("/api/v1/nodes/node1").andReturn(200, node1).once();
 
@@ -107,10 +107,10 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodes");
                 from("direct:listByLabels")
                         .toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels");

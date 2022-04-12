@@ -44,12 +44,12 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         server.expect().withPath("/api/v1/services")
                 .andReturn(200, new ServiceListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
@@ -74,7 +74,7 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void getServiceTest() throws Exception {
+    public void getServiceTest() {
         Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/services/se1").andReturn(200, se1).once();
@@ -89,7 +89,7 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void createAndDeleteService() throws Exception {
+    public void createAndDeleteService() {
         Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/services/se1").andReturn(200, se1).once();
@@ -105,10 +105,10 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServices");
                 from("direct:listByLabels")
                         .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServicesByLabels");

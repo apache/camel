@@ -42,12 +42,12 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         server.expect().withPath("/api/v1/pods")
                 .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         server.expect().withPath("/api/v1/namespaces/test/pods")
@@ -79,7 +79,7 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void getPodTest() throws Exception {
+    public void getPodTest() {
         Pod pod1 = new PodBuilder().withNewMetadata().withName("pod1").withNamespace("test").and().build();
         Pod pod2 = new PodBuilder().withNewMetadata().withName("pod2").withNamespace("ns1").and().build();
 
@@ -96,7 +96,7 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void deletePod() throws Exception {
+    public void deletePod() {
         Pod pod1 = new PodBuilder().withNewMetadata().withName("pod1").withNamespace("test").and().build();
         server.expect().withPath("/api/v1/namespaces/test/pods/pod1").andReturn(200, pod1).once();
 
@@ -111,10 +111,10 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=listPods");
                 from("direct:listByLabels")
                         .to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=listPodsByLabels");
