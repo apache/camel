@@ -50,7 +50,7 @@ public class RestSwaggerEndpointTest {
     URI endpointUri = URI.create("endpoint.json");
 
     @Test
-    public void shouldComplainForUnknownOperations() throws Exception {
+    public void shouldComplainForUnknownOperations() {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
@@ -265,7 +265,7 @@ public class RestSwaggerEndpointTest {
     }
 
     @Test
-    public void shouldHonourComponentSpecificationPathProperty() throws Exception {
+    public void shouldHonourComponentSpecificationPathProperty() {
         final RestSwaggerComponent component = new RestSwaggerComponent();
         component.setSpecificationUri(componentJsonUri);
 
@@ -277,7 +277,7 @@ public class RestSwaggerEndpointTest {
     }
 
     @Test
-    public void shouldHonourEndpointUriPathSpecificationPathProperty() throws Exception {
+    public void shouldHonourEndpointUriPathSpecificationPathProperty() {
         final RestSwaggerComponent component = new RestSwaggerComponent();
         component.setSpecificationUri(componentJsonUri);
 
@@ -380,7 +380,7 @@ public class RestSwaggerEndpointTest {
     }
 
     @Test
-    public void shouldRaiseExceptionsForMissingSpecifications() throws IOException {
+    public void shouldRaiseExceptionsForMissingSpecifications() {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
@@ -423,7 +423,7 @@ public class RestSwaggerEndpointTest {
     }
 
     @Test
-    public void shouldUseDefaultSpecificationUri() throws Exception {
+    public void shouldUseDefaultSpecificationUri() {
         final RestSwaggerComponent component = new RestSwaggerComponent();
 
         final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint(
@@ -434,7 +434,7 @@ public class RestSwaggerEndpointTest {
     }
 
     @Test
-    public void shouldUseDefaultSpecificationUriEvenIfHashIsPresent() throws Exception {
+    public void shouldUseDefaultSpecificationUriEvenIfHashIsPresent() {
         final RestSwaggerComponent component = new RestSwaggerComponent();
 
         final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint(
