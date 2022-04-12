@@ -43,7 +43,7 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
     protected MockEndpoint resultBar;
 
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         BlobStore blobStore = ContextBuilder.newBuilder("transient").credentials("id", "credential")
                 .buildView(BlobStoreContext.class).getBlobStore();
         blobStore.createContainerInLocation(null, "foo");
@@ -77,37 +77,37 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testBlobStoreCount() throws InterruptedException {
+    public void testBlobStoreCount() {
         Long count = template.requestBody("direct:count", "Some message", Long.class);
         assertEquals(Long.valueOf(1), count);
     }
 
     @Test
-    public void testBlobStoreRemove() throws InterruptedException {
+    public void testBlobStoreRemove() {
         Long count = template.requestBody("direct:remove", "Some message", Long.class);
         assertEquals(Long.valueOf(0), count);
     }
 
     @Test
-    public void testBlobStoreClear() throws InterruptedException {
+    public void testBlobStoreClear() {
         Long count = template.requestBody("direct:clear", "Some message", Long.class);
         assertEquals(Long.valueOf(0), count);
     }
 
     @Test
-    public void testBlobStoreDelete() throws InterruptedException {
+    public void testBlobStoreDelete() {
         Boolean result = template.requestBody("direct:delete", "Some message", Boolean.class);
         assertEquals(false, result);
     }
 
     @Test
-    public void testBlobStoreContainerExists() throws InterruptedException {
+    public void testBlobStoreContainerExists() {
         Boolean result = template.requestBody("direct:exists", "Some message", Boolean.class);
         assertEquals(true, result);
     }
 
     @Test
-    public void testBlobStoreRemoveBlobs() throws InterruptedException {
+    public void testBlobStoreRemoveBlobs() {
         Boolean result = template.requestBody("direct:exists", "Some message", Boolean.class);
         assertEquals(true, result);
         List blobsToRemove = new ArrayList<>();

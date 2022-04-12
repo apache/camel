@@ -59,7 +59,7 @@ public class JcloudsMultipleBlobStoreTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         blobStore1.createContainerInLocation(null, TEST_CONTAINER);
         blobStore2.createContainerInLocation(null, TEST_CONTAINER);
         ((JcloudsComponent) context.getComponent("jclouds")).setBlobStores(Lists.newArrayList(blobStore1, blobStore2));

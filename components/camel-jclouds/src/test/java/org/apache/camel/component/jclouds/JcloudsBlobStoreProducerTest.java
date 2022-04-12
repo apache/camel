@@ -61,7 +61,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBlobStorePutAndGet() throws InterruptedException {
+    public void testBlobStorePutAndGet() {
         String message = "Some message";
         template.sendBody("direct:put-and-get", message);
         Object result = template.requestBodyAndHeader("direct:put-and-get", null, JcloudsConstants.OPERATION,
@@ -70,7 +70,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBlobStorePutWithStreamAndGet() throws InterruptedException, TransformerException {
+    public void testBlobStorePutWithStreamAndGet() throws TransformerException {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(MESSAGE.getBytes());
         Exchange exchange = new DefaultExchange(context);
         StreamCache streamCache
@@ -82,7 +82,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBlobStorePutAndCount() throws InterruptedException {
+    public void testBlobStorePutAndCount() {
         String message = "Some message";
         template.sendBody("direct:put-and-count", message);
         Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
@@ -91,7 +91,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBlobStorePutAndRemove() throws InterruptedException {
+    public void testBlobStorePutAndRemove() {
         String message = "Some message";
         template.sendBody("direct:put-and-remove", message);
         template.requestBodyAndHeader("direct:put-and-remove", null, JcloudsConstants.OPERATION, JcloudsConstants.REMOVE_BLOB);
@@ -101,7 +101,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBlobStorePutAndClear() throws InterruptedException {
+    public void testBlobStorePutAndClear() {
         String message = "Some message";
         template.sendBody("direct:put-and-clear", message);
         Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
@@ -115,7 +115,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBlobStorePutAndDeleteContainer() throws InterruptedException {
+    public void testBlobStorePutAndDeleteContainer() {
         String message = "Some message";
         template.sendBody("direct:put-and-delete-container", message);
         Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
@@ -126,7 +126,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testCheckContainerExists() throws InterruptedException {
+    public void testCheckContainerExists() {
         Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
                 JcloudsConstants.CONTAINER_EXISTS, Boolean.class);
         assertEquals(true, result);
@@ -138,7 +138,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRemoveBlobs() throws InterruptedException {
+    public void testRemoveBlobs() {
         template.sendBody("direct:put", "test message");
         Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
                 JcloudsConstants.COUNT_BLOBS, Long.class);
@@ -156,7 +156,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         blobStore.createContainerInLocation(null, TEST_CONTAINER);
         ((JcloudsComponent) context.getComponent("jclouds")).setBlobStores(Lists.newArrayList(blobStore));
 

@@ -92,7 +92,7 @@ public class JcloudsBlobStoreConsumerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         blobStore.createContainerInLocation(null, TEST_CONTAINER);
         blobStore.createContainerInLocation(null, TEST_CONTAINER_WITH_DIR);
         ((JcloudsComponent) context.getComponent("jclouds")).setBlobStores(Lists.newArrayList(blobStore));
