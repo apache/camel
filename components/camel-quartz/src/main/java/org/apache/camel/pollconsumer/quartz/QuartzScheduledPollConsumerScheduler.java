@@ -83,13 +83,11 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
 
     @Override
     public void unscheduleTask() {
-        if (trigger != null) {
-            LOG.debug("Unscheduling trigger: {}", trigger.getKey());
-            try {
-                quartzScheduler.unscheduleJob(trigger.getKey());
-            } catch (SchedulerException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
+        LOG.debug("Unscheduling trigger: {}", trigger.getKey());
+        try {
+            unscheduleJob();
+        } catch (SchedulerException e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -264,6 +262,14 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
 
     @Override
     protected void doStop() throws Exception {
+        unscheduleJob();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+    }
+
+    private void unscheduleJob() throws SchedulerException {
         if (trigger != null && deleteJob) {
             boolean isClustered = quartzScheduler.getMetaData().isJobStoreClustered();
             if (!quartzScheduler.isShutdown() && !isClustered) {
@@ -271,10 +277,6 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
                 quartzScheduler.unscheduleJob(trigger.getKey());
             }
         }
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
     }
 
     private void checkTriggerIsNonConflicting(Trigger trigger) {
