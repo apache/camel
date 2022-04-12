@@ -57,10 +57,10 @@ public class MyBatisSelectOneWithInputAndOutputHeaderTest extends MyBatisTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
                         .to("mybatis:selectAccountById?statementType=SelectOne&inputHeader=" + TEST_CASE_INPUT_HEADER_NAME

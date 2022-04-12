@@ -75,9 +75,9 @@ public class MyBatisQueueTest extends MyBatisTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("mybatis:selectUnprocessedAccounts?onConsume=consumeAccount").to("mock:results");
                 // END SNIPPET: e1

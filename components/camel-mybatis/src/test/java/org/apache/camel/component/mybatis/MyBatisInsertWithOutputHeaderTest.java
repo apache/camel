@@ -51,10 +51,10 @@ public class MyBatisInsertWithOutputHeaderTest extends MyBatisTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mybatis:insertAccount?statementType=Insert&outputHeader=" + TEST_CASE_HEADER_NAME)
                         .to("mock:result");

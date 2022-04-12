@@ -103,10 +103,10 @@ public class MyBatisShutdownAllTasksTest extends MyBatisTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("mybatis:selectAllAccounts").noAutoStartup().routeId("route1")
                         // let it complete all tasks
                         .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
