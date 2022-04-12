@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MvelComponentTest extends CamelTestSupport {
 
     @Test
-    public void testMvel() throws Exception {
+    public void testMvel() {
         Exchange exchange = template.request("direct:a", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(7);
             }
         });
@@ -42,10 +42,10 @@ public class MvelComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMvelTemplate() throws Exception {
+    public void testMvelTemplate() {
         Exchange exchange = template.request("direct:b", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(7);
                 exchange.getIn().setHeader(MvelConstants.MVEL_TEMPLATE,
                         "{ \"text\": \"@{\"The result is \" + request.body * 3}\" }");
@@ -56,7 +56,7 @@ public class MvelComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMvelUri() throws Exception {
+    public void testMvelUri() {
         Exchange exchange = template.request("direct:b", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
