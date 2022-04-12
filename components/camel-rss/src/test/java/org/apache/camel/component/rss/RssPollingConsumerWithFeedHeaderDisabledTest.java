@@ -41,9 +41,9 @@ public class RssPollingConsumerWithFeedHeaderDisabledTest extends CamelTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=500&feedHeader=false").to("mock:result");
             }
         };

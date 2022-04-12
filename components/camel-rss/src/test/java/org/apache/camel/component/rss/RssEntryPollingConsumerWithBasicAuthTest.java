@@ -33,10 +33,10 @@ public class RssEntryPollingConsumerWithBasicAuthTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("rss:http://localhost:" + JettyTestServer.getInstance().port
                      + "/?splitEntries=true&sortEntries=true&delay=100&username=camel&password=camelPass").to("mock:result");
             }
