@@ -50,10 +50,10 @@ public class JGroupsComponentWithChannelPropertiesTest extends CamelTestSupport 
     // Routes fixture
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JGroupsComponent defaultComponent = new JGroupsComponent();
                 defaultComponent.setChannel(defaultComponentChannel);
                 context().addComponent("my-default-jgroups", defaultComponent);
@@ -99,7 +99,7 @@ public class JGroupsComponentWithChannelPropertiesTest extends CamelTestSupport 
     }
 
     @Test
-    public void shouldConfigureChannelWithProperties() throws Exception {
+    public void shouldConfigureChannelWithProperties() {
         // When
         JGroupsEndpoint endpoint = getMandatoryEndpoint(CONFIGURED_ENDPOINT_URI, JGroupsEndpoint.class);
 
@@ -108,7 +108,7 @@ public class JGroupsComponentWithChannelPropertiesTest extends CamelTestSupport 
     }
 
     @Test
-    public void shouldCreateChannel() throws Exception {
+    public void shouldCreateChannel() {
         // When
         JGroupsEndpoint endpoint = getMandatoryEndpoint("my-default-jgroups:" + CLUSTER_NAME, JGroupsEndpoint.class);
         JGroupsComponent component = (JGroupsComponent) endpoint.getComponent();

@@ -56,10 +56,10 @@ public class JGroupsSharedChannelTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(DIRECT_PRODUCER).routeId(PRODUCER_ROUTE).to(JGROUPS_SHARED_CHANNEL);
 
                 from(JGROUPS_SHARED_CHANNEL).routeId(CONSUMER_ROUTE).to(MOCK_CONSUMER);
