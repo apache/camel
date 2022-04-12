@@ -65,7 +65,7 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration()
                         .port(getServerPort());
             }
