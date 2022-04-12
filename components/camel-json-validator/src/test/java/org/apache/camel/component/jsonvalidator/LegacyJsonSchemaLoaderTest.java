@@ -54,7 +54,7 @@ public class LegacyJsonSchemaLoaderTest extends CamelTestSupport {
                 "json-validator:org/apache/camel/component/jsonvalidator/schema.json", JsonValidatorEndpoint.class);
         endpoint.setSchemaLoader(new JsonSchemaLoader() {
             @Override
-            public JsonSchema createSchema(CamelContext camelContext, InputStream inputStream) throws Exception {
+            public JsonSchema createSchema(CamelContext camelContext, InputStream inputStream) {
                 // ignore the requested schema and always return Order.json schema ... the validation will only
                 // succeed if it's done with this schema
                 JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
@@ -65,10 +65,10 @@ public class LegacyJsonSchemaLoaderTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json")
                         .to("mock:end");
