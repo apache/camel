@@ -130,7 +130,7 @@ public class NitriteConsumerRepositoryTest extends AbstractNitriteTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 fromF("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName())
