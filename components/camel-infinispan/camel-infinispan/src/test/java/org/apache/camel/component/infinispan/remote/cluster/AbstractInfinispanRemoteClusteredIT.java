@@ -150,7 +150,7 @@ public class AbstractInfinispanRemoteClusteredIT {
         public RouteBuilder getRouteBuilder(RunnerEnv runnerEnv) {
             return new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     fromF("timer:%s?delay=1000&period=1000&repeatCount=%d", runnerEnv.id, runnerEnv.events)
                             .routeId("route-" + runnerEnv.id)
                             .log("From id=${routeId} counter=${header.CamelTimerCounter}")
@@ -171,7 +171,7 @@ public class AbstractInfinispanRemoteClusteredIT {
         public RouteBuilder getRouteBuilder(RunnerEnv runnerEnv) {
             return new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     this.getContext().addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace(viewName));
 
                     fromF("timer:%s?delay=1000&period=1000&repeatCount=%d", runnerEnv.id, runnerEnv.events)

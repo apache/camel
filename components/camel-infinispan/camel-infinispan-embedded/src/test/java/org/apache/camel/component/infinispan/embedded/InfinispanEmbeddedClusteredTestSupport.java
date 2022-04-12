@@ -50,7 +50,7 @@ public class InfinispanEmbeddedClusteredTestSupport extends CamelTestSupport {
         }
 
         @Override
-        public void createCacheManagers() throws Throwable {
+        public void createCacheManagers() {
             builderUsed = new ConfigurationBuilder();
             builderUsed.clustering().cacheMode(cacheMode);
             if (cacheMode.isDistributed()) {
