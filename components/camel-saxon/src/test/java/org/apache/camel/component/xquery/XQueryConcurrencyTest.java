@@ -69,9 +69,9 @@ public class XQueryConcurrencyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // no retry as we want every failure to submerge
                 errorHandler(noErrorHandler());
 

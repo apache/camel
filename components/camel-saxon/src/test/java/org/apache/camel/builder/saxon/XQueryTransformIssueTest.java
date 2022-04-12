@@ -38,10 +38,10 @@ public class XQueryTransformIssueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .transform().xquery("concat(/Envelope/Body/getEmployee/EmpId/text(),\"TestConcat\")", String.class)
                         .to("log:info")

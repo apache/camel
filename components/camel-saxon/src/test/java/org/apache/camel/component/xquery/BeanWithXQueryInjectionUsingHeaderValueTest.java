@@ -27,7 +27,7 @@ public class BeanWithXQueryInjectionUsingHeaderValueTest extends CamelTestSuppor
     protected MyBean myBean = new MyBean();
 
     @Test
-    public void testConstantXPathHeaders() throws Exception {
+    public void testConstantXPathHeaders() {
         template.sendBodyAndHeader("bean:myBean", "<response>OK</response>",
                 "invoiceDetails", "<invoice><person><name>Alan</name><date>26/08/2012</date></person></invoice>");
 
@@ -37,7 +37,7 @@ public class BeanWithXQueryInjectionUsingHeaderValueTest extends CamelTestSuppor
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("myBean", myBean);
     }
 
