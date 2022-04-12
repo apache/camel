@@ -37,7 +37,7 @@ public class RestOpenApiV3SecuritySchemesTest extends CamelTestSupport {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
@@ -116,7 +116,7 @@ public class RestOpenApiV3SecuritySchemesTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSecuritySchemesV2() throws Exception {
+    public void testSecuritySchemesV2() {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[] { "http" });

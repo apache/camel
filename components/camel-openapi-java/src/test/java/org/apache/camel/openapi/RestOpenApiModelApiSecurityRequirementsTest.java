@@ -36,7 +36,7 @@ public class RestOpenApiModelApiSecurityRequirementsTest extends CamelTestSuppor
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
