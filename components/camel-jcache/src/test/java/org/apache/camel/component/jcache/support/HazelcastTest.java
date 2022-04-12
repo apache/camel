@@ -35,13 +35,13 @@ public @interface HazelcastTest {
 
     class HazelcastTestExtension implements BeforeAllCallback, AfterAllCallback {
         @Override
-        public void beforeAll(ExtensionContext context) throws Exception {
+        public void beforeAll(ExtensionContext context) {
             System.setProperty("hazelcast.named.jcache.instance", "false");
             System.setProperty("hazelcast.jcache.provider.type", "member");
         }
 
         @Override
-        public void afterAll(ExtensionContext context) throws Exception {
+        public void afterAll(ExtensionContext context) {
         }
 
     }

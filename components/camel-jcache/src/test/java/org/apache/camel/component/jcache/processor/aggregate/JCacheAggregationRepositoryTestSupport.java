@@ -23,7 +23,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 @HazelcastTest
 class JCacheAggregationRepositoryTestSupport extends CamelTestSupport {
 
-    protected JCacheAggregationRepository createRepository(boolean optimistic) throws Exception {
+    protected JCacheAggregationRepository createRepository(boolean optimistic) {
         JCacheAggregationRepository repository = new JCacheAggregationRepository();
         repository.setCamelContext(context);
         repository.setConfiguration(new JCacheConfiguration("aggregation-repository"));

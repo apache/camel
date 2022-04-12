@@ -38,7 +38,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
     //Basic test to verify value gets cached and route is not executed for the second time
     @Test
-    public void testValueGetsCached() throws Exception {
+    public void testValueGetsCached() {
         final String key = randomString();
         MockEndpoint mock = getMockEndpoint("mock:value");
         Cache cache = lookupCache("simple");
@@ -63,7 +63,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
     //Verify policy applies only on the section of the route wrapped
     @Test
-    public void testPartial() throws Exception {
+    public void testPartial() {
         final String key = randomString();
         MockEndpoint mock = getMockEndpoint("mock:value");
         MockEndpoint mockUnwrapped = getMockEndpoint("mock:unwrapped");
@@ -91,7 +91,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
     //Cache is closed
     @Test
-    public void testClosedCache() throws Exception {
+    public void testClosedCache() {
         final String key = randomString();
         MockEndpoint mock = getMockEndpoint("mock:value");
 
@@ -113,7 +113,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
     //Key is already stored
     @Test
-    public void testValueWasCached() throws Exception {
+    public void testValueWasCached() {
         final String key = randomString();
         final String value = "test";
         MockEndpoint mock = getMockEndpoint("mock:value");
@@ -133,7 +133,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
     //Null final body
     @Test
-    public void testNullResult() throws Exception {
+    public void testNullResult() {
         final String key = randomString();
         MockEndpoint mock = getMockEndpoint("mock:value");
         mock.whenAnyExchangeReceived(e -> e.getMessage().setBody(null));
@@ -151,7 +151,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
     //Use a key expression ${header.mykey}
     @Test
-    public void testKeyExpression() throws Exception {
+    public void testKeyExpression() {
         final String key = randomString();
         final String body = randomString();
         MockEndpoint mock = getMockEndpoint("mock:value");
@@ -177,7 +177,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
     //Key is null, ${header.mykey} is not set
     @Test
-    public void testKeyNull() throws Exception {
+    public void testKeyNull() {
         final String key = randomString();
         String body = randomString();
         MockEndpoint mock = getMockEndpoint("mock:value");
@@ -208,7 +208,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
     //Value is cached after handled exception
     @Test
-    public void testHandledException() throws Exception {
+    public void testHandledException() {
         final String key = randomString();
         MockEndpoint mock = getMockEndpoint("mock:value");
         Cache cache = lookupCache("simple");
@@ -225,7 +225,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
     //Nothing is cached after an unhandled exception
     @Test
-    public void testException() throws Exception {
+    public void testException() {
         final String key = randomString();
         MockEndpoint mock = getMockEndpoint("mock:value");
         mock.whenAnyExchangeReceived(e -> {
@@ -246,7 +246,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
