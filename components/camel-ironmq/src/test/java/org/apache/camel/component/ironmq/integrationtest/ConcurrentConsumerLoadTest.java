@@ -94,9 +94,9 @@ public class ConcurrentConsumerLoadTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(ironMQEndpoint).id("iron").autoStartup(false).to("mock:result");
                 from(sedaEndpoint).to(ironMQEndpoint).to("mock:iron");
             }

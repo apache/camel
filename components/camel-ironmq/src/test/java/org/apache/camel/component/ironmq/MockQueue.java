@@ -45,7 +45,7 @@ public class MockQueue extends Queue {
     }
 
     @Override
-    public String push(String msg, long delay) throws IOException {
+    public String push(String msg, long delay) {
         String randint = new BigInteger(24 * 8, new SecureRandom()).toString(16);
         Message message = new Message();
         message.setBody(msg);
@@ -57,7 +57,7 @@ public class MockQueue extends Queue {
     }
 
     @Override
-    public Ids pushMessages(String[] msg, long delay) throws IOException {
+    public Ids pushMessages(String[] msg, long delay) {
         for (String messageName : msg) {
             Message message = new Message();
             message.setBody(messageName);

@@ -49,7 +49,7 @@ public class IronMQComponentTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         final String ironMQEndpoint = "ironmq:testqueue?projectId=" + projectId + "&token=" + token;
         return new RouteBuilder() {
             public void configure() {

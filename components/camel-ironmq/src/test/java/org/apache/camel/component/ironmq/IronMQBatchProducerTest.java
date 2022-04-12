@@ -52,7 +52,7 @@ public class IronMQBatchProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProduceBatchWithIllegalPayload() throws Exception {
+    public void testProduceBatchWithIllegalPayload() {
         final List<String> body = Arrays.asList("foo", "bar");
 
         assertThrows(CamelExecutionException.class,
@@ -74,7 +74,7 @@ public class IronMQBatchProducerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
