@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jira.producer;
 
-import java.io.IOException;
 import java.net.URI;
 
 import com.atlassian.jira.rest.client.api.IssueRestClient;
@@ -114,7 +113,7 @@ public class TransitionIssueProducerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws IOException {
+            public void configure() {
                 from("direct:start")
                         .setHeader(ISSUE_KEY, () -> KEY + "-1")
                         .setHeader(ISSUE_TRANSITION_ID, () -> 31)
