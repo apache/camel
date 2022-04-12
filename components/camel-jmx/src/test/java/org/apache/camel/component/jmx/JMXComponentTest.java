@@ -37,7 +37,7 @@ public class JMXComponentTest {
     DefaultCamelContext context = new DefaultCamelContext();
 
     @Test
-    public void withObjectProperties() throws Exception {
+    public void withObjectProperties() {
         JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.propOne=prop1&key.propTwo=prop2",
                 JMXEndpoint.class);
         assertNotNull(ep);
@@ -51,7 +51,7 @@ public class JMXComponentTest {
     }
 
     @Test
-    public void withObjectName() throws Exception {
+    public void withObjectName() {
         JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName", JMXEndpoint.class);
         assertNotNull(ep);
 
@@ -62,7 +62,7 @@ public class JMXComponentTest {
     }
 
     @Test
-    public void withObjectNameAndObjectProperties() throws Exception {
+    public void withObjectNameAndObjectProperties() {
         try {
             context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName&key.propOne=prop1");
             fail("expected exception");
@@ -72,7 +72,7 @@ public class JMXComponentTest {
     }
 
     @Test
-    public void withoutDomain() throws Exception {
+    public void withoutDomain() {
         try {
             context.getEndpoint("jmx:platform?objectName=theObjectName");
             fail("missing domain should have caused failure");
@@ -82,7 +82,7 @@ public class JMXComponentTest {
     }
 
     @Test
-    public void withoutObjectNameAndObjectProperties() throws Exception {
+    public void withoutObjectNameAndObjectProperties() {
         try {
             context.getEndpoint("jmx:platform?objectDomain=theObjectDomain");
             fail("missing name should have caused failure");

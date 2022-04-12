@@ -28,50 +28,50 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JMXUriBuilderTest {
 
     @Test
-    public void defaultsToPlatform() throws Exception {
+    public void defaultsToPlatform() {
         assertEquals("jmx:platform", new JMXUriBuilder().toString());
     }
 
     @Test
-    public void remote() throws Exception {
+    public void remote() {
         assertEquals("jmx:service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi",
                 new JMXUriBuilder("service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi").toString());
     }
 
     @Test
-    public void withServerName() throws Exception {
+    public void withServerName() {
         assertEquals("jmx:service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi",
                 new JMXUriBuilder().withServerName("service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi").toString());
     }
 
     @Test
-    public void format() throws Exception {
+    public void format() {
         assertEquals("jmx:platform?format=raw", new JMXUriBuilder().withFormat("raw").toString());
     }
 
     @Test
-    public void credentials() throws Exception {
+    public void credentials() {
         assertEquals("jmx:platform?user=me&password=pass", new JMXUriBuilder().withUser("me").withPassword("pass").toString());
     }
 
     @Test
-    public void objectName() throws Exception {
+    public void objectName() {
         assertEquals("jmx:platform?objectDomain=myDomain&objectName=oname",
                 new JMXUriBuilder().withObjectDomain("myDomain").withObjectName("oname").toString());
     }
 
     @Test
-    public void notificationFilter() throws Exception {
+    public void notificationFilter() {
         assertEquals("jmx:platform?notificationFilter=#foo", new JMXUriBuilder().withNotificationFilter("#foo").toString());
     }
 
     @Test
-    public void handback() throws Exception {
+    public void handback() {
         assertEquals("jmx:platform?handback=#hb", new JMXUriBuilder().withHandback("#hb").toString());
     }
 
     @Test
-    public void objectProperties() throws Exception {
+    public void objectProperties() {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put("one", "1");
         map.put("two", "2");
@@ -79,12 +79,12 @@ public class JMXUriBuilderTest {
     }
 
     @Test
-    public void withObjectPropertiesReference() throws Exception {
+    public void withObjectPropertiesReference() {
         assertEquals("jmx:platform?objectProperties=#op", new JMXUriBuilder().withObjectPropertiesReference("#op").toString());
     }
 
     @Test
-    public void withObjectPropertiesReferenceSansHashmark() throws Exception {
+    public void withObjectPropertiesReferenceSansHashmark() {
         assertEquals("jmx:platform?objectProperties=#op", new JMXUriBuilder().withObjectPropertiesReference("op").toString());
     }
 }

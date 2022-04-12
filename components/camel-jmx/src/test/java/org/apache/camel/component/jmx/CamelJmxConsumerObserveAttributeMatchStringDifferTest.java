@@ -56,10 +56,10 @@ public class CamelJmxConsumerObserveAttributeMatchStringDifferTest extends Camel
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String id = getContext().getName();
 
                 fromF("jmx:platform?objectDomain=org.apache.camel&key.context=%s&key.type=routes&key.name=\"foo\"&observedAttribute=Tracing&stringToCompare=true&notifyDiffer=true",
