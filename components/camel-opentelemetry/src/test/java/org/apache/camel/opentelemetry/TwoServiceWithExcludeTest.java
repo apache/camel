@@ -39,17 +39,17 @@ public class TwoServiceWithExcludeTest extends CamelOpenTelemetryTestSupport {
     }
 
     @Test
-    public void testRoute() throws Exception {
+    public void testRoute() {
         template.requestBody("direct:ServiceA", "Hello");
 
         verify();
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:ServiceA")
                         .log("ServiceA has been called")
                         .delay(simple("${random(1000,2000)}"))

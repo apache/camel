@@ -37,17 +37,17 @@ public class MulticastRouteTest extends CamelOpenTelemetryTestSupport {
     }
 
     @Test
-    public void testRoute() throws Exception {
+    public void testRoute() {
         template.requestBody("direct:start", "Hello");
 
         verify();
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("seda:a").routeId("start");
 
                 from("seda:a").routeId("a")
