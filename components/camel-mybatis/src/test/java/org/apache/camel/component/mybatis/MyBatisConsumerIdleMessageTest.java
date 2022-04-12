@@ -44,10 +44,10 @@ public class MyBatisConsumerIdleMessageTest extends MyBatisTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("mybatis:selectAllAccounts?statementType=SelectList"
                      + "&sendEmptyMessageWhenIdle=true")
                              .to("mock:result");

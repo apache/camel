@@ -45,10 +45,10 @@ public class MyBatisSelectOneExchangeInOutWithOutputHeaderTest extends MyBatisTe
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
                         .setExchangePattern(ExchangePattern.InOut)
