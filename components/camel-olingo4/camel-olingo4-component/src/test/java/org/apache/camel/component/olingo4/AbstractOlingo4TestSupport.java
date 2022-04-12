@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpHost;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -69,7 +68,7 @@ public class AbstractOlingo4TestSupport extends CamelTestSupport {
      * generated postfix
      */
     @SuppressWarnings("deprecation")
-    protected String getRealServiceUrl(String baseUrl) throws ClientProtocolException, IOException {
+    protected String getRealServiceUrl(String baseUrl) throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(baseUrl);
         HttpContext httpContext = new BasicHttpContext();

@@ -34,7 +34,7 @@ public class Olingo4RouteTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRead() throws Exception {
+    public void testRead() {
         // Read entity set of the People object
         final ClientEntitySet entities = (ClientEntitySet) requestBody("direct:readentities", null);
         assertNotNull(entities);
@@ -42,7 +42,7 @@ public class Olingo4RouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:readentities").to("olingo4://read/People?serviceUri=" + TEST_SERVICE_BASE_URL);
