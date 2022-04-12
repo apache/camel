@@ -61,12 +61,12 @@ public class HttpMethodRestrictTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("jetty://http://localhost:{{port}}/methodRestrict?httpMethodRestrict=POST").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Message in = exchange.getIn();
                         String request = in.getBody(String.class);
                         exchange.getMessage().setBody(request + " response");

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class RestJettyAcceptTest extends BaseJettyTest {
 
     @Test
-    public void testJettyProducerNoAccept() throws Exception {
+    public void testJettyProducerNoAccept() {
         String out = fluentTemplate.withHeader(Exchange.HTTP_METHOD, "post").withBody("{ \"name\": \"Donald Duck\" }")
                 .to("http://localhost:" + getPort() + "/users/123/update")
                 .request(String.class);
@@ -39,7 +39,7 @@ public class RestJettyAcceptTest extends BaseJettyTest {
     }
 
     @Test
-    public void testJettyProducerAcceptValid() throws Exception {
+    public void testJettyProducerAcceptValid() {
         String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader("Accept", "application/json").withHeader(Exchange.HTTP_METHOD, "post")
                 .withBody("{ \"name\": \"Donald Duck\" }").to("http://localhost:" + getPort() + "/users/123/update")
@@ -49,7 +49,7 @@ public class RestJettyAcceptTest extends BaseJettyTest {
     }
 
     @Test
-    public void testJettyProducerAcceptInvalid() throws Exception {
+    public void testJettyProducerAcceptInvalid() {
         fluentTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader("Accept", "application/xml")
                 .withHeader(Exchange.HTTP_METHOD, "post")
@@ -65,10 +65,10 @@ public class RestJettyAcceptTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use jetty on localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort())
                         // turn on client request validation

@@ -42,7 +42,7 @@ public class JettyRouteWithUnknownSocketPropertiesTest extends BaseJettyTest {
         }
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // define socket connector properties
                 Map<String, Object> properties = new HashMap<>();
                 properties.put("acceptors", 4);

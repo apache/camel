@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class JettyResponseBodyWhenErrorTest extends BaseJettyTest {
 
     @Test
-    public void testResponseBodyWhenError() throws Exception {
+    public void testResponseBodyWhenError() {
         try {
             template.requestBody("http://localhost:{{port}}/myapp/myservice", "bookid=123");
             fail("Should have thrown an exception");
@@ -52,9 +52,9 @@ public class JettyResponseBodyWhenErrorTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(noErrorHandler());
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
             }
@@ -63,7 +63,7 @@ public class JettyResponseBodyWhenErrorTest extends BaseJettyTest {
 
     public class MyBookService implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             throw new IllegalArgumentException("Damm");
         }
     }

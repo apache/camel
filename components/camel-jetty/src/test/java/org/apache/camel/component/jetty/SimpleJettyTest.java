@@ -24,15 +24,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SimpleJettyTest extends BaseJettyTest {
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() {
         String result = template.requestBody("http://localhost:{{port}}/myapp", "Camel", String.class);
         assertEquals("Hello Camel", result);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp").transform(body().prepend("Hello "));
             }
         };

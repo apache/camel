@@ -89,9 +89,9 @@ public class JettyLongestContextPathMatchTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/aaa/?matchOnUriPrefix=true").to("mock:aaa");
 
                 from("jetty:http://localhost:{{port}}/myapp/aaa/bbb/ccc/?matchOnUriPrefix=true").to("mock:ccc");

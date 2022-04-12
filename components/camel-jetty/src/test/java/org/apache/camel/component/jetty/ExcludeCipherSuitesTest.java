@@ -29,7 +29,7 @@ public class ExcludeCipherSuitesTest extends BaseJettyTest {
 
     protected String pwd = "changeit";
 
-    private SSLContextParameters createSslContextParameters() throws Exception {
+    private SSLContextParameters createSslContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
         ksp.setPassword(pwd);
@@ -58,7 +58,7 @@ public class ExcludeCipherSuitesTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);

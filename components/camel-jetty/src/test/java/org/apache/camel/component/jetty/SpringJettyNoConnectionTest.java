@@ -47,7 +47,7 @@ public class SpringJettyNoConnectionTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testConnectionOk() throws Exception {
+    public void testConnectionOk() {
         String reply = template.requestBody("direct:start", "World", String.class);
         assertEquals("Bye World", reply);
     }

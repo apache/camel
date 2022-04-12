@@ -48,7 +48,7 @@ public class SpringJettyNoConnectionRedeliveryTest extends CamelSpringTestSuppor
     }
 
     @Test
-    public void testConnectionOk() throws Exception {
+    public void testConnectionOk() {
         String reply = template.requestBody("direct:start", "World", String.class);
         assertEquals("Bye World", reply);
     }
@@ -59,7 +59,7 @@ public class SpringJettyNoConnectionRedeliveryTest extends CamelSpringTestSuppor
         context.getRouteController().stopRoute("jetty");
 
         Exchange exchange = template.request("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Moon");
             }
         });

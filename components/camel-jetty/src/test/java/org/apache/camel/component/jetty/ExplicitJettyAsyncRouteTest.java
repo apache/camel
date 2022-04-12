@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ExplicitJettyAsyncRouteTest extends BaseJettyTest {
 
     @Test
-    public void testSendToJetty() throws Exception {
+    public void testSendToJetty() {
         Object response = template.requestBody("http://localhost:{{port}}/myapp/myservice", "bookid=123");
         // convert the response to a String
         String body = context.getTypeConverter().convertTo(String.class, response);
@@ -40,9 +40,9 @@ public class ExplicitJettyAsyncRouteTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // async and continuation is not compatible!
                 from("jetty:http://localhost:{{port}}/myapp/myservice?async=true&useContinuation=false")
                         .process(new MyBookService());
@@ -52,7 +52,7 @@ public class ExplicitJettyAsyncRouteTest extends BaseJettyTest {
 
     public class MyBookService implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // just get the body as a string
             String body = exchange.getIn().getBody(String.class);
 

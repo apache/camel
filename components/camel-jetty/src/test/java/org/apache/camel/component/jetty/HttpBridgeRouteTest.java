@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class HttpBridgeRouteTest extends BaseJettyTest {
 
     @Test
-    public void testHttpClient() throws Exception {
+    public void testHttpClient() {
         String response = template.requestBodyAndHeader("http://localhost:" + port2 + "/test/hello",
                 new ByteArrayInputStream("This is a test".getBytes()), "Content-Type",
                 "application/xml", String.class);
@@ -49,13 +49,13 @@ public class HttpBridgeRouteTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
 
                 Processor serviceProc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // get the request URL and copy it to the request body
                         String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
                         exchange.getMessage().setBody(uri);

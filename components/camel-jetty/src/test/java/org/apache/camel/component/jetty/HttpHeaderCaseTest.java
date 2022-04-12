@@ -51,11 +51,11 @@ public class HttpHeaderCaseTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/mytest").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
 
                         // headers received should be in case as well
                         Map<String, Object> map = new LinkedHashMap<>();

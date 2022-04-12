@@ -60,10 +60,10 @@ public class HttpProducerSOTimeoutTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/myservice")
                         // but we wait for 2 sec before reply is sent back
                         .delay(2000).transform().constant("Bye World").to("mock:result");

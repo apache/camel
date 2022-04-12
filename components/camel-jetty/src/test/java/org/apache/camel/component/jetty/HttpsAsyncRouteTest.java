@@ -17,7 +17,6 @@
 package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
 import java.net.URISyntaxException;
@@ -124,7 +123,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
     @Override
     @Test
-    public void testEndpointWithoutHttps() throws Exception {
+    public void testEndpointWithoutHttps() {
         // these tests does not run well on Windows
         if (isPlatform("windows")) {
             return;
@@ -179,7 +178,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     }
 
     @Override
-    protected void invokeHttpEndpoint() throws IOException {
+    protected void invokeHttpEndpoint() {
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type",
                 "application/xml");
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test", expectedBody, "Content-Type",
@@ -187,7 +186,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
                 JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");
@@ -199,7 +198,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
                 from("jetty:https://localhost:" + port1 + "/test?async=true&useContinuation=false").to("mock:a");
 
                 Processor proc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };

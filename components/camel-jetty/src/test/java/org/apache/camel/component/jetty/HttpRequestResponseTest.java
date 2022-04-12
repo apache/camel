@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class HttpRequestResponseTest extends BaseJettyTest {
 
     @Test
-    public void testHttpServletRequestResponse() throws Exception {
+    public void testHttpServletRequestResponse() {
         Object response = template.requestBody("http://localhost:{{port}}/myapp/myservice", "bookid=123");
         // convert the response to a String
         String body = context.getTypeConverter().convertTo(String.class, response);
@@ -42,9 +42,9 @@ public class HttpRequestResponseTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
                 // END SNIPPET: e1

@@ -44,12 +44,12 @@ public class HttpConverterTest extends BaseJettyTest {
     public void testToServletRequestAndResponse() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test")
                         // add this node to make sure the convert can work within
                         // DefaultMessageImpl
                         .convertBodyTo(String.class).process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 HttpServletRequest request = exchange.getIn(HttpServletRequest.class);
                                 assertNotNull(request, "We should get request object here");
                                 HttpServletResponse response = exchange.getIn(HttpServletResponse.class);
@@ -70,7 +70,7 @@ public class HttpConverterTest extends BaseJettyTest {
     public void testToServletInputStreamWithStreamCaching() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         HttpMessage msg = exchange.getIn(HttpMessage.class);
@@ -96,7 +96,7 @@ public class HttpConverterTest extends BaseJettyTest {
     public void testToServletInputDisableStreamStreamCaching() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test?disableStreamCache=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         HttpMessage msg = exchange.getIn(HttpMessage.class);
@@ -122,9 +122,9 @@ public class HttpConverterTest extends BaseJettyTest {
     public void testToInputStream() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         HttpMessage msg = exchange.getIn(HttpMessage.class);
 
                         InputStream sis = msg.getBody(InputStream.class);

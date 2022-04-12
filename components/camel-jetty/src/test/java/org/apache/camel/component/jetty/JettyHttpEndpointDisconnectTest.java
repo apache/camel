@@ -36,7 +36,7 @@ public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
     private String serverUri = "http://localhost:" + getPort() + "/myservice";
 
     @Test
-    public void testContextShutdownRemovesHttpConnector() throws Exception {
+    public void testContextShutdownRemovesHttpConnector() {
         context.stop();
         assertEquals(0, JettyHttpComponent.CONNECTORS.size(),
                 () -> {
@@ -57,9 +57,9 @@ public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:" + serverUri).to("mock:result");
             }
         };

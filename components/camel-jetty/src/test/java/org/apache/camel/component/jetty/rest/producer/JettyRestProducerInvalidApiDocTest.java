@@ -35,7 +35,7 @@ public class JettyRestProducerInvalidApiDocTest extends CamelTestSupport {
     public void testInvalidPath() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use localhost with the given port
                 restConfiguration().component("jetty").host("localhost");
 
@@ -56,7 +56,7 @@ public class JettyRestProducerInvalidApiDocTest extends CamelTestSupport {
     public void testInvalidQuery() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use localhost with the given port
                 restConfiguration().component("jetty").host("localhost").producerApiDoc("hello-api.json");
 

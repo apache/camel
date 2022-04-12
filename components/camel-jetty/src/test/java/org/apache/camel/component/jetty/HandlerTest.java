@@ -93,24 +93,24 @@ public class HandlerTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:" + port1 + "/?handlers=#statisticsHandler1").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody(htmlResponse);
                     }
                 });
 
                 from("jetty:http://localhost:" + port2 + "/?handlers=#statisticsHandler2,#statisticsHandler3")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.getMessage().setBody(htmlResponse);
                             }
                         });
                 from("jetty:http://localhost:" + port2 + "/endpoint2?handlers=#statisticsHandler2,#statisticsHandler3")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.getMessage().setBody(htmlResponse);
                             }
                         });

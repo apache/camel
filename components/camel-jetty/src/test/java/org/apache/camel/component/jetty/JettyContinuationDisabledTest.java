@@ -36,10 +36,10 @@ public class JettyContinuationDisabledTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // disable continuation
                 JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
                 jetty.setUseContinuation(false);

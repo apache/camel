@@ -33,12 +33,12 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Producer createProducer() throws Exception {
+    public Producer createProducer() {
         return new MyAsyncProducer(this);
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) {
         throw new UnsupportedOperationException("Consumer not supported");
     }
 

@@ -27,7 +27,7 @@ public class RestApiJettyYamlTest extends RestApiJettyTest {
 
     @Override
     @Test
-    public void testApi() throws Exception {
+    public void testApi() {
         String out = template.requestBody("jetty:http://localhost:{{port}}/api-doc/swagger.yaml", null, String.class);
         assertNotNull(out);
         assertTrue(out.contains("version: \"1.2.3\""));

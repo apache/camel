@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RestJettyPostNotMapHttpMessageHeadersTest extends BaseJettyTest {
 
     @Test
-    public void testPostNotMapHttpMessageHeadersTest() throws Exception {
+    public void testPostNotMapHttpMessageHeadersTest() {
         Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.HTTP_METHOD, "POST");
         headers.put(Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded");
@@ -40,10 +40,10 @@ public class RestJettyPostNotMapHttpMessageHeadersTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use jetty on localhost with the given port
                 // ensure we don't extract key=value pairs from form bodies
                 // (application/x-www-form-urlencoded)

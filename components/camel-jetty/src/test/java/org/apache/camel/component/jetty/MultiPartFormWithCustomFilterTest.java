@@ -99,9 +99,9 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // Set the jetty temp directory which store the file for multi
                 // part form
@@ -142,7 +142,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                 // the enableMultipartFilter=false parameter
                 from("jetty://http://localhost:{{port}}/test2?multipartFilterRef=myMultipartFilter&enableMultipartFilter=false")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 AttachmentMessage in = exchange.getMessage(AttachmentMessage.class);
                                 assertEquals(2, in.getAttachments().size(), "Get a wrong attachement size");
                                 DataHandler data = in.getAttachment("log4j2.properties");

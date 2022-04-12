@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class JettyRouteTest extends BaseJettyTest {
 
     @Test
-    public void testSendToJetty() throws Exception {
+    public void testSendToJetty() {
         Object response = template.requestBody("http://localhost:{{port}}/myapp/myservice", "bookid=123");
         // convert the response to a String
         String body = context.getTypeConverter().convertTo(String.class, response);
@@ -40,15 +40,15 @@ public class JettyRouteTest extends BaseJettyTest {
     }
 
     @Test
-    public void testHttpProxyHostHeader() throws Exception {
+    public void testHttpProxyHostHeader() {
         String out = template.requestBody("http://localhost:{{port}}/proxyServer", null, String.class);
         assertEquals("localhost:" + getPort2(), out, "Get a wrong host header");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
                 // END SNIPPET: e1
@@ -63,7 +63,7 @@ public class JettyRouteTest extends BaseJettyTest {
     // START SNIPPET: e2
     public class MyBookService implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // just get the body as a string
             String body = exchange.getIn().getBody(String.class);
 

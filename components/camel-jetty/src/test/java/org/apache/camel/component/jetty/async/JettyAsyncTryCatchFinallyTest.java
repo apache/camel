@@ -38,10 +38,10 @@ public class JettyAsyncTryCatchFinallyTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("jetty:http://localhost:{{port}}/myservice").convertBodyTo(String.class).doTry().to("mock:try")

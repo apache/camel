@@ -36,10 +36,10 @@ public class JettyEndpointContinuationDisabledTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myservice?useContinuation=false").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Thread.sleep(1000);

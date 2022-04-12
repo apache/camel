@@ -33,7 +33,7 @@ public class JettyCallHttpThenExceptionTest extends BaseJettyTest {
         getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
 
         Exchange reply = template.request("http://localhost:{{port}}/myserver?throwExceptionOnFailure=false", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("World");
             }
         });
@@ -47,10 +47,10 @@ public class JettyCallHttpThenExceptionTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/myserver").to("log:A")
                         // remove http headers before and after invoking http
                         // service

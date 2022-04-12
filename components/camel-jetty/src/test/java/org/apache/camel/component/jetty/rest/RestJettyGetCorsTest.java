@@ -34,7 +34,7 @@ public class RestJettyGetCorsTest extends BaseJettyTest {
 
         Exchange out = template.request("http://localhost:" + getPort() + "/users/123/basic", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
             }
         });
@@ -61,17 +61,17 @@ public class RestJettyGetCorsTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use jetty on localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort()).enableCORS(true);
 
                 // use the rest DSL to define the rest services
                 rest("/users/").get("{id}/basic").to("direct:basic");
                 from("direct:basic").to("mock:input").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String id = exchange.getIn().getHeader("id", String.class);
                         exchange.getMessage().setBody(id + ";Donald Duck");
                     }

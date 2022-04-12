@@ -27,20 +27,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
 
     @Test
-    public void testJettyHttpClient() throws Exception {
+    public void testJettyHttpClient() {
         String response = template.requestBody("http://localhost:" + port2 + "/jettyTestRouteA?param1=%2B447777111222", null,
                 String.class);
         assertEquals("param1=+447777111222", response, "Get a wrong response");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
 
                 Processor serviceProc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // %2B becomes decoded to a space
                         Object s = exchange.getIn().getHeader("param1");
                         // can be either + or %2B

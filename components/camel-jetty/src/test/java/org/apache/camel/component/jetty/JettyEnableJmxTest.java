@@ -124,9 +124,9 @@ public class JettyEnableJmxTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 serverUri0 = "http://localhost:" + port1 + "/myservice?enableJmx=true";
                 serverUri1 = "http://localhost:" + port2 + "/myservice?enableJmx=true";
                 serverUri2 = "http://localhost:" + port3 + "/myservice?enableJmx=false";
@@ -155,7 +155,7 @@ public class JettyEnableJmxTest extends BaseJettyTest {
         }
     }
 
-    protected MBeanServerConnection getMBeanConnection() throws Exception {
+    protected MBeanServerConnection getMBeanConnection() {
         if (mbsc == null) {
             mbsc = ManagementFactory.getPlatformMBeanServer();
         }

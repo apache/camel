@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class HttpProducerOkStatusCodeRangeTest extends BaseJettyTest {
 
     @Test
-    public void testNoOk() throws Exception {
+    public void testNoOk() {
         byte[] data = "Hello World".getBytes();
         try {
             template.requestBody("http://localhost:{{port}}/test?okStatusCodeRange=200-200", data, String.class);
@@ -42,7 +42,7 @@ public class HttpProducerOkStatusCodeRangeTest extends BaseJettyTest {
     }
 
     @Test
-    public void testNoOkSingleValue() throws Exception {
+    public void testNoOkSingleValue() {
         byte[] data = "Hello World".getBytes();
         try {
             template.requestBody("http://localhost:{{port}}/test?okStatusCodeRange=200", data, String.class);
@@ -55,17 +55,17 @@ public class HttpProducerOkStatusCodeRangeTest extends BaseJettyTest {
     }
 
     @Test
-    public void testOk() throws Exception {
+    public void testOk() {
         byte[] data = "Hello World".getBytes();
         String out = template.requestBody("http://localhost:{{port}}/test?okStatusCodeRange=200-209", data, String.class);
         assertEquals("Not allowed", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test").setHeader(Exchange.HTTP_RESPONSE_CODE, constant(209))
                         .transform(constant("Not allowed"));
             }

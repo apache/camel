@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class RestJettyContentTypeTest extends BaseJettyTest {
 
     @Test
-    public void testJettyProducerNoContentType() throws Exception {
+    public void testJettyProducerNoContentType() {
         String out = fluentTemplate.withHeader(Exchange.HTTP_METHOD, "post").withBody("{ \"name\": \"Donald Duck\" }")
                 .to("http://localhost:" + getPort() + "/users/123/update")
                 .request(String.class);
@@ -39,7 +39,7 @@ public class RestJettyContentTypeTest extends BaseJettyTest {
     }
 
     @Test
-    public void testJettyProducerContentTypeValid() throws Exception {
+    public void testJettyProducerContentTypeValid() {
         String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader(Exchange.HTTP_METHOD, "post").withBody("{ \"name\": \"Donald Duck\" }")
                 .to("http://localhost:" + getPort() + "/users/123/update").request(String.class);
@@ -62,7 +62,7 @@ public class RestJettyContentTypeTest extends BaseJettyTest {
     }
 
     @Test
-    public void testJettyMultiProducerContentTypeValid() throws Exception {
+    public void testJettyMultiProducerContentTypeValid() {
         String out = fluentTemplate.withHeader("Accept", "application/csv")
                 .withHeader(Exchange.HTTP_METHOD, "get")
                 .to("http://localhost:" + getPort() + "/users").request(String.class);
@@ -71,10 +71,10 @@ public class RestJettyContentTypeTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use jetty on localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort())
                         // turn on client request validation

@@ -31,7 +31,7 @@ public class JettySuspendTest extends BaseJettyTest {
     private String serverUri = "http://localhost:" + getPort() + "/cool";
 
     @Test
-    public void testJettySuspend() throws Exception {
+    public void testJettySuspend() {
         context.getShutdownStrategy().setTimeout(50);
 
         String reply = template.requestBody(serverUri, "World", String.class);
@@ -54,10 +54,10 @@ public class JettySuspendTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://" + serverUri).id("route1").transform(body().prepend("Bye "));
             }
         };

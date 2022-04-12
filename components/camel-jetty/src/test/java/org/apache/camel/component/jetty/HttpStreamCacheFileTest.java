@@ -33,7 +33,7 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
     private final String responseBody = "12345678901234567890123456789012345678901234567890";
 
     @Test
-    public void testStreamCacheToFileShouldBeDeletedInCaseOfResponse() throws Exception {
+    public void testStreamCacheToFileShouldBeDeletedInCaseOfResponse() {
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 
@@ -43,7 +43,7 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
     }
 
     @Test
-    public void testStreamCacheToFileShouldBeDeletedInCaseOfException() throws Exception {
+    public void testStreamCacheToFileShouldBeDeletedInCaseOfException() {
         try {
             template.requestBody("direct:start", null, String.class);
             fail("Should have thrown an exception");
@@ -59,10 +59,10 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable stream caching and use a low threshold so its forced
                 // to write to file
                 context.getStreamCachingStrategy().setSpoolThreshold(16);
@@ -73,7 +73,7 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
                 from("direct:start").to("http://localhost:{{port}}/myserver");
 
                 from("jetty://http://localhost:{{port}}/myserver").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
                         if (ObjectHelper.isEmpty(body)) {
                             exchange.getMessage().setBody(responseBody);

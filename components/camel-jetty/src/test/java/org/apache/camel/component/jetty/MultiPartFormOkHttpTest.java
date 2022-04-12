@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MultiPartFormOkHttpTest extends BaseJettyTest {
 
-    private Request createMultipartRequest() throws Exception {
+    private Request createMultipartRequest() {
         MediaType mediaType = MediaType.parse("multipart/form-data; boundary=---011000010111000001101001");
         RequestBody body = RequestBody
                 .create(mediaType,
@@ -58,9 +58,9 @@ public class MultiPartFormOkHttpTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         AttachmentMessage message = exchange.getMessage(AttachmentMessage.class);

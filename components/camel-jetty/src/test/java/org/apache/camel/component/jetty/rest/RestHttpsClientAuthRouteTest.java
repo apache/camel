@@ -93,10 +93,10 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 RestConfigurationDefinition restConfig
                         = restConfiguration().scheme("https").host("localhost").port(port.getPort());
                 decorateRestConfiguration(restConfig);
@@ -106,14 +106,14 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
                 rest("/TestResource").get("/{id}").to("direct:get1").post("/{id}").to("direct:post1");
 
                 from("direct:get1").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String id = exchange.getIn().getHeader("id", String.class);
                         exchange.getMessage().setBody("Hello " + id);
                     }
                 });
 
                 from("direct:post1").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String id = exchange.getIn().getHeader("id", String.class);
                         String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
                         exchange.getMessage().setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));

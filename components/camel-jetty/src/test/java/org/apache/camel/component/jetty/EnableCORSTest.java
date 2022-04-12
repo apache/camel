@@ -66,9 +66,9 @@ public class EnableCORSTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test1?enableCORS=false").transform(simple("OK"));
                 from("jetty://http://localhost:{{port2}}/test2?enableCORS=true").transform(simple("OK"));
             }

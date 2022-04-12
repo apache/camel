@@ -33,7 +33,7 @@ public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
     private String body2 = "Bye " + body;
 
     @Test
-    public void testStreamCacheToFileShouldBeDeletedInCaseOfResponse() throws Exception {
+    public void testStreamCacheToFileShouldBeDeletedInCaseOfResponse() {
         String out = template.requestBody("http://localhost:{{port}}/myserver", body, String.class);
         assertEquals(body2, out);
 
@@ -44,10 +44,10 @@ public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable stream caching and use a low threshold so its forced
                 // to write to file
                 context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());

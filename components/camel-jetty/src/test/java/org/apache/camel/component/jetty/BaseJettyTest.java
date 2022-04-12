@@ -59,7 +59,7 @@ public abstract class BaseJettyTest extends CamelTestSupport {
     }
 
     @BindToRegistry("prop")
-    public Properties loadProp() throws Exception {
+    public Properties loadProp() {
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
         prop.setProperty("port2", "" + getPort2());

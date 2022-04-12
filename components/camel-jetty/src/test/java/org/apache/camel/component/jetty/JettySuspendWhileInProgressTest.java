@@ -75,9 +75,9 @@ public class JettySuspendWhileInProgressTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://" + serverUri).log("Got data will wait 10 sec with reply").delay(10000)
                         .transform(simple("Bye ${header.name}"));
             }

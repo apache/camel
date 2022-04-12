@@ -42,10 +42,10 @@ public class JettySimplifiedHandle404Test extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // disable error handling
                 errorHandler(noErrorHandler());
 
@@ -69,7 +69,7 @@ public class JettySimplifiedHandle404Test extends BaseJettyTest {
 
                 // this is our jetty server where we simulate the 404
                 from("jetty://http://localhost:{{port}}/myserver").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("Page not found");
                         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
                     }
