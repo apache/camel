@@ -126,7 +126,8 @@ public class RawMailMessageTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock://normalMessage" + type);
         mock.expectedMessageCount(1);
-        mock.expectedBodyReceived().body().isNotNull();
+        mock.message(0).body().isNotNull();
+
         assertMockEndpointsSatisfied();
 
         String body = mock.getExchanges().get(0).getIn().getBody(String.class);
