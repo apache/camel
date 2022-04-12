@@ -57,7 +57,7 @@ public class ResteasySimpleConsumerTest {
     }
 
     @Test
-    public void testGettingResponseFromBean() throws Exception {
+    public void testGettingResponseFromBean() {
         Client client = ClientBuilder.newBuilder().build();
         WebTarget target = client.target(baseUri.toString() + "simpleService/getMsg");
         Response response = target.request().get();
@@ -68,7 +68,7 @@ public class ResteasySimpleConsumerTest {
     }
 
     @Test
-    public void testGettingBodyFromCamelRoute() throws Exception {
+    public void testGettingBodyFromCamelRoute() {
         Client client = ClientBuilder.newBuilder().build();
         WebTarget target = client.target(baseUri.toString() + "simpleService/getMsg2");
         Response response = target.request().get();

@@ -56,11 +56,10 @@ public class ResteasyConsumerMatchUriOnPrefix {
 
     /**
      * App declares files via the web.xml
-     * 
-     * @throws Exception
+     *
      */
     @Test
-    public void testEndpoint() throws Exception {
+    public void testEndpoint() {
         Response response = ResteasyClientBuilder.newClient().target(baseUri.toString() + "simpleService/match/prefix")
                 .request().get();
         String entity = response.readEntity(String.class);

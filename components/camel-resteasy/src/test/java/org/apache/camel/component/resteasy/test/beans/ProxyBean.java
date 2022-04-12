@@ -21,7 +21,7 @@ import org.apache.camel.Processor;
 
 public class ProxyBean implements Processor {
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         String customer = exchange.getIn().getBody(String.class);
 
         exchange.getMessage().setBody("Customer added : " + customer);

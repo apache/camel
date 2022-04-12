@@ -142,7 +142,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
 
     @Test
     @Order(1)
-    public void testProxyGetAll() throws Exception {
+    public void testProxyGetAll() {
         String expectedUser1 = "{\"name\":\"Roman\",\"surname\":\"Jakubco\",\"id\":1}";
         String expectedUser2 = "{\"name\":\"Camel\",\"surname\":\"Rider\",\"id\":2}";
 
@@ -152,12 +152,12 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProxyGet() throws Exception {
+    public void testProxyGet() {
         String expectedBody = "{\"name\":\"Camel\",\"surname\":\"Rider\",\"id\":2}";
 
         Exchange response = template.request("direct:get", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 ArrayList<Object> params = new ArrayList<Object>();
                 params.add(2);
                 exchange.getIn().getHeaders().put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
@@ -167,12 +167,12 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProxyGetUnmarshal() throws Exception {
+    public void testProxyGetUnmarshal() {
         Customer expectedCustomer = new Customer("Camel", "Rider", 2);
 
         Exchange response = template.request("direct:getUnmarshal", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 ArrayList<Object> params = new ArrayList<Object>();
                 params.add(2);
 
@@ -184,7 +184,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProxyPost() throws Exception {
+    public void testProxyPost() {
         Integer customerId = 3;
         Customer expectedCustomer = new Customer("TestPost", "TestPost", customerId);
 
@@ -200,7 +200,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProxyPut() throws Exception {
+    public void testProxyPut() {
         Integer customerId = 4;
         Customer expectedCustomer = new Customer("TestPut", "TestPut", customerId);
 
@@ -226,7 +226,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProxyDelete() throws Exception {
+    public void testProxyDelete() {
         Integer customerId = 5;
         Customer expectedCustomer = new Customer("TestDelete", "TestDelete", customerId);
 
@@ -249,7 +249,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProxyCallWithMoreAttributes() throws Exception {
+    public void testProxyCallWithMoreAttributes() {
         Integer customerId = 6;
         Customer expectedCustomer = new Customer("Test", "Test", customerId);
 
@@ -276,7 +276,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProxyCallWithDifferentTypeAttributes() throws Exception {
+    public void testProxyCallWithDifferentTypeAttributes() {
         Integer customerId = 7;
         Customer expectedCustomer = new Customer("TestAttr", "TestAttr", customerId);
 
@@ -319,7 +319,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProxyCallWithAttributesInWrongOrder() throws Exception {
+    public void testProxyCallWithAttributesInWrongOrder() {
         Integer customerId = 8;
         final Customer expectedCustomer = new Customer("TestWrong", "TestWrong", customerId);
 
@@ -335,7 +335,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
         headers.put(ResteasyConstants.RESTEASY_PROXY_METHOD_PARAMS, params);
         Exchange exchange = template.request("direct:differentType", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 ArrayList<Object> exchangeParams = new ArrayList<Object>();
                 exchangeParams.add(expectedCustomer);
                 exchangeParams.add(8);
@@ -350,7 +350,7 @@ public class ResteasyProducerProxyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProxyCallOnMethodWithoutReturnTypeResponse() throws Exception {
+    public void testProxyCallOnMethodWithoutReturnTypeResponse() {
         Integer customerId = 9;
         Customer expectedCustomer = new Customer("Test", "Test", customerId);
 

@@ -58,7 +58,7 @@ public class ResteasyRestDSLProxyTest {
     }
 
     @Test
-    public void testRestDSLProxy() throws Exception {
+    public void testRestDSLProxy() {
         Client client = ClientBuilder.newBuilder().build();
         WebTarget target = client.target(baseUri.toString() + "proxy/get");
         Response response = target.request().get();

@@ -144,7 +144,7 @@ public @interface WebTest {
         }
 
         @Override
-        public void beforeEach(ExtensionContext context) throws Exception {
+        public void beforeEach(ExtensionContext context) {
             Class<?> testClass = context.getRequiredTestClass();
             List<Field> fields = Stream.of(testClass.getDeclaredFields())
                     .filter(f -> f.isAnnotationPresent(Resource.class))
@@ -168,7 +168,7 @@ public @interface WebTest {
         }
 
         @Override
-        public void afterEach(ExtensionContext context) throws Exception {
+        public void afterEach(ExtensionContext context) {
         }
 
         @Override

@@ -57,7 +57,7 @@ public class ResteasyRestDSLTest {
     }
 
     @Test
-    public void testRestDSL() throws Exception {
+    public void testRestDSL() {
         Client client = ClientBuilder.newBuilder().build();
         WebTarget target = client.target(baseUri.toString() + "simpleService/getMsg");
         Response response = target.request().get();

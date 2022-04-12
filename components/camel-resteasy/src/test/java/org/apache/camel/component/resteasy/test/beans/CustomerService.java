@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.resteasy.test.beans;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -45,14 +43,14 @@ public class CustomerService {
     @GET
     @Produces("application/json")
     @Path("/getAll")
-    public Response getAllCustomers() throws IOException, ServletException {
+    public Response getAllCustomers() {
         return Response.status(200).entity(list.getCustomerList()).build();
     }
 
     @GET
     @Produces("application/json")
     @Path("/getCustomer")
-    public Response getCustomer(@QueryParam("id") Integer id) throws Exception {
+    public Response getCustomer(@QueryParam("id") Integer id) {
         Customer c = list.getCustomer(id);
         if (c != null) {
             return Response.status(200).entity(c).build();
@@ -63,7 +61,7 @@ public class CustomerService {
 
     @DELETE
     @Path("/deleteCustomer")
-    public Response deleteCustomer(@QueryParam("id") Integer id) throws IOException, ServletException {
+    public Response deleteCustomer(@QueryParam("id") Integer id) {
         Customer c = list.deleteCustomer(id);
         return Response.status(200).entity("Customer deleted : " + c).build();
     }
@@ -71,7 +69,7 @@ public class CustomerService {
     @POST
     @Consumes("application/json")
     @Path("/createCustomer")
-    public Response createCustomer(Customer customer) throws IOException, ServletException {
+    public Response createCustomer(Customer customer) {
         list.addCustomer(customer);
         return Response.status(200).entity("Customer added : " + customer).build();
     }
@@ -79,7 +77,7 @@ public class CustomerService {
     @PUT
     @Consumes("application/json")
     @Path("/updateCustomer")
-    public Response updateCustomer(Customer customer) throws Exception {
+    public Response updateCustomer(Customer customer) {
         Customer update = list.getCustomer(customer.getId());
         if (update != null) {
             list.deleteCustomer(customer.getId());
@@ -98,8 +96,8 @@ public class CustomerService {
     @Produces("application/json")
     @Path("/getSpecificThreeCustomers")
     public Response getSpecificThreeCustomers(
-            @QueryParam("c1") Integer customerId1, @QueryParam("c2") Integer customerId2, @QueryParam("c3") Integer customerId3)
-            throws Exception {
+            @QueryParam("c1") Integer customerId1, @QueryParam("c2") Integer customerId2,
+            @QueryParam("c3") Integer customerId3) {
         List<Customer> customers = new ArrayList<>();
         customers.add(list.getCustomer(customerId1));
         customers.add(list.getCustomer(customerId2));
@@ -112,7 +110,7 @@ public class CustomerService {
     @Produces("application/json")
     @Consumes("application/json")
     @Path("/checkCustomer")
-    public Response checkIfCustomerExists(@QueryParam("c1") Integer customerId1, Customer customer) throws Exception {
+    public Response checkIfCustomerExists(@QueryParam("c1") Integer customerId1, Customer customer) {
         Customer foundCustomer = list.getCustomer(customerId1);
         if (foundCustomer.equals(customer)) {
             return Response.status(200).entity("Customers are equal").build();
@@ -125,7 +123,7 @@ public class CustomerService {
     @GET
     @Produces("application/json")
     @Path("/getCustomerWithoutResponse")
-    public Customer getCustomerWithoutResponse(@QueryParam("c1") Integer customerId1) throws Exception {
+    public Customer getCustomerWithoutResponse(@QueryParam("c1") Integer customerId1) {
         Customer c = list.getCustomer(customerId1);
         return c;
     }

@@ -56,7 +56,7 @@ public class ResteasyConsumerTwoServletsTest {
     }
 
     @Test
-    public void testServletNameOption() throws Exception {
+    public void testServletNameOption() {
         Client client = ClientBuilder.newBuilder().build();
         WebTarget target = client.target(baseUri.toString() + "numberOne/simpleServiceSecure/getMsg");
         Response response = target.request().get();

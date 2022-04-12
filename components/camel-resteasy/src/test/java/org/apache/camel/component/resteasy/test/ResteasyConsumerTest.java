@@ -208,7 +208,7 @@ public class ResteasyConsumerTest {
     }
 
     @Test
-    public void testWrongMethod() throws Exception {
+    public void testWrongMethod() {
         Client client = ClientBuilder.newBuilder().build();
         WebTarget target = client.target(baseUri.toString() + "customer/createCustomer");
         Response response = target.request().get();
