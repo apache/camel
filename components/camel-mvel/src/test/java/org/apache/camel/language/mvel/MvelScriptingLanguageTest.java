@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class MvelScriptingLanguageTest extends CamelTestSupport {
 
     @Test
-    public void testScripting() throws Exception {
+    public void testScripting() {
         Language lan = context.resolveLanguage("mvel");
         Assertions.assertTrue(lan instanceof ScriptingLanguage);
 
