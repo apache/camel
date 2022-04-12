@@ -43,7 +43,7 @@ public class JGroupsClusterRouteTest {
     class Builder extends RouteBuilder {
 
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("jgroups:" + clusterName + "?enableViewMessages=true").filter(dropNonCoordinatorViews()).threads()
                     .delay(delayIfContextNotStarted(SECONDS.toMillis(15)))
                     .to("controlbus:route?routeId=masterRoute&action=start&async=true");
