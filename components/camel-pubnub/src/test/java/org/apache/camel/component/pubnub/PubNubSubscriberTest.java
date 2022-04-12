@@ -48,7 +48,7 @@ public class PubNubSubscriberTest extends PubNubTestBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("pubnub:mychannel?pubnub=#pubnub").id("subroute").autoStartup(false)
