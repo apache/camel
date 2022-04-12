@@ -46,10 +46,10 @@ public class NetWeaverFlightDataTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .toF("sap-netweaver:%s?username=%s&password=%s", NetWeaverTestConstants.NETWEAVER_GATEWAY_URL, username,
                                 password)
