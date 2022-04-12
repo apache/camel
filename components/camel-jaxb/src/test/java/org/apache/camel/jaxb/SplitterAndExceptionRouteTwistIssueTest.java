@@ -91,11 +91,11 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 errorHandler(
                         deadLetterChannel(mockRejectEndpoint)
@@ -110,7 +110,7 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
                         .convertBodyTo(String.class, "UTF-8")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String text = (String) exchange.getIn().getBody();
                                 Twits twits = new Twits();
 
@@ -128,7 +128,7 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
                         .convertBodyTo(String.class, "UTF-8")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String text = (String) exchange.getIn().getBody();
 
                                 StringBuilder twits = new StringBuilder();

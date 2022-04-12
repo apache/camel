@@ -94,10 +94,10 @@ public class JaxbDataFormatSchemaValidationWithObjectFactoryTest extends CamelTe
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
                 jaxbDataFormat.setContextPath(Message.class.getPackage().getName());
                 jaxbDataFormat.setSchema("classpath:message.xsd");

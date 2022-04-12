@@ -40,7 +40,7 @@ public class JaxbMarshalNamespacePrefixMapperTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(JaxbMarshalNamespacePrefixMapperTest.class);
 
     @BindToRegistry("myPrefix")
-    public Map<String, String> addMap() throws Exception {
+    public Map<String, String> addMap() {
         Map<String, String> map = new HashMap<>();
         map.put("http://www.camel.apache.org/jaxb/example/order/1", "o");
         map.put("http://www.camel.apache.org/jaxb/example/address/1", "a");
@@ -77,10 +77,10 @@ public class JaxbMarshalNamespacePrefixMapperTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JaxbDataFormat df = new JaxbDataFormat();
                 df.setContextPath("org.apache.camel.example");
                 df.setNamespacePrefixRef("myPrefix");

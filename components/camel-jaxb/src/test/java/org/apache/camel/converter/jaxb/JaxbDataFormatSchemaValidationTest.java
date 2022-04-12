@@ -115,7 +115,7 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnmarshallWithValidationException() throws Exception {
+    public void testUnmarshallWithValidationException() {
         String xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
                 .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" />")
                 .toString();
@@ -131,10 +131,10 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
                 jaxbDataFormat.setContextPath(Person.class.getPackage().getName());
                 jaxbDataFormat.setSchema("classpath:person.xsd,classpath:address.xsd");

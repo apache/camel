@@ -78,14 +78,14 @@ public class FallbackTypeConverterShouldThrowExceptionTest extends CamelTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder(context) {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         try {
                             exchange.getIn().getBody(Foo.class);
                         } catch (TypeConversionException e) {
@@ -94,7 +94,7 @@ public class FallbackTypeConverterShouldThrowExceptionTest extends CamelTestSupp
                     }
                 }).to("mock:a").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         try {
                             exchange.getIn().getBody(List.class);
                         } catch (TypeConversionException e) {

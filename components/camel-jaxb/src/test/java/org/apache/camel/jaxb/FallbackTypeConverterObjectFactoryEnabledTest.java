@@ -35,12 +35,12 @@ public class FallbackTypeConverterObjectFactoryEnabledTest extends CamelTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         context.getGlobalOptions().put(FallbackTypeConverter.OBJECT_FACTORY, "true");
         return new RouteBuilder(context) {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").convertBodyTo(String.class).to("direct:b");
                 from("direct:b").convertBodyTo(Message.class).to("mock:a");
             }

@@ -93,11 +93,11 @@ public class NonXmlFilterReaderTest {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
         }
 
         @Override
-        public int read(char[] cbuf, int off, int len) throws IOException {
+        public int read(char[] cbuf, int off, int len) {
             int length = Math.min(len, constant.length);
             System.arraycopy(constant, 0, cbuf, off, length);
             return length;
