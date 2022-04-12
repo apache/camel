@@ -27,10 +27,10 @@ public class JoorBeanInjectVarTest extends CamelTestSupport {
     private MyEchoBean myEchoBean = new MyEchoBean();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .transform().joor("var bean = #bean:myEcho; return 'Hello ' + bean.echo(bodyAs(String))")
                         .to("mock:result");

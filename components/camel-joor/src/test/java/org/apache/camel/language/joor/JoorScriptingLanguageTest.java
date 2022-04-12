@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class JoorScriptingLanguageTest extends CamelTestSupport {
 
     @Test
-    public void testScripting() throws Exception {
+    public void testScripting() {
         Language lan = context.resolveLanguage("joor");
         Assertions.assertTrue(lan instanceof ScriptingLanguage);
 
