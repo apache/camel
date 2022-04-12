@@ -51,7 +51,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
     }
 
     @Override
-    protected void doPostSetup() throws Exception {
+    protected void doPostSetup() {
         tracer.reset();
     }
 

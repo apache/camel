@@ -43,7 +43,7 @@ public class SpanProcessorsTest extends CamelOpenTracingTestSupport {
     }
 
     @Test
-    public void testRoute() throws Exception {
+    public void testRoute() {
         Exchange result = template.request("direct:start",
                 exchange -> {
                     exchange.getIn().setBody("Hello");
@@ -55,10 +55,10 @@ public class SpanProcessorsTest extends CamelOpenTracingTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("seda:a").routeId("start");
 
                 from("seda:a").routeId("a")

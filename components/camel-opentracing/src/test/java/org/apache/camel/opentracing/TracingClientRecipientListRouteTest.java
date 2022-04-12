@@ -50,17 +50,17 @@ public class TracingClientRecipientListRouteTest extends CamelOpenTracingTestSup
     }
 
     @Test
-    public void testRoute() throws Exception {
+    public void testRoute() {
         template.requestBody("direct:start", "Hello");
 
         verify();
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").recipientList(constant("seda:a,seda:b,seda:c")).id("direct-recipientList-1")
                         .routeId("start");
 

@@ -36,7 +36,7 @@ public class SpringOpenTracingSimpleRouteTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testRoute() throws Exception {
+    public void testRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
 
         for (int i = 0; i < 5; i++) {
