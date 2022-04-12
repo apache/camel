@@ -8276,7 +8276,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "bean-type", type = "string"),
-                    @YamlProperty(name = "expression", type = "string", required = true),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "ref", type = "string"),
@@ -8306,11 +8305,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "bean-type": {
                     String val = asText(node);
                     target.setBeanTypeName(val);
-                    break;
-                }
-                case "expression": {
-                    String val = asText(node);
-                    target.setExpression(val);
                     break;
                 }
                 case "id": {
@@ -15683,7 +15677,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "end-token", type = "string"),
-                    @YamlProperty(name = "expression", type = "string", required = true),
                     @YamlProperty(name = "group", type = "string"),
                     @YamlProperty(name = "group-delimiter", type = "string"),
                     @YamlProperty(name = "header-name", type = "string"),
@@ -15719,11 +15712,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "end-token": {
                     String val = asText(node);
                     target.setEndToken(val);
-                    break;
-                }
-                case "expression": {
-                    String val = asText(node);
-                    target.setExpression(val);
                     break;
                 }
                 case "group": {
@@ -17397,7 +17385,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.XMLTokenizerExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
-                    @YamlProperty(name = "expression", type = "string", required = true),
                     @YamlProperty(name = "group", type = "number"),
                     @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
@@ -17424,11 +17411,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(XMLTokenizerExpression target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "expression": {
-                    String val = asText(node);
-                    target.setExpression(val);
-                    break;
-                }
                 case "group": {
                     String val = asText(node);
                     target.setGroup(val);

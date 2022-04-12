@@ -463,7 +463,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         setProperty.beginControlFlow("switch(propertyKey)");
 
         for (FieldInfo field : fields(info)) {
-            if (generateSetValue(setProperty, field, properties)) {
+            if (generateSetValue(modelName.get(), setProperty, field, properties)) {
                 caseAdded = true;
             }
         }
@@ -606,7 +606,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
     }
 
     @SuppressWarnings("MethodLength")
-    private boolean generateSetValue(CodeBlock.Builder cb, FieldInfo field, Collection<AnnotationSpec> annotations) {
+    private boolean generateSetValue(String modelName, CodeBlock.Builder cb, FieldInfo field, Collection<AnnotationSpec> annotations) {
         if (hasAnnotation(field, XML_TRANSIENT_CLASS) && !hasAnnotation(field, DSL_PROPERTY_ANNOTATION)) {
             return false;
         }
@@ -821,6 +821,12 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                         throw new UnsupportedOperationException("Unable to handle field: " + field.name() + " with type: " + field.type().name());
                 }
             }
+        }
+
+        if ("expression".equals(fieldName) && !expressionRequired(modelName)) {
+            // special for some language models which does not have required expression
+            // which should be skipped
+            return true;
         }
 
         //

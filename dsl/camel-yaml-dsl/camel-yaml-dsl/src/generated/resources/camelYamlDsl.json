@@ -6063,9 +6063,6 @@
             "beanType" : {
               "type" : "string"
             },
-            "expression" : {
-              "type" : "string"
-            },
             "id" : {
               "type" : "string"
             },
@@ -6083,8 +6080,7 @@
               "type" : "boolean"
             }
           }
-        } ],
-        "required" : [ "expression" ]
+        } ]
       },
       "org.apache.camel.model.language.MvelExpression" : {
         "oneOf" : [ {
@@ -6193,9 +6189,6 @@
             "endToken" : {
               "type" : "string"
             },
-            "expression" : {
-              "type" : "string"
-            },
             "group" : {
               "type" : "string"
             },
@@ -6231,7 +6224,7 @@
             }
           }
         } ],
-        "required" : [ "expression", "token" ]
+        "required" : [ "token" ]
       },
       "org.apache.camel.model.language.XMLTokenizerExpression" : {
         "oneOf" : [ {
@@ -6239,9 +6232,6 @@
         }, {
           "type" : "object",
           "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
             "group" : {
               "type" : "number"
             },
@@ -6259,8 +6249,7 @@
               "type" : "boolean"
             }
           }
-        } ],
-        "required" : [ "expression" ]
+        } ]
       },
       "org.apache.camel.model.language.XPathExpression" : {
         "oneOf" : [ {
