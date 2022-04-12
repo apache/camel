@@ -98,7 +98,7 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
     }
 
     @Test
-    public void testCamelHealthCheckRepositorySpecificChecksDisabled() throws Exception {
+    public void testCamelHealthCheckRepositorySpecificChecksDisabled() {
         List<HealthCheck> repositoryChecks = new ArrayList<>();
         repositoryChecks.add(createLivenessCheck("check-1", true, builder -> builder.up()));
         repositoryChecks.add(createLivenessCheck("check-2", false, builder -> builder.up()));
@@ -479,10 +479,10 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("healthyRoute")
                         .setBody(constant("Hello Camel MicroProfile Health"));
             }

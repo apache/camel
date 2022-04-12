@@ -93,10 +93,10 @@ public class FaultToleranceRefConfigurationTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("start")
                         .circuitBreaker().id("myFaultTolerance").configuration("myConfig").faultToleranceConfiguration()
                         .delay(2000).timeoutEnabled(true).timeoutDuration(5000).end()

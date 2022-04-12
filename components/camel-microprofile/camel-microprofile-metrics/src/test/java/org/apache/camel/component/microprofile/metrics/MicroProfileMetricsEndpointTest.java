@@ -70,7 +70,7 @@ public class MicroProfileMetricsEndpointTest {
     }
 
     @Test
-    public void testInvalidMetricType() throws Exception {
+    public void testInvalidMetricType() {
         MicroProfileMetricsEndpoint endpoint = createEndpoint(MetricType.INVALID);
         assertThrows(IllegalStateException.class, () -> endpoint.createProducer());
     }

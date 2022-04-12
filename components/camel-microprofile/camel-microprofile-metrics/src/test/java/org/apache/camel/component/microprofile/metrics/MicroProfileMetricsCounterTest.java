@@ -62,10 +62,10 @@ public class MicroProfileMetricsCounterTest extends MicroProfileMetricsTestSuppo
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:increment")
                         .to("microprofile-metrics:counter:test-counter?counterIncrement=10");
 

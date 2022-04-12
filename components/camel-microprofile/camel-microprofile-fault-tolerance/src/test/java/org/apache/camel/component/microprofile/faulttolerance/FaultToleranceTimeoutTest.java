@@ -37,14 +37,14 @@ public class FaultToleranceTimeoutTest extends CamelTestSupport {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Test
-    public void testFast() throws Exception {
+    public void testFast() {
         // this calls the fast route and therefore we get a response
         Object out = template.requestBody("direct:start", "fast");
         assertEquals("Fast response", out);
     }
 
     @Test
-    public void testSlow() throws Exception {
+    public void testSlow() {
         // this calls the slow route and therefore causes a timeout which
         // triggers an exception
         Exception exception = assertThrows(Exception.class,
@@ -55,7 +55,7 @@ public class FaultToleranceTimeoutTest extends CamelTestSupport {
 
     @Test
     @Disabled("manual testing")
-    public void testSlowLoop() throws Exception {
+    public void testSlowLoop() {
         // this calls the slow route and therefore causes a timeout which
         // triggers an exception
         for (int i = 0; i < 10; i++) {
@@ -68,10 +68,10 @@ public class FaultToleranceTimeoutTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .circuitBreaker()
                         // enable and use 2 second timeout
