@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.minio.integration;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 import com.google.common.collect.Iterators;
@@ -50,7 +49,7 @@ class MinioListObjectsOperationIT extends MinioIntegrationTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    MinioListObjectsOperationIT() throws IOException {
+    MinioListObjectsOperationIT() {
     }
 
     @SuppressWarnings("unchecked")
