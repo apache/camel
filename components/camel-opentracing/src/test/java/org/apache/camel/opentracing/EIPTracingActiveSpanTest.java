@@ -48,7 +48,7 @@ public class EIPTracingActiveSpanTest extends CamelOpenTracingTestSupport {
     }
 
     @Test
-    public void testRoute() throws Exception {
+    public void testRoute() {
         template.requestBody("direct:start", "Hello");
 
         verify();
@@ -60,13 +60,13 @@ public class EIPTracingActiveSpanTest extends CamelOpenTracingTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("start").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // here you can use GlobalTracer if it's in your classpath or
                         // use the exchange context to look for a tracer in the registry
                         GlobalTracer.get().buildSpan("using-active-span")

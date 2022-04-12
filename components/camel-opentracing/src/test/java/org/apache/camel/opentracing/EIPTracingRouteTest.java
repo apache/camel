@@ -58,7 +58,7 @@ public class EIPTracingRouteTest extends CamelOpenTracingTestSupport {
     }
 
     @Test
-    public void testRoute() throws Exception {
+    public void testRoute() {
         template.requestBody("direct:start", "Hello");
 
         verify();
@@ -70,10 +70,10 @@ public class EIPTracingRouteTest extends CamelOpenTracingTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("start")
                         .to("seda:a").id("direct-to");
 

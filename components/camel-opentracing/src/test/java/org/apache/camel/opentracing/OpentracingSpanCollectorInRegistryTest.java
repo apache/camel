@@ -49,7 +49,7 @@ public class OpentracingSpanCollectorInRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void testZipkinConfiguration() throws Exception {
+    public void testZipkinConfiguration() {
         assertNotNull(openTracing.getTracer());
         assertTrue(openTracing.getTracer() instanceof NoopTracer);
     }
