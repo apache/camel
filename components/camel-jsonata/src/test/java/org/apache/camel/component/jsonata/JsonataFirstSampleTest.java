@@ -49,7 +49,7 @@ public class JsonataFirstSampleTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         final Processor processor = new Processor() {
             public void process(Exchange exchange) {
                 Map<String, String> contextMap = new HashMap<>();
