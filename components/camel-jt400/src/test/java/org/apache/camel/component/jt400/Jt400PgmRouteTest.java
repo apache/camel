@@ -75,11 +75,11 @@ public class Jt400PgmRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 if (SYSTEM != null) {
                     String uri = String
                             .format("jt400://%s:%s@%s/QSYS.LIB/%s.LIB/%s.pgm?outputFieldsIdx=%s&fieldsLength=%s",

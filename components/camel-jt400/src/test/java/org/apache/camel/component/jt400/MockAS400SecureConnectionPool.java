@@ -20,7 +20,6 @@ import java.util.Locale;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
-import com.ibm.as400.access.ConnectionPoolException;
 import com.ibm.as400.security.auth.ProfileTokenCredential;
 
 /**
@@ -34,70 +33,66 @@ public class MockAS400SecureConnectionPool extends AS400ConnectionPool {
     }
 
     @Override
-    public AS400 getSecureConnection(String systemName, String userID, String password) throws ConnectionPoolException {
+    public AS400 getSecureConnection(String systemName, String userID, String password) {
         return new AS400(systemName, userID, password);
     }
 
     @Deprecated
     @Override
-    public AS400 getSecureConnection(String systemName, String userID) throws ConnectionPoolException {
+    public AS400 getSecureConnection(String systemName, String userID) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public AS400 getSecureConnection(String systemName, String userID, String password, int i) throws ConnectionPoolException {
+    public AS400 getSecureConnection(String systemName, String userID, String password, int i) {
         return new AS400(systemName, userID, password);
     }
 
     @Deprecated
     @Override
-    public AS400 getSecureConnection(String systemName, String userID, int i) throws ConnectionPoolException {
+    public AS400 getSecureConnection(String systemName, String userID, int i) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public AS400 getSecureConnection(String systemName, String userID, ProfileTokenCredential profileTokenCredential)
-            throws ConnectionPoolException {
+    public AS400 getSecureConnection(String systemName, String userID, ProfileTokenCredential profileTokenCredential) {
         return new AS400(systemName, userID);
     }
 
     @Override
-    public AS400 getSecureConnection(String systemName, String userID, ProfileTokenCredential profileTokenCredential, int i)
-            throws ConnectionPoolException {
+    public AS400 getSecureConnection(String systemName, String userID, ProfileTokenCredential profileTokenCredential, int i) {
         return new AS400(systemName, userID);
     }
 
     @Deprecated
     @Override
-    public AS400 getConnection(String systemName, String userID) throws ConnectionPoolException {
+    public AS400 getConnection(String systemName, String userID) {
         throw new UnsupportedOperationException();
     }
 
     @Deprecated
     @Override
-    public AS400 getConnection(String systemName, String userID, int service) throws ConnectionPoolException {
+    public AS400 getConnection(String systemName, String userID, int service) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public AS400 getConnection(String systemName, String userID, String password) throws ConnectionPoolException {
+    public AS400 getConnection(String systemName, String userID, String password) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public AS400 getConnection(String systemName, String userID, String password, int service) throws ConnectionPoolException {
+    public AS400 getConnection(String systemName, String userID, String password, int service) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public AS400 getConnection(String systemName, String userID, String password, int service, Locale locale)
-            throws ConnectionPoolException {
+    public AS400 getConnection(String systemName, String userID, String password, int service, Locale locale) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public AS400 getConnection(String systemName, String userID, String password, Locale locale)
-            throws ConnectionPoolException {
+    public AS400 getConnection(String systemName, String userID, String password, Locale locale) {
         throw new UnsupportedOperationException();
     }
 
