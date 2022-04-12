@@ -90,10 +90,10 @@ public class LevelDBAggregateLoadAndRecoverTest extends LevelDBTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 LevelDBAggregationRepository repo = getRepo();
                 repo.setUseRecovery(true);
                 // for faster unit testing
@@ -107,7 +107,7 @@ public class LevelDBAggregateLoadAndRecoverTest extends LevelDBTestSupport {
                         .to("log:output?showHeaders=true")
                         // have every 10th exchange fail which should then be recovered
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 int num = counter.incrementAndGet();
                                 if (num % 10 == 0) {
                                     throw new IllegalStateException("Failed for num " + num);
