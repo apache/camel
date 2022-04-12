@@ -34,7 +34,7 @@ public class XMLQueueToProcessorTransactionTest extends AbstractTransactionTest 
     }
 
     @Test
-    public void testRollbackUsingXmlQueueToQueue() throws Exception {
+    public void testRollbackUsingXmlQueueToQueue() {
         // routes should have been configured via xml and added to the camel context
         assertResult();
     }
