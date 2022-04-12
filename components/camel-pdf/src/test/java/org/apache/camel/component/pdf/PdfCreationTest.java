@@ -116,10 +116,10 @@ public class PdfCreationTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("pdf:create?fontSize=6&font=Courier&pageSize=PAGE_SIZE_A1")
                         .to("mock:result");
