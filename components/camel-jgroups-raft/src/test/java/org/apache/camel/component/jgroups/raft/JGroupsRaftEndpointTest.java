@@ -43,17 +43,17 @@ public class JGroupsRaftEndpointTest extends CamelTestSupport {
 
     StateMachine sm = new StateMachine() {
         @Override
-        public byte[] apply(byte[] bytes, int i, int i1) throws Exception {
+        public byte[] apply(byte[] bytes, int i, int i1) {
             return new byte[0];
         }
 
         @Override
-        public void readContentFrom(DataInput dataInput) throws Exception {
+        public void readContentFrom(DataInput dataInput) {
 
         }
 
         @Override
-        public void writeContentTo(DataOutput dataOutput) throws Exception {
+        public void writeContentTo(DataOutput dataOutput) {
 
         }
     };
@@ -67,10 +67,10 @@ public class JGroupsRaftEndpointTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(CONFIGURED_ENDPOINT_URI).to("mock:test");
                 from(CONFIGURED_ENDPOINT_URI1).to("mock:test1");
                 from(CONFIGURED_ENDPOINT_URI2).to("mock:test2");
@@ -79,7 +79,7 @@ public class JGroupsRaftEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldSetClusterNameAndResolveRaftHandle() throws Exception {
+    public void shouldSetClusterNameAndResolveRaftHandle() {
         JGroupsRaftEndpoint endpoint = getMandatoryEndpoint(CONFIGURED_ENDPOINT_URI, JGroupsRaftEndpoint.class);
 
         assertEquals(CLUSTER_NAME, endpoint.getClusterName());

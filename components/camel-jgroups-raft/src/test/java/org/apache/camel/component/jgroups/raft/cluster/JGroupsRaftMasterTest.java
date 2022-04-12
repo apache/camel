@@ -95,7 +95,7 @@ public class JGroupsRaftMasterTest extends JGroupsRaftClusterAbstractTest {
         context.addService(service);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("master:jgr:timer:master?delay=1000&period=1000")
                         .routeId("route-" + id)
                         .log("From ${routeId}");
