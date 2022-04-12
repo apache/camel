@@ -34,7 +34,7 @@ public class RxJavaStreamsServiceSubscriberTest extends RxJavaStreamsServiceTest
     public void testSubscriber() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:sub1")
                         .to("mock:sub1");
                 from("reactive-streams:sub2")
@@ -84,7 +84,7 @@ public class RxJavaStreamsServiceSubscriberTest extends RxJavaStreamsServiceTest
     public void testSingleConsumer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:singleConsumer")
                         .process()
                         .message(m -> m.setHeader("thread", Thread.currentThread().getId()))
@@ -120,7 +120,7 @@ public class RxJavaStreamsServiceSubscriberTest extends RxJavaStreamsServiceTest
     public void testMultipleConsumers() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:multipleConsumers?concurrentConsumers=3")
                         .process()
                         .message(m -> m.setHeader("thread", Thread.currentThread().getId()))
