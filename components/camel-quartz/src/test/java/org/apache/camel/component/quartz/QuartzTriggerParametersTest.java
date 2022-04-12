@@ -32,10 +32,10 @@ public class QuartzTriggerParametersTest extends BaseQuartzTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String cron = String.format("quartz://job?cron=0+%s+%s+?+*+*&trigger.timeZone=%s&trigger.misfireInstruction=2",
                         59, 23, "Europe/Berlin");
 

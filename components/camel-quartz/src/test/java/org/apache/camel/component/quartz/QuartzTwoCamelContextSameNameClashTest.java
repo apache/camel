@@ -36,7 +36,7 @@ public class QuartzTwoCamelContextSameNameClashTest {
         camel1.setName("myCamel");
         camel1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?")
                         .log("Fired one")
                         .to("mock:one");
@@ -48,7 +48,7 @@ public class QuartzTwoCamelContextSameNameClashTest {
         camel2.setName("myCamel");
         camel2.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myOtherGroup/myOtherTimerName?cron=0/1+*+*+*+*+?")
                         .log("Fired two")
                         .to("mock:two");
@@ -58,7 +58,7 @@ public class QuartzTwoCamelContextSameNameClashTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         camel1.stop();
         camel2.stop();
     }

@@ -47,10 +47,10 @@ public class QuartzAutoStartTest extends BaseQuartzTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?&autoStartScheduler=false").to("mock:one");
             }
         };

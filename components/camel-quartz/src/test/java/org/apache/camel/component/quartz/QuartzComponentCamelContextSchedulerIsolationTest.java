@@ -21,7 +21,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -72,7 +71,7 @@ public class QuartzComponentCamelContextSchedulerIsolationTest {
     /**
      * Get the default scheduler for the provided camel context.
      */
-    private Scheduler getDefaultScheduler(CamelContext context) throws SchedulerException {
+    private Scheduler getDefaultScheduler(CamelContext context) {
         return getQuartzComponent(context).getScheduler();
     }
 

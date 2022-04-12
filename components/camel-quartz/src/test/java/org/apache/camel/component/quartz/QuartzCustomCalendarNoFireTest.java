@@ -52,7 +52,7 @@ public class QuartzCustomCalendarNoFireTest extends BaseQuartzTest {
     }
 
     @BindToRegistry("calendar")
-    public HolidayCalendar loadCalendar() throws Exception {
+    public HolidayCalendar loadCalendar() {
 
         HolidayCalendar cal = new HolidayCalendar();
         cal.addExcludedDate(new Date());
