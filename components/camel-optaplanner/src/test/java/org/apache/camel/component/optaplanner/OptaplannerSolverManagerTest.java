@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class OptaplannerSolverManagerTest extends CamelTestSupport {
 
     @Test
-    public void testSynchronousProblemSolving() throws Exception {
+    public void testSynchronousProblemSolving() {
         CloudBalancingGenerator generator = new CloudBalancingGenerator(true);
         final CloudBalance planningProblem = generator.createCloudBalance(4, 12);
         assertNull(planningProblem.getScore());
