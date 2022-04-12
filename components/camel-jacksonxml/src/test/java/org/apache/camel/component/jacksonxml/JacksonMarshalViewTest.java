@@ -64,11 +64,11 @@ public class JacksonMarshalViewTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 // START SNIPPET: format
                 from("direct:inPojoAgeView").marshal().jacksonXml(TestPojoView.class, Views.Age.class);

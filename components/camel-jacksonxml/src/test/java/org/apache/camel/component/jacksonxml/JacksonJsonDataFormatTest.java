@@ -21,10 +21,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class JacksonJsonDataFormatTest extends JacksonMarshalTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").marshal().jacksonXml();
                 from("direct:back").unmarshal().jacksonXml().to("mock:reverse");
 

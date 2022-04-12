@@ -38,11 +38,11 @@ public class JacksonIncludeDefaultTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JacksonXMLDataFormat format = new JacksonXMLDataFormat();
 
                 from("direct:marshal").marshal(format).to("mock:marshal");
