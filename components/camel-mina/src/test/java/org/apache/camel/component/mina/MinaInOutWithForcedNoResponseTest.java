@@ -34,7 +34,7 @@ public class MinaInOutWithForcedNoResponseTest extends BaseMinaTest {
     int port2;
 
     @Test
-    public void testResponse() throws Exception {
+    public void testResponse() {
         Object out = template.requestBody("mina:tcp://localhost:" + port1 + "?sync=true", "Woodbine");
         assertEquals("Hello Chad", out);
     }
@@ -48,10 +48,10 @@ public class MinaInOutWithForcedNoResponseTest extends BaseMinaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
+            public void configure() {
                 port1 = getPort();
                 port2 = getNextPort();
 

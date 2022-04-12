@@ -84,10 +84,10 @@ public class MinaVMCustomCodecTest extends BaseMinaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
+            public void configure() {
                 from(String.format("mina:vm://localhost:%1$s?sync=true&codec=#myCodec", getPort()))
                         .transform(constant("Bye World")).to("mock:result");
             }
@@ -97,7 +97,7 @@ public class MinaVMCustomCodecTest extends BaseMinaTest {
     private static class MyCodec implements ProtocolCodecFactory {
 
         @Override
-        public ProtocolEncoder getEncoder(IoSession is) throws Exception {
+        public ProtocolEncoder getEncoder(IoSession is) {
             return new ProtocolEncoder() {
 
                 public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out) throws Exception {
@@ -108,7 +108,7 @@ public class MinaVMCustomCodecTest extends BaseMinaTest {
                     out.write(bb);
                 }
 
-                public void dispose(IoSession ioSession) throws Exception {
+                public void dispose(IoSession ioSession) {
                     // do nothing
                 }
             };
@@ -116,7 +116,7 @@ public class MinaVMCustomCodecTest extends BaseMinaTest {
         }
 
         @Override
-        public ProtocolDecoder getDecoder(IoSession is) throws Exception {
+        public ProtocolDecoder getDecoder(IoSession is) {
             return new CumulativeProtocolDecoder() {
 
                 protected boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {

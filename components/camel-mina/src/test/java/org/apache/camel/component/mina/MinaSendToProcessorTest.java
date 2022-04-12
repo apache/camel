@@ -28,7 +28,7 @@ public class MinaSendToProcessorTest extends BaseMinaTest {
         context.addRoutes(new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to(String.format("mina:tcp://localhost:%1$s?sync=false&lazySessionCreation=false", getPort()));
             }
@@ -47,7 +47,7 @@ public class MinaSendToProcessorTest extends BaseMinaTest {
         context.addRoutes(new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(String.format("mina:tcp://localhost:%1$s?sync=false", getPort()));
             }
         });

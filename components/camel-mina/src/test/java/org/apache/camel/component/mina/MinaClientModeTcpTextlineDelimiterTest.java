@@ -79,7 +79,7 @@ public class MinaClientModeTcpTextlineDelimiterTest extends BaseMinaTest {
             acceptor.bind(new InetSocketAddress("127.0.0.1", port));
         }
 
-        public void shutdown() throws Exception {
+        public void shutdown() {
             acceptor.unbind();
             acceptor.dispose();
         }
@@ -87,7 +87,7 @@ public class MinaClientModeTcpTextlineDelimiterTest extends BaseMinaTest {
 
     private class ServerHandler extends IoHandlerAdapter {
         @Override
-        public void sessionOpened(IoSession session) throws Exception {
+        public void sessionOpened(IoSession session) {
             session.write("Hello there!\n");
             session.closeNow();
         }

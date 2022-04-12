@@ -103,7 +103,7 @@ public class MinaTransferExchangeOptionTest extends BaseMinaTest {
                 from(String.format("mina:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort()))
                         .process(new Processor() {
 
-                            public void process(Exchange e) throws InterruptedException {
+                            public void process(Exchange e) {
                                 LOG.debug("Enter Processor...");
                                 assertNotNull(e.getIn().getBody());
                                 LOG.debug("Enter Processor...1");

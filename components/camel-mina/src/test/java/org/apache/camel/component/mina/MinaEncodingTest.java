@@ -181,7 +181,7 @@ public class MinaEncodingTest extends BaseMinaTest {
     }
 
     @Test
-    public void testInvalidEncoding() throws Exception {
+    public void testInvalidEncoding() {
         final String uri = String.format("mina:tcp://localhost:%1$s?textline=true&encoding=XXX&sync=false", getPort());
 
         try {
