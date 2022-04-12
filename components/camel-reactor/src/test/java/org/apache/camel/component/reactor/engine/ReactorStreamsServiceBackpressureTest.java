@@ -39,7 +39,7 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:gen?period=20&repeatCount=20")
                         .setBody()
                         .header(Exchange.TIMER_COUNTER)
@@ -74,7 +74,7 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:gen?period=20&repeatCount=20")
                         .setBody()
                         .header(Exchange.TIMER_COUNTER)
@@ -121,7 +121,7 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:gen?period=20&repeatCount=20")
                         .setBody()
                         .header(Exchange.TIMER_COUNTER)

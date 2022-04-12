@@ -44,7 +44,7 @@ class ReactorStreamsServiceTestSupport extends CamelTestSupport {
     }
 
     @Override
-    protected void doPostSetup() throws Exception {
+    protected void doPostSetup() {
         this.crs = CamelReactiveStreams.get(context);
     }
 
