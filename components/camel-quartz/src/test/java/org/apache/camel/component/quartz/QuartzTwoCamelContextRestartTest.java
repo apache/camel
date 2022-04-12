@@ -33,7 +33,7 @@ public class QuartzTwoCamelContextRestartTest {
         camel1 = new DefaultCamelContext();
         camel1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?").to("log:one", "mock:one");
             }
         });
@@ -43,7 +43,7 @@ public class QuartzTwoCamelContextRestartTest {
         camel2.getComponent("quartz", QuartzComponent.class).setEnableJmx(false);
         camel2.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myOtherGroup/myOtherTimerName?cron=0/1+*+*+*+*+?").to("log:two", "mock:two");
             }
         });
@@ -51,7 +51,7 @@ public class QuartzTwoCamelContextRestartTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         camel1.stop();
         camel2.stop();
     }

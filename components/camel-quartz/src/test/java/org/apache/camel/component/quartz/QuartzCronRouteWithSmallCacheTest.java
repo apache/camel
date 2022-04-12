@@ -59,7 +59,7 @@ public class QuartzCronRouteWithSmallCacheTest extends BaseQuartzTest {
 
                 from("quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         latch.countDown();
                         template.sendBody("direct:foo", "Quartz triggered");
                     }

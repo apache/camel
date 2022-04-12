@@ -62,7 +62,7 @@ public class DelegateEndpointQuartzTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("my", new MyComponent());
     }
 

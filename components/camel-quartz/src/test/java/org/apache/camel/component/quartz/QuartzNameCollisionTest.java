@@ -42,7 +42,7 @@ public class QuartzNameCollisionTest {
         camel1 = new DefaultCamelContext();
         camel1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?").to("log:one", "mock:one");
             }
         });
@@ -65,7 +65,7 @@ public class QuartzNameCollisionTest {
         camel1 = new DefaultCamelContext();
         camel1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?").to("log:one", "mock:one");
             }
         });
@@ -74,7 +74,7 @@ public class QuartzNameCollisionTest {
         camel2 = new DefaultCamelContext();
         camel2.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup/myTimerName=0/2+*+*+*+*+?").to("log:two", "mock:two");
             }
         });
@@ -89,7 +89,7 @@ public class QuartzNameCollisionTest {
         camel1 = new DefaultCamelContext();
         camel1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup/myTimerName?stateful=true&cron=0/1+*+*+*+*+?").to("log:one", "mock:one");
             }
         });
@@ -98,7 +98,7 @@ public class QuartzNameCollisionTest {
         camel2 = new DefaultCamelContext();
         camel2.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup/myTimerName?stateful=true").to("log:two", "mock:two");
             }
         });
@@ -115,7 +115,7 @@ public class QuartzNameCollisionTest {
 
         camel.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?").to("log:one", "mock:one");
             }
         });
@@ -142,14 +142,14 @@ public class QuartzNameCollisionTest {
         camel1 = new DefaultCamelContext();
         camel1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?").id("route-1").to("log:one", "mock:one");
             }
         });
 
         camel1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup2/myTimerName?cron=0/1+*+*+*+*+?").id("route-2").to("log:one", "mock:one");
             }
         });
@@ -170,7 +170,7 @@ public class QuartzNameCollisionTest {
     }
 
     @AfterEach
-    public void cleanUp() throws Exception {
+    public void cleanUp() {
         if (camel1 != null) {
             camel1.stop();
             camel1 = null;

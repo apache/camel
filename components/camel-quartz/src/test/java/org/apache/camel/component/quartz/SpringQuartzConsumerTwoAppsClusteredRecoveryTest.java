@@ -106,7 +106,7 @@ public class SpringQuartzConsumerTwoAppsClusteredRecoveryTest {
         ApplicationContext applicationContext;
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // shutdown the application context;
             ((AbstractXmlApplicationContext) applicationContext).close();
         }

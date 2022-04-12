@@ -35,7 +35,7 @@ public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
     private int size = 100;
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("startPolicy", createRouteStartPolicy());
         registry.bind("throttlePolicy", createThrottlePolicy());
     }

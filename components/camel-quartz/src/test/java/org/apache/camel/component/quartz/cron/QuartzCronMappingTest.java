@@ -32,7 +32,7 @@ public class QuartzCronMappingTest extends BaseQuartzTest {
     public void test5PartsCronPattern() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("cron://myName?schedule=* * * * ?")
                         .id("cron")
                         .to("mock:result");
@@ -46,7 +46,7 @@ public class QuartzCronMappingTest extends BaseQuartzTest {
     public void test6PartsCronPattern() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("cron://myName?schedule=0/2 * * * * ?")
                         .id("cron")
                         .to("mock:result");

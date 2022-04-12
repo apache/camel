@@ -54,7 +54,7 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
     }
 
     @Test
-    public void testQuartzPropertiesFileNotFound() throws Exception {
+    public void testQuartzPropertiesFileNotFound() {
         quartz = context.getComponent("quartz", QuartzComponent.class);
 
         quartz.setPropertiesFile("doesnotexist.properties");

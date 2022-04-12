@@ -43,7 +43,7 @@ public class QuartzComponentTest extends BaseQuartzTest {
     }
 
     @Test
-    public void testQuartzComponent() throws Exception {
+    public void testQuartzComponent() {
         QuartzComponent comp = new QuartzComponent(context);
         comp.start();
         comp.stop();

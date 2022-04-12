@@ -32,7 +32,7 @@ public class QuartzOneCamelContextSuspendResumeTest {
         camel1 = new DefaultCamelContext();
         camel1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?").to("mock:one");
             }
         });
@@ -40,7 +40,7 @@ public class QuartzOneCamelContextSuspendResumeTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         camel1.stop();
     }
 

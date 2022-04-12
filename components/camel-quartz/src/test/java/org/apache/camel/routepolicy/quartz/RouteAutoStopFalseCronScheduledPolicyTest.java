@@ -36,7 +36,7 @@ public class RouteAutoStopFalseCronScheduledPolicyTest extends CamelTestSupport 
         policy.setRouteStartTime("*/5 * * * * ?");
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").routeId("foo").noAutoStartup()
                         .routePolicy(policy)
                         .to("mock:foo");

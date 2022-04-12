@@ -33,7 +33,7 @@ public class QuartzTwoCamelContextTest {
         camel1 = new DefaultCamelContext();
         camel1.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myGroup/myTimerName?cron=0/1+*+*+*+*+?").to("mock:one");
             }
         });
@@ -42,7 +42,7 @@ public class QuartzTwoCamelContextTest {
         camel2 = new DefaultCamelContext();
         camel2.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myOtherGroup/myOtherTimerName?cron=0/1+*+*+*+*+?").to("mock:two");
             }
         });
@@ -50,7 +50,7 @@ public class QuartzTwoCamelContextTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         camel1.stop();
         camel2.stop();
     }
@@ -80,7 +80,7 @@ public class QuartzTwoCamelContextTest {
         DefaultCamelContext camel3 = new DefaultCamelContext();
         camel3.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quartz://myThirdGroup/myThirdTimerName?cron=0/1+*+*+*+*+?").to("mock:three");
             }
         });
