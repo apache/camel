@@ -38,7 +38,7 @@ public class RouteConcurrentTest extends CamelOpenTelemetryTestSupport {
     }
 
     @Test
-    public void testSingleInvocationsOfRoute() throws Exception {
+    public void testSingleInvocationsOfRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 
         template.sendBody("seda:foo", "Hello World");
@@ -49,7 +49,7 @@ public class RouteConcurrentTest extends CamelOpenTelemetryTestSupport {
     }
 
     @Test
-    public void testConcurrentInvocationsOfRoute() throws Exception {
+    public void testConcurrentInvocationsOfRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
 
         for (int i = 0; i < 5; i++) {
@@ -62,10 +62,10 @@ public class RouteConcurrentTest extends CamelOpenTelemetryTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo?concurrentConsumers=5").routeId("foo")
                         .log("routing at ${routeId}")
                         .delay(simple("${random(1000,2000)}"))
