@@ -34,10 +34,10 @@ public class JacksonObjectListSplitTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // you can specify the pojo class type for unmarshal the jason file
                 JacksonXMLDataFormat format = new JacksonXMLDataFormat(DummyObject.class);
                 format.useList();
