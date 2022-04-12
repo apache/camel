@@ -58,7 +58,7 @@ public class JsltFunctionsTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 JsltComponent js = context.getComponent("jslt", JsltComponent.class);
