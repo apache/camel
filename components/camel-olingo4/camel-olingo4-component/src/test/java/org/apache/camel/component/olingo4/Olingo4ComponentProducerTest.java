@@ -87,7 +87,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     }
 
     @Test
-    public void testRead() throws Exception {
+    public void testRead() {
         final Map<String, Object> headers = new HashMap<>();
 
         // Read metadata ($metadata) object
@@ -158,7 +158,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     }
 
     @Test
-    public void testCreateUpdateDelete() throws Exception {
+    public void testCreateUpdateDelete() {
         final ClientEntity clientEntity = createEntity();
 
         ClientEntity entity = requestBody("direct:create-entity", clientEntity);
@@ -191,7 +191,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     }
 
     @Test
-    public void testCreateUpdateDeleteFromJson() throws Exception {
+    public void testCreateUpdateDeleteFromJson() {
         ClientEntity entity = requestBody("direct:create-entity", TEST_CREATE_JSON);
         assertNotNull(entity);
         assertEquals("Lewis", entity.getProperty("FirstName").getValue().toString());
@@ -234,7 +234,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     }
 
     @Test
-    public void testBatch() throws Exception {
+    public void testBatch() {
         final List<Olingo4BatchRequest> batchParts = new ArrayList<>();
 
         // 1. Edm query
@@ -313,14 +313,14 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     }
 
     @Test
-    public void testUnboundActionRequest() throws Exception {
+    public void testUnboundActionRequest() {
         final HttpStatusCode status = requestBody("direct:unbound-action-ResetDataSource", null);
         assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
     }
 
     @Test
     @Disabled
-    public void testBoundActionRequest() throws Exception {
+    public void testBoundActionRequest() {
         final ClientEntity clientEntity = objFactory.newEntity(null);
         clientEntity.getProperties().add(
                 objFactory.newPrimitiveProperty("userName", objFactory.newPrimitiveValueBuilder().buildString("scottketchum")));
@@ -433,7 +433,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test routes for read
