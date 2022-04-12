@@ -77,7 +77,7 @@ public class LumberjackDisconnectionTest extends CamelTestSupport {
         int count;
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             count++;
             if (count == 4) {
                 throw new RuntimeCamelException("Ooops");
