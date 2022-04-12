@@ -32,24 +32,24 @@ public class JdbcParameterizedQueryGeneratedKeysTest extends AbstractJdbcGenerat
     }
 
     @Test
-    public void testRetrieveGeneratedKeys() throws Exception {
+    public void testRetrieveGeneratedKeys() {
         super.testRetrieveGeneratedKeys("insert into tableWithAutoIncr (content) values (:?value)", VALUE_MAP);
     }
 
     @Test
-    public void testRetrieveGeneratedKeysWithStringGeneratedColumns() throws Exception {
+    public void testRetrieveGeneratedKeysWithStringGeneratedColumns() {
         super.testRetrieveGeneratedKeysWithStringGeneratedColumns("insert into tableWithAutoIncr (content) values (:?value)",
                 VALUE_MAP);
     }
 
     @Test
-    public void testRetrieveGeneratedKeysWithIntGeneratedColumns() throws Exception {
+    public void testRetrieveGeneratedKeysWithIntGeneratedColumns() {
         super.testRetrieveGeneratedKeysWithIntGeneratedColumns("insert into tableWithAutoIncr (content) values (:?value)",
                 VALUE_MAP);
     }
 
     @Test
-    public void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown() throws Exception {
+    public void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown() {
         super.testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown(
                 "insert into tableWithAutoIncr (content) values (:?value)", VALUE_MAP);
     }

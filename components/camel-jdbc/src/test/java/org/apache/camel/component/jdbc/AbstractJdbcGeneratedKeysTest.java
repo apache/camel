@@ -61,7 +61,7 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
                 "generated keys row count should be one");
     }
 
-    protected void testRetrieveGeneratedKeys(String query) throws Exception {
+    protected void testRetrieveGeneratedKeys(String query) {
         testRetrieveGeneratedKeys(query, null);
     }
 
@@ -99,7 +99,7 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
                 "generated keys row count should be one");
     }
 
-    protected void testRetrieveGeneratedKeysWithStringGeneratedColumns(String query) throws Exception {
+    protected void testRetrieveGeneratedKeysWithStringGeneratedColumns(String query) {
         testRetrieveGeneratedKeysWithStringGeneratedColumns(query, null);
     }
 
@@ -137,7 +137,7 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
                 "generated keys row count should be one");
     }
 
-    protected void testRetrieveGeneratedKeysWithIntGeneratedColumns(String query) throws Exception {
+    protected void testRetrieveGeneratedKeysWithIntGeneratedColumns(String query) {
         testRetrieveGeneratedKeysWithIntGeneratedColumns(query, null);
     }
 
@@ -162,7 +162,7 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
         assertTrue(exchange.isFailed());
     }
 
-    protected void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown(String query) throws Exception {
+    protected void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown(String query) {
         testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown(query, null);
     }
 
