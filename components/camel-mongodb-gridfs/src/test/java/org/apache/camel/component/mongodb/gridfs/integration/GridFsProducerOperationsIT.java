@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class GridFsProducerOperationsIT extends AbstractMongoDbITSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:create")
@@ -99,7 +99,7 @@ public class GridFsProducerOperationsIT extends AbstractMongoDbITSupport {
         Exchange result = template.request(
                 "mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket(), new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody(FILE_DATA);
                         exchange.getMessage().setHeaders(headers);
                     }
