@@ -111,7 +111,7 @@ public class LdifRouteIT extends LdifTestSupport {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (camel != null) {
             camel.stop();
         }
@@ -325,11 +325,11 @@ public class LdifRouteIT extends LdifTestSupport {
         return data;
     }
 
-    protected RouteBuilder createRouteBuilder(final String ldapEndpointUrl) throws Exception {
+    protected RouteBuilder createRouteBuilder(final String ldapEndpointUrl) {
         return new RouteBuilder() {
             // START SNIPPET: route
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(ENDPOINT_START).to(ldapEndpointUrl);
             }
             // END SNIPPET: route
@@ -362,7 +362,7 @@ public class LdifRouteIT extends LdifTestSupport {
 
         setupCamel.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(ENDPOINT_SETUP_START).to(ENDPOINT_LDIF);
             }
         });

@@ -440,8 +440,7 @@ public final class ServerAnnotationProcessor {
         return port;
     }
 
-    public static KdcServer getKdcServer(Description description, DirectoryService directoryService)
-            throws Exception {
+    public static KdcServer getKdcServer(Description description, DirectoryService directoryService) {
         CreateKdcServer createLdapServer = description.getAnnotation(CreateKdcServer.class);
 
         return createKdcServer(createLdapServer, directoryService);
