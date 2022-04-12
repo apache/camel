@@ -62,7 +62,7 @@ public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
     }
 
     @Test
-    public void addsNewKeysToCache() throws Exception {
+    public void addsNewKeysToCache() {
         assertTrue(repository.add("One"));
         assertTrue(repository.add("Two"));
 
@@ -71,20 +71,20 @@ public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
     }
 
     @Test
-    public void skipsAddingSecondTimeTheSameKey() throws Exception {
+    public void skipsAddingSecondTimeTheSameKey() {
         assertTrue(repository.add("One"));
         assertFalse(repository.add("One"));
     }
 
     @Test
-    public void containsPreviouslyAddedKey() throws Exception {
+    public void containsPreviouslyAddedKey() {
         assertFalse(repository.contains("One"));
         repository.add("One");
         assertTrue(repository.contains("One"));
     }
 
     @Test
-    public void removesAnExistingKey() throws Exception {
+    public void removesAnExistingKey() {
         cache.clear();
 
         repository.add("One");
@@ -94,12 +94,12 @@ public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
     }
 
     @Test
-    public void doesNotRemoveMissingKey() throws Exception {
+    public void doesNotRemoveMissingKey() {
         assertFalse(repository.remove("One"));
     }
 
     @Test
-    public void clearCache() throws Exception {
+    public void clearCache() {
         assertTrue(repository.add("One"));
         assertTrue(repository.add("Two"));
 

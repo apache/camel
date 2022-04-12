@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 public class JCacheConsumerTest extends JCacheComponentTestSupport {
 
     @BindToRegistry("myFilter")
-    public CacheEntryEventFilter addCacheEntryEventFilter() throws Exception {
+    public CacheEntryEventFilter addCacheEntryEventFilter() {
         return new CacheEntryEventFilter<Object, Object>() {
             @Override
             public boolean evaluate(CacheEntryEvent<?, ?> event) throws CacheEntryListenerException {
@@ -105,7 +105,7 @@ public class JCacheConsumerTest extends JCacheComponentTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("jcache://test-cache?filteredEvents=UPDATED,REMOVED,EXPIRED").to("mock:created");

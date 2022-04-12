@@ -35,7 +35,7 @@ public class JCacheManagerTest extends JCacheComponentTestSupport {
     }
 
     @Test
-    public void testCacheCreationFailure() throws Exception {
+    public void testCacheCreationFailure() {
         JCacheConfiguration conf = new JCacheConfiguration();
         conf.setCacheName(randomString());
         conf.setCreateCacheIfNotExists(false);

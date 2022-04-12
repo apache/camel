@@ -48,7 +48,7 @@ public class SpringJCachePolicyTest extends CamelSpringTestSupport {
 
     //Verify value gets cached and route is not executed for the second time
     @Test
-    public void testXmlDslValueGetsCached() throws Exception {
+    public void testXmlDslValueGetsCached() {
         final String key = randomString();
         MockEndpoint mock = getMockEndpoint("mock:spring");
 
@@ -72,7 +72,7 @@ public class SpringJCachePolicyTest extends CamelSpringTestSupport {
 
     //Verify if we call the route with different keys, both gets cached
     @Test
-    public void testXmlDslDifferent() throws Exception {
+    public void testXmlDslDifferent() {
         final String key1 = randomString();
         MockEndpoint mock = getMockEndpoint("mock:spring");
 
@@ -97,7 +97,7 @@ public class SpringJCachePolicyTest extends CamelSpringTestSupport {
 
     //Verify policy applies only on the section of the route wrapped
     @Test
-    public void testXmlDslPartial() throws Exception {
+    public void testXmlDslPartial() {
         final String key = randomString();
         MockEndpoint mock = getMockEndpoint("mock:spring");
         MockEndpoint mockUnwrapped = getMockEndpoint("mock:unwrapped");
@@ -124,7 +124,7 @@ public class SpringJCachePolicyTest extends CamelSpringTestSupport {
 
     //Use a key expression ${header.mykey}
     @Test
-    public void testXmlDslKeyExpression() throws Exception {
+    public void testXmlDslKeyExpression() {
         final String key = randomString();
         final String body = randomString();
         MockEndpoint mock = getMockEndpoint("mock:spring");
