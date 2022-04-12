@@ -42,7 +42,7 @@ public class RabbitMQRequeueUnhandledExceptionIT extends AbstractRabbitMQIT {
     private MockEndpoint consumingMockEndpoint;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         ConnectionProperties connectionProperties = service.connectionProperties();
         String rabbitMQEndpoint
                 = String.format("rabbitmq:localhost:%d/ex4?username=%s&password=%s&autoAck=false&queue=q4&routingKey=%s",
@@ -52,7 +52,7 @@ public class RabbitMQRequeueUnhandledExceptionIT extends AbstractRabbitMQIT {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:rabbitMQ").id("producingRoute").log("Sending message")
                         .to(ExchangePattern.InOnly, rabbitMQEndpoint)
                         .to(producingMockEndpoint);

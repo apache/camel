@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -95,7 +94,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         String basicURI = getBasicURI(ROUTE);
         String allowNullHeaders = basicURI + "&allowNullHeaders=true&allowCustomHeaders=false";
         String allowCustomHeaders = basicURI + "&allowCustomHeaders=true";
@@ -108,7 +107,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
         context().setTracing(true);
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(basicURI);
                 from("direct:start-allow-null-headers").to(allowNullHeaders);
                 from("direct:start-not-allow-custom-headers").to(allowNullHeaders);
@@ -138,7 +137,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
     }
 
     @Test
-    public void producedMessageIsReceived() throws InterruptedException, IOException, TimeoutException {
+    public void producedMessageIsReceived() throws InterruptedException, IOException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
@@ -148,7 +147,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
     }
 
     @Test
-    public void producedMessageWithNotNullHeaders() throws InterruptedException, IOException, TimeoutException {
+    public void producedMessageWithNotNullHeaders() throws InterruptedException, IOException {
         final List<String> received = new ArrayList<>();
         final Map<String, Object> receivedHeaders = new HashMap<>();
         Map<String, Object> headers = new HashMap<>();
@@ -164,7 +163,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
     }
 
     @Test
-    public void producedMessageAllowNullHeaders() throws InterruptedException, IOException, TimeoutException {
+    public void producedMessageAllowNullHeaders() throws InterruptedException, IOException {
         final List<String> received = new ArrayList<>();
         final Map<String, Object> receivedHeaders = new HashMap<>();
         Map<String, Object> headers = new HashMap<>();
@@ -180,7 +179,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
     }
 
     @Test
-    public void producedMessageNotAllowCustomHeaders() throws InterruptedException, IOException, TimeoutException {
+    public void producedMessageNotAllowCustomHeaders() throws IOException {
         final List<String> received = new ArrayList<>();
         final Map<String, Object> receivedHeaders = new HashMap<>();
         Map<String, Object> headers = new HashMap<>();
@@ -199,7 +198,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
     }
 
     @Test
-    public void producedMessageAllowCustomHeaders() throws InterruptedException, IOException, TimeoutException {
+    public void producedMessageAllowCustomHeaders() throws InterruptedException, IOException {
         final List<String> received = new ArrayList<>();
         final Map<String, Object> receivedHeaders = new HashMap<>();
         Map<String, Object> headers = new HashMap<>();
@@ -249,7 +248,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
 
     @Test
     public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabled()
-            throws InterruptedException, IOException, TimeoutException {
+            throws InterruptedException, IOException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
@@ -260,7 +259,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
 
     @Test
     public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabledAndBadRoutingKeyIsUsed()
-            throws InterruptedException, IOException, TimeoutException {
+            throws InterruptedException, IOException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
@@ -271,7 +270,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
 
     @Test
     public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedAndMessageIsMarkedAsMandatory()
-            throws InterruptedException, IOException, TimeoutException {
+            throws InterruptedException, IOException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
@@ -288,7 +287,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
 
     @Test
     public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedOnABadRouteButMessageIsNotMandatory()
-            throws InterruptedException, IOException, TimeoutException {
+            throws InterruptedException, IOException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
@@ -315,8 +314,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
         }
 
         @Override
-        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
-                throws IOException {
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
             LOGGER.info("AMQP.BasicProperties: {}", properties);
 
             receivedHeaders.putAll(properties.getHeaders());

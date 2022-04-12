@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RabbitMQToDSendDynamicIT extends AbstractRabbitMQIT {
 
     @Test
-    public void testToD() throws Exception {
+    public void testToD() {
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
@@ -36,10 +36,10 @@ public class RabbitMQToDSendDynamicIT extends AbstractRabbitMQIT {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 RabbitMQComponent mq = context.getComponent("rabbitmq", RabbitMQComponent.class);
                 mq.setHostname(service.connectionProperties().hostname());
                 mq.setPortNumber(service.connectionProperties().port());

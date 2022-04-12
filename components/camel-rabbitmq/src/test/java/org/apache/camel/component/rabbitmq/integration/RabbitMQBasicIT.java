@@ -33,7 +33,7 @@ public class RabbitMQBasicIT extends AbstractRabbitMQIT {
     private MockEndpoint mock;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         ConnectionProperties connectionProperties = service.connectionProperties();
         foo = String.format("rabbitmq:%s:%d/foo?username=%s&password=%s", connectionProperties.hostname(),
                 connectionProperties.port(), connectionProperties.username(), connectionProperties.password());
@@ -43,7 +43,7 @@ public class RabbitMQBasicIT extends AbstractRabbitMQIT {
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(foo).log("FOO received: ${body}").to(bar);
 
                 from(bar).log("BAR received: ${body}").to(mock).transform().simple("Bye ${body}");

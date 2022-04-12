@@ -99,7 +99,7 @@ public class RabbitMQDeadLetterRoutingKeyIT extends AbstractRabbitMQIT {
     }
 
     @Test
-    public void originalRoutingKeyIsReceived() throws IOException, InterruptedException {
+    public void originalRoutingKeyIsReceived() throws IOException {
         final List<String> received = new ArrayList<>();
         final StringBuilder routingKey = new StringBuilder();
 

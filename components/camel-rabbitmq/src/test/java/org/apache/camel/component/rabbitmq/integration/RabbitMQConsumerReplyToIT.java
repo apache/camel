@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -58,14 +57,14 @@ public class RabbitMQConsumerReplyToIT extends AbstractRabbitMQIT {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         ConnectionProperties connectionProperties = service.connectionProperties();
 
         context().setTracing(true);
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 log.info("Building routes...");
 
                 fromF("rabbitmq:localhost:%d/%s?username=%s&password=%s&routingKey=%s", connectionProperties.port(),
@@ -76,7 +75,7 @@ public class RabbitMQConsumerReplyToIT extends AbstractRabbitMQIT {
     }
 
     @Test
-    public void replyMessageIsReceived() throws IOException, TimeoutException, InterruptedException {
+    public void replyMessageIsReceived() throws IOException, InterruptedException {
         final List<String> received = new ArrayList<>();
 
         AMQP.BasicProperties.Builder prop = new AMQP.BasicProperties.Builder();
@@ -88,7 +87,7 @@ public class RabbitMQConsumerReplyToIT extends AbstractRabbitMQIT {
         assertThatBodiesReceivedIn(received, REPLY);
     }
 
-    private void assertThatBodiesReceivedIn(final List<String> received, final String... expected) throws InterruptedException {
+    private void assertThatBodiesReceivedIn(final List<String> received, final String... expected) {
         Awaitility.await().atMost(Duration.ofSeconds(1)).untilAsserted(() -> assertListSize(received, expected.length));
 
         for (String body : expected) {
@@ -105,8 +104,7 @@ public class RabbitMQConsumerReplyToIT extends AbstractRabbitMQIT {
         }
 
         @Override
-        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
-                throws IOException {
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
             received.add(new String(body));
         }
     }
