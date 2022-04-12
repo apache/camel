@@ -36,7 +36,7 @@ public class KameletEipMulticastTest extends CamelTestSupport {
     public void testOne() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("echo")
                         .from("kamelet:source")
                         .setBody(body().append(body()));
@@ -76,7 +76,7 @@ public class KameletEipMulticastTest extends CamelTestSupport {
     public void testTwo() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("echo")
                         .from("kamelet:source")
                         .setBody(body().append(body()));
