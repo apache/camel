@@ -39,7 +39,7 @@ public final class PubNubGeoLocationExample {
 
     static class GeoLocationRoute extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("timer:geotimer")
                     .process(exchange -> exchange.getIn().setBody(new Foo("bar", "TEXT")))
                     .to("pubnub:eon-maps-geolocation-input?operation=fire&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey="

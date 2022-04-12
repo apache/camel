@@ -37,12 +37,12 @@ public class PubNubTestBase extends CamelTestSupport {
 
     private WireMockServer wireMockServer = new WireMockServer(options().port(port));
 
-    protected void setupResources() throws Exception {
+    protected void setupResources() {
         wireMockServer.start();
         WireMock.configureFor("localhost", wireMockServer.port());
     }
 
-    protected void cleanupResources() throws Exception {
+    protected void cleanupResources() {
         wireMockServer.stop();
         pubnub.destroy();
     }

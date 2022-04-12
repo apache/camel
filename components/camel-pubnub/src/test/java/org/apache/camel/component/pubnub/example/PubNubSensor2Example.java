@@ -52,7 +52,7 @@ public final class PubNubSensor2Example {
                                                + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY;
 
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("timer:device2").routeId("device-event-route")
                     .bean(PubNubSensor2Example.EventGeneratorBean.class, "getRandomEvent('device2')")
                     .to(deviceEP);
@@ -69,7 +69,7 @@ public final class PubNubSensor2Example {
         private static Map<String, String> devices = new ConcurrentHashMap<>();
 
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from(masterEP)
                     .routeId("master-route")
                     .bean(PubNubSensor2Example.PubsubRoute.DataProcessorBean.class, "doSomethingInteresting(${body})")

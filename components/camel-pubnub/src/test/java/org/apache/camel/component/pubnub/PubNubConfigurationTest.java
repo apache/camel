@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PubNubConfigurationTest extends CamelTestSupport {
 
     @Test
-    public void createEndpointWithIllegalArguments() throws Exception {
+    public void createEndpointWithIllegalArguments() {
         PubNubComponent component = context.getComponent("pubnub", PubNubComponent.class);
         assertThrows(IllegalArgumentException.class,
                 () -> component.createEndpoint("pubnub"));

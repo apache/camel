@@ -47,7 +47,7 @@ public class PubNubPublishTest extends PubNubTestBase {
     }
 
     @Test
-    public void testPublishEmptyBody() throws Exception {
+    public void testPublishEmptyBody() {
         assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:publish", null));
     }
@@ -64,7 +64,7 @@ public class PubNubPublishTest extends PubNubTestBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:publish").to(endpoint).to("mock:result");
