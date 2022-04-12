@@ -97,7 +97,7 @@ public class JpaTest {
     }
 
     @Test
-    public void testProducerInsertsList() throws Exception {
+    public void testProducerInsertsList() {
         // lets produce some objects
         template.send(listEndpoint, new Processor() {
             public void process(Exchange exchange) {
@@ -122,7 +122,7 @@ public class JpaTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         camelContext.start();
         template = camelContext.createProducerTemplate();
 
@@ -160,7 +160,7 @@ public class JpaTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         ServiceHelper.stopService(consumer, template);
         camelContext.stop();
     }

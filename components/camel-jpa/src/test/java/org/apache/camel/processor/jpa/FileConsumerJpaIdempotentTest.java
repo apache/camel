@@ -50,9 +50,9 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("file://target/idempotent/?idempotent=true&idempotentRepository=#jpaStore&move=done/${file:name}")
                         .routeId("foo").autoStartup(false)
                         .to("mock:result");

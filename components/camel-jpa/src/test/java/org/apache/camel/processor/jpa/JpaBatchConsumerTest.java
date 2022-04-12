@@ -44,10 +44,10 @@ public class JpaBatchConsumerTest extends AbstractJpaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jpa://" + SendEmail.class.getName() + "?delay=2000").to("mock:result");
             }
         };

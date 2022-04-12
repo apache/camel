@@ -55,14 +55,14 @@ public class JpaTXRollbackTest extends AbstractJpaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jpa://" + SendEmail.class.getName() + "?transacted=true&delay=1000").routeId("foo").noAutoStartup()
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 SendEmail send = exchange.getIn().getBody(SendEmail.class);
                                 if ("kaboom@beer.org".equals(send.getAddress())) {
                                     throw new IllegalArgumentException("Forced");

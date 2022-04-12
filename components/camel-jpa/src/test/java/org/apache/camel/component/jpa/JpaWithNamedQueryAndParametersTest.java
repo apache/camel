@@ -124,7 +124,7 @@ public class JpaWithNamedQueryAndParametersTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         camelContext = new DefaultCamelContext();
         SimpleRegistry registry = new SimpleRegistry();
         Map<String, Object> params = new HashMap<>();
@@ -151,7 +151,7 @@ public class JpaWithNamedQueryAndParametersTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         ServiceHelper.stopService(consumer, template);
         camelContext.stop();
     }
