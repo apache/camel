@@ -23,10 +23,10 @@ import org.junit.jupiter.api.Test;
 public class JoorPredicateTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .choice()
                         .when().joor("((int) body) / 2 > 10")
