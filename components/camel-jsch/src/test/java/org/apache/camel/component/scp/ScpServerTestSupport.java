@@ -84,7 +84,7 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
     }
 
     @BeforeAll
-    public static void initPort() throws Exception {
+    public static void initPort() {
         port = AvailablePortFinder.getNextAvailable();
     }
 
