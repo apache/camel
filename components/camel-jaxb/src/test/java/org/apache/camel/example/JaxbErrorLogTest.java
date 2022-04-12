@@ -44,7 +44,7 @@ public class JaxbErrorLogTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:test")
                         .bean(new FailingBean())
                         .to("log:end", "mock:end");

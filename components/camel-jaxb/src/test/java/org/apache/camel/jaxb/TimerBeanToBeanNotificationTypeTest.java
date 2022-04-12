@@ -34,10 +34,10 @@ public class TimerBeanToBeanNotificationTypeTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:foo?delay=500&repeatCount=1")
                         .log("Timer triggered")
                         .bean(MyNotificationService.class, "createNotification")

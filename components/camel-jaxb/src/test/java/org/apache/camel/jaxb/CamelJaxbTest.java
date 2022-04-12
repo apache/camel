@@ -48,7 +48,7 @@ public class CamelJaxbTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnmarshalBadCharsNoFiltering() throws Exception {
+    public void testUnmarshalBadCharsNoFiltering() {
         String xml = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>";
         assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:getJAXBElementValue", xml));
     }
@@ -185,10 +185,10 @@ public class CamelJaxbTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
+            public void configure() {
                 JaxbDataFormat dataFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
                 dataFormat.setSchemaLocation("person.xsd");
                 dataFormat.setIgnoreJAXBElement(false);

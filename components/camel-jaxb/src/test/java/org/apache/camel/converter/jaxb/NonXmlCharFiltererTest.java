@@ -96,7 +96,7 @@ public class NonXmlCharFiltererTest {
         when(nonXmlCharFiltererMock.filter(eq(new char[] { 'a', 'b', 'c' }), anyInt(), anyInt()))
                 .thenAnswer(new Answer<Boolean>() {
 
-                    public Boolean answer(InvocationOnMock invocation) throws Throwable {
+                    public Boolean answer(InvocationOnMock invocation) {
                         char[] buffer = (char[]) invocation.getArguments()[0];
                         buffer[0] = 'i';
                         buffer[1] = 'o';

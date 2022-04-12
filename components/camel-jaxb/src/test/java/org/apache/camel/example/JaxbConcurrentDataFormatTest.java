@@ -48,7 +48,7 @@ public class JaxbConcurrentDataFormatTest extends CamelTestSupport {
         for (int i = 0; i < files; i++) {
             final int index = i;
             executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
+                public Object call() {
                     PurchaseOrder bean = new PurchaseOrder();
                     bean.setName("Beer");
                     bean.setAmount(Double.valueOf("" + index));
