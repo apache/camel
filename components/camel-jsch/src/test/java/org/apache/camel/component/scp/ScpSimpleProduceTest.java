@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:" + getScpPath() + "?recursive=true&delete=true")
                         .convertBodyTo(String.class)
                         .to("mock:result");
