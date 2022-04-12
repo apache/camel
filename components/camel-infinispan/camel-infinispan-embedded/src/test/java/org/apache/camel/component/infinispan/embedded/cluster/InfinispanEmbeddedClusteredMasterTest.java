@@ -40,7 +40,7 @@ public class InfinispanEmbeddedClusteredMasterTest extends AbstractInfinispanEmb
             context.addService(clusterService);
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     fromF("master:%s:timer:%s?delay=1000&period=1000", namespace, id)
                             .routeId("route-" + id)
                             .log("From ${routeId}")

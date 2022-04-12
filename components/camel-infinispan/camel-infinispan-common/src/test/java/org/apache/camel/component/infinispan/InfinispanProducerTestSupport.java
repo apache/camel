@@ -178,7 +178,7 @@ public interface InfinispanProducerTestSupport {
     }
 
     @Test
-    default void publishMapWithLifespan() throws Exception {
+    default void publishMapWithLifespan() {
         fluentTemplate()
                 .to("direct:start")
                 .withHeader(InfinispanConstants.MAP, CollectionHelper.mapOf(KEY_ONE, VALUE_ONE, KEY_TWO, VALUE_TWO))
@@ -194,7 +194,7 @@ public interface InfinispanProducerTestSupport {
     }
 
     @Test
-    default void publishMapWithLifespanAndMaxIdleTime() throws Exception {
+    default void publishMapWithLifespanAndMaxIdleTime() {
         fluentTemplate()
                 .to("direct:start")
                 .withHeader(InfinispanConstants.MAP, CollectionHelper.mapOf(KEY_ONE, VALUE_ONE, KEY_TWO, VALUE_TWO))
@@ -392,7 +392,7 @@ public interface InfinispanProducerTestSupport {
     }
 
     @Test
-    default void publishKeyAndValueWithLifespan() throws Exception {
+    default void publishKeyAndValueWithLifespan() {
         fluentTemplate()
                 .to("direct:start")
                 .withHeader(InfinispanConstants.KEY, KEY_ONE)
@@ -407,7 +407,7 @@ public interface InfinispanProducerTestSupport {
     }
 
     @Test
-    default void getOrDefault() throws Exception {
+    default void getOrDefault() {
         fluentTemplate()
                 .to("direct:start")
                 .withHeader(InfinispanConstants.KEY, KEY_ONE)
@@ -437,7 +437,7 @@ public interface InfinispanProducerTestSupport {
     }
 
     @Test
-    default void putOperationReturnsThePreviousValue() throws Exception {
+    default void putOperationReturnsThePreviousValue() {
         getCache().put(KEY_ONE, "existing value");
 
         String result = fluentTemplate()
