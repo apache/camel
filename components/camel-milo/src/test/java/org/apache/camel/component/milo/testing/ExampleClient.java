@@ -40,7 +40,7 @@ public final class ExampleClient {
         context.addRoutes(new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // bridge item1 to item2
                 final String item1 = NodeIds.nodeValue("urn:org:apache:camel", "MyItem");
                 final String item2 = NodeIds.nodeValue("urn:org:apache:camel", "MyItem2");

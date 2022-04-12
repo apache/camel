@@ -69,10 +69,10 @@ public class CallClientTest extends AbstractMiloServerTest {
     private ProducerTemplate producer1;
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(DIRECT_START_1).to(resolve(MILO_CLIENT_ITEM_C1_1));
             }
         };
@@ -158,7 +158,7 @@ public class CallClientTest extends AbstractMiloServerTest {
     }
 
     @Test
-    public void testCall1() throws Exception {
+    public void testCall1() {
         // call
 
         doCall(this.producer1, "foo");

@@ -80,10 +80,10 @@ public class WriteClientTest extends AbstractMiloServerTest {
     protected ProducerTemplate producer4;
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from(MILO_SERVER_ITEM_1).to(MOCK_TEST_1);
                 from(MILO_SERVER_ITEM_2).to(MOCK_TEST_2);
