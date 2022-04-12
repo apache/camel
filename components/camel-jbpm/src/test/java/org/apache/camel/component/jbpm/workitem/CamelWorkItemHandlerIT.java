@@ -53,7 +53,7 @@ public class CamelWorkItemHandlerIT extends CamelTestSupport {
         String routeId = "testSyncInOnlyExceptionRoute";
         RouteBuilder builder = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId(routeId)
                         .setBody(simple("${body.getParameter(\"Request\")}"))
                         .to("mock:result");
@@ -69,7 +69,7 @@ public class CamelWorkItemHandlerIT extends CamelTestSupport {
         String routeId = "testSyncInOnlyExceptionRoute";
         RouteBuilder builder = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId(routeId)
                         .setBody(simple("${body.getParameter(\"Request\")}"))
                         .throwException(new IllegalArgumentException("Illegal contennt!"))
@@ -115,7 +115,7 @@ public class CamelWorkItemHandlerIT extends CamelTestSupport {
         String routeId = "testSyncInOnlyExceptionRoute";
         RouteBuilder builder = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId(routeId)
                         .setBody(simple("${body.getParameter(\"Request\")}"))
                         .to("mock:result");
@@ -157,7 +157,7 @@ public class CamelWorkItemHandlerIT extends CamelTestSupport {
         String routeId = "testSyncInOutExceptionRoute";
         RouteBuilder builder = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId(routeId)
                         .setBody(simple("${body.getParameter(\"Request\")}"))
                         .throwException(new IllegalArgumentException("Illegal contennt!"))
@@ -196,7 +196,7 @@ public class CamelWorkItemHandlerIT extends CamelTestSupport {
         String routeId = "testSyncInOutExceptionRoute";
         RouteBuilder builder = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId(routeId)
                         .setBody(simple("${body.getParameter(\"Request\")}"))
                         .throwException(new IllegalArgumentException("Illegal contennt!"))
@@ -236,7 +236,7 @@ public class CamelWorkItemHandlerIT extends CamelTestSupport {
         String routeId = "testSyncInOutExceptionRoute";
         RouteBuilder builder = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId(routeId)
                         .setBody(simple("${body.getParameter(\"Request\")}"))
                         .doTry()
@@ -245,7 +245,7 @@ public class CamelWorkItemHandlerIT extends CamelTestSupport {
                         .process(new Processor() {
 
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 RuntimeCamelException exceptionWrapper = new RuntimeCamelException(Exchange.EXCEPTION_CAUGHT);
                                 throw exceptionWrapper;
                             }
