@@ -83,7 +83,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         return Boolean.getBoolean("java.awt.headless");
     }
 
-    private void sendFile() throws Exception {
+    private void sendFile() {
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
@@ -104,7 +104,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         });
     }
 
-    private void sendGIF() throws Exception {
+    private void sendGIF() {
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
@@ -125,7 +125,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         });
     }
 
-    private void sendJPEG() throws Exception {
+    private void sendJPEG() {
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
@@ -359,7 +359,7 @@ public class PrinterPrintTest extends CamelTestSupport {
     }
 
     @Test
-    public void printToMiddleTray() throws Exception {
+    public void printToMiddleTray() {
         PrinterEndpoint endpoint = new PrinterEndpoint();
         PrinterConfiguration configuration = new PrinterConfiguration();
         configuration.setHostname("localhost");
@@ -383,7 +383,7 @@ public class PrinterPrintTest extends CamelTestSupport {
     }
 
     @Test
-    public void printsWithLandscapeOrientation() throws Exception {
+    public void printsWithLandscapeOrientation() {
         PrinterEndpoint endpoint = new PrinterEndpoint();
         PrinterConfiguration configuration = new PrinterConfiguration();
         configuration.setHostname("localhost");
