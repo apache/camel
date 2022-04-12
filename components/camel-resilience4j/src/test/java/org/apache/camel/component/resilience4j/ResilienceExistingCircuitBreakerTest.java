@@ -60,10 +60,10 @@ public class ResilienceExistingCircuitBreakerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:start").circuitBreaker().resilience4jConfiguration()
                         .circuitBreaker("myCircuitBreaker").end()
                         .throwException(new IllegalArgumentException("Forced")).onFallback().transform()

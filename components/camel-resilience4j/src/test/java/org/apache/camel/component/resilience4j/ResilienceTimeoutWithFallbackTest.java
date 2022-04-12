@@ -29,14 +29,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ResilienceTimeoutWithFallbackTest extends CamelTestSupport {
 
     @Test
-    public void testFast() throws Exception {
+    public void testFast() {
         // this calls the fast route and therefore we get a response
         Object out = template.requestBody("direct:start", "fast");
         assertEquals("LAST CHANGE", out);
     }
 
     @Test
-    public void testSlow() throws Exception {
+    public void testSlow() {
         // this calls the slow route and therefore causes a timeout which
         // triggers the fallback
         Object out = template.requestBody("direct:start", "slow");
@@ -44,10 +44,10 @@ public class ResilienceTimeoutWithFallbackTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").circuitBreaker()
                         // enable and use 2 second timeout
                         .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()

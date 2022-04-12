@@ -86,10 +86,10 @@ public class ResilienceManagementTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("start").circuitBreaker().id("myResilience").to("direct:foo").onFallback()
                         .transform().constant("Fallback message").end()
                         .to("mock:result");
