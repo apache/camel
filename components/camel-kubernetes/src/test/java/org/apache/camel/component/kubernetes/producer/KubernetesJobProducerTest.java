@@ -43,12 +43,12 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         server.expect().withPath("/apis/batch/v1/namespaces/test/jobs")
                 .andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
@@ -74,7 +74,7 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void getJobTest() throws Exception {
+    public void getJobTest() {
         Job sc1 = new JobBuilder().withNewMetadata().withName("sc1").withNamespace("test").and().build();
 
         server.expect().withPath("/apis/batch/v1/namespaces/test/jobs/sc1").andReturn(200, sc1).once();
@@ -89,10 +89,10 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=listJob");
                 from("direct:listByLabels")
                         .to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=listJobByLabels");

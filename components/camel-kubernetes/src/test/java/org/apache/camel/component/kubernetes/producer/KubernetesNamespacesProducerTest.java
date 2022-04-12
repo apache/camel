@@ -41,12 +41,12 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         server.expect().withPath("/api/v1/namespaces")
                 .andReturn(200, new NamespaceListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
@@ -55,7 +55,7 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void getNamespace() throws Exception {
+    public void getNamespace() {
         ObjectMeta meta = new ObjectMeta();
         meta.setName("test");
         server.expect().withPath("/api/v1/namespaces/test").andReturn(200, new NamespaceBuilder().withMetadata(meta).build())
@@ -70,7 +70,7 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void createAndDeleteNamespace() throws Exception {
+    public void createAndDeleteNamespace() {
         Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").endMetadata().build();
         server.expect().withPath("/api/v1/namespaces/ns1").andReturn(200, ns1).once();
 
@@ -83,10 +83,10 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespaces");
                 from("direct:getNs").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=getNamespace");
                 from("direct:deleteNamespace")

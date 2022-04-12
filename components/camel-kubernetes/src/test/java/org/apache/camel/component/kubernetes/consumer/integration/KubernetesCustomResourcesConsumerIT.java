@@ -66,7 +66,7 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(1)
-    public void createCustomResource() throws Exception {
+    public void createCustomResource() {
         mockResultEndpoint.expectedMessageCount(2);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
                 "MODIFIED");
@@ -88,7 +88,7 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(2)
-    public void deleteCustomResource() throws Exception {
+    public void deleteCustomResource() {
         mockResultEndpoint.expectedMessageCount(2);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
                 "MODIFIED");
@@ -112,10 +112,10 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:createCustomResource")
                         .toF("kubernetes-custom-resources://%s/?oauthToken=%s&operation=createCustomResource", host, authToken);
                 from("direct:deleteCustomResource")
@@ -130,7 +130,7 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
 
     public class KubernetesProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Message in = exchange.getIn();
             String json = exchange.getIn().getBody(String.class);
 

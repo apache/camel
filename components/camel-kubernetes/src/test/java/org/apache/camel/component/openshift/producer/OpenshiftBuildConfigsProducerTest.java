@@ -37,7 +37,7 @@ public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
     public OpenShiftServer server = new OpenShiftServer();
 
     @BindToRegistry("client")
-    public NamespacedOpenShiftClient loadClient() throws Exception {
+    public NamespacedOpenShiftClient loadClient() {
         server.expect().withPath("/apis/build.openshift.io/v1/namespaces/test/buildconfigs")
                 .andReturn(200, new BuildConfigListBuilder().build()).once();
 
@@ -59,17 +59,17 @@ public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         List<BuildConfig> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(3, result.size());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").to("openshift-build-configs:///?operation=listBuildConfigs&kubernetesClient=#client");
                 from("direct:listByLabels")
                         .to("openshift-build-configs:///?kubernetesClient=#client&operation=listBuildConfigsByLabels");

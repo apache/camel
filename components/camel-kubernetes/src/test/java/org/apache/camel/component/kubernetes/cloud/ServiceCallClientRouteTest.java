@@ -37,10 +37,10 @@ public class ServiceCallClientRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 KubernetesConfiguration kubernetesConfiguration = new KubernetesConfiguration();
                 kubernetesConfiguration.setMasterUrl("http://172.28.128.80:8080");
                 kubernetesConfiguration.setUsername("admin");

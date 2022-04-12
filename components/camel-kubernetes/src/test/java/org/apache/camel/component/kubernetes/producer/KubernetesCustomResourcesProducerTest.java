@@ -71,7 +71,7 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
     }
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
@@ -211,10 +211,10 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:getCustomResource")
                         .toF("kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=getCustomResource");
                 from("direct:listCustomResources").toF(

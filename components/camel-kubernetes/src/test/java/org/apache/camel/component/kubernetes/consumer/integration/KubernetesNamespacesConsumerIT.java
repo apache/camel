@@ -56,7 +56,7 @@ public class KubernetesNamespacesConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(1)
-    public void createPod() throws Exception {
+    public void createPod() {
         mockResultEndpoint.expectedMessageCount(5);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
                 "MODIFIED", "MODIFIED", "MODIFIED", "DELETED");
@@ -76,7 +76,7 @@ public class KubernetesNamespacesConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(2)
-    public void listByLabels() throws Exception {
+    public void listByLabels() {
         Exchange ex = template.request("direct:listByLabels", exchange -> {
             Map<String, String> labels = new HashMap<>();
             labels.put("this", "rocks");
@@ -116,10 +116,10 @@ public class KubernetesNamespacesConsumerIT extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=listNamespaces", host, authToken);
                 from("direct:listByLabels").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=listNamespacesByLabels",
                         host, authToken);
@@ -136,7 +136,7 @@ public class KubernetesNamespacesConsumerIT extends KubernetesTestSupport {
 
     public class KubernetesProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Message in = exchange.getIn();
             log.info("Got event with body: " + in.getBody() + " and action "
                      + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));

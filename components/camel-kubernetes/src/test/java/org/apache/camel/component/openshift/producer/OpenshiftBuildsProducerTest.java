@@ -57,18 +57,18 @@ public class OpenshiftBuildsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         List<Build> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(2, result.size());
     }
 
     @Test
-    public void listByLabelsTest() throws Exception {
+    public void listByLabelsTest() {
         Exchange ex = template.request("direct:listByLabels", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Map<String, String> labels = new HashMap<>();
                 labels.put("key1", "value1");
                 labels.put("key2", "value2");
@@ -82,10 +82,10 @@ public class OpenshiftBuildsProducerTest extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").to("openshift-builds:///?operation=listBuilds&kubernetesClient=#client");
                 from("direct:listByLabels").to("openshift-builds:///?operation=listBuildsByLabels&kubernetesClient=#client");
             }

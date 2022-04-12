@@ -43,12 +43,12 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         server.expect().withPath("/api/v1/secrets")
                 .andReturn(200, new SecretListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
@@ -75,7 +75,7 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void getSecretTest() throws Exception {
+    public void getSecretTest() {
         Secret sc1 = new SecretBuilder().withNewMetadata().withName("sc1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/secrets/sc1").andReturn(200, sc1).once();
@@ -90,7 +90,7 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void createAndDeleteSecret() throws Exception {
+    public void createAndDeleteSecret() {
         Secret sc1 = new SecretBuilder().withNewMetadata().withName("sc1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/secrets/sc1").andReturn(200, sc1).once();
@@ -105,10 +105,10 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=listSecrets");
                 from("direct:listByLabels")
                         .to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=listSecretsByLabels");

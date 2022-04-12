@@ -120,10 +120,10 @@ public class KubernetesPodsConsumerIT extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:createPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=createPod", host, authToken);
                 from("direct:deletePod").toF("kubernetes-pods://%s?oauthToken=%s&operation=deletePod", host, authToken);
                 fromF("kubernetes-pods://%s?oauthToken=%s&namespace=default&labelKey=this&labelValue=rocks", host, authToken)
@@ -135,7 +135,7 @@ public class KubernetesPodsConsumerIT extends KubernetesTestSupport {
 
     public class KubernetesProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Message in = exchange.getIn();
             Pod pod = exchange.getIn().getBody(Pod.class);
             log.info("Got event with pod name: " + pod.getMetadata().getName() + " and action "

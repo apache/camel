@@ -40,12 +40,12 @@ public class KubernetesPersistentVolumesProducerTest extends KubernetesTestSuppo
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         server.expect().withPath("/api/v1/persistentvolumes")
                 .andReturn(200,
                         new PersistentVolumeListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
@@ -74,10 +74,10 @@ public class KubernetesPersistentVolumesProducerTest extends KubernetesTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").to(
                         "kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumes");
                 from("direct:listByLabels").to(

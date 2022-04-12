@@ -65,7 +65,7 @@ public class KubernetesConfigMapsConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(1)
-    public void createConfigMapWithProperties() throws Exception {
+    public void createConfigMapWithProperties() {
         configureMock();
 
         Exchange ex = template.request("direct:createConfigmap", exchange -> {
@@ -87,7 +87,7 @@ public class KubernetesConfigMapsConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(2)
-    public void createConfigMap() throws Exception {
+    public void createConfigMap() {
         configureMock();
 
         Exchange ex = template.request("direct:createConfigmap", exchange -> {
@@ -108,7 +108,7 @@ public class KubernetesConfigMapsConsumerIT extends KubernetesTestSupport {
     @ParameterizedTest
     @Order(3)
     @ValueSource(strings = { "test", "test1" })
-    public void deleteConfigMaps(String configMapName) throws Exception {
+    public void deleteConfigMaps(String configMapName) {
         Exchange ex = template.request("direct:deleteConfigmap", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, configMapName);
@@ -125,10 +125,10 @@ public class KubernetesConfigMapsConsumerIT extends KubernetesTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:createConfigmap")
                         .toF("kubernetes-config-maps://%s?oauthToken=%s&operation=createConfigMap", host,
                                 authToken);
@@ -145,7 +145,7 @@ public class KubernetesConfigMapsConsumerIT extends KubernetesTestSupport {
 
     public class KubernetesProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Message in = exchange.getIn();
             ConfigMap cm = exchange.getIn().getBody(ConfigMap.class);
 

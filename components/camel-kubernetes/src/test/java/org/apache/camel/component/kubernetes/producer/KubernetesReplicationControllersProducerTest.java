@@ -43,12 +43,12 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
-    public KubernetesClient getClient() throws Exception {
+    public KubernetesClient getClient() {
         return server.getClient();
     }
 
     @Test
-    public void listTest() throws Exception {
+    public void listTest() {
         server.expect().withPath("/api/v1/replicationcontrollers")
                 .andReturn(200,
                         new ReplicationControllerListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
@@ -77,7 +77,7 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
     }
 
     @Test
-    public void getReplicationControllerTest() throws Exception {
+    public void getReplicationControllerTest() {
         ReplicationController rc1
                 = new ReplicationControllerBuilder().withNewMetadata().withName("rc1").withNamespace("test").and().build();
 
@@ -93,7 +93,7 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
     }
 
     @Test
-    public void createAndDeleteReplicationController() throws Exception {
+    public void createAndDeleteReplicationController() {
         server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1")
                 .andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
                         .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(0).endSpec().withNewStatus()
@@ -142,10 +142,10 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:list").to(
                         "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=listReplicationControllers");
                 from("direct:listByLabels").to(
