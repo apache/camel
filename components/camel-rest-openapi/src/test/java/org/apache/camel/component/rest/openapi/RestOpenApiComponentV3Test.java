@@ -73,7 +73,7 @@ public class RestOpenApiComponentV3Test extends CamelTestSupport {
     }
 
     @Override
-    public void setUp() throws Exception {
+    public void setUp() {
     }
 
     @BeforeEach
@@ -215,7 +215,7 @@ public class RestOpenApiComponentV3Test extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
