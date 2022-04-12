@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.rest.openapi;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +50,7 @@ public class RestOpenApiEndpointV3Test {
     URI endpointUri = URI.create("endpoint.json");
 
     @Test
-    public void shouldComplainForUnknownOperations() throws Exception {
+    public void shouldComplainForUnknownOperations() {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
@@ -273,7 +272,7 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
-    public void shouldHonourComponentSpecificationPathProperty() throws Exception {
+    public void shouldHonourComponentSpecificationPathProperty() {
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setSpecificationUri(componentJsonUri);
 
@@ -285,7 +284,7 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
-    public void shouldHonourEndpointUriPathSpecificationPathProperty() throws Exception {
+    public void shouldHonourEndpointUriPathSpecificationPathProperty() {
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setSpecificationUri(componentJsonUri);
 
@@ -383,7 +382,7 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
-    public void shouldRaiseExceptionsForMissingSpecifications() throws IOException {
+    public void shouldRaiseExceptionsForMissingSpecifications() {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
@@ -426,7 +425,7 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
-    public void shouldUseDefaultSpecificationUri() throws Exception {
+    public void shouldUseDefaultSpecificationUri() {
         final RestOpenApiComponent component = new RestOpenApiComponent();
 
         final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
@@ -437,7 +436,7 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
-    public void shouldUseDefaultSpecificationUriEvenIfHashIsPresent() throws Exception {
+    public void shouldUseDefaultSpecificationUriEvenIfHashIsPresent() {
         final RestOpenApiComponent component = new RestOpenApiComponent();
 
         final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
