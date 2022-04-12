@@ -25,7 +25,7 @@ public class JsonbJsonDataFormatTest extends JsonbMarshalTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").marshal().json(JsonLibrary.Jsonb);
                 from("direct:back").unmarshal().json(JsonLibrary.Jsonb).to("mock:reverse");
 
