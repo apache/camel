@@ -80,10 +80,10 @@ public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends LevelDBTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // CHECKSTYLE:OFF
                 from("direct:start")
                         .aggregate(header("id"), new StringAggregationStrategy())
@@ -93,7 +93,7 @@ public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends LevelDBTest
                             .to("mock:aggregated")
                             // simulate errors the first three times
                             .process(new Processor() {
-                                public void process(Exchange exchange) throws Exception {
+                                public void process(Exchange exchange) {
                                     int count = getCounter(getSerializerType()).incrementAndGet();
                                     if (count <= 3) {
                                         throw new IllegalArgumentException("Damn");
