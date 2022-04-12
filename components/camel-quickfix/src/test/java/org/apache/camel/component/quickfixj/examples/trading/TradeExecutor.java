@@ -26,10 +26,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import quickfix.ConfigError;
 import quickfix.DataDictionary;
 import quickfix.DataDictionaryProvider;
-import quickfix.FieldConvertError;
 import quickfix.FieldNotFound;
 import quickfix.FixVersions;
 import quickfix.IncorrectTagValue;
@@ -39,7 +37,6 @@ import quickfix.MessageUtils;
 import quickfix.Session;
 import quickfix.SessionID;
 import quickfix.SessionNotFound;
-import quickfix.UnsupportedMessageType;
 import quickfix.field.ApplVerID;
 import quickfix.field.AvgPx;
 import quickfix.field.CumQty;
@@ -73,7 +70,7 @@ public class TradeExecutor {
     private int orderID;
     private int execID;
 
-    public TradeExecutor() throws ConfigError, FieldConvertError {
+    public TradeExecutor() {
         setAlwaysFillLimitOrders(true);
 
         Set<String> validOrderTypes = new HashSet<>();
@@ -108,7 +105,7 @@ public class TradeExecutor {
         listeners.remove(listener);
     }
 
-    public void execute(final Message message) throws FieldNotFound, UnsupportedMessageType, IncorrectTagValue {
+    public void execute(final Message message) {
         final SessionID sessionID = MessageUtils.getSessionID(message);
 
         try {
@@ -131,7 +128,7 @@ public class TradeExecutor {
     }
 
     private void onMessage(quickfix.fix40.NewOrderSingle order, SessionID sessionID)
-            throws FieldNotFound, UnsupportedMessageType, IncorrectTagValue {
+            throws FieldNotFound, IncorrectTagValue {
         try {
             validateOrder(order);
 
@@ -240,7 +237,7 @@ public class TradeExecutor {
     }
 
     private void onMessage(quickfix.fix41.NewOrderSingle order, SessionID sessionID)
-            throws FieldNotFound, UnsupportedMessageType, IncorrectTagValue {
+            throws FieldNotFound, IncorrectTagValue {
         try {
             validateOrder(order);
 
@@ -280,7 +277,7 @@ public class TradeExecutor {
     }
 
     private void onMessage(quickfix.fix42.NewOrderSingle order, SessionID sessionID)
-            throws FieldNotFound, UnsupportedMessageType, IncorrectTagValue {
+            throws FieldNotFound, IncorrectTagValue {
         try {
             validateOrder(order);
 
@@ -328,7 +325,7 @@ public class TradeExecutor {
     }
 
     private void onMessage(quickfix.fix43.NewOrderSingle order, SessionID sessionID)
-            throws FieldNotFound, UnsupportedMessageType, IncorrectTagValue {
+            throws FieldNotFound, IncorrectTagValue {
         try {
             validateOrder(order);
 
@@ -363,7 +360,7 @@ public class TradeExecutor {
     }
 
     private void onMessage(quickfix.fix44.NewOrderSingle order, SessionID sessionID)
-            throws FieldNotFound, UnsupportedMessageType, IncorrectTagValue {
+            throws FieldNotFound, IncorrectTagValue {
         try {
             validateOrder(order);
 
@@ -398,7 +395,7 @@ public class TradeExecutor {
     }
 
     private void onMessage(quickfix.fix50.NewOrderSingle order, SessionID sessionID)
-            throws FieldNotFound, UnsupportedMessageType, IncorrectTagValue {
+            throws FieldNotFound, IncorrectTagValue {
         try {
             validateOrder(order);
 

@@ -18,7 +18,6 @@ package org.apache.camel.component.quickfixj.examples.transform;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.quickfixj.QuickfixjEndpoint;
-import quickfix.ConfigError;
 import quickfix.DataDictionary;
 import quickfix.Message;
 import quickfix.Session;
@@ -27,7 +26,7 @@ import quickfix.SessionID;
 public class QuickfixjEventJsonTransformer {
     private final QuickfixjMessageJsonTransformer renderer;
 
-    public QuickfixjEventJsonTransformer() throws ConfigError {
+    public QuickfixjEventJsonTransformer() {
         renderer = new QuickfixjMessageJsonTransformer();
     }
 

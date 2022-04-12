@@ -49,7 +49,7 @@ public class RestartRouteExample {
 
         RouteBuilder routes = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER").routeId("foo")
                         .filter(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.EMAIL))
                         .bean(new CountDownLatchDecrementer("message", receivedMessageLatch));

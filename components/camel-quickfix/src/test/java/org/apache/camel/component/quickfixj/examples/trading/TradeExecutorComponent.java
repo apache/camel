@@ -126,10 +126,10 @@ public class TradeExecutorComponent extends DefaultComponent {
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             return new DefaultProducer(this) {
                 @Override
-                public void process(final Exchange exchange) throws Exception {
+                public void process(final Exchange exchange) {
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -145,15 +145,15 @@ public class TradeExecutorComponent extends DefaultComponent {
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             return new DefaultConsumer(this, processor) {
                 @Override
-                protected void doStart() throws Exception {
+                protected void doStart() {
                     processors.add(getProcessor());
                 }
 
                 @Override
-                protected void doStop() throws Exception {
+                protected void doStop() {
                     processors.remove(getProcessor());
                 }
             };

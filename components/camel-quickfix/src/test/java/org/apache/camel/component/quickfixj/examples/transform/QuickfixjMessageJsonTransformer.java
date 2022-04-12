@@ -18,11 +18,9 @@ package org.apache.camel.component.quickfixj.examples.transform;
 
 import java.util.Iterator;
 
-import quickfix.ConfigError;
 import quickfix.DataDictionary;
 import quickfix.Field;
 import quickfix.FieldMap;
-import quickfix.FieldNotFound;
 import quickfix.FieldType;
 import quickfix.Group;
 import quickfix.Message;
@@ -32,7 +30,7 @@ import quickfix.SessionID;
 
 public class QuickfixjMessageJsonTransformer {
 
-    public String transform(Message message) throws FieldNotFound, ConfigError {
+    public String transform(Message message) {
         SessionID sessionID = MessageUtils.getSessionID(message);
         Session session = Session.lookupSession(sessionID);
         DataDictionary dataDictionary = session.getDataDictionary();

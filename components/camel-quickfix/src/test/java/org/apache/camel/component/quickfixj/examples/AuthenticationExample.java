@@ -54,7 +54,7 @@ public class AuthenticationExample {
 
         RouteBuilder routes = new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Modify the outgoing logon message to add a password
                 // The modified message will be sent from the FIX engine when the message exchange completes
                 from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET").filter(PredicateBuilder.and(

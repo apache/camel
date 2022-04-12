@@ -112,7 +112,7 @@ public class QuickfixjEngineTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         Thread.currentThread().setContextClassLoader(contextClassLoader);
         if (quickfixjEngine != null) {
             quickfixjEngine.stop();
@@ -120,7 +120,7 @@ public class QuickfixjEngineTest {
     }
 
     @Test
-    public void missingSettingsResource() throws Exception {
+    public void missingSettingsResource() {
         assertThrows(FileNotFoundException.class,
                 () -> new QuickfixjEngine(camelContext, "quickfix:test", "bogus.cfg"));
     }
