@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.openstack;
 
-import java.io.IOException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
@@ -49,7 +47,7 @@ public abstract class AbstractProducerTestSupport {
     protected Producer producer;
 
     @BeforeEach
-    public void before() throws IOException {
+    public void before() {
         msg = new DefaultMessage(camelContext);
         when(exchange.getIn()).thenReturn(msg);
         when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(camelContext);
