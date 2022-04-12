@@ -51,10 +51,10 @@ public class JcrProducerDifferentWorkspaceTest extends JcrRouteDifferentWorkspac
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: jcr-create-node
                 from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME, constant("node"))
                         .setHeader("my.contents.property", body())

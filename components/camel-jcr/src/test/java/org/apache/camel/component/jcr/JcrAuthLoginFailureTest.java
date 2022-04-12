@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JcrAuthLoginFailureTest extends JcrAuthTestBase {
 
     @Test
-    public void testCreateNodeWithAuthentication() throws Exception {
+    public void testCreateNodeWithAuthentication() {
         Exchange exchange = createExchangeWithBody("<message>hello!</message>");
         Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
@@ -39,10 +39,10 @@ public class JcrAuthLoginFailureTest extends JcrAuthTestBase {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: jcr
                 from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME,
                         constant("node")).setHeader("my.contents.property",

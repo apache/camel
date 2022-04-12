@@ -45,7 +45,7 @@ public class JcrConverterTest {
     protected TypeConverter converter;
 
     @BeforeEach
-    public void init() throws Exception {
+    public void init() {
         converter = new DefaultTypeConverter(
                 new DefaultPackageScanClassResolver(),
                 new Injector() {
@@ -73,22 +73,22 @@ public class JcrConverterTest {
     }
 
     @Test
-    public void testBooleanValueConverter() throws Exception {
+    public void testBooleanValueConverter() {
         assertJcrConverterAvailable(BooleanValue.class, Boolean.TRUE);
     }
 
     @Test
-    public void testBinaryValueConverter() throws Exception {
+    public void testBinaryValueConverter() {
         assertJcrConverterAvailable(BinaryValue.class, new ByteArrayInputStream("test".getBytes()));
     }
 
     @Test
-    public void testDateValueConverter() throws Exception {
+    public void testDateValueConverter() {
         assertJcrConverterAvailable(DateValue.class, Calendar.getInstance());
     }
 
     @Test
-    public void testStringValueConverter() throws Exception {
+    public void testStringValueConverter() {
         assertJcrConverterAvailable(StringValue.class, "plain text");
     }
 
