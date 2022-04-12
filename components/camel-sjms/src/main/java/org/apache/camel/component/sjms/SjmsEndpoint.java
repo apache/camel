@@ -406,6 +406,7 @@ public class SjmsEndpoint extends DefaultEndpoint
             }
         }
         template.setDestinationCreationStrategy(getDestinationCreationStrategy());
+        template.setPreserveMessageQos(isPreserveMessageQos());
 
         return template;
     }

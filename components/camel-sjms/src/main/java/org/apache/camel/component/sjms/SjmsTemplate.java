@@ -27,6 +27,8 @@ import javax.jms.Session;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
+import org.apache.camel.component.sjms.jms.JmsConstants;
+import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.component.sjms.jms.MessageCreator;
 import org.apache.camel.util.ObjectHelper;
 
@@ -39,6 +41,7 @@ public class SjmsTemplate {
     private final int acknowledgeMode;
     private DestinationCreationStrategy destinationCreationStrategy;
 
+    private boolean preserveMessageQos;
     private boolean explicitQosEnabled;
     private int deliveryMode = Message.DEFAULT_DELIVERY_MODE;
     private int priority = Message.DEFAULT_PRIORITY;
@@ -77,6 +80,10 @@ public class SjmsTemplate {
 
     public void setExplicitQosEnabled(boolean explicitQosEnabled) {
         this.explicitQosEnabled = explicitQosEnabled;
+    }
+
+    public void setPreserveMessageQos(boolean preserveMessageQos) {
+        this.preserveMessageQos = preserveMessageQos;
     }
 
     public Object execute(SessionCallback sessionCallback, boolean startConnection) throws Exception {
@@ -159,7 +166,38 @@ public class SjmsTemplate {
     }
 
     public void send(MessageProducer producer, Message message) throws Exception {
-        if (explicitQosEnabled) {
+        if (preserveMessageQos) {
+            long ttl = message.getJMSExpiration();
+            if (ttl != 0) {
+                ttl = ttl - System.currentTimeMillis();
+                // Message had expired.. so set the ttl as small as possible
+                if (ttl <= 0) {
+                    ttl = 1;
+                }
+            }
+
+            int priority = message.getJMSPriority();
+            if (priority < 0 || priority > 9) {
+                // use priority from endpoint if not provided on message with a valid range
+                priority = this.priority;
+            }
+
+            // if a delivery mode was set as a JMS header then we have used a temporary
+            // property to store it - CamelJMSDeliveryMode. Otherwise we could not keep
+            // track whether it was set or not as getJMSDeliveryMode() will default return 1 regardless
+            // if it was set or not, so we can never tell if end user provided it in a header
+            int deliveryMode;
+            if (JmsMessageHelper.hasProperty(message, JmsConstants.JMS_DELIVERY_MODE)) {
+                deliveryMode = message.getIntProperty(JmsConstants.JMS_DELIVERY_MODE);
+                // remove the temporary property
+                JmsMessageHelper.removeJmsProperty(message, JmsConstants.JMS_DELIVERY_MODE);
+            } else {
+                // use the existing delivery mode from the message
+                deliveryMode = message.getJMSDeliveryMode();
+            }
+
+            producer.send(message, deliveryMode, priority, ttl);
+        } else if (explicitQosEnabled) {
             producer.send(message, deliveryMode, priority, timeToLive);
         } else {
             producer.send(message);
