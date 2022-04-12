@@ -62,10 +62,10 @@ public class MicroProfileMetricsConcurrentGaugeTest extends MicroProfileMetricsT
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:gaugeIncrement")
                         .to("microprofile-metrics:concurrent gauge:test-gauge?gaugeIncrement=true");
 

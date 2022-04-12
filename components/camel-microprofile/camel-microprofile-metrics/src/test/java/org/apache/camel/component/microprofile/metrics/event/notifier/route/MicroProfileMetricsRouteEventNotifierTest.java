@@ -42,7 +42,7 @@ public class MicroProfileMetricsRouteEventNotifierTest extends MicroProfileMetri
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").id("test")
                         .to("mock:bar");
             }
@@ -77,10 +77,10 @@ public class MicroProfileMetricsRouteEventNotifierTest extends MicroProfileMetri
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:result");
             }

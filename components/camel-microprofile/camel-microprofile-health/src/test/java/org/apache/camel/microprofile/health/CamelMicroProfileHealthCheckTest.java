@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTestSupport {
 
     @Test
-    public void testCamelContextHealthCheckUpStatus() throws Exception {
+    public void testCamelContextHealthCheckUpStatus() {
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("health-context"));
         context.getExtension(HealthCheckRegistry.class).register(new ContextHealthCheck());
 

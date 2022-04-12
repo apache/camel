@@ -62,7 +62,7 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         Properties prop = new Properties();
         prop.put("who", "Camel");
 
@@ -80,7 +80,7 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
     }
 
     @Test
-    public void testLoadAll() throws Exception {
+    public void testLoadAll() {
         PropertiesComponent pc = context.getPropertiesComponent();
         Properties properties = pc.loadProperties();
 
@@ -90,7 +90,7 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
     }
 
     @Test
-    public void testLoadFiltered() throws Exception {
+    public void testLoadFiltered() {
         PropertiesComponent pc = context.getPropertiesComponent();
         Properties properties = pc.loadProperties(k -> k.length() > 2);
 
@@ -109,10 +109,10 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("{{start}}")
                         .to("mock:{{my-mock}}");
             }

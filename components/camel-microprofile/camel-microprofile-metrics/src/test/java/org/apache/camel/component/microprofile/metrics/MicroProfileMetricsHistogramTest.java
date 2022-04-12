@@ -48,10 +48,10 @@ public class MicroProfileMetricsHistogramTest extends MicroProfileMetricsTestSup
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:histogram")
                         .to("microprofile-metrics:histogram:test-histogram?value=10");
 

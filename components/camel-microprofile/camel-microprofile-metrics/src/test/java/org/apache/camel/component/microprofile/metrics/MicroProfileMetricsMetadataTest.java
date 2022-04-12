@@ -71,10 +71,10 @@ public class MicroProfileMetricsMetadataTest extends MicroProfileMetricsTestSupp
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:metadata")
                         .toF("microprofile-metrics:counter:test-counter?description=%s&displayName=%s&metricUnit=%s",
                                 METRIC_DESCRIPTION,

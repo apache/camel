@@ -55,10 +55,10 @@ public class MicroProfileMetricsMeterTest extends MicroProfileMetricsTestSupport
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:mark")
                         .to("microprofile-metrics:meter:test-meter?mark=10");
 

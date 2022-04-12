@@ -39,7 +39,7 @@ public class MicroProfileMetricsCamelContextEventNotifierTest extends MicroProfi
     private MicroProfileMetricsCamelContextEventNotifier eventNotifier;
 
     @Test
-    public void testMicroProfileMetricsCamelContextEventNotifier() throws Exception {
+    public void testMicroProfileMetricsCamelContextEventNotifier() {
         List<Tag> tags = new ArrayList<>();
         tags.add(new Tag(CAMEL_CONTEXT_TAG, context.getName()));
 
@@ -56,7 +56,7 @@ public class MicroProfileMetricsCamelContextEventNotifierTest extends MicroProfi
     }
 
     @Test
-    public void testMicroProfileMetricsCamelContextEventNotifierStop() throws Exception {
+    public void testMicroProfileMetricsCamelContextEventNotifierStop() {
         assertEquals(2, metricRegistry.getMetrics().size());
         eventNotifier.stop();
         assertEquals(0, metricRegistry.getMetrics().size());

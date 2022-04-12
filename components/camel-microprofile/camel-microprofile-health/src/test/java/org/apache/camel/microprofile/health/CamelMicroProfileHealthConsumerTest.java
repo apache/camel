@@ -100,10 +100,10 @@ public class CamelMicroProfileHealthConsumerTest extends CamelMicroProfileHealth
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("healthyRoute")
                         .setBody(constant("Hello Camel MicroProfile Health"));
             }
