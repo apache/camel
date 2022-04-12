@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
 public class PgEventHelperTest {
 
     @Test
-    public void testToPGConnectionWithNullConnection() throws Exception {
+    public void testToPGConnectionWithNullConnection() {
         assertThrows(IllegalArgumentException.class,
                 () -> PgEventHelper.toPGConnection(null));
     }

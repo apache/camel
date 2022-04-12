@@ -38,10 +38,10 @@ public class PgEventPubSubIT extends PgEventITSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(timerEndpoint)
                         .setBody(constant(TEST_MESSAGE_BODY))
                         .to(String.format(
