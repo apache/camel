@@ -54,7 +54,7 @@ public class BasicSubscriberTest extends BaseReactiveTest {
     }
 
     @Override
-    protected void doPostSetup() throws Exception {
+    protected void doPostSetup() {
 
         Subscriber<Integer> sub = CamelReactiveStreams.get(context()).streamSubscriber("sub", Integer.class);
         Subscriber<Integer> sub2 = CamelReactiveStreams.get(context()).streamSubscriber("sub2", Integer.class);
@@ -65,7 +65,7 @@ public class BasicSubscriberTest extends BaseReactiveTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

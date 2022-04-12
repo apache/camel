@@ -259,7 +259,7 @@ public class DelayedMonoPublisherTest {
     }
 
     @Test
-    public void testDataOrExceptionAllowed() throws Exception {
+    public void testDataOrExceptionAllowed() {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         Exception ex = new RuntimeCamelException("An exception");
         pub.setException(ex);
@@ -268,7 +268,7 @@ public class DelayedMonoPublisherTest {
     }
 
     @Test
-    public void testDataOrExceptionAllowed2() throws Exception {
+    public void testDataOrExceptionAllowed2() {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         pub.setData(1);
         Exception ex = new RuntimeCamelException("An exception");
@@ -277,7 +277,7 @@ public class DelayedMonoPublisherTest {
     }
 
     @Test
-    public void testOnlyOneDataAllowed() throws Exception {
+    public void testOnlyOneDataAllowed() {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         pub.setData(1);
         assertThrows(IllegalStateException.class,
@@ -285,7 +285,7 @@ public class DelayedMonoPublisherTest {
     }
 
     @Test
-    public void testOnlyOneExceptionAllowed() throws Exception {
+    public void testOnlyOneExceptionAllowed() {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         final RuntimeCamelException runtimeException = new RuntimeCamelException("An exception");
         pub.setException(runtimeException);

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CamelReactiveStreamsTest {
 
     @Test
-    public void testDefaultService() throws Exception {
+    public void testDefaultService() {
         DefaultCamelContext context = new DefaultCamelContext();
         try {
             context.start();
@@ -43,7 +43,7 @@ public class CamelReactiveStreamsTest {
     }
 
     @Test
-    public void testSameDefaultServiceReturned() throws Exception {
+    public void testSameDefaultServiceReturned() {
         DefaultCamelContext context = new DefaultCamelContext();
         try {
             context.start();
@@ -59,7 +59,7 @@ public class CamelReactiveStreamsTest {
     }
 
     @Test
-    public void testSameServiceReturnedFromRegistry() throws Exception {
+    public void testSameServiceReturnedFromRegistry() {
         ReactiveStreamsComponent component = new ReactiveStreamsComponent();
 
         SimpleRegistry registry = new SimpleRegistry();
@@ -83,7 +83,7 @@ public class CamelReactiveStreamsTest {
     }
 
     @Test
-    public void testNamedServiceResolvedUsingFactory() throws Exception {
+    public void testNamedServiceResolvedUsingFactory() {
         ReactiveStreamsComponent component = new ReactiveStreamsComponent();
         component.setServiceType("test-service");
 

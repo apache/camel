@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ExchangeRequestTest extends BaseReactiveTest {
 
     @Test
-    public void testStreamRequest() throws Exception {
+    public void testStreamRequest() {
 
         CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
 
@@ -48,7 +48,7 @@ public class ExchangeRequestTest extends BaseReactiveTest {
     }
 
     @Test
-    public void testInteraction() throws Exception {
+    public void testInteraction() {
 
         CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
 
@@ -60,7 +60,7 @@ public class ExchangeRequestTest extends BaseReactiveTest {
     }
 
     @Test
-    public void testMultipleInteractions() throws Exception {
+    public void testMultipleInteractions() {
         CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
 
         Integer sum = Flowable.just(1, 2, 3)
@@ -73,7 +73,7 @@ public class ExchangeRequestTest extends BaseReactiveTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
