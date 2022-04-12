@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import javax.lang.model.element.Modifier;
@@ -383,6 +384,23 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             builder.addAnnotation(CN_YAML_IN);
         }
 
+        final AtomicReference<String> modelName = new AtomicReference<>();
+        annotationValue(info, XML_ROOT_ELEMENT_ANNOTATION_CLASS, "name")
+                .map(AnnotationValue::asString)
+                .filter(value -> !"##default".equals(value))
+                .ifPresent(value -> {
+                    // generate the kebab case variant for backward compatibility
+                    // https://issues.apache.org/jira/browse/CAMEL-17097
+                    if (!Objects.equals(value, StringHelper.camelCaseToDash(value))) {
+                        yamlTypeAnnotation.addMember("nodes", "$S", StringHelper.camelCaseToDash(value));
+                        TypeSpecHolder.put(attributes, "node", StringHelper.camelCaseToDash(value));
+                    }
+
+                    yamlTypeAnnotation.addMember("nodes", "$S", value);
+                    modelName.set(value);
+                    TypeSpecHolder.put(attributes, "node", value);
+                });
+
         //
         // Constructors
         //
@@ -569,21 +587,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         yamlTypeAnnotation.addMember("types", "$L.class", info.name().toString());
         yamlTypeAnnotation.addMember("order", "org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1", info.name().toString());
 
-        annotationValue(info, XML_ROOT_ELEMENT_ANNOTATION_CLASS, "name")
-            .map(AnnotationValue::asString)
-            .filter(value -> !"##default".equals(value))
-            .ifPresent(value -> {
-                // generate the kebab case variant for backward compatibility
-                // https://issues.apache.org/jira/browse/CAMEL-17097
-                if (!Objects.equals(value, StringHelper.camelCaseToDash(value))) {
-                    yamlTypeAnnotation.addMember("nodes", "$S", StringHelper.camelCaseToDash(value));
-                    TypeSpecHolder.put(attributes, "node", StringHelper.camelCaseToDash(value));
-                }
-
-                yamlTypeAnnotation.addMember("nodes", "$S", value);
-                TypeSpecHolder.put(attributes, "node", value);
-            });
-
         properties.stream().sorted(Comparator.comparing(a -> a.members.get("name").toString())).forEach(spec -> {
             yamlTypeAnnotation.addMember("properties", "$L", spec);
         });
@@ -591,6 +594,15 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         builder.addAnnotation(yamlTypeAnnotation.build());
 
         return new TypeSpecHolder(builder.build(), attributes);
+    }
+
+    private boolean expressionRequired(String modelName) {
+        if ("method".equals(modelName) || "tokenize".equals(modelName) || "xtokenize".equals(modelName)) {
+            // skip expression attribute on these three languages as they are
+            // solely configured using attributes
+            return false;
+        }
+        return true;
     }
 
     @SuppressWarnings("MethodLength")
