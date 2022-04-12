@@ -61,7 +61,7 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<SendEmail> out = executor.submit(new Callable<SendEmail>() {
-                public SendEmail call() throws Exception {
+                public SendEmail call() {
                     return template.requestBody("direct:start", new SendEmail("user" + index + "@somewhere.org"),
                             SendEmail.class);
                 }

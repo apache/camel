@@ -81,7 +81,7 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
         });
     }
 
-    protected void assertEntityInDB(int size) throws Exception {
+    protected void assertEntityInDB(int size) {
         assertEntityInDB(size, SendEmail.class);
     }
 

@@ -82,7 +82,7 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         context.addRoutes(new SpringRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: idempotent
                 from("direct:start").idempotentConsumer(
                         header("messageId"),
@@ -123,13 +123,13 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
     public void testFailedExchangesNotAdded() throws Exception {
         context.addRoutes(new SpringRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).redeliveryDelay(0).logStackTrace(false));
 
                 from("direct:start").idempotentConsumer(
                         header("messageId"),
                         jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME)).process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("messageId", String.class);
                                 if (id.equals("2")) {
                                     throw new IllegalArgumentException("Damn I cannot handle id 2");

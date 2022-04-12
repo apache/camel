@@ -38,7 +38,7 @@ public class JpaProducerWithQueryParametersHeaderTest {
 
     @Test
     @SuppressWarnings("rawtypes")
-    public void testProducerWithNamedQuery() throws Exception {
+    public void testProducerWithNamedQuery() {
         template.sendBody("direct:deleteCustomers", "");
         Customer c1 = new Customer();
         c1.setName("Willem");
@@ -65,7 +65,7 @@ public class JpaProducerWithQueryParametersHeaderTest {
 
         camelContext.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:namedQuery")
                         .to("jpa://" + Customer.class.getName() + "?namedQuery=findAllCustomersWithName");
 
@@ -82,7 +82,7 @@ public class JpaProducerWithQueryParametersHeaderTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         camelContext.stop();
     }
 }

@@ -76,7 +76,7 @@ public class MultipleJpaRouteEndpointTest extends CamelTestSupport {
         when(emf2.createEntityManager()).thenReturn(em2);
 
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 JpaEndpoint jpa1 = new JpaEndpoint();
                 jpa1.setComponent(new JpaComponent());
                 jpa1.setCamelContext(context);

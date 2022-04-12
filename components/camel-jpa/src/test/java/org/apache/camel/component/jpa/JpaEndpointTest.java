@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class JpaEndpointTest extends CamelTestSupport {
 
     @Test
-    public void testJpaEndpointCtr() throws Exception {
+    public void testJpaEndpointCtr() {
         JpaEndpoint jpa = new JpaEndpoint();
         jpa.setEntityType(SendEmail.class);
 
@@ -48,7 +48,7 @@ public class JpaEndpointTest extends CamelTestSupport {
      */
     @Deprecated
     @Test
-    public void testJpaEndpointCtrUrl() throws Exception {
+    public void testJpaEndpointCtrUrl() {
         JpaEndpoint jpa = new JpaEndpoint("jpa://org.apache.camel.examples.SendEmail", null);
         jpa.setEntityType(SendEmail.class);
 
@@ -65,7 +65,7 @@ public class JpaEndpointTest extends CamelTestSupport {
      */
     @Deprecated
     @Test
-    public void testJpaEndpointCtrUrlEMF() throws Exception {
+    public void testJpaEndpointCtrUrlEMF() {
         EntityManagerFactory fac = Persistence.createEntityManagerFactory("camel");
 
         JpaEndpoint jpa = new JpaEndpoint("jpa://org.apache.camel.examples.SendEmail", null);
@@ -85,7 +85,7 @@ public class JpaEndpointTest extends CamelTestSupport {
      */
     @Deprecated
     @Test
-    public void testJpaEndpointCtrUrlEMFandTM() throws Exception {
+    public void testJpaEndpointCtrUrlEMFandTM() {
         EntityManagerFactory fac = Persistence.createEntityManagerFactory("camel");
         JpaTransactionManager tm = new JpaTransactionManager(fac);
         tm.afterPropertiesSet();
@@ -103,7 +103,7 @@ public class JpaEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testJpaEndpointCustomEMFandTM() throws Exception {
+    public void testJpaEndpointCustomEMFandTM() {
         EntityManagerFactory fac = Persistence.createEntityManagerFactory("camel");
         JpaTransactionManager tm = new JpaTransactionManager(fac);
         tm.afterPropertiesSet();
