@@ -364,6 +364,8 @@ public class VertxPlatformHttpEngineTest {
         final CamelContext context = createCamelContext(configuration -> {
             VertxPlatformHttpServerConfiguration.BodyHandler bodyHandler
                     = new VertxPlatformHttpServerConfiguration.BodyHandler();
+            // turn on file uploads
+            bodyHandler.setHandleFileUploads(true);
             bodyHandler.setUploadsDirectory(tempFile.getParent());
             configuration.setBodyHandler(bodyHandler);
         });
