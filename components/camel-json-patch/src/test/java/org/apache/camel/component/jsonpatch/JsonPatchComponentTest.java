@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JsonPatchComponentTest extends CamelTestSupport {
 
     @Test
-    public void testCamelJsonPatch() throws Exception {
+    public void testCamelJsonPatch() {
         MockEndpoint mock = getMockEndpoint("mock:result");
         sendBody("direct:foo", "{ \"a\": \"b\" }");
         assertEquals(1, mock.getReceivedExchanges().size());
@@ -34,7 +34,7 @@ public class JsonPatchComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSendToDeadLetterChannelIfPatchError() throws Exception {
+    public void testSendToDeadLetterChannelIfPatchError() {
         MockEndpoint mock = getMockEndpoint("mock:errors");
         String source = "{ \"a\": \"b\" }";
         sendBody("direct:patch_error", source);
