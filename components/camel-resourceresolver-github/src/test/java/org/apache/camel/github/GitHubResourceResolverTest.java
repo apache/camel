@@ -52,7 +52,7 @@ public class GitHubResourceResolverTest extends CamelTestSupport {
     }
 
     @Test
-    public void testGitHubDoesNotExist() throws Exception {
+    public void testGitHubDoesNotExist() {
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
         Resource res = ecc.getResourceLoader().resolveResource("github:apache:camel:main:core/unknown.xml");
         assertNotNull(res);
