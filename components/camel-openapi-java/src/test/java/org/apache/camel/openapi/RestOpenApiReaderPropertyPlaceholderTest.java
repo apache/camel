@@ -63,10 +63,10 @@ public class RestOpenApiReaderPropertyPlaceholderTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest("/{{foo}}").consumes("application/json").produces("application/json").get("/hi/{name}")
                         .description("Saying hi").param().name("name").type(RestParamType.path)
                         .dataType("string").description("Who is it").endParam().to("log:hi").get("/{{bar}}/{name}")

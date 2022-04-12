@@ -38,7 +38,7 @@ public class RestOpenApiProcessorTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest().get("/foo").description("Foo endpoint").to("mock:foo")
                         .post("/bar").description("Bar endpoint").to("mock:foo");
             }
@@ -61,7 +61,7 @@ public class RestOpenApiProcessorTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest().get("/foo").description("Foo endpoint").to("mock:foo")
                         .post("/bar").description("Bar endpoint").to("mock:foo");
             }
@@ -86,7 +86,7 @@ public class RestOpenApiProcessorTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest().get("/foo").description("Foo endpoint").deprecated().to("mock:foo")
                         .post("/bar").description("Bar endpoint").to("mock:foo");
             }
@@ -115,7 +115,7 @@ public class RestOpenApiProcessorTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest().get("/foo").description("Foo endpoint").to("mock:foo")
                         .post("/bar").description("Bar endpoint").to("mock:foo");
             }
@@ -140,7 +140,7 @@ public class RestOpenApiProcessorTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest().get("/foo").description("Foo endpoint").to("mock:foo")
                         .post("/bar").description("Bar endpoint").to("mock:foo");
             }
@@ -166,7 +166,7 @@ public class RestOpenApiProcessorTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest().get("/foo").description("Foo endpoint").to("mock:foo")
                         .post("/bar").description("Bar endpoint").to("mock:foo");
             }

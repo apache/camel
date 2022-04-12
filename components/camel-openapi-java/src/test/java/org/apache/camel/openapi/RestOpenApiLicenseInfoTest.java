@@ -36,7 +36,7 @@ public class RestOpenApiLicenseInfoTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration()
                         .apiProperty("openapi.version", openApiVersion)
                         .apiProperty("api.contact.name", "Mr Camel")
