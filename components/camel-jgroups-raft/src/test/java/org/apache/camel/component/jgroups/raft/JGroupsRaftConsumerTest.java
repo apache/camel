@@ -35,10 +35,10 @@ public class JGroupsRaftConsumerTest extends JGroupsRaftAbstractTest {
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftConsumerTest.class);
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(CONFIGURED_ENDPOINT_URI).to("mock:out");
                 from(CONFIGURED_ENDPOINT_URI2).to("mock:out2");
                 from(CONFIGURED_ENDPOINT_URI3).to("mock:out3");
