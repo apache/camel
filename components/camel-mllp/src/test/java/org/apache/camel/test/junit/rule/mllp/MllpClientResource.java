@@ -80,14 +80,14 @@ public class MllpClientResource implements BeforeEachCallback, AfterEachCallback
     }
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) {
         if (0 < mllpPort) {
             this.connect();
         }
     }
 
     @Override
-    public void afterEach(ExtensionContext context) throws Exception {
+    public void afterEach(ExtensionContext context) {
         this.close();
     }
 
@@ -313,7 +313,7 @@ public class MllpClientResource implements BeforeEachCallback, AfterEachCallback
         return receiveFramedData(soTimeout);
     }
 
-    public String receiveFramedData(int timout) throws SocketException, SocketTimeoutException {
+    public String receiveFramedData(int timout) throws SocketException {
         if (!isConnected()) {
             throw new MllpJUnitResourceException("Cannot receive acknowledgement - client is not connected");
         }
@@ -382,7 +382,7 @@ public class MllpClientResource implements BeforeEachCallback, AfterEachCallback
         return receiveData(soTimeout);
     }
 
-    public String receiveData(int timeout) throws SocketException, SocketTimeoutException {
+    public String receiveData(int timeout) throws SocketException {
         clientSocket.setSoTimeout(timeout);
         StringBuilder availableInput = new StringBuilder();
 
@@ -401,7 +401,7 @@ public class MllpClientResource implements BeforeEachCallback, AfterEachCallback
         return availableInput.toString();
     }
 
-    public String eatData() throws SocketException, SocketTimeoutException {
+    public String eatData() throws SocketException {
         return eatData(soTimeout);
     }
 

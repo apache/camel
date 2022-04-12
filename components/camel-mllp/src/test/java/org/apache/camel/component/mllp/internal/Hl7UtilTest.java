@@ -107,14 +107,14 @@ public class Hl7UtilTest {
     private Charset charset = Charset.forName("ISO_8859_1");
 
     @Test
-    public void testGenerateInvalidPayloadExceptionMessage() throws Exception {
+    public void testGenerateInvalidPayloadExceptionMessage() {
         String message = hl7util.generateInvalidPayloadExceptionMessage(TEST_MESSAGE.getBytes());
 
         assertNull(message, "Valid payload should result in a null message");
     }
 
     @Test
-    public void testGenerateInvalidPayloadExceptionMessageWithLengthLargerThanArraySize() throws Exception {
+    public void testGenerateInvalidPayloadExceptionMessageWithLengthLargerThanArraySize() {
         byte[] payload = TEST_MESSAGE.getBytes();
         String message = hl7util.generateInvalidPayloadExceptionMessage(payload, payload.length * 2);
 
@@ -122,7 +122,7 @@ public class Hl7UtilTest {
     }
 
     @Test
-    public void testGenerateInvalidPayloadExceptionMessageWithLengthSmallerThanArraySize() throws Exception {
+    public void testGenerateInvalidPayloadExceptionMessageWithLengthSmallerThanArraySize() {
         byte[] payload = TEST_MESSAGE.getBytes();
         String message = hl7util.generateInvalidPayloadExceptionMessage(payload, 10);
 
@@ -130,7 +130,7 @@ public class Hl7UtilTest {
     }
 
     @Test
-    public void testGenerateInvalidPayloadExceptionMessageWithNullPayload() throws Exception {
+    public void testGenerateInvalidPayloadExceptionMessageWithNullPayload() {
         assertEquals("HL7 payload is null", hl7util.generateInvalidPayloadExceptionMessage(null));
 
         assertEquals("HL7 payload is null", hl7util.generateInvalidPayloadExceptionMessage(null, 1234));
@@ -150,7 +150,7 @@ public class Hl7UtilTest {
     }
 
     @Test
-    public void testGenerateInvalidPayloadExceptionMessageWithEmptyPayload() throws Exception {
+    public void testGenerateInvalidPayloadExceptionMessageWithEmptyPayload() {
         byte[] payload = new byte[0];
 
         assertEquals("HL7 payload is empty", hl7util.generateInvalidPayloadExceptionMessage(payload));
@@ -158,7 +158,7 @@ public class Hl7UtilTest {
     }
 
     @Test
-    public void testGenerateInvalidPayloadExceptionMessageWithEmbeddedStartOfBlock() throws Exception {
+    public void testGenerateInvalidPayloadExceptionMessageWithEmbeddedStartOfBlock() {
         byte[] basePayload = TEST_MESSAGE.getBytes();
 
         ByteArrayOutputStream payloadStream = new ByteArrayOutputStream(basePayload.length + 1);
@@ -175,7 +175,7 @@ public class Hl7UtilTest {
     }
 
     @Test
-    public void testGenerateInvalidPayloadExceptionMessageWithEmbeddedEndOfBlock() throws Exception {
+    public void testGenerateInvalidPayloadExceptionMessageWithEmbeddedEndOfBlock() {
         byte[] basePayload = TEST_MESSAGE.getBytes();
 
         ByteArrayOutputStream payloadStream = new ByteArrayOutputStream(basePayload.length + 1);
@@ -210,10 +210,9 @@ public class Hl7UtilTest {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testGenerateAcknowledgementPayloadFromNullMessage() throws Exception {
+    public void testGenerateAcknowledgementPayloadFromNullMessage() {
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
         assertThrows(MllpAcknowledgementGenerationException.class,
                 () -> hl7util.generateAcknowledgementPayload(mllpSocketBuffer, null, "AA"));
@@ -222,10 +221,9 @@ public class Hl7UtilTest {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testGenerateAcknowledgementPayloadFromEmptyMessage() throws Exception {
+    public void testGenerateAcknowledgementPayloadFromEmptyMessage() {
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
         assertThrows(MllpAcknowledgementGenerationException.class,
                 () -> hl7util.generateAcknowledgementPayload(mllpSocketBuffer, new byte[0], "AA"));
@@ -234,10 +232,9 @@ public class Hl7UtilTest {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testGenerateAcknowledgementPayloadWithoutEnoughFields() throws Exception {
+    public void testGenerateAcknowledgementPayloadWithoutEnoughFields() {
         final byte[] testMessage = TEST_MESSAGE.replace("||ORM^O01|00001|D|2.3|||||||", "").getBytes();
 
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
@@ -270,10 +267,9 @@ public class Hl7UtilTest {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConvertStringToPrintFriendlyString() throws Exception {
+    public void testConvertStringToPrintFriendlyString() {
         assertEquals(hl7util.NULL_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString((String) null));
         assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(""));
         assertEquals(EXPECTED_MESSAGE, hl7util.convertToPrintFriendlyString(TEST_MESSAGE));
@@ -282,10 +278,9 @@ public class Hl7UtilTest {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConvertBytesToPrintFriendlyString() throws Exception {
+    public void testConvertBytesToPrintFriendlyString() {
         assertEquals(hl7util.NULL_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString((byte[]) null));
         assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0]));
         assertEquals(EXPECTED_MESSAGE, hl7util.convertToPrintFriendlyString(TEST_MESSAGE_BYTES));
@@ -294,10 +289,9 @@ public class Hl7UtilTest {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConvertBytesToPrintFriendlyStringWithStartAndEndPositions() throws Exception {
+    public void testConvertBytesToPrintFriendlyStringWithStartAndEndPositions() {
         assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString((byte[]) null, 0, 1000));
         assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString((byte[]) null, 200, 1000));
         assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString((byte[]) null, -200, 1000));
@@ -346,10 +340,9 @@ public class Hl7UtilTest {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testBytesToPrintFriendlyStringBuilder() throws Exception {
+    public void testBytesToPrintFriendlyStringBuilder() {
         assertEquals(hl7util.NULL_REPLACEMENT_VALUE, hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null).toString());
         assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, hl7util.bytesToPrintFriendlyStringBuilder(new byte[0]).toString());
         assertEquals(EXPECTED_MESSAGE, hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES).toString());
@@ -358,10 +351,9 @@ public class Hl7UtilTest {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testBytesToPrintFriendlyStringBuilderWithStartAndEndPositions() throws Exception {
+    public void testBytesToPrintFriendlyStringBuilderWithStartAndEndPositions() {
         assertEquals(hl7util.NULL_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 0, 1000).toString());
         assertEquals(hl7util.NULL_REPLACEMENT_VALUE,
@@ -429,10 +421,9 @@ public class Hl7UtilTest {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testAppendBytesAsPrintFriendlyString() throws Exception {
+    public void testAppendBytesAsPrintFriendlyString() {
         StringBuilder builder = null;
 
         try {
@@ -458,10 +449,9 @@ public class Hl7UtilTest {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testAppendBytesAsPrintFriendlyStringWithStartAndEndPositions() throws Exception {
+    public void testAppendBytesAsPrintFriendlyStringWithStartAndEndPositions() {
         StringBuilder builder = null;
 
         try {
@@ -599,10 +589,9 @@ public class Hl7UtilTest {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testAppendCharacterAsPrintFriendlyString() throws Exception {
+    public void testAppendCharacterAsPrintFriendlyString() {
         StringBuilder builder = null;
 
         try {
@@ -630,7 +619,7 @@ public class Hl7UtilTest {
     }
 
     @Test
-    public void testGetCharacterAsPrintFriendlyString() throws Exception {
+    public void testGetCharacterAsPrintFriendlyString() {
         assertEquals("<0x0B VT>", Hl7Util.getCharacterAsPrintFriendlyString(MllpProtocolConstants.START_OF_BLOCK));
         assertEquals("<0x1C FS>", Hl7Util.getCharacterAsPrintFriendlyString(MllpProtocolConstants.END_OF_BLOCK));
         assertEquals("<0x0D CR>", Hl7Util.getCharacterAsPrintFriendlyString(MllpProtocolConstants.SEGMENT_DELIMITER));
@@ -639,28 +628,28 @@ public class Hl7UtilTest {
     }
 
     @Test
-    public void testFindMsh18WhenExistsWithoutTrailingPipe() throws Exception {
+    public void testFindMsh18WhenExistsWithoutTrailingPipe() {
         final String testMessage = MSH_SEGMENT + "||||||8859/1" + '\r' + REMAINING_SEGMENTS;
 
         assertEquals("8859/1", hl7util.findMsh18(testMessage.getBytes(), charset));
     }
 
     @Test
-    public void testFindMsh18WhenExistsWithTrailingPipe() throws Exception {
+    public void testFindMsh18WhenExistsWithTrailingPipe() {
         final String testMessage = MSH_SEGMENT + "||||||8859/1|" + '\r' + REMAINING_SEGMENTS;
 
         assertEquals("8859/1", hl7util.findMsh18(testMessage.getBytes(), charset));
     }
 
     @Test
-    public void testFindMsh18WhenMissingWithoutTrailingPipe() throws Exception {
+    public void testFindMsh18WhenMissingWithoutTrailingPipe() {
         final String testMessage = MSH_SEGMENT + "||||||" + '\r' + REMAINING_SEGMENTS;
 
         assertEquals("", hl7util.findMsh18(testMessage.getBytes(), charset));
     }
 
     @Test
-    public void testFindMsh18WhenMissingWithTrailingPipe() throws Exception {
+    public void testFindMsh18WhenMissingWithTrailingPipe() {
         final String testMessage = MSH_SEGMENT + "|||||||" + '\r' + REMAINING_SEGMENTS;
 
         assertEquals("", hl7util.findMsh18(testMessage.getBytes(), charset));

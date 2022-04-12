@@ -63,7 +63,7 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithoutValidationTest
     }
 
     @Override
-    public void testMessageContainingEmbeddedEndOfBlock() throws Exception {
+    public void testMessageContainingEmbeddedEndOfBlock() {
         expectedCompleteCount = 1;
 
         setExpectedCounts();

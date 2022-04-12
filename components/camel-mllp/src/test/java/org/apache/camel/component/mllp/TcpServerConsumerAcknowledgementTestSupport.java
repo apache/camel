@@ -90,7 +90,7 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
             int responseTimeout = 5000;
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String routeId = "mllp-test-receiver-route";
 
                 onException(MllpInvalidAcknowledgementException.class)

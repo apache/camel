@@ -31,12 +31,12 @@ public class MllpExceptionTest extends MllpExceptionTestSupport {
     MllpException instance;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
     }
 
     @Test
-    public void testGetHl7MessageBytes() throws Exception {
+    public void testGetHl7MessageBytes() {
         instance = new MllpException(EXCEPTION_MESSAGE, LOG_PHI_TRUE);
         assertNull(instance.getHl7MessageBytes());
 
@@ -72,7 +72,7 @@ public class MllpExceptionTest extends MllpExceptionTestSupport {
     }
 
     @Test
-    public void testGetHl7AcknowledgementBytes() throws Exception {
+    public void testGetHl7AcknowledgementBytes() {
         instance = new MllpException(EXCEPTION_MESSAGE, LOG_PHI_TRUE);
         assertNull(instance.getHl7AcknowledgementBytes());
 
@@ -117,35 +117,35 @@ public class MllpExceptionTest extends MllpExceptionTestSupport {
     }
 
     @Test
-    public void testNullHl7Message() throws Exception {
+    public void testNullHl7Message() {
         instance = new MllpException(EXCEPTION_MESSAGE, null, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertEquals(expectedMessage(null, HL7_ACKNOWLEDGEMENT), instance.getMessage());
     }
 
     @Test
-    public void testEmptyHl7Message() throws Exception {
+    public void testEmptyHl7Message() {
         instance = new MllpException(EXCEPTION_MESSAGE, EMPTY_BYTE_ARRAY, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertEquals(expectedMessage(null, HL7_ACKNOWLEDGEMENT), instance.getMessage());
     }
 
     @Test
-    public void testNullHl7Acknowledgement() throws Exception {
+    public void testNullHl7Acknowledgement() {
         instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, NULL_BYTE_ARRAY, LOG_PHI_TRUE);
 
         assertEquals(expectedMessage(HL7_MESSAGE, null), instance.getMessage());
     }
 
     @Test
-    public void testEmptyAcknowledgement() throws Exception {
+    public void testEmptyAcknowledgement() {
         instance = new MllpException(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, EMPTY_BYTE_ARRAY, LOG_PHI_TRUE);
 
         assertEquals(expectedMessage(HL7_MESSAGE, null), instance.getMessage());
     }
 
     @Test
-    public void testNullHl7Payloads() throws Exception {
+    public void testNullHl7Payloads() {
         instance = new MllpException(EXCEPTION_MESSAGE, NULL_BYTE_ARRAY, NULL_BYTE_ARRAY, LOG_PHI_TRUE);
 
         assertEquals(expectedMessage(null, null), instance.getMessage());

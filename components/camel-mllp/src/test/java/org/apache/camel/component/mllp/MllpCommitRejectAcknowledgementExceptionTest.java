@@ -33,10 +33,9 @@ public class MllpCommitRejectAcknowledgementExceptionTest extends MllpExceptionT
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorOne() throws Exception {
+    public void testConstructorOne() {
         instance = new MllpCommitRejectAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpCommitRejectAcknowledgementException.EXCEPTION_MESSAGE));
@@ -48,10 +47,9 @@ public class MllpCommitRejectAcknowledgementExceptionTest extends MllpExceptionT
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorTwo() throws Exception {
+    public void testConstructorTwo() {
         instance = new MllpCommitRejectAcknowledgementException(
                 HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
@@ -64,10 +62,9 @@ public class MllpCommitRejectAcknowledgementExceptionTest extends MllpExceptionT
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testGetAcknowledgmentType() throws Exception {
+    public void testGetAcknowledgmentType() {
         instance = new MllpCommitRejectAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertEquals("CR", instance.getAcknowledgmentType());

@@ -108,7 +108,7 @@ public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
         RouteBuilder builder = new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String routeId = "mllp-max-concurrent-consumers-route";
 
                 fromF("mllp://%s:%d?maxConcurrentConsumers=%d&autoAck=true&connectTimeout=100&receiveTimeout=1000",

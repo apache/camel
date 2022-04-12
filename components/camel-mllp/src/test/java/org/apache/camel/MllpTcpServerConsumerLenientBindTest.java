@@ -59,7 +59,7 @@ public class MllpTcpServerConsumerLenientBindTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         RouteBuilder builder = new RouteBuilder() {
             String routeId = "mllp-receiver-with-lenient-bind";
 

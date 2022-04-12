@@ -87,7 +87,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String routeId = "mllp-test-receiver-route";
 
                 onException(MllpInvalidMessageException.class)
@@ -271,7 +271,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
     @Test
     public abstract void testInvalidMessage() throws Exception;
 
-    protected void runInvalidMessage() throws Exception {
+    protected void runInvalidMessage() {
         setExpectedCounts();
 
         mllpClient.sendFramedData("INVALID PAYLOAD");
@@ -345,7 +345,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
     }
 
     @Test
-    public abstract void testMessageContainingEmbeddedEndOfBlock() throws Exception;
+    public abstract void testMessageContainingEmbeddedEndOfBlock();
 
     @Test
     public abstract void testInvalidMessageContainingEmbeddedEndOfBlock() throws Exception;
@@ -416,7 +416,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
     }
 
     @Test
-    public void testInitialMessageWithoutEndOfDataByte() throws Exception {
+    public void testInitialMessageWithoutEndOfDataByte() {
         setExpectedCounts();
 
         mllpClient.setSendEndOfData(false);

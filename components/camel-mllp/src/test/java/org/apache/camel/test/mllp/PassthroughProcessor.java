@@ -35,7 +35,7 @@ public class PassthroughProcessor implements Processor {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         String message = exchange.getIn().getBody(String.class);
         if (null != message) {
             String msh = message.substring(0, message.indexOf('\r'));

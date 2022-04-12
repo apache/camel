@@ -51,7 +51,7 @@ public class MllpProducerConsumerLoopbackInOnlyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         String mllpHost = "localhost";
         int mllpPort = AvailablePortFinder.getNextAvailable();
 
