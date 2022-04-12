@@ -41,11 +41,11 @@ public class JacksonMarshalNamingStrategyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 JacksonDataFormat format = new JacksonDataFormat();
                 format.setNamingStrategy("LOWER_DOT_CASE");
                 from("direct:in").marshal(format).to("mock:result");
