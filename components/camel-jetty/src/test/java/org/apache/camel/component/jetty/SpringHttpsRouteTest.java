@@ -67,7 +67,7 @@ public class SpringHttpsRouteTest {
     private Integer port;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         // ensure jsse clients can validate the self signed dummy localhost
         // cert,
         // use the server keystore as the trust store for these tests
@@ -76,7 +76,7 @@ public class SpringHttpsRouteTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         restoreSystemProperties();
     }
 

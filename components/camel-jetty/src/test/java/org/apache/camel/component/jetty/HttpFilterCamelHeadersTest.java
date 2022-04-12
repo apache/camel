@@ -34,9 +34,9 @@ public class HttpFilterCamelHeadersTest extends BaseJettyTest {
     private MyFooBean bean = new MyFooBean();
 
     @Test
-    public void testFilterCamelHeaders() throws Exception {
+    public void testFilterCamelHeaders() {
         Exchange out = template.send("http://localhost:{{port}}/test/filter", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Claus");
                 exchange.getIn().setHeader("bar", 123);
             }
@@ -60,10 +60,10 @@ public class HttpFilterCamelHeadersTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/test/filter").bean("foo");
             }
         };

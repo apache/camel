@@ -50,9 +50,9 @@ public class JettyContentBasedRouteTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("jetty:" + serverUri).choice().when().simple("${header.one}").to("mock:one").otherwise().to("mock:other");
                 // END SNIPPET: e1

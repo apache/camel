@@ -64,10 +64,10 @@ public class JettyEndpointSetHttpTraceTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:" + portTraceOff + "/myservice").to("log:foo");
                 from("jetty:http://localhost:" + portTraceOn + "/myservice?traceEnabled=true").to("log:bar");
             }

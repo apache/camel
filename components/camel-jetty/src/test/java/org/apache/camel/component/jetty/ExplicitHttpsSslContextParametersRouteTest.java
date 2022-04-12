@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Disabled;
 public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
 
     // START SNIPPET: e2
-    private Connector createSslSocketConnector(CamelContext context, int port) throws Exception {
+    private Connector createSslSocketConnector(CamelContext context, int port) {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
         ksp.setPassword(pwd);
@@ -58,7 +58,7 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
     // END SNIPPET: e2
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
@@ -74,7 +74,7 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
 
                 Processor proc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };

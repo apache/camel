@@ -25,16 +25,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JettyRestProducerApiDocTest extends BaseJettyTest {
 
     @Test
-    public void testJettyProducerGet() throws Exception {
+    public void testJettyProducerGet() {
         String out = fluentTemplate.withHeader("name", "Donald Duck").to("direct:start").request(String.class);
         assertEquals("Hello Donald Duck", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use localhost with the given port
                 restConfiguration().component("jetty").producerComponent("http").host("localhost").port(getPort())
                         .producerApiDoc("hello-api.json");

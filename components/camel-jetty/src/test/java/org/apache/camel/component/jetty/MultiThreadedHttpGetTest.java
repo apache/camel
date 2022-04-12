@@ -102,7 +102,7 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("seda:withConversion?concurrentConsumers=5").to("http://localhost:{{port}}/search")
@@ -111,7 +111,7 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
                 from("seda:withoutConversion?concurrentConsumers=5").to("http://localhost:{{port}}/search").to("mock:results");
 
                 from("jetty:http://localhost:{{port}}/search").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("<html>Bye World</html>");
                     }
                 });

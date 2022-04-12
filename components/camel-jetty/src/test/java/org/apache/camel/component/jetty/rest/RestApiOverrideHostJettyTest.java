@@ -34,7 +34,7 @@ public class RestApiOverrideHostJettyTest extends BaseJettyTest {
     }
 
     @Test
-    public void testApi() throws Exception {
+    public void testApi() {
         String out = template.requestBody("jetty:http://localhost:{{port}}/api-doc", null, String.class);
         assertNotNull(out);
 
@@ -47,10 +47,10 @@ public class RestApiOverrideHostJettyTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().component("jetty").host("localhost").port(getPort()).apiContextPath("/api-doc")
                         .apiHost("mycoolserver/myapi").apiProperty("cors", "true")
                         .apiProperty("api.title", "The hello rest thing").apiProperty("api.version", "1.2.3");

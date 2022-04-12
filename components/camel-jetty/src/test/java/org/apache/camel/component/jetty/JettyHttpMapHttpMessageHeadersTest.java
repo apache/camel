@@ -105,9 +105,9 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:" + serverUriFiltered + "?mapHttpMessageHeaders=false").to("mock:result");
                 from("jetty:" + serverUriNotFiltered).to("mock:result1");
             }

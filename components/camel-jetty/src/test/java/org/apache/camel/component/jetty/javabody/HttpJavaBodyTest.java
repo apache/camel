@@ -49,9 +49,9 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         MyCoolBean cool = exchange.getIn().getBody(MyCoolBean.class);
                         assertNotNull(cool);
 
@@ -86,9 +86,9 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         MyCoolBean cool = exchange.getIn().getBody(MyCoolBean.class);
                         assertNotNull(cool);
 
@@ -125,9 +125,9 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
                         assertNotNull(body);
                         assertEquals("Hello World", body);
@@ -158,11 +158,11 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).to("mock:error");
 
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
                         assertNotNull(body);
                         assertEquals("Hello World", body);
@@ -195,9 +195,9 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
                         assertNotNull(body);
                         assertEquals("Hello World", body);

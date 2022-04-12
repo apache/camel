@@ -18,7 +18,6 @@ package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
@@ -101,13 +100,13 @@ public class HttpRouteTest extends BaseJettyTest {
     }
 
     @Test
-    public void testEchoEndpoint() throws Exception {
+    public void testEchoEndpoint() {
         String out = template.requestBody("http://localhost:" + port1 + "/echo", "HelloWorld", String.class);
         assertEquals("HelloWorld", out, "Get a wrong output ");
     }
 
     @Test
-    public void testEchoEndpointWithIgnoreResponseBody() throws Exception {
+    public void testEchoEndpointWithIgnoreResponseBody() {
         String out = template.requestBody("http://localhost:" + port1 + "/echo?ignoreResponseBody=true", "HelloWorld",
                 String.class);
         assertNull(out, "Get a wrong output ");
@@ -167,7 +166,7 @@ public class HttpRouteTest extends BaseJettyTest {
     }
 
     @Test
-    public void testDisableStreamCache() throws Exception {
+    public void testDisableStreamCache() {
         String response = template.requestBodyAndHeader("http://localhost:" + port3 + "/noStreamCache",
                 new ByteArrayInputStream("This is a test".getBytes()), "Content-Type",
                 "application/xml", String.class);
@@ -196,12 +195,12 @@ public class HttpRouteTest extends BaseJettyTest {
         client.close();
     }
 
-    protected void invokeHttpEndpoint() throws IOException {
+    protected void invokeHttpEndpoint() {
         template.requestBodyAndHeader("http://localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // enable stream cache
@@ -210,7 +209,7 @@ public class HttpRouteTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + port1 + "/test").to("mock:a");
 
                 Processor proc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         try {
                             HttpMessage message = (HttpMessage) exchange.getIn();
                             HttpSession session = message.getRequest().getSession();
@@ -225,7 +224,7 @@ public class HttpRouteTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + port1 + "/responseCode").setHeader(Exchange.HTTP_RESPONSE_CODE, simple("400"));
 
                 Processor printProcessor = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Message out = exchange.getMessage();
                         out.copyFrom(exchange.getIn());
                         log.info("The body's object is " + exchange.getIn().getBody());
@@ -239,7 +238,7 @@ public class HttpRouteTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + port1 + "/echo").process(printProcessor).process(printProcessor);
 
                 Processor procParameters = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // As the request input stream is cached by
                         // DefaultHttpBinding,
                         // HttpServletRequest can't get the parameters of post
@@ -257,7 +256,7 @@ public class HttpRouteTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + port1 + "/parameter").process(procParameters);
 
                 from("jetty:http://localhost:" + port1 + "/postxml").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String value = exchange.getIn().getBody(String.class);
                         assertEquals(POST_MESSAGE, value, "The response message is wrong");
                         exchange.getMessage().setBody("OK");
@@ -266,7 +265,7 @@ public class HttpRouteTest extends BaseJettyTest {
 
                 from("jetty:http://localhost:" + port3 + "/noStreamCache?disableStreamCache=true").noStreamCaching()
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 InputStream is = (InputStream) exchange.getIn().getBody();
                                 assertTrue(is instanceof org.eclipse.jetty.server.HttpInput, "It should be a raw inputstream");
                                 String request = exchange.getIn().getBody(String.class);
@@ -276,7 +275,7 @@ public class HttpRouteTest extends BaseJettyTest {
                         });
 
                 from("jetty:http://localhost:" + port4 + "/requestBufferSize").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String string = exchange.getIn().getBody(String.class);
                         exchange.getMessage().setBody(string);
                     }

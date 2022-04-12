@@ -43,10 +43,10 @@ public class HttpStreamCacheFileIssueTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable stream caching and use a low threshold so its forced
                 // to write to file
                 context.getStreamCachingStrategy().setSpoolThreshold(16);
@@ -55,7 +55,7 @@ public class HttpStreamCacheFileIssueTest extends BaseJettyTest {
 
                 // use a route so we got an unit of work
                 from("direct:start").to("http://localhost:{{port}}/myserver").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // there should be a temp cache file
                         String[] files = testDirectory().toFile().list();
                         assertTrue(files.length > 0, "There should be a temp cache file");

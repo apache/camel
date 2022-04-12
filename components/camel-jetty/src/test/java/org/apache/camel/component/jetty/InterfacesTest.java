@@ -112,11 +112,11 @@ public class InterfacesTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:" + port1 + "/testRoute").setBody().constant("local").to("mock:endpoint");
 
                 from("jetty:http://localhost:" + port2 + "/testRoute").setBody().constant("local-differentPort")

@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MultiPartFormTest extends BaseJettyTest {
-    private HttpEntity createMultipartRequestEntity() throws Exception {
+    private HttpEntity createMultipartRequestEntity() {
         File file = new File("src/test/resources/log4j2.properties");
         return MultipartEntityBuilder.create().addTextBody("comment", "A binary file of some kind")
                 .addBinaryBody(file.getName(), file).build();
@@ -66,9 +66,9 @@ public class MultiPartFormTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // Set the jetty temp directory which store the file for multi
                 // part form

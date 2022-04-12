@@ -43,7 +43,7 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
     }
 
     @Test
-    public void testSwitchingNoBodyTo204HttpViaCamel() throws Exception {
+    public void testSwitchingNoBodyTo204HttpViaCamel() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("http://localhost:{{port}}/bar", inExchange);
 
@@ -52,7 +52,7 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
     }
 
     @Test
-    public void testSwitchingNoBodyTo204ViaCamelRoute() throws Exception {
+    public void testSwitchingNoBodyTo204ViaCamelRoute() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("direct:bar", inExchange);
 
@@ -72,7 +72,7 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
     }
 
     @Test
-    public void testNoSwitchingNoCodeHttpViaCamel() throws Exception {
+    public void testNoSwitchingNoCodeHttpViaCamel() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("http://localhost:{{port}}/foo", inExchange);
 
@@ -81,7 +81,7 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
     }
 
     @Test
-    public void testNoSwitchingNoCodeViaCamelRoute() throws Exception {
+    public void testNoSwitchingNoCodeViaCamelRoute() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("direct:foo", inExchange);
 
@@ -101,7 +101,7 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
     }
 
     @Test
-    public void testNoSwitchingNoBodyHttpViaCamel() throws Exception {
+    public void testNoSwitchingNoBodyHttpViaCamel() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("http://localhost:{{port}}/foobar", inExchange);
 
@@ -110,7 +110,7 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
     }
 
     @Test
-    public void testNoSwitchingNoBodyViaCamelRoute() throws Exception {
+    public void testNoSwitchingNoBodyViaCamelRoute() {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("direct:foobar", inExchange);
 
@@ -119,10 +119,10 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/bar").setBody().constant("");
 
                 from("direct:bar").to("http://localhost:{{port}}/bar");

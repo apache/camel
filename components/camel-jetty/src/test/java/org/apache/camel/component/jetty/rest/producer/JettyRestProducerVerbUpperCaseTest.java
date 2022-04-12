@@ -27,16 +27,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JettyRestProducerVerbUpperCaseTest extends BaseJettyTest {
 
     @Test
-    public void testVerbUpperCase() throws Exception {
+    public void testVerbUpperCase() {
         String out = fluentTemplate.withHeader("id", "123").to("direct:start").request(String.class);
         assertEquals("123;Donald Duck", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort());
 
@@ -45,7 +45,7 @@ public class JettyRestProducerVerbUpperCaseTest extends BaseJettyTest {
                 // use the rest DSL to define the rest services
                 rest("/users/").get("{id}/basic").to("direct:basic");
                 from("direct:basic").to("mock:input").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
                         assertEquals("GET", method);
 

@@ -42,10 +42,10 @@ public class JettyCamelHttpUrlCBRTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://0.0.0.0:{{port}}/foo").filter().simple("${header.CamelHttpUrl} contains 'foo'")
                         .to("mock:foo").end().transform().constant("Bye World");
             }

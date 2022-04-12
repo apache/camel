@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class RestJettyRequiredBodyTest extends BaseJettyTest {
 
     @Test
-    public void testJettyValid() throws Exception {
+    public void testJettyValid() {
         String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader("Accept", "application/json").withHeader(Exchange.HTTP_METHOD, "post")
                 .withBody("{ \"name\": \"Donald Duck\" }").to("http://localhost:" + getPort() + "/users/123/update")
@@ -70,10 +70,10 @@ public class RestJettyRequiredBodyTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configure to use jetty on localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort())
                         // turn on client request validation

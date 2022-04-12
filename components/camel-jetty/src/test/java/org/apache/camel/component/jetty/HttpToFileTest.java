@@ -51,9 +51,9 @@ public class HttpToFileTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // put the incoming data on the seda queue and return a fixed
                 // response that we got the file
                 from("jetty:http://localhost:{{port}}/myworld").convertBodyTo(String.class).to("seda:in")

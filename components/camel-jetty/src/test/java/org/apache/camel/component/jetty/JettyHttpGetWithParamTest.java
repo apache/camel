@@ -71,9 +71,9 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:" + serverUri).process(processor).to("mock:result");
                 from("direct:start").setHeader(Exchange.HTTP_METHOD, constant("GET"))
                         .setHeader(Exchange.HTTP_URI, simple(serverUri + "?${in.headers.parameters}"))
@@ -84,7 +84,7 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
 
     private static class MyParamsProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             HttpMessage message = (HttpMessage) exchange.getIn();
             assertNotNull(message.getRequest());
             assertEquals("uno", message.getRequest().getParameter("one"));

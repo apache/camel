@@ -26,18 +26,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HttpReturnDataNotInputStreamConvertableTest extends BaseJettyTest {
 
     @Test
-    public void testHttpReturnDataNotInputStreamConvertableTest() throws Exception {
+    public void testHttpReturnDataNotInputStreamConvertableTest() {
         String out = template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
         assertEquals("This is the response", out);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // See: CAMEL-15475
                         exchange.getOut().setBody(new MyResponseBean());
                     }

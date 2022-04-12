@@ -55,10 +55,10 @@ public class JettyAsyncThrottleTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myservice").removeHeaders("*").throttle(2).asyncDelayed().loadBalance()
                         .failover().to("http://localhost:" + port2 + "/foo")
                         .to("http://localhost:" + port3 + "/bar").end().to("mock:result");

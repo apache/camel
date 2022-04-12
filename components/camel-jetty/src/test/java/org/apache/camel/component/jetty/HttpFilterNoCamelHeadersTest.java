@@ -42,7 +42,7 @@ public class HttpFilterNoCamelHeadersTest extends BaseJettyTest {
         getMockEndpoint("mock:result").message(0).header("CamelDummy").isNull();
 
         Exchange out = template.request("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("World");
                 exchange.getIn().setHeader("bar", 123);
             }
@@ -55,10 +55,10 @@ public class HttpFilterNoCamelHeadersTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader(Exchange.FILE_NAME, constant("test.txt"))
                         .to("http://localhost:{{port}}/test/filter").to("mock:result");
 

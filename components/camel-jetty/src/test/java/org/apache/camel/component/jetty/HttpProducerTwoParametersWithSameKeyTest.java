@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class HttpProducerTwoParametersWithSameKeyTest extends BaseJettyTest {
 
     @Test
-    public void testTwoParametersWithSameKey() throws Exception {
+    public void testTwoParametersWithSameKey() {
         Exchange out = template.request("http://localhost:{{port}}/myapp?from=me&to=foo&to=bar", null);
 
         assertNotNull(out);
@@ -50,9 +50,9 @@ public class HttpProducerTwoParametersWithSameKeyTest extends BaseJettyTest {
     }
 
     @Test
-    public void testTwoHeadersWithSameKeyHeader() throws Exception {
+    public void testTwoHeadersWithSameKeyHeader() {
         Exchange out = template.request("http://localhost:{{port}}/myapp", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(null);
                 exchange.getIn().setHeader("from", "me");
                 List<String> list = new ArrayList<>();
@@ -75,12 +75,12 @@ public class HttpProducerTwoParametersWithSameKeyTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/myapp").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String from = exchange.getIn().getHeader("from", String.class);
                         assertEquals("me", from);
 

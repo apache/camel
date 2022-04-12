@@ -33,7 +33,7 @@ public class JettySessionSupportTest extends BaseJettyTest {
     public void testJettySessionSupportInvalid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/hello").to("mock:foo");
 
                 from("jetty:http://localhost:{{port}}/bye?sessionSupport=true").to("mock:bar");
@@ -54,7 +54,7 @@ public class JettySessionSupportTest extends BaseJettyTest {
     public void testJettySessionSupportOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/hello?sessionSupport=true").transform(simple("Bye ${body}"));
             }
         });

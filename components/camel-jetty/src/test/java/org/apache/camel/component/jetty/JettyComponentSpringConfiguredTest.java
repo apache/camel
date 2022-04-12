@@ -54,7 +54,7 @@ public class JettyComponentSpringConfiguredTest extends CamelSpringTestSupport {
 
     @Test
     @Disabled("run manual test")
-    public void testJetty2() throws Exception {
+    public void testJetty2() {
         assertNotNull(context.hasComponent("jetty2"), "Should have jetty2 component");
 
         String reply = template.requestBody("http://localhost:" + port + "/myapp", "Camel", String.class);

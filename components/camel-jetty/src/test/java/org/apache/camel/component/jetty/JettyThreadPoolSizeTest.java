@@ -45,10 +45,10 @@ public class JettyThreadPoolSizeTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // setup the jetty component with the custom minThreads
                 JettyHttpComponent jettyComponent = (JettyHttpComponent) context.getComponent("jetty");
                 jettyComponent.setMinThreads(5);

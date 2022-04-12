@@ -30,7 +30,7 @@ import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
 public class HttpsRouteAddSslConnectorPropertiesTest extends HttpsRouteTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
                 // START SNIPPET: e1
@@ -45,7 +45,7 @@ public class HttpsRouteAddSslConnectorPropertiesTest extends HttpsRouteTest {
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
 
                 Processor proc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };

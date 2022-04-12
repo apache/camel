@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
 
@@ -48,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class HttpAuthMethodPriorityTest extends BaseJettyTest {
 
     @BindToRegistry("myAuthHandler")
-    public SecurityHandler getSecurityHandler() throws IOException {
+    public SecurityHandler getSecurityHandler() {
         Constraint constraint = new Constraint(Constraint.__BASIC_AUTH, "user");
         constraint.setAuthenticate(true);
 
@@ -68,7 +67,7 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
     }
 
     @Test
-    public void testAuthMethodPriorityBasicDigest() throws Exception {
+    public void testAuthMethodPriorityBasicDigest() {
         String out = template.requestBody(
                 "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,Digest&authUsername=donald&authPassword=duck",
                 "Hello World",
@@ -77,7 +76,7 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
     }
 
     @Test
-    public void testAuthMethodPriorityNTLMBasic() throws Exception {
+    public void testAuthMethodPriorityNTLMBasic() {
         String out = template.requestBody(
                 "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM,Basic&authUsername=donald&authPassword=duck",
                 "Hello World",
@@ -86,7 +85,7 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
     }
 
     @Test
-    public void testAuthMethodPriorityInvalid() throws Exception {
+    public void testAuthMethodPriorityInvalid() {
         try {
             template.requestBody(
                     "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,foo&authUsername=donald&authPassword=duck",
@@ -103,7 +102,7 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
     }
 
     @Test
-    public void testAuthMethodPriorityNTLM() throws Exception {
+    public void testAuthMethodPriorityNTLM() {
         try {
             template.requestBody(
                     "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM&authUsername=donald&authPassword=duck",
@@ -116,12 +115,12 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test?handlers=myAuthHandler").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
                         assertNotNull(req);
                         Principal user = req.getUserPrincipal();

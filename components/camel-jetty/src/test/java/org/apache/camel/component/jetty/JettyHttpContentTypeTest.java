@@ -62,10 +62,10 @@ public class JettyHttpContentTypeTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://127.0.0.1:{{port}}/foo").to("mock:input").transform().constant("Bye World");
             }
         };

@@ -41,14 +41,14 @@ public class HttpProducerJMXBeansIssueTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/leak").transform(constant("Bye World"));
 
                 from("direct:leak").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         LOG.debug("URL is: " + exchange.getIn().getHeader("url"));
                     }
                 }).recipientList(header("url"));

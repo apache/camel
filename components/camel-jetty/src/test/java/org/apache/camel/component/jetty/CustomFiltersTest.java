@@ -58,7 +58,7 @@ public class CustomFiltersTest extends BaseJettyTest {
         }
 
         @Override
-        public void init(FilterConfig filterConfig) throws ServletException {
+        public void init(FilterConfig filterConfig) {
             keyWord = filterConfig.getInitParameter("keyWord");
         }
 
@@ -94,21 +94,21 @@ public class CustomFiltersTest extends BaseJettyTest {
     }
 
     @BindToRegistry("myFilters")
-    public List<Filter> loadFilter() throws Exception {
+    public List<Filter> loadFilter() {
         List<Filter> filters = new ArrayList<>();
         filters.add(new MyTestFilter());
         return filters;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
 
                 // Test the filter list options
                 from("jetty://http://localhost:{{port}}/testFilters?filters=myFilters&filterInit.keyWord=KEY")
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Message in = exchange.getIn();
                                 String request = in.getBody(String.class);
                                 // The other form date can be get from the message

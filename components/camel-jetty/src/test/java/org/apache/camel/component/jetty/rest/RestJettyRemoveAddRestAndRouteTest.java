@@ -55,7 +55,7 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
 
         new RouteBuilder(context) {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest("/").get("/issues/{isin}/{sedol}").to("direct:issues");
 
                 from("direct:issues").routeId("issues")
@@ -74,10 +74,10 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().host("localhost").port(getPort());
 
                 rest("/")

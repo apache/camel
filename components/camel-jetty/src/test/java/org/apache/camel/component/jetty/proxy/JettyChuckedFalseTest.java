@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JettyChuckedFalseTest extends BaseJettyTest {
 
     @Test
-    public void runningTest() throws Exception {
+    public void runningTest() {
         Exchange exchange = template.request("http://localhost:{{port}}/test", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // we do nothing here, so http producer will send a GET method
                 // request
             }
@@ -48,10 +48,10 @@ public class JettyChuckedFalseTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("jetty:http://localhost:{{port}}/test?matchOnUriPrefix=true&chunked=false")
                         .to("http://localhost:{{port2}}/other?bridgeEndpoint=true");

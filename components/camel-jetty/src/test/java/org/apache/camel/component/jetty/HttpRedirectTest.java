@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class HttpRedirectTest extends BaseJettyTest {
 
     @Test
-    public void testHttpRedirect() throws Exception {
+    public void testHttpRedirect() {
         try {
             template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
             fail("Should have thrown an exception");
@@ -63,18 +63,18 @@ public class HttpRedirectTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 301);
                         exchange.getMessage().setHeader("location", "http://localhost:" + getPort() + "/newtest");
                     }
                 });
                 from("jetty://http://localhost:{{port}}/remove").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
                     }
                 });

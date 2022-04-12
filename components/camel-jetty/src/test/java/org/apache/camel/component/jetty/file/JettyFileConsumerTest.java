@@ -55,7 +55,7 @@ public class JettyFileConsumerTest extends BaseJettyTest {
     }
 
     @Test
-    public void testSendBinaryFile() throws Exception {
+    public void testSendBinaryFile() {
         File jpg = new File("src/test/resources/java.jpg");
         String response = template.requestBody("http://localhost:{{port}}/myapp/myservice2", jpg, String.class);
         assertEquals("OK", response, "Response should be OK ");
@@ -80,9 +80,9 @@ public class JettyFileConsumerTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/myservice").to(fileUri("test?fileName=temp.xml"))
                         .setBody(constant("OK"));
 

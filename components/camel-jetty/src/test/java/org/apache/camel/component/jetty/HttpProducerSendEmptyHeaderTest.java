@@ -42,11 +42,11 @@ public class HttpProducerSendEmptyHeaderTest extends BaseJettyTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         allowNullHeaders();
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:{{port}}/myapp/mytest").convertBodyTo(String.class).to("mock:result");
             }
         };
