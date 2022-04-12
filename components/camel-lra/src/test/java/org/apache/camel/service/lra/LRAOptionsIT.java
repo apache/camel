@@ -59,17 +59,17 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
     }
 
     @Test
-    public void testRouteDoesNotHangOnOptionError() throws Exception {
+    public void testRouteDoesNotHangOnOptionError() {
         assertThrows(RuntimeCamelException.class,
                 () -> template.sendBody("direct:wrong-expression", "Hello"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:workflow")
                         .saga()
