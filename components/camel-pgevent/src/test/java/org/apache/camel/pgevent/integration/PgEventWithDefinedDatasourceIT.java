@@ -40,7 +40,7 @@ public class PgEventWithDefinedDatasourceIT extends PgEventITSupport {
     private MockEndpoint mockEndpoint;
 
     @BindToRegistry("pgDataSource")
-    public PGDataSource loadDataSource() throws Exception {
+    public PGDataSource loadDataSource() {
         PGDataSource dataSource = new PGDataSource();
         dataSource.setHost(getHost());
         dataSource.setPort(getMappedPort());
@@ -58,10 +58,10 @@ public class PgEventWithDefinedDatasourceIT extends PgEventITSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(timerEndpoint)
                         .setBody(constant(TEST_MESSAGE_BODY))
                         .to(notifyEndpoint);
