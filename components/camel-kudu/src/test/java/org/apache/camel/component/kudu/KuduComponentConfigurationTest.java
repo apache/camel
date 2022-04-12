@@ -42,7 +42,7 @@ public class KuduComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void wrongUrl() throws Exception {
+    public void wrongUrl() {
         KuduComponent component = new KuduComponent(this.context());
         assertThrows(Exception.class,
                 () -> component.createEndpoint("wrong url"));
