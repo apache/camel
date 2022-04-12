@@ -64,7 +64,7 @@ public class SimpleIPFSTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:startA").to("ipfs:version");
                 }
             });
@@ -89,7 +89,7 @@ public class SimpleIPFSTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").to("ipfs:add");
                 }
             });
@@ -116,7 +116,7 @@ public class SimpleIPFSTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").to("ipfs:add");
                 }
             });
@@ -143,7 +143,7 @@ public class SimpleIPFSTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").to("ipfs:cat");
                 }
             });
@@ -168,7 +168,7 @@ public class SimpleIPFSTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").to("ipfs:get?outdir=target");
                 }
             });
@@ -194,7 +194,7 @@ public class SimpleIPFSTest {
 
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").to("ipfs:get?outdir=target");
                 }
             });
