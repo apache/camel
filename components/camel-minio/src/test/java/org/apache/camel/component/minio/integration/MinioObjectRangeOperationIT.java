@@ -51,7 +51,7 @@ class MinioObjectRangeOperationIT extends MinioIntegrationTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    MinioObjectRangeOperationIT() throws IOException {
+    MinioObjectRangeOperationIT() {
     }
 
     @Test
