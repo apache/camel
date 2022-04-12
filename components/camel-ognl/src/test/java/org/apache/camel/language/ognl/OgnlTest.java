@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class OgnlTest extends LanguageTestSupport {
 
     @Test
-    public void testOgnlExpressions() throws Exception {
+    public void testOgnlExpressions() {
         assertExpression("exchange", exchange);
         assertExpression("exchange.getIn().body", "<hello id='m123'>world!</hello>");
         assertExpression("getRequest().body", "<hello id='m123'>world!</hello>");
@@ -37,7 +37,7 @@ public class OgnlTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testClassMethodExpression() throws Exception {
+    public void testClassMethodExpression() {
         try {
             assertExpression("@org.apache.camel.language.ognl.Animal1@getClassName()", "Animal");
             fail("Expect exception here.");
@@ -50,13 +50,13 @@ public class OgnlTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testGetOutFalseKeepsNullOutMessage() throws Exception {
+    public void testGetOutFalseKeepsNullOutMessage() {
         assertExpression("exchange.hasOut()", false);
         assertFalse(exchange.hasOut());
     }
 
     @Test
-    public void testResponseCreatesOutMessage() throws Exception {
+    public void testResponseCreatesOutMessage() {
         assertExpression("response.body", null);
         assertTrue(exchange.hasOut());
     }

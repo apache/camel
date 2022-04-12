@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class OgnlScriptingLanguageTest extends CamelTestSupport {
 
     @Test
-    public void testScripting() throws Exception {
+    public void testScripting() {
         Language lan = context.resolveLanguage("ognl");
         Assertions.assertTrue(lan instanceof ScriptingLanguage);
 
