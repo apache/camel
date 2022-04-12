@@ -49,7 +49,7 @@ public class MinaReverserServer {
         acceptor.bind(new InetSocketAddress(port));
     }
 
-    public void stop() throws Exception {
+    public void stop() {
         acceptor.unbind();
     }
 

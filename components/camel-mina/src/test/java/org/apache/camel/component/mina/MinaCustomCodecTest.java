@@ -62,7 +62,7 @@ public class MinaCustomCodecTest extends BaseMinaTest {
     }
 
     @Test
-    public void testProducerFailInDecodingResponse() throws Exception {
+    public void testProducerFailInDecodingResponse() {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
@@ -115,11 +115,11 @@ public class MinaCustomCodecTest extends BaseMinaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()))
                         .transform(constant("Bye World")).to("mock:result");
             }
@@ -139,7 +139,7 @@ public class MinaCustomCodecTest extends BaseMinaTest {
         }
 
         @Override
-        public ProtocolEncoder getEncoder(IoSession session) throws Exception {
+        public ProtocolEncoder getEncoder(IoSession session) {
             return new ProtocolEncoder() {
 
                 @Override
@@ -152,7 +152,7 @@ public class MinaCustomCodecTest extends BaseMinaTest {
                 }
 
                 @Override
-                public void dispose(IoSession ioSession) throws Exception {
+                public void dispose(IoSession ioSession) {
                     // do nothing
                 }
             };
@@ -160,7 +160,7 @@ public class MinaCustomCodecTest extends BaseMinaTest {
         }
 
         @Override
-        public ProtocolDecoder getDecoder(IoSession session) throws Exception {
+        public ProtocolDecoder getDecoder(IoSession session) {
             return new CumulativeProtocolDecoder() {
 
                 @Override

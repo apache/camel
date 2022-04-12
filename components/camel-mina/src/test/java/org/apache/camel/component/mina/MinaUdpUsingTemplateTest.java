@@ -40,7 +40,7 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
         assertMockEndpointsSatisfied();
     }
 
-    protected void sendUdpMessages() throws Exception {
+    protected void sendUdpMessages() {
         for (int i = 0; i < messageCount; i++) {
             template.sendBody(String.format("mina:udp://127.0.0.1:%1$s?sync=false", getPort()), "Hello Message: " + i);
         }

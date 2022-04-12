@@ -37,7 +37,7 @@ public abstract class BaseMinaTest extends CamelTestSupport {
     private static volatile int port;
 
     @BeforeAll
-    public static void initPort() throws Exception {
+    public static void initPort() {
         port = AvailablePortFinder.getNextAvailable();
     }
 

@@ -45,7 +45,7 @@ public class MinaConsumerTest extends BaseMinaTest {
     }
 
     @Test
-    public void testSendTextlineSyncText() throws Exception {
+    public void testSendTextlineSyncText() {
         // START SNIPPET: e4
         String response = (String) template.requestBody("mina:tcp://localhost:" + port2 + "?textline=true&sync=true", "World");
         assertEquals("Bye World", response);
@@ -53,10 +53,10 @@ public class MinaConsumerTest extends BaseMinaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
+            public void configure() {
                 port1 = getPort();
                 port2 = getNextPort();
 
@@ -67,7 +67,7 @@ public class MinaConsumerTest extends BaseMinaTest {
                 // START SNIPPET: e3
                 from("mina:tcp://localhost:" + port2 + "?textline=true&sync=true").process(new Processor() {
 
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getMessage().setBody("Bye " + body);
                     }

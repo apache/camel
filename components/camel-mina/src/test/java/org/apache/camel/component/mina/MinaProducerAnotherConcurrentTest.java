@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MinaProducerAnotherConcurrentTest extends BaseMinaTest {
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() {
         String out = template.requestBody("direct:start", "A", String.class);
         assertEquals("Bye A", out);
     }
@@ -58,7 +58,7 @@ public class MinaProducerAnotherConcurrentTest extends BaseMinaTest {
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
-                public String call() throws Exception {
+                public String call() {
                     return template.requestBody("direct:start", index, String.class);
                 }
             });
@@ -76,10 +76,10 @@ public class MinaProducerAnotherConcurrentTest extends BaseMinaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(String.format("mina:tcp://localhost:%1$s?sync=true", getPort()));
 
                 from(String.format("mina:tcp://localhost:%1$s?sync=true", getPort())).process(exchange -> {

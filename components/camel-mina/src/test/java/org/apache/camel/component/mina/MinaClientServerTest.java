@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MinaClientServerTest extends BaseMinaTest {
 
     @Test
-    public void testSendToServer() throws InterruptedException {
+    public void testSendToServer() {
         // START SNIPPET: e3
         String out = (String) template.requestBody(String.format("mina:tcp://localhost:%1$s?textline=true", getPort()), "Chad");
         assertEquals("Hello Chad", out);
@@ -34,11 +34,11 @@ public class MinaClientServerTest extends BaseMinaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // lets setup a server on port %1$s
                 // and we let the request-reply be processed in the MyServerProcessor
@@ -52,7 +52,7 @@ public class MinaClientServerTest extends BaseMinaTest {
     private static class MyServerProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // get the input from the IN body
             String name = exchange.getIn().getBody(String.class);
             // send back a response on the OUT body

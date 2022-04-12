@@ -36,10 +36,10 @@ public class MinaInOnlyRouteTest extends BaseMinaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
-            public void configure() throws Exception {
+            public void configure() {
                 from(String.format("mina:tcp://localhost:%1$s?sync=true", getPort())).process(exchange -> {
                     String body = exchange.getIn().getBody(String.class);
                     exchange.getMessage().setBody("Bye " + body);

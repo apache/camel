@@ -59,7 +59,7 @@ public class MinaUdpNoCamelTest {
     }
 
     @AfterEach
-    public void closeUDPAcceptor() throws IOException {
+    public void closeUDPAcceptor() {
         server.close();
     }
 
@@ -106,13 +106,13 @@ public class MinaUdpNoCamelTest {
         }
 
         @Override
-        public void messageReceived(IoSession session, Object message) throws Exception {
+        public void messageReceived(IoSession session, Object message) {
             logger.debug("UDPServer Received body: {}", message);
             numMessagesReceived++;
         }
 
         @Override
-        public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+        public void exceptionCaught(IoSession session, Throwable cause) {
             logger.error("Ooops! Something went wrong :|", cause);
         }
     }
@@ -161,12 +161,12 @@ public class MinaUdpNoCamelTest {
         }
 
         @Override
-        public void messageReceived(IoSession session, Object message) throws Exception {
+        public void messageReceived(IoSession session, Object message) {
             logger.debug("Client Received body: {}", message);
         }
 
         @Override
-        public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+        public void exceptionCaught(IoSession session, Throwable cause) {
             logger.error("Ooops! Something went wrong :|", cause);
         }
     }

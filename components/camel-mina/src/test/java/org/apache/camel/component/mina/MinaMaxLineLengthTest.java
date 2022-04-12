@@ -41,11 +41,11 @@ public class MinaMaxLineLengthTest extends BaseMinaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // lets setup a server on port %1$s
                 // we set the sync option so we will send a reply
@@ -62,7 +62,7 @@ public class MinaMaxLineLengthTest extends BaseMinaTest {
     private static class MyServerProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // get the input from the IN body
             String request = exchange.getIn().getBody(String.class);
             // echo back the response on the OUT body

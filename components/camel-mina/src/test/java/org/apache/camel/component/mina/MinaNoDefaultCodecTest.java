@@ -42,7 +42,7 @@ public class MinaNoDefaultCodecTest extends BaseMinaTest {
 
         context.addRoutes(new RouteBuilder() {
 
-            public void configure() throws Exception {
+            public void configure() {
                 from(uri1).to("mock:result");
                 from(uri2).to("mock:result");
             }

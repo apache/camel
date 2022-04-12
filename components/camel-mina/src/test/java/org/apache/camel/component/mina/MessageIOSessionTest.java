@@ -59,11 +59,11 @@ public class MessageIOSessionTest extends BaseMinaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(String.format("mina:tcp://localhost:%1$s?textline=true", getPort()))
                         .to("log://mytest")
                         .to("mock:result");
