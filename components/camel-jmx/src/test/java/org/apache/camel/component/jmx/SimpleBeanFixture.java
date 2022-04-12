@@ -76,7 +76,7 @@ public class SimpleBeanFixture {
         startContext();
     }
 
-    protected void startContext() throws Exception {
+    protected void startContext() {
         mContext.start();
     }
 
@@ -162,7 +162,7 @@ public class SimpleBeanFixture {
         mContext.setRegistry(getRegistry());
         mContext.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(buildFromURI().toString()).to(mock);
             }
         });

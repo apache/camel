@@ -21,7 +21,6 @@ import java.io.File;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -38,11 +37,11 @@ public final class XmlFixture {
     private XmlFixture() {
     }
 
-    public static Source toSource(String aXmlString) throws Exception {
+    public static Source toSource(String aXmlString) {
         return Input.fromString(aXmlString).build();
     }
 
-    public static Source toSource(File aFile) throws Exception {
+    public static Source toSource(File aFile) {
         return Input.fromFile(aFile).build();
     }
 
@@ -59,8 +58,7 @@ public final class XmlFixture {
     }
 
     public static void dump(Source aActual)
-            throws TransformerConfigurationException,
-            TransformerException {
+            throws TransformerException {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer = tf.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -77,7 +75,7 @@ public final class XmlFixture {
         return transform(aSource, resourcePath);
     }
 
-    protected static Source transform(Source aSource, String aResourcePath) throws Exception {
+    protected static Source transform(Source aSource, String aResourcePath) {
         Source stylesheet = new StreamSource(XmlFixture.class.getResourceAsStream(aResourcePath));
         stylesheet.setSystemId(XmlFixture.class.getResource(aResourcePath).toExternalForm());
         return Input.byTransforming(aSource).withStylesheet(stylesheet).build();
