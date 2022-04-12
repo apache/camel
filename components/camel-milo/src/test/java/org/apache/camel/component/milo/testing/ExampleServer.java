@@ -44,7 +44,7 @@ public final class ExampleServer {
         context.addRoutes(new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 /*
                  * Take an MQTT topic and forward its content to an OPC UA
                  * server item. You can e.g. take some MQTT application and an

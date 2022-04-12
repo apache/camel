@@ -158,10 +158,10 @@ public class BrowseServerTest extends AbstractMiloServerTest {
     protected ProducerTemplate producer9;
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(DIRECT_START_1).enrich(resolve(MILO_BROWSE_ROOT)).to(MOCK_TEST_1);
                 from(DIRECT_START_2).enrich(resolve(MILO_BROWSE_WITHOUT_SUB_TYPES)).to(MOCK_TEST_2);
                 from(DIRECT_START_3).enrich(resolve(MILO_BROWSE_ROOT_RECURSIVE_2)).to(MOCK_TEST_3);

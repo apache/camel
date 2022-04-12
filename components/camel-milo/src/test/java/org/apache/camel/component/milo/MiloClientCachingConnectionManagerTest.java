@@ -46,7 +46,7 @@ public class MiloClientCachingConnectionManagerTest {
     }
 
     @Test
-    public void testReleaseConnectionNotLastConsumer() throws Exception {
+    public void testReleaseConnectionNotLastConsumer() {
         final MiloClientConfiguration configuration = new MiloClientConfiguration();
         MiloClientConnection connection1 = instance.createConnection(configuration, new MonitorFilterConfiguration());
         instance.createConnection(configuration, new MonitorFilterConfiguration());
@@ -58,7 +58,7 @@ public class MiloClientCachingConnectionManagerTest {
     }
 
     @Test
-    public void testReleaseConnectionLastConsumer() throws Exception {
+    public void testReleaseConnectionLastConsumer() {
         final MiloClientConfiguration configuration = new MiloClientConfiguration();
         MiloClientConnection connection1 = instance.createConnection(configuration, new MonitorFilterConfiguration());
         MiloClientConnection connection2 = instance.createConnection(configuration, new MonitorFilterConfiguration());

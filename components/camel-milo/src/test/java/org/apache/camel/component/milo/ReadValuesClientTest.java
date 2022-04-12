@@ -50,10 +50,10 @@ public class ReadValuesClientTest extends AbstractMiloServerTest {
     protected ProducerTemplate producer2;
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(DIRECT_START_1).to(MILO_SERVER_ITEM_1);
 
                 from(DIRECT_START_2)

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.milo.server;
 
-import java.io.IOException;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -43,16 +41,16 @@ public class ServerLocalTest extends CamelTestSupport {
     protected MockEndpoint testEndpoint;
 
     @BeforeEach
-    public void pickFreePort() throws IOException {
+    public void pickFreePort() {
         final MiloServerComponent component = context().getComponent("milo-server", MiloServerComponent.class);
         component.setPort(AvailablePortFinder.getNextAvailable());
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(MILO_ITEM_1).to(MOCK_TEST);
             }
         };
