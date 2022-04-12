@@ -46,7 +46,7 @@ public class JooqComponentTest extends BaseJooqTest {
     }
 
     @Test
-    public void testNonDefaultConfig() throws Exception {
+    public void testNonDefaultConfig() {
         JooqComponent component = (JooqComponent) context().getComponent("jooq");
         assertThrows(PropertyBindingException.class,
                 () -> component.createEndpoint(
