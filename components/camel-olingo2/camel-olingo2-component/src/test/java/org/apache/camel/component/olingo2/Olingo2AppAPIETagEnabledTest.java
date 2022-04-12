@@ -109,7 +109,7 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
 
             @SuppressWarnings("resource")
             @Override
-            public MockResponse dispatch(RecordedRequest recordedRequest) throws InterruptedException {
+            public MockResponse dispatch(RecordedRequest recordedRequest) {
                 MockResponse mockResponse = new MockResponse();
 
                 switch (recordedRequest.getMethod()) {

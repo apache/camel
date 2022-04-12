@@ -132,7 +132,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
     }
 
     @Test
-    public void testCreateUpdateDelete() throws Exception {
+    public void testCreateUpdateDelete() {
         final Map<String, Object> data = getEntityData();
         Map<String, Object> address;
 
@@ -169,7 +169,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
     }
 
     @Test
-    public void testCreateMerge() throws Exception {
+    public void testCreateMerge() {
         final Map<String, Object> data = getEntityData();
         data.put(ID_PROPERTY, TEST_MERGE_MANUFACTURER_ID);
 
@@ -378,7 +378,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // test routes for read
