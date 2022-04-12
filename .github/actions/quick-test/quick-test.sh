@@ -27,6 +27,7 @@ MVN_OPTS=${MVN_OPTS:-$MVN_DEFAULT_OPTS}
 
 # Script variables
 failures=0
+maxNumberOfTestableComponents=15
 basedir=$(pwd)
 testDate=$(date '+%Y-%m-%d-%H%M%S')
 logDir=${basedir}/automated-build-log
@@ -98,7 +99,7 @@ function main() {
     echo "0" > "${logDir}/failures"
     exit 0
   else
-    if [[ ${total} -gt 10 ]]; then
+    if [[ ${total} -gt ${maxNumberOfTestableComponents} ]]; then
       echo "0" > "${logDir}/tested"
       echo "0" > "${logDir}/failures"
       exit 0
