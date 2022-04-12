@@ -167,10 +167,10 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("ignite-cache:testcontinuous1?query=#query1").routeId("continuousQuery").noAutoStartup().to("mock:test1");
 
                 from("ignite-cache:testcontinuous1?query=#query1&fireExistingQueryResults=true")

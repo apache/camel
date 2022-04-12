@@ -161,7 +161,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
     private Processor storeBodyInListProcessor(final List<Object> list) {
         return new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 list.add(exchange.getIn().getBody());
             }
         };

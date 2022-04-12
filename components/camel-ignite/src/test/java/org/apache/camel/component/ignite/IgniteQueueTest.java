@@ -266,7 +266,7 @@ public class IgniteQueueTest extends AbstractIgniteTest {
         // POLL with a timeout.
         Assertions.assertThat(Executors.newSingleThreadExecutor().submit(new Callable<Long>() {
             @Override
-            public Long call() throws Exception {
+            public Long call() {
                 Stopwatch sw = Stopwatch.createStarted();
                 Assertions.assertThat(template.requestBody(
                         "ignite-queue:" + resourceUid + "?operation=POLL&timeoutMillis=1000&capacity=100", null, String.class))
