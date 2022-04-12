@@ -53,7 +53,7 @@ public class ResteasyMethodRestrictTest {
     }
 
     @Test
-    public void testGettingResponseFromBean() throws Exception {
+    public void testGettingResponseFromBean() {
         Client client = ClientBuilder.newBuilder().build();
         WebTarget target = client.target(baseUri.toString() + "method/restrict");
         Response response = target.request().get();

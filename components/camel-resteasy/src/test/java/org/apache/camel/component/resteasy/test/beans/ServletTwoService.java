@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.resteasy.test.beans;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -28,7 +25,7 @@ public class ServletTwoService {
 
     @GET
     @Path("/getMsg")
-    public Response getMessage() throws IOException, ServletException {
+    public Response getMessage() {
         return Response.status(200).entity("Message from camel-servlet-2").build();
     }
 

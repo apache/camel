@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 
 public class TestBean implements Processor {
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         ByteArrayOutputStream body = exchange.getIn().getBody(ByteArrayOutputStream.class);
         exchange.getMessage().setBody("Added this message from bean to original message from Rest Service -> " + body);
     }

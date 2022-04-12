@@ -111,7 +111,7 @@ public class ResteasyProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         String expectedUser1 = "{\"name\":\"Roman\",\"surname\":\"Jakubco\",\"id\":1}";
         String expectedUser2 = "{\"name\":\"Camel\",\"surname\":\"Rider\",\"id\":2}";
         String response = template.requestBody("direct:getAll", null, String.class);
@@ -120,7 +120,7 @@ public class ResteasyProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testGetWithQuery() throws Exception {
+    public void testGetWithQuery() {
         String expectedBody = "{\"name\":\"Camel\",\"surname\":\"Rider\",\"id\":2}";
 
         String response = template.requestBodyAndHeader("direct:get", null, Exchange.HTTP_QUERY, "id=2", String.class);
@@ -128,7 +128,7 @@ public class ResteasyProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testGetWithQueryUnmarshal() throws Exception {
+    public void testGetWithQueryUnmarshal() {
         Integer customerId = 2;
         Customer expectedCustomer = new Customer("Camel", "Rider", customerId);
         Customer customer = template.requestBodyAndHeader("direct:getUnmarshal", null, Exchange.HTTP_QUERY, "id=" + customerId,
@@ -137,7 +137,7 @@ public class ResteasyProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testPost() throws Exception {
+    public void testPost() {
         Integer customerId = 3;
         Customer expectedCustomer = new Customer("TestPost", "TestPost", customerId);
         String response
@@ -153,7 +153,7 @@ public class ResteasyProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testPostMarshal() throws Exception {
+    public void testPostMarshal() {
         Integer customerId = 4;
         Customer expectedCustomer = new Customer("TestPostMarshal", "TestPostMarshal", customerId);
 
@@ -169,7 +169,7 @@ public class ResteasyProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testPut() throws Exception {
+    public void testPut() {
         Integer customerId = 5;
         Customer customer = new Customer("TestPut", "TestPut", customerId);
 
@@ -197,7 +197,7 @@ public class ResteasyProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete() {
         Integer customerId = 6;
         Customer expectedCustomer = new Customer("TestDelete", "TestDelete", customerId);
 
@@ -216,14 +216,14 @@ public class ResteasyProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMethodInHeader() throws Exception {
+    public void testMethodInHeader() {
         Integer customerId = 7;
         Customer expectedCustomer = new Customer("TestPostInHeader", "TestPostInHeader", customerId);
 
         //check default value for http method
         Exchange exchange = template.request("direct:postInHeader", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
 
             }
         });
@@ -246,17 +246,17 @@ public class ResteasyProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSettingNotExistingHttpMethod() throws Exception {
+    public void testSettingNotExistingHttpMethod() {
         assertThrows(CamelExecutionException.class,
                 () -> template.requestBodyAndHeader("direct:getAll", null, ResteasyConstants.RESTEASY_HTTP_METHOD, "GAT"));
     }
 
     @SuppressWarnings("rawtypes")
     @Test
-    public void testHead() throws Exception {
+    public void testHead() {
         Exchange exchange = template.request("direct:getAll", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getMessage().setHeader(ResteasyConstants.RESTEASY_HTTP_METHOD, "HEAD");
             }
         });

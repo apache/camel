@@ -62,7 +62,7 @@ public class ResteasyConsumerProxyTest {
     }
 
     @Test
-    public void testProxyOnlyFromCamel() throws Exception {
+    public void testProxyOnlyFromCamel() {
         Client client = ClientBuilder.newBuilder().build();
         WebTarget target = client.target(baseUri.toString() + "camel/address");
         Response response = target.request().get();
@@ -72,7 +72,7 @@ public class ResteasyConsumerProxyTest {
     }
 
     @Test
-    public void testProxyFromInterface() throws Exception {
+    public void testProxyFromInterface() {
         Response response = ResteasyClientBuilder.newClient().target(baseUri.toString() + "proxy/get").request().get();
 
         assertEquals(200, response.getStatus());
@@ -83,7 +83,7 @@ public class ResteasyConsumerProxyTest {
     // FIX THIS: using bean in camel route a getting body as Customer.class doesn't work -> need to investigate
     // RESOLUTION: resteasy-jackson2-provider test dependency resolves it.
     @Test
-    public void testProxyPostFromInterface() throws Exception {
+    public void testProxyPostFromInterface() {
         Customer customer = new Customer("Camel", "Rider", 1);
 
         Client client = ClientBuilder.newBuilder().build();
@@ -97,7 +97,7 @@ public class ResteasyConsumerProxyTest {
     }
 
     @Test
-    public void testWrongMethodOnProxyInterface() throws Exception {
+    public void testWrongMethodOnProxyInterface() {
         Client client = ClientBuilder.newBuilder().build();
         WebTarget target = client.target(baseUri.toString() + "proxy/createCustomer");
         Response response = target.request().get();

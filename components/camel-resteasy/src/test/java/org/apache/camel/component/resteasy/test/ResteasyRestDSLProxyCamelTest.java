@@ -55,7 +55,7 @@ public class ResteasyRestDSLProxyCamelTest {
     }
 
     @Test
-    public void testRestDSLProxyCamel() throws Exception {
+    public void testRestDSLProxyCamel() {
         Client client = ClientBuilder.newBuilder().build();
         WebTarget target = client.target(baseUri.toString() + "say/hello");
         Response response = target.request().get();

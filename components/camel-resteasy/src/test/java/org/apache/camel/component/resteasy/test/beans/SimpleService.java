@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.resteasy.test.beans;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -28,25 +25,25 @@ public class SimpleService {
 
     @GET
     @Path("/getMsg")
-    public Response getMessage() throws IOException, ServletException {
+    public Response getMessage() {
         return Response.status(200).entity("Message1 from Rest service").build();
     }
 
     @GET
     @Path("/getMsg2")
-    public Response getMessage2() throws IOException, ServletException {
+    public Response getMessage2() {
         return Response.status(200).entity("Message2 from Rest service").build();
     }
 
     @GET
     @Path("/getMsg3")
-    public Response getMessage3() throws IOException, ServletException {
+    public Response getMessage3() {
         return Response.status(200).entity("Message3 from Rest service").build();
     }
 
     @GET
     @Path("/match/prefix")
-    public Response matchOnUri() throws IOException, ServletException {
+    public Response matchOnUri() {
         return Response.status(200).entity("Prefix").build();
     }
 
