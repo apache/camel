@@ -40,12 +40,12 @@ public class IrcsListUsersTest extends IrcIntegrationTestSupport {
     private static final String PRODUCER_URI = "ircs:{{camelFrom}}@{{server}}/{{channel1}}";
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 LOGGER.debug("Creating new test route");
 
                 from(PRODUCER_URI + "?namesOnJoin=true&onReply=true")
