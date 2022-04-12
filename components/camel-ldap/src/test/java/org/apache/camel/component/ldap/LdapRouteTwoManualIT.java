@@ -56,7 +56,7 @@ public class LdapRouteTwoManualIT extends AbstractLdapTestUnit {
     private int port;
 
     @BeforeEach
-    public void setup() throws Exception {
+    public void setup() {
         // you can assign port number in the @CreateTransport annotation
         port = super.getLdapServer().getPort();
 
@@ -75,7 +75,7 @@ public class LdapRouteTwoManualIT extends AbstractLdapTestUnit {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         camel.stop();
     }
 
@@ -134,10 +134,10 @@ public class LdapRouteTwoManualIT extends AbstractLdapTestUnit {
         return false;
     }
 
-    protected RouteBuilder createRouteBuilder(final String ldapEndpointUrl) throws Exception {
+    protected RouteBuilder createRouteBuilder(final String ldapEndpointUrl) {
         return new RouteBuilder() {
             // START SNIPPET: route
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(ldapEndpointUrl);
             }
             // END SNIPPET: route
