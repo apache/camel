@@ -54,13 +54,13 @@ public class RabbitMQConsumerIT extends AbstractRabbitMQIT {
     };
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         ConnectionProperties connectionProperties = service.connectionProperties();
 
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromF("rabbitmq:localhost:%d/%s?username=%s&password=%s&arg.queue.x-single-active-consumer=true",
                         connectionProperties.port(), EXCHANGE, connectionProperties.username(), connectionProperties.password())
                                 .to(to);

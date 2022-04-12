@@ -30,7 +30,7 @@ public class RabbitMQLookupConnectionFactoryTest extends CamelTestSupport {
     private ConnectionFactory myConnectionFactory;
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         SimpleRegistry registry = new SimpleRegistry();
         myConnectionFactory = new ConnectionFactory();
         myConnectionFactory.setHost("myhost");
@@ -40,7 +40,7 @@ public class RabbitMQLookupConnectionFactoryTest extends CamelTestSupport {
     }
 
     @Test
-    public void testLookupConnectionFactory() throws Exception {
+    public void testLookupConnectionFactory() {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:myexchange", RabbitMQEndpoint.class);
         assertNotNull(endpoint);
         assertSame(endpoint.getConnectionFactory(), myConnectionFactory);

@@ -42,7 +42,7 @@ public class RabbitMQRequeueHandledExceptionIT extends AbstractRabbitMQIT {
     private MockEndpoint consumingMockEndpoint;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         ConnectionProperties connectionProperties = service.connectionProperties();
 
         String rabbitMQEndpoint
@@ -53,7 +53,7 @@ public class RabbitMQRequeueHandledExceptionIT extends AbstractRabbitMQIT {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:rabbitMQ").id("producingRoute").log("Sending message").to(ExchangePattern.InOnly, rabbitMQEndpoint)
                         .to(producingMockEndpoint);
 

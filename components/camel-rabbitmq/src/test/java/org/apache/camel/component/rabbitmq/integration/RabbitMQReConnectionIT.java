@@ -55,7 +55,7 @@ public class RabbitMQReConnectionIT extends AbstractRabbitMQIT {
     private MockEndpoint consumingMockEndpoint;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         ConnectionProperties connectionProperties = service.connectionProperties();
         String rabbitMQEndpoint = String.format("rabbitmq:localhost:%d/%s?username=%s&password=%s"
                                                 + "&queue=q3&routingKey=rk3&automaticRecoveryEnabled=true&requestedHeartbeat=1000&connectionTimeout=5000",
@@ -65,7 +65,7 @@ public class RabbitMQReConnectionIT extends AbstractRabbitMQIT {
 
             @Override
             @SuppressWarnings("unchecked")
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:rabbitMQ").id("producingRoute").onException(AlreadyClosedException.class, ConnectException.class)
                         .maximumRedeliveries(10).redeliveryDelay(500L).end()
                         .log("Sending message").to(ExchangePattern.InOnly, rabbitMQEndpoint).to(producingMockEndpoint);

@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.rabbitmq.integration.qpid;
 
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-
 import org.apache.camel.component.rabbitmq.integration.RabbitMQProducerIT;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -26,12 +23,10 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 public class RabbitMQProducerQpidIT extends RabbitMQProducerIT {
 
     @Override
-    public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabledAndBadRoutingKeyIsUsed()
-            throws InterruptedException, IOException, TimeoutException {
+    public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabledAndBadRoutingKeyIsUsed() {
     }
 
     @Override
-    public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedOnABadRouteButMessageIsNotMandatory()
-            throws InterruptedException, IOException, TimeoutException {
+    public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedOnABadRouteButMessageIsNotMandatory() {
     }
 }

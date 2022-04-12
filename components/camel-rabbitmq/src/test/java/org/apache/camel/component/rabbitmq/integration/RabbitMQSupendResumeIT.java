@@ -36,7 +36,7 @@ public class RabbitMQSupendResumeIT extends AbstractRabbitMQIT {
     private ProducerTemplate template;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         ConnectionProperties connectionProperties = service.connectionProperties();
         String rabbitMQEndpoint = String.format(
                 "rabbitmq:localhost:%d/%susername=%s&password=%s&queue=q6&routingKey=rk3&autoDelete=false",
@@ -45,7 +45,7 @@ public class RabbitMQSupendResumeIT extends AbstractRabbitMQIT {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("producer").log("sending ${body}").to(rabbitMQEndpoint);
                 from(rabbitMQEndpoint).routeId("consumer").log("got ${body}").to("mock:result");
             }

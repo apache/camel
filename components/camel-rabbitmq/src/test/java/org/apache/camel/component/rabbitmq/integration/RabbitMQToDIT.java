@@ -34,10 +34,10 @@ public class RabbitMQToDIT extends AbstractRabbitMQIT {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 RabbitMQComponent mq = context.getComponent("rabbitmq", RabbitMQComponent.class);
                 mq.setHostname(service.connectionProperties().hostname());
                 mq.setPortNumber(service.connectionProperties().port());

@@ -25,16 +25,16 @@ public class RabbitMQRequeueQpidIT extends RabbitMQRequeueIT {
 
     @Override
     @Test
-    public void testNoRequeueHeaderCausesReject() throws Exception {
+    public void testNoRequeueHeaderCausesReject() {
     }
 
     @Override
     @Test
-    public void testNonBooleanRequeueHeaderCausesReject() throws Exception {
+    public void testNonBooleanRequeueHeaderCausesReject() {
     }
 
     @Override
     @Test
-    public void testFalseRequeueHeaderCausesReject() throws Exception {
+    public void testFalseRequeueHeaderCausesReject() {
     }
 }

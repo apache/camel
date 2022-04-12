@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.rabbitmq.integration;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +62,7 @@ public class RabbitMQInOutIT extends AbstractRabbitMQIT {
     private MockEndpoint resultEndpoint;
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         SimpleRegistry reg = new SimpleRegistry();
 
         Map<String, Object> args = new HashMap<>();
@@ -74,7 +73,7 @@ public class RabbitMQInOutIT extends AbstractRabbitMQIT {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         ConnectionProperties connectionProperties = service.connectionProperties();
         String rabbitMQEndpoint = String
                 .format("rabbitmq:%s:%d/%s?threadPoolSize=1&exchangeType=direct&username=%s&password=%s"
@@ -93,7 +92,7 @@ public class RabbitMQInOutIT extends AbstractRabbitMQIT {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:rabbitMQ").id("producingRoute").setHeader("routeHeader", simple("routeHeader"))
                         .to(ExchangePattern.InOut, rabbitMQEndpoint);
@@ -138,7 +137,7 @@ public class RabbitMQInOutIT extends AbstractRabbitMQIT {
     }
 
     @Test
-    public void inOutRaceConditionTest1() throws InterruptedException, IOException {
+    public void inOutRaceConditionTest1() {
         String reply
                 = template.requestBodyAndHeader("direct:rabbitMQ", "test1", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE,
                         String.class);
@@ -146,7 +145,7 @@ public class RabbitMQInOutIT extends AbstractRabbitMQIT {
     }
 
     @Test
-    public void inOutRaceConditionTest2() throws InterruptedException, IOException {
+    public void inOutRaceConditionTest2() {
         String reply
                 = template.requestBodyAndHeader("direct:rabbitMQ", "test2", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE,
                         String.class);
@@ -154,7 +153,7 @@ public class RabbitMQInOutIT extends AbstractRabbitMQIT {
     }
 
     @Test
-    public void headerTest() throws InterruptedException, IOException {
+    public void headerTest() {
         Map<String, Object> headers = new HashMap<>();
 
         TestSerializableObject testObject = new TestSerializableObject();
@@ -206,7 +205,7 @@ public class RabbitMQInOutIT extends AbstractRabbitMQIT {
     }
 
     @Test
-    public void inOutTimeOutTest() throws InterruptedException {
+    public void inOutTimeOutTest() {
         try {
             template.requestBodyAndHeader("direct:rabbitMQ", "TimeOut", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE,
                     String.class);
