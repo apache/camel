@@ -25,7 +25,7 @@ public class JohnzonJsonDataFormatTest extends JohnzonMarshalTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").marshal().json(JsonLibrary.Johnzon);
                 from("direct:back").unmarshal().json(JsonLibrary.Johnzon).to("mock:reverse");
 
