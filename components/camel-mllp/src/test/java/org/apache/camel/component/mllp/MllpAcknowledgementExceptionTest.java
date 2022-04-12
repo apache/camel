@@ -34,10 +34,9 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorOne() throws Exception {
+    public void testConstructorOne() {
         instance = new MllpAcknowledgementExceptionStub(TEST_EXCEPTION_MESSAGE, LOG_PHI_TRUE);
 
         assertNull(instance.getCause());
@@ -49,10 +48,9 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorTwo() throws Exception {
+    public void testConstructorTwo() {
         instance = new MllpAcknowledgementExceptionStub(TEST_EXCEPTION_MESSAGE, CAUSE, LOG_PHI_TRUE);
 
         assertSame(CAUSE, instance.getCause());
@@ -64,10 +62,9 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorThree() throws Exception {
+    public void testConstructorThree() {
         instance = new MllpAcknowledgementExceptionStub(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, LOG_PHI_TRUE);
 
         assertNull(instance.getCause());
@@ -79,10 +76,9 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorFour() throws Exception {
+    public void testConstructorFour() {
         instance = new MllpAcknowledgementExceptionStub(
                 TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
@@ -95,10 +91,9 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorFive() throws Exception {
+    public void testConstructorFive() {
         instance = new MllpAcknowledgementExceptionStub(TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertSame(CAUSE, instance.getCause());
@@ -110,10 +105,9 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorSix() throws Exception {
+    public void testConstructorSix() {
         instance = new MllpAcknowledgementExceptionStub(
                 TEST_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 

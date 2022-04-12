@@ -33,10 +33,9 @@ public class MllpApplicationErrorAcknowledgementExceptionTest extends MllpExcept
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorOne() throws Exception {
+    public void testConstructorOne() {
         instance = new MllpApplicationErrorAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpApplicationErrorAcknowledgementException.EXCEPTION_MESSAGE));
@@ -48,10 +47,9 @@ public class MllpApplicationErrorAcknowledgementExceptionTest extends MllpExcept
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorTwo() throws Exception {
+    public void testConstructorTwo() {
         instance = new MllpApplicationErrorAcknowledgementException(
                 HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
@@ -64,10 +62,9 @@ public class MllpApplicationErrorAcknowledgementExceptionTest extends MllpExcept
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testGetAcknowledgmentType() throws Exception {
+    public void testGetAcknowledgmentType() {
         instance = new MllpApplicationErrorAcknowledgementException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertEquals("AE", instance.getAcknowledgmentType());

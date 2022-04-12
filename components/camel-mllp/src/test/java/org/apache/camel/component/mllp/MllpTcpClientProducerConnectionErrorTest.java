@@ -71,7 +71,7 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             String routeId = "mllp-sender";
 

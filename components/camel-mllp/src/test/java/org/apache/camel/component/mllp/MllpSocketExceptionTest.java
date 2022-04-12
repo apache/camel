@@ -33,10 +33,9 @@ public class MllpSocketExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorOne() throws Exception {
+    public void testConstructorOne() {
         instance = new MllpSocketException(TEST_EXCEPTION_MESSAGE);
 
         assertNull(instance.getCause());
@@ -46,10 +45,9 @@ public class MllpSocketExceptionTest extends MllpExceptionTestSupport {
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorTwo() throws Exception {
+    public void testConstructorTwo() {
         instance = new MllpSocketException(TEST_EXCEPTION_MESSAGE, CAUSE);
 
         assertNotNull(instance.getCause());

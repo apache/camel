@@ -34,10 +34,9 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorOne() throws Exception {
+    public void testConstructorOne() {
         instance = new MllpAcknowledgementReceiveException(HL7_MESSAGE_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpAcknowledgementReceiveException.EXCEPTION_MESSAGE));
@@ -49,10 +48,9 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorTwo() throws Exception {
+    public void testConstructorTwo() {
         instance = new MllpAcknowledgementReceiveException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpAcknowledgementReceiveException.EXCEPTION_MESSAGE));
@@ -64,10 +62,9 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorThree() throws Exception {
+    public void testConstructorThree() {
         instance = new MllpAcknowledgementReceiveException(HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpAcknowledgementReceiveException.EXCEPTION_MESSAGE));
@@ -79,10 +76,9 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorFour() throws Exception {
+    public void testConstructorFour() {
         instance = new MllpAcknowledgementReceiveException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(MllpAcknowledgementReceiveException.EXCEPTION_MESSAGE));
@@ -94,10 +90,9 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorFive() throws Exception {
+    public void testConstructorFive() {
         instance = new MllpAcknowledgementReceiveException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(ALTERNATE_EXCEPTION_MESSAGE));
@@ -109,10 +104,9 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorSix() throws Exception {
+    public void testConstructorSix() {
         instance = new MllpAcknowledgementReceiveException(
                 ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
@@ -125,10 +119,9 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorSeven() throws Exception {
+    public void testConstructorSeven() {
         instance = new MllpAcknowledgementReceiveException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(ALTERNATE_EXCEPTION_MESSAGE));
@@ -140,10 +133,9 @@ public class MllpAcknowledgementReceiveExceptionTest extends MllpExceptionTestSu
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorEight() throws Exception {
+    public void testConstructorEight() {
         instance = new MllpAcknowledgementReceiveException(
                 ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 

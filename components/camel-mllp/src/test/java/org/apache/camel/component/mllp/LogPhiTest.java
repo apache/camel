@@ -64,7 +64,7 @@ public class LogPhiTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
@@ -113,7 +113,7 @@ public class LogPhiTest extends CamelTestSupport {
         testLogPhi(startDefaultPhi, exceptionMessage -> assertTrue(exceptionMessage.contains("hl7Message")));
     }
 
-    public void testLogPhi(Endpoint endpoint, Consumer<String> contains) throws Exception {
+    public void testLogPhi(Endpoint endpoint, Consumer<String> contains) {
         Exchange exchange = endpoint.createExchange(InOut);
         String message = Hl7TestMessageGenerator.generateMessage();
         exchange.getIn().setBody(message);

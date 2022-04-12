@@ -64,7 +64,7 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
             String routeId = "mllp-receiver";
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 onCompletion()
                         .log(LoggingLevel.INFO, routeId, "Test route complete");

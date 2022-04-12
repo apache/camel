@@ -74,7 +74,7 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
     }
 
     @BindToRegistry("target")
-    public SjmsComponent addTargetComponent() throws Exception {
+    public SjmsComponent addTargetComponent() {
 
         SjmsComponent target = new SjmsComponent();
         target.setConnectionFactory(new ActiveMQConnectionFactory(service.getVmURL()));
@@ -93,7 +93,7 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
             int responseTimeout = 5000;
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 String routeId = "mllp-test-receiver-route";
 
                 onCompletion()

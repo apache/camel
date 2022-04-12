@@ -30,12 +30,12 @@ public class PooledExecutorTest {
     TestExecutor instance;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         instance = new TestExecutor(THREAD_COUNT);
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         instance.stop();
     }
 

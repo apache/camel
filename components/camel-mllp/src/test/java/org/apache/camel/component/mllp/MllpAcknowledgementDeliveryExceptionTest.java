@@ -33,10 +33,9 @@ public class MllpAcknowledgementDeliveryExceptionTest extends MllpExceptionTestS
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorOne() throws Exception {
+    public void testConstructorOne() {
         instance = new MllpAcknowledgementDeliveryException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, LOG_PHI_TRUE);
 
         assertTrue(instance.getMessage().startsWith(TEST_EXCEPTION_MESSAGE));
@@ -47,10 +46,9 @@ public class MllpAcknowledgementDeliveryExceptionTest extends MllpExceptionTestS
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorTwo() throws Exception {
+    public void testConstructorTwo() {
         instance = new MllpAcknowledgementDeliveryException(HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE, LOG_PHI_TRUE);
 
         assertSame(CAUSE, instance.getCause());
@@ -62,10 +60,9 @@ public class MllpAcknowledgementDeliveryExceptionTest extends MllpExceptionTestS
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorThree() throws Exception {
+    public void testConstructorThree() {
         final String alternateExceptionMessage = "Alternate Message";
 
         instance = new MllpAcknowledgementDeliveryException(
@@ -79,10 +76,9 @@ public class MllpAcknowledgementDeliveryExceptionTest extends MllpExceptionTestS
     /**
      * Description of test.
      *
-     * @throws Exception in the event of a test error.
      */
     @Test
-    public void testConstructorFour() throws Exception {
+    public void testConstructorFour() {
         final String alternateExceptionMessage = "Alternate Message";
 
         instance = new MllpAcknowledgementDeliveryException(
