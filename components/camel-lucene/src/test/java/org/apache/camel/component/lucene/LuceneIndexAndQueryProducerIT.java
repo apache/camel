@@ -51,7 +51,7 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
     };
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("std", new File("target/stdindexDir"));
         registry.bind("load_dir", new File("src/test/resources/sources"));
         registry.bind("stdAnalyzer", new StandardAnalyzer());
@@ -66,10 +66,10 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
         return false;
     }
 
-    private void sendRequest(final String quote) throws Exception {
+    private void sendRequest(final String quote) {
 
         template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
 
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
@@ -79,9 +79,9 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
         });
     }
 
-    private void sendQuery() throws Exception {
+    private void sendQuery() {
         template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
 
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
@@ -127,7 +127,7 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
                         .to("direct:next");
 
                 from("direct:next").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Hits hits = exchange.getIn().getBody(Hits.class);
                         printResults(hits);
                     }
@@ -162,7 +162,7 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
                         .to("lucene:searchIndex:query?analyzer=#stdAnalyzer&indexDir=#std&maxHits=20").to("direct:next");
 
                 from("direct:next").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Hits hits = exchange.getIn().getBody(Hits.class);
                         printResults(hits);
                     }
