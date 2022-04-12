@@ -38,9 +38,9 @@ public class LuceneQueryProcessorIT extends CamelTestSupport {
         return false;
     }
 
-    private void sendRequest() throws Exception {
+    private void sendRequest() {
         template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
 
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
@@ -67,7 +67,7 @@ public class LuceneQueryProcessorIT extends CamelTestSupport {
                 }
 
                 from("direct:next").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Hits hits = exchange.getIn().getBody(Hits.class);
                         printResults(hits);
                     }
@@ -110,7 +110,7 @@ public class LuceneQueryProcessorIT extends CamelTestSupport {
                 }
 
                 from("direct:next").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Hits hits = exchange.getIn().getBody(Hits.class);
                         printResults(hits);
                     }
