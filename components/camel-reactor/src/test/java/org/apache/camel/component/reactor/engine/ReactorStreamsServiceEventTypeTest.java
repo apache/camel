@@ -33,7 +33,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
     public void testOnCompleteHeaderForwarded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers?forwardOnComplete=true")
                         .to("mock:endpoint");
             }
@@ -56,7 +56,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
     public void testOnCompleteHeaderNotForwarded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers")
                         .to("mock:endpoint");
             }
@@ -77,7 +77,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
     public void testOnNextHeaderForwarded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers")
                         .to("mock:endpoint");
             }
@@ -102,7 +102,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
     public void testOnErrorHeaderForwarded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers?forwardOnError=true")
                         .to("mock:endpoint");
             }
@@ -136,7 +136,7 @@ public class ReactorStreamsServiceEventTypeTest extends ReactorStreamsServiceTes
     public void testOnErrorHeaderNotForwarded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers")
                         .to("mock:endpoint");
             }
