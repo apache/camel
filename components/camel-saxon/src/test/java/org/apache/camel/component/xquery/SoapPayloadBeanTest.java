@@ -36,10 +36,10 @@ public class SoapPayloadBeanTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:src/test/resources/?fileName=payload.xml&noop=true")
                         .bean(SoapPayloadBean.class)
                         .to("log:xml", "mock:result");

@@ -52,10 +52,10 @@ public class XQueryFromFileTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri())
                         .to("xquery:org/apache/camel/component/xquery/transform.xquery")
                         .to("mock:result");

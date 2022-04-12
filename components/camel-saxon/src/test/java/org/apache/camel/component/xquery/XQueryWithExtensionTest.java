@@ -37,7 +37,7 @@ public class XQueryWithExtensionTest extends CamelTestSupport {
     private Configuration conf;
 
     @BindToRegistry("saxonConf")
-    public Configuration loadConf() throws Exception {
+    public Configuration loadConf() {
 
         conf = new Configuration();
         conf.registerExtensionFunction(new SimpleExtension());
@@ -56,10 +56,10 @@ public class XQueryWithExtensionTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("xquery:org/apache/camel/component/xquery/transformWithExtension.xquery?configuration=#saxonConf")
                         .to("mock:result");

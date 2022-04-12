@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class XPathTest extends CamelTestSupport {
 
     @Test
-    public void testXPathUsingSaxon() throws Exception {
+    public void testXPathUsingSaxon() {
         XPathFactory fac = new XPathFactoryImpl();
         XPathBuilder builder = XPathBuilder.xpath("foo/bar").factory(fac);
 
@@ -46,7 +46,7 @@ public class XPathTest extends CamelTestSupport {
     }
 
     @Test
-    public void testXPathFunctionSubstringUsingSaxon() throws Exception {
+    public void testXPathFunctionSubstringUsingSaxon() {
         String xml = "<foo><bar>Hello World</bar></foo>";
 
         XPathFactory fac = new XPathFactoryImpl();
@@ -60,7 +60,7 @@ public class XPathTest extends CamelTestSupport {
     }
 
     @Test
-    public void testXPathFunctionTokenizeUsingSaxonXPathFactory() throws Exception {
+    public void testXPathFunctionTokenizeUsingSaxonXPathFactory() {
         // START SNIPPET: e1
         // create a Saxon factory
         XPathFactory fac = new net.sf.saxon.xpath.XPathFactoryImpl();
@@ -75,7 +75,7 @@ public class XPathTest extends CamelTestSupport {
     }
 
     @Test
-    public void testXPathFunctionTokenizeUsingSaxon() throws Exception {
+    public void testXPathFunctionTokenizeUsingSaxon() {
         // START SNIPPET: e3
         // create a builder to evaluate the xpath using saxon
         XPathBuilder builder = XPathBuilder.xpath("tokenize(/foo/bar, '_')[2]").saxon();
