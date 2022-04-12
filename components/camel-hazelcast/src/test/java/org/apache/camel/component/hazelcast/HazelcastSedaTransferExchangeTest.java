@@ -26,11 +26,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HazelcastSedaTransferExchangeTest extends CamelTestSupport {
@@ -41,14 +40,19 @@ public class HazelcastSedaTransferExchangeTest extends CamelTestSupport {
     private HazelcastInstance hazelcastInstance;
 
     @BeforeAll
-    public void beforeEach() {
+    public void beforeAll() {
         Config config = new Config();
         config.getNetworkConfig().getJoin().getAutoDetectionConfig().setEnabled(false);
         hazelcastInstance = Hazelcast.newHazelcastInstance(config);
     }
 
-    @AfterAll
+    @AfterEach
     public void afterEach() {
+        mock.reset();
+    }
+
+    @AfterAll
+    public void afterAll() {
         if (hazelcastInstance != null) {
             hazelcastInstance.shutdown();
         }
@@ -68,24 +72,20 @@ public class HazelcastSedaTransferExchangeTest extends CamelTestSupport {
         template.send("direct:foobar", exchange);
 
         assertMockEndpointsSatisfied();
-        mock.reset();
     }
 
     @Test
     public void testExchangeTransferDisabled() throws InterruptedException {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("test");
-        mock.expectedHeaderReceived("test", "");
+        mock.expectedNoHeaderReceived();
 
         Exchange exchange = createExchangeWithBody("test");
-        exchange.getIn().setHeader("test", "fail...");
+        exchange.getIn().setHeader("test", "Not propagated");
 
         template.send("direct:foo", exchange);
 
-        assertThrows(AssertionError.class,
-                () -> assertMockEndpointsSatisfied());
-
-        mock.reset();
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -100,7 +100,7 @@ public class HazelcastSedaTransferExchangeTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").to("hazelcast-seda:foo");
 
                 from("direct:foobar").to("hazelcast-seda:foo?transferExchange=true");
@@ -109,5 +109,4 @@ public class HazelcastSedaTransferExchangeTest extends CamelTestSupport {
             }
         };
     }
-
 }
