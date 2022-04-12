@@ -47,7 +47,7 @@ public class JacksonConcurrentTest extends CamelTestSupport {
         for (int i = 0; i < files; i++) {
             final int index = i;
             executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
+                public Object call() {
                     TestPojo pojo = new TestPojo();
                     pojo.setName("Hi " + index);
 
