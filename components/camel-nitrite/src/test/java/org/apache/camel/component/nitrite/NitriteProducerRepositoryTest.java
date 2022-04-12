@@ -60,7 +60,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
     }
 
     @Test
-    public void findRepositoryOperation() throws Exception {
+    public void findRepositoryOperation() {
         List<MyPersistentObject> result = template.requestBodyAndHeader(
                 String.format("nitrite://%s?repositoryClass=%s", tempDb(), MyPersistentObject.class.getCanonicalName()),
                 null,
@@ -73,7 +73,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
     }
 
     @Test
-    public void removeRepositoryOperation() throws Exception {
+    public void removeRepositoryOperation() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION,
                 new RemoveRepositoryOperation(ObjectFilters.eq("key2", "b")));
@@ -86,7 +86,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
     }
 
     @Test
-    public void updateRepositoryOperation() throws Exception {
+    public void updateRepositoryOperation() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION,
                 new UpdateRepositoryOperation(ObjectFilters.eq("key2", "f")));
@@ -100,7 +100,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
     }
 
     @Test
-    public void createIndexOperation() throws Exception {
+    public void createIndexOperation() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION,
                 new CreateIndexOperation("key3", IndexOptions.indexOptions(IndexType.Unique)));
@@ -134,7 +134,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
     }
 
     @Test
-    public void getAttributesOperation() throws Exception {
+    public void getAttributesOperation() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new GetAttributesOperation());
 
@@ -144,7 +144,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
     }
 
     @Test
-    public void insertOperation() throws Exception {
+    public void insertOperation() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new InsertOperation(
                 new MyPersistentObject(123, "", "", "")));
@@ -181,7 +181,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
     }
 
     @Test
-    public void updateOperation() throws Exception {
+    public void updateOperation() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new UpdateOperation(
                 new MyPersistentObject(1, "", "", "")));
@@ -194,7 +194,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
     }
 
     @Test
-    public void upsertOperation() throws Exception {
+    public void upsertOperation() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new UpsertOperation(
                 new MyPersistentObject(1, "", "", "")));
@@ -207,7 +207,7 @@ public class NitriteProducerRepositoryTest extends AbstractNitriteTest {
     }
 
     @Test
-    public void testForbiddenOperation() throws Exception {
+    public void testForbiddenOperation() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader(NitriteConstants.OPERATION, new FindCollectionOperation());
 
