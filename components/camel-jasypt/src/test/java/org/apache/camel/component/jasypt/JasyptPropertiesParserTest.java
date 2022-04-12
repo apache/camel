@@ -93,7 +93,7 @@ public class JasyptPropertiesParserTest {
     }
 
     @Test
-    public void testUsesProvidedPasswordIfEncryptorIsNotSet() throws Exception {
+    public void testUsesProvidedPasswordIfEncryptorIsNotSet() {
         jasyptPropertiesParser.setEncryptor(null);
         jasyptPropertiesParser.setPassword(KNOWN_PASSWORD);
 
@@ -101,7 +101,7 @@ public class JasyptPropertiesParserTest {
     }
 
     @Test
-    public void testUsesProvidedPasswordFromSystemPropertyIfEncryptorIsNotSet() throws Exception {
+    public void testUsesProvidedPasswordFromSystemPropertyIfEncryptorIsNotSet() {
         System.setProperty("myfoo", KNOWN_PASSWORD);
 
         jasyptPropertiesParser.setEncryptor(null);
