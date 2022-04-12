@@ -47,7 +47,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         template.sendBodyAndHeaders("direct:start", null, destroyHeaders(null, null));
     }
 
@@ -224,7 +224,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
     @SuppressWarnings("unchecked")
     @Disabled("For now not possible to combine stub provider with ssh module, required for runScript")
     @Test
-    public void testRunScript() throws InterruptedException {
+    public void testRunScript() {
         Map<String, Object> runScriptHeaders = new HashMap<>();
         runScriptHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.RUN_SCRIPT);
 
