@@ -52,7 +52,7 @@ public class FromQueueToQueueTest extends CamelTestSupport {
 
         template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
@@ -81,7 +81,7 @@ public class FromQueueToQueueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {

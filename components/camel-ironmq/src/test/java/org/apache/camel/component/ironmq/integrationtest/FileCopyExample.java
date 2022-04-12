@@ -50,7 +50,7 @@ public class FileCopyExample extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 //copies test.txt from test/data to ironmq 
