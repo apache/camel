@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JoltDefaultrTest extends CamelTestSupport {
 
     @Test
-    public void testFirstSampleJolt() throws Exception {
+    public void testFirstSampleJolt() {
         Exchange exchange = template.request("direct://start", exchange1 -> {
             Map<String, String> body = new HashMap<>();
             body.put("Hello", "World");
@@ -47,7 +47,7 @@ public class JoltDefaultrTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")
