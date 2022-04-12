@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.nats.integration;
 
-import java.io.IOException;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,7 +27,7 @@ public class NatsConsumerMaxMessagesQueueIT extends NatsITSupport {
     protected MockEndpoint mockResultEndpoint;
 
     @Test
-    public void testMaxConsumer() throws InterruptedException, IOException {
+    public void testMaxConsumer() throws InterruptedException {
         mockResultEndpoint.setExpectedMessageCount(2);
 
         template.sendBody("direct:send", "test");
@@ -39,10 +37,10 @@ public class NatsConsumerMaxMessagesQueueIT extends NatsITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:send").to("nats:test");
 
                 from("nats:test?maxMessages=5&queueName=test").routeId("cons1").to(mockResultEndpoint);

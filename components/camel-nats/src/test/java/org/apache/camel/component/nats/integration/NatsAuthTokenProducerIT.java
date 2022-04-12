@@ -22,15 +22,15 @@ import org.junit.jupiter.api.Test;
 public class NatsAuthTokenProducerIT extends NatsAuthITSupport {
 
     @Test
-    public void sendTest() throws Exception {
+    public void sendTest() {
         template.sendBody("direct:send", "pippo");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:send").to("nats:test");
             }
         };
