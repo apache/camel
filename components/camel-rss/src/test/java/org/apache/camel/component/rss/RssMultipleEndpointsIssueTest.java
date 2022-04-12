@@ -37,10 +37,10 @@ public class RssMultipleEndpointsIssueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("rss:http://www.iafrica.com/pls/cms/grapevine.xml?initialDelay=2000").to("mock:a");
 
                 from("rss:http://www.iafrica.com/pls/cms/grapevine.xml?p_section=world_news&initialDelay=3000").to("mock:b");

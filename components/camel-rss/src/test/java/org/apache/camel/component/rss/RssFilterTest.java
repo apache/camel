@@ -35,14 +35,14 @@ public class RssFilterTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("myFilterBean", new FilterBean());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // See RssFilterWithXPathTest for an example of how to do this with XPath
 
                 // START SNIPPET: ex1

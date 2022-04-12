@@ -42,7 +42,7 @@ public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         // timestamp from the feed to use as base
         // Fri, 31 Oct 2008 12:02:21 -0500
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-5:00"));
@@ -52,9 +52,9 @@ public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100").filter().method("myBean", "isAfterDate")
                         .to("mock:result");
             }

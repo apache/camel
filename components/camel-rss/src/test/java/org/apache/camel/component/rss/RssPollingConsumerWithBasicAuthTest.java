@@ -23,10 +23,10 @@ import org.junit.jupiter.api.BeforeAll;
 public class RssPollingConsumerWithBasicAuthTest extends RssPollingConsumerTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("rss:http://localhost:" + JettyTestServer.getInstance().port
                      + "/?splitEntries=false&username=camel&password=camelPass").to("mock:result");
             }
