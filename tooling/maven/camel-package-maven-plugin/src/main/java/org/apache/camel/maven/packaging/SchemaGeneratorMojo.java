@@ -455,15 +455,14 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     private void processValue(
             Class<?> originalClassType, Class<?> classElement, Field fieldElement,
             String fieldName, Set<EipOptionModel> eipOptions, String prefix, String modelName) {
+
         // XmlValue has no name attribute
         String name = fieldName;
 
-        if ("method".equals(modelName) || "tokenize".equals(modelName) || "xtokenize".equals(modelName)) {
+        if ("expression".equals(name) && !expressionRequired(modelName)) {
             // skip expression attribute on these three languages as they are
             // solely configured using attributes
-            if ("expression".equals(name)) {
-                return;
-            }
+            return;
         }
 
         name = prefix + name;
@@ -949,8 +948,10 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
 
             final String kind = "expression";
-            EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, true, "", label, docComment, deprecated,
-                    deprecationNote, false, null, oneOfTypes, asPredicate, false);
+            final boolean required = expressionRequired(name);
+            EipOptionModel ep
+                    = createOption(name, displayName, kind, fieldTypeName, required, "", label, docComment, deprecated,
+                            deprecationNote, false, null, oneOfTypes, asPredicate, false);
             eipOptions.add(ep);
         }
     }
@@ -1050,6 +1051,15 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         return defaultValue;
+    }
+
+    private boolean expressionRequired(String modelName) {
+        if ("method".equals(modelName) || "tokenize".equals(modelName) || "xtokenize".equals(modelName)) {
+            // skip expression attribute on these three languages as they are
+            // solely configured using attributes
+            return false;
+        }
+        return true;
     }
 
     private boolean findRequired(Field fieldElement, boolean defaultValue) {

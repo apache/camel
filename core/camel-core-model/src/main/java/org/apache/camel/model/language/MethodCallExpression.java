@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -175,18 +174,9 @@ public class MethodCallExpression extends ExpressionDefinition {
         }
     }
 
-    private String beanName() {
-        if (ref != null) {
-            return ref;
-        } else if (instance != null) {
-            return ObjectHelper.className(instance);
-        }
-        return getExpression();
-    }
-
     @Override
     public String toString() {
-        String name = null;
+        String name;
         if (ref != null) {
             name = "ref:" + ref;
         } else if (beanTypeName != null) {
