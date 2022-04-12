@@ -60,10 +60,10 @@ public class NatsConsumerWithConnectionLoadIT extends NatsITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("nats:test?connection=#connection").to(mockResultEndpoint);
                 from("nats:test1?connection=#connection").to(mockResultEndpoint1);
             }

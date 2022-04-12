@@ -38,10 +38,10 @@ public class NatsConsumerIT extends NatsITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:send").to("nats:test?flushConnection=true");
 
                 from("nats:test?flushConnection=true").to(mockResultEndpoint);

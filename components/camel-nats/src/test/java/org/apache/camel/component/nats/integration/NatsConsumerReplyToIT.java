@@ -44,10 +44,10 @@ public class NatsConsumerReplyToIT extends NatsITSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:send")
                         .to("nats:test?replySubject=myReplyQueue&flushConnection=true");
 
