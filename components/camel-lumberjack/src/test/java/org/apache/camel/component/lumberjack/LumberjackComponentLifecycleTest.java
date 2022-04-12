@@ -46,7 +46,7 @@ public class LumberjackComponentLifecycleTest extends CamelTestSupport {
 
     @Test
     @Timeout(30)
-    public void shouldRestart() throws Exception {
+    public void shouldRestart() {
         // Given a started context
         assertEquals(ServiceStatus.Started, context.getStatus());
 
