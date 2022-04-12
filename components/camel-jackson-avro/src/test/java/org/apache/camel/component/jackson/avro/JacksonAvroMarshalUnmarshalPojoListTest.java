@@ -68,7 +68,7 @@ public class JacksonAvroMarshalUnmarshalPojoListTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         String schemaJson = "{\n" +
                             "  \"type\": \"array\",  \n" +
                             "  \"items\":{\n" +
@@ -91,10 +91,10 @@ public class JacksonAvroMarshalUnmarshalPojoListTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:serialized").unmarshal().custom("custom-df").to("mock:pojo");
                 from("direct:pojo").marshal().custom("custom-df").to("mock:serialized");
             }
