@@ -46,7 +46,7 @@ public class Jt400ComponentDefaultSecureConnectionPoolTest extends Jt400TestSupp
 
     @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (component != null) {
             component.stop();
         }
