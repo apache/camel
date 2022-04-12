@@ -70,7 +70,7 @@ public class Olingo2RouteTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRead() throws Exception {
+    public void testRead() {
         final Map<String, Object> headers = new HashMap<>();
 
         headers.put(Olingo2Constants.PROPERTY_PREFIX + "keyPredicate", "'1'");
@@ -81,7 +81,7 @@ public class Olingo2RouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:READENTRY").to("olingo2://read/DefaultContainer.Manufacturers?serviceUri=" + TEST_SERVICE_URL);
