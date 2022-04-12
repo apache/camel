@@ -37,7 +37,7 @@ public class IrcsWithSslContextParamsRouteTest extends IrcRouteTest {
     //    when camel-con joins the room.
 
     @BindToRegistry("sslContextParameters")
-    protected SSLContextParameters loadSslContextParams() throws Exception {
+    protected SSLContextParameters loadSslContextParams() {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("localhost.p12");
         ksp.setPassword("changeit");

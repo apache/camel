@@ -60,9 +60,9 @@ public class IrcMultiChannelRouteTest extends IrcIntegrationTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(fromUri()).choice().when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG")).to("direct:mock")
                         .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to(joined);
 
