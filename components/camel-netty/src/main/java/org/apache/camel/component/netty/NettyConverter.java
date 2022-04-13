@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
@@ -62,13 +62,13 @@ public final class NettyConverter {
     }
 
     @Converter
-    public static String toString(ByteBuf buffer, Exchange exchange) throws UnsupportedEncodingException {
+    public static String toString(ByteBuf buffer, Exchange exchange) {
         byte[] bytes = toByteArray(buffer, exchange);
         // use type converter as it can handle encoding set on the Exchange
         if (exchange != null) {
             return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, bytes);
         }
-        return new String(bytes, "UTF-8");
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     @Converter
