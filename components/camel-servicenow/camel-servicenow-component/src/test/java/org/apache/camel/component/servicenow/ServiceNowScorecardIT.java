@@ -34,7 +34,7 @@ public class ServiceNowScorecardIT extends ServiceNowITSupport {
     ProducerTemplate template;
 
     @Test
-    public void testScorecard() throws Exception {
+    public void testScorecard() {
         List<Scorecard> scorecardList = template.requestBodyAndHeaders(
                 "direct:servicenow",
                 null,
@@ -54,7 +54,7 @@ public class ServiceNowScorecardIT extends ServiceNowITSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:servicenow")

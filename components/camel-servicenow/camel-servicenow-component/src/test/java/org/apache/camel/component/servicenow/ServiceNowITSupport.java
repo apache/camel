@@ -60,7 +60,7 @@ class ServiceNowITSupport extends CamelTestSupport {
         return parameters;
     }
 
-    public void configureServicenowComponent(CamelContext camelContext) throws Exception {
+    public void configureServicenowComponent(CamelContext camelContext) {
         String userName = getSystemPropertyOrEnvVar("servicenow.username");
         String password = getSystemPropertyOrEnvVar("servicenow.password");
         String oauthClientId = getSystemPropertyOrEnvVar("servicenow.oauth2.client.id");

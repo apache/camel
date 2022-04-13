@@ -122,7 +122,7 @@ public class ServiceNowAttachmentIT extends ServiceNowITSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:servicenow")

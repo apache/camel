@@ -87,7 +87,7 @@ public class ServiceNowIT extends ServiceNowITSupport {
     }
 
     @Test
-    public void testBodyMismatch() throws Exception {
+    public void testBodyMismatch() {
 
         Map<String, Object> kv = kvBuilder()
                 .put(ServiceNowConstants.RESOURCE, "table")
@@ -278,7 +278,7 @@ public class ServiceNowIT extends ServiceNowITSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:servicenow")

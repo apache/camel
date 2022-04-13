@@ -36,7 +36,7 @@ public class ServiceNowServiceCatalogIT extends ServiceNowITSupport {
     ProducerTemplate template;
 
     @Test
-    public void testRetrieveServiceCatalogsAndCategories() throws Exception {
+    public void testRetrieveServiceCatalogsAndCategories() {
         List<Map<?, ?>> result1 = template.requestBodyAndHeaders(
                 "direct:servicenow",
                 null,
@@ -63,7 +63,7 @@ public class ServiceNowServiceCatalogIT extends ServiceNowITSupport {
     }
 
     @Test
-    public void testWrongSubject() throws Exception {
+    public void testWrongSubject() {
         final Map<String, Object> invalid = kvBuilder()
                 .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
                 .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
@@ -83,7 +83,7 @@ public class ServiceNowServiceCatalogIT extends ServiceNowITSupport {
     // *************************************************************************
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:servicenow")
