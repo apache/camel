@@ -160,7 +160,7 @@
     <curator-version>4.3.0</curator-version>
     <cxf-codegen-plugin-version>3.4.5</cxf-codegen-plugin-version>
     <cxf-version>3.4.5</cxf-version>
-    <cxf-version-range>[3.4,3.4]</cxf-version-range>
+    <cxf-version-range>[3.4,3.5)</cxf-version-range>
     <cxf-xjc-plugin-version>3.3.1</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
     <cxf.codegen.jvmArgs></cxf.codegen.jvmArgs>
