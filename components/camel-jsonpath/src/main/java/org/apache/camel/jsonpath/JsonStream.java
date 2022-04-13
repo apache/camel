@@ -21,6 +21,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -90,7 +91,7 @@ public class JsonStream extends FilterInputStream {
 
         if (enc == null) {
             // not found; as per specification, this means it must be UTF-8.
-            enc = Charset.forName("UTF-8");
+            enc = StandardCharsets.UTF_8;
         }
         encoding = enc;
     }
@@ -131,18 +132,18 @@ public class JsonStream extends FilterInputStream {
         //  16-bit encoding BOMs
         if (Arrays.equals(firstTwoBytes, BOM_UTF_16BE)) {
             inputIndex = 2;
-            return Charset.forName("UTF-16BE");
+            return StandardCharsets.UTF_16BE;
         }
         if (Arrays.equals(firstTwoBytes, BOM_UTF_16LE)) {
             inputIndex = 2;
-            return Charset.forName("UTF-16LE");
+            return StandardCharsets.UTF_16LE;
         }
 
         byte[] firstThreeBytes = Arrays.copyOf(fourByteBuffer, 3);
         // UTF-8 BOM?
         if (Arrays.equals(firstThreeBytes, BOM_UTF_8)) {
             inputIndex = 3;
-            return Charset.forName("UTF-8");
+            return StandardCharsets.UTF_8;
         }
         return null;
     }
@@ -169,9 +170,9 @@ public class JsonStream extends FilterInputStream {
 
     private Charset getUTF16EncodingFromNullPattern() {
         if (fourByteBuffer[0] == 0) {
-            return Charset.forName("UTF-16BE");
+            return StandardCharsets.UTF_16BE;
         } else if (fourByteBuffer[1] == 0) {
-            return Charset.forName("UTF-16LE");
+            return StandardCharsets.UTF_16LE;
         } else { // not  UTF-16
             return null;
         }
