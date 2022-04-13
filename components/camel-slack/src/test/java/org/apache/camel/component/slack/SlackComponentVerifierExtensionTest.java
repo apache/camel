@@ -37,7 +37,7 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testParametersWebhook() throws Exception {
+    public void testParametersWebhook() {
         Component component = context().getComponent("slack");
 
         ComponentVerifierExtension verifier
@@ -52,7 +52,7 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testParametersToken() throws Exception {
+    public void testParametersToken() {
         Component component = context().getComponent("slack");
 
         ComponentVerifierExtension verifier
@@ -67,7 +67,7 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testParametersEmpty() throws Exception {
+    public void testParametersEmpty() {
         Component component = context().getComponent("slack");
 
         ComponentVerifierExtension verifier
@@ -81,7 +81,7 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testParametersWebhookUrlTokenBoth() throws Exception {
+    public void testParametersWebhookUrlTokenBoth() {
         Component component = context().getComponent("slack");
 
         ComponentVerifierExtension verifier
@@ -97,7 +97,7 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConnectivityWebhook() throws Exception {
+    public void testConnectivityWebhook() {
         Component component = context().getComponent("slack");
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
@@ -111,7 +111,7 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConnectivityToken() throws Exception {
+    public void testConnectivityToken() {
         Component component = context().getComponent("slack");
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
