@@ -105,7 +105,7 @@ public class ServiceNowMetaDataExtensionIT extends ServiceNowITSupport {
     }
 
     @Test
-    public void testInvalidObjectType() throws Exception {
+    public void testInvalidObjectType() {
         Map<String, Object> parameters = getParameters();
         parameters.put("objectType", "test");
         parameters.put("objectName", "incident");
