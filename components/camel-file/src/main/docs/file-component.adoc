@@ -448,11 +448,11 @@ Will for example create a file named `foo.done` if the target file was
 from("file://inputdir/?delete=true").to("file://outputdir")
 ----
 
-=== Read from a directory and write to another directory using a overrule dynamic name
+=== Read from a directory and write to another directory using a dynamic name
 
 [source,java]
 ----
-from("file://inputdir/?delete=true").to("file://outputdir?overruleFile=copy-of-${file:name}")
+from("file://inputdir/?delete=true").to("file://outputdir?fileName=copy-of-${file:name}")
 ----
 
 Listen on a directory and create a message for each file dropped there.
