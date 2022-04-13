@@ -423,7 +423,7 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
   if (example) {
     allTasks.push(
       series(
-        named(`clean:example:${type}`, clean, example.destination, ['json']),
+        named(`clean:example:${type}`, clean, example.destination, ['json', 'js']),
         named(`symlink:example:${type}`, createExampleSymlinks, example.source, example.destination)
       )
     )
