@@ -311,6 +311,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     public void reset() {
+        safeLatchReset();
         expectedCount = -1;
         counter.set(0);
         defaultProcessor = null;
@@ -318,7 +319,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         receivedExchanges = new CopyOnWriteArrayList<>();
         failures = new CopyOnWriteArrayList<>();
         tests = new CopyOnWriteArrayList<>();
-        latch = null;
         failFastAssertionError = null;
         sleepForEmptyTest = 0;
         resultWaitTime = 0;
@@ -441,13 +441,15 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 Thread.sleep(timeoutForEmptyEndpoints);
             }
             assertEquals("Received message count", expectedCount, getReceivedCounter());
-        } else if (expectedCount > 0 || expectedMinimumCount > 0) {
-            // Always wait whatever the value of the received counter to ensure that all expected messages are
-            // fully processed (until the latch countDown)
-            waitForCompleteLatch();
-            if (expectedCount > 0 && failFastAssertionError == null) {
+        } else if (expectedCount > 0) {
+            if (expectedCount != getReceivedCounter()) {
+                waitForCompleteLatch();
+            }
+            if (failFastAssertionError == null) {
                 assertEquals("Received message count", expectedCount, getReceivedCounter());
             }
+        } else if (expectedMinimumCount > 0 && getReceivedCounter() < expectedMinimumCount) {
+            waitForCompleteLatch();
         }
 
         if (failFastAssertionError != null) {
@@ -1747,6 +1749,23 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 receivedExchanges.add(copy);
             }
         }
+    }
+
+    /**
+     * Reset the latch to {@code null} if it was not {@code null} but before, wait until the latch is released to ensure
+     * that all expected messages are fully processed (until the latch countDown) to prevent conflicts with subsequent
+     * tests.
+     */
+    private void safeLatchReset() {
+        if (latch == null) {
+            return;
+        }
+        try {
+            waitForCompleteLatch(resultWaitTime);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        this.latch = null;
     }
 
     protected void waitForCompleteLatch() throws InterruptedException {
