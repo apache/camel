@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.kinesis;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Converter;
 import software.amazon.awssdk.services.kinesis.model.Record;
@@ -31,7 +32,7 @@ public final class RecordStringConverter {
 
     @Converter
     public static String toString(Record record) {
-        Charset charset = Charset.forName("UTF-8");
+        Charset charset = StandardCharsets.UTF_8;
 
         ByteBuffer buffer = record.data().asByteBuffer();
         if (buffer.hasArray()) {
