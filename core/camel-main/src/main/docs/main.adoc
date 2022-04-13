@@ -471,7 +471,7 @@ camel.beans.myApp[username] = goofy
 ----
 
 Camel will then create this as a `LinkedHashMap` type with the name `myApp` which is
-bound to the Camel xref:manual::registry.adoc[Registry], with the data defined in the properties.
+bound to the Camel xref:manual:ROOT:registry.adoc[Registry], with the data defined in the properties.
 
 If you desire a different `java.util.Map` implementation, then you can use `#class` style as shown:
 
