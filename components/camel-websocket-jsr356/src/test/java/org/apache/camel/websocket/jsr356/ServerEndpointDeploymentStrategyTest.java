@@ -94,14 +94,14 @@ public class ServerEndpointDeploymentStrategyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("websocket-jsr356:/greeting")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Session session = exchange.getMessage().getHeader(JSR356Constants.SESSION, Session.class);
                                 session.getAsyncRemote().sendObject(exchange.getMessage().getBody(String.class));
                             }
