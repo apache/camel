@@ -18,6 +18,7 @@ package org.apache.camel.component.as2.api.protocol;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.HashMap;
@@ -25,7 +26,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
-import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Constants;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2ServerManager;
@@ -144,7 +144,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
                     AS2DispositionType.FAILED, null, null, null, null, null, mdnMessageTemplate);
             multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                     httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.FAILED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true,
+                    AS2DispositionType.FAILED, null, null, null, null, null, StandardCharsets.US_ASCII.name(), boundary, true,
                     decryptingPrivateKey, mdnMessage);
         } else {
             String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response,
@@ -153,7 +153,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
                     mdnMessageTemplate);
             multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                     httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true,
+                    AS2DispositionType.PROCESSED, null, null, null, null, null, StandardCharsets.US_ASCII.name(), boundary, true,
                     decryptingPrivateKey, mdnMessage);
         }
 
@@ -229,7 +229,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
                     multipartReportEntity.setMainBody(false);
                     MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
                             multipartReportEntity, gen,
-                            AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, false, null);
+                            StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, false, null);
                     response.setHeader(multipartSignedEntity.getContentType());
                     EntityUtils.setMessageEntity(response, multipartSignedEntity);
                 } catch (Exception e) {

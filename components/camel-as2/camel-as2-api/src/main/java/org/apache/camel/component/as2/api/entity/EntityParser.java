@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
@@ -443,7 +443,7 @@ public final class EntityParser {
                 ContentType contentType = ContentType.parse(contentTypeStr);
 
                 // Determine Charset
-                String charsetName = AS2Charset.US_ASCII;
+                String charsetName = StandardCharsets.US_ASCII.name();
                 Charset charset = contentType.getCharset();
                 if (charset != null) {
                     charsetName = charset.name();
@@ -507,7 +507,7 @@ public final class EntityParser {
         try {
 
             if (charsetName == null) {
-                charsetName = AS2Charset.US_ASCII;
+                charsetName = StandardCharsets.US_ASCII.name();
             }
             Charset charset = Charset.forName(charsetName);
             CharsetDecoder charsetDecoder = charset.newDecoder();
@@ -614,7 +614,7 @@ public final class EntityParser {
         try {
 
             if (charsetName == null) {
-                charsetName = AS2Charset.US_ASCII;
+                charsetName = StandardCharsets.US_ASCII.name();
             }
             Charset charset = Charset.forName(charsetName);
             CharsetDecoder charsetDecoder = charset.newDecoder();
@@ -655,7 +655,7 @@ public final class EntityParser {
             }
 
             String textReportCharsetName = textReportContentType.getCharset() == null
-                    ? AS2Charset.US_ASCII : textReportContentType.getCharset().name();
+                    ? StandardCharsets.US_ASCII.name() : textReportContentType.getCharset().name();
             TextPlainEntity textReportEntity
                     = parseTextPlainEntityBody(inbuffer, boundary, textReportCharsetName, textReportContentTransferEncoding);
             textReportEntity.setHeaders(headers);
@@ -693,7 +693,7 @@ public final class EntityParser {
             }
 
             String dispositionNotificationCharsetName = dispositionNotificationContentType.getCharset() == null
-                    ? AS2Charset.US_ASCII : dispositionNotificationContentType.getCharset().name();
+                    ? StandardCharsets.US_ASCII.name() : dispositionNotificationContentType.getCharset().name();
             AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity
                     = parseMessageDispositionNotificationEntityBody(
                             inbuffer, boundary, dispositionNotificationCharsetName,
@@ -727,7 +727,7 @@ public final class EntityParser {
         try {
 
             if (charsetName == null) {
-                charsetName = AS2Charset.US_ASCII;
+                charsetName = StandardCharsets.US_ASCII.name();
             }
             Charset charset = Charset.forName(charsetName);
             CharsetDecoder charsetDecoder = charset.newDecoder();
@@ -759,7 +759,7 @@ public final class EntityParser {
         try {
 
             if (charsetName == null) {
-                charsetName = AS2Charset.US_ASCII;
+                charsetName = StandardCharsets.US_ASCII.name();
             }
             Charset charset = Charset.forName(charsetName);
             CharsetDecoder charsetDecoder = charset.newDecoder();
@@ -796,7 +796,7 @@ public final class EntityParser {
         try {
             Charset charset = entityContentType.getCharset();
             if (charset == null) {
-                charset = Charset.forName(AS2Charset.US_ASCII);
+                charset = StandardCharsets.US_ASCII;
             }
             CharsetDecoder charsetDecoder = charset.newDecoder();
 
@@ -877,7 +877,7 @@ public final class EntityParser {
         try {
             Charset charset = ediMessageContentType.getCharset();
             if (charset == null) {
-                charset = Charset.forName(AS2Charset.US_ASCII);
+                charset = StandardCharsets.US_ASCII;
             }
             CharsetDecoder charsetDecoder = charset.newDecoder();
 
@@ -912,7 +912,7 @@ public final class EntityParser {
         try {
             Charset charset = contentType.getCharset();
             if (charset == null) {
-                charset = Charset.forName(AS2Charset.US_ASCII);
+                charset = StandardCharsets.US_ASCII;
             }
             CharsetDecoder charsetDecoder = charset.newDecoder();
 
@@ -947,7 +947,7 @@ public final class EntityParser {
         try {
             Charset charset = contentType.getCharset();
             if (charset == null) {
-                charset = Charset.forName(AS2Charset.US_ASCII);
+                charset = StandardCharsets.US_ASCII;
             }
             CharsetDecoder charsetDecoder = charset.newDecoder();
 
@@ -981,7 +981,7 @@ public final class EntityParser {
         try {
             Charset charset = contentType.getCharset();
             if (charset == null) {
-                charset = Charset.forName(AS2Charset.US_ASCII);
+                charset = StandardCharsets.US_ASCII;
             }
             CharsetDecoder charsetDecoder = charset.newDecoder();
 

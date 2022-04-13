@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
-import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
@@ -270,14 +270,14 @@ public abstract class MimeEntity extends AbstractHttpEntity {
 
     public String getCharset() {
         if (getContentType() == null) {
-            return AS2Charset.US_ASCII;
+            return StandardCharsets.US_ASCII.name();
         }
         ContentType contentType = ContentType.parse(getContentType().getValue());
         Charset charset = contentType.getCharset();
         if (charset != null) {
             return charset.name();
         }
-        return AS2Charset.US_ASCII;
+        return StandardCharsets.US_ASCII.name();
     }
 
 }

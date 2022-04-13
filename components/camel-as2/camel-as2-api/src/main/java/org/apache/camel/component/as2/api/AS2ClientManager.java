@@ -17,6 +17,7 @@
 package org.apache.camel.component.as2.api;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
@@ -267,7 +268,7 @@ public class AS2ClientManager {
                 AS2SignedDataGenerator signingGenrator = createSigningGenerator(httpContext);
                 MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
                         applicationEDIEntity, signingGenrator,
-                        AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, true, null);
+                        StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, true, null);
 
                 // Add Multipart Signed Entity to main body of request.
                 EntityUtils.setMessageEntity(request, multipartSignedEntity);
@@ -290,7 +291,7 @@ public class AS2ClientManager {
                 AS2SignedDataGenerator signingGenrator = createSigningGenerator(httpContext);
                 MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
                         applicationEDIEntity,
-                        signingGenrator, AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, false, null);
+                        signingGenrator, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, false, null);
 
                 // Create Enveloped Entity containing Multipart Signed Entity
                 CMSEnvelopedDataGenerator envelopedDataGenerator = createEncryptingGenerator(httpContext);
@@ -320,7 +321,7 @@ public class AS2ClientManager {
                 AS2SignedDataGenerator signingGenrator = createSigningGenerator(httpContext);
                 MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
                         applicationEDIEntity,
-                        signingGenrator, AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, false, null);
+                        signingGenrator, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, false, null);
 
                 // Create Compressed Entity containing Multipart Signed Entity
                 CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator(httpContext);
@@ -358,7 +359,7 @@ public class AS2ClientManager {
                 AS2SignedDataGenerator signingGenrator = createSigningGenerator(httpContext);
                 MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
                         applicationEDIEntity, signingGenrator,
-                        AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, false, null);
+                        StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, false, null);
 
                 // Create Compressed Entity containing Multipart Signed Entity
                 CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator(httpContext);
