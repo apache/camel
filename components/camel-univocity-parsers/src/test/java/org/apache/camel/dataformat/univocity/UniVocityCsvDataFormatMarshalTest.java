@@ -118,7 +118,7 @@ public final class UniVocityCsvDataFormatMarshalTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         final Map<String, DataFormat> tests = new HashMap<>();
 
         // Default writing of CSV
@@ -139,7 +139,7 @@ public final class UniVocityCsvDataFormatMarshalTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 for (Map.Entry<String, DataFormat> test : tests.entrySet()) {
                     from("direct:" + test.getKey()).marshal(test.getValue()).convertBodyTo(String.class).to("mock:result");
                 }

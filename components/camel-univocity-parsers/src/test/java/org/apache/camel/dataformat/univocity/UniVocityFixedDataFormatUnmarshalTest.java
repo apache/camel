@@ -151,7 +151,7 @@ public final class UniVocityFixedDataFormatUnmarshalTest extends CamelTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         final Map<String, DataFormat> tests = new HashMap<>();
 
         // Default reading of fixed-width
@@ -185,7 +185,7 @@ public final class UniVocityFixedDataFormatUnmarshalTest extends CamelTestSuppor
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 for (Map.Entry<String, DataFormat> test : tests.entrySet()) {
                     from("direct:" + test.getKey()).unmarshal(test.getValue()).to("mock:result");
                 }
