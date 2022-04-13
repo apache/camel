@@ -96,7 +96,7 @@ public class Web3jConsumerEthBlockHashObservableMockTest extends Web3jMockTestSu
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
