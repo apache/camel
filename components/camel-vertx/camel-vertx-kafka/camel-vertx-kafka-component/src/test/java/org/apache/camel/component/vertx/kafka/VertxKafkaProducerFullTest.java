@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.vertx.kafka;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -122,10 +121,10 @@ public class VertxKafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:startStrings").to(toStrings).to(mockEndpoint);
 
                 from("direct:startStrings2").to(toStrings2).to(mockEndpoint);
@@ -140,7 +139,7 @@ public class VertxKafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     }
 
     @Test
-    public void producedStringMessageIsReceivedByKafka() throws InterruptedException, IOException {
+    public void producedStringMessageIsReceivedByKafka() throws InterruptedException {
         int messageInTopic = 10;
         int messageInOtherTopic = 5;
 
@@ -170,7 +169,7 @@ public class VertxKafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     }
 
     @Test
-    public void producedString2MessageIsReceivedByKafka() throws InterruptedException, IOException {
+    public void producedString2MessageIsReceivedByKafka() throws InterruptedException {
         int messageInTopic = 10;
         int messageInOtherTopic = 5;
 
@@ -200,7 +199,7 @@ public class VertxKafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     }
 
     @Test
-    public void producedStringCollectionMessageIsReceivedByKafka() throws InterruptedException, IOException {
+    public void producedStringCollectionMessageIsReceivedByKafka() throws InterruptedException {
         int messageInTopic = 10;
         int messageInOtherTopic = 5;
 
@@ -244,7 +243,7 @@ public class VertxKafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     }
 
     @Test
-    public void producedBytesMessageIsReceivedByKafka() throws InterruptedException, IOException {
+    public void producedBytesMessageIsReceivedByKafka() throws InterruptedException {
         int messageInTopic = 10;
         int messageInOtherTopic = 5;
 

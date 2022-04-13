@@ -104,7 +104,7 @@ public class VertxWebsocketExternalServerTest extends VertxWebSocketTestSupport 
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .toD("vertx-websocket:localhost:${header.port}/ws?clientSubProtocols=foo,bar,cheese");
 
@@ -131,6 +131,6 @@ public class VertxWebsocketExternalServerTest extends VertxWebSocketTestSupport 
     }
 
     @Override
-    protected void startCamelContext() throws Exception {
+    protected void startCamelContext() {
     }
 }

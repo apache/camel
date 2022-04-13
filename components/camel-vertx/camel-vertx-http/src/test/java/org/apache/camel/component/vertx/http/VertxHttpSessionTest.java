@@ -76,15 +76,15 @@ public class VertxHttpSessionTest extends VertxHttpTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Simulate session handling for an application with a 'secured' endpoint
                 from(getTestServerUri() + "/secure")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Message message = exchange.getMessage();
                                 String cookie = message.getHeader("Cookie", String.class);
                                 if (cookie != null && cookie.equals("sessionId=" + SESSION_ID)) {
@@ -98,7 +98,7 @@ public class VertxHttpSessionTest extends VertxHttpTestSupport {
                 from(getTestServerUri() + "/login")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 Message message = exchange.getMessage();
                                 String username = message.getHeader("username", String.class);
                                 String password = message.getHeader("password", String.class);

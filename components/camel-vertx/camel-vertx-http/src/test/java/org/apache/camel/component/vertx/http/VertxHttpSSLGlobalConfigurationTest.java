@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class VertxHttpSSLGlobalConfigurationTest extends VertxHttpTestSupport {
 
     @Test
-    public void testGlobalSSLContextParameters() throws Exception {
+    public void testGlobalSSLContextParameters() {
         String result = template.requestBody(getProducerUri(), null, String.class);
         assertEquals("Hello World", result);
     }
@@ -67,10 +67,10 @@ public class VertxHttpSSLGlobalConfigurationTest extends VertxHttpTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerUri() + "?sslContextParameters=#serverSSLParameters")
                         .setBody(constant("Hello World"));
             }
@@ -78,7 +78,7 @@ public class VertxHttpSSLGlobalConfigurationTest extends VertxHttpTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         SSLContextParameters serverSSLParameters = new SSLContextParameters();
 
         KeyStoreParameters keystoreParameters = new KeyStoreParameters();

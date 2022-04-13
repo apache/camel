@@ -29,7 +29,7 @@ public class VertxBaseTestSupport extends CamelTestSupport {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @BeforeAll
-    public static void initPort() throws Exception {
+    public static void initPort() {
         port = AvailablePortFinder.getNextAvailable();
     }
 

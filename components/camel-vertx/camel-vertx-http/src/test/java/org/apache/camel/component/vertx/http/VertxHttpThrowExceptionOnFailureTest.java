@@ -92,7 +92,7 @@ public class VertxHttpThrowExceptionOnFailureTest extends VertxHttpTestSupport {
     public void testThrowExceptionOnFailureWithOverriddenUri() {
         Exchange exchange = template.request(getProducerUri(), new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getMessage().setHeader(Exchange.HTTP_URI, getTestServerUrl() + "/redirect");
             }
         });
@@ -115,10 +115,10 @@ public class VertxHttpThrowExceptionOnFailureTest extends VertxHttpTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerUri())
                         .throwException(new Exception("Forced"));
 

@@ -84,10 +84,10 @@ public class VertxHttpMethodTest extends VertxHttpTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerUri())
                         .setBody(header(Exchange.HTTP_METHOD));
             }

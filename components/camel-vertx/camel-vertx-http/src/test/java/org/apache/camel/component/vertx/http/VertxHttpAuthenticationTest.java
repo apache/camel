@@ -39,10 +39,10 @@ public class VertxHttpAuthenticationTest extends VertxHttpTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerUri() + "/basic")
                         .process(exchange -> {
                             // Decode the username & password from the Authorization header

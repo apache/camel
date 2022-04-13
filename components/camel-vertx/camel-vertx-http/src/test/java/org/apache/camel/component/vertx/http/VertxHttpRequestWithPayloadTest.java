@@ -142,10 +142,10 @@ public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerUri())
                         .choice()
                         .when(simple("${body} == ''"))
@@ -156,7 +156,7 @@ public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
                 from(getTestServerUri() + "/form")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 exchange.toString();
                             }
                         })

@@ -31,17 +31,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class VertxHttpSSLTest extends VertxHttpTestSupport {
 
     @Test
-    public void testSSLContextParametersFromRegistry() throws Exception {
+    public void testSSLContextParametersFromRegistry() {
         String result
                 = template.requestBody(getProducerUri() + "?sslContextParameters=#clientSSLParameters", null, String.class);
         assertEquals("Hello World", result);
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerUri() + "?sslContextParameters=#serverSSLParameters")
                         .setBody(constant("Hello World"));
             }
@@ -49,7 +49,7 @@ public class VertxHttpSSLTest extends VertxHttpTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         SSLContextParameters serverSSLParameters = new SSLContextParameters();
         SSLContextParameters clientSSLParameters = new SSLContextParameters();
 

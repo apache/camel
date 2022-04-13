@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class VertxKafkaComponentTest extends CamelTestSupport {
 
     @Test
-    void testPropertiesSet() throws Exception {
+    void testPropertiesSet() {
         String uri = "vertx-kafka:mytopic?bootstrapServers=broker1:12345,broker2:12566&partitionerClass=com.class.Party";
 
         VertxKafkaEndpoint endpoint = context.getEndpoint(uri, VertxKafkaEndpoint.class);
@@ -45,7 +45,7 @@ class VertxKafkaComponentTest extends CamelTestSupport {
     }
 
     @Test
-    void testBrokersOnComponent() throws Exception {
+    void testBrokersOnComponent() {
         VertxKafkaComponent kafka = context.getComponent("vertx-kafka", VertxKafkaComponent.class);
         kafka.getConfiguration().setBootstrapServers("broker1:12345,broker2:12566");
 

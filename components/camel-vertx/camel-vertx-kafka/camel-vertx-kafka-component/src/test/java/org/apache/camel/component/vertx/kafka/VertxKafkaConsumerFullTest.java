@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.vertx.kafka;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
@@ -68,18 +67,18 @@ public class VertxKafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(from).routeId("foo").to(to);
             }
         };
     }
 
     @Test
-    public void kafkaMessageIsConsumedByCamel() throws InterruptedException, IOException {
+    public void kafkaMessageIsConsumedByCamel() throws InterruptedException {
         String propagatedHeaderKey = "PropagatedCustomHeader";
         byte[] propagatedHeaderValue = "propagated header value".getBytes();
         String skippedHeaderKey = "CamelSkippedHeader";
@@ -103,7 +102,7 @@ public class VertxKafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
     }
 
     @Test
-    public void kafkaRecordSpecificHeadersAreNotOverwritten() throws InterruptedException, IOException {
+    public void kafkaRecordSpecificHeadersAreNotOverwritten() throws InterruptedException {
         String propagatedHeaderKey = VertxKafkaConstants.TOPIC;
         byte[] propagatedHeaderValue = "propagated incorrect topic".getBytes();
         to.expectedHeaderReceived(VertxKafkaConstants.TOPIC, TOPIC);
