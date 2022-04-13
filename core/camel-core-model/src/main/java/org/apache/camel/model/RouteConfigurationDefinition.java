@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -37,8 +39,8 @@ import org.apache.camel.spi.Metadata;
 public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<RouteConfigurationDefinition>
         implements PreconditionContainer {
 
-    // TODO: Model for ErrorHandler (requires to move error handler model from spring-xml, blueprint to core)
-
+    @XmlElement
+    private ErrorHandlerDefinition errorHandler;
     @XmlElement(name = "intercept")
     private List<InterceptDefinition> intercepts = new ArrayList<>();
     @XmlElement(name = "interceptFrom")
@@ -69,6 +71,14 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
     @Override
     public String getLabel() {
         return "RoutesConfiguration " + getId();
+    }
+
+    public ErrorHandlerDefinition getErrorHandler() {
+        return errorHandler;
+    }
+
+    public void setErrorHandler(ErrorHandlerDefinition errorHandler) {
+        this.errorHandler = errorHandler;
     }
 
     public List<OnExceptionDefinition> getOnExceptions() {
@@ -131,6 +141,32 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
 
     // Fluent API
     // -------------------------------------------------------------------------
+
+    /**
+     * Sets the error handler to use, for routes that has not already been configured with an error handler.
+     *
+     * @param  ref reference to existing error handler
+     * @return     the builder
+     */
+    public RouteConfigurationDefinition errorHandler(String ref) {
+        ErrorHandlerDefinition def = new ErrorHandlerDefinition();
+        def.setErrorHandlerType(new ErrorHandlerRefDefinition(ref));
+        setErrorHandler(def);
+        return this;
+    }
+
+    /**
+     * Sets the error handler to use, for routes that has not already been configured with an error handler.
+     *
+     * @param  errorHandler the error handler
+     * @return              the builder
+     */
+    public RouteConfigurationDefinition errorHandler(ErrorHandlerFactory errorHandler) {
+        ErrorHandlerDefinition def = new ErrorHandlerDefinition();
+        def.setErrorHandlerType(errorHandler);
+        setErrorHandler(def);
+        return this;
+    }
 
     /**
      * Sets the predicate of the precondition in simple language to evaluate in order to determine if this route

@@ -20,6 +20,7 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
+import org.apache.camel.model.ErrorHandlerDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
@@ -41,6 +42,7 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
           properties = {
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "precondition", type = "string"),
+                  @YamlProperty(name = "error-handler", type = "object:org.apache.camel.model.ErrorHandlerDefinition.class"),
                   @YamlProperty(name = "intercept", type = "array:org.apache.camel.model.InterceptDefinition"),
                   @YamlProperty(name = "intercept-from", type = "array:org.apache.camel.model.InterceptFromDefinition"),
                   @YamlProperty(name = "intercept-send-to-endpoint",
@@ -78,6 +80,11 @@ public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBa
                     }
                     case "precondition":
                         target.setPrecondition(asText(val));
+                        break;
+                    case "error-handler":
+                        setDeserializationContext(val, dc);
+                        ErrorHandlerDefinition ehd = asType(val, ErrorHandlerDefinition.class);
+                        target.setErrorHandler(ehd);
                         break;
                     case "on-exception":
                         setDeserializationContext(val, dc);

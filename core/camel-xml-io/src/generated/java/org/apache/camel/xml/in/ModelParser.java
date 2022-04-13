@@ -978,6 +978,7 @@ public class ModelParser extends BaseParser {
             return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
         }, (def, key) -> {
             switch (key) {
+                case "errorHandler": def.setErrorHandler(doParseErrorHandlerDefinition()); break;
                 case "interceptFrom": doAdd(doParseInterceptFromDefinition(), def.getInterceptFroms(), def::setInterceptFroms); break;
                 case "interceptSendToEndpoint": doAdd(doParseInterceptSendToEndpointDefinition(), def.getInterceptSendTos(), def::setInterceptSendTos); break;
                 case "intercept": doAdd(doParseInterceptDefinition(), def.getIntercepts(), def::setIntercepts); break;

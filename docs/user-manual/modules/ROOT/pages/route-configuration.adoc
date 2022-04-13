@@ -12,6 +12,7 @@ The route configuration is supported by all DSL's, so useable by: Java, XML, Gro
 
 In the route configuration you can setup common strategies for:
 
+- xref:error-handler.adoc[Error Handler]
 - xref:exception-clause.adoc[OnException]
 - xref:oncompletion.adoc[OnCompletion]
 - xref:components:eips:intercept.adoc[Intercept]
@@ -176,6 +177,32 @@ then fail and rollback.
 If you add more routes, then those routes can also be assigned the _retryError_ configuration
 if they should also retry in case of error.
 
+=== Route Configuration with Error Handler
+
+Each route configuration can also have a specific error handler configured, as shown below:
+
+[source,java]
+----
+public class MyJavaErrorHandler extends RouteConfigurationBuilder {
+
+    @Override
+    public void configuration() throws Exception {
+        routeConfiguration()
+            .errorHandler(deadLetterChannel("mock:dead"));
+
+        routeConfiguration("retryError")
+            .onException(Exception.class).maximumRedeliveries(5);
+    }
+}
+----
+
+In the example above, the _nameless_ configuration has an error handler with a dead letter queue.
+And the route configuration with id _retryError_ does not, and instead it will attempt
+to retry the failing message up till 5 times before giving up (exhausted). Because this
+route configuration does not have any error handler assigned, then Camel will use the default error handler.
+
+IMPORTANT: Routes that have a local error handler defined, will always use this error handler,
+instead of the error handler from route configurations. A route can only have 1 error handler.
 
 == Route Configuration in XML
 

@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -57,6 +58,7 @@ import org.apache.camel.impl.engine.DefaultManagementStrategy;
 import org.apache.camel.impl.engine.TransformerKey;
 import org.apache.camel.impl.engine.ValidatorKey;
 import org.apache.camel.model.ContextScanDefinition;
+import org.apache.camel.model.ErrorHandlerDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.GlobalOptionsDefinition;
@@ -590,6 +592,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             route.resetPrepare();
 
             // merge global and route scoped together
+            AtomicReference<ErrorHandlerDefinition> errorHandler = new AtomicReference<>();
             List<OnExceptionDefinition> oe = new ArrayList<>(getOnExceptions());
             List<InterceptDefinition> icp = new ArrayList<>(getIntercepts());
             List<InterceptFromDefinition> ifrom = new ArrayList<>(getInterceptFroms());
@@ -615,6 +618,12 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                                     }
                                 })
                                 .forEach(g -> {
+                                    // there can only be one global error handler, so override previous, meaning
+                                    // that we will pick the last in the sort (take precedence)
+                                    if (g.getErrorHandler() != null) {
+                                        errorHandler.set(g.getErrorHandler());
+                                    }
+
                                     String aid = g.getId() == null ? "<default>" : g.getId();
                                     // remember the id that was used on the route
                                     route.addAppliedRouteConfigurationId(aid);
@@ -629,7 +638,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
 
             // must prepare the route before we can add it to the routes list
-            RouteDefinitionHelper.prepareRoute(getContext(), route, oe, icp, ifrom, ito, oc);
+            RouteDefinitionHelper.prepareRoute(getContext(), route, errorHandler.get(), oe, icp, ifrom, ito, oc);
 
             if (LOG.isDebugEnabled() && route.getAppliedRouteConfigurationIds() != null) {
                 LOG.debug("Route: {} is using route configurations ids: {}", route.getId(),

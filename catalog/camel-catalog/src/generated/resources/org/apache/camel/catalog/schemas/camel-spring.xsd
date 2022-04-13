@@ -10535,6 +10535,7 @@ Reference to the route templates in the xml dsl.
     <xs:complexContent>
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
+          <xs:element minOccurs="0" ref="tns:errorHandler"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:intercept"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:interceptFrom"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:interceptSendToEndpoint"/>

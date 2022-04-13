@@ -223,4 +223,46 @@ class RouteConfigurationTest extends YamlTestSupport {
         Assertions.assertTrue(out2.isFailed())
     }
 
+    def "route-configuration-error-handler"() {
+        setup:
+        // global configurations
+        loadRoutes """
+                - beans:
+                  - name: myFailingProcessor
+                    type: ${MyFailingProcessor.name}
+                - route-configuration:
+                    - error-handler:
+                        dead-letter-channel: 
+                          dead-letter-uri: "mock:on-error"
+            """
+        // routes
+        loadRoutes """
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - process: 
+                          ref: "myFailingProcessor"            
+                - from:
+                    uri: "direct:start2"
+                    steps:
+                      - process: 
+                          ref: "myFailingProcessor"            
+            """
+
+        withMock('mock:on-error') {
+            expectedBodiesReceived 'hello', 'hello2'
+        }
+
+        when:
+        context.start()
+
+        withTemplate {
+            to('direct:start').withBody('hello').send()
+            to('direct:start2').withBody('hello2').send()
+        }
+        then:
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
+
 }

@@ -12,6 +12,7 @@
     "output": false
   },
   "properties": {
+    "errorHandler": { "kind": "element", "displayName": "Error Handler", "required": false, "type": "object", "javaType": "org.apache.camel.model.ErrorHandlerDefinition", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the error handler to use, for routes that has not already been configured with an error handler." },
     "intercept": { "kind": "element", "displayName": "Intercept", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.InterceptDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Adds a route for an interceptor that intercepts every processing step." },
     "interceptFrom": { "kind": "element", "displayName": "Intercept From", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.InterceptFromDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Adds a route for an interceptor that intercepts incoming messages on the given endpoint." },
     "interceptSendToEndpoint": { "kind": "element", "displayName": "Intercept Send To Endpoint", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.InterceptSendToEndpointDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Applies a route for an interceptor if an exchange is send to the given endpoint" },

@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -241,6 +242,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         route.setResource(resource);
 
         // merge global and route scoped together
+        final AtomicReference<ErrorHandlerDefinition> gcErrorHandler = new AtomicReference<>();
         List<OnExceptionDefinition> oe = new ArrayList<>(onExceptions);
         List<InterceptDefinition> icp = new ArrayList<>(intercepts);
         List<InterceptFromDefinition> ifrom = new ArrayList<>(interceptFroms);
@@ -250,6 +252,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
             List<RouteConfigurationDefinition> globalConfigurations
                     = getCamelContext().adapt(ModelCamelContext.class).getRouteConfigurationDefinitions();
             if (globalConfigurations != null) {
+
                 // if there are multiple ids configured then we should apply in that same order
                 String[] ids = route.getRouteConfigurationId() != null
                         ? route.getRouteConfigurationId().split(",") : new String[] { "*" };
@@ -266,6 +269,12 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
                                 }
                             })
                             .forEach(g -> {
+                                // there can only be one global error handler, so override previous, meaning
+                                // that we will pick the last in the sort (take precedence)
+                                if (g.getErrorHandler() != null) {
+                                    gcErrorHandler.set(g.getErrorHandler());
+                                }
+
                                 String aid = g.getId() == null ? "<default>" : g.getId();
                                 // remember the id that was used on the route
                                 route.addAppliedRouteConfigurationId(aid);
@@ -276,11 +285,24 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
                                 oc.addAll(g.getOnCompletions());
                             });
                 }
+
+                // set error handler before prepare
+                if (errorHandlerFactory == null && gcErrorHandler.get() != null) {
+                    ErrorHandlerDefinition ehd = gcErrorHandler.get();
+                    route.setErrorHandlerFactoryIfNull(ehd.getErrorHandlerType());
+                }
             }
         }
 
+        // if the route does not already have an error handler set then use route configured error handler
+        // if one was configured
+        ErrorHandlerDefinition ehd = null;
+        if (errorHandlerFactory == null && gcErrorHandler.get() != null) {
+            ehd = gcErrorHandler.get();
+        }
+
         // must prepare the route before we can add it to the routes list
-        RouteDefinitionHelper.prepareRoute(getCamelContext(), route, oe, icp, ifrom, ito, oc);
+        RouteDefinitionHelper.prepareRoute(getCamelContext(), route, ehd, oe, icp, ifrom, ito, oc);
 
         if (LOG.isDebugEnabled() && route.getAppliedRouteConfigurationIds() != null) {
             LOG.debug("Route: {} is using route configurations ids: {}", route.getId(),

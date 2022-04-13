@@ -307,7 +307,7 @@ public final class RouteDefinitionHelper {
      * @param route   the route
      */
     public static void prepareRoute(CamelContext context, RouteDefinition route) {
-        prepareRoute(context, route, null, null, null, null, null);
+        prepareRoute(context, route, null, null, null, null, null, null);
     }
 
     /**
@@ -317,6 +317,7 @@ public final class RouteDefinitionHelper {
      *
      * @param context                            the camel context
      * @param route                              the route
+     * @param errorHandler                       optional error handler
      * @param onExceptions                       optional list of onExceptions
      * @param intercepts                         optional list of interceptors
      * @param interceptFromDefinitions           optional list of interceptFroms
@@ -324,13 +325,16 @@ public final class RouteDefinitionHelper {
      * @param onCompletions                      optional list onCompletions
      */
     public static void prepareRoute(
-            CamelContext context, RouteDefinition route, List<OnExceptionDefinition> onExceptions,
+            CamelContext context, RouteDefinition route,
+            ErrorHandlerDefinition errorHandler,
+            List<OnExceptionDefinition> onExceptions,
             List<InterceptDefinition> intercepts,
             List<InterceptFromDefinition> interceptFromDefinitions,
             List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
             List<OnCompletionDefinition> onCompletions) {
 
-        prepareRouteImp(context, route, onExceptions, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions,
+        prepareRouteImp(context, route, errorHandler, onExceptions, intercepts, interceptFromDefinitions,
+                interceptSendToEndpointDefinitions,
                 onCompletions);
     }
 
@@ -341,6 +345,7 @@ public final class RouteDefinitionHelper {
      *
      * @param context                            the camel context
      * @param route                              the route
+     * @param errorHandler                       optional error handler
      * @param onExceptions                       optional list of onExceptions
      * @param intercepts                         optional list of interceptors
      * @param interceptFromDefinitions           optional list of interceptFroms
@@ -348,7 +353,9 @@ public final class RouteDefinitionHelper {
      * @param onCompletions                      optional list onCompletions
      */
     private static void prepareRouteImp(
-            CamelContext context, RouteDefinition route, List<OnExceptionDefinition> onExceptions,
+            CamelContext context, RouteDefinition route,
+            ErrorHandlerDefinition errorHandler,
+            List<OnExceptionDefinition> onExceptions,
             List<InterceptDefinition> intercepts,
             List<InterceptFromDefinition> interceptFromDefinitions,
             List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
@@ -370,7 +377,7 @@ public final class RouteDefinitionHelper {
         RouteDefinitionHelper.prepareRouteForInit(route, abstracts, lower);
 
         // parent and error handler builder should be initialized first
-        initParentAndErrorHandlerBuilder(context, route, abstracts, onExceptions);
+        initParentAndErrorHandlerBuilder(context, route, errorHandler, abstracts, onExceptions);
         // validate top-level violations
         validateTopLevel(route.getOutputs());
         // then interceptors
@@ -440,10 +447,13 @@ public final class RouteDefinitionHelper {
     }
 
     private static void initParentAndErrorHandlerBuilder(
-            CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> abstracts,
+            CamelContext context, RouteDefinition route, ErrorHandlerDefinition errorHandler,
+            List<ProcessorDefinition<?>> abstracts,
             List<OnExceptionDefinition> onExceptions) {
 
-        if (context != null) {
+        if (errorHandler != null) {
+            route.setErrorHandlerFactoryIfNull(errorHandler.getErrorHandlerType());
+        } else if (context != null) {
             // let the route inherit the error handler builder from camel
             // context if none already set
 
