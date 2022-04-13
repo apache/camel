@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.NaturalSortComparator;
@@ -67,7 +66,7 @@ public class ConsumeChildrenIT extends ZooKeeperITSupport {
     }
 
     private void validateExchangesContainListings(MockEndpoint mock, List<?>... expected)
-            throws CamelExchangeException, NoSuchHeaderException {
+            throws CamelExchangeException {
         int index = 0;
         for (Exchange received : mock.getReceivedExchanges()) {
             Watcher.Event.EventType expectedEvent;
