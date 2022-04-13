@@ -52,9 +52,9 @@ public class StringTemplateLetterTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").to("string-template:org/apache/camel/component/stringtemplate/letter.tm").to("mock:result");
             }
         };

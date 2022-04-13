@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class StringTemplateViaHeaderTest extends CamelTestSupport {
 
     @Test
-    public void testByHeaderTemplate() throws Exception {
+    public void testByHeaderTemplate() {
         Exchange response = template.request("direct:b", exchange -> {
             exchange.getIn().setHeader("name", "Sheldon");
             exchange.getIn().setHeader(StringTemplateConstants.STRINGTEMPLATE_TEMPLATE,
@@ -40,7 +40,7 @@ public class StringTemplateViaHeaderTest extends CamelTestSupport {
     }
 
     @Test
-    public void testByHeaderUri() throws Exception {
+    public void testByHeaderUri() {
         Exchange response = template.request("direct:a", exchange -> {
             exchange.getIn().setBody("Monday");
             exchange.getIn().setHeader("name", "Christian");
