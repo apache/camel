@@ -47,7 +47,7 @@ public class TrapTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TrapTest.class);
 
     @Test
-    public void testStartRoute() throws Exception {
+    public void testStartRoute() {
         // do nothing here , just make sure the camel route can started.
     }
 
