@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.thrift;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -136,11 +137,11 @@ public class ThriftDataFormat extends ServiceSupport
 
         if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_JSON)) {
             serializer = new TSerializer(new TJSONProtocol.Factory());
-            IOUtils.write(serializer.toString((TBase) graph), outputStream, "UTF-8");
+            IOUtils.write(serializer.toString((TBase) graph), outputStream, StandardCharsets.UTF_8);
             contentTypeHeader = CONTENT_TYPE_HEADER_JSON;
         } else if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_SIMPLE_JSON)) {
             serializer = new TSerializer(new TSimpleJSONProtocol.Factory());
-            IOUtils.write(serializer.toString((TBase) graph), outputStream, "UTF-8");
+            IOUtils.write(serializer.toString((TBase) graph), outputStream, StandardCharsets.UTF_8);
             contentTypeHeader = CONTENT_TYPE_HEADER_JSON;
         } else if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_BINARY)) {
             serializer = new TSerializer(new TBinaryProtocol.Factory());
