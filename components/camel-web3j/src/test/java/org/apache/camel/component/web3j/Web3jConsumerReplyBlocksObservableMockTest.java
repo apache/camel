@@ -101,7 +101,7 @@ public class Web3jConsumerReplyBlocksObservableMockTest extends Web3jMockTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));

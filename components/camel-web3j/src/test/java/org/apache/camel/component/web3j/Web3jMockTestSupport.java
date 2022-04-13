@@ -62,11 +62,11 @@ public class Web3jMockTestSupport extends CamelTestSupport {
     }
 
     @BeforeAll
-    public static void startServer() throws Exception {
+    public static void startServer() {
     }
 
     @AfterAll
-    public static void stopServer() throws Exception {
+    public static void stopServer() {
     }
 
     @Override

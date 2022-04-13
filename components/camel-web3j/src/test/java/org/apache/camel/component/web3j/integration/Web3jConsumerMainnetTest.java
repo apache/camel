@@ -45,7 +45,7 @@ public class Web3jConsumerMainnetTest extends Web3jIntegrationTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
@@ -60,7 +60,7 @@ public class Web3jConsumerMainnetTest extends Web3jIntegrationTestSupport {
                              .to("log:foo?showAll=true&multiline=true&level=INFO")
                              .process(new Processor() {
                                  @Override
-                                 public void process(Exchange exchange) throws Exception {
+                                 public void process(Exchange exchange) {
                                      EthBlock.Block body = exchange.getIn().getBody(EthBlock.Block.class);
                                      List<EthBlock.TransactionResult> transactions = body.getTransactions();
                                      exchange.getIn().setBody(transactions);
