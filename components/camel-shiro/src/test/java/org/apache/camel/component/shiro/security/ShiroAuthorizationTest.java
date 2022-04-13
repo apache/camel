@@ -146,7 +146,7 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
 
         return new RouteBuilder[] { new RouteBuilder() {
             public void configure() {
@@ -206,7 +206,7 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, encrypt());
             exchange.getIn().setBody("Beatle Mania");
         }

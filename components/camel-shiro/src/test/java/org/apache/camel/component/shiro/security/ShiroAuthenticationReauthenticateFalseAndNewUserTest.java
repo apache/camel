@@ -62,7 +62,7 @@ public class ShiroAuthenticationReauthenticateFalseAndNewUserTest extends CamelT
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         final ShiroSecurityPolicy securityPolicy
                 = new ShiroSecurityPolicy("./src/test/resources/securityconfig.ini", passPhrase, false);
 
@@ -84,7 +84,7 @@ public class ShiroAuthenticationReauthenticateFalseAndNewUserTest extends CamelT
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, encrypt());
             exchange.getIn().setBody("Beatle Mania");
         }
