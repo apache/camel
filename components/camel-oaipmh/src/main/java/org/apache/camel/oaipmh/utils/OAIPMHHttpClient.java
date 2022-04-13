@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -99,7 +100,7 @@ public class OAIPMHHttpClient {
                         if (entity == null) {
                             throw new IOException("No response received");
                         }
-                        return EntityUtils.toString(entity, Charset.forName("UTF-8"));
+                        return EntityUtils.toString(entity, StandardCharsets.UTF_8);
                     } else {
                         throw new ClientProtocolException("Unexpected response status: " + status);
                     }
