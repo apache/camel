@@ -19,6 +19,7 @@ package org.apache.camel.component.salesforce.codegen;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -73,7 +74,7 @@ public class SchemaExecution extends AbstractSalesforceExecution {
         final Path schemaFilePath = outputDirectory.toPath().resolve(jsonSchemaFilename);
         try {
             Files.write(schemaFilePath,
-                    JsonUtils.getJsonSchemaString(schemaObjectMapper, allSchemas, jsonSchemaId).getBytes("UTF-8"));
+                    JsonUtils.getJsonSchemaString(schemaObjectMapper, allSchemas, jsonSchemaId).getBytes(StandardCharsets.UTF_8));
         } catch (final IOException e) {
             throw new RuntimeException("Unable to generate JSON Schema source file: " + schemaFilePath, e);
         }
