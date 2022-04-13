@@ -47,7 +47,7 @@ public class PollOIDTest extends CamelTestSupport {
     }
 
     @Test
-    public void testStartRoute() throws Exception {
+    public void testStartRoute() {
         // do nothing here , just make sure the camel route can started.
     }
 

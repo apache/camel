@@ -28,7 +28,7 @@ public class UriConfigurationTest {
     protected CamelContext context = new DefaultCamelContext();
 
     @Test
-    public void testTrapReceiverConfiguration() throws Exception {
+    public void testTrapReceiverConfiguration() {
         context.start();
 
         Endpoint endpoint = context.getEndpoint("snmp:0.0.0.0:1662?protocol=udp&type=TRAP&oids=1.3.6.1.2.1.7.5.1");
@@ -41,7 +41,7 @@ public class UriConfigurationTest {
     }
 
     @Test
-    public void testTrapReceiverWithoutPortConfiguration() throws Exception {
+    public void testTrapReceiverWithoutPortConfiguration() {
         context.start();
 
         Endpoint endpoint = context.getEndpoint("snmp:0.0.0.0?protocol=udp&type=TRAP&oids=1.3.6.1.2.1.7.5.1");
@@ -54,7 +54,7 @@ public class UriConfigurationTest {
     }
 
     @Test
-    public void testOidPollerConfiguration() throws Exception {
+    public void testOidPollerConfiguration() {
         context.start();
 
         Endpoint endpoint = context.getEndpoint("snmp:127.0.0.1:1662?protocol=udp&type=POLL&oids=1.3.6.1.2.1.7.5.1");
