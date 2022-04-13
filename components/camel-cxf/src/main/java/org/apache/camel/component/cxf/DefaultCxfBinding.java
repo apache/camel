@@ -21,6 +21,7 @@ import java.io.Reader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -531,7 +532,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         String contentTypeHeader = ExchangeHelper.getContentType(camelExchange);
         if (contentTypeHeader != null) {
             String charset = HttpHeaderHelper.findCharset(contentTypeHeader);
-            String normalizedEncoding = HttpHeaderHelper.mapCharset(charset, Charset.forName("UTF-8").name());
+            String normalizedEncoding = HttpHeaderHelper.mapCharset(charset, StandardCharsets.UTF_8.name());
             if (normalizedEncoding != null) {
                 camelExchange.setProperty(ExchangePropertyKey.CHARSET_NAME, normalizedEncoding);
             }
