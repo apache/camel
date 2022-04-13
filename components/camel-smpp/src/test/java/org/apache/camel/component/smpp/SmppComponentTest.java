@@ -136,7 +136,7 @@ public class SmppComponentTest {
     }
 
     @Test
-    public void createEndpointSmppConfigurationShouldReturnASmppEndpoint() throws Exception {
+    public void createEndpointSmppConfigurationShouldReturnASmppEndpoint() {
         SmppConfiguration configuration = new SmppConfiguration();
         Endpoint endpoint = component.createEndpoint(configuration);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
@@ -152,7 +152,7 @@ public class SmppComponentTest {
     }
 
     @Test
-    public void createEndpointStringSmppConfigurationShouldReturnASmppEndpoint() throws Exception {
+    public void createEndpointStringSmppConfigurationShouldReturnASmppEndpoint() {
         SmppConfiguration configuration = new SmppConfiguration();
         Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775?password=password", configuration);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
