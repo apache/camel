@@ -80,10 +80,10 @@ public class AutomatedConversionTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // we setup a Syslog listener on a random port.
                 from("mina:udp://127.0.0.1:" + serverPort).unmarshal().syslog().process(new Processor() {
                     @Override
