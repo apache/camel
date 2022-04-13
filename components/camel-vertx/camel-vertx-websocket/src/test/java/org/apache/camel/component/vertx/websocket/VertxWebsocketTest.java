@@ -268,10 +268,10 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .toF("vertx-websocket:localhost:%d/test", port);
 
@@ -286,7 +286,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
                         .setBody(simple("Hello ${body}"))
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 int serverPort = getVertxServerRandomPort();
                                 exchange.getMessage().setHeader("port", serverPort);
                             }

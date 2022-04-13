@@ -35,7 +35,7 @@ public class VertxHttpGzipTest extends VertxHttpTestSupport {
     private volatile String message;
 
     @Test
-    public void testCompressedResponse() throws InterruptedException {
+    public void testCompressedResponse() {
         // Invoke the endpoint without compression support to get the raw gzipped response
         String result = template.requestBodyAndHeader(getProducerUri(), null, "Accept-Encoding", "gzip,deflate", String.class);
         // Result is compressed so the length should be less than the original message
@@ -49,10 +49,10 @@ public class VertxHttpGzipTest extends VertxHttpTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 getContext().getRegistry().bind("gzip", createGzipHandler());
 
                 from(getTestServerUri() + "?handlers=gzip")
@@ -73,7 +73,7 @@ public class VertxHttpGzipTest extends VertxHttpTestSupport {
                         .addEncodingHandler("gzip", new GzipEncodingProvider(), 50, Predicates.parse("max-content-size[5]")))
                                 .setNext(new HttpHandler() {
                                     @Override
-                                    public void handleRequest(final HttpServerExchange exchange) throws Exception {
+                                    public void handleRequest(final HttpServerExchange exchange) {
                                         exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, message.length() + "");
                                         exchange.getResponseSender().send(message, IoCallback.END_EXCHANGE);
                                     }

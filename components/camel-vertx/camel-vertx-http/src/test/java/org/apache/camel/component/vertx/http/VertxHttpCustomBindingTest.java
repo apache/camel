@@ -46,7 +46,7 @@ public class VertxHttpCustomBindingTest extends VertxHttpTestSupport {
         VertxHttpComponent component = new VertxHttpComponent();
         component.setVertxHttpBinding(new VertxHttpBinding() {
             @Override
-            public HttpRequest<Buffer> prepareHttpRequest(VertxHttpEndpoint endpoint, Exchange exchange) throws Exception {
+            public HttpRequest<Buffer> prepareHttpRequest(VertxHttpEndpoint endpoint, Exchange exchange) {
                 VertxHttpConfiguration configuration = endpoint.getConfiguration();
                 URI httpURI = configuration.getHttpUri();
                 WebClient webClient = endpoint.getWebClient();
@@ -66,14 +66,12 @@ public class VertxHttpCustomBindingTest extends VertxHttpTestSupport {
 
             @Override
             public Object processResponseBody(
-                    VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result, boolean exceptionOnly)
-                    throws Exception {
+                    VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result, boolean exceptionOnly) {
                 return null;
             }
 
             @Override
-            public Throwable handleResponseFailure(VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result)
-                    throws Exception {
+            public Throwable handleResponseFailure(VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result) {
                 return null;
             }
 
@@ -93,10 +91,10 @@ public class VertxHttpCustomBindingTest extends VertxHttpTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerUri() + "/overridden")
                         .setBody(constant("Hello World"));
             }

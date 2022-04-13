@@ -54,7 +54,7 @@ public class VertxHttpProducerTest extends VertxHttpTestSupport {
 
         Exchange exchange = template.request(getProducerUri() + "/content/type", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json; charset=iso-8859-4");
             }
         });
@@ -71,17 +71,17 @@ public class VertxHttpProducerTest extends VertxHttpTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(getTestServerUri())
                         .setBody(constant("Hello World"));
 
                 from(getTestServerUri() + "/content/type")
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String contentType = ExchangeHelper.getContentType(exchange);
                                 if (!contentType.startsWith("application/json")) {
                                     throw new IllegalStateException("Unexpected Content-Type header");

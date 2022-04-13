@@ -39,7 +39,7 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromF("vertx-websocket:localhost:%d/test?router=#customRouter", port)
                         .to("mock:result");
             }
@@ -80,7 +80,7 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
         context.addComponent("vertx-websocket", component);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromF("vertx-websocket:localhost:%d/test", port)
                         .to("mock:result");
             }
@@ -117,7 +117,7 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
         context.addComponent("vertx-websocket", component);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromF("vertx-websocket:localhost:%d/test?router=#customRouter", port)
                         .to("mock:result");
             }
@@ -157,7 +157,7 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromF("vertx-websocket:localhost:%d/test", port)
                         .to("mock:result");
             }
@@ -187,6 +187,6 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
     }
 
     @Override
-    protected void startCamelContext() throws Exception {
+    protected void startCamelContext() {
     }
 }

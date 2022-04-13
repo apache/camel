@@ -38,10 +38,10 @@ public class VertxWebsocketMultiConsumerTest extends VertxWebSocketTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromF("vertx-websocket:localhost:%d/test/a", port)
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");

@@ -66,10 +66,10 @@ public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestS
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("vertx-websocket:///default/configuration")
                         .to("mock:defaultConfiguration");
             }

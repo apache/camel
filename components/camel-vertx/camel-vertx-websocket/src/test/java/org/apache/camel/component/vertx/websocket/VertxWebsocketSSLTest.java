@@ -75,7 +75,7 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .toF("vertx-websocket:localhost:%d/echo?sslContextParameters=#clientSSLParameters", port);
 
@@ -107,7 +107,7 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .toF("vertx-websocket:localhost:%d/echo?sslContextParameters=#clientSSLParameters", port);
 
@@ -138,6 +138,6 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
     }
 
     @Override
-    protected void startCamelContext() throws Exception {
+    protected void startCamelContext() {
     }
 }
