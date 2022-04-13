@@ -17,7 +17,7 @@
 package org.apache.camel.component.leveldb;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -456,22 +456,14 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     }
 
     public static byte[] keyBuilder(String repo, String key) {
-        try {
-            return (repo + '\0' + key).getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeCamelException(e);
-        }
+        return (repo + '\0' + key).getBytes(StandardCharsets.UTF_8);
     }
 
     public static String asString(byte[] value) {
         if (value == null) {
             return null;
         } else {
-            try {
-                return new String(value, "UTF-8");
-            } catch (UnsupportedEncodingException var2) {
-                throw new RuntimeCamelException(var2);
-            }
+            return new String(value, StandardCharsets.UTF_8);
         }
     }
 
