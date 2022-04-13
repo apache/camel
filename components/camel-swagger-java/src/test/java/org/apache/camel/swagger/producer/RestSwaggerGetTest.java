@@ -37,10 +37,10 @@ public class RestSwaggerGetTest extends CamelTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().host("camelhost").producerComponent("dummy");
 
                 from("direct:start").to("rest:get:hello/hi/{name}?apiDoc=hello-api.json").to("mock:result");

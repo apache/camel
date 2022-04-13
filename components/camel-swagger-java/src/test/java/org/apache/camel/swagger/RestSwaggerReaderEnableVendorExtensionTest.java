@@ -45,10 +45,10 @@ public class RestSwaggerReaderEnableVendorExtensionTest extends CamelTestSupport
     private Object dummy = new Object();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable vendor extensions
                 restConfiguration().apiVendorExtension(true);
 
