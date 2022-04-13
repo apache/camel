@@ -52,10 +52,10 @@ public class WebhookUriEncodingTest extends WebhookTestBase {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 restConfiguration()
                         .host("0.0.0.0")

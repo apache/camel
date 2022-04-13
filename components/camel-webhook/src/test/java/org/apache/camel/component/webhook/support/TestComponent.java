@@ -35,7 +35,7 @@ public class TestComponent extends DefaultComponent {
     }
 
     @Override
-    protected TestEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected TestEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
         if (this.endpoint == null) {
             this.endpoint = new TestEndpoint(uri, this);
             if (this.customizer != null) {
