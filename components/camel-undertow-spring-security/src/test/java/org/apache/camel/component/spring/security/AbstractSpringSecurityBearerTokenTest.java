@@ -48,7 +48,7 @@ public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSup
     }
 
     @BeforeAll
-    public static void initPort() throws Exception {
+    public static void initPort() {
         port = AvailablePortFinder.getNextAvailable();
     }
 
@@ -73,7 +73,7 @@ public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSup
     }
 
     @BindToRegistry("prop")
-    public Properties loadProperties() throws Exception {
+    public Properties loadProperties() {
 
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
