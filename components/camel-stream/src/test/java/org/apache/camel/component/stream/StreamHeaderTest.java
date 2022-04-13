@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.stream;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -61,7 +60,7 @@ public class StreamHeaderTest extends CamelTestSupport {
     private class MyOutputStream extends OutputStream {
 
         @Override
-        public void write(int b) throws IOException {
+        public void write(int b) {
             sb.append((char) b);
         }
     }

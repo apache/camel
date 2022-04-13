@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.stream.mock;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -38,11 +37,11 @@ public class MockURLConnection extends URLConnection {
     }
 
     @Override
-    public void connect() throws IOException {
+    public void connect() {
     }
 
     @Override
-    public OutputStream getOutputStream() throws IOException {
+    public OutputStream getOutputStream() {
         return THREAD_OUTPUT_STREAM.get();
     }
 

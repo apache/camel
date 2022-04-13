@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class StreamDelayTest extends CamelTestSupport {
 
     @Test
-    public void testStringContent() throws Exception {
+    public void testStringContent() {
         long start = System.currentTimeMillis();
         template.sendBody("direct:in", "Hello Text World\n");
         long delta = System.currentTimeMillis() - start;

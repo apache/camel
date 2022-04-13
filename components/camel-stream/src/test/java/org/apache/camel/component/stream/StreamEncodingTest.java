@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 public class StreamEncodingTest extends CamelTestSupport {
 
     @Test
-    public void testStringContent() throws Exception {
+    public void testStringContent() {
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
         String body = "Hello Thai Elephant \u0E08";
 

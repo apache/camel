@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.stream.mock;
 
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
@@ -27,7 +26,7 @@ import java.net.URLStreamHandler;
 public class Handler extends URLStreamHandler {
 
     @Override
-    protected URLConnection openConnection(URL u) throws IOException {
+    protected URLConnection openConnection(URL u) {
         return new MockURLConnection(u);
     }
 

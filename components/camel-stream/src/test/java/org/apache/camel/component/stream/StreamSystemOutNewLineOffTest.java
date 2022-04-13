@@ -38,7 +38,7 @@ public class StreamSystemOutNewLineOffTest extends CamelTestSupport {
 
     // START SNIPPET: e1
     @Test
-    public void testStringContent() throws Exception {
+    public void testStringContent() {
         try {
             // Given
             System.setOut(new PrintStream(mockOut));
