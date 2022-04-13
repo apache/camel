@@ -49,7 +49,7 @@ public class ZooKeeperGroupTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         int port = findFreePort();
         curator = CuratorFrameworkFactory.builder()
                 .connectString("localhost:" + port)

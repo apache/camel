@@ -98,7 +98,7 @@ public class MasterEndpointFailoverIT {
     }
 
     @AfterEach
-    public void afterRun() throws Exception {
+    public void afterRun() {
         consumerContext1.stop();
         consumerContext2.stop();
         producerContext.stop();
