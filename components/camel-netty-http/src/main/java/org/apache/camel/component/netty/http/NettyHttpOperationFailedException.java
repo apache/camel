@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.io.UnsupportedEncodingException;
-
 import io.netty.handler.codec.http.HttpContent;
 import org.apache.camel.CamelException;
 import org.apache.camel.component.netty.NettyConverter;
@@ -47,13 +45,7 @@ public class NettyHttpOperationFailedException extends CamelException {
         this.redirectLocation = location;
         this.content = content;
 
-        String str = "";
-        try {
-            str = NettyConverter.toString(content.content(), null);
-        } catch (UnsupportedEncodingException e) {
-            // ignore
-        }
-        this.contentAsString = str;
+        this.contentAsString = NettyConverter.toString(content.content(), null);
     }
 
     public String getUri() {
