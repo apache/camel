@@ -45,7 +45,7 @@ public class RealtimeSearchTest extends SplunkTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:submit")

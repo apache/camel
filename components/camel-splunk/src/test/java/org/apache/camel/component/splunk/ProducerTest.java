@@ -154,13 +154,13 @@ public class ProducerTest extends SplunkMockTestSupport {
     }
 
     @Test
-    public void testBodyWithoutRawOption() throws Exception {
+    public void testBodyWithoutRawOption() {
         assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:tcp", "foobar"));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:stream").to(

@@ -45,7 +45,7 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createProducerWithoutUserAndPassword() throws Exception {
+    public void createProducerWithoutUserAndPassword() {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
         assertThrows(IllegalArgumentException.class,
                 () -> component.createEndpoint("splunk://test"));
