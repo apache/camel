@@ -745,7 +745,8 @@ public final class Olingo4AppImpl implements Olingo4App {
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
 
                     batchRequestHeaderOutputStream.write(
-                            (HttpGet.METHOD_NAME + " " + batchQueryUri + " " + HttpVersion.HTTP_1_1).getBytes(StandardCharsets.UTF_8));
+                            (HttpGet.METHOD_NAME + " " + batchQueryUri + " " + HttpVersion.HTTP_1_1)
+                                    .getBytes(StandardCharsets.UTF_8));
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
                     final ContentType acceptType = getResourceContentType(uriInfo);
                     final String acceptCharset = acceptType.getParameter(ContentType.PARAMETER_CHARSET);
@@ -828,7 +829,8 @@ public final class Olingo4AppImpl implements Olingo4App {
         try {
             final Header[] contentHeaders = response.getHeaders(HttpHeader.CONTENT_TYPE);
             final ODataBatchLineIterator batchLineIterator
-                    = new ODataBatchLineIteratorImpl(IOUtils.lineIterator(response.getEntity().getContent(), StandardCharsets.UTF_8));
+                    = new ODataBatchLineIteratorImpl(
+                            IOUtils.lineIterator(response.getEntity().getContent(), StandardCharsets.UTF_8));
             final String batchBoundary = ODataBatchUtilities.getBoundaryFromHeader(getHeadersCollection(contentHeaders));
             final ODataBatchController batchController = new ODataBatchController(batchLineIterator, batchBoundary);
 

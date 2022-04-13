@@ -702,7 +702,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         // Create plain edi request message to acknowledge
         ApplicationEDIEntity ediEntity = EntityUtils.createEDIEntity(EDI_MESSAGE,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, false, ATTACHED_FILE_NAME);
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, false,
+                ATTACHED_FILE_NAME);
         HttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", REQUEST_URI);
         HttpMessageUtils.setHeaderValue(request, AS2Header.SUBJECT, SUBJECT);
         String httpdate = DATE_GENERATOR.getCurrentDate();
