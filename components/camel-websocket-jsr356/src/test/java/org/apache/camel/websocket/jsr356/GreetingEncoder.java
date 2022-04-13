@@ -16,7 +16,6 @@
  */
 package org.apache.camel.websocket.jsr356;
 
-import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
@@ -34,7 +33,7 @@ public class GreetingEncoder implements Encoder.Text<String> {
     }
 
     @Override
-    public String encode(String message) throws EncodeException {
+    public String encode(String message) {
         return "Hello " + message;
     }
 }
