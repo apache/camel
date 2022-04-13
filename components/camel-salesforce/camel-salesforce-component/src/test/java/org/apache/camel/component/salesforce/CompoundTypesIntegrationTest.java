@@ -23,8 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -90,7 +90,8 @@ public class CompoundTypesIntegrationTest extends AbstractSalesforceTestBase {
 
         } finally {
             // delete the test SObject
-            assertNull(template().requestBody("direct:deleteSObject" + suffix, result.getId()));
+            String id = (String) template().requestBody("direct:deleteSObject" + suffix, result.getId());
+            assertEquals(id, result.getId());
             LOG.debug("Delete successful");
         }
     }

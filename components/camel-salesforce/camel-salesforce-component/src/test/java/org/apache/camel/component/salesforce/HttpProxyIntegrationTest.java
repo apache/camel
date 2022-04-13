@@ -38,6 +38,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.B64Code;
 import org.eclipse.jetty.util.StringUtil;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,8 +150,8 @@ public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
         configurationMethod.accept(salesforce);
     }
 
-    @Override
-    public void cleanupResources() throws Exception {
+    @AfterAll
+    public static void cleanup() throws Exception {
         // stop the proxy server after component
         LOG.info("Stopping proxy server...");
         server.stop();
