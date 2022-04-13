@@ -42,7 +42,7 @@ public class AbstractSmppCommandTest {
 
         command = new AbstractSmppCommand(session, config) {
             @Override
-            public void execute(Exchange exchange) throws SmppException {
+            public void execute(Exchange exchange) {
             }
         };
     }

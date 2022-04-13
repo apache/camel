@@ -199,7 +199,7 @@ public class SmppBindingTest {
     }
 
     @Test
-    public void createSmppMessageFromDeliveryReceiptWithoutShortMessageShouldNotThrowException() throws Exception {
+    public void createSmppMessageFromDeliveryReceiptWithoutShortMessageShouldNotThrowException() {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
         deliverSm.setOptionalParameters(new OptionalParameter.Short((short) 0x2153, (short) 0));
@@ -280,7 +280,7 @@ public class SmppBindingTest {
     }
 
     @Test
-    public void createSmppMessageFromDataSmShouldReturnASmppMessage() throws Exception {
+    public void createSmppMessageFromDataSmShouldReturnASmppMessage() {
         DataSm dataSm = new DataSm();
         dataSm.setSequenceNumber(1);
         dataSm.setCommandId(1);

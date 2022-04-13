@@ -116,7 +116,7 @@ public class SmppComponentManualIT extends CamelTestSupport {
     }
 
     @Test
-    public void sendCancelSM() throws Exception {
+    public void sendCancelSM() {
         Exchange exchange = start.createExchange(ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "CancelSm");
         exchange.getIn().setHeader(SmppConstants.ID, "1");
@@ -127,7 +127,7 @@ public class SmppComponentManualIT extends CamelTestSupport {
     }
 
     @Test
-    public void sendQuerySM() throws Exception {
+    public void sendQuerySM() {
         Exchange exchange = start.createExchange(ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "QuerySm");
         exchange.getIn().setHeader(SmppConstants.ID, "1");
@@ -141,7 +141,7 @@ public class SmppComponentManualIT extends CamelTestSupport {
     }
 
     @Test
-    public void sendReplaceSM() throws Exception {
+    public void sendReplaceSM() {
         Exchange exchange = start.createExchange(ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
         exchange.getIn().setBody("Hello Camel World!");
@@ -153,7 +153,7 @@ public class SmppComponentManualIT extends CamelTestSupport {
     }
 
     @Test
-    public void sendDataSM() throws Exception {
+    public void sendDataSM() {
         Exchange exchange = start.createExchange(ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "DataSm");
 
@@ -163,7 +163,7 @@ public class SmppComponentManualIT extends CamelTestSupport {
     }
 
     @Test
-    public void sendSubmitMultiSM() throws Exception {
+    public void sendSubmitMultiSM() {
         Exchange exchange = start.createExchange(ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitMulti");
         exchange.getIn().setBody("Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
@@ -177,10 +177,10 @@ public class SmppComponentManualIT extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=producer");
 
