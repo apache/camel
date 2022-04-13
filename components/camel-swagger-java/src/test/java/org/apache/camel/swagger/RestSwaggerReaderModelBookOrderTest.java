@@ -44,10 +44,10 @@ public class RestSwaggerReaderModelBookOrderTest extends CamelTestSupport {
     private Object dummy = new Object();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // this user REST service is json only
                 rest("/books").tag("dude").description("Book order service").consumes("application/json")
                         .produces("application/json")

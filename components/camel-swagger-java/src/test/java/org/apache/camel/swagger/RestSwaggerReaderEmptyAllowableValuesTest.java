@@ -41,10 +41,10 @@ public class RestSwaggerReaderEmptyAllowableValuesTest extends CamelTestSupport 
     private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest("/rest").consumes("application/json")
                         .produces("text/plain").get("/test")
                         .responseMessage().code(200)

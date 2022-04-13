@@ -45,10 +45,10 @@ public class RestSwaggerReaderModelApiSecurityTest extends CamelTestSupport {
     private Object dummy = new Object();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest("/user").tag("dude").description("User rest service")
                         // setup security definitions
                         .securityDefinitions().oauth2("petstore_auth")

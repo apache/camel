@@ -41,10 +41,10 @@ public class RestSwaggerReaderFileResponseModelTest extends CamelTestSupport {
     private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest("/hello").consumes("application/json").produces("application/octet-stream").get("/pdf/{name}")
                         .description("Saying hi").param().name("name").type(RestParamType.path)
                         .dataType("string").description("Who is it").example("Donald Duck").endParam()
