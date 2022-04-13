@@ -2794,7 +2794,7 @@ public class Calculator {
             return sb.toString();
         }
 
-        public void validate() throws org.apache.thrift.TException {
+        public void validate() {
             // check for required fields
             // check for sub-struct validity
             if (w != null) {
@@ -3928,7 +3928,7 @@ public class Calculator {
             return sb.toString();
         }
 
-        public void validate() throws org.apache.thrift.TException {
+        public void validate() {
             // check for required fields
             // check for sub-struct validity
             if (w != null) {
@@ -4301,7 +4301,7 @@ public class Calculator {
             return sb.toString();
         }
 
-        public void validate() throws org.apache.thrift.TException {
+        public void validate() {
             // check for required fields
             // check for sub-struct validity
             if (success != null) {
@@ -5643,7 +5643,7 @@ public class Calculator {
             return sb.toString();
         }
 
-        public void validate() throws org.apache.thrift.TException {
+        public void validate() {
             // check for required fields
             // check for sub-struct validity
             if (v9 != null) {
