@@ -277,6 +277,5 @@ public interface SmppConstants {
               javaType = "String")
     String SPLITTING_POLICY = "CamelSmppSplittingPolicy";
 
-    String UCS2_ENCODING = "UTF-16BE";
     byte UNKNOWN_ALPHABET = -1;
 }
