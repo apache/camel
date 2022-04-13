@@ -53,10 +53,10 @@ public class SplitCustomThreadPoolTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // register a custom thread pool profile with id myLowPool
                 context.getExecutorServiceManager().registerThreadPoolProfile(
                         new ThreadPoolProfileBuilder("myLowPool").poolSize(2).maxPoolSize(10).build());
