@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import com.google.protobuf.Message;
@@ -135,7 +136,7 @@ public class ProtobufDataFormat extends ServiceSupport
 
         String contentTypeHeader = CONTENT_TYPE_HEADER_NATIVE;
         if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_JSON)) {
-            IOUtils.write(JsonFormat.printer().print(inputMessage), outputStream, "UTF-8");
+            IOUtils.write(JsonFormat.printer().print(inputMessage), outputStream, StandardCharsets.UTF_8);
             contentTypeHeader = CONTENT_TYPE_HEADER_JSON;
         } else if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_NATIVE)) {
             inputMessage.writeTo(outputStream);
