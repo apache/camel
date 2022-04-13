@@ -42,10 +42,10 @@ public class StringTemplateCustomDelimiterTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(DIRECT_BRACE).to(
                         "string-template:org/apache/camel/component/stringtemplate/custom-delimiter-brace.tm?delimiterStart={&delimiterStop=}");
                 from(DIRECT_DOLLAR).to(
