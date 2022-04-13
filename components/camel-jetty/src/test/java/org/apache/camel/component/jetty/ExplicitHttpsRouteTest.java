@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
