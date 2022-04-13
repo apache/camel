@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.as2.api.util;
 
-import org.apache.camel.component.as2.api.AS2Charset;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
@@ -43,7 +44,7 @@ public class EntityUtilsTest {
 
     @Test
     public void testCreateEDIEntityContentTypeWithEncoding() throws Exception {
-        ContentType ediMessageContentType = ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII);
+        ContentType ediMessageContentType = ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII);
         String ediMessage = "whatever";
         ApplicationEDIEntity applicationEDIEntity
                 = EntityUtils.createEDIEntity(ediMessage, ediMessageContentType, null, false, "sample.txt");

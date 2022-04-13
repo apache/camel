@@ -17,6 +17,7 @@
 package org.apache.camel.component.as2;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
@@ -32,7 +33,6 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
-import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2CompressionAlgorithm;
 import org.apache.camel.component.as2.api.AS2Constants;
 import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
@@ -239,7 +239,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.PLAIN);
         // parameter type is org.apache.http.entity.ContentType
         headers.put("CamelAS2.ediMessageContentType",
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII));
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII.name()));
         // parameter type is String
         headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is String
@@ -282,10 +282,10 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
                 = (DispositionNotificationMultipartReportEntity) responseEntity;
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
-        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, AS2Charset.US_ASCII).toString(),
+        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
                 firstPart.getContentTypeValue(), "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, AS2Charset.US_ASCII).toString(),
+        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, StandardCharsets.US_ASCII).toString(),
                 secondPart.getContentTypeValue(),
                 "Unexpected content type in second body part of report");
 
@@ -318,7 +318,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.PLAIN);
         // parameter type is org.apache.http.entity.ContentType
         headers.put("CamelAS2.ediMessageContentType",
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII));
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII));
         // parameter type is String
         headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is String
@@ -361,10 +361,10 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
                 = (DispositionNotificationMultipartReportEntity) responseEntity;
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
-        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, AS2Charset.US_ASCII).toString(),
+        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
                 firstPart.getContentTypeValue(), "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, AS2Charset.US_ASCII).toString(),
+        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, StandardCharsets.US_ASCII).toString(),
                 secondPart.getContentTypeValue(),
                 "Unexpected content type in second body part of report");
 
@@ -401,7 +401,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.ENCRYPTED);
         // parameter type is org.apache.http.entity.ContentType
         headers.put("CamelAS2.ediMessageContentType",
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII));
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII));
         // parameter type is String
         headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is String
@@ -453,10 +453,10 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
                 = (DispositionNotificationMultipartReportEntity) responseEntity;
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
-        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, AS2Charset.US_ASCII).toString(),
+        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
                 firstPart.getContentTypeValue(), "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, AS2Charset.US_ASCII).toString(),
+        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, StandardCharsets.US_ASCII).toString(),
                 secondPart.getContentTypeValue(),
                 "Unexpected content type in second body part of report");
 
@@ -493,7 +493,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.SIGNED);
         // parameter type is org.apache.http.entity.ContentType
         headers.put("CamelAS2.ediMessageContentType",
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII));
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII));
         // parameter type is String
         headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is org.apache.camel.component.as2.api.AS2SignatureAlgorithm
@@ -554,10 +554,10 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
                 = (DispositionNotificationMultipartReportEntity) responseSignedDataEntity;
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
-        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, AS2Charset.US_ASCII).toString(),
+        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
                 firstPart.getContentTypeValue(), "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, AS2Charset.US_ASCII).toString(),
+        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, StandardCharsets.US_ASCII).toString(),
                 secondPart.getContentTypeValue(),
                 "Unexpected content type in second body part of report");
         ApplicationPkcs7SignatureEntity signatureEntity = responseSignedEntity.getSignatureEntity();
@@ -601,7 +601,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.PLAIN_COMPRESSED);
         // parameter type is org.apache.http.entity.ContentType
         headers.put("CamelAS2.ediMessageContentType",
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII));
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII));
         // parameter type is String
         headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is org.apache.camel.component.as2.api.AS2CompressionAlgorithm
@@ -659,10 +659,10 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
                 = (DispositionNotificationMultipartReportEntity) responseSignedDataEntity;
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
-        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, AS2Charset.US_ASCII).toString(),
+        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
                 firstPart.getContentTypeValue(), "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, AS2Charset.US_ASCII).toString(),
+        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, StandardCharsets.US_ASCII).toString(),
                 secondPart.getContentTypeValue(),
                 "Unexpected content type in second body part of report");
         ApplicationPkcs7SignatureEntity signatureEntity = responseSignedEntity.getSignatureEntity();
@@ -702,7 +702,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         // Create plain edi request message to acknowledge
         ApplicationEDIEntity ediEntity = EntityUtils.createEDIEntity(EDI_MESSAGE,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, false, ATTACHED_FILE_NAME);
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, false, ATTACHED_FILE_NAME);
         HttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", REQUEST_URI);
         HttpMessageUtils.setHeaderValue(request, AS2Header.SUBJECT, SUBJECT);
         String httpdate = DATE_GENERATOR.getCurrentDate();
