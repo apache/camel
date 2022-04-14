@@ -199,27 +199,34 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
             final String aliasTitle = aTitle;
 
-            ComponentModel parentData = null;
-            Class<?> superclass = classElement.getSuperclass();
-            if (superclass != null) {
-                parentData = models.get(superclass);
-                if (parentData == null) {
-                    UriEndpoint parentUriEndpoint = superclass.getAnnotation(UriEndpoint.class);
-                    if (parentUriEndpoint != null) {
-                        String parentScheme = parentUriEndpoint.scheme().split(",")[0];
-                        String superClassName = superclass.getName();
-                        String packageName = superClassName.substring(0, superClassName.lastIndexOf('.'));
-                        String fileName = packageName.replace('.', '/') + "/" + parentScheme + ".json";
-                        String json = loadResource(fileName);
-                        parentData = JsonMapper.generateComponentModel(json);
-                    }
-                }
-            }
+            ComponentModel parentData = collectParentData(models, classElement);
 
             ComponentModel model = writeJSonSchemeAndPropertyConfigurer(classElement, uriEndpoint, aliasTitle, alias,
                     extendsAlias, label, schemes, parentData);
             models.put(classElement, model);
         }
+    }
+
+    private ComponentModel collectParentData(Map<Class, ComponentModel> models, Class<?> classElement) {
+        ComponentModel parentData = null;
+        final Class<?> superclass = classElement.getSuperclass();
+
+        if (superclass != null) {
+            parentData = models.get(superclass);
+            if (parentData == null) {
+                UriEndpoint parentUriEndpoint = superclass.getAnnotation(UriEndpoint.class);
+                if (parentUriEndpoint != null) {
+                    String parentScheme = parentUriEndpoint.scheme().split(",")[0];
+                    String superClassName = superclass.getName();
+                    String packageName = superClassName.substring(0, superClassName.lastIndexOf('.'));
+                    String fileName = packageName.replace('.', '/') + "/" + parentScheme + ".json";
+                    String json = loadResource(fileName);
+                    parentData = JsonMapper.generateComponentModel(json);
+                }
+            }
+        }
+
+        return parentData;
     }
 
     private int compareClasses(Class<?> c1, Class<?> c2) {
@@ -676,6 +683,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     private void generateComponentConfigurer(
             UriEndpoint uriEndpoint, String scheme, String[] schemes, ComponentModel componentModel,
             ComponentModel parentData) {
+
         if (!uriEndpoint.generateConfigurer()) {
             return;
         }
@@ -685,8 +693,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         String pfqn;
         boolean hasSuper;
-        if (parentData != null
-                && loadClass(componentModel.getJavaType()).getSuperclass() == loadClass(parentData.getJavaType())) {
+
+        Class<?> superClazz = loadClass(componentModel.getJavaType()).getSuperclass();
+        if (parentData != null && superClazz.getName().equals(parentData.getJavaType())) {
             // special for activemq and amqp scheme which should reuse jms
             pfqn = parentData.getJavaType() + "Configurer";
             hasSuper = true;
@@ -734,10 +743,12 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         if (isFirstScheme(scheme, schemes)) {
             return;
         }
+
+        Class<?> superClazz = loadClass(componentModel.getJavaType()).getSuperclass();
+
         String pfqn;
         boolean hasSuper;
-        if (parentData != null
-                && loadClass(componentModel.getJavaType()).getSuperclass() == loadClass(parentData.getJavaType())) {
+        if (parentData != null && superClazz.getName().equals(parentData.getJavaType())) {
             try {
                 pfqn = classElement.getSuperclass().getName() + "Configurer";
                 hasSuper = true;
