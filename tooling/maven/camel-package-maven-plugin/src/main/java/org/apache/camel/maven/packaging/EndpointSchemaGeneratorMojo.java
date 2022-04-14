@@ -1170,15 +1170,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 }
             }
 
-            String excludedProperties = getExcludedEnd(classElement.getAnnotation(Metadata.class));
+            collectExcludes(classElement, excludes);
+
             Metadata metadata;
-
-            final UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
-            if (uriEndpoint != null) {
-                Collections.addAll(excludes, excludedProperties.split(","));
-            }
-            for (Field fieldElement : classElement.getDeclaredFields()) {
-
+            for (final Field fieldElement : classElement.getDeclaredFields()) {
                 metadata = fieldElement.getAnnotation(Metadata.class);
                 if (metadata != null && metadata.skip()) {
                     continue;
@@ -1190,125 +1185,15 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 }
                 Boolean secret = metadata != null ? metadata.secret() : null;
 
-                UriPath path = fieldElement.getAnnotation(UriPath.class);
-                String fieldName = fieldElement.getName();
-                // component options should not include @UriPath as they are for endpoints only
-                if (!componentOption && path != null) {
-                    String name = prefix + (Strings.isNullOrEmpty(path.name()) ? fieldName : path.name());
-
-                    // should we exclude the name?
-                    if (excludes.contains(name)) {
-                        continue;
-                    }
-
-                    Object defaultValue = path.defaultValue();
-                    if ("".equals(defaultValue) && metadata != null) {
-                        defaultValue = metadata.defaultValue();
-                    }
-                    String defaultValueNote = path.defaultValueNote();
-                    boolean required = metadata != null && metadata.required();
-                    String label = path.label();
-                    if (Strings.isNullOrEmpty(label) && metadata != null) {
-                        label = metadata.label();
-                    }
-                    String displayName = path.displayName();
-                    if (Strings.isNullOrEmpty(displayName)) {
-                        displayName = metadata != null ? metadata.displayName() : null;
-                    }
-                    // compute a display name if we don't have anything
-                    if (Strings.isNullOrEmpty(displayName)) {
-                        displayName = Strings.asTitle(name);
-                    }
-
-                    Class<?> fieldTypeElement = fieldElement.getType();
-                    String fieldTypeName = getTypeName(GenericsUtil.resolveType(orgClassElement, fieldElement));
-
-                    String docComment = path.description();
-                    if (Strings.isNullOrEmpty(docComment)) {
-                        docComment = findJavaDoc(fieldElement, fieldName, name, classElement, false);
-                    }
-
-                    // gather enums
-                    List<String> enums = gatherEnums(path, fieldTypeElement);
-
-                    // the field type may be overloaded by another type
-                    boolean isDuration = false;
-                    if (!Strings.isNullOrEmpty(path.javaType())) {
-                        String mjt = path.javaType();
-                        if ("java.time.Duration".equals(mjt)) {
-                            isDuration = true;
-                        } else {
-                            fieldTypeName = mjt;
-                        }
-                    }
-
-                    // prepare default value so its value is correct according to its type
-                    defaultValue = getDefaultValue(defaultValue, fieldTypeName, isDuration);
-
-                    boolean isSecret = secret != null && secret || path.secret();
-                    boolean isAutowired = metadata != null && metadata.autowired();
-                    String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
-                            componentModel.isProducerOnly());
-
-                    // generics for collection types
-                    String nestedType = null;
-                    String desc = fieldTypeName;
-                    if (desc.contains("<") && desc.contains(">")) {
-                        desc = Strings.between(desc, "<", ">");
-                        // if it has additional nested types, then we only want the outer type
-                        int pos = desc.indexOf('<');
-                        if (pos != -1) {
-                            desc = desc.substring(0, pos);
-                        }
-                        // if its a map then it has a key/value, so we only want the last part
-                        pos = desc.indexOf(',');
-                        if (pos != -1) {
-                            desc = desc.substring(pos + 1);
-                        }
-                        desc = desc.replace('$', '.');
-                        desc = desc.trim();
-                        // skip if the type is generic or a wildcard
-                        if (!desc.isEmpty() && desc.indexOf('?') == -1 && !desc.contains(" extends ")) {
-                            nestedType = desc;
-                        }
-                    }
-
-                    BaseOptionModel option;
-                    if (componentOption) {
-                        option = new ComponentOptionModel();
-                    } else {
-                        option = new EndpointOptionModel();
-                    }
-                    option.setName(name);
-                    option.setKind("path");
-                    option.setDisplayName(displayName);
-                    option.setType(getType(fieldTypeName, false, isDuration));
-                    option.setJavaType(fieldTypeName);
-                    option.setRequired(required);
-                    option.setDefaultValue(defaultValue);
-                    option.setDefaultValueNote(defaultValueNote);
-                    option.setDescription(docComment.trim());
-                    option.setDeprecated(deprecated);
-                    option.setDeprecationNote(deprecationNote);
-                    option.setSecret(isSecret);
-                    option.setAutowired(isAutowired);
-                    option.setGroup(group);
-                    option.setLabel(label);
-                    option.setEnums(enums);
-                    option.setNestedType(nestedType);
-                    option.setConfigurationClass(nestedTypeName);
-                    option.setConfigurationField(nestedFieldName);
-                    if (componentModel.getEndpointOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
-                        componentModel.addEndpointOption((EndpointOptionModel) option);
-                    }
+                if (collectUriPathProperties(componentModel, classElement, excludes, prefix, nestedTypeName, nestedFieldName, componentOption, orgClassElement, metadata, fieldElement, deprecated, deprecationNote, secret)) {
+                    continue;
                 }
+                String fieldName;
 
                 UriParam param = fieldElement.getAnnotation(UriParam.class);
                 if (param != null) {
-                    ApiParam apiParam = fieldElement.getAnnotation(ApiParam.class);
                     fieldName = fieldElement.getName();
                     String name = prefix + (Strings.isNullOrEmpty(param.name()) ? fieldName : param.name());
-
                     // should we exclude the name?
                     if (excludes.contains(name)) {
                         continue;
@@ -1354,156 +1239,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                         nestedTypeName = null;
                         nestedFieldName = null;
                     } else {
-                        String docComment = param.description();
-                        if (Strings.isNullOrEmpty(docComment)) {
-                            docComment = findJavaDoc(fieldElement, fieldName, name, classElement, false);
-                        }
-                        if (Strings.isNullOrEmpty(docComment)) {
-                            docComment = "";
-                        }
+                        ApiParam apiParam = fieldElement.getAnnotation(ApiParam.class);
 
-                        // gather enums
-                        List<String> enums = gatherEnums(param, fieldTypeElement);
-
-                        // the field type may be overloaded by another type
-                        boolean isDuration = false;
-                        if (!Strings.isNullOrEmpty(param.javaType())) {
-                            String jt = param.javaType();
-                            if ("java.time.Duration".equals(jt)) {
-                                isDuration = true;
-                            } else {
-                                fieldTypeName = param.javaType();
-                            }
-                        }
-
-                        // prepare default value so its value is correct according to its type
-                        defaultValue = getDefaultValue(defaultValue, fieldTypeName, isDuration);
-
-                        boolean isSecret = secret != null && secret || param.secret();
-                        boolean isAutowired = metadata != null && metadata.autowired();
-                        String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
-                                componentModel.isProducerOnly());
-
-                        // generics for collection types
-                        String nestedType = null;
-                        String desc = fieldTypeName;
-                        if (desc.contains("<") && desc.contains(">")) {
-                            desc = Strings.between(desc, "<", ">");
-                            // if it has additional nested types, then we only want the outer type
-                            int pos = desc.indexOf('<');
-                            if (pos != -1) {
-                                desc = desc.substring(0, pos);
-                            }
-                            // if its a map then it has a key/value, so we only want the last part
-                            pos = desc.indexOf(',');
-                            if (pos != -1) {
-                                desc = desc.substring(pos + 1);
-                            }
-                            desc = desc.replace('$', '.');
-                            desc = desc.trim();
-                            // skip if the type is generic or a wildcard
-                            if (!desc.isEmpty() && desc.indexOf('?') == -1 && !desc.contains(" extends ")) {
-                                nestedType = desc;
-                            }
-                        }
-
-                        BaseOptionModel option;
-                        if (componentOption) {
-                            option = new ComponentOptionModel();
-                        } else if (apiOption) {
-                            option = new ApiOptionModel();
-                        } else {
-                            option = new EndpointOptionModel();
-                        }
-                        option.setName(name);
-                        option.setDisplayName(displayName);
-                        option.setType(getType(fieldTypeName, false, isDuration));
-                        option.setJavaType(fieldTypeName);
-                        option.setRequired(required);
-                        option.setDefaultValue(defaultValue);
-                        option.setDefaultValueNote(defaultValueNote);
-                        option.setDescription(docComment.trim());
-                        option.setDeprecated(deprecated);
-                        option.setDeprecationNote(deprecationNote);
-                        option.setSecret(isSecret);
-                        option.setAutowired(isAutowired);
-                        option.setGroup(group);
-                        option.setLabel(label);
-                        option.setEnums(enums);
-                        option.setNestedType(nestedType);
-                        option.setConfigurationClass(nestedTypeName);
-                        option.setConfigurationField(nestedFieldName);
-                        option.setPrefix(paramPrefix);
-                        option.setOptionalPrefix(paramOptionalPrefix);
-                        option.setMultiValue(multiValue);
-                        if (componentOption) {
-                            option.setKind("property");
-                            componentModel.addComponentOption((ComponentOptionModel) option);
-                        } else if (apiOption && apiParam != null) {
-                            option.setKind("parameter");
-                            final String targetApiName = apiName;
-                            ApiModel api;
-                            Optional<ApiModel> op = componentModel.getApiOptions().stream()
-                                    .filter(o -> o.getName().equals(targetApiName))
-                                    .findFirst();
-                            if (!op.isPresent()) {
-                                api = new ApiModel();
-                                api.setName(apiName);
-                                componentModel.getApiOptions().add(api);
-                                if (apiParams != null) {
-                                    for (String alias : apiParams.aliases()) {
-                                        api.addAlias(alias);
-                                    }
-                                }
-                                if (apiParams != null) {
-                                    api.setDescription(apiParams.description());
-                                    // component model takes precedence
-                                    api.setConsumerOnly(componentModel.isConsumerOnly() || apiParams.consumerOnly());
-                                    api.setProducerOnly(componentModel.isProducerOnly() || apiParams.producerOnly());
-                                }
-                            } else {
-                                api = op.get();
-                            }
-                            for (ApiMethod method : apiParam.apiMethods()) {
-                                ApiMethodModel apiMethod = null;
-                                for (ApiMethodModel m : api.getMethods()) {
-                                    if (m.getName().equals(method.methodName())) {
-                                        apiMethod = m;
-                                        break;
-                                    }
-                                }
-                                if (apiMethod == null) {
-                                    apiMethod = api.newMethod(method.methodName());
-                                }
-                                // the method description is stored on @ApiParams
-                                if (apiParams != null) {
-                                    for (ApiMethod m : apiParams.apiMethods()) {
-                                        if (m.methodName().equals(method.methodName())) {
-                                            apiMethod.setDescription(m.description());
-                                            for (String sig : m.signatures()) {
-                                                apiMethod.addSignature(sig);
-                                            }
-                                            break;
-                                        }
-                                    }
-                                }
-                                // copy the option and override with the correct description
-                                ApiOptionModel copy = ((ApiOptionModel) option).copy();
-                                apiMethod.addApiOptionModel(copy);
-                                // the option description is stored on @ApiMethod
-                                copy.setDescription(method.description());
-                                // whether we are consumer or producer only
-                                group = EndpointHelper.labelAsGroupName(copy.getLabel(), api.isConsumerOnly(),
-                                        api.isProducerOnly());
-                                copy.setGroup(group);
-                                copy.setOptional(apiParam.optional());
-                            }
-                        } else {
-                            option.setKind("parameter");
-                            if (componentModel.getEndpointOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
-                                componentModel.addEndpointOption((EndpointOptionModel) option);
-                            }
-                        }
+                        collectNonNestedField(componentModel, classElement, nestedTypeName, nestedFieldName, componentOption, apiName, apiOption, apiParams, metadata, fieldElement, deprecated, deprecationNote, secret, fieldName, param, apiParam, name, paramOptionalPrefix, paramPrefix, multiValue, defaultValue, defaultValueNote, required, label, displayName, fieldTypeElement, fieldTypeName);
                     }
                 }
             }
@@ -1521,6 +1259,284 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             } else {
                 break;
             }
+        }
+    }
+
+    private void collectNonNestedField(ComponentModel componentModel, Class<?> classElement, String nestedTypeName, String nestedFieldName, boolean componentOption, String apiName, boolean apiOption, ApiParams apiParams, Metadata metadata, Field fieldElement, boolean deprecated, String deprecationNote, Boolean secret, String fieldName, UriParam param, ApiParam apiParam, String name, String paramOptionalPrefix, String paramPrefix, boolean multiValue, Object defaultValue, String defaultValueNote, boolean required, String label, String displayName, Class<?> fieldTypeElement, String fieldTypeName) {
+        String docComment = param.description();
+        if (Strings.isNullOrEmpty(docComment)) {
+            docComment = findJavaDoc(fieldElement, fieldName, name, classElement, false);
+        }
+        if (Strings.isNullOrEmpty(docComment)) {
+            docComment = "";
+        }
+
+        // gather enums
+        List<String> enums = gatherEnums(param, fieldTypeElement);
+
+        // the field type may be overloaded by another type
+        boolean isDuration = false;
+        if (!Strings.isNullOrEmpty(param.javaType())) {
+            String jt = param.javaType();
+            if ("java.time.Duration".equals(jt)) {
+                isDuration = true;
+            } else {
+                fieldTypeName = param.javaType();
+            }
+        }
+
+        // prepare default value so its value is correct according to its type
+        defaultValue = getDefaultValue(defaultValue, fieldTypeName, isDuration);
+
+        boolean isSecret = secret != null && secret || param.secret();
+        boolean isAutowired = metadata != null && metadata.autowired();
+        String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
+                componentModel.isProducerOnly());
+
+        // generics for collection types
+        String nestedType = null;
+        String desc = fieldTypeName;
+        if (desc.contains("<") && desc.contains(">")) {
+            desc = Strings.between(desc, "<", ">");
+            // if it has additional nested types, then we only want the outer type
+            int pos = desc.indexOf('<');
+            if (pos != -1) {
+                desc = desc.substring(0, pos);
+            }
+            // if its a map then it has a key/value, so we only want the last part
+            pos = desc.indexOf(',');
+            if (pos != -1) {
+                desc = desc.substring(pos + 1);
+            }
+            desc = desc.replace('$', '.');
+            desc = desc.trim();
+            // skip if the type is generic or a wildcard
+            if (!desc.isEmpty() && desc.indexOf('?') == -1 && !desc.contains(" extends ")) {
+                nestedType = desc;
+            }
+        }
+
+        BaseOptionModel option;
+        if (componentOption) {
+            option = new ComponentOptionModel();
+        } else if (apiOption) {
+            option = new ApiOptionModel();
+        } else {
+            option = new EndpointOptionModel();
+        }
+        option.setName(name);
+        option.setDisplayName(displayName);
+        option.setType(getType(fieldTypeName, false, isDuration));
+        option.setJavaType(fieldTypeName);
+        option.setRequired(required);
+        option.setDefaultValue(defaultValue);
+        option.setDefaultValueNote(defaultValueNote);
+        option.setDescription(docComment.trim());
+        option.setDeprecated(deprecated);
+        option.setDeprecationNote(deprecationNote);
+        option.setSecret(isSecret);
+        option.setAutowired(isAutowired);
+        option.setGroup(group);
+        option.setLabel(label);
+        option.setEnums(enums);
+        option.setNestedType(nestedType);
+        option.setConfigurationClass(nestedTypeName);
+        option.setConfigurationField(nestedFieldName);
+        option.setPrefix(paramPrefix);
+        option.setOptionalPrefix(paramOptionalPrefix);
+        option.setMultiValue(multiValue);
+        if (componentOption) {
+            option.setKind("property");
+            componentModel.addComponentOption((ComponentOptionModel) option);
+        } else if (apiOption && apiParam != null) {
+            option.setKind("parameter");
+            final String targetApiName = apiName;
+            ApiModel api;
+            Optional<ApiModel> op = componentModel.getApiOptions().stream()
+                    .filter(o -> o.getName().equals(targetApiName))
+                    .findFirst();
+            if (!op.isPresent()) {
+                api = new ApiModel();
+                api.setName(apiName);
+                componentModel.getApiOptions().add(api);
+                if (apiParams != null) {
+                    for (String alias : apiParams.aliases()) {
+                        api.addAlias(alias);
+                    }
+                }
+                if (apiParams != null) {
+                    api.setDescription(apiParams.description());
+                    // component model takes precedence
+                    api.setConsumerOnly(componentModel.isConsumerOnly() || apiParams.consumerOnly());
+                    api.setProducerOnly(componentModel.isProducerOnly() || apiParams.producerOnly());
+                }
+            } else {
+                api = op.get();
+            }
+            for (ApiMethod method : apiParam.apiMethods()) {
+                ApiMethodModel apiMethod = null;
+                for (ApiMethodModel m : api.getMethods()) {
+                    if (m.getName().equals(method.methodName())) {
+                        apiMethod = m;
+                        break;
+                    }
+                }
+                if (apiMethod == null) {
+                    apiMethod = api.newMethod(method.methodName());
+                }
+                // the method description is stored on @ApiParams
+                if (apiParams != null) {
+                    for (ApiMethod m : apiParams.apiMethods()) {
+                        if (m.methodName().equals(method.methodName())) {
+                            apiMethod.setDescription(m.description());
+                            for (String sig : m.signatures()) {
+                                apiMethod.addSignature(sig);
+                            }
+                            break;
+                        }
+                    }
+                }
+                // copy the option and override with the correct description
+                ApiOptionModel copy = ((ApiOptionModel) option).copy();
+                apiMethod.addApiOptionModel(copy);
+                // the option description is stored on @ApiMethod
+                copy.setDescription(method.description());
+                // whether we are consumer or producer only
+                group = EndpointHelper.labelAsGroupName(copy.getLabel(), api.isConsumerOnly(),
+                        api.isProducerOnly());
+                copy.setGroup(group);
+                copy.setOptional(apiParam.optional());
+            }
+        } else {
+            option.setKind("parameter");
+            if (componentModel.getEndpointOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
+                componentModel.addEndpointOption((EndpointOptionModel) option);
+            }
+        }
+    }
+
+    private boolean collectUriPathProperties(ComponentModel componentModel, Class<?> classElement, Set<String> excludes, String prefix, String nestedTypeName, String nestedFieldName, boolean componentOption, Class<?> orgClassElement, Metadata metadata, Field fieldElement, boolean deprecated, String deprecationNote, Boolean secret) {
+        UriPath path = fieldElement.getAnnotation(UriPath.class);
+        String fieldName = fieldElement.getName();
+        // component options should not include @UriPath as they are for endpoints only
+        if (!componentOption && path != null) {
+            String name = prefix + (Strings.isNullOrEmpty(path.name()) ? fieldName : path.name());
+
+            // should we exclude the name?
+            if (excludes.contains(name)) {
+                return true;
+            }
+
+            Object defaultValue = path.defaultValue();
+            if ("".equals(defaultValue) && metadata != null) {
+                defaultValue = metadata.defaultValue();
+            }
+            String defaultValueNote = path.defaultValueNote();
+            boolean required = metadata != null && metadata.required();
+            String label = path.label();
+            if (Strings.isNullOrEmpty(label) && metadata != null) {
+                label = metadata.label();
+            }
+            String displayName = path.displayName();
+            if (Strings.isNullOrEmpty(displayName)) {
+                displayName = metadata != null ? metadata.displayName() : null;
+            }
+            // compute a display name if we don't have anything
+            if (Strings.isNullOrEmpty(displayName)) {
+                displayName = Strings.asTitle(name);
+            }
+
+            Class<?> fieldTypeElement = fieldElement.getType();
+            String fieldTypeName = getTypeName(GenericsUtil.resolveType(orgClassElement, fieldElement));
+
+            String docComment = path.description();
+            if (Strings.isNullOrEmpty(docComment)) {
+                docComment = findJavaDoc(fieldElement, fieldName, name, classElement, false);
+            }
+
+            // gather enums
+            List<String> enums = gatherEnums(path, fieldTypeElement);
+
+            // the field type may be overloaded by another type
+            boolean isDuration = false;
+            if (!Strings.isNullOrEmpty(path.javaType())) {
+                String mjt = path.javaType();
+                if ("java.time.Duration".equals(mjt)) {
+                    isDuration = true;
+                } else {
+                    fieldTypeName = mjt;
+                }
+            }
+
+            // prepare default value so its value is correct according to its type
+            defaultValue = getDefaultValue(defaultValue, fieldTypeName, isDuration);
+
+            boolean isSecret = secret != null && secret || path.secret();
+            boolean isAutowired = metadata != null && metadata.autowired();
+            String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
+                    componentModel.isProducerOnly());
+
+            // generics for collection types
+            String nestedType = null;
+            String desc = fieldTypeName;
+            if (desc.contains("<") && desc.contains(">")) {
+                desc = Strings.between(desc, "<", ">");
+                // if it has additional nested types, then we only want the outer type
+                int pos = desc.indexOf('<');
+                if (pos != -1) {
+                    desc = desc.substring(0, pos);
+                }
+                // if its a map then it has a key/value, so we only want the last part
+                pos = desc.indexOf(',');
+                if (pos != -1) {
+                    desc = desc.substring(pos + 1);
+                }
+                desc = desc.replace('$', '.');
+                desc = desc.trim();
+                // skip if the type is generic or a wildcard
+                if (!desc.isEmpty() && desc.indexOf('?') == -1 && !desc.contains(" extends ")) {
+                    nestedType = desc;
+                }
+            }
+
+            BaseOptionModel option;
+            if (componentOption) {
+                option = new ComponentOptionModel();
+            } else {
+                option = new EndpointOptionModel();
+            }
+            option.setName(name);
+            option.setKind("path");
+            option.setDisplayName(displayName);
+            option.setType(getType(fieldTypeName, false, isDuration));
+            option.setJavaType(fieldTypeName);
+            option.setRequired(required);
+            option.setDefaultValue(defaultValue);
+            option.setDefaultValueNote(defaultValueNote);
+            option.setDescription(docComment.trim());
+            option.setDeprecated(deprecated);
+            option.setDeprecationNote(deprecationNote);
+            option.setSecret(isSecret);
+            option.setAutowired(isAutowired);
+            option.setGroup(group);
+            option.setLabel(label);
+            option.setEnums(enums);
+            option.setNestedType(nestedType);
+            option.setConfigurationClass(nestedTypeName);
+            option.setConfigurationField(nestedFieldName);
+            if (componentModel.getEndpointOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
+                componentModel.addEndpointOption((EndpointOptionModel) option);
+            }
+        }
+        return false;
+    }
+
+    private void collectExcludes(Class<?> classElement, Set<String> excludes) {
+        final UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
+        if (uriEndpoint != null) {
+            String excludedProperties = getExcludedEnd(classElement.getAnnotation(Metadata.class));
+
+            Collections.addAll(excludes, excludedProperties.split(","));
         }
     }
 
@@ -1739,6 +1755,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         if (source != null && !jd.tags().isEmpty()) {
             ASTNode n = (ASTNode) jd.tags().get(0);
             String txt = source.substring(n.getStartPosition(), n.getStartPosition() + n.getLength());
+
             return txt
                     .replaceAll(" *\n *\\* *\n", "\n\n")
                     .replaceAll(" *\n *\\* +", "\n");
