@@ -31,6 +31,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public abstract class AbstractInitKamelet {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractInitKamelet.class);
 

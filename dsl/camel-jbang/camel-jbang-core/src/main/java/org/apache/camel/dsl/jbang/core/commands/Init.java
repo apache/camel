@@ -16,14 +16,22 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.concurrent.Callable;
 
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "init", description = "Creates Kamelets (use --help)")
+@Command(name = "init", description = "Initialize empty Camel integrations")
 class Init implements Callable<Integer> {
+
+    @CommandLine.Parameters(description = "Name of integration file", arity = "1")
+    private String file;
+
     //CHECKSTYLE:OFF
     @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested = false;
@@ -31,8 +39,18 @@ class Init implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        new CommandLine(this).execute("--help");
+        String ext = FileUtil.onlyExt(file, false);
+        String name = FileUtil.onlyName(file, false);
+        InputStream is = Init.class.getClassLoader().getResourceAsStream("templates/" + ext + ".tmpl");
+        if (is == null) {
+            System.out.println("Error: unsupported file type: " + ext);
+            return 1;
+        }
+        String context = IOHelper.loadText(is);
+        IOHelper.close(is);
 
+        context = context.replaceFirst("\\{\\{ \\.Name }}", name);
+        IOHelper.writeText(context, new FileOutputStream(file, false));
         return 0;
     }
 }

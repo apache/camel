@@ -29,6 +29,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(name = "components", description = "Search for Camel components")
+@Deprecated
 class SearchComponents extends AbstractSearch implements Callable<Integer> {
 
     /*

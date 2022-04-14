@@ -29,14 +29,12 @@ public class CamelJBangMain implements Callable<Integer> {
     public static void run(String... args) {
         commandLine = new CommandLine(new CamelJBangMain())
                 .addSubcommand("run", new Run())
+                .addSubcommand("init", new CommandLine(new Init()))
                 .addSubcommand("search", new CommandLine(new Search())
                         .addSubcommand("kamelets", new SearchKamelets())
                         .addSubcommand("components", new SearchComponents())
                         .addSubcommand("languages", new SearchLanguages())
                         .addSubcommand("others", new SearchOthers()))
-                .addSubcommand("init", new CommandLine(new Init())
-                        .addSubcommand("kamelet", new InitKamelet())
-                        .addSubcommand("binding", new InitBinding()))
                 .addSubcommand("create", new CommandLine(new Create())
                         .addSubcommand("project", new Project()));
 

@@ -31,6 +31,7 @@ import org.apache.camel.main.KameletMain;
 import org.apache.camel.spi.Resource;
 import org.apache.commons.io.IOUtils;
 
+@Deprecated
 public abstract class AbstractSearch {
     private String resourceLocation;
     private String branch;

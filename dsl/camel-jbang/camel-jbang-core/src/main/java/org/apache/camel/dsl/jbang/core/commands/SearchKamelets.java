@@ -28,6 +28,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(name = "kamelets", description = "Search for a Kamelet in the Kamelet catalog")
+@Deprecated
 class SearchKamelets extends AbstractSearch implements Callable<Integer> {
     /*
      * Matches the following line. Separate them into groups and pick the last
