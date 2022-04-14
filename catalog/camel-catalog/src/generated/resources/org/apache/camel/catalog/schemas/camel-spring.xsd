@@ -288,7 +288,7 @@ To use DataSonnet scripts for message transformations.
   <xs:element name="deadLetterChannel" type="tns:deadLetterChannelDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Dead letter channel error handler.
+Error handler with dead letter queue.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -296,7 +296,7 @@ Dead letter channel error handler.
   <xs:element name="defaultErrorHandler" type="tns:defaultErrorHandlerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Default error handler.
+The default error handler.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -840,7 +840,7 @@ Evaluates a MVEL template.
   <xs:element name="noErrorHandler" type="tns:noErrorHandlerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-No error handler.
+To not use an error handler.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
