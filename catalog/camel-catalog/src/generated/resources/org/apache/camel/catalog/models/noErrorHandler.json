@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "noErrorHandler",
     "title": "No Error Handler",
-    "description": "No error handler.",
+    "description": "To not use an error handler.",
     "deprecated": false,
     "label": "configuration,error",
     "javaType": "org.apache.camel.model.errorhandler.NoErrorHandlerDefinition",

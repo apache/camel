@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "defaultErrorHandler",
     "title": "Default Error Handler",
-    "description": "Default error handler.",
+    "description": "The default error handler.",
     "deprecated": false,
     "label": "configuration,error",
     "javaType": "org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition",

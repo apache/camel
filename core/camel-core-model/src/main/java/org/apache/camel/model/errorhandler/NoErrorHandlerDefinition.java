@@ -24,7 +24,7 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.spi.Metadata;
 
 /**
- * No error handler.
+ * To not use an error handler.
  */
 @Metadata(label = "configuration,error")
 @XmlRootElement(name = "noErrorHandler")

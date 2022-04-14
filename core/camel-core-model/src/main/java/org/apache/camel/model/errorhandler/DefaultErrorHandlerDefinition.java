@@ -39,7 +39,7 @@ import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default error handler.
+ * The default error handler.
  */
 @Metadata(label = "configuration,error")
 @XmlRootElement(name = "defaultErrorHandler")

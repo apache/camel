@@ -27,7 +27,7 @@ import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Dead letter channel error handler.
+ * Error handler with dead letter queue.
  */
 @Metadata(label = "configuration,error")
 @XmlRootElement(name = "deadLetterChannel")

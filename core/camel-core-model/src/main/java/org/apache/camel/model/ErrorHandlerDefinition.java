@@ -50,6 +50,9 @@ public class ErrorHandlerDefinition extends IdentifiedType {
         return errorHandlerType;
     }
 
+    /**
+     * The specific error handler in use.
+     */
     public void setErrorHandlerType(ErrorHandlerFactory errorHandlerType) {
         this.errorHandlerType = errorHandlerType;
     }
