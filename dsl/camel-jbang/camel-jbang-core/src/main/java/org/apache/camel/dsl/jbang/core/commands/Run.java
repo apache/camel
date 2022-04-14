@@ -184,13 +184,13 @@ class Run implements Callable<Integer> {
         main.addInitialProperty("camel.main.tracing", trace ? "true" : "false");
         main.addInitialProperty("camel.main.modeline", modeline ? "true" : "false");
 
-        // override properties as arguments
+        // command line arguments
         if (property != null) {
             for (String p : property) {
                 String k = StringHelper.before(p, "=");
                 String v = StringHelper.after(p, "=");
                 if (k != null && v != null) {
-                    main.addOverrideProperty(k, v);
+                    main.addArgumentProperty(k, v);
                 }
             }
         }

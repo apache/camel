@@ -1662,6 +1662,8 @@ public abstract class BaseMainSupport extends BaseService {
             loc = "JVM System Property";
         } else if ("ENV".equals(loc)) {
             loc = "OS Environment Variable";
+        } else if ("arguments".equals(loc) || "CLI".equals(loc)) {
+            loc = "Command Line";
         }
         loc = "[" + loc + "]";
         loc = String.format("%-30s", loc);

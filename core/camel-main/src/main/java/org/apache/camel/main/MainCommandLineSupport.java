@@ -20,8 +20,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.camel.CamelConfiguration;
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.PropertiesSource;
+import org.apache.camel.util.OrderedProperties;
 
 /**
  * Support for command line arguments to Camel main.
@@ -29,6 +35,7 @@ import org.apache.camel.CamelConfiguration;
 public abstract class MainCommandLineSupport extends MainSupport {
 
     protected final List<Option> options = new ArrayList<>();
+    protected Properties argumentProperties;
     private volatile boolean initOptionsDone;
 
     @SafeVarargs
@@ -37,6 +44,38 @@ public abstract class MainCommandLineSupport extends MainSupport {
     }
 
     public MainCommandLineSupport() {
+    }
+
+    public Properties getArgumentProperties() {
+        return argumentProperties;
+    }
+
+    /**
+     * Sets command line argument as properties for the properties component.
+     */
+    public void setArgumentProperties(Properties argumentProperties) {
+        this.argumentProperties = argumentProperties;
+    }
+
+    /**
+     * Sets command line argument as properties for the properties component.
+     */
+    public void setArgumentProperties(Map<String, Object> initialProperties) {
+        this.argumentProperties = new OrderedProperties();
+        this.argumentProperties.putAll(initialProperties);
+    }
+
+    /**
+     * Adds a property (command line) for the properties component.
+     *
+     * @param key   the property key
+     * @param value the property value
+     */
+    public void addArgumentProperty(String key, String value) {
+        if (this.argumentProperties == null) {
+            this.argumentProperties = new OrderedProperties();
+        }
+        this.argumentProperties.put(key, value);
     }
 
     protected void initOptions() {
@@ -177,6 +216,27 @@ public abstract class MainCommandLineSupport extends MainSupport {
         run();
 
         return getExitCode();
+    }
+
+    @Override
+    protected void configurePropertiesService(CamelContext camelContext) throws Exception {
+        super.configurePropertiesService(camelContext);
+
+        PropertiesComponent pc = camelContext.getPropertiesComponent();
+        if (argumentProperties != null && !argumentProperties.isEmpty()) {
+            // register source for command line arguments to be used for property placeholders
+            pc.addPropertiesSource(new PropertiesSource() {
+                @Override
+                public String getName() {
+                    return "CLI";
+                }
+
+                @Override
+                public String getProperty(String name) {
+                    return argumentProperties.getProperty(name);
+                }
+            });
+        }
     }
 
     /**
