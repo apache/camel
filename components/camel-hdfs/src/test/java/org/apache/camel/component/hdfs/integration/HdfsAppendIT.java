@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.shaded.org.apache.commons.lang.SystemUtils;
+import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
