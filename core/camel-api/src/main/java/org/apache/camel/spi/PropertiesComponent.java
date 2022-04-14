@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.StaticService;
 
 /**
@@ -251,5 +252,10 @@ public interface PropertiesComponent extends StaticService {
      * @return         true if some properties was reloaded
      */
     boolean reloadProperties(String pattern);
+
+    /**
+     * Adds the {@link PropertiesLookupListener}.
+     */
+    void addPropertiesLookupListener(PropertiesLookupListener propertiesLookupListener);
 
 }

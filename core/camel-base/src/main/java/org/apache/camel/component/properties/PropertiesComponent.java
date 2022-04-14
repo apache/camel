@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
@@ -107,6 +108,7 @@ public class PropertiesComponent extends ServiceSupport
     private final PropertiesFunctionResolver functionResolver = new PropertiesFunctionResolver();
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
+    private List<PropertiesLookupListener> propertiesLookupListeners = new ArrayList<>();
     private final List<PropertiesSource> sources = new ArrayList<>();
     private List<PropertiesLocation> locations = new ArrayList<>();
     private String location;
@@ -655,6 +657,24 @@ public class PropertiesComponent extends ServiceSupport
 
     public List<PropertiesSource> getSources() {
         return sources;
+    }
+
+    public void addPropertiesLookupListener(PropertiesLookupListener propertiesLookupListener) {
+        propertiesLookupListeners.add(propertiesLookupListener);
+    }
+
+    /**
+     * Remove {@link PropertiesLookupListener}
+     */
+    public void removePropertiesLookupListener(PropertiesLookupListener propertiesLookupListener) {
+        propertiesLookupListeners.remove(propertiesLookupListener);
+    }
+
+    /**
+     * Gets the {@link PropertiesLookupListener}
+     */
+    public List<PropertiesLookupListener> getPropertiesLookupListeners() {
+        return propertiesLookupListeners;
     }
 
     @ManagedOperation(description = "Reload properties from the given location patterns")

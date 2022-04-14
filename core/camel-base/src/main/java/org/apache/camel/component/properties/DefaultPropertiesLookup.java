@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.properties;
 
-import java.util.Iterator;
 import java.util.Properties;
 
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PropertiesSource;
 
@@ -54,6 +54,7 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
             Object value = local.get(name);
             if (value != null) {
                 answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
+                onLookup(name, answer, "LocalProperties");
             }
         }
 
@@ -63,13 +64,27 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
             Object value = component.getOverrideProperties().get(name);
             if (value != null) {
                 answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
+                onLookup(name, answer, "OverrideProperties");
             }
         }
         if (answer == null) {
             // try till first found source
-            Iterator<PropertiesSource> it2 = component.getSources().iterator();
-            while (answer == null && it2.hasNext()) {
-                answer = it2.next().getProperty(name);
+            for (PropertiesSource ps : component.getSources()) {
+                answer = ps.getProperty(name);
+                if (answer != null) {
+                    String source = ps.getName();
+                    if (ps instanceof ClasspathPropertiesSource) {
+                        source = "classpath:" + ((LocationPropertiesSource) ps).getLocation().getPath();
+                    } else if (ps instanceof FilePropertiesSource) {
+                        source = "file:" + ((LocationPropertiesSource) ps).getLocation().getPath();
+                    } else if (ps instanceof RefPropertiesSource) {
+                        source = "ref:" + ((LocationPropertiesSource) ps).getLocation().getPath();
+                    } else if (ps instanceof LocationPropertiesSource) {
+                        source = ((LocationPropertiesSource) ps).getLocation().getPath();
+                    }
+                    onLookup(name, answer, source);
+                    break;
+                }
             }
         }
         // initial properties are last
@@ -78,9 +93,21 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
             Object value = component.getInitialProperties().get(name);
             if (value != null) {
                 answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
+                onLookup(name, answer, "InitialProperties");
             }
         }
 
         return answer;
     }
+
+    private void onLookup(String name, String value, String source) {
+        for (PropertiesLookupListener listener : component.getPropertiesLookupListeners()) {
+            try {
+                listener.onLookup(name, value, source);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+    }
+
 }
