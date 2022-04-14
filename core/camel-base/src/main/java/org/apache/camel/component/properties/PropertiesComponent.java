@@ -224,48 +224,7 @@ public class PropertiesComponent extends ServiceSupport
 
     @Override
     public Properties loadProperties(Predicate<String> filter) {
-        OrderedLocationProperties prop = new OrderedLocationProperties();
-
-        // use initial properties
-        if (initialProperties != null) {
-            for (String name : initialProperties.stringPropertyNames()) {
-                if (filter.test(name)) {
-                    prop.put("initial", name, initialProperties.get(name));
-                }
-            }
-        }
-
-        if (!sources.isEmpty()) {
-            // sources are ordered according to {@link org.apache.camel.support.OrderComparator} so
-            // it is needed to iterate them in reverse order otherwise lower priority sources may
-            // override properties from higher priority ones
-            for (int i = sources.size(); i-- > 0;) {
-                PropertiesSource ps = sources.get(i);
-                if (ps instanceof LoadablePropertiesSource) {
-                    LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
-                    Properties p = lps.loadProperties(filter);
-                    if (p instanceof OrderedLocationProperties) {
-                        prop.putAll((OrderedLocationProperties) p);
-                    } else if (ps instanceof LocationPropertiesSource) {
-                        String loc = ((LocationPropertiesSource) ps).getLocation().getPath();
-                        prop.putAll(loc, p);
-                    } else {
-                        prop.putAll(lps.getName(), p);
-                    }
-                }
-            }
-        }
-
-        // use override properties
-        if (overrideProperties != null) {
-            for (String name : overrideProperties.stringPropertyNames()) {
-                if (filter.test(name)) {
-                    prop.put("override", name, overrideProperties.get(name));
-                }
-            }
-        }
-
-        return prop;
+        return loadProperties(filter, k -> k);
     }
 
     @Override

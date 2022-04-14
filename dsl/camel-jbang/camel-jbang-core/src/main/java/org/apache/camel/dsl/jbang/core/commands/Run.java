@@ -40,6 +40,7 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -96,6 +97,9 @@ class Run implements Callable<Integer> {
     @Option(names = { "--properties" },
             description = "Load properties file for route placeholders (ex. /path/to/file.properties")
     private String propertiesFiles;
+
+    @Option(names = { "-p", "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
+    private String[] property;
 
     @Option(names = { "--file-lock" }, defaultValue = "true",
             description = "Whether to create a temporary file lock, which upon deleting triggers this process to terminate")
@@ -179,6 +183,17 @@ class Run implements Callable<Integer> {
         main.addInitialProperty("camel.main.sourceLocationEnabled", "true");
         main.addInitialProperty("camel.main.tracing", trace ? "true" : "false");
         main.addInitialProperty("camel.main.modeline", modeline ? "true" : "false");
+
+        // override properties as arguments
+        if (property != null) {
+            for (String p : property) {
+                String k = StringHelper.before(p, "=");
+                String v = StringHelper.after(p, "=");
+                if (k != null && v != null) {
+                    main.addOverrideProperty(k, v);
+                }
+            }
+        }
 
         if (maxMessages > 0) {
             main.addInitialProperty("camel.main.durationMaxMessages", String.valueOf(maxMessages));
