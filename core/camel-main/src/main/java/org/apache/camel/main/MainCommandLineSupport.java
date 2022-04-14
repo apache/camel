@@ -22,11 +22,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.util.OrderedProperties;
 
 /**
@@ -225,7 +226,30 @@ public abstract class MainCommandLineSupport extends MainSupport {
         PropertiesComponent pc = camelContext.getPropertiesComponent();
         if (argumentProperties != null && !argumentProperties.isEmpty()) {
             // register source for command line arguments to be used for property placeholders
-            pc.addPropertiesSource(new PropertiesSource() {
+            pc.addPropertiesSource(new LoadablePropertiesSource() {
+                @Override
+                public Properties loadProperties() {
+                    return argumentProperties;
+                }
+
+                @Override
+                public Properties loadProperties(Predicate<String> filter) {
+                    Properties answer = new OrderedProperties();
+
+                    for (String name : argumentProperties.stringPropertyNames()) {
+                        if (filter.test(name)) {
+                            answer.put(name, argumentProperties.get(name));
+                        }
+                    }
+
+                    return answer;
+                }
+
+                @Override
+                public void reloadProperties(String location) {
+                    // noop
+                }
+
                 @Override
                 public String getName() {
                     return "CLI";
