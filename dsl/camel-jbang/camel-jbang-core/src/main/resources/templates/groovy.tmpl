@@ -4,5 +4,5 @@
 from('timer:groovy?period=1000')
     .routeId('groovy')
     .setBody()
-      .simple('Hello Camel K from ${routeId}')
+      .simple('Hello Camel from ${routeId}')
     .log('${body}')

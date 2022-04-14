@@ -11,7 +11,7 @@
     <route id="xml">
         <from uri="timer:xml?period=1000"/>
         <setBody>
-            <simple>Hello Camel K from ${routeId}</simple>
+            <simple>Hello Camel from ${routeId}</simple>
         </setBody>
         <log message="${body}"/>
     </route>

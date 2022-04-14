@@ -2,8 +2,6 @@
 
 A JBang-based Camel app for easily running Camel routes.
 
-The `camel-jbang` is available from *Camel 3.12* and newer versions.
-
 == Installation
 
 It is not necessary to install Camel JBang. However, if you prefer to do so, JBang makes it easy for us by providing an installation feature that works with Github. If you have JBang installed on your system, then you can run the following command to install CamelJBang:
@@ -12,8 +10,6 @@ It is not necessary to install Camel JBang. However, if you prefer to do so, JBa
 ----
 jbang app install camel@apache/camel
 ----
-
-NOTE: Up to Camel 3.14, the app was named `CamelJBang`. From 3.15 and newer, the app is named `camel`. It is still possible to use the older name by installing it using `CamelJBang@apache/camel` but this approach is deprecated and should not be used in the future.
 
 == Using Camel JBang
 
@@ -28,15 +24,6 @@ TIP: The first time you run this command, it may cause dependencies to be cached
 
 All the commands support the `--help` and will display the appropriate help if that flag is provided.
 
-However, if you have installed CamelJBang with `jbang app install` then you can use `CamelJBang` instead of `jbang camel@apache/camel`
-
-=== Troubleshooting
-
-When using https://www.jbang.dev/[JBang] then JBang stores state in `~/.jbang` directory.
-This is also the location where JBang stores downloaded JARs.
-
-So if you find problems with JBang using what is seems like an outdated JAR, then you can
-try to delete this directory, or parts of it.
 
 === Using a specific Camel version
 
@@ -44,43 +31,44 @@ You can specify which Camel version to run as shown:
 
 [source,bash]
 ----
-jbang run -Dcamel.jbang.version=3.14.0 camel@apache/camel [command]
+jbang run -Dcamel.jbang.version=3.16.0 camel@apache/camel [command]
 ----
 
-== Running Routes
-
-You can run Camel routes from any of the supported xref:dsl.adoc[DSLs] in Camel such as YAML, XML, Java, Groovy.
-
-For example to run YAML-based routes which also refer to Kamelets in the catalog.
-In order to do so, write a YAML-based file with the `route`, the `steps` and the `to` destination for the route. The following example, shows a route that uses the Timer Source Kamelet to produce messages every second. The body of the messages will be logged to the standard output. Subsequently, they will be sent to a AMQP 1.0 compliant broker using the JMS AMQ 1.0 Sink Kamelet.
-
-[source,yaml]
-----
-#!/usr/bin/env jbang camel@apache/camel run
-- route:
-    id: "hello"
-    from:
-      uri: "kamelet:timer-source"
-      parameters:
-        period: 1000
-        message: "Hello Camel JBang"
-      steps:
-        - log: "${body}"
-        - to:
-            uri: "kamelet:jms-amqp-10-sink"
-            parameters:
-              remoteURI: amqp://localhost:61616
-              destinationName: test-queue
-----
-
-Execute the following command to run this route:
+And you can also try bleeding edge development by using SNAPSHOT such as:
 
 [source,bash]
 ----
-camel run jms-amqp-10-sink-binding.yaml
+jbang run -Dcamel.jbang.version=3.17.0-SNAPSHOT camel@apache/camel [command]
 ----
 
-NOTE: it is necessary to have a AMQP 1.0 broker, such as Apache Artemis, running locally and listening on port 61616. Adjust the route accordingly if using a different address for the broker.
+== Creating and running Camel routes
+
+You can create a new basic routes with the `init` command.
+
+For example to create an XML route you do:
+
+[source,bash]
+----
+camel init cheese.xml
+----
+
+Which creates the file `cheese.xml` with a sample route.
+
+To run the file, you simply do:
+
+[source,bash]
+----
+camel run cheese.xml
+----
+
+NOTE: You can create and run any of the supported xref:dsl.adoc[DSLs] in Camel such as YAML, XML, Java, Groovy.
+
+To create a new .java integration, you simply do:
+
+[source,bash]
+----
+camel init foo.java
+----
 
 === Running Routes from multiple files
 
@@ -274,7 +262,7 @@ You can use the following Quarkus annotations:
 
 === Debugging
 
-You can debug both camel@apache/camel and your integration scripts by making use of the `--debug` flag provided by JBang:
+You can debug both Camel JBang and your integration scripts by making use of the `--debug` flag provided by JBang:
 
 [source,bash]
 ----
@@ -285,98 +273,7 @@ Listening for transport dt_socket at address: 4004
 
 As you can see the default listening port is 4004 but can be configured as described in https://www.jbang.dev/documentation/guide/latest/debugging.html[JBang Debugging].
 
-=== Search
-
-You can use the CLI to search for kamelets, components, languages and miscellaneous components (others). Running the following command will present a list of items that can be searched:
-
-[source,bash]
-----
-camel search --help
-----
-
-For example, to search for kamelets named `jms`, you can use:
-
-[source,bash]
-----
-camel search kamelets --search-term=jms
-----
-
-To list all the kamelets, just run the command without any search term:
-
-[source,bash]
-----
-camel search kamelets
-----
-
-
-The same behavior also works for all the other search commands. The table below lists all search commands available at the moment:
-
-|===
-|Command |Description
-
-|kamelets
-|search for kamelets
-
-|components
-|search for components
-
-|languages
-|search for languages
-
-|others
-|search for miscellaneous components
-
-|===
-
-
-=== Init Kamelets
-
-The init sub-command can be used to simplify creating Kamelets. Through this command, it is possible to create new Kamelets through pre-configured templates. It works in two steps: first it is necessary to bootstrap the Kamelet by creating a properties file with the parameters necessary to create the Kamelet. Once the properties file is correctly set, then it is possible to create a pre-filled Kamelet by processing that properties file.
-
-To bootstrap the Kamelet run:
-
-[source,bash]
-----
-camel init kamelet --bootstrap
-----
-
-This will create a sub-directory called `work` in the current directory with a properties file named `init-template.properties` inside it.
-
-The keys of the properties file are commented with the details about what need to be filled in order to generate the Kamelet. If a value is missing, it will be ignored when generating the Kamelet and will need to be filled in manually later.
-
-After you have filled the values, you can generate the Kamelet using:
-
-[source,bash]
-----
-camel init kamelet --properties-path work/init-template.properties
-----
-
-Running this command will create a new file in the `work` directory. The name of the generated file is determined by the `kameletMetadataName` property in the properties file. As such, parsing the default properties file would generate a file named `my-sample-sink.kamelet.yaml` in the directory.
-
-After the file is generated, it may still need to require final adjustments, such as correctly setting the name, the icon and other requirements for official Kamelets. Please consult the Kamelet development documentation for updated details.
-
-
-=== Init Bindings
-
-The init sub-command can also be used to simplify creating Kamelets bindings. Through this command, it is possible to create new bindings through pre-configured templates. Use the  `--kamelet` option (you can list the available ones using the search command) to set the Kamelet to generate the binding for.
-
-To execute this feature run:
-
-[source,bash]
-----
-camel init binding --destination /path/to/destination/directory/ --kamelet sftp-source
-----
-
-This will create a new sample YAML binding file that can be modified and used in Camel K.
-
-You can also generate bindings that can be run by CamelJBang or Camel Core, but setting the `--project` option:
-
-[source,bash]
-----
-camel init binding --destination /path/to/destination/directory/ --kamelet sftp-source --project core
-----
-
-=== Create Project
+=== Create Quarkus Project
 
 The create project command can be used to generate a maven project. After running the integration with the `run` command `create project` will generate a maven quarkus project with some required dependencies that can be used as a starting point for complex integrations. 
 
@@ -428,3 +325,14 @@ jbang camel@apache/camel create project TimerRoute.java --quarkusDependencies=ca
 ----
 jbang camel@apache/camel create project KafkaRoute.java --quarkusDependencies=camel-quarkus-kafka,camel-quarkus-log --name=KafkaRouteProject
 ----
+
+== Troubleshooting
+
+When using https://www.jbang.dev/[JBang] then JBang stores state in `~/.jbang` directory.
+This is also the location where JBang stores downloaded JARs.
+
+Camel JBang also downloads needed dependencies while running. However, these dependencies
+are downloaded to `~/.groovy` (downloaded via Groovy Grape).
+
+So if you find problems with running Camel JBang using what is seems like an outdated JAR, then you can
+try to delete these directories, or parts of it.
