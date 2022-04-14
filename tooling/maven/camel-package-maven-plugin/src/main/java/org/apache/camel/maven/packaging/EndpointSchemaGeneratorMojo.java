@@ -343,18 +343,24 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         for (Field field : headersClass.getFields()) {
             if ((isEnum || isStatic(field.getModifiers()) && field.getType() == String.class)
                     && field.isAnnotationPresent(Metadata.class)) {
-                getLog().debug(
-                        String.format("Trying to add the constant %s in the class %s as header.", field.getName(),
-                                headersClass.getName()));
+
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug(
+                            String.format("Trying to add the constant %s in the class %s as header.", field.getName(),
+                                    headersClass.getName()));
+                }
                 if (addEndpointHeader(componentModel, scheme, field, headersNameProvider)) {
                     foundHeader = true;
                     continue;
                 }
             }
-            getLog().debug(
-                    String.format(
-                            "The field %s of the class %s is not considered as a name of a header, thus it is skipped",
-                            field.getName(), headersClass.getName()));
+
+            if (getLog().isDebugEnabled()) {
+                getLog().debug(
+                        String.format(
+                                "The field %s of the class %s is not considered as a name of a header, thus it is skipped",
+                                field.getName(), headersClass.getName()));
+            }
         }
         return foundHeader;
     }
@@ -376,14 +382,20 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     private boolean addEndpointHeader(ComponentModel componentModel, String scheme, Field field, String headersNameProvider) {
         final Metadata metadata = field.getAnnotation(Metadata.class);
         if (metadata == null) {
-            getLog().debug(String.format("The field %s in class %s has no Metadata", field.getName(),
-                    field.getDeclaringClass().getName()));
+
+            if (getLog().isDebugEnabled()) {
+                getLog().debug(String.format("The field %s in class %s has no Metadata", field.getName(),
+                        field.getDeclaringClass().getName()));
+            }
             return false;
         }
         final String[] applicableFor = metadata.applicableFor();
         if (applicableFor.length > 0 && Arrays.stream(applicableFor).noneMatch(s -> s.equals(scheme))) {
-            getLog().debug(String.format("The field %s in class %s is not applicable for %s", field.getName(),
-                    field.getDeclaringClass().getName(), scheme));
+
+            if (getLog().isDebugEnabled()) {
+                getLog().debug(String.format("The field %s in class %s is not applicable for %s", field.getName(),
+                        field.getDeclaringClass().getName(), scheme));
+            }
             return false;
         }
         final EndpointHeaderModel header = new EndpointHeaderModel();
@@ -406,15 +418,20 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         try {
             header.setEnums(getEnums(metadata, header.getJavaType().isEmpty() ? null : loadClass(header.getJavaType())));
         } catch (NoClassDefFoundError e) {
-            getLog().debug(String.format("The java type %s could not be found", header.getJavaType()), e);
+            if (getLog().isDebugEnabled()) {
+                getLog().debug(String.format("The java type %s could not be found", header.getJavaType()), e);
+            }
         }
         try {
             setHeaderNames(header, field, headersNameProvider);
             componentModel.addEndpointHeader(header);
         } catch (Exception e) {
-            getLog().debug(String.format("The name of the header corresponding to the field %s in class %s cannot be retrieved",
-                    field.getName(),
-                    field.getDeclaringClass().getName()));
+            if (getLog().isDebugEnabled()) {
+                getLog().debug(
+                        String.format("The name of the header corresponding to the field %s in class %s cannot be retrieved",
+                                field.getName(),
+                                field.getDeclaringClass().getName()));
+            }
         }
         return true;
     }
