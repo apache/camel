@@ -39,6 +39,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Configuration;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
+import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StartupStep;
 import org.apache.camel.console.DevConsole;
@@ -46,9 +47,11 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.impl.event.CamelContextRoutesStartedEvent;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -56,6 +59,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
@@ -534,12 +538,18 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+        // gathers the properties (key=value) that was used as property placeholders during bootstrap
+        final OrderedLocationProperties propertyPlaceholders = new OrderedLocationProperties();
+
         // use the main autowired lifecycle strategy instead of the default
         camelContext.getLifecycleStrategies().removeIf(s -> s instanceof AutowiredLifecycleStrategy);
         camelContext.addLifecycleStrategy(new MainAutowiredLifecycleStrategy(camelContext));
 
         // setup properties
         configurePropertiesService(camelContext);
+        // register listener on properties component so we can capture them
+        PropertiesComponent pc = camelContext.getPropertiesComponent();
+        pc.addPropertiesLookupListener(new PropertyPlaceholderListener(propertyPlaceholders));
         // setup startup recorder before building context
         configureStartupRecorder(camelContext);
         // setup package scan
@@ -585,6 +595,36 @@ public abstract class BaseMainSupport extends BaseService {
         for (MainListener listener : listeners) {
             listener.afterConfigure(this);
             listener.configure(camelContext);
+        }
+
+        // we want to log the property placeholder summary after routes has been started,
+        // but before camel context logs that it has been started, so we need to use an event listener
+        if (standalone && mainConfigurationProperties.isAutoConfigurationLogSummary()) {
+            camelContext.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+                @Override
+                public boolean isEnabled(CamelEvent event) {
+                    return event instanceof CamelContextRoutesStartedEvent;
+                }
+
+                @Override
+                public void notify(CamelEvent event) throws Exception {
+                    // log summary of configurations
+                    if (!propertyPlaceholders.isEmpty()) {
+                        LOG.info("Property-placeholders summary");
+                        for (var entry : propertyPlaceholders.entrySet()) {
+                            String k = entry.getKey().toString();
+                            Object v = entry.getValue();
+                            String loc = locationSummary(propertyPlaceholders, k);
+
+                            if (SensitiveUtils.containsSensitive(k)) {
+                                LOG.info("    {} {}=xxxxxx", loc, k);
+                            } else {
+                                LOG.info("    {} {}={}", loc, k, v);
+                            }
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -1626,6 +1666,23 @@ public abstract class BaseMainSupport extends BaseService {
         loc = "[" + loc + "]";
         loc = String.format("%-30s", loc);
         return loc;
+    }
+
+    private static final class PropertyPlaceholderListener implements PropertiesLookupListener {
+
+        private final OrderedLocationProperties olp;
+
+        public PropertyPlaceholderListener(OrderedLocationProperties olp) {
+            this.olp = olp;
+        }
+
+        @Override
+        public void onLookup(String name, String value, String source) {
+            if (source == null) {
+                source = "unknown";
+            }
+            olp.put(source, name, value);
+        }
     }
 
 }

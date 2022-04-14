@@ -21,7 +21,9 @@ import java.util.Properties;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesSource;
+import org.apache.camel.util.OrderedLocationProperties;
 
 /**
  * Default {@link PropertiesLookup} which lookup properties from a {@link java.util.Properties} with all existing
@@ -81,6 +83,12 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
                         source = "ref:" + ((LocationPropertiesSource) ps).getLocation().getPath();
                     } else if (ps instanceof LocationPropertiesSource) {
                         source = ((LocationPropertiesSource) ps).getLocation().getPath();
+                    } else if (ps instanceof LoadablePropertiesSource) {
+                        Properties prop = ((LoadablePropertiesSource) ps).loadProperties();
+                        if (prop instanceof OrderedLocationProperties) {
+                            OrderedLocationProperties olp = (OrderedLocationProperties) prop;
+                            source = olp.getLocation(name);
+                        }
                     }
                     onLookup(name, answer, source);
                     break;

@@ -20,10 +20,13 @@ import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.Resource;
 
 /**
- * modeline trait
+ * Modeline trait
  */
 public interface Trait {
 
+    /**
+     * Name of trait
+     */
     String getName();
 
     /**
