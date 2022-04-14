@@ -150,12 +150,11 @@ public class WsProducerConsumerTest extends CamelTestSupport {
         mock.expectedBodiesReceived(TEST_CONNECTED_MESSAGE);
 
         mock.assertIsSatisfied();
+        resetMocks();
 
         LOG.info("Restarting Test Server");
         stopTestServer();
         startTestServer();
-
-        resetMocks();
 
         mock.expectedBodiesReceived(TEST_CONNECTED_MESSAGE);
 
