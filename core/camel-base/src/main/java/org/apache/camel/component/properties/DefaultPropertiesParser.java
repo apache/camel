@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -313,6 +314,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
             if (local != null) {
                 value = local.getProperty(key);
                 if (value != null) {
+                    onLookup(key, value, "LocalProperties");
                     log.debug("Found local property: {} with value: {} to be used.", key, value);
                 }
             }
@@ -328,12 +330,14 @@ public class DefaultPropertiesParser implements PropertiesParser {
             if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
                 value = lookupEnvironmentVariable(key);
                 if (value != null) {
+                    onLookup(key, value, "ENV");
                     log.debug("Found an OS environment property: {} with value: {} to be used.", key, value);
                 }
             }
             if (value == null && sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE) {
                 value = System.getProperty(key);
                 if (value != null) {
+                    onLookup(key, value, "SYS");
                     log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
                 }
             }
@@ -348,12 +352,14 @@ public class DefaultPropertiesParser implements PropertiesParser {
             if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK) {
                 value = lookupEnvironmentVariable(key);
                 if (value != null) {
+                    onLookup(key, value, "ENV");
                     log.debug("Found an OS environment property: {} with value: {} to be used.", key, value);
                 }
             }
             if (value == null && sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_FALLBACK) {
                 value = System.getProperty(key);
                 if (value != null) {
+                    onLookup(key, value, "SYS");
                     log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
                 }
             }
@@ -364,6 +370,16 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 answer = value;
             }
             return answer;
+        }
+    }
+
+    private void onLookup(String name, String value, String source) {
+        for (PropertiesLookupListener listener : propertiesComponent.getPropertiesLookupListeners()) {
+            try {
+                listener.onLookup(name, value, source);
+            } catch (Exception e) {
+                // ignore
+            }
         }
     }
 
