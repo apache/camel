@@ -31,7 +31,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.shaded.org.apache.commons.lang.SystemUtils;
+import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
