@@ -75,7 +75,8 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
         MockEndpoint out = getMockEndpoint("mock:result");
         out.expectedMessageCount(0);
 
-        assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
+        out.setSleepForEmptyTest(2_000);
+        assertMockEndpointsSatisfied();
     }
 
     @Override
