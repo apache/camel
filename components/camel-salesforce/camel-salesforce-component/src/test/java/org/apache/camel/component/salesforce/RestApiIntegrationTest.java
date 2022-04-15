@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
@@ -74,6 +75,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.EVENT_NAME;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.EVENT_SCHEMA_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -524,6 +527,35 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
             versions = tmp;
         }
         assertNotNull(versions);
+    }
+
+    @Test
+    public void testGetEventSchemaByEventName() {
+        final Object expandedResult
+                = template.requestBodyAndHeader("salesforce:getEventSchema", "", EVENT_NAME, "BatchApexErrorEvent");
+        assertNotNull(expandedResult);
+
+        final Object compactResult = template.requestBodyAndHeaders("salesforce:getEventSchema", "",
+                Map.of(EVENT_NAME, "BatchApexErrorEvent",
+                        SalesforceEndpointConfig.EVENT_SCHEMA_FORMAT, "compact"));
+        assertNotNull(compactResult);
+    }
+
+    @Test
+    public void testGetEventSchemaBySchemaId() throws IOException {
+        final Object schemaResult = template.requestBodyAndHeaders("salesforce:getEventSchema", "",
+                Map.of(EVENT_NAME, "BatchApexErrorEvent",
+                        SalesforceEndpointConfig.EVENT_SCHEMA_FORMAT, "compact"));
+        assertNotNull(schemaResult);
+
+        ObjectMapper mapper = new ObjectMapper();
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> map = (Map<String, Object>) mapper.readValue((InputStream) schemaResult, Map.class);
+        final String schemaId = (String) map.get("uuid");
+
+        final Object idResult = template.requestBodyAndHeader("salesforce:getEventSchema", "", EVENT_SCHEMA_ID, schemaId);
+        System.out.println(idResult);
+        assertNotNull(idResult);
     }
 
     @Test
