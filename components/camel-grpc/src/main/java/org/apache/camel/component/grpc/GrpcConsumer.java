@@ -138,6 +138,10 @@ public class GrpcConsumer extends DefaultConsumer {
                     configuration.getJwtIssuer(), configuration.getJwtSubject()));
         }
 
+        for (ServerInterceptor si : configuration.getServerInterceptors()) {
+            serverBuilder.intercept(si);
+        }
+
         server = serverBuilder.addService(ServerInterceptors.intercept(bindableService, headerInterceptor))
                 .maxInboundMessageSize(configuration.getMaxMessageSize())
                 .flowControlWindow(configuration.getFlowControlWindow())
