@@ -1,0 +1,15 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: {{ .Name }}
+spec:
+  source:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1
+      name: {{ .Source }}
+    {{ .SourceProperties }}
+  sink:
+    uri: {{ .Sink }}
+    #properties:
+      #key: "value"

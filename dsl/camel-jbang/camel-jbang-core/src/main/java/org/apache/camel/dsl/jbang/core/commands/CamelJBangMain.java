@@ -30,6 +30,7 @@ public class CamelJBangMain implements Callable<Integer> {
         commandLine = new CommandLine(new CamelJBangMain())
                 .addSubcommand("run", new Run())
                 .addSubcommand("init", new CommandLine(new Init()))
+                .addSubcommand("bind", new CommandLine(new Bind()))
                 .addSubcommand("search", new CommandLine(new Search())
                         .addSubcommand("kamelets", new SearchKamelets())
                         .addSubcommand("components", new SearchComponents())
