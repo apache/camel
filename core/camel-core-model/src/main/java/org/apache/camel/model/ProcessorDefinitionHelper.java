@@ -383,8 +383,8 @@ public final class ProcessorDefinitionHelper {
             node.setLocation(resource.getLocation());
 
             String ext = FileUtil.onlyExt(resource.getLocation(), true);
-            if ("groovy".equals(ext) || "js".equals(ext)) {
-                // we cannot get line number for groovy/javascript scripts
+            if ("groovy".equals(ext) || "js".equals(ext) || "jsh".equals(ext)) {
+                // we cannot get line number for groovy/java-script/java-shell
                 return;
             }
         }
