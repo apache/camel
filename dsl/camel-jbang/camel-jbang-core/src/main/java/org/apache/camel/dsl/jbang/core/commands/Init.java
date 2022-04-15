@@ -32,6 +32,10 @@ class Init implements Callable<Integer> {
     @CommandLine.Parameters(description = "Name of integration file", arity = "1")
     private String file;
 
+    @Option(names = { "--integration" },
+            description = "When creating a yaml file should it be created as a Camel K Integration CRD")
+    private boolean integration;
+
     //CHECKSTYLE:OFF
     @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested = false;
@@ -40,6 +44,10 @@ class Init implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         String ext = FileUtil.onlyExt(file, false);
+        if ("yaml".equals(ext) && integration) {
+            ext = "integration.yaml";
+        }
+
         String name = FileUtil.onlyName(file, false);
         InputStream is = Init.class.getClassLoader().getResourceAsStream("templates/" + ext + ".tmpl");
         if (is == null) {
