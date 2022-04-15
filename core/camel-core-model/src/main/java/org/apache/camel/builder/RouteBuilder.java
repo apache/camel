@@ -313,6 +313,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      */
     public RouteDefinition from(String uri) {
         getRouteCollection().setCamelContext(getContext());
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
         RouteDefinition answer = getRouteCollection().from(uri);
         configureRoute(answer);
         return answer;
@@ -327,6 +330,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      */
     public RouteDefinition fromF(String uri, Object... args) {
         getRouteCollection().setCamelContext(getContext());
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
         RouteDefinition answer = getRouteCollection().from(String.format(uri, args));
         configureRoute(answer);
         return answer;
@@ -340,6 +346,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      */
     public RouteDefinition from(Endpoint endpoint) {
         getRouteCollection().setCamelContext(getContext());
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
         RouteDefinition answer = getRouteCollection().from(endpoint);
         configureRoute(answer);
         return answer;
@@ -347,6 +356,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     public RouteDefinition from(EndpointConsumerBuilder endpointDefinition) {
         getRouteCollection().setCamelContext(getContext());
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
         RouteDefinition answer = getRouteCollection().from(endpointDefinition);
         configureRoute(answer);
         return answer;
@@ -362,6 +374,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             throw new IllegalArgumentException("errorHandler must be defined before any routes in the RouteBuilder");
         }
         getRouteCollection().setCamelContext(getContext());
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
         setErrorHandlerFactory(errorHandlerFactory);
     }
 
@@ -375,6 +390,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             throw new IllegalArgumentException("errorHandler must be defined before any routes in the RouteBuilder");
         }
         getRouteCollection().setCamelContext(getContext());
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
         setErrorHandlerFactory(new ErrorHandlerRefDefinition(ref));
     }
 
@@ -422,6 +440,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             throw new IllegalArgumentException("intercept must be defined before any routes in the RouteBuilder");
         }
         getRouteCollection().setCamelContext(getContext());
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
         return getRouteCollection().intercept();
     }
 
@@ -435,6 +456,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             throw new IllegalArgumentException("interceptFrom must be defined before any routes in the RouteBuilder");
         }
         getRouteCollection().setCamelContext(getContext());
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
         return getRouteCollection().interceptFrom();
     }
 
@@ -449,6 +473,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             throw new IllegalArgumentException("interceptFrom must be defined before any routes in the RouteBuilder");
         }
         getRouteCollection().setCamelContext(getContext());
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
         return getRouteCollection().interceptFrom(uri);
     }
 
@@ -463,6 +490,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             throw new IllegalArgumentException("interceptSendToEndpoint must be defined before any routes in the RouteBuilder");
         }
         getRouteCollection().setCamelContext(getContext());
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
         return getRouteCollection().interceptSendToEndpoint(uri);
     }
 
@@ -479,6 +509,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             throw new IllegalArgumentException("onException must be defined before any routes in the RouteBuilder");
         }
         getRouteCollection().setCamelContext(getContext());
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
         return getRouteCollection().onException(exception);
     }
 
@@ -509,6 +542,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             throw new IllegalArgumentException("onCompletion must be defined before any routes in the RouteBuilder");
         }
         getRouteCollection().setCamelContext(getContext());
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
         return getRouteCollection().onCompletion();
     }
 
@@ -676,12 +712,18 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     protected void populateRoutes() throws Exception {
         CamelContext camelContext = notNullCamelContext();
         getRouteCollection().setCamelContext(camelContext);
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
         camelContext.getExtension(Model.class).addRouteDefinitions(getRouteCollection().getRoutes());
     }
 
     protected void populateOrUpdateRoutes() throws Exception {
         CamelContext camelContext = notNullCamelContext();
         getRouteCollection().setCamelContext(camelContext);
+        if (resource != null) {
+            getRouteCollection().setResource(resource);
+        }
         // must stop and remove existing running routes
         for (RouteDefinition route : getRouteCollection().getRoutes()) {
             camelContext.getRouteController().stopRoute(route.getRouteId());

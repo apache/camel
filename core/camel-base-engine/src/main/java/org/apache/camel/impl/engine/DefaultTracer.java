@@ -126,6 +126,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
 
         // we need to capture original source:line-number
         if (original && camelContext.isDebugging()) {
+            // TODO: use in dumpTrace
             int line = route.getInput().getLineNumber();
             String loc = route.getInput().getLocation();
         }

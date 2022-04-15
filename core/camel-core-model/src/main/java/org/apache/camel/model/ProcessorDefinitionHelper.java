@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.NamedNode;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.util.FileUtil;
 
 /**
  * Helper class for ProcessorDefinition and the other model classes.
@@ -376,7 +378,17 @@ public final class ProcessorDefinitionHelper {
      *
      * @param node the node
      */
-    public static void prepareSourceLocation(NamedNode node) {
+    public static void prepareSourceLocation(Resource resource, NamedNode node) {
+        if (resource != null) {
+            node.setLocation(resource.getLocation());
+
+            String ext = FileUtil.onlyExt(resource.getLocation(), true);
+            if ("groovy".equals(ext)) {
+                // we cannot get line number for groovy scripts
+                return;
+            }
+        }
+
         // line number may already be set if parsed via XML, YAML etc.
         int number = node.getLineNumber();
         if (number < 0) {
@@ -385,11 +397,13 @@ public final class ProcessorDefinitionHelper {
             for (int i = 1; i < st.length; i++) {
                 StackTraceElement e = st[i];
                 if (!e.getClassName().startsWith("org.apache.camel.model") &&
-                        !e.getClassName().startsWith("org.apache.camel.builder.RouteBuilder")) {
+                        !e.getClassName().startsWith("org.apache.camel.builder.RouteBuilder") &&
+                        !e.getClassName().startsWith("org.apache.camel.dsl")) {
                     // when we are no longer in model/RouteBuilder, we have found the location:line-number
                     node.setLineNumber(e.getLineNumber());
                     if (node.getLocation() == null) {
-                        node.setLocation(e.getClassName());
+                        String name = e.getClassName();
+                        node.setLocation(name);
                     }
                     return;
                 }

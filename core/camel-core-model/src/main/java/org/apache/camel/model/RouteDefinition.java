@@ -765,7 +765,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         if (getCamelContext() != null && (getCamelContext().isSourceLocationEnabled() || getCamelContext().isDebugging()
                 || getCamelContext().isTracing())) {
             // we want to capture source location:line for every output
-            ProcessorDefinitionHelper.prepareSourceLocation(input);
+            ProcessorDefinitionHelper.prepareSourceLocation(getResource(), input);
         }
     }
 

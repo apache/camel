@@ -66,6 +66,8 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Policy;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.support.ExpressionAdapter;
 import org.slf4j.Logger;
 
@@ -177,7 +179,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         }
         if (context != null && (context.isSourceLocationEnabled() || context.isDebugging() || context.isTracing())) {
             // we want to capture source location:line for every output
-            ProcessorDefinitionHelper.prepareSourceLocation(output);
+            Resource resource = this instanceof ResourceAware ? ((ResourceAware) this).getResource() : null;
+            ProcessorDefinitionHelper.prepareSourceLocation(resource, output);
         }
 
         // inject context

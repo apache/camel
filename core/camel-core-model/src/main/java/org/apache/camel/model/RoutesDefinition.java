@@ -395,6 +395,9 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         if (handler != null) {
             route.setErrorHandlerFactoryIfNull(handler);
         }
+        if (resource != null) {
+            route.setResource(resource);
+        }
         return route;
     }
 }

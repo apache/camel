@@ -44,7 +44,7 @@ public final class LoggerHelper {
             }
             String loc = ((LineNumberAware) node).getLocation();
             int line = ((LineNumberAware) node).getLineNumber();
-            if (line != -1 && loc != null) {
+            if (loc != null) {
                 // is it a class or file?
                 name = loc;
                 if (loc.contains(":")) {
@@ -59,7 +59,9 @@ public final class LoggerHelper {
                         name = name.substring(pos + 1);
                     }
                 }
-                name += ":" + line;
+                if (line != -1) {
+                    name += ":" + line;
+                }
             }
         }
         return name;
