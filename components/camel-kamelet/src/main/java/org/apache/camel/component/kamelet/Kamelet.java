@@ -127,6 +127,8 @@ public final class Kamelet {
         ObjectHelper.notNull(rid, PARAM_ROUTE_ID);
 
         RouteDefinition def = in.asRouteDefinition();
+        def.setLocation(in.getLocation());
+        def.setLineNumber(in.getLineNumber());
         def.setId(rid);
 
         if (def.getInput() == null) {

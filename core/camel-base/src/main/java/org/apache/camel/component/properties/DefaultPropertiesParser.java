@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -314,7 +315,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
             if (local != null) {
                 value = local.getProperty(key);
                 if (value != null) {
-                    onLookup(key, value, "LocalProperties");
+                    String loc = location(local, key, "LocalProperties");
+                    onLookup(key, value, loc);
                     log.debug("Found local property: {} with value: {} to be used.", key, value);
                 }
             }
@@ -381,6 +383,17 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 // ignore
             }
         }
+    }
+
+    private static String location(Properties prop, String name, String defaultLocation) {
+        String loc = null;
+        if (prop instanceof OrderedLocationProperties) {
+            loc = ((OrderedLocationProperties) prop).getLocation(name);
+        }
+        if (loc == null) {
+            loc = defaultLocation;
+        }
+        return loc;
     }
 
     /**

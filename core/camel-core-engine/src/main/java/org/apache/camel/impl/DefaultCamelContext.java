@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -87,6 +86,7 @@ import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.LocalBeanRegistry;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.NamedThreadLocal;
@@ -793,7 +793,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     }
 
                     // copy parameters/bean repository to not cause side-effect
-                    Map<String, Object> params = new HashMap<>(routeDefinition.getTemplateParameters());
+                    Map<Object, Object> params = new HashMap<>(routeDefinition.getTemplateParameters());
                     LocalBeanRegistry bbr
                             = (LocalBeanRegistry) routeDefinition.getRouteTemplateContext().getLocalBeanRepository();
                     LocalBeanRegistry bbrCopy = new LocalBeanRegistry();
@@ -803,7 +803,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     // no side-effect from previously used values that Camel may use in its endpoint
                     // registry and elsewhere
                     if (bbr != null && !bbr.isEmpty()) {
-                        for (Map.Entry<String, Object> param : params.entrySet()) {
+                        for (Map.Entry<Object, Object> param : params.entrySet()) {
                             Object value = param.getValue();
                             if (value instanceof String) {
                                 String oldKey = (String) value;
@@ -836,8 +836,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                         }
                     }
 
-                    Properties prop = new Properties();
-                    prop.putAll(params);
+                    OrderedLocationProperties prop = new OrderedLocationProperties();
+                    prop.putAll(routeDefinition.getLocation(), params);
                     pc.setLocalProperties(prop);
 
                     // we need to shadow the bean registry on the CamelContext with the local beans from the route template context

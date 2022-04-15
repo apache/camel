@@ -56,7 +56,8 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
             Object value = local.get(name);
             if (value != null) {
                 answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
-                onLookup(name, answer, "LocalProperties");
+                String loc = location(local, name, "LocalProperties");
+                onLookup(name, answer, loc);
             }
         }
 
@@ -66,7 +67,8 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
             Object value = component.getOverrideProperties().get(name);
             if (value != null) {
                 answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
-                onLookup(name, answer, "OverrideProperties");
+                String loc = location(local, name, "OverrideProperties");
+                onLookup(name, answer, loc);
             }
         }
         if (answer == null) {
@@ -101,7 +103,8 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
             Object value = component.getInitialProperties().get(name);
             if (value != null) {
                 answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
-                onLookup(name, answer, "InitialProperties");
+                String loc = location(local, name, "InitialProperties");
+                onLookup(name, answer, loc);
             }
         }
 
@@ -116,6 +119,17 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
                 // ignore
             }
         }
+    }
+
+    private static String location(Properties prop, String name, String defaultLocation) {
+        String loc = null;
+        if (prop instanceof OrderedLocationProperties) {
+            loc = ((OrderedLocationProperties) prop).getLocation(name);
+        }
+        if (loc == null) {
+            loc = defaultLocation;
+        }
+        return loc;
     }
 
 }

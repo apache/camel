@@ -1651,6 +1651,9 @@ public abstract class BaseMainSupport extends BaseService {
         if (loc.contains(":")) {
             loc = StringHelper.after(loc, ":");
         }
+        // strip paths so location is only the name
+        loc = FileUtil.stripPath(loc);
+        // clip long name
         if (loc.length() > 28) {
             int pos = loc.length() - 28;
             loc = loc.substring(pos);
