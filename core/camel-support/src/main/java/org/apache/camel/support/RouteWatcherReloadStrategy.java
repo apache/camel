@@ -59,6 +59,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
     private String pattern;
     private boolean removeAllRoutes = true;
+    private final List<Resource> previousSources = new ArrayList<>();
 
     public RouteWatcherReloadStrategy() {
     }
@@ -165,6 +166,17 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         // remember all existing resources
         List<Resource> sources = new ArrayList<>();
 
+        if (!previousSources.isEmpty()) {
+            // last update failed, so we need to update all previous sources to ensure we go back
+            // to the last working set
+            previousSources.forEach(rs -> {
+                // remember all the sources of the current routes (except the updated)
+                if (rs != null && !equalResourceLocation(resource, rs)) {
+                    sources.add(rs);
+                }
+            });
+        }
+
         try {
             // should all existing routes be stopped and removed first?
             if (removeAllRoutes) {
@@ -196,9 +208,18 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 }
             }
 
+            // just in case remember this set of sources as what was attempted previously to update
+            // in case the update fails with an exception
+            previousSources.clear();
+            previousSources.addAll(sources);
+
             // reload those other routes that was stopped and removed as we want to keep running those
             Set<String> ids
                     = getCamelContext().adapt(ExtendedCamelContext.class).getRoutesLoader().updateRoutes(sources);
+
+            // update okay, so clear as we do not need to remember those anymore
+            previousSources.clear();
+
             if (!ids.isEmpty()) {
                 List<String> lines = new ArrayList<>();
                 int total = 0;
