@@ -245,6 +245,7 @@ class Run implements Callable<Integer> {
         StringJoiner js = new StringJoiner(",");
         StringJoiner sjReload = new StringJoiner(",");
         StringJoiner sjClasspathFiles = new StringJoiner(",");
+        StringJoiner sjKamelets = new StringJoiner(",");
 
         for (String file : files) {
 
@@ -286,6 +287,10 @@ class Run implements Callable<Integer> {
                 }
             }
 
+            if (file.startsWith("file:") && file.endsWith(".kamelet.yaml")) {
+                sjKamelets.add(file);
+            }
+
             // automatic map github https urls to github resolver
             if (file.startsWith("https://github.com/")) {
                 String ext = FileUtil.onlyExt(file);
@@ -308,7 +313,8 @@ class Run implements Callable<Integer> {
                     if (kamelets.length() > 0) {
                         String loc = main.getInitialProperties().getProperty("camel.component.kamelet.location");
                         if (loc != null) {
-                            loc = loc + "," + kamelets;
+                            // local kamelets first
+                            loc = kamelets + "," + loc;
                         } else {
                             loc = kamelets.toString();
                         }
@@ -328,6 +334,16 @@ class Run implements Callable<Integer> {
         }
         if (sjClasspathFiles.length() > 0) {
             main.addInitialProperty("camel.jbang.classpathFiles", sjClasspathFiles.toString());
+        }
+
+        if (sjKamelets.length() > 0) {
+            String loc = main.getInitialProperties().getProperty("camel.component.kamelet.location");
+            if (loc != null) {
+                loc = loc + "," + sjKamelets;
+            } else {
+                loc = sjKamelets.toString();
+            }
+            main.addInitialProperty("camel.component.kamelet.location", loc);
         }
 
         // we can only reload if file based
