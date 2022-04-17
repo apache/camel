@@ -429,6 +429,7 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                                         <include>**/*IntegrationTest.java</include>
                                     </includes>
                                     <excludedGroups>standalone</excludedGroups>
+                                    <forkedProcessExitTimeoutInSeconds>240</forkedProcessExitTimeoutInSeconds>
                                 </configuration>
                             </execution>
                             <execution>

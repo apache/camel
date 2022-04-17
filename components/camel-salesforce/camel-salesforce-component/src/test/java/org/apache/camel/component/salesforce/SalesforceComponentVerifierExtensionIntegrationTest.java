@@ -49,6 +49,7 @@ public class SalesforceComponentVerifierExtensionIntegrationTest extends CamelTe
         parameters.put("clientSecret", loginConfig.getClientSecret());
         parameters.put("userName", loginConfig.getUserName());
         parameters.put("password", loginConfig.getPassword());
+        parameters.put("loginUrl", loginConfig.getLoginUrl());
 
         return parameters;
     }

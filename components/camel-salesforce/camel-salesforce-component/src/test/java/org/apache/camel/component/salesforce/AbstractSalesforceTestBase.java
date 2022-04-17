@@ -60,6 +60,8 @@ public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
         clientProperties.put("maxContentLength", String.valueOf(4 * 1024 * 1024));
         component.setHttpClientProperties(clientProperties);
 
+        component.setHttpClientIdleTimeout(60000);
+
         // set DTO package
         component.setPackages(Merchandise__c.class.getPackage().getName());
 

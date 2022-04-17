@@ -40,7 +40,7 @@ public class SchemaMojoIntegrationTest {
         setup(mojo);
 
         mojo.includes = new String[] { "Account" };
-        mojo.outputDirectory = temp.getRoot().toFile();
+        mojo.outputDirectory = temp.toFile();
         mojo.jsonSchemaFilename = "test-schema.json";
         mojo.jsonSchemaId = JsonUtils.DEFAULT_ID_PREFIX;
 

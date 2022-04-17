@@ -24,10 +24,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
-import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
+import org.apache.camel.component.salesforce.api.dto.UpsertSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch.Method;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchResponse;
@@ -38,7 +37,6 @@ import org.apache.camel.test.junit5.params.Parameter;
 import org.apache.camel.test.junit5.params.Parameterized;
 import org.apache.camel.test.junit5.params.Parameters;
 import org.apache.camel.test.junit5.params.Test;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,7 +51,9 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
     }
 
     private static final Set<String> VERSIONS
-            = new HashSet<>(Arrays.asList(SalesforceEndpointConfig.DEFAULT_VERSION, "34.0", "36.0", "37.0", "39.0"));
+            = new HashSet<>(Arrays.asList(SalesforceEndpointConfig.DEFAULT_VERSION, "34.0"));
+
+    private static final String ACCOUNT_EXTERNAL_ID = "CompositeAPIBatch";
 
     @Parameter
     protected String format;
@@ -63,25 +63,24 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
 
     private String accountId;
 
-    @AfterEach
-    public void removeRecords() {
-        try {
-            template.sendBody("salesforce:deleteSObject?sObjectName=Account&sObjectId=" + accountId, null);
-        } catch (final CamelExecutionException ignored) {
-            // other tests run in parallel could have deleted the Account
+    @BeforeEach
+    public void setupRecords() throws InterruptedException {
+        if (accountId != null) {
+            return;
         }
 
-        template.request("direct:deleteBatchAccounts", null);
-    }
-
-    @BeforeEach
-    public void setupRecords() {
         final Account account = new Account();
         account.setName("Composite API Batch");
+        account.setExternal_Id__c(ACCOUNT_EXTERNAL_ID);
 
-        final CreateSObjectResult result = template.requestBody("salesforce:createSObject", account, CreateSObjectResult.class);
-
+        final UpsertSObjectResult result = template.requestBody(
+                "salesforce:upsertSObject?sObjectIdName=External_Id__c&apiVersion=53.0", account, UpsertSObjectResult.class);
         accountId = result.getId();
+
+        if (result.getCreated()) {
+            // Give the indexer some time to index this account
+            Thread.sleep(2000);
+        }
     }
 
     @Test
@@ -298,7 +297,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
         // asynchronously to object creation, so that account might not be
         // indexed at this time, so we search for
         // `United` Account that should be created with developer instance
-        batch.addSearch("FIND {United} IN Name Fields RETURNING Account (Name)");
+        batch.addSearch("FIND {Composite API Batch} IN Name Fields RETURNING Account (Name)");
 
         final SObjectBatchResponse response = testBatch(batch);
 
