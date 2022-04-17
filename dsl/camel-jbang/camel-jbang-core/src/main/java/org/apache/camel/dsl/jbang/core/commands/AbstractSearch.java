@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.api.Extractor;
+import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.exceptions.ResourceDoesNotExist;
 import org.apache.camel.github.GitHubResourceResolver;
 import org.apache.camel.main.KameletMain;
@@ -53,6 +54,9 @@ public abstract class AbstractSearch {
     }
 
     protected void downloadResource(File indexFile) throws ResourceDoesNotExist, IOException {
+        // turn off logging as we use camel to download
+        RuntimeUtil.configureLog("off");
+
         KameletMain main = new KameletMain();
         main.start();
         CamelContext context = main.getCamelContext();
