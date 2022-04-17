@@ -367,8 +367,8 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 new RestClient.ResponseCallback() {
                     @Override
                     public void onResponse(InputStream response, Map<String, String> headers, SalesforceException exception) {
-                        processResponse(exchange, response, headers, exception, callback);
                         restoreFields(exchange, sObjectBase, finalsObjectId, null, null);
+                        processResponse(exchange, response, headers, exception, callback);
                     }
                 });
     }
@@ -381,8 +381,8 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         restClient.deleteSObject(sObjectName, sObjectId, determineHeaders(exchange), new RestClient.ResponseCallback() {
             @Override
             public void onResponse(InputStream response, Map<String, String> headers, SalesforceException exception) {
-                processResponse(exchange, response, headers, exception, callback);
                 restoreFields(exchange, sObjectBase, sObjectId, null, null);
+                processResponse(exchange, response, headers, exception, callback);
             }
         });
     }
@@ -410,8 +410,8 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 new RestClient.ResponseCallback() {
                     @Override
                     public void onResponse(InputStream response, Map<String, String> headers, SalesforceException exception) {
-                        processResponse(exchange, response, headers, exception, callback);
                         restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
+                        processResponse(exchange, response, headers, exception, callback);
                     }
                 });
     }
@@ -438,8 +438,8 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 getRequestStream(exchange), new RestClient.ResponseCallback() {
                     @Override
                     public void onResponse(InputStream response, Map<String, String> headers, SalesforceException exception) {
-                        processResponse(exchange, response, headers, exception, callback);
                         restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
+                        processResponse(exchange, response, headers, exception, callback);
                     }
                 });
     }
@@ -483,8 +483,8 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 new RestClient.ResponseCallback() {
                     @Override
                     public void onResponse(InputStream response, Map<String, String> headers, SalesforceException exception) {
-                        processResponse(exchange, response, headers, exception, callback);
                         restoreFields(exchange, sObjectBase, sObjectId, null, null);
+                        processResponse(exchange, response, headers, exception, callback);
                     }
                 });
     }

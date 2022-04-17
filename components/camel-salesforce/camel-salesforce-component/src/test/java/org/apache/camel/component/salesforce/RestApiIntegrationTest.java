@@ -420,6 +420,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         lineItem.setName(lineItemId);
         UpsertSObjectResult result = template().requestBody("direct:upsertSObject", lineItem, UpsertSObjectResult.class);
         assertNotNull(result);
+        assertNotNull(lineItem.getName());
         assertTrue(result.getSuccess());
         assertTrue(result.getCreated());
     }
