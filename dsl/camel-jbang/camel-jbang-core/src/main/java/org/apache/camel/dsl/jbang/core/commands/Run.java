@@ -25,6 +25,7 @@ import java.net.http.HttpResponse;
 import java.nio.file.FileSystems;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -249,6 +250,9 @@ class Run implements Callable<Integer> {
 
         for (String file : files) {
 
+            if (skipFile(file)) {
+                continue;
+            }
             if (!knownFile(file)) {
                 // non known files to be added on classpath
                 sjClasspathFiles.add(file);
@@ -506,6 +510,26 @@ class Run implements Callable<Integer> {
             // assume match as it can be wildcard or dir
             return true;
         }
+    }
+
+    private boolean skipFile(String name) {
+        if (name.startsWith(".")) {
+            return true;
+        }
+        if ("pom.xml".equalsIgnoreCase(name)) {
+            return true;
+        }
+        if ("build.gradle".equalsIgnoreCase(name)) {
+            return true;
+        }
+
+        String on = FileUtil.onlyName(name, true);
+        on = on.toLowerCase(Locale.ROOT);
+        if (on.startsWith("readme")) {
+            return true;
+        }
+
+        return false;
     }
 
 }
