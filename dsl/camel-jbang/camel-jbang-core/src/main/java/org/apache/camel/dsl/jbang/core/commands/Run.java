@@ -102,9 +102,9 @@ class Run implements Callable<Integer> {
     @Option(names = { "-p", "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
     private String[] property;
 
-    @Option(names = { "--file-lock" }, defaultValue = "true",
+    @Option(names = { "--file-lock" },
             description = "Whether to create a temporary file lock, which upon deleting triggers this process to terminate")
-    private boolean fileLock = true;
+    private boolean fileLock;
 
     @Option(names = { "--jfr" },
             description = "Enables Java Flight Recorder saving recording to disk on exit")
