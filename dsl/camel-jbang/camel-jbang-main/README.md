@@ -110,7 +110,7 @@ And you should see the following output:
 A new lock file was created, delete the file to stop running:
 /home/oscerd/workspace/apache-camel/camel/dsl/camel-jbang/camel-jbang-main/dist/./.run3788379828636362676.camel.lock
 Starting CamelJBang
-2022-02-15 16:49:07.108  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext : Detected: camel-debug JAR (enabling Camel Debugging)
+2022-02-15 16:49:07.108  INFO 31844 --- [           main] e.camel.impl.engine.AbstractCamelContext : Detected: camel-debug JAR (Enabling Camel Debugging)
 2022-02-15 16:49:07.272  INFO 31844 --- [           main] org.apache.camel.main.BaseMainSupport    : Auto-configuration summary
 2022-02-15 16:49:07.273  INFO 31844 --- [           main] org.apache.camel.main.BaseMainSupport    :     camel.main.name=CamelJBang
 2022-02-15 16:49:07.273  INFO 31844 --- [           main] org.apache.camel.main.BaseMainSupport    :     camel.main.shutdownTimeout=5
