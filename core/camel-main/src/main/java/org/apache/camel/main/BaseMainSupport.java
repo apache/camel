@@ -410,16 +410,35 @@ public abstract class BaseMainSupport extends BaseService {
 
         // log summary of configurations
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
-            LOG.info("Auto-configuration summary");
+            boolean header = false;
             for (var entry : autoConfiguredProperties.entrySet()) {
                 String k = entry.getKey().toString();
                 Object v = entry.getValue();
                 String loc = locationSummary(autoConfiguredProperties, k);
 
+                // tone down logging noise for our own internal configurations
+                boolean debug = loc.contains("[camel-main]");
+                if (debug && !LOG.isDebugEnabled()) {
+                    continue;
+                }
+
+                if (!header) {
+                    LOG.info("Auto-configuration summary");
+                    header = true;
+                }
+
                 if (SensitiveUtils.containsSensitive(k)) {
-                    LOG.info("    {} {}=xxxxxx", loc, k);
+                    if (debug) {
+                        LOG.debug("    {} {}=xxxxxx", loc, k);
+                    } else {
+                        LOG.info("    {} {}=xxxxxx", loc, k);
+                    }
                 } else {
-                    LOG.info("    {} {}={}", loc, k, v);
+                    if (debug) {
+                        LOG.debug("    {} {}={}", loc, k, v);
+                    } else {
+                        LOG.info("    {} {}={}", loc, k, v);
+                    }
                 }
             }
         }
@@ -1609,16 +1628,35 @@ public abstract class BaseMainSupport extends BaseService {
             }
             // log summary of configurations
             if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
-                LOG.info("Auto-configuration component {} summary", name);
+                boolean header = false;
                 for (var entry : autoConfiguredProperties.entrySet()) {
                     String k = entry.getKey().toString();
                     Object v = entry.getValue();
                     String loc = locationSummary(autoConfiguredProperties, k);
 
+                    // tone down logging noise for our own internal configurations
+                    boolean debug = loc.contains("[camel-main]");
+                    if (debug && !LOG.isDebugEnabled()) {
+                        continue;
+                    }
+
+                    if (!header) {
+                        LOG.info("Auto-configuration component {} summary", name);
+                        header = true;
+                    }
+
                     if (SensitiveUtils.containsSensitive(k)) {
-                        LOG.info("    {} {}=xxxxxx", loc, k);
+                        if (debug) {
+                            LOG.debug("    {} {}=xxxxxx", loc, k);
+                        } else {
+                            LOG.info("    {} {}=xxxxxx", loc, k);
+                        }
                     } else {
-                        LOG.info("    {} {}={}", loc, k, v);
+                        if (debug) {
+                            LOG.debug("    {} {}={}", loc, k, v);
+                        } else {
+                            LOG.info("    {} {}={}", loc, k, v);
+                        }
                     }
                 }
             }
