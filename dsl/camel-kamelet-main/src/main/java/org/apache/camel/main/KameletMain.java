@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import java.lang.management.ManagementFactory;
 import java.util.Map;
 import java.util.Objects;
 
@@ -158,6 +159,11 @@ public class KameletMain extends MainCommandLineSupport {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
 
+        String info = startupInfo();
+        if (info != null) {
+            LOG.info(info);
+        }
+
         // any additional files to add to classpath
         ClassLoader parentCL = KameletMain.class.getClassLoader();
         String cpFiles = getInitialProperties().getProperty("camel.jbang.classpathFiles");
@@ -251,6 +257,27 @@ public class KameletMain extends MainCommandLineSupport {
         addInitialProperty("camel.component.kamelet.location", location);
         addInitialProperty("camel.component.rest.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.producerComponentName", "vertx-http");
+    }
+
+    protected String startupInfo() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Using Java ").append(System.getProperty("java.version"));
+        String pid = getPid();
+        if (pid != null) {
+            sb.append(" with PID ").append(pid);
+        }
+        sb.append(". Started by ").append(System.getProperty("user.name"));
+        sb.append(" in ").append(System.getProperty("user.dir"));
+
+        return sb.toString();
+    }
+
+    private static String getPid() {
+        try {
+            return "" + ManagementFactory.getRuntimeMXBean().getPid();
+        } catch (Throwable e) {
+            return null;
+        }
     }
 
 }
