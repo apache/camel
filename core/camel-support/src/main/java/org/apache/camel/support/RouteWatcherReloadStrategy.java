@@ -150,6 +150,11 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         super.doStart();
     }
 
+    @Override
+    protected String startupMessage(File dir) {
+        return "Live route reloading enabled (directory: " + dir + ")";
+    }
+
     protected void onPropertiesReload(Resource resource) {
         LOG.info("Reloading properties: {}. (Only Camel routes can be updated with changes)",
                 resource.getLocation());
