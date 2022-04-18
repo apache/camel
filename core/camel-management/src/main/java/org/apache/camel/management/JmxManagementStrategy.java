@@ -121,7 +121,7 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
 
     @Override
     protected void doInit() throws Exception {
-        LOG.info("JMX is enabled");
+        LOG.debug("JMX is enabled");
         super.doInit();
     }
 

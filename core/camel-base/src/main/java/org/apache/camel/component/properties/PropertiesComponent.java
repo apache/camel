@@ -731,7 +731,7 @@ public class PropertiesComponent extends ServiceSupport
             try {
                 for (PropertiesSource source : getCamelContext().getRegistry().findByType(PropertiesSource.class)) {
                     addPropertiesSource(source);
-                    LOG.info("PropertiesComponent added custom PropertiesSource (registry): {}", source);
+                    LOG.debug("PropertiesComponent added custom PropertiesSource (registry): {}", source);
                 }
 
                 FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class)
@@ -742,7 +742,7 @@ public class PropertiesComponent extends ServiceSupport
                     if (obj instanceof PropertiesSource) {
                         PropertiesSource ps = (PropertiesSource) obj;
                         addPropertiesSource(ps);
-                        LOG.info("PropertiesComponent added custom PropertiesSource (factory): {}", ps);
+                        LOG.debug("PropertiesComponent added custom PropertiesSource (factory): {}", ps);
                     } else if (obj != null) {
                         LOG.warn(
                                 "PropertiesComponent cannot add custom PropertiesSource as the type is not a {} but: {}",
