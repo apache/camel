@@ -9,7 +9,7 @@ There is a companion maven plugin [camel-salesforce-plugin](https://github.com/a
 
 **Note:** These instructions are only for running integration tests, they use permissions and IP restrictions that should be reconsidered for production use. 
 
-**Note:** Running the tests you will quickly use up your API allowance, 15000 requests/day in the free developer account, make sure that you won't deny your other applications/users access by running them.
+**Note:** Running the tests you will quickly use up your API allowance, 15,000 requests/day in the free developer account. Make sure that you won't deny your other applications/users access by running them. Scratch orgs are preferable as they have a more generous limit of 5,000,000 requests/day.
 
 In order to run the integration tests you need a Salesforce Developer account. You can get a Salesforce Developer account by visiting [developer.salesforce.com](https://developer.salesforce.com/) and sign up for one.
 
@@ -26,11 +26,19 @@ Before running the tests for the first time run the migration by invoking Maven 
 
 This will create a _Connected App_ with predefined Consumer Key (the one mentioned in the comment one in `test-salesforce-login.properties.sample`) and _Consumer Secret_ (`clientSecret`) with the name of `CamelSalesforceIntegrationTests`.
 
-This however is run every time when you run the integration tests by issuing from the `camel-salesforce-component` Maven module directory:
+Note that this deployment is run every time you run the integration tests by issuing from the `camel-salesforce-component` Maven module directory:
 
     $ mvn -Pintegration verify
+                                                     
+However, once the deployment is successful, subsequent deployments are redundant, but harmless as it is an idempotent operation.
 
 If you need any custom fields, Apex classes or other configuration changes done, make sure to download them using the _Salesforce Migration Tool_ and include them in `it/resources/salesforce` directory.
+
+After the initial successful deployment, in salesforce go to Setup > App Manager, find the CamelSalesforceIntegrationTests app and click View. Copy the Consumer Key and Consumer Secret values into salesforce.client.id and salesforce.client.secret respectively.
+
+It's also recommended to set email deliverability to `System Email Only` so you don't receive loads of approval emails when the tests run. 
+
+If your org contains Duplicate Rules for Objects the integration tests use, they could cause the tests to fail. If this is the case, deactivating the rules is recommended. 
 
 If your tests cannot be run alongside other tests you can use `@Standalone` to mark them as such.
 
