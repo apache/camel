@@ -37,7 +37,9 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("languages", new SearchLanguages())
                         .addSubcommand("others", new SearchOthers()))
                 .addSubcommand("create", new CommandLine(new Create())
-                        .addSubcommand("project", new Project()));
+                        .addSubcommand("project", new Project()))
+                .addSubcommand("generate", new CommandLine(new CodeGenerator())
+                        .addSubcommand("rest", new CodeRestGenerator()));
 
         int exitCode = commandLine.execute(args);
         System.exit(exitCode);
