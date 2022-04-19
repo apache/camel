@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,8 +69,12 @@ public class JavaSourceParser {
     private Map<String, Map<String, String>> parameterTypes = new LinkedHashMap<>();
     private Map<String, Map<String, String>> parameterDocs = new LinkedHashMap<>();
 
+    public void parse(InputStream in, String innerClass) throws IOException {
+        parse(new String(in.readAllBytes()), innerClass);
+    }
+
     @SuppressWarnings("unchecked")
-    public synchronized void parse(InputStream in, String innerClass) {
+    public synchronized void parse(String in, String innerClass) {
         AbstractGenericCapableJavaSource rootClazz = (AbstractGenericCapableJavaSource) Roaster.parse(in);
         AbstractGenericCapableJavaSource clazz = rootClazz;
 
