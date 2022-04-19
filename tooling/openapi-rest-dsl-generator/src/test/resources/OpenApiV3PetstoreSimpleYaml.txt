@@ -7,5 +7,4 @@
       - name: "body"
         required: true
         type: "body"
-      to:
-        uri: "direct:rest1"
+      to: "direct:rest1"

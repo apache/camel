@@ -12,8 +12,7 @@
         name: "body"
         required: true
         type: "body"
-      to:
-        uri: "direct:updatePet"
+      to: "direct:updatePet"
     - id: "updateUser"
       path: "/user/{username}"
       description: "This can only be done by the logged in user."
@@ -28,8 +27,7 @@
         name: "body"
         required: true
         type: "body"
-      to:
-        uri: "direct:updateUser"
+      to: "direct:updateUser"
     post:
     - id: "addPet"
       path: "/pet"
@@ -45,8 +43,7 @@
         name: "body"
         required: true
         type: "body"
-      to:
-        uri: "direct:addPet"
+      to: "direct:addPet"
     - id: "updatePetWithForm"
       path: "/pet/{petId}"
       consumes: "application/x-www-form-urlencoded"
@@ -66,8 +63,7 @@
         name: "status"
         required: true
         type: "formData"
-      to:
-        uri: "direct:updatePetWithForm"
+      to: "direct:updatePetWithForm"
     - id: "uploadFile"
       path: "/pet/{petId}/uploadImage"
       consumes: "multipart/form-data"
@@ -88,8 +84,7 @@
         name: "file"
         required: true
         type: "formData"
-      to:
-        uri: "direct:uploadFile"
+      to: "direct:uploadFile"
     - id: "placeOrder"
       path: "/store/order"
       consumes: "*/*"
@@ -99,8 +94,7 @@
         name: "body"
         required: true
         type: "body"
-      to:
-        uri: "direct:placeOrder"
+      to: "direct:placeOrder"
     - id: "createUser"
       path: "/user"
       description: "This can only be done by the logged in user."
@@ -110,8 +104,7 @@
         name: "body"
         required: true
         type: "body"
-      to:
-        uri: "direct:createUser"
+      to: "direct:createUser"
     - id: "createUsersWithArrayInput"
       path: "/user/createWithArray"
       consumes: "*/*"
@@ -120,8 +113,7 @@
         name: "body"
         required: true
         type: "body"
-      to:
-        uri: "direct:createUsersWithArrayInput"
+      to: "direct:createUsersWithArrayInput"
     - id: "createUsersWithListInput"
       path: "/user/createWithList"
       consumes: "*/*"
@@ -130,8 +122,7 @@
         name: "body"
         required: true
         type: "body"
-      to:
-        uri: "direct:createUsersWithListInput"
+      to: "direct:createUsersWithListInput"
     get:
     - id: "findPetsByStatus"
       path: "/pet/findByStatus"
@@ -145,8 +136,7 @@
         name: "status"
         required: true
         type: "query"
-      to:
-        uri: "direct:findPetsByStatus"
+      to: "direct:findPetsByStatus"
     - id: "findPetsByTags"
       path: "/pet/findByTags"
       description: "Muliple tags can be provided with comma separated strings. Use\
@@ -160,8 +150,7 @@
         name: "tags"
         required: true
         type: "query"
-      to:
-        uri: "direct:findPetsByTags"
+      to: "direct:findPetsByTags"
     - id: "getPetById"
       path: "/pet/{petId}"
       description: "Returns a single pet"
@@ -172,14 +161,12 @@
         name: "petId"
         required: true
         type: "path"
-      to:
-        uri: "direct:getPetById"
+      to: "direct:getPetById"
     - id: "getInventory"
       path: "/store/inventory"
       description: "Returns a map of status codes to quantities"
       produces: "application/json"
-      to:
-        uri: "direct:getInventory"
+      to: "direct:getInventory"
     - id: "getOrderById"
       path: "/store/order/{orderId}"
       description: "For valid response try integer IDs with value >= 1 and <= 10.\
@@ -191,8 +178,7 @@
         name: "orderId"
         required: true
         type: "path"
-      to:
-        uri: "direct:getOrderById"
+      to: "direct:getOrderById"
     - id: "loginUser"
       path: "/user/login"
       produces: "application/xml,application/json"
@@ -207,12 +193,10 @@
         name: "password"
         required: true
         type: "query"
-      to:
-        uri: "direct:loginUser"
+      to: "direct:loginUser"
     - id: "logoutUser"
       path: "/user/logout"
-      to:
-        uri: "direct:logoutUser"
+      to: "direct:logoutUser"
     - id: "getUserByName"
       path: "/user/{username}"
       produces: "application/xml,application/json"
@@ -222,8 +206,7 @@
         name: "username"
         required: true
         type: "path"
-      to:
-        uri: "direct:getUserByName"
+      to: "direct:getUserByName"
     delete:
     - id: "deletePet"
       path: "/pet/{petId}"
@@ -237,8 +220,7 @@
         name: "petId"
         required: true
         type: "path"
-      to:
-        uri: "direct:deletePet"
+      to: "direct:deletePet"
     - id: "deleteOrder"
       path: "/store/order/{orderId}"
       description: "For valid response try integer IDs with positive integer value.\
@@ -249,8 +231,7 @@
         name: "orderId"
         required: true
         type: "path"
-      to:
-        uri: "direct:deleteOrder"
+      to: "direct:deleteOrder"
     - id: "deleteUser"
       path: "/user/{username}"
       description: "This can only be done by the logged in user."
@@ -260,5 +241,4 @@
         name: "username"
         required: true
         type: "path"
-      to:
-        uri: "direct:deleteUser"
+      to: "direct:deleteUser"
