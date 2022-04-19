@@ -16,19 +16,35 @@
  */
 package org.apache.camel.component.feed;
 
+import org.apache.camel.ResumeStrategy;
+
 /**
  * Filter used by the {@link org.apache.camel.component.feed.FeedEntryPollingConsumer} to filter entries from the feed.
+ *
+ * @param <E> entry type
  */
-public interface EntryFilter {
+public interface EntryFilter<E> extends ResumeStrategy {
 
     /**
      * Tests to be used as filtering the feed for only entries of interest, such as only new entries, etc.
      *
-     * @param  endpoint the endpoint
-     * @param  feed     the feed
-     * @param  entry    the given entry to filter
-     * @return          <tt>true</tt> to include the entry, <ff>false</tt> to skip it
+     * @param  entry the given entry to filter
+     * @return       <tt>true</tt> to include the entry, <ff>false</tt> to skip it
      */
-    boolean isValidEntry(FeedEndpoint endpoint, Object feed, Object entry);
+    boolean isValidEntry(E entry);
 
+    @Override
+    default void resume() {
+        // NO-OP by default. Implementations can implement more complex behaviors if needed
+    }
+
+    @Override
+    default void start() {
+        // NO-OP
+    }
+
+    @Override
+    default void stop() {
+        // NO-OP
+    }
 }

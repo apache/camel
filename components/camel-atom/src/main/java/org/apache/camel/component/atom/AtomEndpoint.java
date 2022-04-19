@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.atom;
 
-import java.util.Date;
-
 import org.apache.abdera.model.Feed;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
@@ -57,9 +55,9 @@ public class AtomEndpoint extends FeedEndpoint {
 
     @Override
     protected FeedPollingConsumer createEntryPollingConsumer(
-            FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries)
+            FeedEndpoint feedEndpoint, Processor processor, boolean throttleEntries)
             throws Exception {
-        AtomEntryPollingConsumer answer = new AtomEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
+        AtomEntryPollingConsumer answer = new AtomEntryPollingConsumer(this, processor, throttleEntries);
         configureConsumer(answer);
         return answer;
     }

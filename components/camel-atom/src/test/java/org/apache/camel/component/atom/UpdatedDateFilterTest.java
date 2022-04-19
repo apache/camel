@@ -53,7 +53,7 @@ public class UpdatedDateFilterTest {
         // must reverse backwards
         for (int i = entries.size() - 1; i > 0; i--) {
             Entry entry = entries.get(i);
-            boolean valid = filter.isValidEntry(null, doc, entry);
+            boolean valid = filter.isValidEntry(entry);
             // only the 3 last should be true
             if (i > 3) {
                 assertEquals(false, valid, "not valid");

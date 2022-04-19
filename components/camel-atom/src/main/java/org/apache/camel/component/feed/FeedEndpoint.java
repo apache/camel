@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.feed;
 
-import java.util.Date;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -39,11 +37,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     @UriParam(defaultValue = "true", description = "Sets whether or not entries should be sent "
                                                    + "individually or whether the entire feed should be sent as a single message")
     protected boolean splitEntries = true;
-    @UriParam(description = "Sets the timestamp to be used for filtering entries from the "
-                            + "atom feeds. This options is only in conjunction with the splitEntries.")
-    protected Date lastUpdate;
-    @UriParam(defaultValue = "true", description = "Sets whether to use filtering or not of the entries.")
-    protected boolean filter = true;
+
     @UriParam(defaultValue = "true", description = "Sets whether to add the feed object as a header.")
     private boolean feedHeader = true;
     @UriParam(description = "Sets whether to sort entries by published date. Only works when splitEntries = true.")
@@ -76,7 +70,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
         FeedPollingConsumer answer;
         if (isSplitEntries()) {
-            answer = createEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
+            answer = createEntryPollingConsumer(this, processor, throttleEntries);
         } else {
             answer = createPollingConsumer(this, processor);
         }
@@ -92,7 +86,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
             throws Exception;
 
     protected abstract FeedPollingConsumer createEntryPollingConsumer(
-            FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries)
+            FeedEndpoint feedEndpoint, Processor processor, boolean throttleEntries)
             throws Exception;
 
     protected Exchange createExchangeWithFeedHeader(Object feed, String header) {
@@ -155,29 +149,6 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
      */
     public void setSplitEntries(boolean splitEntries) {
         this.splitEntries = splitEntries;
-    }
-
-    public Date getLastUpdate() {
-        return lastUpdate;
-    }
-
-    /**
-     * Sets the timestamp to be used for filtering entries from the atom feeds. This options is only in conjunction with
-     * the splitEntries.
-     */
-    public void setLastUpdate(Date lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
-
-    public boolean isFilter() {
-        return filter;
-    }
-
-    /**
-     * Sets whether to use filtering or not of the entries.
-     */
-    public void setFilter(boolean filter) {
-        this.filter = filter;
     }
 
     /**

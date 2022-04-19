@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.atom;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -28,14 +32,24 @@ import org.junit.jupiter.api.condition.OS;
  * Unit test for AtomEntryPollingConsumer
  */
 @DisabledOnOs(OS.AIX)
-public class AtomEntryPollingConsumerTest extends CamelTestSupport {
+public class AtomEntryPollingConsumerWithResumeTest extends CamelTestSupport {
 
-    @DisplayName("Tests whether can consume from the atom feed")
+    @DisplayName("Tests whether the component can consume with resume API enabled")
     @Test
-    void testCanConsume() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result1");
-        mock.expectedMessageCount(7);
+    void testCanConsumeWithResume() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(4);
         mock.assertIsSatisfied();
+    }
+
+    private Date getTestFilterDate() {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+
+        try {
+            return df.parse("2007-11-13 14:35:00 +0100");
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -43,7 +57,9 @@ public class AtomEntryPollingConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=500")
-                        .to("mock:result1");
+                        .resumable().resumeStrategy(new UpdatedDateFilter(getTestFilterDate()))
+                        .routeId("WithResume")
+                        .to("mock:result");
             }
         };
     }
