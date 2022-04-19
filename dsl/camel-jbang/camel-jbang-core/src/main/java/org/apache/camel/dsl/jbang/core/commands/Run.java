@@ -64,8 +64,9 @@ class Run implements Callable<Integer> {
     private boolean helpRequested;
     //CHECKSTYLE:ON
 
-    @Option(names = { "--dep", "--dependency" }, description = "Additional dependencies to add to the classpath", arity = "0")
-    private String[] dependencies;
+    @Option(names = {
+            "--deps" }, description = "Add additional dependencies (Use commas to separate them).")
+    private String dependencies;
 
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     private String name;
@@ -224,7 +225,7 @@ class Run implements Callable<Integer> {
             main.addInitialProperty("camel.jbang.jfr-profile", jfrProfile);
         }
         if (dependencies != null) {
-            main.addInitialProperty("camel.jbang.dependencies", String.join(",", dependencies));
+            main.addInitialProperty("camel.jbang.dependencies", dependencies);
         }
 
         if (fileLock) {
