@@ -118,68 +118,6 @@ public interface AtomEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether to use filtering or not of the entries.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param filter the value to set
-         * @return the dsl builder
-         */
-        default AtomEndpointBuilder filter(boolean filter) {
-            doSetProperty("filter", filter);
-            return this;
-        }
-        /**
-         * Sets whether to use filtering or not of the entries.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param filter the value to set
-         * @return the dsl builder
-         */
-        default AtomEndpointBuilder filter(String filter) {
-            doSetProperty("filter", filter);
-            return this;
-        }
-        /**
-         * Sets the timestamp to be used for filtering entries from the atom
-         * feeds. This options is only in conjunction with the splitEntries.
-         * 
-         * The option is a: &lt;code&gt;java.util.Date&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param lastUpdate the value to set
-         * @return the dsl builder
-         */
-        default AtomEndpointBuilder lastUpdate(Date lastUpdate) {
-            doSetProperty("lastUpdate", lastUpdate);
-            return this;
-        }
-        /**
-         * Sets the timestamp to be used for filtering entries from the atom
-         * feeds. This options is only in conjunction with the splitEntries.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Date&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param lastUpdate the value to set
-         * @return the dsl builder
-         */
-        default AtomEndpointBuilder lastUpdate(String lastUpdate) {
-            doSetProperty("lastUpdate", lastUpdate);
-            return this;
-        }
-        /**
          * Sets the password to be used for basic authentication when polling
          * from a HTTP feed.
          * 
