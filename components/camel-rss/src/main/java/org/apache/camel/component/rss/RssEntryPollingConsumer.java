@@ -17,11 +17,9 @@
 package org.apache.camel.component.rss;
 
 import java.util.Collections;
-import java.util.Date;
 
 import com.rometools.rome.feed.synd.SyndFeed;
 import org.apache.camel.Processor;
-import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -30,13 +28,12 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
 
-    public RssEntryPollingConsumer(RssEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate,
-                                   boolean throttleEntries) {
-        super(endpoint, processor, filter, lastUpdate, throttleEntries);
+    public RssEntryPollingConsumer(RssEndpoint endpoint, Processor processor, boolean throttleEntries) {
+        super(endpoint, processor, throttleEntries);
     }
 
     @Override
-    protected void populateList(Object feed) throws Exception {
+    protected void populateList(Object feed) {
         if (list == null) {
             list = ((SyndFeed) feed).getEntries();
             if (endpoint.isSortEntries()) {
@@ -64,10 +61,5 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
     @Override
     protected void resetList() {
         list = null;
-    }
-
-    @Override
-    protected EntryFilter createEntryFilter(Date lastUpdate) {
-        return new UpdatedDateFilter(lastUpdate);
     }
 }

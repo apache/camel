@@ -20,7 +20,6 @@ import java.util.Date;
 
 import org.apache.abdera.model.Entry;
 import org.apache.camel.component.feed.EntryFilter;
-import org.apache.camel.component.feed.FeedEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,21 +27,29 @@ import org.slf4j.LoggerFactory;
  * Filters out all entries which occur before the last time of the entry we saw (assuming entries arrive sorted in
  * order).
  */
-public class UpdatedDateFilter implements EntryFilter {
+public class UpdatedDateFilter implements EntryFilter<Entry> {
 
     private static final Logger LOG = LoggerFactory.getLogger(UpdatedDateFilter.class);
     private Date lastUpdate;
+
+    public UpdatedDateFilter() {
+
+    }
 
     public UpdatedDateFilter(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
 
+    private Date getLastUpdate() {
+        return this.lastUpdate;
+    }
+
     @Override
-    public boolean isValidEntry(FeedEndpoint endpoint, Object feed, Object entry) {
-        Date updated = ((Entry) entry).getUpdated();
+    public boolean isValidEntry(Entry entry) {
+        Date updated = entry.getUpdated();
         if (updated == null) {
             // never been updated so get published date
-            updated = ((Entry) entry).getPublished();
+            updated = entry.getPublished();
         }
         if (updated == null) {
             LOG.debug("No updated time for entry so assuming its valid: entry=[{}]", entry);
@@ -51,12 +58,11 @@ public class UpdatedDateFilter implements EntryFilter {
         if (lastUpdate != null) {
             // we need to skip the latest updated entry
             if (lastUpdate.after(updated) || lastUpdate.equals(updated)) {
-                LOG.debug("Entry is older than lastupdate=[{}], no valid entry=[{}]", lastUpdate, entry);
+                LOG.debug("Entry is older than last update=[{}], no valid entry=[{}]", lastUpdate, entry);
                 return false;
             }
         }
         lastUpdate = updated;
         return true;
     }
-
 }

@@ -20,7 +20,6 @@ import java.util.Date;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndEntryImpl;
-import com.rometools.rome.feed.synd.SyndFeedImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,17 +42,17 @@ public class UpdatedDateFilterTest {
         SyndEntry entry = new SyndEntryImpl();
         entry.setPublishedDate(now);
         entry.setAuthor("ANDY");
-        assertTrue(fixture.isValidEntry(new RssEndpoint(), new SyndFeedImpl(), entry));
+        assertTrue(fixture.isValidEntry(entry));
 
         entry = new SyndEntryImpl();
         entry.setPublishedDate(now);
         entry.setAuthor("ANDY");
-        assertFalse(fixture.isValidEntry(new RssEndpoint(), new SyndFeedImpl(), entry));
+        assertFalse(fixture.isValidEntry(entry));
 
         entry = new SyndEntryImpl();
         entry.setPublishedDate(now);
         entry.setAuthor("FRED");
-        assertTrue(fixture.isValidEntry(new RssEndpoint(), new SyndFeedImpl(), entry));
+        assertTrue(fixture.isValidEntry(entry));
     }
 
 }

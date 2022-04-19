@@ -101,6 +101,18 @@ Asynchronous, Synchronous or NO-OP commit policies from the former `autoCommitOn
 The configuration for body handler file uploads has changed from `true` to `false`.
 The configuration can be enabled via the `VertxPlatformHttpServerConfiguration` class.
 
+=== camel-atom
+
+This component was refactored to support the Resume API v2. As such, the options `filter` and `lastUpdate` where removed.
+
+```
+from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=500")
+    .resumable().resumeStrategy(new UpdatedDateFilter(new Date()))
+    .to("mock:result");
+```
+
+More complex filters can be implemented by extending the `UpdatedDateFilter` or by implementing a new `EntryFilter` resume strategy.
+
 === camel-cdi
 
 The support for the Camel XML configuration import, that had been marked as deprecated in previous releases, was removed.

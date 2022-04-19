@@ -37,10 +37,6 @@ public class AtomEntryPollingConsumerWithBasicAuthTest extends AtomEntryPollingC
                 from("atom:http://localhost:" + JettyTestServer.getInstance().port
                      + "/?splitEntries=true&filter=false&delay=500&username=camel&password=camelPass")
                              .to("mock:result2");
-
-                from("atom:http://localhost:" + JettyTestServer.getInstance().port
-                     + "/?splitEntries=true&filter=true&lastUpdate=#myDate&delay=500&username=camel&password=camelPass")
-                             .to("mock:result3");
             }
         };
     }

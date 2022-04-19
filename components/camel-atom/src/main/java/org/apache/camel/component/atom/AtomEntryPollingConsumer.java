@@ -17,13 +17,11 @@
 package org.apache.camel.component.atom;
 
 import java.io.IOException;
-import java.util.Date;
 
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.ParseException;
 import org.apache.camel.Processor;
-import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -33,9 +31,8 @@ import org.apache.camel.util.ObjectHelper;
 public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
     private Document<Feed> document;
 
-    public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate,
-                                    boolean throttleEntries) {
-        super(endpoint, processor, filter, lastUpdate, throttleEntries);
+    public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean throttleEntries) {
+        super(endpoint, processor, throttleEntries);
     }
 
     private Document<Feed> getDocument() throws IOException, ParseException {
@@ -72,10 +69,5 @@ public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
     @Override
     protected void resetList() {
         document = null;
-    }
-
-    @Override
-    protected EntryFilter createEntryFilter(Date lastUpdate) {
-        return new UpdatedDateFilter(lastUpdate);
     }
 }

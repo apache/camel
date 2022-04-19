@@ -17,7 +17,6 @@
 package org.apache.camel.component.rss;
 
 import java.util.Arrays;
-import java.util.Date;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
@@ -77,10 +76,9 @@ public class RssEndpoint extends FeedEndpoint {
 
     @Override
     protected FeedPollingConsumer createEntryPollingConsumer(
-            FeedEndpoint feedEndpoint, Processor processor,
-            boolean filter, Date lastUpdate, boolean throttleEntries)
+            FeedEndpoint feedEndpoint, Processor processor, boolean throttleEntries)
             throws Exception {
-        RssEntryPollingConsumer answer = new RssEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
+        RssEntryPollingConsumer answer = new RssEntryPollingConsumer(this, processor, throttleEntries);
         configureConsumer(answer);
         return answer;
     }

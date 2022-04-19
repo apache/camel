@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import org.apache.camel.component.feed.EntryFilter;
-import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.support.LRUCacheFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * Filters out all entries which occur before the last time of the entry we saw (assuming entries arrive sorted in
  * order).
  */
-public class UpdatedDateFilter implements EntryFilter {
+public class UpdatedDateFilter implements EntryFilter<SyndEntry> {
 
     private static final Logger LOG = LoggerFactory.getLogger(UpdatedDateFilter.class);
     private Date lastUpdate;
@@ -38,16 +37,23 @@ public class UpdatedDateFilter implements EntryFilter {
     @SuppressWarnings("unchecked")
     private Map<Integer, Integer> entriesForLastUpdate = LRUCacheFactory.newLRUCache(1000);
 
+    public UpdatedDateFilter() {
+    }
+
     public UpdatedDateFilter(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
 
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
     @Override
-    public boolean isValidEntry(FeedEndpoint endpoint, Object feed, Object entry) {
-        Date updated = ((SyndEntry) entry).getUpdatedDate();
+    public boolean isValidEntry(SyndEntry entry) {
+        Date updated = entry.getUpdatedDate();
         if (updated == null) {
             // never been updated so get published date
-            updated = ((SyndEntry) entry).getPublishedDate();
+            updated = entry.getPublishedDate();
         }
         if (updated == null) {
             LOG.debug("No updated time for entry so assuming its valid: entry=[{}]", entry);
@@ -55,7 +61,7 @@ public class UpdatedDateFilter implements EntryFilter {
         }
         if (lastUpdate != null) {
             if (lastUpdate.after(updated)) {
-                LOG.debug("Entry is older than lastupdate=[{}], no valid entry=[{}]", lastUpdate, entry);
+                LOG.debug("Entry is older than last update=[{}], no valid entry=[{}]", lastUpdate, entry);
                 return false;
             } else {
                 Integer hash = entry.hashCode();

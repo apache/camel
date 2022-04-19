@@ -16,29 +16,25 @@
  */
 package org.apache.camel.component.feed;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ResumeAware;
 
 /**
  * Consumer to poll feeds and return each entry from the feed step by step.
  */
-public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
+public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer implements ResumeAware<EntryFilter<E>> {
     protected int entryIndex;
-    protected EntryFilter entryFilter;
+    protected EntryFilter<E> entryFilter;
     @SuppressWarnings("rawtypes")
-    protected List list;
+    protected List<E> list;
     protected boolean throttleEntries;
     protected Object feed;
 
-    public FeedEntryPollingConsumer(FeedEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate,
-                                    boolean throttleEntries) {
+    public FeedEntryPollingConsumer(FeedEndpoint endpoint, Processor processor, boolean throttleEntries) {
         super(endpoint, processor);
-        if (filter) {
-            entryFilter = createEntryFilter(lastUpdate);
-        }
         this.throttleEntries = throttleEntries;
     }
 
@@ -52,12 +48,12 @@ public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
 
         int polledMessages = 0;
         while (hasNextEntry()) {
-            Object entry = list.get(entryIndex--);
+            E entry = list.get(entryIndex--);
             polledMessages++;
 
             boolean valid = true;
             if (entryFilter != null) {
-                valid = entryFilter.isValidEntry(endpoint, feed, entry);
+                valid = entryFilter.isValidEntry(entry);
             }
             if (valid) {
                 Exchange exchange = endpoint.createExchange(feed, entry);
@@ -76,7 +72,15 @@ public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
         return polledMessages;
     }
 
-    protected abstract EntryFilter createEntryFilter(Date lastUpdate);
+    @Override
+    public void setResumeStrategy(EntryFilter<E> resumeStrategy) {
+        this.entryFilter = resumeStrategy;
+    }
+
+    @Override
+    public EntryFilter<E> getResumeStrategy() {
+        return entryFilter;
+    }
 
     protected abstract void resetList();
 

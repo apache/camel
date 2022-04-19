@@ -36,12 +36,9 @@ public class RssEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "feedheader":
         case "feedHeader": target.setFeedHeader(property(camelContext, boolean.class, value)); return true;
-        case "filter": target.setFilter(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "lastupdate":
-        case "lastUpdate": target.setLastUpdate(property(camelContext, java.util.Date.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
@@ -91,12 +88,9 @@ public class RssEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "feedheader":
         case "feedHeader": return boolean.class;
-        case "filter": return boolean.class;
         case "greedy": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
-        case "lastupdate":
-        case "lastUpdate": return java.util.Date.class;
         case "password": return java.lang.String.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
@@ -147,12 +141,9 @@ public class RssEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": return target.getExchangePattern();
         case "feedheader":
         case "feedHeader": return target.isFeedHeader();
-        case "filter": return target.isFilter();
         case "greedy": return target.isGreedy();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
-        case "lastupdate":
-        case "lastUpdate": return target.getLastUpdate();
         case "password": return target.getPassword();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
