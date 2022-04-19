@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import io.grpc.ClientInterceptor;
+import io.grpc.ServerInterceptor;
 import io.grpc.internal.GrpcUtil;
 import io.grpc.netty.NegotiationType;
 import io.grpc.netty.NettyChannelBuilder;
@@ -111,9 +112,14 @@ public class GrpcConfiguration {
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean routeControlledStreamObserver;
 
+    private List<ServerInterceptor> serverInterceptors = Collections.emptyList();
+
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean autoDiscoverServerInterceptors = true;
+
     private List<ClientInterceptor> clientInterceptors = Collections.emptyList();
 
-    @UriParam(label = "common", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean autoDiscoverClientInterceptors = true;
 
     @UriParam(defaultValue = "false", label = "advanced",
@@ -402,6 +408,30 @@ public class GrpcConfiguration {
      */
     public void setMaxConcurrentCallsPerConnection(int maxConcurrentCallsPerConnection) {
         this.maxConcurrentCallsPerConnection = maxConcurrentCallsPerConnection;
+    }
+
+    public List<ServerInterceptor> getServerInterceptors() {
+        return serverInterceptors;
+    }
+
+    /**
+     * Setting the server interceptors on the netty channel in order to intercept incoming calls before they are
+     * received by the server.
+     */
+    public void setServerInterceptors(List<ServerInterceptor> serverInterceptors) {
+        this.serverInterceptors = serverInterceptors;
+    }
+
+    public boolean isAutoDiscoverServerInterceptors() {
+        return autoDiscoverServerInterceptors;
+    }
+
+    /**
+     * Setting the autoDiscoverServerInterceptors mechanism, if true, the component will look for a ServerInterceptor
+     * instance in the registry automatically otherwise it will skip that checking.
+     */
+    public void setAutoDiscoverServerInterceptors(boolean autoDiscoverServerInterceptors) {
+        this.autoDiscoverServerInterceptors = autoDiscoverServerInterceptors;
     }
 
     public List<ClientInterceptor> getClientInterceptors() {
