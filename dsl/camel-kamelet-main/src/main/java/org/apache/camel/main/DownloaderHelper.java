@@ -47,8 +47,17 @@ public final class DownloaderHelper {
 
         LOG.debug("Downloading dependency: {}:{}:{}", groupId, artifactId, version);
         Grape.grab(map);
-        LOG.info("Downloaded dependency: {}:{}:{} took: {}", groupId, artifactId, version,
-                TimeUtils.printDuration(watch.taken()));
+
+        // only report at INFO if downloading took > 1s because loading from cache is faster
+        // and then it is not downloaded over the internet
+        long taken = watch.taken();
+        String msg = "Downloaded dependency: " + groupId + ":" + artifactId + ":" + version + " took: "
+                     + TimeUtils.printDuration(taken);
+        if (taken < 1000) {
+            LOG.debug(msg);
+        } else {
+            LOG.debug(msg);
+        }
     }
 
     public static boolean alreadyOnClasspath(CamelContext camelContext, String artifactId, String version) {
