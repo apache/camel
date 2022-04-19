@@ -44,43 +44,6 @@ public interface GrpcEndpointBuilderFactory {
             return (AdvancedGrpcEndpointConsumerBuilder) this;
         }
         /**
-         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
-         * component will look for a ClientInterceptor instance in the registry
-         * automatically otherwise it will skip that checking.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param autoDiscoverClientInterceptors the value to set
-         * @return the dsl builder
-         */
-        default GrpcEndpointConsumerBuilder autoDiscoverClientInterceptors(
-                boolean autoDiscoverClientInterceptors) {
-            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
-         * component will look for a ClientInterceptor instance in the registry
-         * automatically otherwise it will skip that checking.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param autoDiscoverClientInterceptors the value to set
-         * @return the dsl builder
-         */
-        default GrpcEndpointConsumerBuilder autoDiscoverClientInterceptors(
-                String autoDiscoverClientInterceptors) {
-            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
-            return this;
-        }
-        /**
          * The HTTP/2 flow control window size (MiB).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -140,6 +103,43 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder maxMessageSize(String maxMessageSize) {
             doSetProperty("maxMessageSize", maxMessageSize);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverServerInterceptors mechanism, if true, the
+         * component will look for a ServerInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param autoDiscoverServerInterceptors the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder autoDiscoverServerInterceptors(
+                boolean autoDiscoverServerInterceptors) {
+            doSetProperty("autoDiscoverServerInterceptors", autoDiscoverServerInterceptors);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverServerInterceptors mechanism, if true, the
+         * component will look for a ServerInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param autoDiscoverServerInterceptors the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder autoDiscoverServerInterceptors(
+                String autoDiscoverServerInterceptors) {
+            doSetProperty("autoDiscoverServerInterceptors", autoDiscoverServerInterceptors);
             return this;
         }
         /**
@@ -723,43 +723,6 @@ public interface GrpcEndpointBuilderFactory {
             return (AdvancedGrpcEndpointProducerBuilder) this;
         }
         /**
-         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
-         * component will look for a ClientInterceptor instance in the registry
-         * automatically otherwise it will skip that checking.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param autoDiscoverClientInterceptors the value to set
-         * @return the dsl builder
-         */
-        default GrpcEndpointProducerBuilder autoDiscoverClientInterceptors(
-                boolean autoDiscoverClientInterceptors) {
-            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
-         * component will look for a ClientInterceptor instance in the registry
-         * automatically otherwise it will skip that checking.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param autoDiscoverClientInterceptors the value to set
-         * @return the dsl builder
-         */
-        default GrpcEndpointProducerBuilder autoDiscoverClientInterceptors(
-                String autoDiscoverClientInterceptors) {
-            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
-            return this;
-        }
-        /**
          * The HTTP/2 flow control window size (MiB).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -819,6 +782,43 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder maxMessageSize(String maxMessageSize) {
             doSetProperty("maxMessageSize", maxMessageSize);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
+         * component will look for a ClientInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param autoDiscoverClientInterceptors the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointProducerBuilder autoDiscoverClientInterceptors(
+                boolean autoDiscoverClientInterceptors) {
+            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
+         * component will look for a ClientInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param autoDiscoverClientInterceptors the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointProducerBuilder autoDiscoverClientInterceptors(
+                String autoDiscoverClientInterceptors) {
+            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
             return this;
         }
         /**
@@ -1233,43 +1233,6 @@ public interface GrpcEndpointBuilderFactory {
                 GrpcEndpointProducerBuilder {
         default AdvancedGrpcEndpointBuilder advanced() {
             return (AdvancedGrpcEndpointBuilder) this;
-        }
-        /**
-         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
-         * component will look for a ClientInterceptor instance in the registry
-         * automatically otherwise it will skip that checking.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param autoDiscoverClientInterceptors the value to set
-         * @return the dsl builder
-         */
-        default GrpcEndpointBuilder autoDiscoverClientInterceptors(
-                boolean autoDiscoverClientInterceptors) {
-            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
-         * component will look for a ClientInterceptor instance in the registry
-         * automatically otherwise it will skip that checking.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param autoDiscoverClientInterceptors the value to set
-         * @return the dsl builder
-         */
-        default GrpcEndpointBuilder autoDiscoverClientInterceptors(
-                String autoDiscoverClientInterceptors) {
-            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
-            return this;
         }
         /**
          * The HTTP/2 flow control window size (MiB).

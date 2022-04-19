@@ -61,8 +61,10 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
 
     @BeforeEach
     public void startGrpcChannels() {
-        interceptRequestChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_REQUEST_INTERCEPT_TEST_PORT).usePlaintext().build();
-        nointerceptRequestChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_REQUEST_NO_INTERCEPT_TEST_PORT).usePlaintext().build();
+        interceptRequestChannel
+                = ManagedChannelBuilder.forAddress("localhost", GRPC_REQUEST_INTERCEPT_TEST_PORT).usePlaintext().build();
+        nointerceptRequestChannel
+                = ManagedChannelBuilder.forAddress("localhost", GRPC_REQUEST_NO_INTERCEPT_TEST_PORT).usePlaintext().build();
         interceptBlockingStub = PingPongGrpc.newBlockingStub(interceptRequestChannel);
         nointerceptBlockingStub = PingPongGrpc.newBlockingStub(nointerceptRequestChannel);
     }
@@ -79,7 +81,7 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
         when(mockServerInterceptor2.interceptCall(any(), any(), any())).thenCallRealMethod();
         LOG.info("gRPC pingSyncSync method blocking test start");
         PingRequest pingRequest
-            = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
         PongResponse pongResponse = interceptBlockingStub.pingSyncSync(pingRequest);
 
         assertNotNull(pongResponse);
@@ -95,7 +97,7 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
         when(mockServerInterceptor2.interceptCall(any(), any(), any())).thenCallRealMethod();
         LOG.info("gRPC pingSyncSync method blocking test start");
         PingRequest pingRequest
-            = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
         PongResponse pongResponse = nointerceptBlockingStub.pingSyncSync(pingRequest);
 
         assertNotNull(pongResponse);
@@ -113,13 +115,13 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("grpc://localhost:" + GRPC_REQUEST_INTERCEPT_TEST_PORT
-                    + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
-                    .bean(new GrpcConsumerServerInterceptorTest.GrpcMessageBuilder(), "buildPongResponse");
+                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
+                             .bean(new GrpcConsumerServerInterceptorTest.GrpcMessageBuilder(), "buildPongResponse");
 
                 from("grpc://localhost:" + GRPC_REQUEST_NO_INTERCEPT_TEST_PORT
-                    + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION"
-                    + "&autoDiscoverServerInterceptors=false")
-                    .bean(new GrpcConsumerServerInterceptorTest.GrpcMessageBuilder(), "buildPongResponse");
+                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION"
+                     + "&autoDiscoverServerInterceptors=false")
+                             .bean(new GrpcConsumerServerInterceptorTest.GrpcMessageBuilder(), "buildPongResponse");
             }
         };
     }
@@ -156,12 +158,12 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
     public class GrpcMessageBuilder {
         public PongResponse buildPongResponse(PingRequest pingRequest) {
             return PongResponse.newBuilder().setPongName(pingRequest.getPingName() + GRPC_TEST_PONG_VALUE)
-                .setPongId(pingRequest.getPingId()).build();
+                    .setPongId(pingRequest.getPingId()).build();
         }
 
         public PongResponse buildAsyncPongResponse(List<PingRequest> pingRequests) {
             return PongResponse.newBuilder().setPongName(pingRequests.get(0).getPingName() + GRPC_TEST_PONG_VALUE)
-                .setPongId(pingRequests.get(0).getPingId()).build();
+                    .setPongId(pingRequests.get(0).getPingId()).build();
         }
     }
 }
