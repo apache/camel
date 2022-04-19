@@ -16,46 +16,19 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
-import org.apache.camel.CamelContext;
-import org.apache.camel.generator.openapi.RestDslGenerator;
-import org.apache.camel.impl.lw.LightweightCamelContext;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "generate", description = "Generate REST DSL source code from OpenApi specification")
+@CommandLine.Command(name = "generate", description = "Generate source code")
 public class CodeGenerator implements Callable<Integer> {
 
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested;
-    @CommandLine.Option(names = { "-i", "--input" }, description = "OpenApi specification file name")
-    private String input;
-    @CommandLine.Option(names = { "-o", "--output" }, description = "Output REST DSL file name")
-    private String output;
-
-    @CommandLine.Option(names = { "-t", "--type" }, description = "REST DSL type (YAML or XML)", defaultValue = "yaml")
-    private String type;
+    private boolean helpRequested = true;
 
     @Override
     public Integer call() throws Exception {
-        final ObjectMapper mapper = new ObjectMapper();
-        final JsonNode node = mapper.readTree(Paths.get(input).toFile());
-        OasDocument document = (OasDocument) Library.readDocument(node);
-        CamelContext context = new LightweightCamelContext();
-        final String yaml = type.equals("yaml")
-                ? RestDslGenerator.toYaml(document).generate(context)
-                : RestDslGenerator.toXml(document).generate(context);
-        if (output == null) {
-            System.out.println(yaml);
-        } else {
-            Files.write(Paths.get(output), yaml.getBytes());
-        }
+        new CommandLine(this).execute("--help");
         return 0;
     }
 }
