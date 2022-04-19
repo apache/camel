@@ -69,7 +69,8 @@ public final class ResourceHelper {
             return false;
         }
 
-        return uri.startsWith("file:") || uri.startsWith("classpath:") || uri.startsWith("http:") || uri.startsWith("https:");
+        return uri.startsWith("file:") || uri.startsWith("classpath:") || uri.startsWith("ref:") ||
+            uri.startsWith("http:") || uri.startsWith("https:");
     }
 
     /**
