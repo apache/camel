@@ -150,6 +150,48 @@ Or you can run all files starting with rou*
 camel run https://github.com/apache/camel-k/tree/main/examples/languages/rou*
 ----
 
+=== Downloading routes hosted on GitHub
+
+We have made it easy for Camel JBang to download existing examples from GitHub to local disk,
+which allows for modifying the example and to run locally.
+
+All you need to do is to copy the https link from the web browser.
+For example, you can download the _dependency injection_ example by:
+
+[source,bash]
+----
+camel init https://github.com/apache/camel-kamelets-examples/tree/main/jbang/dependency-injection
+----
+
+Then the files (not sub folders) are downloaded to the current directory.
+The example can then be run locally with:
+
+[source,bash]
+----
+camel run *
+----
+
+You can also run in reload mode, to hot-deploy on source code changes.
+
+[source,bash]
+----
+camel run * --reload
+----
+
+You can also download a single file, such as one of the Camel K examples:
+
+[source,bash]
+----
+camel init https://github.com/apache/camel-k/blob/main/examples/languages/simple.groovy
+----
+
+This is a groovy route, which you can run with (or use `*`):
+
+[source,bash]
+----
+camel run simple.groovy
+----
+
 === Running local Kamelets
 
 You can also use Camel JBang to try local Kamelets, without the need to publish them on Github or package them in a jar.
