@@ -84,7 +84,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         if (getConfiguration().getStreamingUploadTimeout() > 0) {
             timeoutCheckerExecutorService
                     = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                    TIMEOUT_CHECKER_EXECUTOR_NAME);
+                            TIMEOUT_CHECKER_EXECUTOR_NAME);
             timeoutCheckerExecutorService.scheduleAtFixedRate(new StreamingUploadTimeoutTask(),
                     getConfiguration().getStreamingUploadTimeout(), getConfiguration().getStreamingUploadTimeout(),
                     TimeUnit.MILLISECONDS);
