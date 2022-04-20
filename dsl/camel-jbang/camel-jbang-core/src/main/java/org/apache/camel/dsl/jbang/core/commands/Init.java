@@ -18,13 +18,23 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.dsl.jbang.core.common.exceptions.ResourceDoesNotExist;
+import org.apache.camel.github.GitHubResourceResolver;
+import org.apache.camel.impl.lw.LightweightCamelContext;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.commons.io.IOUtils;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+
+import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.asGithubSingleUrl;
+import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.fetchGithubUrls;
 
 @Command(name = "init", description = "Initialize empty Camel integrations")
 class Init implements Callable<Integer> {
@@ -43,6 +53,13 @@ class Init implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+
+        // is the file referring to an existing file on github
+        // then we should download the file to local for use
+        if (file.startsWith("https://github.com/")) {
+            return downloadFromGithub();
+        }
+
         String ext = FileUtil.onlyExt(file, false);
         if ("yaml".equals(ext) && integration) {
             ext = "integration.yaml";
@@ -61,4 +78,40 @@ class Init implements Callable<Integer> {
         IOHelper.writeText(context, new FileOutputStream(file, false));
         return 0;
     }
+
+    private int downloadFromGithub() throws Exception {
+        StringJoiner all = new StringJoiner(",");
+
+        String ext = FileUtil.onlyExt(file);
+        boolean wildcard = FileUtil.onlyName(file, false).contains("*");
+        if (ext != null && !wildcard) {
+            // it is a single file so map to
+            String url = asGithubSingleUrl(file);
+            all.add(url);
+        } else {
+            fetchGithubUrls(file, all);
+        }
+
+        if (all.length() > 0) {
+            CamelContext tiny = new LightweightCamelContext();
+            GitHubResourceResolver resolver = new GitHubResourceResolver();
+            resolver.setCamelContext(tiny);
+            for (String u : all.toString().split(",")) {
+                Resource resource = resolver.resolve(u);
+                if (!resource.exists()) {
+                    throw new ResourceDoesNotExist(resource);
+                }
+
+                String loc = resource.getLocation();
+                String name = FileUtil.stripPath(loc);
+
+                try (FileOutputStream fo = new FileOutputStream(name)) {
+                    IOUtils.copy(resource.getInputStream(), fo);
+                }
+            }
+        }
+
+        return 0;
+    }
+
 }

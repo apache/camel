@@ -18,12 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.FileSystems;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.StringJoiner;
@@ -32,19 +27,19 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+
+import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.asGithubSingleUrl;
+import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.fetchGithubUrls;
 
 @Command(name = "run", description = "Run Camel")
 class Run implements Callable<Integer> {
@@ -304,13 +299,13 @@ class Run implements Callable<Integer> {
                     // it is a single file so map to
                     file = asGithubSingleUrl(file);
                 } else {
-                    StringJoiner files = new StringJoiner(",");
+                    StringJoiner routes = new StringJoiner(",");
                     StringJoiner kamelets = new StringJoiner(",");
                     StringJoiner properties = new StringJoiner(",");
-                    fetchGithubUrls(file, files, kamelets, properties);
+                    fetchGithubUrls(file, routes, kamelets, properties);
 
-                    if (files.length() > 0) {
-                        file = files.toString();
+                    if (routes.length() > 0) {
+                        file = routes.toString();
                     }
                     if (properties.length() > 0) {
                         main.addInitialProperty("camel.component.properties.location", properties.toString());
@@ -403,104 +398,6 @@ class Run implements Callable<Integer> {
         lockFile.deleteOnExit();
 
         return lockFile;
-    }
-
-    private static String asGithubSingleUrl(String url) throws Exception {
-        // strip https://github.com/
-        url = url.substring(19);
-        // https://github.com/apache/camel-k/blob/main/examples/languages/routes.kts
-        // https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/hello-java/Hey.java
-        // https://github.com/apache/camel-kamelets-examples/blob/main/jbang/hello-java/Hey.java
-        url = url.replaceFirst("/", ":");
-        url = url.replaceFirst("/", ":");
-        url = url.replaceFirst("tree/", "");
-        url = url.replaceFirst("blob/", "");
-        url = url.replaceFirst("/", ":");
-        return "github:" + url;
-    }
-
-    private static void fetchGithubUrls(String url, StringJoiner files, StringJoiner kamelets, StringJoiner properties)
-            throws Exception {
-        // this is a directory, so we need to query github which files are there and filter them
-
-        // URL: https://api.github.com/repos/apache/camel-k/contents/examples/kamelets/kameletbindings
-        // URL: https://api.github.com/repos/apache/camel-k/contents/examples/kamelets/kameletbindings?ref=v1.7.0
-        // https://github.com/apache/camel-k/tree/main/examples/kamelets/kameletbindings
-        // https://github.com/apache/camel-k/tree/v1.7.0/examples/kamelets/kameletbindings
-
-        // strip https://github.com/
-        url = url.substring(19);
-
-        String[] parts = url.split("/");
-        if (parts.length < 5) {
-            return;
-        }
-
-        String org = parts[0];
-        String repo = parts[1];
-        String action = parts[2];
-        String branch = parts[3];
-        String path;
-        String wildcard = null;
-        StringJoiner sj = new StringJoiner("/");
-        for (int i = 4; i < parts.length; i++) {
-            if (i == parts.length - 1) {
-                // last element uses wildcard to filter which files to include
-                if (parts[i].contains("*")) {
-                    wildcard = parts[i];
-                    break;
-                }
-            }
-            sj.add(parts[i]);
-        }
-        path = sj.toString();
-
-        if ("tree".equals(action)) {
-            // https://api.github.com/repos/apache/camel-k/contents/examples/kamelets/kameletbindings?ref=v1.7.0
-            url = "https://api.github.com/repos/" + org + "/" + repo + "/contents/" + path;
-            if (!"main".equals(branch) && !"master".equals(branch)) {
-                url = url + "?ref=" + branch;
-            }
-        }
-
-        downloadGithubFiles(url, wildcard, files, kamelets, properties);
-    }
-
-    private static void downloadGithubFiles(
-            String url, String wildcard, StringJoiner files, StringJoiner kamelets, StringJoiner properties)
-            throws Exception {
-
-        // use JDK http client to call github api
-        HttpClient hc = HttpClient.newHttpClient();
-        HttpResponse<String> res = hc.send(HttpRequest.newBuilder(new URI(url)).timeout(Duration.ofSeconds(20)).build(),
-                HttpResponse.BodyHandlers.ofString());
-
-        if (res.statusCode() == 200) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(res.body());
-            for (JsonNode c : root) {
-                String name = c.get("name").asText();
-                String ext = FileUtil.onlyExt(name, false);
-                boolean match = wildcard == null || AntPathMatcher.INSTANCE.match(wildcard, name, false);
-                if (match) {
-                    if ("kamelet.yaml".equalsIgnoreCase(ext)) {
-                        String htmlUrl = c.get("html_url").asText();
-                        String u = asGithubSingleUrl(htmlUrl);
-                        kamelets.add(u);
-                    } else if ("properties".equalsIgnoreCase(ext)) {
-                        String htmlUrl = c.get("html_url").asText();
-                        String u = asGithubSingleUrl(htmlUrl);
-                        properties.add(u);
-                    } else if ("java".equalsIgnoreCase(ext) || "xml".equalsIgnoreCase(ext) || "yaml".equalsIgnoreCase(ext)
-                            || "groovy".equalsIgnoreCase(ext) || "js".equalsIgnoreCase(ext) || "jsh".equalsIgnoreCase(ext)
-                            || "kts".equalsIgnoreCase(ext)) {
-                        String htmlUrl = c.get("html_url").asText();
-                        String u = asGithubSingleUrl(htmlUrl);
-                        files.add(u);
-                    }
-                }
-            }
-        }
     }
 
     private boolean knownFile(String file) {
