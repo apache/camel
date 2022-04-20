@@ -279,6 +279,7 @@ public class ResourceHelperTest extends TestSupport {
         assertEquals("file:", ResourceHelper.getScheme("file:myfile.txt"));
         assertEquals("classpath:", ResourceHelper.getScheme("classpath:myfile.txt"));
         assertEquals("http:", ResourceHelper.getScheme("http:www.foo.com"));
+        assertEquals("ref:", ResourceHelper.getScheme("ref:myBean"));
         assertNull(ResourceHelper.getScheme("www.foo.com"));
         assertNull(ResourceHelper.getScheme("myfile.txt"));
     }
