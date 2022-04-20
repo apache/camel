@@ -143,7 +143,7 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
                                 "# " + GENERATED_MSG + NL + "class=" + className + NL);
                     } else {
                         StringBuilder sb = new StringBuilder();
-                        sb.append("# " + GENERATED_MSG + NL + "class=").append(className).append(NL);
+                        sb.append("# ").append(GENERATED_MSG).append(NL).append("class=").append(className).append(NL);
                         updateResource(resourcesOutputDir.toPath(),
                                 "META-INF/services/org/apache/camel/" + sfa.value().asString() + "/" + pval,
                                 sb.toString());
@@ -202,14 +202,14 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
         String cn = fqn.substring(fqn.lastIndexOf('.') + 1);
 
         StringBuilder w = new StringBuilder();
-        w.append("/* " + GENERATED_MSG + " */\n");
+        w.append("/* ").append(GENERATED_MSG).append(" */\n");
         w.append("package ").append(pn).append(";\n");
         w.append("\n");
         w.append("import java.util.HashMap;\n");
         w.append("import java.util.Map;\n");
         w.append("\n");
         w.append("/**\n");
-        w.append(" * " + GENERATED_MSG + "\n");
+        w.append(" * ").append(GENERATED_MSG).append("\n");
         w.append(" */\n");
         w.append("public class ").append(cn).append(" {\n");
         w.append("\n");
