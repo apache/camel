@@ -85,6 +85,7 @@ public class KafkaRecordProcessorFacade {
 
                 if (consumerListener != null) {
                     if (!consumerListener.afterProcess(lastResult)) {
+                        commitManager.commitOffset(partition, lastResult.getPartitionLastOffset());
                         return lastResult;
                     }
                 }
