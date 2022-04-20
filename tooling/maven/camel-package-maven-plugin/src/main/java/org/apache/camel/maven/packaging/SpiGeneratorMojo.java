@@ -17,6 +17,7 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -167,32 +168,45 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
             for (String cpe : project.getCompileClasspathElements()) {
                 Matcher matcher = cpePattern.matcher(cpe);
                 if (matcher.matches()) {
-                    try (JarFile jf = new JarFile(cpe)) {
-                        JarEntry indexEntry = jf.getJarEntry("META-INF/jandex.idx");
-                        if (indexEntry != null) {
-                            try (InputStream is = jf.getInputStream(indexEntry)) {
-                                indices.add(new IndexReader(is).read());
-                            }
-                        } else {
-                            final Indexer indexer = new Indexer();
-
-                            List<JarEntry> classes = jf.stream()
-                                    .filter(je -> je.getName().endsWith(".class"))
-                                    .collect(Collectors.toList());
-
-                            for (JarEntry je : classes) {
-                                try (InputStream is = jf.getInputStream(je)) {
-                                    indexer.index(is);
-                                }
-                            }
-                            indices.add(indexer.complete());
-                        }
-                    }
+                    addIndex(indices, cpe);
                 }
             }
             return CompositeIndex.create(indices);
         } catch (Exception e) {
             throw new MojoExecutionException("IOException: " + e.getMessage(), e);
+        }
+    }
+
+    private void addIndex(List<IndexView> indices, String cpe) throws IOException {
+        try (JarFile jf = new JarFile(cpe)) {
+            JarEntry indexEntry = jf.getJarEntry("META-INF/jandex.idx");
+            if (indexEntry != null) {
+                readIndexFromJandex(indices, jf, indexEntry);
+            } else {
+                createIndexFromClass(indices, jf);
+            }
+        }
+    }
+
+    private void createIndexFromClass(List<IndexView> indices, JarFile jf) throws IOException {
+        final Indexer indexer = new Indexer();
+
+        List<JarEntry> classes = jf.stream()
+                .filter(je -> je.getName().endsWith(".class"))
+                .collect(Collectors.toList());
+
+        for (JarEntry je : classes) {
+            try (InputStream is = jf.getInputStream(je)) {
+                indexer.index(is);
+            }
+        }
+
+        indices.add(indexer.complete());
+    }
+
+    private void readIndexFromJandex(List<IndexView> indices, JarFile jf, JarEntry indexEntry) throws IOException {
+        try (InputStream is = jf.getInputStream(indexEntry)) {
+            indices.add(new IndexReader(is).read());
         }
     }
 
