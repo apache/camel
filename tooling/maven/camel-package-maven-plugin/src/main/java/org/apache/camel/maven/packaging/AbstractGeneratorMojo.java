@@ -122,8 +122,8 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 
     public static String createProperties(MavenProject project, String key, String val) {
         String data;
-        StringBuilder properties = new StringBuilder();
-        properties.append("# " + GENERATED_MSG + NL);
+        StringBuilder properties = new StringBuilder(256);
+        properties.append("# ").append(GENERATED_MSG).append(NL);
         properties.append(key).append("=").append(val).append(NL);
         properties.append("groupId=").append(project.getGroupId()).append(NL);
         properties.append("artifactId=").append(project.getArtifactId()).append(NL);
