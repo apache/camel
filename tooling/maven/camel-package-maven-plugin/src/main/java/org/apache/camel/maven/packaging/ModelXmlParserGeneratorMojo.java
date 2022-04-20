@@ -60,6 +60,7 @@ import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.camel.maven.packaging.generics.JandexStore;
 import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -144,7 +145,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         expressionDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".language.ExpressionDefinition");
 
         String resName = routesDefinitionClass.getName().replace('.', '/') + ".class";
-        String url = classLoader.getResource(resName).toExternalForm().replace(resName, "META-INF/jandex.idx");
+        String url = classLoader.getResource(resName).toExternalForm().replace(resName, JandexStore.DEFAULT_NAME);
         Index index;
         try (InputStream is = new URL(url).openStream()) {
             index = new IndexReader(is).read();

@@ -18,15 +18,12 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -47,6 +44,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
+import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.EipModel;
@@ -71,7 +69,6 @@ import org.jboss.jandex.AnnotationValue;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.ClassInfo.NestingType;
 import org.jboss.jandex.DotName;
-import org.jboss.jandex.IndexReader;
 import org.jboss.jandex.IndexView;
 
 @Mojo(name = "generate-schema", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
@@ -243,12 +240,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     private IndexView getIndex() {
         if (indexView == null) {
-            Path output = Paths.get(project.getBuild().getOutputDirectory());
-            try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
-                indexView = new IndexReader(is).read();
-            } catch (IOException e) {
-                throw new RuntimeException("IOException: " + e.getMessage(), e);
-            }
+            indexView = PackagePluginUtils.readJandexIndexQuietly(project);
         }
         return indexView;
     }

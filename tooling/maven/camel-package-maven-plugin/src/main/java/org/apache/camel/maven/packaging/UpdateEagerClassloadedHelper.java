@@ -17,9 +17,6 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -27,6 +24,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
 
+import org.apache.camel.maven.packaging.generics.JandexStore;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -38,7 +36,6 @@ import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
-import org.jboss.jandex.IndexReader;
 
 import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
@@ -97,12 +94,14 @@ public class UpdateEagerClassloadedHelper extends AbstractGeneratorMojo {
 
     private void discoverClasses(Path output, Set<String> fqns) {
         Index index;
-        try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
-            index = new IndexReader(is).read();
-        } catch (IOException e) {
-            // ignore
+
+        final JandexStore.Jandex jandex = JandexStore.read(output);
+        if (jandex.getException() != null) {
+            getLog().warn("Jandex reading path failed" + jandex.getException().getMessage(), jandex.getException());
             return;
         }
+
+        index = jandex.getIndex();
 
         // discover all classes annotated with @EagerClassloaded
         List<AnnotationInstance> annotations = index.getAnnotations(EAGER_CLASSLOADED);

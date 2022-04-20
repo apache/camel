@@ -16,16 +16,13 @@
  */
 package org.apache.camel.maven.packaging.generics;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.jboss.jandex.Index;
-import org.jboss.jandex.IndexReader;
 
 public final class PackagePluginUtils {
 
@@ -34,13 +31,38 @@ public final class PackagePluginUtils {
 
     public static Index readJandexIndex(MavenProject project) throws MojoExecutionException {
         Path output = Paths.get(project.getBuild().getOutputDirectory());
-        Index index;
-        try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
-            index = new IndexReader(is).read();
-        } catch (IOException e) {
-            throw new MojoExecutionException("IOException: " + e.getMessage(), e);
+        final JandexStore.Jandex jandex = JandexStore.read(output);
+        if (jandex.getException() != null) {
+            throw new MojoExecutionException("IOException: " + jandex.getException(), jandex.getException());
         }
-        return index;
+
+        return jandex.getIndex();
+    }
+
+    public static Index readJandexIndexQuietly(MavenProject project) {
+        Path output = Paths.get(project.getBuild().getOutputDirectory());
+        final JandexStore.Jandex jandex = JandexStore.read(output);
+        if (jandex.getException() != null) {
+            throw new RuntimeException("IOException: " + jandex.getException(), jandex.getException());
+        }
+
+        return jandex.getIndex();
+    }
+
+    public static Index readJandexIndexIgnoreMissing(MavenProject project, Log log) throws MojoExecutionException {
+        Path output = Paths.get(project.getBuild().getOutputDirectory());
+        final JandexStore.Jandex jandex = JandexStore.read(output);
+
+        if (jandex.getException() != null) {
+            if (!jandex.doesNotExist()) {
+                throw new MojoExecutionException(
+                        "IOException: " + jandex.getException().getMessage(), jandex.getException());
+            }
+
+            log.warn("Jandex reading failed: " + jandex.getException().getMessage());
+        }
+
+        return jandex.getIndex();
     }
 
     public static String joinHeaderAndSource(String licenseHeader, String source) {

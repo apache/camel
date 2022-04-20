@@ -50,6 +50,7 @@ import java.util.stream.Stream;
 import org.apache.camel.Category;
 import org.apache.camel.maven.packaging.generics.ClassUtil;
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
+import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -93,7 +94,6 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.DotName;
-import org.jboss.jandex.IndexReader;
 import org.jboss.jandex.IndexView;
 
 import static java.lang.reflect.Modifier.isStatic;
@@ -1646,13 +1646,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     private IndexView getIndex() {
         if (indexView == null) {
-            Path output = Paths.get(project.getBuild().getOutputDirectory());
-            try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
-                indexView = new IndexReader(is).read();
-            } catch (IOException e) {
-                throw new RuntimeException("IOException: " + e.getMessage(), e);
-            }
+            indexView = PackagePluginUtils.readJandexIndexQuietly(project);
         }
+
         return indexView;
     }
 

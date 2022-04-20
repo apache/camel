@@ -18,7 +18,6 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
@@ -26,10 +25,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -38,6 +33,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.util.ReflectionHelper;
@@ -59,7 +55,6 @@ import org.jboss.jandex.AnnotationValue;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
-import org.jboss.jandex.IndexReader;
 
 import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.readJandexIndex;
 import static org.apache.camel.tooling.util.ReflectionHelper.doWithMethods;
@@ -134,16 +129,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         Set<String> bootstrapAndExtendedSet = new LinkedHashSet<>();
 
         if (discoverClasses) {
-            Path output = Paths.get(project.getBuild().getOutputDirectory());
-            Index index;
-            try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
-                index = new IndexReader(is).read();
-            } catch (NoSuchFileException e) {
-                // ignore if no jandex index
-                index = null;
-            } catch (IOException e) {
-                throw new MojoExecutionException("IOException: " + e.getMessage(), e);
-            }
+            Index index = PackagePluginUtils.readJandexIndexIgnoreMissing(project, getLog());
 
             if (index != null) {
                 // discover all classes annotated with @Configurer

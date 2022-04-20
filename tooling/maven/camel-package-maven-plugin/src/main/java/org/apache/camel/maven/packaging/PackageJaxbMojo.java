@@ -139,6 +139,7 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
     }
 
     private IndexView createIndex(List<String> locations) throws MojoExecutionException {
+
         if (index.exists()) {
             try (InputStream is = new FileInputStream(index)) {
                 IndexReader r = new IndexReader(is);
