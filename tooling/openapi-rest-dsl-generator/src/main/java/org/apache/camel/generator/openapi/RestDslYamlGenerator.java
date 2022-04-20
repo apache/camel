@@ -38,9 +38,7 @@ import org.xml.sax.InputSource;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.*;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
@@ -61,6 +59,10 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
     }
 
     public String generate(final CamelContext context) throws Exception {
+        return generate(context, false);
+    }
+
+    public String generate(final CamelContext context, boolean generateRoutes) throws Exception {
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
         final String basePath = RestDslGenerator.determineBasePathFrom(this.basePath, document);
         final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(
@@ -123,13 +125,26 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         XmlMapper xmlMapper = new XmlMapper();
         JsonNode node = xmlMapper.readTree(newXml.getBytes());
 
+        List<String> toTagUris = new ArrayList<>();
+
         for (String v : VERBS) {
             fixParamNodes(xmlMapper, node, v);
             fixVerb(node, v);
-            fixToTags(xmlMapper, node, v);
+            toTagUris.addAll(fixToTags(xmlMapper, node, v));
         }
         // the root tag should be an array
         node = fixRootNode(xmlMapper, node);
+
+        // add Routes
+        if (generateRoutes) {
+            for (String uri : toTagUris) {
+                ObjectNode from = JsonNodeFactory.instance.objectNode();
+                from.set("uri", new TextNode(uri));
+                ObjectNode route = JsonNodeFactory.instance.objectNode();
+                route.set("from", from);
+                ((ArrayNode) node).add(xmlMapper.createObjectNode().set("route", route));
+            }
+        }
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
         String yaml = mapper.writeValueAsString(node);
@@ -238,10 +253,11 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
     /**
      * to tag should be in implicit mode, ex: to: "direct:directX"
      */
-    private static void fixToTags(XmlMapper xmlMapper, JsonNode node, String verb) {
+    private static List<String> fixToTags(XmlMapper xmlMapper, JsonNode node, String verb) {
+        List<String> toTags = new ArrayList<>();
         JsonNode verbs = node.path("rest").path(verb);
         if (verbs == null || verbs.isMissingNode()) {
-            return;
+            return toTags;
         }
         if (!verbs.isArray()) {
             // the rest has only 1 verb so fool the code below and wrap in an new array
@@ -252,9 +268,21 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         for (JsonNode n : verbs) {
             if (n.has("to")) {
                 ObjectNode on = (ObjectNode) n;
-                on.set("to", n.get("to").get("uri"));
+                JsonNode uri = n.get("to").get("uri");
+                on.set("to", uri);
+                toTags.add(uri.textValue());
             }
         }
+        return toTags;
+    }
+
+    /**
+     * Get all URIs for 'to' tags
+     */
+    private static List<String> getToUris(RestsDefinition rests) {
+        List<String> toTags = new ArrayList<>();
+
+        return toTags;
     }
 
     private static int fieldOrderIndex(String field) {
