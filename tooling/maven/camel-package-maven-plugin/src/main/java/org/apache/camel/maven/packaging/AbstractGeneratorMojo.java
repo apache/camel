@@ -161,12 +161,15 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
             if (file.isAbsolute()) {
                 file = new File(r.getDirectory().substring(baseDir.length() + 1));
             }
-            String path = file.getPath() + "/" + suffix;
+
             if (log.isDebugEnabled()) {
+                String path = file.getPath() + "/" + suffix;
                 log.debug("Checking  if " + path + " (" + r.getDirectory() + "/" + suffix + ") has changed.");
             }
-            if (buildContext.hasDelta(path)) {
-                log.debug("Indeed " + suffix + " has changed.");
+            if (buildContext.hasDelta(new File(file, suffix))) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Indeed " + suffix + " has changed.");
+                }
                 return true;
             }
         }
