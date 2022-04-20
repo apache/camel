@@ -62,7 +62,7 @@ import software.amazon.awssdk.utils.IoUtils;
 public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3StreamUploadProducer.class);
-
+    private static final String TIMEOUT_CHECKER_EXECUTOR_NAME = "S3_Streaming_Upload_Timeout_Checker";
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     CreateMultipartUploadResponse initResponse;
     AtomicInteger index = new AtomicInteger(1);
@@ -84,7 +84,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         if (getConfiguration().getStreamingUploadTimeout() > 0) {
             timeoutCheckerExecutorService
                     = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                            "timeout_checker");
+                    TIMEOUT_CHECKER_EXECUTOR_NAME);
             timeoutCheckerExecutorService.scheduleAtFixedRate(new StreamingUploadTimeoutTask(),
                     getConfiguration().getStreamingUploadTimeout(), getConfiguration().getStreamingUploadTimeout(),
                     TimeUnit.MILLISECONDS);
