@@ -179,7 +179,7 @@ from("direct:start")
   .process(new Processor() {
       @Override
       public void process(Exchange exchange) throws Exception {
-          Collection c = new ArrayList<Integer>();
+          List c = new ArrayList();
           c.add("team1");
           c.add("team2");
           c.add("team3");
