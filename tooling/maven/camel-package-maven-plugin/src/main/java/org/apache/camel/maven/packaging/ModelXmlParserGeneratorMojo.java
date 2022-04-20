@@ -289,13 +289,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                     attributes = " (def, key, val) -> {\n" + "    if (\"" + entry.getKey() + "\".equals(key)) {\n" + "        " + entry.getValue() + "\n" + "        return true;\n"
                                  + "    }\n" + "    return " + defaultCase + ";\n" + "}";
                 } else {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(" (def, key, val) -> {\n" + "    switch (key) {\n");
-                    for (Map.Entry<String, String> entry : cases.entrySet()) {
-                        sb.append("        case \"").append(entry.getKey()).append("\": ").append(entry.getValue()).append(" break;\n");
-                    }
-                    sb.append("        default: return ").append(defaultCase).append(";\n" + "    }\n" + "    return true;\n" + "}");
-                    attributes = sb.toString();
+                    attributes = generateCases(cases, defaultCase);
                 }
             }
 
@@ -465,7 +459,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                         Stream.of(returnClause.split("\n")).forEach(s -> sb.append("\n        ").append(s));
                     }
                     sb.append("\n");
-                    sb.append("    }\n" + "    return true;\n" + "}");
+                    sb.append("    }\n").append("    return true;\n").append("}");
                     elements = sb.toString();
                 }
             }
@@ -560,6 +554,26 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         return parser;
+    }
+
+    private String generateCases(SortedMap<String, String> cases, String defaultCase) {
+        String attributes;
+        StringBuilder sb = new StringBuilder();
+        sb.append(" (def, key, val) -> {\n").append("    switch (key) {\n");
+        for (Map.Entry<String, String> entry : cases.entrySet()) {
+            sb.append("        case \"")
+                    .append(entry.getKey())
+                    .append("\": ")
+                    .append(entry.getValue())
+                    .append(" break;\n");
+        }
+        sb.append("        default: return ")
+                .append(defaultCase)
+                .append(";\n" + "    }\n")
+                .append("    return true;\n")
+                .append("}");
+        attributes = sb.toString();
+        return attributes;
     }
     // CHECKSTYLE:ON
 
