@@ -127,6 +127,41 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         return getInputStream().read();
     }
 
+    @Override
+    public int read(byte[] b) throws IOException {
+        return getInputStream().read(b);
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+        return getInputStream().read(b, off, len);
+    }
+
+    @Override
+    public long skip(long n) throws IOException {
+        return getInputStream().skip(n);
+    }
+
+    @Override
+    public byte[] readAllBytes() throws IOException {
+        return getInputStream().readAllBytes();
+    }
+
+    @Override
+    public byte[] readNBytes(int len) throws IOException {
+        return getInputStream().readNBytes(len);
+    }
+
+    @Override
+    public int readNBytes(byte[] b, int off, int len) throws IOException {
+        return getInputStream().readNBytes(b, off, len);
+    }
+
+    @Override
+    public long transferTo(OutputStream out) throws IOException {
+        return getInputStream().transferTo(out);
+    }
+
     protected InputStream getInputStream() throws IOException {
         if (stream == null) {
             stream = createInputStream(file);
