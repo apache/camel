@@ -17,6 +17,7 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -29,6 +30,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
@@ -157,12 +160,14 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private IndexView getIndex() throws MojoExecutionException {
+        Pattern cpePattern = Pattern.compile(".*/camel-[^/]+.jar");
         try {
             List<IndexView> indices = new ArrayList<>();
             indices.add(PackagePluginUtils.readJandexIndex(project));
 
             for (String cpe : project.getCompileClasspathElements()) {
-                if (cpe.matches(".*/camel-[^/]+.jar")) {
+                Matcher matcher = cpePattern.matcher(cpe);
+                if (matcher.matches()) {
                     try (JarFile jf = new JarFile(cpe)) {
                         JarEntry indexEntry = jf.getJarEntry("META-INF/jandex.idx");
                         if (indexEntry != null) {
@@ -171,9 +176,11 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
                             }
                         } else {
                             final Indexer indexer = new Indexer();
+
                             List<JarEntry> classes = jf.stream()
                                     .filter(je -> je.getName().endsWith(".class"))
                                     .collect(Collectors.toList());
+
                             for (JarEntry je : classes) {
                                 try (InputStream is = jf.getInputStream(je)) {
                                     indexer.index(is);
