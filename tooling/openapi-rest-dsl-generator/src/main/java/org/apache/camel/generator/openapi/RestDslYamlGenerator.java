@@ -126,6 +126,7 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         for (String v : VERBS) {
             fixParamNodes(xmlMapper, node, v);
             fixVerb(node, v);
+            fixToTags(xmlMapper, node, v);
         }
         // the root tag should be an array
         node = fixRootNode(xmlMapper, node);
@@ -230,6 +231,28 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
                         on.set("required", bn);
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * to tag should be in implicit mode, ex: to: "direct:directX"
+     */
+    private static void fixToTags(XmlMapper xmlMapper, JsonNode node, String verb) {
+        JsonNode verbs = node.path("rest").path(verb);
+        if (verbs == null || verbs.isMissingNode()) {
+            return;
+        }
+        if (!verbs.isArray()) {
+            // the rest has only 1 verb so fool the code below and wrap in an new array
+            ArrayNode arr = xmlMapper.createArrayNode();
+            arr.add(verbs);
+            verbs = arr;
+        }
+        for (JsonNode n : verbs) {
+            if (n.has("to")) {
+                ObjectNode on = (ObjectNode) n;
+                on.set("to", n.get("to").get("uri"));
             }
         }
     }
