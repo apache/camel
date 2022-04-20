@@ -168,7 +168,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                 // check whether the queue already exists
                 boolean done = false;
                 while (!done) {
-                    ListQueuesResponse listQueuesResult = client.listQueues();
+                    ListQueuesResponse listQueuesResult = client.listQueues(ListQueuesRequest.builder().maxResults(1000).build());
 
                     for (String url : listQueuesResult.queueUrls()) {
                         if (url.endsWith("/" + configuration.getQueueName())) {
