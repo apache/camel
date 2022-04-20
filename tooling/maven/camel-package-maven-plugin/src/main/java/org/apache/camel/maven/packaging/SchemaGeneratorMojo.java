@@ -23,6 +23,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -1224,7 +1225,10 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         try {
             Path srcDir = project.getBasedir().toPath().resolve("src/main/java");
             Path file = srcDir.resolve(className.replace('.', '/') + ".java");
-            return (JavaClassSource) Roaster.parse(file.toFile());
+
+            String fileContent = new String(Files.readAllBytes(file));
+
+            return (JavaClassSource) Roaster.parse(fileContent);
         } catch (IOException e) {
             throw new RuntimeException("Unable to parse java class " + className, e);
         }
