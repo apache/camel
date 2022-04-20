@@ -31,6 +31,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
+import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.annotations.ConstantProvider;
 import org.apache.camel.spi.annotations.ServiceFactory;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -158,10 +159,8 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
     private IndexView getIndex() throws MojoExecutionException {
         try {
             List<IndexView> indices = new ArrayList<>();
-            Path output = Paths.get(project.getBuild().getOutputDirectory());
-            try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
-                indices.add(new IndexReader(is).read());
-            }
+            indices.add(PackagePluginUtils.readJandexIndex(project));
+
             for (String cpe : project.getCompileClasspathElements()) {
                 if (cpe.matches(".*/camel-[^/]+.jar")) {
                     try (JarFile jf = new JarFile(cpe)) {
