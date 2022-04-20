@@ -50,7 +50,7 @@ public class XsltUriResolverTest {
         Source source = xsltUriResolver.resolve("ref:staffTemplateXsl", "classpath:xslt/staff/staff.xsl");
         assertNotNull(source);
         assertEquals("ref:staffTemplateXsl", source.getSystemId());
-        assertArrayEquals(((StreamSource)source).getInputStream().readAllBytes(), staffTemplateXsl.getBytes());
+        assertArrayEquals(((StreamSource) source).getInputStream().readAllBytes(), staffTemplateXsl.getBytes());
     }
 
     private static String readFileFromClasspathAsString(String path) throws IOException {
