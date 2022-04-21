@@ -439,6 +439,12 @@ class Run implements Callable<Integer> {
             return true;
         }
 
+        // skip dirs
+        File f = new File(name);
+        if (f.exists() && f.isDirectory()) {
+            return true;
+        }
+
         String on = FileUtil.onlyName(name, true);
         on = on.toLowerCase(Locale.ROOT);
         if (on.startsWith("readme")) {
