@@ -39,12 +39,14 @@ import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.NetworkClient;
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -64,6 +66,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
     private KafkaProducerHealthCheck producerHealthCheck;
     private KafkaHealthCheckRepository healthCheckRepository;
     private String clientId;
+    private String transactionId;
     private final KafkaEndpoint endpoint;
     private final KafkaConfiguration configuration;
     private ExecutorService workerPool;
@@ -153,6 +156,12 @@ public class KafkaProducer extends DefaultAsyncProducer {
         Properties props = getProps();
         if (kafkaProducer == null) {
             createProducer(props);
+        }
+
+        // init kafka transaction
+        transactionId = props.getProperty(ProducerConfig.TRANSACTIONAL_ID_CONFIG);
+        if (transactionId != null) {
+            kafkaProducer.initTransactions();
         }
 
         // if we are in asynchronous mode we need a worker pool
@@ -365,6 +374,10 @@ public class KafkaProducer extends DefaultAsyncProducer {
         // is the message body a list or something that contains multiple values
         Message message = exchange.getIn();
 
+        if (transactionId != null) {
+            startKafkaTransaction(exchange);
+        }
+
         if (isIterable(message.getBody())) {
             processIterableSync(exchange, message);
         } else {
@@ -438,6 +451,10 @@ public class KafkaProducer extends DefaultAsyncProducer {
         Message message = exchange.getMessage();
         Object body = message.getBody();
 
+        if (transactionId != null) {
+            startKafkaTransaction(exchange);
+        }
+
         try {
             // is the message body a list or something that contains multiple values
             if (isIterable(body)) {
@@ -490,6 +507,42 @@ public class KafkaProducer extends DefaultAsyncProducer {
             kafkaProducer.send(record, delegatingCallback);
         } else {
             kafkaProducer.send(record, cb);
+        }
+    }
+
+    private void startKafkaTransaction(Exchange exchange) {
+        exchange.getUnitOfWork().beginTransactedBy(transactionId);
+        kafkaProducer.beginTransaction();
+        exchange.getUnitOfWork().addSynchronization(new KafkaTransactionSynchronization(transactionId, kafkaProducer));
+    }
+}
+
+class KafkaTransactionSynchronization extends SynchronizationAdapter {
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaTransactionSynchronization.class);
+    private String transactionId;
+    private Producer kafkaProducer;
+
+    public KafkaTransactionSynchronization(String transacionId, Producer kafkaProducer) {
+        this.transactionId = transacionId;
+        this.kafkaProducer = kafkaProducer;
+    }
+
+    @Override
+    public void onDone(Exchange exchange) {
+        try {
+            if (exchange.getException() != null || exchange.isRollbackOnly()) {
+                LOG.warn("Abort kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
+                kafkaProducer.abortTransaction();
+            } else {
+                LOG.debug("Commit kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
+                kafkaProducer.commitTransaction();
+            }
+        } catch (Throwable t) {
+            LOG.warn("Abort kafka transaction {} with exchange {} due to {} ", transactionId, exchange.getExchangeId(), t);
+            exchange.setException(t);
+            kafkaProducer.abortTransaction();
+        } finally {
+            exchange.getUnitOfWork().endTransactedBy(transactionId);
         }
     }
 }
