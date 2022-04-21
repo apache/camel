@@ -44,6 +44,7 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
         prop.put("start", "direct:start");
         prop.put("hi", "World");
         prop.put("my-mock", "result");
+        prop.put("empty", "");
 
         // create PMC config source and register it so we can use it for testing
         PropertiesConfigSource pcs = new PropertiesConfigSource(prop, "my-smallrye-config");
@@ -87,6 +88,7 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
         Assertions.assertThat(properties.get("start")).isEqualTo("direct:start");
         Assertions.assertThat(properties.get("hi")).isEqualTo("World");
         Assertions.assertThat(properties.get("my-mock")).isEqualTo("result");
+        Assertions.assertThat(properties.get("empty")).isNull();
     }
 
     @Test
