@@ -17,7 +17,9 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.util.Arrays;
 import java.util.Locale;
@@ -32,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine.Command;
@@ -43,6 +46,8 @@ import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.fetchGithubU
 
 @Command(name = "run", description = "Run Camel")
 class Run implements Callable<Integer> {
+
+    public static final String DEPENDENCY_FILE = ".camel-jbang-runtime-dependency-tree.yaml";
 
     private static final String[] ACCEPTED_FILE_EXT
             = new String[] { "properties", "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
@@ -170,6 +175,17 @@ class Run implements Callable<Integer> {
         } else {
             main = new KameletMain("file://" + localKameletDir);
         }
+
+        final FileOutputStream fos = new FileOutputStream(DEPENDENCY_FILE, false);
+        main.setDownloadListener((groupId, artifactId, version) -> {
+            String line = "mvn:" + groupId + ":" + artifactId + ":" + version;
+            try {
+                fos.write(line.getBytes(StandardCharsets.UTF_8));
+                fos.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
+            } catch (Exception e) {
+                // ignore
+            }
+        });
         main.setAppName("Apache Camel (JBang)");
 
         main.addInitialProperty("camel.main.name", name);
@@ -383,6 +399,8 @@ class Run implements Callable<Integer> {
         context = main.getCamelContext();
 
         main.run();
+
+        IOHelper.close(fos);
 
         int code = main.getExitCode();
         return code;
