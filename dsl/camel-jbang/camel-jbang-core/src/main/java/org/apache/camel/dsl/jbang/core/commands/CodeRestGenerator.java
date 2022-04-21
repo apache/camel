@@ -42,6 +42,8 @@ public class CodeRestGenerator implements Callable<Integer> {
     private String output;
     @CommandLine.Option(names = { "-t", "--type" }, description = "REST DSL type (YAML or XML)", defaultValue = "yaml")
     private String type;
+    @CommandLine.Option(names = { "-r", "--routes" }, description = "Generate routes (YAML)")
+    private boolean generateRoutes = false;
 
     @Override
     public Integer call() throws Exception {
@@ -51,7 +53,7 @@ public class CodeRestGenerator implements Callable<Integer> {
         Configurator.setRootLevel(Level.OFF);
         try (CamelContext context = new LightweightCamelContext()) {
             final String yaml = type.equals("yaml")
-                    ? RestDslGenerator.toYaml(document).generate(context)
+                    ? RestDslGenerator.toYaml(document).generate(context, generateRoutes)
                     : RestDslGenerator.toXml(document).generate(context);
             if (output == null) {
                 System.out.println(yaml);
