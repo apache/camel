@@ -41,6 +41,7 @@ import org.apache.camel.dsl.jbang.core.generator.QuarkusGenerator;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "create-project", description = "Creates Camel-Quarkus project")
+@Deprecated
 public class Project implements Callable<Integer> {
 
     private static final String PACKAGE_REGEX = "package\\s+([a-zA_Z_][\\.\\w]*);";

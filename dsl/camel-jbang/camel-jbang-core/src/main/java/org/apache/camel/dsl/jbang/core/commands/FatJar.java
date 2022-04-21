@@ -18,8 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +39,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(name = "fat-jar", description = "Package application as a single fat-jar")
-class FarJar implements Callable<Integer> {
+class FatJar implements Callable<Integer> {
 
     //CHECKSTYLE:OFF
     @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
@@ -52,7 +54,7 @@ class FarJar implements Callable<Integer> {
             return 0;
         }
 
-        File target = new File("target/camel-app/lib");
+        File target = new File("target/camel-app/");
         FileUtil.removeDir(target);
         target.mkdirs();
 
@@ -60,7 +62,25 @@ class FarJar implements Callable<Integer> {
         ClassLoader parentCL = KameletMain.class.getClassLoader();
         final GroovyClassLoader gcl = new GroovyClassLoader(parentCL);
 
+        // copy settings also (but not as hidden file)
+        File out = new File(target, Run.RUN_SETTINGS_FILE.substring(1));
+        safeCopy(settings, out, true);
+
+        // routes
+        target = new File("target/camel-app/");
+        copyFiles(settings, target);
+
+        // log4j configuration
+        InputStream is = FatJar.class.getResourceAsStream("/log4j2.properties");
+        safeCopy(is, new File(target, "log4j2.properties"), false);
+
         List<String> lines = Files.readAllLines(settings.toPath());
+
+        // include log4j dependencies
+        lines.add("dependency=org.apache.logging.log4j:log4j-api:2.17.2");
+        lines.add("dependency=org.apache.logging.log4j:log4j-core:2.17.2");
+        lines.add("dependency=org.apache.logging.log4j:log4j-slf4j-impl:2.17.2");
+        lines.add("dependency=org.fusesource.jansi:jansi:2.4.0");
 
         // include camel-kamelet-main as its a core dependency needed
         Optional<MavenGav> first = lines.stream()
@@ -73,6 +93,9 @@ class FarJar implements Callable<Integer> {
             lines.add(0, "dependency=mvn:org.apache.camel:camel-kamelet-main:" + v);
         }
 
+        // JARs should be in lib sub-folder
+        target = new File("target/camel-app/lib");
+        target.mkdirs();
         for (String l : lines) {
             if (l.startsWith("dependency=")) {
                 l = StringHelper.after(l, "dependency=");
@@ -89,15 +112,6 @@ class FarJar implements Callable<Integer> {
             }
         }
 
-        // copy route files
-        // TODO: 3rd party .jar should be in lib
-        target = new File("target/camel-app/");
-        copyFiles(settings, target);
-
-        // copy settings also (but not as hidden file)
-        File out = new File(target, Run.RUN_SETTINGS_FILE.substring(1));
-        Files.copy(settings.toPath(), out.toPath());
-
         return 0;
     }
 
@@ -111,11 +125,9 @@ class FarJar implements Callable<Integer> {
             for (String f : files.split(",")) {
                 if (f.startsWith("file:")) {
                     f = f.substring(5);
-                    File s = new File(f);
-                    if (s.exists() && s.isFile()) {
-                        File out = new File(target, s.getName());
-                        Files.copy(s.toPath(), out.toPath());
-                    }
+                    File source = new File(f);
+                    File out = new File(target, source.getName());
+                    safeCopy(source, out, true);
                 }
             }
         }
@@ -125,9 +137,32 @@ class FarJar implements Callable<Integer> {
         for (URI u : uris) {
             File f = new File(u.toURL().getFile());
             File out = new File(target, f.getName());
-            if (!out.exists()) {
-                Files.copy(f.toPath(), out.toPath());
-            }
+            safeCopy(f, out, false);
+        }
+    }
+
+    private void safeCopy(File source, File target, boolean override) throws Exception {
+        if (!source.exists()) {
+            return;
+        }
+
+        if (!target.exists()) {
+            Files.copy(source.toPath(), target.toPath());
+        } else if (override) {
+            Files.copy(source.toPath(), target.toPath(),
+                    StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    private void safeCopy(InputStream source, File target, boolean override) throws Exception {
+        if (source == null) {
+            return;
+        }
+
+        if (!target.exists()) {
+            Files.copy(source, target.toPath());
+        } else if (override) {
+            Files.copy(source, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
     }
 

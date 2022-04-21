@@ -22,9 +22,8 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "create", description = "Creates Maven Project (use --help)")
-@Deprecated
-class Create implements Callable<Integer> {
+@Command(name = "package", description = "Package Camel application (use --help)")
+class Package implements Callable<Integer> {
     //CHECKSTYLE:OFF
     @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested = false;

@@ -37,8 +37,9 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("languages", new SearchLanguages())
                         .addSubcommand("others", new SearchOthers()))
                 .addSubcommand("create", new CommandLine(new Create())
-                        .addSubcommand("fat-jar", new FarJar())
                         .addSubcommand("project", new Project()))
+                .addSubcommand("package", new CommandLine(new Package())
+                        .addSubcommand("fat-jar", new FatJar()))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator())
                         .addSubcommand("rest", new CodeRestGenerator()));
 
