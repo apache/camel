@@ -47,11 +47,12 @@ import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.fetchGithubU
 @Command(name = "run", description = "Run Camel")
 class Run implements Callable<Integer> {
 
-    public static final String DEPENDENCY_FILE = ".camel-jbang-runtime-dependency-tree.yaml";
+    public static final String RUN_SETTINGS_FILE = ".camel-jbang-run.properties";
 
     private static final String[] ACCEPTED_FILE_EXT
             = new String[] { "properties", "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
 
+    private FileOutputStream settings;
     private CamelContext context;
     private File lockFile;
     private ScheduledExecutorService executor;
@@ -161,11 +162,15 @@ class Run implements Callable<Integer> {
     }
 
     private int run() throws Exception {
+        settings = new FileOutputStream(RUN_SETTINGS_FILE, false);
+
         // configure logging first
         if (logging) {
             RuntimeUtil.configureLog(loggingLevel);
+            writeSettings("loggingLevel", loggingLevel);
         } else {
             RuntimeUtil.configureLog("off");
+            writeSettings("loggingLevel", "off");
         }
 
         KameletMain main;
@@ -174,28 +179,30 @@ class Run implements Callable<Integer> {
             main = new KameletMain();
         } else {
             main = new KameletMain("file://" + localKameletDir);
+            writeSettings("localKameletDir", localKameletDir);
         }
 
-        final FileOutputStream fos = new FileOutputStream(DEPENDENCY_FILE, false);
         main.setDownloadListener((groupId, artifactId, version) -> {
             String line = "mvn:" + groupId + ":" + artifactId + ":" + version;
-            try {
-                fos.write(line.getBytes(StandardCharsets.UTF_8));
-                fos.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
-            } catch (Exception e) {
-                // ignore
-            }
+            writeSettings("dependency", line);
         });
         main.setAppName("Apache Camel (JBang)");
 
         main.addInitialProperty("camel.main.name", name);
+        writeSettings("camel.main.name", name);
+
         // shutdown quickly
         main.addInitialProperty("camel.main.shutdownTimeout", "5");
+        writeSettings("camel.main.shutdownTimeout", "5");
+
         // turn off lightweight if we have routes reload enabled
         main.addInitialProperty("camel.main.routesReloadEnabled", reload ? "true" : "false");
         main.addInitialProperty("camel.main.sourceLocationEnabled", "true");
+        writeSettings("camel.main.sourceLocationEnabled", "true");
         main.addInitialProperty("camel.main.tracing", trace ? "true" : "false");
+        writeSettings("camel.main.tracing", trace ? "true" : "false");
         main.addInitialProperty("camel.main.modeline", modeline ? "true" : "false");
+        writeSettings("camel.main.modeline", modeline ? "true" : "false");
 
         // command line arguments
         if (property != null) {
@@ -204,39 +211,50 @@ class Run implements Callable<Integer> {
                 String v = StringHelper.after(p, "=");
                 if (k != null && v != null) {
                     main.addArgumentProperty(k, v);
+                    writeSettings(k, v);
                 }
             }
         }
 
         if (maxMessages > 0) {
             main.addInitialProperty("camel.main.durationMaxMessages", String.valueOf(maxMessages));
+            writeSettings("camel.main.durationMaxMessages", String.valueOf(maxMessages));
         }
         if (maxSeconds > 0) {
             main.addInitialProperty("camel.main.durationMaxSeconds", String.valueOf(maxSeconds));
+            writeSettings("camel.main.durationMaxSeconds", String.valueOf(maxSeconds));
         }
         if (maxIdleSeconds > 0) {
             main.addInitialProperty("camel.main.durationMaxIdleSeconds", String.valueOf(maxIdleSeconds));
+            writeSettings("camel.main.durationMaxIdleSeconds", String.valueOf(maxIdleSeconds));
         }
         if (port > 0) {
             main.addInitialProperty("camel.jbang.platform-http.port", String.valueOf(port));
+            writeSettings("camel.jbang.platform-http.port", String.valueOf(port));
         }
         if (console) {
             main.addInitialProperty("camel.jbang.console", "true");
+            writeSettings("camel.jbang.console", "true");
         }
         if (health) {
             main.addInitialProperty("camel.jbang.health", "true");
+            writeSettings("camel.jbang.health", "true");
         }
 
         if (jfr) {
             main.addInitialProperty("camel.jbang.jfr", "jfr");
+            writeSettings("camel.jbang.jfr", "jfr");
         }
         if (jfrProfile != null) {
             // turn on jfr if a profile was specified
             main.addInitialProperty("camel.jbang.jfr", "jfr");
+            writeSettings("camel.jbang.jfr", "jfr");
             main.addInitialProperty("camel.jbang.jfr-profile", jfrProfile);
+            writeSettings("camel.jbang.jfr-profile", jfrProfile);
         }
         if (dependencies != null) {
             main.addInitialProperty("camel.jbang.dependencies", dependencies);
+            writeSettings("camel.jbang.dependencies", dependencies);
         }
 
         if (fileLock) {
@@ -345,11 +363,14 @@ class Run implements Callable<Integer> {
                 sjReload.add(file.substring(5));
             }
         }
+
         if (js.length() > 0) {
             main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
+            writeSettings("camel.main.routesIncludePattern", js.toString());
         }
         if (sjClasspathFiles.length() > 0) {
             main.addInitialProperty("camel.jbang.classpathFiles", sjClasspathFiles.toString());
+            writeSettings("camel.jbang.classpathFiles", sjClasspathFiles.toString());
         }
 
         if (sjKamelets.length() > 0) {
@@ -360,6 +381,7 @@ class Run implements Callable<Integer> {
                 loc = sjKamelets.toString();
             }
             main.addInitialProperty("camel.component.kamelet.location", loc);
+            writeSettings("camel.component.kamelet.location", loc);
         }
 
         // we can only reload if file based
@@ -392,6 +414,7 @@ class Run implements Callable<Integer> {
                 loc = locations.toString();
             }
             main.addInitialProperty("camel.component.properties.location", loc);
+            writeSettings("camel.component.properties.location", loc);
         }
 
         main.start();
@@ -400,7 +423,7 @@ class Run implements Callable<Integer> {
 
         main.run();
 
-        IOHelper.close(fos);
+        IOHelper.close(settings);
 
         int code = main.getExitCode();
         return code;
@@ -452,6 +475,16 @@ class Run implements Callable<Integer> {
         }
 
         return false;
+    }
+
+    private void writeSettings(String key, String value) {
+        String line = key + "=" + value;
+        try {
+            settings.write(line.getBytes(StandardCharsets.UTF_8));
+            settings.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
 }
