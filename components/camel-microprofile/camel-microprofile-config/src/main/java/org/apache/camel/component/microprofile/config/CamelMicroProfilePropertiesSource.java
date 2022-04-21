@@ -46,8 +46,8 @@ public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSour
         final Properties answer = new Properties();
         final Config config = ConfigProvider.getConfig();
 
-        for (String key : config.getPropertyNames()) {
-            answer.put(key, config.getValue(key, String.class));
+        for (String name : config.getPropertyNames()) {
+            config.getOptionalValue(name, String.class).ifPresent(value -> answer.put(name, value));
         }
 
         return answer;
@@ -60,7 +60,7 @@ public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSour
 
         for (String name : config.getPropertyNames()) {
             if (filter.test(name)) {
-                config.getOptionalValue(name, String.class).ifPresent(v -> answer.put(name, v));
+                config.getOptionalValue(name, String.class).ifPresent(value -> answer.put(name, value));
             }
         }
 
