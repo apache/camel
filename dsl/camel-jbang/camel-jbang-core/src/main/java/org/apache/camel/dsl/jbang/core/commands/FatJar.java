@@ -82,7 +82,7 @@ class FatJar implements Callable<Integer> {
         lines.add("dependency=org.apache.logging.log4j:log4j-slf4j-impl:2.17.2");
         lines.add("dependency=org.fusesource.jansi:jansi:2.4.0");
 
-        // include camel-kamelet-main as its a core dependency needed
+        // include camel-kamelet-main/camel-fatjar-main as they are needed
         Optional<MavenGav> first = lines.stream()
                 .filter(l -> l.startsWith("dependency="))
                 .map(l -> MavenGav.parseGav(null, StringHelper.after(l, "dependency=")))
@@ -91,6 +91,7 @@ class FatJar implements Callable<Integer> {
         if (first.isPresent()) {
             String v = first.get().getVersion();
             lines.add(0, "dependency=mvn:org.apache.camel:camel-kamelet-main:" + v);
+            lines.add(0, "dependency=mvn:org.apache.camel:camel-fatjar-main:" + v);
         }
 
         // JARs should be in lib sub-folder

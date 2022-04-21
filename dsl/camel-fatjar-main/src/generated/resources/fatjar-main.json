@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "fatjar-main",
+    "title": "Fatjar Main",
+    "description": "Main to run Camel as Fat-Jar standalone",
+    "deprecated": false,
+    "firstVersion": "3.17.0",
+    "label": "jbang",
+    "supportLevel": "Experimental",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-fatjar-main",
+    "version": "3.17.0-SNAPSHOT"
+  }
+}

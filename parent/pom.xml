@@ -2786,6 +2786,11 @@
 				<artifactId>camel-groovy-dsl-common</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-fatjar-main</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-kamelet-main</artifactId>
