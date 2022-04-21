@@ -43,7 +43,7 @@ public class CodeRestGenerator implements Callable<Integer> {
     @CommandLine.Option(names = { "-t", "--type" }, description = "REST DSL type (YAML or XML)", defaultValue = "yaml")
     private String type;
     @CommandLine.Option(names = { "-r", "--routes" }, description = "Generate routes (YAML)")
-    private boolean generateRoutes = false;
+    private boolean generateRoutes;
 
     @Override
     public Integer call() throws Exception {
