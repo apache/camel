@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import groovy.lang.GroovyClassLoader;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -38,6 +39,7 @@ public class KameletMain extends MainCommandLineSupport {
     private static ClassLoader kameletClassLoader;
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
+    private DownloadListener downloadListener;
 
     public KameletMain() {
         configureInitialProperties(DEFAULT_KAMELETS_LOCATION);
@@ -113,6 +115,17 @@ public class KameletMain extends MainCommandLineSupport {
         this.download = download;
     }
 
+    public DownloadListener getDownloadListener() {
+        return downloadListener;
+    }
+
+    /**
+     * Sets a custom download listener
+     */
+    public void setDownloadListener(DownloadListener downloadListener) {
+        this.downloadListener = downloadListener;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -158,6 +171,11 @@ public class KameletMain extends MainCommandLineSupport {
     protected CamelContext createCamelContext() {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
+
+        // register download listener
+        if (downloadListener != null) {
+            answer.adapt(ExtendedCamelContext.class).setExtension(DownloadListener.class, downloadListener);
+        }
 
         String info = startupInfo();
         if (info != null) {

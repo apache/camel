@@ -37,6 +37,13 @@ public final class DownloaderHelper {
     }
 
     public static void downloadDependency(CamelContext camelContext, String groupId, String artifactId, String version) {
+
+        // trigger listener
+        DownloadListener listener = camelContext.getExtension(DownloadListener.class);
+        if (listener != null) {
+            listener.onDownloadDependency(groupId, artifactId, version);
+        }
+
         StopWatch watch = new StopWatch();
         Map<String, Object> map = new HashMap<>();
         map.put("classLoader", camelContext.getApplicationContextClassLoader());
@@ -56,7 +63,7 @@ public final class DownloaderHelper {
         if (taken < 1000) {
             LOG.debug(msg);
         } else {
-            LOG.debug(msg);
+            LOG.info(msg);
         }
     }
 
