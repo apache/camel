@@ -36,7 +36,7 @@ public class KafkaConsumerNoopCommitIT extends BaseManualCommitTestSupport {
 
     @EndpointInject("kafka:" + TOPIC
                     + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false"
-                    + "&allowManualCommit=true&autoOffsetReset=earliest")
+                    + "&allowManualCommit=true&autoOffsetReset=earliest&metadataMaxAgeMs=1000")
     private Endpoint from;
 
     @AfterEach
