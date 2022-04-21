@@ -49,18 +49,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-kamelet-main</artifactId>
         </dependency>
         <dependency>
@@ -70,15 +58,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-file-watch</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-platform-http-vertx</artifactId>
-        </dependency>
-        <!-- JMX to gather runtime statistics -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-management</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
