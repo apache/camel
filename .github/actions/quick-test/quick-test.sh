@@ -68,7 +68,8 @@ function runTest() {
     notifySuccess "${component}" "${total}" "${current}" "${failures}"
   fi
 
-  local testLog="target/${component}-test.log"
+  local shortName=$(basename "${component}")
+  local testLog="target/${shortName}-test.log"
   if [[ -f "$testLog" ]] ; then
     echo "Copying test log file at ${testLog} to the log directory"
     mv "${testLog}" "${logDir}"/
