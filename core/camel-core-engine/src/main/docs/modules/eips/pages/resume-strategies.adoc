@@ -13,6 +13,7 @@ Support for resume varies according to the component. Initially, the support is 
 
 * xref:components::atom-component.adoc[camel-atom]
 * xref:components::aws2-kinesis-component.adoc[camel-aws2-kinesis]
+* xref:components::cql-component.adoc[camel-cassandracql]
 * xref:components::couchdb-component.adoc[camel-couchdb]
 * xref:components::file-component.adoc[camel-file]
 * xref:components::kafka-component.adoc[camel-kafka]
