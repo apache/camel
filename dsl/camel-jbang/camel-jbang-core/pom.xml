@@ -89,6 +89,12 @@
             <artifactId>jansi</artifactId>
             <version>${jansi-version}</version>
         </dependency>
+        <!-- Docker generator -->
+        <dependency>
+            <groupId>com.google.cloud.tools</groupId>
+            <artifactId>jib-core</artifactId>
+            <version>${jib-version}</version>
+        </dependency>
         <!-- Code generator -->
         <dependency>
             <groupId>org.apache.camel</groupId>

@@ -311,6 +311,7 @@
         <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
+        <jib-version>0.21.0</jib-version>
         <jira-guava-version>26.0-jre</jira-guava-version>
         <jira-rest-client-api-version>5.2.2</jira-rest-client-api-version>
         <libthrift-version>0.14.1</libthrift-version>
