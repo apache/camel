@@ -67,6 +67,14 @@ function runTest() {
   else
     notifySuccess "${component}" "${total}" "${current}" "${failures}"
   fi
+
+  local testLog="target/${component}-test.log"
+  if [[ -f "$testLog" ]] ; then
+    echo "Copying test log file at ${testLog} to the log directory"
+    mv "${testLog}" "${logDir}"/
+  else
+    echo "There is no log file to copy at ${testLog}"
+  fi
 }
 
 function componentTest() {
