@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Generated;
@@ -68,6 +69,7 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 @Mojo(name = "generate-endpoint-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class EndpointDslMojo extends AbstractGeneratorMojo {
+    private static final transient Pattern COMMA_PRESERVER_PATTERN = Pattern.compile(",(\\S)");
 
     /**
      * The project build directory
@@ -817,7 +819,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                         method.setName(ms.getName());
                         // roaster dont preserve the message body with nicely formatted space after comma
                         String body = ms.getBody();
-                        body = body.replaceAll(",(\\S)", ", $1");
+                        body = COMMA_PRESERVER_PATTERN.matcher(body).replaceAll(", $1");
                         method.setBody(body);
                         method.setReturnType(getQualifiedType(ms.getReturnType()));
                         for (Object o : ms.getParameters()) {
