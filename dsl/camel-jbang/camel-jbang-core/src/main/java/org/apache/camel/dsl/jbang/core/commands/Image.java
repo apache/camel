@@ -20,11 +20,14 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 import com.google.cloud.tools.jib.api.Containerizer;
 import com.google.cloud.tools.jib.api.DockerDaemonImage;
+import com.google.cloud.tools.jib.api.InvalidImageReferenceException;
 import com.google.cloud.tools.jib.api.Jib;
 import com.google.cloud.tools.jib.api.LogEvent;
+import com.google.cloud.tools.jib.api.RegistryImage;
 import com.google.cloud.tools.jib.api.buildplan.AbsoluteUnixPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,16 +38,27 @@ public class Image implements Callable<Integer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(Image.class);
 
-    @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
+    @CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested;
-    @CommandLine.Option(names = { "-f", "--from" }, description = "Base Image", defaultValue = "gcr.io/distroless/java:11")
+    @CommandLine.Option(names = {"-f", "--from"}, description = "Base Image", defaultValue = "gcr.io/distroless/java:11")
     private String from;
 
-    @CommandLine.Option(names = { "-j", "--jar" }, required = true, description = "Jar filename")
+    @CommandLine.Option(names = {"-j", "--jar"}, required = true, description = "Jar filename")
     private String jar;
 
-    @CommandLine.Option(names = { "-t", "--tag" }, required = true, description = "Image Tag")
+    @CommandLine.Option(names = {"-t", "--tag"}, description = "Image tag")
     private String tag;
+
+    @CommandLine.Option(names = {"--push"}, description = "Push to the registry")
+    private boolean push;
+
+    @CommandLine.Option(names = {"-r", "--registry"}, description = "Registry image reference")
+    private String registry;
+    @CommandLine.Option(names = {"-u", "--username"}, description = "Registry username")
+    private String username;
+
+    @CommandLine.Option(names = {"-p", "--password"}, description = "Registry password")
+    private String password;
 
     @Override
     public Integer call() throws Exception {
@@ -53,10 +67,36 @@ public class Image implements Callable<Integer> {
                 .addLayer(Arrays.asList(Paths.get(jar)), "/deployments/")
                 .setWorkingDirectory(AbsoluteUnixPath.get("/deployments"))
                 .setEntrypoint("java", "-jar", jarFile.getName())
-                .containerize(
-                        Containerizer.to(DockerDaemonImage.named(tag))
-                                .addEventHandler(LogEvent.class,
-                                        logEvent -> LOG.info(logEvent.getLevel() + ": " + logEvent.getMessage())));
+                .containerize(push ? getRegistry() : getDockerImage());
         return 0;
+    }
+
+    private Containerizer getDockerImage() throws InvalidImageReferenceException {
+        return Containerizer.to(DockerDaemonImage.named(tag)).addEventHandler(LogEvent.class, getEventConsumer());
+    }
+
+    private Containerizer getRegistry() throws InvalidImageReferenceException {
+        return Containerizer.to(
+                        RegistryImage.named(registry).addCredential(username, password))
+                .addEventHandler(LogEvent.class, getEventConsumer());
+    }
+
+    private Consumer<LogEvent> getEventConsumer() {
+        return event -> {
+            switch (event.getLevel()) {
+                case ERROR:
+                    LOG.error(event.getMessage());
+                    break;
+                case WARN:
+                    LOG.warn(event.getMessage());
+                    break;
+                case DEBUG:
+                    LOG.debug(event.getMessage());
+                    break;
+                default:
+                    LOG.info(event.getMessage());
+                    break;
+            }
+        };
     }
 }
