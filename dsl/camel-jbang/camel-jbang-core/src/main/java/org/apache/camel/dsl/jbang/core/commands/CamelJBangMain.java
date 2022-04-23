@@ -41,7 +41,9 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("package", new CommandLine(new Package())
                         .addSubcommand("fat-jar", new FatJar())
                         .addSubcommand("image", new Image()))
+                .addSubcommand("deploy", new CommandLine(new Deploy()))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator())
+                        .addSubcommand("resources", new Resource())
                         .addSubcommand("rest", new CodeRestGenerator()));
 
         int exitCode = commandLine.execute(args);
