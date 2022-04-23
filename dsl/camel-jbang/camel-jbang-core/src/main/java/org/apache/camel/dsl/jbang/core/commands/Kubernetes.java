@@ -18,7 +18,13 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.*;
+import io.fabric8.kubernetes.api.model.EnvVar;
+import io.fabric8.kubernetes.api.model.EnvVarBuilder;
+import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
+import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.api.model.ServiceBuilder;
+import io.fabric8.kubernetes.api.model.ServicePortBuilder;
+import io.fabric8.kubernetes.api.model.ServiceSpecBuilder;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import picocli.CommandLine;
@@ -27,13 +33,10 @@ public class Kubernetes {
 
     @CommandLine.Option(names = { "--name" }, description = "Application name", required = true)
     protected String name;
-
     @CommandLine.Option(names = { "--version" }, description = "Application version (label)", required = true)
     protected String version;
-
     @CommandLine.Option(names = { "--image" }, description = "Deployment container image name", required = true)
     protected String image;
-
     @CommandLine.Option(names = { "--container-port" }, description = "Container port", defaultValue = "8080")
     protected int containerPort;
     @CommandLine.Option(names = { "--service-port" }, description = "Service port", defaultValue = "80")
