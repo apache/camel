@@ -26,10 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "deploy", description = "Deploy resources to Kubernetes, OpenShift, Minikube")
-public class Deploy implements Callable<Integer> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Deploy.class);
+@CommandLine.Command(name = "undeploy", description = "Undeploy resources from Kubernetes, OpenShift, Minikube")
+public class Undeploy implements Callable<Integer> {
+    private static final Logger LOG = LoggerFactory.getLogger(Undeploy.class);
 
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested;
@@ -37,35 +36,17 @@ public class Deploy implements Callable<Integer> {
     private String namespace;
     @CommandLine.Option(names = { "--name" }, description = "Application name", required = true)
     private String name;
-    @CommandLine.Option(names = { "--version" }, description = "Application version (label)", required = true)
-    private String version;
-    @CommandLine.Option(names = { "--image" }, description = "Deployment container image name", required = true)
-    private String image;
-    @CommandLine.Option(names = { "--container-port" }, description = "Container port", defaultValue = "8080")
-    private int containerPort;
-    @CommandLine.Option(names = { "--service-port" }, description = "Service port", defaultValue = "80")
-    private int servicePort;
-    @CommandLine.Option(names = { "--node-port" }, description = "Node port (minikube)", defaultValue = "30777")
-    private int nodePort;
-    @CommandLine.Option(names = { "--replicas" }, description = "Number of replicas of the application", defaultValue = "1")
-    private int replicas;
-    @CommandLine.Option(names = { "--minikube" }, description = "Target is minikube")
-    private boolean minikube;
 
     @Override
     public Integer call() throws Exception {
-        LOG.info("Generating Deployment...");
-        Deployment deployment = KubernetesHelper.createDeployment(namespace, name, image, version, containerPort, replicas);
-        LOG.info("Generating Service...");
-        Service service
-                = KubernetesHelper.createService(namespace, name, version, servicePort, containerPort, minikube, nodePort);
+        Deployment deployment = KubernetesHelper.createDeployment(namespace, name, "", "", 0, 0);
+        Service service = KubernetesHelper.createService(namespace, name, "", 0, 0, false, 0);
 
         try (KubernetesClient client = new DefaultKubernetesClient()) {
-            LOG.info("Creating Deployment in " + (minikube ? "Minikube" : "Kubernetes"));
-            client.apps().deployments().inNamespace(namespace).createOrReplace(deployment);
+            LOG.info("Deleting Service...");
             client.services().inNamespace(namespace).delete(service);
-            LOG.info("Creating Service in " + (minikube ? "Minikube" : "Kubernetes"));
-            client.services().inNamespace(namespace).createOrReplace(service);
+            LOG.info("Deleting Deployment...");
+            client.apps().deployments().inNamespace(namespace).delete(deployment);
         } catch (Exception ex) {
             LOG.error("Error", ex.getMessage());
         }

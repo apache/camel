@@ -31,20 +31,22 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("run", new Run())
                 .addSubcommand("init", new CommandLine(new Init()))
                 .addSubcommand("bind", new CommandLine(new Bind()))
+                .addSubcommand("package", new CommandLine(new Package())
+                        .addSubcommand("fat-jar", new FatJar()))
+                .addSubcommand("generate", new CommandLine(new CodeGenerator())
+                        .addSubcommand("rest", new CodeRestGenerator()))
+                .addSubcommand("build", new CommandLine(new Build())
+                        .addSubcommand("resources", new Resource())
+                        .addSubcommand("image", new Image()))
+                .addSubcommand("deploy", new CommandLine(new Deploy()))
+                .addSubcommand("undeploy", new CommandLine(new Undeploy()))
                 .addSubcommand("search", new CommandLine(new Search())
                         .addSubcommand("kamelets", new SearchKamelets())
                         .addSubcommand("components", new SearchComponents())
                         .addSubcommand("languages", new SearchLanguages())
                         .addSubcommand("others", new SearchOthers()))
                 .addSubcommand("create", new CommandLine(new Create())
-                        .addSubcommand("project", new Project()))
-                .addSubcommand("package", new CommandLine(new Package())
-                        .addSubcommand("fat-jar", new FatJar())
-                        .addSubcommand("image", new Image()))
-                .addSubcommand("deploy", new CommandLine(new Deploy()))
-                .addSubcommand("generate", new CommandLine(new CodeGenerator())
-                        .addSubcommand("resources", new Resource())
-                        .addSubcommand("rest", new CodeRestGenerator()));
+                        .addSubcommand("project", new Project()));
 
         int exitCode = commandLine.execute(args);
         System.exit(exitCode);

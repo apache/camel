@@ -25,10 +25,13 @@ import java.util.concurrent.Callable;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.utils.Serialization;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "resources", description = "Generate Kubernetes resources")
-public class Resource extends Kubernetes implements Callable<Integer> {
+@CommandLine.Command(name = "resources", description = "Create Kubernetes resources")
+public class Resource implements Callable<Integer> {
+    private static final Logger LOG = LoggerFactory.getLogger(Resource.class);
 
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested;
@@ -36,19 +39,46 @@ public class Resource extends Kubernetes implements Callable<Integer> {
     private String path;
     @CommandLine.Option(names = { "--namespace" }, description = "Namespace")
     private String namespace;
+    @CommandLine.Option(names = { "--name" }, description = "Application name", required = true)
+    private String name;
+    @CommandLine.Option(names = { "--version" }, description = "Application version (label)", required = true)
+    private String version;
+    @CommandLine.Option(names = { "--image" }, description = "Deployment container image name", required = true)
+    private String image;
+    @CommandLine.Option(names = { "--container-port" }, description = "Container port", defaultValue = "8080")
+    private int containerPort;
+    @CommandLine.Option(names = { "--service-port" }, description = "Service port", defaultValue = "80")
+    private int servicePort;
+    @CommandLine.Option(names = { "--node-port" }, description = "Node port (minikube)", defaultValue = "30777")
+    private int nodePort;
+    @CommandLine.Option(names = { "--replicas" }, description = "Number of replicas of the application", defaultValue = "1")
+    private int replicas;
+    @CommandLine.Option(names = { "--minikube" }, description = "Target is minikube")
+    private boolean minikube;
 
     @Override
     public Integer call() throws Exception {
-        Deployment deployment = createDeployment(namespace, name, image, version, containerPort, replicas);
-        Service service = createService(namespace, name, version, servicePort, containerPort, minikube, nodePort);
-        Path output = Paths.get(path != null ? path : System.getProperty("user.dir"));
-        if (!Files.exists(output)) {
-            Files.createDirectories(output);
+        try {
+            LOG.info("Generating Deployment...");
+            Deployment deployment = KubernetesHelper.createDeployment(namespace, name, image, version, containerPort, replicas);
+            LOG.info("Generating Service...");
+            Service service
+                    = KubernetesHelper.createService(namespace, name, version, servicePort, containerPort, minikube, nodePort);
+            Path output = Paths.get(path != null ? path : System.getProperty("user.dir"));
+            if (!Files.exists(output)) {
+                LOG.info("Creating output folder " + output);
+                Files.createDirectories(output);
+            }
+            LOG.info("writing deployment.yaml...");
+            Files.write(Paths.get(output.toString(), "deployment.yaml"),
+                    Serialization.asYaml(deployment).getBytes(StandardCharsets.UTF_8));
+            LOG.info("writing service.yaml...");
+            Files.write(Paths.get(output.toString(), "service.yaml"),
+                    Serialization.asYaml(service).getBytes(StandardCharsets.UTF_8));
+        } catch (Exception ex) {
+            LOG.error("Error", ex.getMessage());
         }
-        Files.write(Paths.get(output.toString(), "deployment.yaml"),
-                Serialization.asYaml(deployment).getBytes(StandardCharsets.UTF_8));
-        Files.write(Paths.get(output.toString(), "service.yaml"),
-                Serialization.asYaml(service).getBytes(StandardCharsets.UTF_8));
+
         return 0;
     }
 

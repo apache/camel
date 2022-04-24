@@ -27,28 +27,13 @@ import io.fabric8.kubernetes.api.model.ServicePortBuilder;
 import io.fabric8.kubernetes.api.model.ServiceSpecBuilder;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
-import picocli.CommandLine;
 
-public class Kubernetes {
+public final class KubernetesHelper {
 
-    @CommandLine.Option(names = { "--name" }, description = "Application name", required = true)
-    protected String name;
-    @CommandLine.Option(names = { "--version" }, description = "Application version (label)", required = true)
-    protected String version;
-    @CommandLine.Option(names = { "--image" }, description = "Deployment container image name", required = true)
-    protected String image;
-    @CommandLine.Option(names = { "--container-port" }, description = "Container port", defaultValue = "8080")
-    protected int containerPort;
-    @CommandLine.Option(names = { "--service-port" }, description = "Service port", defaultValue = "80")
-    protected int servicePort;
-    @CommandLine.Option(names = { "--node-port" }, description = "Node port (minikube)", defaultValue = "30777")
-    protected int nodePort;
-    @CommandLine.Option(names = { "--replicas" }, description = "Number of replicas of the application", defaultValue = "1")
-    protected int replicas;
-    @CommandLine.Option(names = { "--minikube" }, description = "Target is minikube")
-    protected boolean minikube;
+    private KubernetesHelper() {
+    }
 
-    public Service createService(
+    public static Service createService(
             String namespace, String name, String version, int port, int targetPort, boolean minikube, int nodePort) {
 
         ObjectMetaBuilder metadata = new ObjectMetaBuilder()
@@ -78,7 +63,7 @@ public class Kubernetes {
                 .build();
     }
 
-    public Deployment createDeployment(
+    public static Deployment createDeployment(
             String namespace, String name, String image, String version, int containerPort, int replica) {
 
         EnvVar envVar = new EnvVarBuilder()
@@ -129,7 +114,7 @@ public class Kubernetes {
                 .build();
     }
 
-    public Map<String, String> getLabels(String name, String version) {
+    public static Map<String, String> getLabels(String name, String version) {
         return Map.of(
                 "app", name,
                 "app.kubernetes.io/name", name,
