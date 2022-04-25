@@ -391,7 +391,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     }
 
     private Map<String, String> parse(String urlEncodedAuthStr) {
-        Map<String, String> auths = new HashMap<String, String>();
+        Map<String, String> auths = new HashMap<>();
         if (isNotEmpty(urlEncodedAuthStr)) {
             String[] parts = urlEncodedAuthStr.split(",");
             for (String part : parts) {
