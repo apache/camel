@@ -36,18 +36,15 @@ public final class JavadocUtil {
 
         descSb.append(model.getTitle()).append(" (").append(model.getArtifactId()).append(")");
         descSb.append("\n").append(model.getDescription());
-        descSb.append("\n");
-        descSb.append("\nCategory: ").append(model.getLabel());
+        descSb.append("\n\nCategory: ").append(model.getLabel());
         descSb.append("\nSince: ").append(model.getFirstVersionShort());
         descSb.append("\nMaven coordinates: ").append(model.getGroupId()).append(":").append(model.getArtifactId());
 
         // include javadoc for all path parameters and mark which are required
-        descSb.append("\n");
-        descSb.append("\nSyntax: <code>").append(model.getSyntax()).append("</code>");
+        descSb.append("\n\nSyntax: <code>").append(model.getSyntax()).append("</code>");
         for (ComponentModel.EndpointOptionModel option : model.getEndpointOptions()) {
             if ("path".equals(option.getKind())) {
-                descSb.append("\n");
-                descSb.append("\nPath parameter: ").append(option.getName());
+                descSb.append("\n\nPath parameter: ").append(option.getName());
                 if (option.isRequired()) {
                     descSb.append(" (required)");
                 }

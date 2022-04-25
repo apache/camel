@@ -630,8 +630,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         if (!baseDesc.endsWith(".")) {
             baseDescBuilder.append(".");
         }
-        baseDescBuilder.append("\n");
-        baseDescBuilder.append("@@REPLACE_ME@@");
+        baseDescBuilder.append("\n@@REPLACE_ME@@");
         if (option.isMultiValue()) {
             baseDescBuilder.append("\nThe option is multivalued, and you can use the ")
                     .append(option.getName())
