@@ -190,7 +190,7 @@ public class PrepareFatJarMojo extends AbstractMojo {
             for (Artifact classPathElement : dependencies) {
                 if (getLog().isDebugEnabled()) {
                     getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
-                            + " to classpath");
+                                   + " to classpath");
                 }
                 File file = classPathElement.getFile();
                 if (file != null) {
