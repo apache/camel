@@ -55,11 +55,11 @@ the unit tests, which can complete in less than 10 minutes.
 mvn clean install -Pfastinstall
 -------------------------------
 
-== A normal build without running tests but checkstyle verification enabled
+== A normal build without running tests but auto formatting and checkstyle verification enabled
 
 [source,bash]
 -------------------------------------------
-mvn clean install -Pfastinstall,sourcecheck
+mvn clean install -Pfastinstall,format,sourcecheck
 -------------------------------------------
 
 == Building with checkstyle
