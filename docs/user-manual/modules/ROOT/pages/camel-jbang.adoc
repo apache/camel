@@ -315,7 +315,34 @@ Listening for transport dt_socket at address: 4004
 
 As you can see the default listening port is 4004 but can be configured as described in https://www.jbang.dev/documentation/guide/latest/debugging.html[JBang Debugging].
 
+== Packaging
+
+The Camel JBang application can be packaged as a standalone _fat-jar_ without the need for JBang to run the application.
+
+You simply do this by
+
+[source,bash]
+----
+camel package fat-jar
+----
+
+Which will generate `target/camel-app.jar` as the output file.
+You can then run this JAR with Java that comes with everything included inside the .jar file.
+
+You can run the JAR with Java as follows:
+
+[source,bash]
+----
+java -jar target/camel-app.jar
+----
+
+== Creating Projects
+
+You can _export_ your Camel JBang application to a traditional Java based project such as Spring Boot or Quarkus.
+
 === Create Quarkus Project
+
+NOTE: New implementation on the way
 
 The create project command can be used to generate a maven project. After running the integration with the `run` command `create project` will generate a maven quarkus project with some required dependencies that can be used as a starting point for complex integrations. 
 

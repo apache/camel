@@ -48,8 +48,6 @@ import picocli.CommandLine.Option;
 @Command(name = "fat-jar", description = "Package application as a single fat-jar")
 class FatJar implements Callable<Integer> {
 
-    private static final String LIB_INDEX_FILE = "camel-jbang-run-lib.idx";
-
     //CHECKSTYLE:OFF
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested = false;
@@ -149,6 +147,7 @@ class FatJar implements Callable<Integer> {
         File target = new File("target/camel-app/bootstrap");
         target.mkdirs();
 
+        // nested-jar classloader is named core
         File fl = new File("target/camel-app/lib/core-1.0.2.jar");
 
         JarInputStream jis = new JarInputStream(new FileInputStream(fl));
