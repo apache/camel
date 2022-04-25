@@ -47,13 +47,4 @@
     <properties>
         <camel.osgi.export.pkg />
     </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>net.revelc.code.formatter</groupId>
-                <artifactId>formatter-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>
