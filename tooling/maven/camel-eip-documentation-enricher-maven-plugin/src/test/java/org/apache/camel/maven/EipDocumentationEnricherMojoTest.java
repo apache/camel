@@ -40,14 +40,14 @@ public class EipDocumentationEnricherMojoTest {
     private File mockInputSchema;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         eipDocumentationEnricherMojo.camelCoreModelDir = mockCamelCore;
         eipDocumentationEnricherMojo.inputCamelSchemaFile = mockInputSchema;
         eipDocumentationEnricherMojo.pathToModelDir = "sub/path";
     }
 
     @Test
-    public void testExecuteCamelCoreIsNull() throws Exception {
+    public void testExecuteCamelCoreIsNull() {
         eipDocumentationEnricherMojo.camelCoreModelDir = null;
 
         when(mockInputSchema.exists()).thenReturn(true);
@@ -62,7 +62,7 @@ public class EipDocumentationEnricherMojoTest {
     }
 
     @Test
-    public void testExecuteInputCamelSchemaIsNotAFile() throws Exception {
+    public void testExecuteInputCamelSchemaIsNotAFile() {
         when(mockInputSchema.exists()).thenReturn(true);
         when(mockInputSchema.isFile()).thenReturn(false);
 
@@ -75,7 +75,7 @@ public class EipDocumentationEnricherMojoTest {
     }
 
     @Test
-    public void testExecutePathToModelDirIsNull() throws Exception {
+    public void testExecutePathToModelDirIsNull() {
         eipDocumentationEnricherMojo.pathToModelDir = null;
 
         try {

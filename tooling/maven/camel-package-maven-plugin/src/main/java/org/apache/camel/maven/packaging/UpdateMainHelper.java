@@ -42,10 +42,9 @@ public class UpdateMainHelper extends AbstractGeneratorMojo {
      * Execute goal.
      *
      * @throws MojoExecutionException execution of the main class or one of the threads it generated failed.
-     * @throws MojoFailureException   something bad happened...
      */
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         File camelDir = findCamelDirectory(baseDir, "core/camel-main");
         if (camelDir == null) {
             getLog().debug("No core/camel-main folder found, skipping execution");

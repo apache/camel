@@ -65,7 +65,7 @@ public abstract class AbstractGeneratorMojoTest {
         mojo.componentPackage = COMPONENT_PACKAGE;
         mojo.project = new MavenProject((Model) null) {
             @Override
-            public List getTestClasspathElements() throws DependencyResolutionRequiredException {
+            public List getTestClasspathElements() {
                 return Collections.EMPTY_LIST;
             }
 

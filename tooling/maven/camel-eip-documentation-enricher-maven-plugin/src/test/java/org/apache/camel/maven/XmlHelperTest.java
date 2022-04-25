@@ -34,12 +34,12 @@ public class XmlHelperTest {
     }
 
     @Test
-    public void testBuildXPath() throws Exception {
+    public void testBuildXPath() {
         assertNotNull(XmlHelper.buildXPath(new CamelSpringNamespace()));
     }
 
     @Test
-    public void testBuildXPathNullPointerExpected() throws Exception {
+    public void testBuildXPathNullPointerExpected() {
         try {
             XmlHelper.buildXPath(null);
             fail("NullPointerException expected");
