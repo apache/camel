@@ -24,7 +24,7 @@ public final class ResourceUtils {
         // noop
     }
 
-    public static File getResourceAsFile(String pathToFile) throws Exception {
+    public static File getResourceAsFile(String pathToFile) {
         return new File(ResourceUtils.class.getClassLoader().getResource(pathToFile).getFile());
     }
 

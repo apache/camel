@@ -66,10 +66,9 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
      * Execute goal.
      *
      * @throws MojoExecutionException execution of the main class or one of the threads it generated failed.
-     * @throws MojoFailureException   something bad happened...
      */
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         File camelDir = findCamelDirectory(baseDir, "core/camel-util");
         if (camelDir == null) {
             getLog().debug("No core/camel-util folder found, skipping execution");

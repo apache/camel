@@ -56,7 +56,7 @@ public class UpdateEagerClassloadedHelper extends AbstractGeneratorMojo {
     protected File baseDir;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         File mainDir = findCamelDirectory(baseDir, "core/camel-main");
         if (mainDir == null) {
             getLog().debug("No core/camel-main folder found, skipping execution");
