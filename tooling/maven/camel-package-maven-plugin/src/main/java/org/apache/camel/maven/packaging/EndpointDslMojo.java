@@ -934,8 +934,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         return s.substring(0, i) + s.substring(i + 1, i + 2).toUpperCase() + s.substring(i + 2);
     }
 
-    private String getMainDescription(ComponentModel model) {
-        StringBuilder descSb = new StringBuilder();
+    private static String getMainDescription(ComponentModel model) {
+        StringBuilder descSb = new StringBuilder(512);
 
         descSb.append(model.getTitle()).append(" (").append(model.getArtifactId()).append(")");
         descSb.append("\n").append(model.getDescription());
@@ -973,7 +973,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         return descSb.toString();
     }
 
-    private String wrapEnumValues(List<String> enumValues) {
+    private static String wrapEnumValues(List<String> enumValues) {
         // comma to space so we can wrap words (which uses space)
         return String.join(", ", enumValues);
     }
