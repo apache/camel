@@ -18,6 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
@@ -27,24 +29,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
 
 import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.MavenGav;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(name = "fat-jar", description = "Package application as a single fat-jar")
 class FatJar implements Callable<Integer> {
 
+    private static final String LIB_INDEX_FILE = "camel-jbang-run-lib.idx";
+
     //CHECKSTYLE:OFF
-    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
+    @Option(names = {"-h", "--help"}, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested = false;
     //CHECKSTYLE:ON
+
+    @CommandLine.Option(names = { "-j", "--jar" }, defaultValue = "target/camel-app.jar", description = "Jar filename")
+    private String jar = "target/camel-app.jar";
 
     @Override
     public Integer call() throws Exception {
@@ -62,25 +74,27 @@ class FatJar implements Callable<Integer> {
         ClassLoader parentCL = KameletMain.class.getClassLoader();
         final GroovyClassLoader gcl = new GroovyClassLoader(parentCL);
 
-        // copy settings also (but not as hidden file)
-        File out = new File(target, Run.RUN_SETTINGS_FILE.substring(1));
-        safeCopy(settings, out, true);
-
-        // routes
-        target = new File("target/camel-app/");
+        // application sources
+        target = new File("target/camel-app/classes");
+        target.mkdirs();
         copyFiles(settings, target);
-
+        // the settings file itself
+        target = new File("target/camel-app/classes", Run.RUN_SETTINGS_FILE.substring(1));
+        safeCopy(settings, target, true);
         // log4j configuration
         InputStream is = FatJar.class.getResourceAsStream("/log4j2.properties");
-        safeCopy(is, new File(target, "log4j2.properties"), false);
+        safeCopy(is, new File("target/camel-app/classes", "log4j2.properties"), false);
 
         List<String> lines = Files.readAllLines(settings.toPath());
+        String version = null;
 
         // include log4j dependencies
         lines.add("dependency=org.apache.logging.log4j:log4j-api:2.17.2");
         lines.add("dependency=org.apache.logging.log4j:log4j-core:2.17.2");
         lines.add("dependency=org.apache.logging.log4j:log4j-slf4j-impl:2.17.2");
         lines.add("dependency=org.fusesource.jansi:jansi:2.4.0");
+        // nested jar classloader
+        lines.add("dependency=com.needhamsoftware.unojar:core:1.0.2");
 
         // include camel-kamelet-main/camel-fatjar-main as they are needed
         Optional<MavenGav> first = lines.stream()
@@ -89,9 +103,12 @@ class FatJar implements Callable<Integer> {
                 .filter(g -> "org.apache.camel".equals(g.getGroupId()))
                 .findFirst();
         if (first.isPresent()) {
-            String v = first.get().getVersion();
-            lines.add(0, "dependency=mvn:org.apache.camel:camel-kamelet-main:" + v);
-            lines.add(0, "dependency=mvn:org.apache.camel:camel-fatjar-main:" + v);
+            version = first.get().getVersion();
+            lines.add(0, "dependency=mvn:org.apache.camel:camel-kamelet-main:" + version);
+            lines.add(0, "dependency=mvn:org.apache.camel:camel-fatjar-main:" + version);
+        }
+        if (version == null) {
+            throw new IllegalStateException("Cannot determine Camel version");
         }
 
         // JARs should be in lib sub-folder
@@ -113,7 +130,111 @@ class FatJar implements Callable<Integer> {
             }
         }
 
+        // MANIFEST.MF
+        manifest(version);
+
+        // app sources as classes
+        applicationClasses();
+
+        // boostrap classloader
+        boostrapClassLoader();
+
+        // and build target jar
+        archiveFatJar(version);
+
         return 0;
+    }
+
+    private void boostrapClassLoader() throws Exception {
+        File target = new File("target/camel-app/bootstrap");
+        target.mkdirs();
+
+        File fl = new File("target/camel-app/lib/core-1.0.2.jar");
+
+        JarInputStream jis = new JarInputStream(new FileInputStream(fl));
+        JarEntry je;
+        while ((je = jis.getNextJarEntry()) != null) {
+            if (!je.isDirectory()) {
+                String name = je.getName();
+                if (name.endsWith(".class")) {
+                    // ensure sub-folders are created
+                    String path = FileUtil.onlyPath("target/camel-app/bootstrap/" + name);
+                    new File(path).mkdirs();
+                    FileOutputStream fos = new FileOutputStream("target/camel-app/bootstrap/" + name);
+                    IOHelper.copy(jis, fos);
+                    IOHelper.close(fos);
+                }
+            }
+        }
+
+        // delete to avoid duplicate
+        fl.delete();
+    }
+
+    private void applicationClasses() throws Exception {
+        // build JAR of target/classes
+        JarOutputStream jos = new JarOutputStream(new FileOutputStream("target/camel-app/lib/application.jar", false));
+
+        File dir = new File("target/camel-app/classes");
+        if (dir.exists() && dir.isDirectory()) {
+            for (File f : dir.listFiles()) {
+                JarEntry je = new JarEntry(f.getName());
+                jos.putNextEntry(je);
+                IOHelper.copyAndCloseInput(new FileInputStream(f), jos);
+            }
+        }
+
+        jos.flush();
+        IOHelper.close(jos);
+    }
+
+    private void manifest(String version) throws Exception {
+        InputStream is = Init.class.getClassLoader().getResourceAsStream("templates/manifest.tmpl");
+        if (is == null) {
+            throw new FileNotFoundException("templates/manifest.tmpl");
+        }
+        String context = IOHelper.loadText(is);
+        IOHelper.close(is);
+        context = context.replaceFirst("\\{\\{ \\.Version }}", version);
+
+        File f = new File("target/camel-app/META-INF");
+        f.mkdirs();
+        IOHelper.writeText(context, new FileOutputStream(f + "/MANIFEST.MF", false));
+    }
+
+    private void archiveFatJar(String version) throws Exception {
+        // package all inside target/camel-app as a jar-file in target folder
+        JarOutputStream jos = new JarOutputStream(new FileOutputStream(jar, false));
+
+        // include manifest first
+        File fm = new File("target/camel-app/META-INF/MANIFEST.MF");
+        JarEntry je = new JarEntry("META-INF/MANIFEST.MF");
+        jos.putNextEntry(je);
+        IOHelper.copyAndCloseInput(new FileInputStream(fm), jos);
+        // include boostrap
+        for (File fl : new File("target/camel-app/bootstrap/com/needhamsoftware/unojar").listFiles()) {
+            if (fl.isFile()) {
+                je = new JarEntry("com/needhamsoftware/unojar/" + fl.getName());
+                jos.putNextEntry(je);
+                IOHelper.copyAndCloseInput(new FileInputStream(fl), jos);
+            }
+        }
+        // include JARs
+        for (File fl : new File("target/camel-app/lib/").listFiles()) {
+            if (fl.isFile()) {
+                if (fl.getName().startsWith("camel-fatjar-main")) {
+                    // must be in main folder
+                    je = new JarEntry("main/" + fl.getName());
+                } else {
+                    je = new JarEntry("lib/" + fl.getName());
+                }
+                jos.putNextEntry(je);
+                IOHelper.copyAndCloseInput(new FileInputStream(fl), jos);
+            }
+        }
+
+        jos.flush();
+        IOHelper.close(jos);
     }
 
     private void copyFiles(File settings, File target) throws Exception {

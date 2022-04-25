@@ -16,7 +16,9 @@
  */
 package org.apache.camel.main.fatjar;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.OrderedProperties;
@@ -28,7 +30,7 @@ public class FatJarMain extends KameletMain {
 
     public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
 
-    public static void main(String... args) throws Exception {
+    public static void main(String[] args) throws Exception {
         FatJarMain main = new FatJarMain();
         int code = main.run(args);
         if (code != 0) {
@@ -38,13 +40,27 @@ public class FatJarMain extends KameletMain {
     }
 
     @Override
+    protected ClassLoader createApplicationContextClassLoader() {
+        // use the classloader that loaded this class
+        return this.getClass().getClassLoader();
+    }
+
+    @Override
     protected void doBuild() throws Exception {
         setAppName("Apache Camel (FatJar)");
         setDownload(false); // no need for download as all is included in fat-jar
 
         // load configuration file
         OrderedProperties prop = new OrderedProperties();
-        prop.load(new FileInputStream(RUN_SETTINGS_FILE));
+        File f = new File(RUN_SETTINGS_FILE);
+        if (f.exists()) {
+            prop.load(new FileInputStream(f));
+        } else {
+            InputStream is = FatJarMain.class.getClassLoader().getResourceAsStream("/" + RUN_SETTINGS_FILE);
+            if (is != null) {
+                prop.load(is);
+            }
+        }
 
         // setup embedded log4j logging
         String loggingLevel = prop.getProperty("loggingLevel", "info");

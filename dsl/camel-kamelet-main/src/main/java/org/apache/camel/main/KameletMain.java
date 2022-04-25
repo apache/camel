@@ -36,7 +36,6 @@ public class KameletMain extends MainCommandLineSupport {
 
     public static final String DEFAULT_KAMELETS_LOCATION = "classpath:/kamelets,github:apache:camel-kamelets/kamelets";
 
-    private static ClassLoader kameletClassLoader;
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
     private DownloadListener downloadListener;
@@ -129,6 +128,17 @@ public class KameletMain extends MainCommandLineSupport {
     // Implementation methods
     // -------------------------------------------------------------------------
 
+    protected ClassLoader createApplicationContextClassLoader() {
+        // any additional files to add to classpath
+        ClassLoader parentCL = KameletMain.class.getClassLoader();
+        String cpFiles = getInitialProperties().getProperty("camel.jbang.classpathFiles");
+        if (cpFiles != null) {
+            parentCL = new ExtraFilesClassLoader(parentCL, cpFiles.split(","));
+            LOG.info("Additional files added to classpath: {}", cpFiles);
+        }
+        return new GroovyClassLoader(parentCL);
+    }
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();
@@ -182,17 +192,7 @@ public class KameletMain extends MainCommandLineSupport {
             LOG.info(info);
         }
 
-        // any additional files to add to classpath
-        ClassLoader parentCL = KameletMain.class.getClassLoader();
-        String cpFiles = getInitialProperties().getProperty("camel.jbang.classpathFiles");
-        if (cpFiles != null) {
-            parentCL = new ExtraFilesClassLoader(parentCL, cpFiles.split(","));
-            LOG.info("Additional files added to classpath: {}", cpFiles);
-        }
-        if (kameletClassLoader == null) {
-            kameletClassLoader = new GroovyClassLoader(parentCL);
-        }
-        answer.setApplicationContextClassLoader(kameletClassLoader);
+        answer.setApplicationContextClassLoader(createApplicationContextClassLoader());
         answer.setRegistry(registry);
         // load camel component and custom health-checks
         answer.setLoadHealthChecks(true);
