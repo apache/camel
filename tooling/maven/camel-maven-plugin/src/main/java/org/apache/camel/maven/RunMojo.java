@@ -712,22 +712,19 @@ public class RunMojo extends AbstractExecMojo {
         }
 
         try {
-            Iterator<Artifact> iter = this.determineRelevantPluginDependencies().iterator();
-            while (iter.hasNext()) {
-                Artifact classPathElement = iter.next();
-
+            for (Artifact classPathElement : this.determineRelevantPluginDependencies()) {
                 // we must skip org.osgi.core, otherwise we get a
                 // java.lang.NoClassDefFoundError: org.osgi.vendor.framework property not set
                 if (classPathElement.getArtifactId().equals("org.osgi.core")) {
                     if (getLog().isDebugEnabled()) {
                         getLog().debug("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/"
-                                       + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
+                                + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
                     }
                     continue;
                 }
 
                 getLog().debug("Adding plugin dependency artifact: " + classPathElement.getArtifactId()
-                               + " to classpath");
+                        + " to classpath");
                 path.add(classPathElement.getFile().toURI().toURL());
             }
         } catch (MalformedURLException e) {
@@ -818,11 +815,9 @@ public class RunMojo extends AbstractExecMojo {
                 // MEXEC-17
                 dependencies.addAll(getAllNonTestScopedDependencies());
 
-                Iterator<Artifact> iter = dependencies.iterator();
-                while (iter.hasNext()) {
-                    Artifact classPathElement = iter.next();
+                for (Artifact classPathElement : dependencies) {
                     getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
-                                   + " to classpath");
+                            + " to classpath");
                     File file = classPathElement.getFile();
                     if (file != null) {
                         path.add(file.toURI().toURL());
@@ -855,9 +850,7 @@ public class RunMojo extends AbstractExecMojo {
     private Collection<Artifact> getAllDependencies() throws MojoExecutionException {
         List<Artifact> artifacts = new ArrayList<>();
 
-        for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
-            Dependency dependency = (Dependency) dependencies.next();
-
+        for (Dependency dependency : project.getDependencies()) {
             String groupId = dependency.getGroupId();
             String artifactId = dependency.getArtifactId();
 

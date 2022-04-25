@@ -187,13 +187,10 @@ public class PrepareFatJarMojo extends AbstractMojo {
             // MEXEC-17
             dependencies.addAll(getAllNonTestScopedDependencies());
 
-            Iterator<Artifact> iter = dependencies.iterator();
-            while (iter.hasNext()) {
-                Artifact classPathElement = iter.next();
-
+            for (Artifact classPathElement : dependencies) {
                 if (getLog().isDebugEnabled()) {
                     getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
-                                   + " to classpath");
+                            + " to classpath");
                 }
                 File file = classPathElement.getFile();
                 if (file != null) {
