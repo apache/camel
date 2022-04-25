@@ -20,8 +20,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.LineNumberReader;
-import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +32,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Generated;
 
 import org.apache.camel.maven.packaging.dsl.DslHelper;
+import org.apache.camel.maven.packaging.generics.JavadocUtil;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
@@ -52,13 +51,14 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
+import static org.apache.camel.maven.packaging.generics.JavadocUtil.getMainDescription;
+import static org.apache.camel.maven.packaging.generics.JavadocUtil.pathParameterJavaDoc;
 import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.joinHeaderAndSource;
 import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
@@ -379,12 +379,14 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         boolean firstAlias = true;
 
         for (ComponentModel componentModel : aliases) {
-            String desc = getMainDescription(componentModel);
-            String methodName = camelCaseLower(componentModel.getScheme());
+            final String desc = getMainDescription(componentModel);
+            final String methodName = camelCaseLower(componentModel.getScheme());
             Method method = doAddMethod(javaClass, builderClass, dslClass, componentModel, methodName);
             String javaDoc = desc;
+
             javaDoc += "\n\n@param path " + pathParameterJavaDoc(componentModel);
             javaDoc += "\n@return the dsl builder\n";
+
             method.getJavaDoc().setText(javaDoc);
             if (componentModel.isDeprecated()) {
                 method.addAnnotation(Deprecated.class);
@@ -409,6 +411,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                         .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
                         .setDefault()
                         .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder", "componentName, path");
+
                 javaDoc = desc;
                 javaDoc += "\n\n@param componentName to use a custom component name for the endpoint instead of the default name";
                 javaDoc += "\n@param path " + pathParameterJavaDoc(componentModel);
@@ -728,15 +731,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         return answer;
     }
 
-    private static String pathParameterJavaDoc(ComponentModel model) {
-        int pos = model.getSyntax().indexOf(':');
-        if (pos != -1) {
-            return model.getSyntax().substring(pos + 1);
-        } else {
-            return model.getSyntax();
-        }
-    }
-
     private boolean synchronizeEndpointBuilderFactoryInterface(List<File> factories) throws MojoFailureException {
         JavaClass javaClass = new JavaClass(getProjectClassLoader());
         javaClass.setPackage(endpointFactoriesPackageName);
@@ -828,7 +822,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                                 method.addParameter(getQualifiedType(ps.getType()), ps.getName());
                             }
                         }
-                        String doc = extractJavaDoc(sourceCode, ms);
+                        String doc = JavadocUtil.extractJavaDoc(sourceCode, ms);
                         method.getJavaDoc().setFullText(doc);
                         if (ms.getAnnotation(Deprecated.class) != null) {
                             method.addAnnotation(Deprecated.class);
@@ -871,34 +865,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         return val;
     }
 
+    @Deprecated
     protected static String extractJavaDoc(String sourceCode, MethodSource ms) throws IOException {
-        // the javadoc is mangled by roaster (sadly it does not preserve newlines and original formatting)
-        // so we need to load it from the original source file
-        Object internal = ms.getJavaDoc().getInternal();
-        if (internal instanceof ASTNode) {
-            int pos = ((ASTNode) internal).getStartPosition();
-            int len = ((ASTNode) internal).getLength();
-            if (pos > 0 && len > 0) {
-                String doc = sourceCode.substring(pos, pos + len);
-                LineNumberReader ln = new LineNumberReader(new StringReader(doc));
-                String line;
-                StringBuilder sb = new StringBuilder();
-                while ((line = ln.readLine()) != null) {
-                    line = line.trim();
-                    if (line.startsWith("/**") || line.startsWith("*/")) {
-                        continue;
-                    }
-                    if (line.startsWith("*")) {
-                        line = line.substring(1).trim();
-                    }
-                    sb.append(line);
-                    sb.append("\n");
-                }
-                doc = sb.toString();
-                return doc;
-            }
-        }
-        return null;
+        return JavadocUtil.extractJavaDoc(sourceCode, ms);
     }
 
     private List<File> loadAllComponentsDslEndpointFactoriesAsFile() {
@@ -932,50 +901,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     private static String camelCaseAtIndex(String s, int i) {
         return s.substring(0, i) + s.substring(i + 1, i + 2).toUpperCase() + s.substring(i + 2);
-    }
-
-    private static String getMainDescription(ComponentModel model) {
-        StringBuilder descSb = new StringBuilder(512);
-
-        descSb.append(model.getTitle()).append(" (").append(model.getArtifactId()).append(")");
-        descSb.append("\n").append(model.getDescription());
-        descSb.append("\n");
-        descSb.append("\nCategory: ").append(model.getLabel());
-        descSb.append("\nSince: ").append(model.getFirstVersionShort());
-        descSb.append("\nMaven coordinates: ").append(model.getGroupId()).append(":").append(model.getArtifactId());
-
-        // include javadoc for all path parameters and mark which are required
-        descSb.append("\n");
-        descSb.append("\nSyntax: <code>").append(model.getSyntax()).append("</code>");
-        for (EndpointOptionModel option : model.getEndpointOptions()) {
-            if ("path".equals(option.getKind())) {
-                descSb.append("\n");
-                descSb.append("\nPath parameter: ").append(option.getName());
-                if (option.isRequired()) {
-                    descSb.append(" (required)");
-                }
-                if (option.isDeprecated()) {
-                    descSb.append(" <strong>deprecated</strong>");
-                }
-                descSb.append("\n").append(option.getDescription());
-                if (option.getDefaultValue() != null) {
-                    descSb.append("\nDefault value: ").append(option.getDefaultValue());
-                }
-                // TODO: default value note ?
-                if (option.getEnums() != null && !option.getEnums().isEmpty()) {
-                    descSb.append("\nThere are ").append(option.getEnums().size())
-                            .append(" enums and the value can be one of: ")
-                            .append(wrapEnumValues(option.getEnums()));
-                }
-            }
-        }
-
-        return descSb.toString();
-    }
-
-    private static String wrapEnumValues(List<String> enumValues) {
-        // comma to space so we can wrap words (which uses space)
-        return String.join(", ", enumValues);
     }
 
     private String getComponentNameFromType(String type) {
