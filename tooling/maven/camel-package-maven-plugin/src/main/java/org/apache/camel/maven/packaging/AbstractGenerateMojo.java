@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -162,9 +163,16 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
                 "org.apache.camel_camel-package-maven-plugin_info_xx");
     }
 
-    private long lastmod(Path p) {
+    private long isRecentlyModifiedFile(Path p) {
         try {
-            return Files.getLastModifiedTime(p).toMillis();
+            BasicFileAttributes fileAttributes = Files.readAttributes(p, BasicFileAttributes.class);
+
+            // if it's a directory, we don't care
+            if (fileAttributes.isDirectory()) {
+                return 0;
+            }
+
+            return fileAttributes.lastModifiedTime().toMillis();
         } catch (IOException e) {
             return 0;
         }
@@ -172,11 +180,17 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
 
     private Stream<String> newer(long lastmod, File file) {
         try {
-            if (file.isDirectory()) {
-                return Files.walk(file.toPath()).filter(Files::isRegularFile).filter(p -> lastmod(p) > lastmod)
+            if (!file.exists()) {
+                return Stream.empty();
+            }
+
+            BasicFileAttributes fileAttributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+
+            if (fileAttributes.isDirectory()) {
+                return Files.walk(file.toPath()).filter(p -> isRecentlyModifiedFile(p) > lastmod)
                         .map(Path::toString);
-            } else if (file.isFile()) {
-                if (lastmod(file.toPath()) > lastmod) {
+            } else if (fileAttributes.isRegularFile()) {
+                if (fileAttributes.lastModifiedTime().toMillis() > lastmod) {
                     if (file.getName().endsWith(".jar")) {
                         try (ZipFile zf = new ZipFile(file)) {
                             return zf.stream().filter(ze -> !ze.isDirectory())
