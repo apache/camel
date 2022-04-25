@@ -142,9 +142,7 @@ public class BomGeneratorMojo extends AbstractMojo {
 
             writePom(pom);
 
-        } catch (MojoFailureException ex) {
-            throw ex;
-        } catch (MojoExecutionException ex) {
+        } catch (MojoFailureException | MojoExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
             throw new MojoExecutionException("Cannot generate the output BOM file", ex);
