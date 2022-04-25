@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -718,13 +717,13 @@ public class RunMojo extends AbstractExecMojo {
                 if (classPathElement.getArtifactId().equals("org.osgi.core")) {
                     if (getLog().isDebugEnabled()) {
                         getLog().debug("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/"
-                                + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
+                                       + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
                     }
                     continue;
                 }
 
                 getLog().debug("Adding plugin dependency artifact: " + classPathElement.getArtifactId()
-                        + " to classpath");
+                               + " to classpath");
                 path.add(classPathElement.getFile().toURI().toURL());
             }
         } catch (MalformedURLException e) {
@@ -817,7 +816,7 @@ public class RunMojo extends AbstractExecMojo {
 
                 for (Artifact classPathElement : dependencies) {
                     getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
-                            + " to classpath");
+                                   + " to classpath");
                     File file = classPathElement.getFile();
                     if (file != null) {
                         path.add(file.toURI().toURL());

@@ -28,7 +28,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -241,7 +240,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             for (Artifact classPathElement : dependencies) {
                 if (getLog().isDebugEnabled()) {
                     getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
-                            + " to classpath");
+                                   + " to classpath");
                 }
 
                 File file = classPathElement.getFile();
