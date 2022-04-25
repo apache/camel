@@ -2197,10 +2197,9 @@ public abstract class AbstractJavadocMojo
 
             for ( Path sourcePath : sourcePaths )
             {
-                List<String> files = new ArrayList<>();
                 File sourceDirectory = sourcePath.toFile();
-                files.addAll( JavadocUtil.getFilesFromSource( sourceDirectory, sourceFileIncludes, sourceFileExcludes,
-                        excludedPackages ) );
+                final List<String> files = getFilesFromSource(sourceDirectory, sourceFileIncludes, sourceFileExcludes,
+                        excludedPackages);
 
                 if ( source != null && JavaVersion.parse( source ).isBefore( "9" )
                         && files.remove( "module-info.java" ) )
