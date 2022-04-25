@@ -89,6 +89,12 @@
             <artifactId>jansi</artifactId>
             <version>${jansi-version}</version>
         </dependency>
+        <!-- Kubernetes client -->
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-client</artifactId>
+            <version>${kubernetes-client-version}</version>
+        </dependency>
         <!-- Docker generator -->
         <dependency>
             <groupId>com.google.cloud.tools</groupId>
