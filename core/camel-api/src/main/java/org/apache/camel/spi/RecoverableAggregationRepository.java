@@ -117,4 +117,19 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
      */
     int getMaximumRedeliveries();
 
+    /**
+     * Confirms the completion of the {@link Exchange} with a result.
+     * <p/>
+     * This method is invoked instead of confirm() if the repository is recoverable. This allows possible recovery of
+     * non-confirmed completed exchanges.
+     *
+     * @param  camelContext the current CamelContext
+     * @param  exchangeId   exchange id to confirm
+     * @return              true if the exchange was successfully removed, else false.
+     */
+    default boolean confirmWithResult(CamelContext camelContext, String exchangeId) {
+        confirm(camelContext, exchangeId);
+        return true;
+    }
+
 }

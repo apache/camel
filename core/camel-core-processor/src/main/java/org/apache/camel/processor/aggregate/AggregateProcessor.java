@@ -125,6 +125,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
     private Map<String, String> closedCorrelationKeys;
     private final Set<String> batchConsumerCorrelationKeys = new ConcurrentSkipListSet<>();
     private final Set<String> inProgressCompleteExchanges = ConcurrentHashMap.newKeySet();
+    private final Set<String> unconfirmedCompleteExchanges = ConcurrentHashMap.newKeySet();
     private final Set<String> inProgressCompleteExchangesForRecoveryTask = ConcurrentHashMap.newKeySet();
     private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<>();
 
@@ -248,6 +249,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
     private long completionTimeoutCheckerInterval = 1000;
 
     private ProducerTemplate deadLetterProducerTemplate;
+    private boolean isRecoverableRepository;
 
     public AggregateProcessor(CamelContext camelContext, AsyncProcessor processor,
                               Expression correlationExpression, AggregationStrategy aggregationStrategy,
@@ -580,7 +582,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
         }
 
         // special for some repository implementations
-        if (aggregationRepository instanceof RecoverableAggregationRepository) {
+        if (isRecoverableRepository()) {
             boolean valid = oldExchange == null || answer.getExchangeId().equals(oldExchange.getExchangeId());
             if (!valid && aggregateRepositoryWarned.compareAndSet(false, true)) {
                 LOG.warn(
@@ -1100,6 +1102,11 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
     public void setAggregationRepository(AggregationRepository aggregationRepository) {
         this.aggregationRepository = aggregationRepository;
+        this.isRecoverableRepository = aggregationRepository instanceof RecoverableAggregationRepository;
+    }
+
+    private boolean isRecoverableRepository() {
+        return isRecoverableRepository;
     }
 
     public boolean isDiscardOnCompletionTimeout() {
@@ -1216,9 +1223,19 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
             // only confirm if we processed without a problem
             try {
-                aggregationRepository.confirm(exchange.getContext(), exchangeId);
+                boolean confirmed;
+                if (isRecoverableRepository()) {
+                    confirmed = ((RecoverableAggregationRepository) aggregationRepository)
+                            .confirmWithResult(exchange.getContext(), exchangeId);
+                } else {
+                    aggregationRepository.confirm(exchange.getContext(), exchangeId);
+                    confirmed = true;
+                }
                 // and remove redelivery state as well
                 redeliveryState.remove(exchangeId);
+                if (!confirmed) {
+                    unconfirmedCompleteExchanges.add(exchangeId);
+                }
             } finally {
                 // must remember to remove in progress when we are complete
                 inProgressCompleteExchanges.remove(exchangeId);
@@ -1373,6 +1390,8 @@ public class AggregateProcessor extends AsyncProcessorSupport
                 recoveryInProgress.set(true);
                 inProgressCompleteExchangesForRecoveryTask.clear();
                 inProgressCompleteExchangesForRecoveryTask.addAll(inProgressCompleteExchanges);
+                // These are delivered but still in complete repository!
+                inProgressCompleteExchangesForRecoveryTask.addAll(unconfirmedCompleteExchanges);
                 final Set<String> exchangeIds = recoverable.scan(camelContext);
                 for (String exchangeId : exchangeIds) {
 
@@ -1388,6 +1407,9 @@ public class AggregateProcessor extends AsyncProcessorSupport
                         final boolean inProgress = inProgressCompleteExchangesForRecoveryTask.contains(exchangeId);
                         if (inProgress) {
                             LOG.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
+                            if (unconfirmedCompleteExchanges.contains(exchangeId)) {
+                                retryConfirm(exchangeId);
+                            }
                         } else {
                             LOG.debug("Loading aggregated exchange with id: {} to be recovered.", exchangeId);
                             Exchange exchange = recoverable.recover(camelContext, exchangeId);
@@ -1463,6 +1485,16 @@ public class AggregateProcessor extends AsyncProcessorSupport
             }
             LOG.trace("Recover check complete");
         }
+
+        private void retryConfirm(String exchangeId) {
+            // Confirm that the exchange was processed
+            if (recoverable.confirmWithResult(camelContext, exchangeId)) {
+                unconfirmedCompleteExchanges.remove(exchangeId);
+                LOG.debug("Removal of exchange {} confirmed.", exchangeId);
+            } else {
+                LOG.warn("Still unable to confirm removal of exchange {}.", exchangeId);
+            }
+        }
     }
 
     @Override
@@ -1513,7 +1545,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
         ServiceHelper.startService(aggregationStrategy, processor, aggregationRepository);
 
         // should we use recover checker
-        if (aggregationRepository instanceof RecoverableAggregationRepository) {
+        if (isRecoverableRepository()) {
             RecoverableAggregationRepository recoverable = (RecoverableAggregationRepository) aggregationRepository;
             if (recoverable.isUseRecovery()) {
                 long interval = recoverable.getRecoveryIntervalInMillis();
