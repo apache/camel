@@ -197,28 +197,6 @@ public final class MultiCompile {
         return sf != null ? sf.getDeclaringClass() : null;
     }
 
-    /* [java-9] */
-    static final class ByteArrayClassLoader extends ClassLoader {
-        private final Map<String, byte[]> classes;
-
-        ByteArrayClassLoader(Map<String, byte[]> classes) {
-            super(ByteArrayClassLoader.class.getClassLoader());
-
-            this.classes = classes;
-        }
-
-        @Override
-        protected Class<?> findClass(String name) throws ClassNotFoundException {
-            byte[] bytes = classes.get(name);
-
-            if (bytes == null) {
-                return super.findClass(name);
-            } else {
-                return defineClass(name, bytes, 0, bytes.length);
-            }
-        }
-    }
-
     static final class JavaFileObject extends SimpleJavaFileObject {
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
 

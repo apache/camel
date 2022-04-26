@@ -45,7 +45,7 @@ public class ClassRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport 
             }
         }
 
-        MultiCompile.ByteArrayClassLoader cl = new MultiCompile.ByteArrayClassLoader(byteCodes);
+        ByteArrayClassLoader cl = new ByteArrayClassLoader(byteCodes);
 
         // instantiate classes from the byte codes
         for (Resource res : resources) {
