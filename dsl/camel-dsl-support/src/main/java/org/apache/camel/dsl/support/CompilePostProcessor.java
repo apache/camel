@@ -33,12 +33,13 @@ public interface CompilePostProcessor {
      * @param  camelContext the camel context
      * @param  name         the name of the resource/class
      * @param  clazz        the class
+     * @param  byteCode     byte code that was compiled from the source as the class (only supported on some DSLs)
      * @param  instance     the object created as instance of the class (if any)
      * @throws Exception    is thrown if error during post-processing
      */
     void postCompile(
             CamelContext camelContext, String name,
-            Class<?> clazz, Object instance)
+            Class<?> clazz, byte[] byteCode, Object instance)
             throws Exception;
 
 }

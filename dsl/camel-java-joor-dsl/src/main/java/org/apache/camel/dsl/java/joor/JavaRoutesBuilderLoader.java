@@ -103,7 +103,8 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
             // support custom annotation scanning post compilation
             // such as to register custom beans, type converters, etc.
             for (CompilePostProcessor pre : getCompilePostProcessors()) {
-                pre.postCompile(getCamelContext(), className, clazz, obj);
+                byte[] byteCode = result.getByteCode(className);
+                pre.postCompile(getCamelContext(), className, clazz, byteCode, obj);
             }
 
             if (obj instanceof RouteBuilder) {

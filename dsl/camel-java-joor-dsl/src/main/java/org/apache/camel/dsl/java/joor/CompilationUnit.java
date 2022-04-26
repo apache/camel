@@ -33,9 +33,11 @@ public class CompilationUnit {
      */
     public static class Result {
         private final Map<String, Class<?>> classes = new LinkedHashMap<>();
+        private final Map<String, byte[]> compiled = new LinkedHashMap<>();
 
-        void addResult(String className, Class<?> clazz) {
+        void addResult(String className, Class<?> clazz, byte[] byteCode) {
             classes.put(className, clazz);
+            compiled.put(className, byteCode);
         }
 
         /**
@@ -46,6 +48,16 @@ public class CompilationUnit {
          */
         public Class<?> getClass(String className) {
             return classes.get(className);
+        }
+
+        /**
+         * Gets the compiled byte code by its class name
+         *
+         * @param  className the class name
+         * @return           the compiled byte code
+         */
+        public byte[] getByteCode(String className) {
+            return compiled.get(className);
         }
 
         /**
