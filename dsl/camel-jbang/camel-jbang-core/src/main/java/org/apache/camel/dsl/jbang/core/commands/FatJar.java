@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
@@ -76,9 +77,8 @@ class FatJar implements Callable<Integer> {
         target = new File("target/camel-app/classes");
         target.mkdirs();
         copyFiles(settings, target);
-        // the settings file itself
-        target = new File("target/camel-app/classes", Run.RUN_SETTINGS_FILE.substring(1));
-        safeCopy(settings, target, true);
+        // settings
+        copySettings(settings);
         // log4j configuration
         InputStream is = FatJar.class.getResourceAsStream("/log4j2.properties");
         safeCopy(is, new File("target/camel-app/classes", "log4j2.properties"), false);
@@ -138,9 +138,28 @@ class FatJar implements Callable<Integer> {
         boostrapClassLoader();
 
         // and build target jar
-        archiveFatJar(version);
+        archiveFatJar();
 
         return 0;
+    }
+
+    private void copySettings(File settings) throws Exception {
+        // the settings file itself
+        File target = new File("target/camel-app/classes", Run.RUN_SETTINGS_FILE.substring(1));
+
+        // need to adjust file: scheme to classpath as the files are now embedded in the fat-jar directly
+        List<String> lines = Files.readAllLines(settings.toPath());
+        FileOutputStream fos = new FileOutputStream(target, false);
+        for (String line : lines) {
+            String value = StringHelper.after(line, "camel.main.routesIncludePattern=");
+            if (value != null) {
+                value = value.replaceAll("file:", "classpath:");
+                line = "camel.main.routesIncludePattern=" + value;
+            }
+            fos.write(line.getBytes(StandardCharsets.UTF_8));
+            fos.write("\n".getBytes(StandardCharsets.UTF_8));
+        }
+        IOHelper.close(fos);
     }
 
     private void boostrapClassLoader() throws Exception {
@@ -201,7 +220,7 @@ class FatJar implements Callable<Integer> {
         IOHelper.writeText(context, new FileOutputStream(f + "/MANIFEST.MF", false));
     }
 
-    private void archiveFatJar(String version) throws Exception {
+    private void archiveFatJar() throws Exception {
         // package all inside target/camel-app as a jar-file in target folder
         JarOutputStream jos = new JarOutputStream(new FileOutputStream(jar, false));
 
