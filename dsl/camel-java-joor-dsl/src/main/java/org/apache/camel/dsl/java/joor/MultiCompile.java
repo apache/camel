@@ -44,6 +44,8 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import org.joor.ReflectException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
 
@@ -52,6 +54,8 @@ import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
  * https://github.com/jOOQ/jOOR/pull/119
  */
 public final class MultiCompile {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MultiCompile.class);
 
     private MultiCompile() {
     }
@@ -111,6 +115,9 @@ public final class MultiCompile {
                     }
                 }
 
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Java JooR Compile -classpath: {}", classpath);
+                }
                 options.addAll(Arrays.asList("-classpath", classpath.toString()));
             }
 
