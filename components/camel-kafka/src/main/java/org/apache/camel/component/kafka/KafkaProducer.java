@@ -50,6 +50,7 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.slf4j.Logger;
@@ -522,8 +523,8 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
     private String transactionId;
     private Producer kafkaProducer;
 
-    public KafkaTransactionSynchronization(String transacionId, Producer kafkaProducer) {
-        this.transactionId = transacionId;
+    public KafkaTransactionSynchronization(String transactionId, Producer kafkaProducer) {
+        this.transactionId = transactionId;
         this.kafkaProducer = kafkaProducer;
     }
 
@@ -531,16 +532,24 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
     public void onDone(Exchange exchange) {
         try {
             if (exchange.getException() != null || exchange.isRollbackOnly()) {
-                LOG.warn("Abort kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
-                kafkaProducer.abortTransaction();
+                if (exchange.getException() instanceof KafkaException) {
+                    LOG.warn("Catch {} and will close kafka producer with transaction {} ", exchange.getException(),
+                            transactionId);
+                    kafkaProducer.close();
+                } else {
+                    LOG.warn("Abort kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
+                    kafkaProducer.abortTransaction();
+                }
             } else {
                 LOG.debug("Commit kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
                 kafkaProducer.commitTransaction();
             }
         } catch (Throwable t) {
-            LOG.warn("Abort kafka transaction {} with exchange {} due to {} ", transactionId, exchange.getExchangeId(), t);
             exchange.setException(t);
-            kafkaProducer.abortTransaction();
+            if (!(t instanceof KafkaException)) {
+                LOG.warn("Abort kafka transaction {} with exchange {} due to {} ", transactionId, exchange.getExchangeId(), t);
+                kafkaProducer.abortTransaction();
+            }
         } finally {
             exchange.getUnitOfWork().endTransactedBy(transactionId);
         }

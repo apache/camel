@@ -17,8 +17,8 @@
 package org.apache.camel.component.kafka.integration;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +49,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KafkaTransactionIT extends BaseEmbeddedKafkaTestSupport {
     private static final String TOPIC_TRANSACTION = "transaction";
+    private static final String TOPIC_CONCURRENCY_TRANSACTION = "concurrency_transaction";
     private static KafkaConsumer<String, String> stringsConsumerConn;
+    private static final int THREAD_NUM = 5;
 
     @EndpointInject("kafka:" + TOPIC_TRANSACTION + "?requestRequiredAcks=-1"
                     + "&additional-properties[transactional.id]=1234"
@@ -57,11 +59,20 @@ public class KafkaTransactionIT extends BaseEmbeddedKafkaTestSupport {
                     + "&additional-properties[retries]=5")
     private Endpoint toTransaction;
 
+    @EndpointInject("kafka:" + TOPIC_CONCURRENCY_TRANSACTION + "?requestRequiredAcks=-1&synchronous=true"
+                    + "&additional-properties[transactional.id]=5678"
+                    + "&additional-properties[enable.idempotence]=true"
+                    + "&additional-properties[retries]=5")
+    private Endpoint toConcurrencyTransaction;
+
     @EndpointInject("mock:kafkaAck")
     private MockEndpoint mockEndpoint;
 
     @Produce("direct:startTransaction")
     private ProducerTemplate testTransaction;
+
+    @Produce("seda:startTransaction")
+    private ProducerTemplate testConcurrencyTransaction;
 
     public KafkaTransactionIT() {
 
@@ -75,7 +86,10 @@ public class KafkaTransactionIT extends BaseEmbeddedKafkaTestSupport {
     @AfterAll
     public static void after() {
         // clean all test topics
-        kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC_TRANSACTION));
+        final List<String> topics = new ArrayList<>();
+        topics.add(TOPIC_TRANSACTION);
+        topics.add(TOPIC_CONCURRENCY_TRANSACTION);
+        kafkaAdminClient.deleteTopics(topics);
     }
 
     @Override
@@ -93,8 +107,41 @@ public class KafkaTransactionIT extends BaseEmbeddedKafkaTestSupport {
                                 }
                             }
                         }).to(mockEndpoint);
+
+                from("seda:startTransaction").to(toConcurrencyTransaction);
             }
         };
+    }
+
+    @Test
+    public void concurrencyProducedTransactionMessage() throws InterruptedException {
+        Thread[] threads = new Thread[THREAD_NUM];
+        int messageInTopic = 5;
+
+        CountDownLatch messagesLatch = new CountDownLatch(messageInTopic * THREAD_NUM);
+
+        for (int i = 0; i < THREAD_NUM; i++) {
+            threads[i] = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    sendMessagesInRoute(messageInTopic, testConcurrencyTransaction, "IT test concurrency transaction message",
+                            KafkaConstants.PARTITION_KEY,
+                            "0");
+                }
+            });
+            threads[i].start();
+        }
+
+        for (int i = 0; i < THREAD_NUM; i++) {
+            threads[i].join();
+        }
+
+        createKafkaMessageConsumer(stringsConsumerConn, TOPIC_CONCURRENCY_TRANSACTION, messagesLatch);
+
+        boolean allMessagesReceived = messagesLatch.await(200, TimeUnit.MILLISECONDS);
+
+        assertTrue(allMessagesReceived,
+                "Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount());
     }
 
     @Test
