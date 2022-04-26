@@ -49,7 +49,7 @@ import picocli.CommandLine.Option;
 @Command(name = "fat-jar", description = "Package application as a single fat-jar")
 class FatJar implements Callable<Integer> {
 
-    private static final String[] SETTINGS_PROP_SOURCE_KEYS = new String[]{
+    private static final String[] SETTINGS_PROP_SOURCE_KEYS = new String[] {
             "camel.main.routesIncludePattern",
             "camel.component.properties.location",
             "camel.component.kamelet.location"
