@@ -14,7 +14,7 @@
     "version": "3.17.0-SNAPSHOT",
     "scheme": "jt400",
     "extendsScheme": "",
-    "syntax": "jt400:userID:password\/systemName\/objectPath.type",
+    "syntax": "jt400:userID:password@systemName\/QSYS.LIB\/objectPath.type",
     "async": false,
     "api": false,
     "consumerOnly": false,

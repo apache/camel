@@ -40,7 +40,7 @@ import org.apache.camel.util.URISupport;
  * for AS/400 and iSeries servers.
  */
 @UriEndpoint(firstVersion = "1.5.0", scheme = "jt400", title = "JT400",
-             syntax = "jt400:userID:password/systemName/objectPath.type", category = { Category.MESSAGING },
+             syntax = "jt400:userID:password@systemName/QSYS.LIB/objectPath.type", category = { Category.MESSAGING },
              headersClass = Jt400Constants.class)
 public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleConsumersSupport {
 

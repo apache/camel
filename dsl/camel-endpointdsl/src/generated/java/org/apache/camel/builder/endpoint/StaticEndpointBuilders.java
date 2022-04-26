@@ -8442,7 +8442,8 @@ public class StaticEndpointBuilders {
      * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-jt400
      * 
-     * Syntax: <code>jt400:userID:password/systemName/objectPath.type</code>
+     * Syntax:
+     * <code>jt400:userID:password@systemName/QSYS.LIB/objectPath.type</code>
      * 
      * Path parameter: userID (required)
      * Returns the ID of the IBM i user.
@@ -8461,7 +8462,7 @@ public class StaticEndpointBuilders {
      * Whether to work with data queues or remote program call
      * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM, MSGQ
      * 
-     * @param path userID:password/systemName/objectPath.type
+     * @param path userID:password@systemName/QSYS.LIB/objectPath.type
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Jt400EndpointBuilderFactory.Jt400EndpointBuilder jt400(
@@ -8478,7 +8479,8 @@ public class StaticEndpointBuilders {
      * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-jt400
      * 
-     * Syntax: <code>jt400:userID:password/systemName/objectPath.type</code>
+     * Syntax:
+     * <code>jt400:userID:password@systemName/QSYS.LIB/objectPath.type</code>
      * 
      * Path parameter: userID (required)
      * Returns the ID of the IBM i user.
@@ -8499,7 +8501,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path userID:password/systemName/objectPath.type
+     * @param path userID:password@systemName/QSYS.LIB/objectPath.type
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Jt400EndpointBuilderFactory.Jt400EndpointBuilder jt400(
