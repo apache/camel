@@ -35,7 +35,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.tools.FileObject;
 import javax.tools.ForwardingJavaFileManager;
@@ -65,8 +64,8 @@ public final class MultiCompile {
     /**
      * Compiles multiple files as one unit
      *
-     * @param unit the files to compile in the same unit
-     * @return the compilation result
+     * @param  unit the files to compile in the same unit
+     * @return      the compilation result
      */
     public static CompilationUnit.Result compileUnit(CompilationUnit unit) {
         CompilationUnit.Result result = CompilationUnit.result();

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dsl.java.joor;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -24,10 +28,6 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.support.ResourceSupport;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,7 +44,8 @@ public class ClassRoutesBuilderLoaderTest {
 
                 @Override
                 public InputStream getInputStream() throws IOException {
-                    return null;
+                    return ClassRoutesBuilderLoaderTest.class
+                            .getResourceAsStream("/org/apache/camel/dsl/java/joor/DummyRoute.class");
                 }
             };
             Collection<RoutesBuilder> builders = context.getRoutesLoader().findRoutesBuilders(resource);

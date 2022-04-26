@@ -1,5 +1,11 @@
 package org.apache.camel.dsl.java.joor;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.api.management.ManagedResource;
@@ -11,10 +17,6 @@ import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
 
 @ManagedResource(description = "Managed ClassRoutesBuilderLoader")
 @RoutesLoader(ClassRoutesBuilderLoader.EXTENSION)
@@ -32,13 +34,23 @@ public class ClassRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport 
     protected Collection<RoutesBuilder> doLoadRoutesBuilders(Collection<Resource> resources) throws Exception {
         Collection<RoutesBuilder> answer = new ArrayList<>();
 
+        // load all the byte code first from the resources
+        Map<String, byte[]> byteCodes = new LinkedHashMap<>();
         for (Resource res : resources) {
-            String className = res.getLocation();
-            className = className.replace('/', '.');
-            if (className.endsWith(".class")) {
-                className = className.substring(0, className.length() - 6);
+            String className = asClassName(res);
+            InputStream is = res.getInputStream();
+            if (is != null) {
+                byte[] code = is.readAllBytes();
+                byteCodes.put(className, code);
             }
-            Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(className);
+        }
+
+        MultiCompile.ByteArrayClassLoader cl = new MultiCompile.ByteArrayClassLoader(byteCodes);
+
+        // instantiate classes from the byte codes
+        for (Resource res : resources) {
+            String className = asClassName(res);
+            Class<?> clazz = cl.findClass(className);
 
             Object obj;
             try {
@@ -63,9 +75,17 @@ public class ClassRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport 
                 RouteBuilder builder = (RouteBuilder) obj;
                 answer.add(builder);
             }
-
         }
 
         return answer;
+    }
+
+    private static String asClassName(Resource resource) {
+        String className = resource.getLocation();
+        className = className.replace('/', '.');
+        if (className.endsWith(".class")) {
+            className = className.substring(0, className.length() - 6);
+        }
+        return className;
     }
 }
