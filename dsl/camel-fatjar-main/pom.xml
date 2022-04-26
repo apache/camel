@@ -30,7 +30,7 @@
     <artifactId>camel-fatjar-main</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Far-JAR Main</name>
+    <name>Camel :: Fat-JAR Main</name>
     <description>Main to run Camel as Fat-Jar standalone</description>
 
     <properties>
