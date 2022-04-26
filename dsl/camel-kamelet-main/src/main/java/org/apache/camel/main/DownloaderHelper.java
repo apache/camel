@@ -44,6 +44,21 @@ public final class DownloaderHelper {
             listener.onDownloadDependency(groupId, artifactId, version);
         }
 
+        // when running jbang directly then the CP has some existing camel components
+        // that essentially is not needed to be downloaded, but we need the listener to trigger
+        // to capture that the GAV is required for running the application
+        if (CP != null) {
+            // is it already on classpath
+            String target = artifactId;
+            if (version != null) {
+                target = target + "-" + version;
+            }
+            if (CP.contains(target)) {
+                // already on classpath
+                return;
+            }
+        }
+
         StopWatch watch = new StopWatch();
         Map<String, Object> map = new HashMap<>();
         map.put("classLoader", camelContext.getApplicationContextClassLoader());
@@ -76,14 +91,6 @@ public final class DownloaderHelper {
         String target = artifactId;
         if (version != null) {
             target = target + "-" + version;
-        }
-
-        if (CP != null) {
-            // is it already on classpath
-            if (CP.contains(target)) {
-                // already on classpath
-                return true;
-            }
         }
 
         if (camelContext.getApplicationContextClassLoader() != null) {

@@ -22,7 +22,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -182,9 +184,13 @@ class Run implements Callable<Integer> {
             writeSettings("localKameletDir", localKameletDir);
         }
 
+        final Set<String> downloaded = new HashSet<>();
         main.setDownloadListener((groupId, artifactId, version) -> {
             String line = "mvn:" + groupId + ":" + artifactId + ":" + version;
-            writeSettings("dependency", line);
+            if (!downloaded.contains(line)) {
+                writeSettings("dependency", line);
+                downloaded.add(line);
+            }
         });
         main.setAppName("Apache Camel (JBang)");
 
