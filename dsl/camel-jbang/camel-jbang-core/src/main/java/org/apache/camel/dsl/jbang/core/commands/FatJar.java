@@ -49,6 +49,12 @@ import picocli.CommandLine.Option;
 @Command(name = "fat-jar", description = "Package application as a single fat-jar")
 class FatJar implements Callable<Integer> {
 
+    private static final String[] SETTINGS_PROP_SOURCE_KEYS = new String[]{
+            "camel.main.routesIncludePattern",
+            "camel.component.properties.location",
+            "camel.component.kamelet.location"
+    };
+
     //CHECKSTYLE:OFF
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested = false;
@@ -76,7 +82,7 @@ class FatJar implements Callable<Integer> {
         // application sources
         target = new File("target/camel-app/classes");
         target.mkdirs();
-        copyFiles(settings, target);
+        copySourceFiles(settings, target);
         // settings
         copySettings(settings);
         // log4j configuration
@@ -151,15 +157,22 @@ class FatJar implements Callable<Integer> {
         List<String> lines = Files.readAllLines(settings.toPath());
         FileOutputStream fos = new FileOutputStream(target, false);
         for (String line : lines) {
-            String value = StringHelper.after(line, "camel.main.routesIncludePattern=");
-            if (value != null) {
-                value = value.replaceAll("file:", "classpath:");
-                line = "camel.main.routesIncludePattern=" + value;
+            for (String k : SETTINGS_PROP_SOURCE_KEYS) {
+                line = fileToClasspath(line, k);
             }
             fos.write(line.getBytes(StandardCharsets.UTF_8));
             fos.write("\n".getBytes(StandardCharsets.UTF_8));
         }
         IOHelper.close(fos);
+    }
+
+    private static String fileToClasspath(String line, String key) {
+        String value = StringHelper.after(line, key + "=");
+        if (value != null) {
+            value = value.replaceAll("file:", "classpath:");
+            line = key + "=" + value;
+        }
+        return line;
     }
 
     private void boostrapClassLoader() throws Exception {
@@ -255,19 +268,21 @@ class FatJar implements Callable<Integer> {
         IOHelper.close(jos);
     }
 
-    private void copyFiles(File settings, File target) throws Exception {
+    private void copySourceFiles(File settings, File target) throws Exception {
         // read the settings file and find the files to copy
         OrderedProperties prop = new OrderedProperties();
         prop.load(new FileInputStream(settings));
 
-        String files = prop.getProperty("camel.main.routesIncludePattern");
-        if (files != null) {
-            for (String f : files.split(",")) {
-                if (f.startsWith("file:")) {
-                    f = f.substring(5);
-                    File source = new File(f);
-                    File out = new File(target, source.getName());
-                    safeCopy(source, out, true);
+        for (String k : SETTINGS_PROP_SOURCE_KEYS) {
+            String files = prop.getProperty(k);
+            if (files != null) {
+                for (String f : files.split(",")) {
+                    if (f.startsWith("file:")) {
+                        f = f.substring(5);
+                        File source = new File(f);
+                        File out = new File(target, source.getName());
+                        safeCopy(source, out, true);
+                    }
                 }
             }
         }
