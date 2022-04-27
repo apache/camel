@@ -101,9 +101,9 @@ public class GenerateComponentMojo extends AbstractGenerateMojo {
         // generate-endpoint-schema
         invoke(EndpointSchemaGeneratorMojo.class, parameters);
         // generate endpoint-uri-factory
-        invoke(GenerateEndpointUriFactoryMojo.class);
+        invoke(GenerateEndpointUriFactoryMojo.class, parameters);
         // generate invoke-on-header
-        invoke(GenerateInvokeOnHeaderMojo.class);
+        invoke(GenerateInvokeOnHeaderMojo.class, parameters);
         // prepare-components
         invoke(PrepareComponentMojo.class, parameters);
         // validate-components
