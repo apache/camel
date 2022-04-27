@@ -111,7 +111,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private long logMiningScnGapDetectionTimeIntervalMaxMs = 20000;
     @UriParam(label = LABEL_NAME, defaultValue = "initial")
     private String snapshotMode = "initial";
-    @UriParam(label = LABEL_NAME, defaultValue = "class io.debezium.relational.history.KafkaDatabaseHistory")
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.relational.history.KafkaDatabaseHistory")
     private String databaseHistory = "io.debezium.relational.history.KafkaDatabaseHistory";
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
     private int maxQueueSize = 8192;

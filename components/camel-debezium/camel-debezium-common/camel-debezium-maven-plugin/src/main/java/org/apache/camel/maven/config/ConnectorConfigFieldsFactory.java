@@ -36,20 +36,20 @@ public final class ConnectorConfigFieldsFactory {
 
     public static Map<String, ConnectorConfigField> createConnectorFieldsAsMap(
             final ConfigDef configDef, final Class<?> configClass, final Set<String> requiredFields,
-            final Map<String, Object> overridenDefaultValues) {
+            final Map<String, Object> overriddenDefaultValues) {
         // first we extract deprecated fields
         final Set<String> deprecatedFields = getDeprecatedFieldsFromConfigClass(configClass);
 
-        return createConnectorFieldsAsMap(configDef, deprecatedFields, requiredFields, overridenDefaultValues);
+        return createConnectorFieldsAsMap(configDef, deprecatedFields, requiredFields, overriddenDefaultValues);
     }
 
     public static Map<String, ConnectorConfigField> createConnectorFieldsAsMap(
             final ConfigDef configDef, final Set<String> deprecatedFields, final Set<String> requiredFields,
-            final Map<String, Object> overridenDefaultValues) {
+            final Map<String, Object> overriddenDefaultValues) {
         ObjectHelper.notNull(configDef, "configDef");
         ObjectHelper.notNull(deprecatedFields, "deprecatedFields");
         ObjectHelper.notNull(requiredFields, "requiredFields");
-        ObjectHelper.notNull(overridenDefaultValues, "overridenDefaultValues");
+        ObjectHelper.notNull(overriddenDefaultValues, "overriddenDefaultValues");
 
         final Map<String, ConnectorConfigField> results = new HashMap<>();
 
@@ -60,7 +60,7 @@ public final class ConnectorConfigFieldsFactory {
                 results.put(name,
                         new ConnectorConfigField(
                                 configKey, deprecatedFields.contains(name), requiredFields.contains(name),
-                                overridenDefaultValues.getOrDefault(name, null)));
+                                overriddenDefaultValues.getOrDefault(name, null)));
             }
         });
 

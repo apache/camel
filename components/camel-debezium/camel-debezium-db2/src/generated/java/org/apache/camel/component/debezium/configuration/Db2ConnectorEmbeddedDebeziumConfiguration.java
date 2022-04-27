@@ -76,7 +76,7 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private int maxBatchSize = 2048;
     @UriParam(label = LABEL_NAME, defaultValue = "initial")
     private String snapshotMode = "initial";
-    @UriParam(label = LABEL_NAME, defaultValue = "class io.debezium.relational.history.KafkaDatabaseHistory")
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.relational.history.KafkaDatabaseHistory")
     private String databaseHistory = "io.debezium.relational.history.KafkaDatabaseHistory";
 
     /**
