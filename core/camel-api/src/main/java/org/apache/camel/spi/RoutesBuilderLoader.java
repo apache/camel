@@ -20,8 +20,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StaticService;
 
-import java.util.Map;
-
 /**
  * SPI for loading {@link RoutesBuilder} from a {@link Resource}.
  */

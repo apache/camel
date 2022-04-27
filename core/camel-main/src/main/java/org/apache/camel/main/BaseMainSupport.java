@@ -409,7 +409,6 @@ public abstract class BaseMainSupport extends BaseService {
                         return null;
                     });
 
-
             // eager load properties from modeline by scanning DSL sources and gather properties for auto configuration
             if (camelContext.isModeline() || mainConfigurationProperties.isModeline()) {
                 modelineRoutes(camelContext);

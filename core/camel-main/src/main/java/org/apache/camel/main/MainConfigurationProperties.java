@@ -374,11 +374,11 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Whether to load preexisting compiled Camel routes class files, when using camel-java-joor-dsl as Java
-     * DSL (such as when using Camel K with Java source routes).
+     * Whether to load preexisting compiled Camel routes class files, when using camel-java-joor-dsl as Java DSL (such
+     * as when using Camel K with Java source routes).
      *
-     * If enabled then Camel will look in the routes compile directory if a compiled Java route already
-     * exists and load its bytecode instead of runtime compiling from its java source file.
+     * If enabled then Camel will look in the routes compile directory if a compiled Java route already exists and load
+     * its bytecode instead of runtime compiling from its java source file.
      */
     public void setRoutesCompileLoadFirst(boolean routesCompileLoadFirst) {
         this.routesCompileLoadFirst = routesCompileLoadFirst;
@@ -630,11 +630,11 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Whether to load preexisting compiled Camel routes class files, when using camel-java-joor-dsl as Java
-     * DSL (such as when using Camel K with Java source routes).
+     * Whether to load preexisting compiled Camel routes class files, when using camel-java-joor-dsl as Java DSL (such
+     * as when using Camel K with Java source routes).
      *
-     * If enabled then Camel will look in the routes compile directory if a compiled Java route already
-     * exists and load its bytecode instead of runtime compiling from its java source file.
+     * If enabled then Camel will look in the routes compile directory if a compiled Java route already exists and load
+     * its bytecode instead of runtime compiling from its java source file.
      */
     public MainConfigurationProperties withRoutesCompileLoadFirst(boolean routesCompileLoadFirst) {
         this.routesCompileLoadFirst = routesCompileLoadFirst;
