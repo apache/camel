@@ -16,14 +16,14 @@
  */
 package org.apache.camel.dsl.java.joor;
 
+import java.io.File;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
 
 public class JavaJoorSaveToDiskTest {
 

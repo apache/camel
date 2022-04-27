@@ -39,7 +39,6 @@ import org.apache.camel.spi.CompilePostProcessor;
 import org.apache.camel.spi.ExtendedRoutesBuilderLoader;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
-import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.RouteWatcherReloadStrategy;
@@ -153,7 +152,8 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
         return answer;
     }
 
-    private Collection<Resource> doLoadCompiledFirst(Map<String, Resource> nameToResource, Collection<RoutesBuilder> answer) throws Exception {
+    private Collection<Resource> doLoadCompiledFirst(Map<String, Resource> nameToResource, Collection<RoutesBuilder> answer)
+            throws Exception {
         // look for existing compiled and load them first, and any that are missing is to be compiled
         Collection<Resource> toBeCompiled = new ArrayList<>();
 
@@ -169,8 +169,9 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
         }
         if (!byteCodes.isEmpty()) {
             // use the loader that can load from class byte codes
-            ExtendedRoutesBuilderLoader loader = (ExtendedRoutesBuilderLoader) getCamelContext().adapt(ExtendedCamelContext.class)
-                    .getRoutesLoader().getRoutesLoader("class");
+            ExtendedRoutesBuilderLoader loader
+                    = (ExtendedRoutesBuilderLoader) getCamelContext().adapt(ExtendedCamelContext.class)
+                            .getRoutesLoader().getRoutesLoader("class");
             Collection<RoutesBuilder> loaded = loader.loadRoutesBuilders(byteCodes);
             answer.addAll(loaded);
         }
@@ -190,7 +191,8 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
                 fos.write(byteCode);
                 IOHelper.close(fos);
             } catch (Exception e) {
-                LOG.warn("Error saving compiled class: " + name + " as bytecode to file: " + target + " due to " + e.getMessage());
+                LOG.warn("Error saving compiled class: " + name + " as bytecode to file: " + target + " due to "
+                         + e.getMessage());
             }
         }
     }
