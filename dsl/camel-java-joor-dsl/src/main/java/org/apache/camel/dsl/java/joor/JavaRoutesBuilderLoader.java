@@ -16,7 +16,9 @@
  */
 package org.apache.camel.dsl.java.joor;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -104,6 +106,13 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
                 }
             }
 
+            if (getCompileDirectory() != null) {
+                byte[] byteCode = result.getByteCode(className);
+                if (byteCode != null) {
+                    saveByteCodeToDisk(getCompileDirectory(), className, byteCode);
+                }
+            }
+
             // support custom annotation scanning post compilation
             // such as to register custom beans, type converters, etc.
             for (CompilePostProcessor pre : getCompilePostProcessors()) {
@@ -118,6 +127,23 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
         }
 
         return answer;
+    }
+
+    private static void saveByteCodeToDisk(String outputDirectory, String name, byte[] byteCode) {
+        // write to disk (can be triggered multiple times so only write once)
+        File target = new File(outputDirectory + "/" + name + ".class");
+        if (!target.exists()) {
+            // create work-dir if needed
+            new File(outputDirectory).mkdirs();
+            try {
+                FileOutputStream fos = new FileOutputStream(target);
+                LOG.debug("Writing compiled class: {} as bytecode to file: {}", name, target);
+                fos.write(byteCode);
+                IOHelper.close(fos);
+            } catch (Exception e) {
+                LOG.warn("Error saving compiled class: " + name + " as bytecode to file: " + target + " due to " + e.getMessage());
+            }
+        }
     }
 
     private static String determineName(Resource resource, String content) {

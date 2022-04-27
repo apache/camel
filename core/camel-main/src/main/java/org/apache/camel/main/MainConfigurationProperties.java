@@ -42,6 +42,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private String basePackageScan;
     private boolean basePackageScanEnabled = true;
     private String routesCompileDirectory;
+    private boolean routesCompileLoadFirst;
 
     private String routesBuilderClasses;
     private String configurationClasses;
@@ -368,6 +369,21 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.routesCompileDirectory = routesCompileDirectory;
     }
 
+    public boolean isRoutesCompileLoadFirst() {
+        return routesCompileLoadFirst;
+    }
+
+    /**
+     * Whether to load preexisting compiled Camel routes class files, when using camel-java-joor-dsl as Java
+     * DSL (such as when using Camel K with Java source routes).
+     *
+     * If enabled then Camel will look in the routes compile directory if a compiled Java route already
+     * exists and load its bytecode instead of runtime compiling from its java source file.
+     */
+    public void setRoutesCompileLoadFirst(boolean routesCompileLoadFirst) {
+        this.routesCompileLoadFirst = routesCompileLoadFirst;
+    }
+
     public int getDurationHitExitCode() {
         return durationHitExitCode;
     }
@@ -610,6 +626,18 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withRoutesCompileDirectory(String routeCompileDirectory) {
         this.routesCompileDirectory = routeCompileDirectory;
+        return this;
+    }
+
+    /**
+     * Whether to load preexisting compiled Camel routes class files, when using camel-java-joor-dsl as Java
+     * DSL (such as when using Camel K with Java source routes).
+     *
+     * If enabled then Camel will look in the routes compile directory if a compiled Java route already
+     * exists and load its bytecode instead of runtime compiling from its java source file.
+     */
+    public MainConfigurationProperties withRoutesCompileLoadFirst(boolean routesCompileLoadFirst) {
+        this.routesCompileLoadFirst = routesCompileLoadFirst;
         return this;
     }
 

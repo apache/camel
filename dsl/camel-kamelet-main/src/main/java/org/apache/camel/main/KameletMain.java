@@ -258,7 +258,6 @@ public class KameletMain extends MainCommandLineSupport {
                 answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer));
                 answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer));
                 answer.setLanguageResolver(new DependencyDownloaderLanguageResolver(answer));
-                answer.setRoutesLoader(new DependencyDownloaderRoutesLoader());
                 answer.addService(new DependencyDownloaderKamelet());
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
@@ -266,6 +265,16 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         return answer;
+    }
+
+    @Override
+    protected void configureRoutesLoader(CamelContext camelContext) {
+        if (download) {
+            // use resolvers that can auto downloaded
+            camelContext.adapt(ExtendedCamelContext.class).setRoutesLoader(new DependencyDownloaderRoutesLoader(configure()));
+        } else {
+            super.configureRoutesLoader(camelContext);
+        }
     }
 
     /**

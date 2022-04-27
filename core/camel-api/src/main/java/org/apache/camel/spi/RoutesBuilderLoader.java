@@ -20,6 +20,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StaticService;
 
+import java.util.Map;
+
 /**
  * SPI for loading {@link RoutesBuilder} from a {@link Resource}.
  */
@@ -60,5 +62,13 @@ public interface RoutesBuilderLoader extends StaticService, CamelContextAware {
      */
     default void preParseRoute(Resource resource) throws Exception {
         // noop
+    }
+
+    /**
+     * Optional initializes the routes loader from the given set of options
+     *
+     * @param options options as key values
+     */
+    default void init(Map<String, Object> options) {
     }
 }

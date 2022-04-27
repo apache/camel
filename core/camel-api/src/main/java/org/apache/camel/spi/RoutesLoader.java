@@ -127,4 +127,11 @@ public interface RoutesLoader extends CamelContextAware {
     default void preParseRoute(Resource resource) throws Exception {
         // noop
     }
+
+    /**
+     * Initializes the discovered {@link RoutesBuilderLoader} before its started and used for the first time.
+     */
+    default void initRoutesBuilderLoader(RoutesBuilderLoader loader) {
+        // noop
+    }
 }

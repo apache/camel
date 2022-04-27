@@ -402,9 +402,13 @@ public abstract class BaseMainSupport extends BaseService {
                         mainConfigurationProperties.setRoutesCompileDirectory(value);
                         return null;
                     });
+            autoConfigurationSingleOption(camelContext, autoConfiguredProperties, "camel.main.routesCompileLoadFirst",
+                    value -> {
+                        boolean bool = CamelContextHelper.parseBoolean(camelContext, value);
+                        mainConfigurationProperties.setRoutesCompileLoadFirst(bool);
+                        return null;
+                    });
 
-            // eager configure dsl compiler as we may load routes when doing modeline scanning
-            configureDslCompiler(camelContext);
 
             // eager load properties from modeline by scanning DSL sources and gather properties for auto configuration
             if (camelContext.isModeline() || mainConfigurationProperties.isModeline()) {
@@ -527,12 +531,9 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    protected void configureDslCompiler(CamelContext camelContext) {
-        if (mainConfigurationProperties.getRoutesCompileDirectory() != null) {
-            RouteDslPostCompiler pc = new RouteDslPostCompiler(mainConfigurationProperties.getRoutesCompileDirectory());
-            camelContext.getRegistry().bind("RouteDslPostCompiler", pc);
-            LOG.debug("Compiling Camel DSL to directory: {}", mainConfigurationProperties.getRoutesCompileDirectory());
-        }
+    protected void configureRoutesLoader(CamelContext camelContext) {
+        // use main based routes loader
+        camelContext.adapt(ExtendedCamelContext.class).setRoutesLoader(new MainRoutesLoader(mainConfigurationProperties));
     }
 
     protected void modelineRoutes(CamelContext camelContext) throws Exception {
@@ -598,8 +599,8 @@ public abstract class BaseMainSupport extends BaseService {
         configureStartupRecorder(camelContext);
         // setup package scan
         configurePackageScan(camelContext);
-        // configure DSL post compiler
-        configureDslCompiler(camelContext);
+        // configure to use our main routes loader
+        configureRoutesLoader(camelContext);
 
         // ensure camel context is build
         camelContext.build();

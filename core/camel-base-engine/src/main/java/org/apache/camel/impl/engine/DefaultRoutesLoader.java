@@ -171,6 +171,8 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
 
         if (answer != null) {
             CamelContextAware.trySetCamelContext(answer, getCamelContext());
+            // allows for custom initialization
+            initRoutesBuilderLoader(answer);
             ServiceHelper.startService(answer);
         }
 
