@@ -46,8 +46,8 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "fat-jar", description = "Package application as a single fat-jar")
-class FatJar implements Callable<Integer> {
+@Command(name = "uber-jar", description = "Package application as a single uber-jar")
+class UberJar implements Callable<Integer> {
 
     private static final String[] SETTINGS_PROP_SOURCE_KEYS = new String[] {
             "camel.main.routesIncludePattern",
@@ -60,8 +60,8 @@ class FatJar implements Callable<Integer> {
     private boolean helpRequested = false;
     //CHECKSTYLE:ON
 
-    @CommandLine.Option(names = { "-j", "--jar" }, defaultValue = "target/camel-app.jar", description = "Jar filename")
-    private String jar = "target/camel-app.jar";
+    @CommandLine.Option(names = { "-j", "--jar" }, defaultValue = "target/camel-runner.jar", description = "Jar filename")
+    private String jar = "target/camel-runner.jar";
 
     @Override
     public Integer call() throws Exception {
@@ -88,7 +88,7 @@ class FatJar implements Callable<Integer> {
         // settings
         copySettings(settings);
         // log4j configuration
-        InputStream is = FatJar.class.getResourceAsStream("/log4j2.properties");
+        InputStream is = UberJar.class.getResourceAsStream("/log4j2.properties");
         safeCopy(is, new File("target/camel-app/classes", "log4j2.properties"), false);
 
         List<String> lines = Files.readAllLines(settings.toPath());
