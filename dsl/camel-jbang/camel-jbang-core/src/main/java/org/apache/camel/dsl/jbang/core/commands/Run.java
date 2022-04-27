@@ -214,8 +214,9 @@ class Run implements Callable<Integer> {
         writeSettings("camel.main.tracing", trace ? "true" : "false");
         main.addInitialProperty("camel.main.modeline", modeline ? "true" : "false");
         writeSettings("camel.main.modeline", modeline ? "true" : "false");
-        main.addInitialProperty("camel.jbang.work-directory", WORK_DIR);
-        writeSettings("camel.jbang.work-directory", WORK_DIR);
+        // allow java-dsl to compile to .class which we need in fat-jar mode
+        main.addInitialProperty("camel.main.routesCompileDirectory", WORK_DIR);
+        writeSettings("camel.main.routesCompileDirectory", WORK_DIR);
 
         // command line arguments
         if (property != null) {

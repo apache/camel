@@ -159,6 +159,9 @@ class FatJar implements Callable<Integer> {
         List<String> lines = Files.readAllLines(settings.toPath());
         FileOutputStream fos = new FileOutputStream(target, false);
         for (String line : lines) {
+            if (line.startsWith("camel.main.routesCompileDirectory")) {
+                continue; // skip as fat-jar should not compile to disk
+            }
             for (String k : SETTINGS_PROP_SOURCE_KEYS) {
                 line = fileToClasspath(line, k);
             }

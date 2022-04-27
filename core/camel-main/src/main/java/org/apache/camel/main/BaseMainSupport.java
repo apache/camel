@@ -158,6 +158,9 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     public Properties getInitialProperties() {
+        if (initialProperties == null) {
+            initialProperties = new OrderedProperties();
+        }
         return initialProperties;
     }
 
@@ -387,10 +390,14 @@ public abstract class BaseMainSupport extends BaseService {
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
             autoConfigurationFailFast(camelContext, autoConfiguredProperties);
             autoConfigurationPropertiesComponent(camelContext, autoConfiguredProperties);
+            autoConfigurationRoutesIncludePattern(camelContext, autoConfiguredProperties);
+
+            // eager configure dsl compiler as we may load routes when doing modeline scanning
+            autoConfigurationRoutesCompileDirectory(camelContext, autoConfiguredProperties);
+            configureDslCompiler(camelContext);
 
             // eager load properties from modeline by scanning DSL sources and gather properties for auto configuration
             if (camelContext.isModeline() || mainConfigurationProperties.isModeline()) {
-                autoConfigurationRoutesIncludePattern(camelContext, autoConfiguredProperties);
                 modelineRoutes(camelContext);
             }
 
@@ -510,6 +517,14 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    protected void configureDslCompiler(CamelContext camelContext) {
+        if (mainConfigurationProperties.getRoutesCompileDirectory() != null) {
+            RouteDslPostCompiler pc = new RouteDslPostCompiler(mainConfigurationProperties.getRoutesCompileDirectory());
+            camelContext.getRegistry().bind("RouteDslPostCompiler", pc);
+            LOG.debug("Compiling Camel DSL to directory: {}", mainConfigurationProperties.getRoutesCompileDirectory());
+        }
+    }
+
     protected void modelineRoutes(CamelContext camelContext) throws Exception {
         // then configure and add the routes
         RoutesConfigurer configurer = new RoutesConfigurer();
@@ -573,6 +588,8 @@ public abstract class BaseMainSupport extends BaseService {
         configureStartupRecorder(camelContext);
         // setup package scan
         configurePackageScan(camelContext);
+        // configure DSL post compiler
+        configureDslCompiler(camelContext);
 
         // ensure camel context is build
         camelContext.build();
@@ -809,6 +826,93 @@ public abstract class BaseMainSupport extends BaseService {
                 mainConfigurationProperties
                         .setRoutesIncludePattern(CamelContextHelper.parseText(camelContext, pattern.toString()));
                 autoConfiguredProperties.put(loc, "camel.main.routesIncludePattern", pattern.toString());
+            }
+        }
+    }
+
+    protected void autoConfigurationRoutesCompileDirectory(
+            CamelContext camelContext, OrderedLocationProperties autoConfiguredProperties) {
+
+        Object dir = getInitialProperties().getProperty("camel.main.routesCompileDirectory");
+        if (ObjectHelper.isNotEmpty(dir)) {
+            mainConfigurationProperties
+                    .setRoutesCompileDirectory(CamelContextHelper.parseText(camelContext, dir.toString()));
+            autoConfiguredProperties.put("initial", "camel.main.routesCompileDirectory", dir.toString());
+        }
+
+        // load properties
+        OrderedLocationProperties prop = (OrderedLocationProperties) camelContext.getPropertiesComponent()
+                .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
+        LOG.debug("Properties from Camel properties component:");
+        for (String key : prop.stringPropertyNames()) {
+            LOG.debug("    {}={}", key, prop.getProperty(key));
+        }
+
+        // special for environment-variable-enabled as we need to know this early before we set all the other options
+        String loc = prop.getLocation("camel.main.routesCompileDirectory");
+        dir = prop.remove("camel.main.routesCompileDirectory");
+        if (ObjectHelper.isNotEmpty(dir)) {
+            mainConfigurationProperties.setRoutesCompileDirectory(
+                    CamelContextHelper.parseText(camelContext, dir.toString()));
+            autoConfiguredProperties.put(loc, "camel.main.routesCompileDirectory",
+                    dir.toString());
+        }
+        // special for system-properties-enabled as we need to know this early before we set all the other options
+        loc = prop.getLocation("camel.main.routesCompileDirectory");
+        Object jvmEnabled = prop.remove("camel.main.routesCompileDirectory");
+        if (ObjectHelper.isNotEmpty(jvmEnabled)) {
+            mainConfigurationProperties.setRoutesIncludePattern(
+                    CamelContextHelper.parseText(camelContext, jvmEnabled.toString()));
+            autoConfiguredProperties.put(loc, "camel.main.routesCompileDirectory",
+                    jvmEnabled.toString());
+        }
+
+        // load properties from ENV (override existing)
+        Properties propENV = null;
+        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
+            propENV = helper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
+            if (!propENV.isEmpty()) {
+                prop.putAll("ENV", propENV);
+                LOG.debug("Properties from OS environment variables:");
+                for (String key : propENV.stringPropertyNames()) {
+                    LOG.debug("    {}={}", key, propENV.getProperty(key));
+                }
+            }
+        }
+        // load properties from JVM (override existing)
+        Properties propJVM = null;
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            propJVM = helper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
+            if (!propJVM.isEmpty()) {
+                prop.putAll("SYS", propJVM);
+                LOG.debug("Properties from JVM system properties:");
+                for (String key : propJVM.stringPropertyNames()) {
+                    LOG.debug("    {}={}", key, propJVM.getProperty(key));
+                }
+            }
+        }
+
+        // special for fail-fast as we need to know this early before we set all the other options
+        loc = "ENV";
+        dir = propENV != null ? propENV.remove("camel.main.routesCompileDirectory") : null;
+        if (ObjectHelper.isNotEmpty(propJVM)) {
+            Object val = propJVM.remove("camel.main.routesCompileDirectory");
+            if (ObjectHelper.isNotEmpty(val)) {
+                loc = "SYS";
+                dir = val;
+            }
+        }
+        if (ObjectHelper.isNotEmpty(dir)) {
+            mainConfigurationProperties
+                    .setRoutesCompileDirectory(CamelContextHelper.parseText(camelContext, dir.toString()));
+            autoConfiguredProperties.put(loc, "camel.main.routesCompileDirectory", dir.toString());
+        } else {
+            loc = prop.getLocation("camel.main.routesCompileDirectory");
+            dir = prop.remove("camel.main.routesCompileDirectory");
+            if (ObjectHelper.isNotEmpty(dir)) {
+                mainConfigurationProperties
+                        .setRoutesCompileDirectory(CamelContextHelper.parseText(camelContext, dir.toString()));
+                autoConfiguredProperties.put(loc, "camel.main.routesCompileDirectory", dir.toString());
             }
         }
     }

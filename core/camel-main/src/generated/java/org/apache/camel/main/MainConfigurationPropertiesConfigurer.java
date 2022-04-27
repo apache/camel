@@ -159,6 +159,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesBuilders": target.setRoutesBuilders(property(camelContext, java.util.List.class, value)); return true;
         case "routescollectorenabled":
         case "RoutesCollectorEnabled": target.setRoutesCollectorEnabled(property(camelContext, boolean.class, value)); return true;
+        case "routescompiledirectory":
+        case "RoutesCompileDirectory": target.setRoutesCompileDirectory(property(camelContext, java.lang.String.class, value)); return true;
         case "routesexcludepattern":
         case "RoutesExcludePattern": target.setRoutesExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "routesincludepattern":
@@ -384,6 +386,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesBuilders": return java.util.List.class;
         case "routescollectorenabled":
         case "RoutesCollectorEnabled": return boolean.class;
+        case "routescompiledirectory":
+        case "RoutesCompileDirectory": return java.lang.String.class;
         case "routesexcludepattern":
         case "RoutesExcludePattern": return java.lang.String.class;
         case "routesincludepattern":
@@ -610,6 +614,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesBuilders": return target.getRoutesBuilders();
         case "routescollectorenabled":
         case "RoutesCollectorEnabled": return target.isRoutesCollectorEnabled();
+        case "routescompiledirectory":
+        case "RoutesCompileDirectory": return target.getRoutesCompileDirectory();
         case "routesexcludepattern":
         case "RoutesExcludePattern": return target.getRoutesExcludePattern();
         case "routesincludepattern":

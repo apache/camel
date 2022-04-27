@@ -26,8 +26,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.dsl.support.CompilePostProcessor;
 import org.apache.camel.dsl.support.ExtendedRouteBuilderLoaderSupport;
+import org.apache.camel.spi.CompilePostProcessor;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.annotations.RoutesLoader;
@@ -85,6 +85,7 @@ public class ClassRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport 
             // support custom annotation scanning post compilation
             // such as to register custom beans, type converters, etc.
             for (CompilePostProcessor pre : getCompilePostProcessors()) {
+                // do not pass in byte code as we do not need to write to disk again
                 pre.postCompile(getCamelContext(), className, clazz, null, obj);
             }
 

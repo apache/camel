@@ -20,38 +20,38 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.dsl.support.CompilePostProcessor;
+import org.apache.camel.spi.CompilePostProcessor;
 import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Post compiler for java-joor-dsl that stores the compiled .java sources as .class files to disk.
  */
-public class JavaJoorPostCompiler {
+public class RouteDslPostCompiler implements CompilePostProcessor {
 
-    public static void initJavaJoorPostCompiler(CamelContext context, String outputDirectory) {
-        context.getRegistry().bind("JavaJoorDslPostCompiler", new ByteCodeCompilePostProcessor(outputDirectory));
+    private static final Logger LOG = LoggerFactory.getLogger(RouteDslPostCompiler.class);
+
+    private final String outputDirectory;
+
+    public RouteDslPostCompiler(String outputDirectory) {
+        this.outputDirectory = outputDirectory;
     }
 
-    private static class ByteCodeCompilePostProcessor implements CompilePostProcessor {
-
-        private final String outputDirectory;
-
-        public ByteCodeCompilePostProcessor(String outputDirectory) {
-            this.outputDirectory = outputDirectory;
-        }
-
-        @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
-                throws Exception {
-            if (byteCode != null) {
+    @Override
+    public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+            throws Exception {
+        if (byteCode != null) {
+            // write to disk (can be triggered multiple times so only write once)
+            File target = new File(outputDirectory + "/" + name + ".class");
+            if (!target.exists()) {
                 // create work-dir if needed
                 new File(outputDirectory).mkdirs();
-                // write to disk
-                FileOutputStream fos = new FileOutputStream(outputDirectory + "/" + name + ".class", false);
+                FileOutputStream fos = new FileOutputStream(target);
+                LOG.debug("Writing compiled class: {} as bytecode to file: {}", name, target);
                 fos.write(byteCode);
                 IOHelper.close(fos);
             }
         }
     }
-
 }
