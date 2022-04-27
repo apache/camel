@@ -379,7 +379,7 @@ idempotent repository. We use the following schema:
 [source,sql]
 ----
 CREATE TABLE CAMEL_MESSAGEPROCESSED ( processorName VARCHAR(255),
-messageId VARCHAR(100), createdAt TIMESTAMP PRIMARY KEY (processorName, messageId) )
+messageId VARCHAR(100), createdAt TIMESTAMP, PRIMARY KEY (processorName, messageId) )
 ----
 
 WARNING: The SQL Server *TIMESTAMP* type is a fixed-length binary-string type. It
