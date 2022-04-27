@@ -65,9 +65,12 @@ public class KafkaFetchRecords implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaFetchRecords.class);
 
+    // There are a few of volatile fields here because they are usually read from other threads,
+    // like from the health check thread. They are usually only read on those contexts.
+
     private final KafkaConsumer kafkaConsumer;
     private org.apache.kafka.clients.consumer.Consumer consumer;
-    private String clientId;
+    private volatile String clientId;
     private final String topicName;
     private final Pattern topicPattern;
     private final String threadId;
@@ -77,13 +80,14 @@ public class KafkaFetchRecords implements Runnable {
     private final BridgeExceptionHandlerToErrorHandler bridge;
     private final ReentrantLock lock = new ReentrantLock();
     private CommitManager commitManager;
-    private Exception lastError;
+    private volatile Exception lastError;
     private final KafkaConsumerListener consumerListener;
 
-    private boolean terminated;
-    private long currentBackoffInterval;
-    private boolean reconnect; // must be false at init (this is the policy whether to reconnect)
-    private boolean connected; // this is the state (connected or not)
+    private volatile boolean terminated;
+    private volatile long currentBackoffInterval;
+
+    private volatile boolean reconnect; // The reconnect must be false at init (this is the policy whether to reconnect).
+    private volatile boolean connected; // this is the state (connected or not)
 
     private volatile State state = State.RUNNING;
 
@@ -490,7 +494,7 @@ public class KafkaFetchRecords implements Runnable {
         this.connected = connected;
     }
 
-    public boolean isReady() {
+    private boolean isReady() {
         if (!connected) {
             return false;
         }
@@ -516,28 +520,23 @@ public class KafkaFetchRecords implements Runnable {
         return ready;
     }
 
-    Properties getKafkaProps() {
+    private Properties getKafkaProps() {
         return kafkaProps;
     }
 
-    String getClientId() {
-        return clientId;
-    }
-
-    Exception getLastError() {
-        return lastError;
-    }
-
-    boolean isTerminated() {
+    private boolean isTerminated() {
         return terminated;
     }
 
-    boolean isRecoverable() {
+    private boolean isRecoverable() {
         return (pollExceptionStrategy.canContinue() || isReconnect()) && isKafkaConsumerRunnable();
     }
 
-    long getCurrentRecoveryInterval() {
-        return currentBackoffInterval;
+    // concurrent access happens here
+    public TaskHealthState healthState() {
+        return new TaskHealthState(
+                isReady(), isTerminated(), isRecoverable(), lastError, clientId,
+                currentBackoffInterval, kafkaProps);
     }
 
     public BridgeExceptionHandlerToErrorHandler getBridge() {
@@ -561,4 +560,5 @@ public class KafkaFetchRecords implements Runnable {
         LOG.info("A resume request was issued and the consumer thread will resume after current processing has finished");
         state = State.RESUME_REQUESTED;
     }
+
 }

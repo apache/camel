@@ -23,6 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.camel.ConsumerListenerAware;
 import org.apache.camel.Processor;
@@ -113,10 +114,6 @@ public class KafkaConsumer extends DefaultConsumer
                 v -> props.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, v));
 
         return props;
-    }
-
-    List<KafkaFetchRecords> getTasks() {
-        return tasks;
     }
 
     @Override
@@ -217,7 +214,7 @@ public class KafkaConsumer extends DefaultConsumer
     @Override
     protected void doSuspend() throws Exception {
         for (KafkaFetchRecords task : tasks) {
-            LOG.info("Pausing Kafka record fetcher task running client ID {}", task.getClientId());
+            LOG.info("Pausing Kafka record fetcher task running client ID {}", task.healthState().getClientId());
             task.pause();
         }
 
@@ -227,10 +224,14 @@ public class KafkaConsumer extends DefaultConsumer
     @Override
     protected void doResume() throws Exception {
         for (KafkaFetchRecords task : tasks) {
-            LOG.info("Resuming Kafka record fetcher task running client ID {}", task.getClientId());
+            LOG.info("Resuming Kafka record fetcher task running client ID {}", task.healthState().getClientId());
             task.resume();
         }
 
         super.doResume();
+    }
+
+    public List<TaskHealthState> healthStates() {
+        return tasks.stream().map(t -> t.healthState()).collect(Collectors.toList());
     }
 }
