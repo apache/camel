@@ -128,7 +128,7 @@ Then you advise the routes followed by starting Camel:
 @Test
 public void testMockEndpoints() throws Exception {
     AdviceWith.adviceWith(context, "myRoute", a ->
-         mockEndpoints();
+         a.mockEndpoints();
     );
 
     context.start();
@@ -179,7 +179,7 @@ The following illustrates how to do this:
 @Test
 public void testReplaceFrom() throws Exception {
     AdviceWith.adviceWith(context, "myRoute", a ->
-        replaceFromWith("direct:start");
+        a.replaceFromWith("direct:start");
     );
 
     context.start();
