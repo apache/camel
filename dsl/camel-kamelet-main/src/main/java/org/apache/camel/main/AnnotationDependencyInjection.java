@@ -100,6 +100,10 @@ public final class AnnotationDependencyInjection {
 
         @Override
         public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance) throws Exception {
+            if (instance == null) {
+                return;
+            }
+
             BindToRegistry bir = instance.getClass().getAnnotation(BindToRegistry.class);
             Configuration cfg = instance.getClass().getAnnotation(Configuration.class);
             if (bir != null || cfg != null || instance instanceof CamelConfiguration) {
@@ -131,11 +135,13 @@ public final class AnnotationDependencyInjection {
 
         @Override
         public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance) throws Exception {
+            if (instance == null) {
+                return;
+            }
             // @Component and @Service are the same
             Component comp = clazz.getAnnotation(Component.class);
             Service service = clazz.getAnnotation(Service.class);
             if (comp != null || service != null) {
-                CamelBeanPostProcessor bpp = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
                 if (comp != null && ObjectHelper.isNotEmpty(comp.value())) {
                     name = comp.value();
                 } else if (service != null && ObjectHelper.isNotEmpty(service.value())) {
@@ -203,6 +209,9 @@ public final class AnnotationDependencyInjection {
 
         @Override
         public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance) throws Exception {
+            if (instance == null) {
+                return;
+            }
             // @ApplicationScoped and @Singleton are considered the same
             ApplicationScoped as = clazz.getAnnotation(ApplicationScoped.class);
             Singleton ss = clazz.getAnnotation(Singleton.class);

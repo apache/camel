@@ -198,6 +198,8 @@ public class KameletMain extends MainCommandLineSupport {
         answer.setLoadHealthChecks(true);
         // annotation based dependency injection for camel/spring/quarkus annotations in DSLs and Java beans
         AnnotationDependencyInjection.initAnnotationBasedDependencyInjection(answer);
+        // java-dsl post compiler to save compilation to disk
+        JavaJoorPostCompiler.initJavaJoorPostCompiler(answer);
 
         // embed HTTP server if port is specified
         Object port = getInitialProperties().get("camel.jbang.platform-http.port");

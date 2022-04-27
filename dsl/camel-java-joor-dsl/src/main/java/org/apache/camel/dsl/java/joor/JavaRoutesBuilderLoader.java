@@ -85,20 +85,24 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
         }
 
         for (String className : result.getClassNames()) {
-            Class<?> clazz = result.getClass(className);
-            Object obj;
-            try {
-                // requires a default no-arg constructor otherwise we skip the class
-                obj = getCamelContext().getInjector().newInstance(clazz);
-            } catch (Exception e) {
-                LOG.debug("Compiled class: " + className + " must have a default no-arg constructor. Skipping.");
-                continue;
-            }
-            LOG.debug("Compiled: {} -> {}", className, obj);
+            Object obj = null;
 
-            // inject context and resource
-            CamelContextAware.trySetCamelContext(obj, getCamelContext());
-            ResourceAware.trySetResource(obj, nameToResource.get(className));
+            Class<?> clazz = result.getClass(className);
+            if (clazz != null) {
+                try {
+                    // requires a default no-arg constructor otherwise we skip the class
+                    obj = getCamelContext().getInjector().newInstance(clazz);
+                } catch (Exception e) {
+                    LOG.debug("Compiled class: " + className + " must have a default no-arg constructor. Skipping.");
+                }
+                if (obj != null) {
+                    LOG.debug("Compiled: {} -> {}", className, obj);
+
+                    // inject context and resource
+                    CamelContextAware.trySetCamelContext(obj, getCamelContext());
+                    ResourceAware.trySetResource(obj, nameToResource.get(className));
+                }
+            }
 
             // support custom annotation scanning post compilation
             // such as to register custom beans, type converters, etc.

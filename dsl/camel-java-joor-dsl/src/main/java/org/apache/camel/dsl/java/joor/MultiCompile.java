@@ -160,6 +160,8 @@ public final class MultiCompile {
                     if (clazz != null) {
                         result.addResult(className, clazz, byteCodes.get(className));
                     }
+                    // we may have compiled additional classes that the className is using, so add these as result as well
+                    byteCodes.forEach((cn, bc) -> result.addResult(cn, null, bc));
                 } else {
                     // Otherwise, use an arbitrary class loader. This approach doesn't allow for
                     // loading private-access interfaces in the compiled class's type hierarchy
@@ -176,6 +178,8 @@ public final class MultiCompile {
                     if (clazz != null) {
                         result.addResult(className, clazz, byteCodes.get(className));
                     }
+                    // we may have compiled additional classes that the className is using, so add these as result as well
+                    byteCodes.forEach((cn, bc) -> result.addResult(cn, null, bc));
                 }
             }
 

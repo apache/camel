@@ -36,8 +36,12 @@ public class CompilationUnit {
         private final Map<String, byte[]> compiled = new LinkedHashMap<>();
 
         void addResult(String className, Class<?> clazz, byte[] byteCode) {
-            classes.put(className, clazz);
-            compiled.put(className, byteCode);
+            if (clazz != null && !classes.containsKey(className)) {
+                classes.put(className, clazz);
+            }
+            if (byteCode != null && !compiled.containsKey(className)) {
+                compiled.put(className, byteCode);
+            }
         }
 
         /**
