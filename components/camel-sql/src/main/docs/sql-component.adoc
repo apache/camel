@@ -379,24 +379,22 @@ idempotent repository. We use the following schema:
 [source,sql]
 ----
 CREATE TABLE CAMEL_MESSAGEPROCESSED ( processorName VARCHAR(255),
-messageId VARCHAR(100) )
-----
-
-
-We added the createdAt column:
-
-[source,sql]
-----
-CREATE TABLE CAMEL_MESSAGEPROCESSED ( processorName VARCHAR(255),
-messageId VARCHAR(100), createdAt TIMESTAMP )
+messageId VARCHAR(100), createdAt TIMESTAMP PRIMARY KEY (processorName, messageId) )
 ----
 
 WARNING: The SQL Server *TIMESTAMP* type is a fixed-length binary-string type. It
 does not map to any of the JDBC time types: *DATE*, *TIME*, or
 *TIMESTAMP*.
 
-When working with concurrent consumers it is crucial to create a unique constraint on the columns processorName and messageId.
-Because the syntax for this constraint differs from database to database, we do not show it here.
+The above SQL is consistent with most popular SQL vendors.
+
+When working with concurrent consumers it is crucial to create a unique constraint on the column combination of
+processorName and messageId. This constraint will be prevent multiple consumers adding the same key to the repository
+and allow only one consumer to handle the message.
+
+The SQL above includes the constraint by creating a primary key. If you prefer to use a different
+constraint, or your SQL server uses a different syntax for table creation, you can create the table yourself using
+the above schema as a starting point.
 
 === Customize the JDBC idempotency repository
 
