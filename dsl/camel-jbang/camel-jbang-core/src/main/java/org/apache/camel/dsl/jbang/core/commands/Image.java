@@ -57,7 +57,7 @@ public class Image implements Callable<Integer> {
     private boolean helpRequested;
     @CommandLine.Option(names = { "-f", "--from" }, description = "Base Image", defaultValue = "gcr.io/distroless/java:11")
     private String from;
-    @CommandLine.Option(names = { "-j", "--jar" }, required = true, description = "Jar filename")
+    @CommandLine.Option(names = { "-j", "--jar" }, description = "Jar file", defaultValue = "target/camel-runner.jar")
     private String jar;
     @CommandLine.Option(names = { "-t", "--tag" }, description = "Image tag")
     private String tag;

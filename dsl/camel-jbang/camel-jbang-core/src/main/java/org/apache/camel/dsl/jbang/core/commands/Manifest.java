@@ -65,7 +65,7 @@ public class Manifest implements Callable<Integer> {
     private boolean minikube;
     @CommandLine.Option(names = { "--openshift" }, description = "Target is openshift")
     private boolean openshift;
-    @CommandLine.Option(names = { "-j", "--jar" }, description = "Jar filename")
+    @CommandLine.Option(names = { "-j", "--jar" }, description = "Jar file", defaultValue = "target/camel-runner.jar")
     private String jar;
 
     @Override
