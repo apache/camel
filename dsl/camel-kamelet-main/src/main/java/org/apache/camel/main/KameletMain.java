@@ -128,17 +128,6 @@ public class KameletMain extends MainCommandLineSupport {
     // Implementation methods
     // -------------------------------------------------------------------------
 
-    protected ClassLoader createApplicationContextClassLoader() {
-        // any additional files to add to classpath
-        ClassLoader parentCL = KameletMain.class.getClassLoader();
-        String cpFiles = getInitialProperties().getProperty("camel.jbang.classpathFiles");
-        if (cpFiles != null) {
-            parentCL = new ExtraFilesClassLoader(parentCL, cpFiles.split(","));
-            LOG.info("Additional files added to classpath: {}", cpFiles);
-        }
-        return new GroovyClassLoader(parentCL);
-    }
-
     @Override
     protected void doInit() throws Exception {
         super.doInit();
@@ -192,7 +181,6 @@ public class KameletMain extends MainCommandLineSupport {
             LOG.info(info);
         }
 
-        answer.setApplicationContextClassLoader(createApplicationContextClassLoader());
         answer.setRegistry(registry);
         // load camel component and custom health-checks
         answer.setLoadHealthChecks(true);
@@ -265,6 +253,25 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         return answer;
+    }
+
+    @Override
+    protected void autoconfigure(CamelContext camelContext) throws Exception {
+        // create classloader that may include additional JARs
+        camelContext.setApplicationContextClassLoader(createApplicationContextClassLoader());
+        // auto configure camel afterwards
+        super.autoconfigure(camelContext);
+    }
+
+    protected ClassLoader createApplicationContextClassLoader() {
+        // any additional files to add to classpath
+        ClassLoader parentCL = KameletMain.class.getClassLoader();
+        String cpFiles = getInitialProperties().getProperty("camel.jbang.classpathFiles");
+        if (cpFiles != null) {
+            parentCL = new ExtraFilesClassLoader(parentCL, cpFiles.split(","));
+            LOG.info("Additional files added to classpath: {}", cpFiles);
+        }
+        return new GroovyClassLoader(parentCL);
     }
 
     @Override
