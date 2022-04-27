@@ -77,7 +77,8 @@ public final class AnnotationDependencyInjection {
     private static class TypeConverterCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance) throws Exception {
+        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+                throws Exception {
             if (clazz.isAnnotationPresent(Converter.class)) {
                 TypeConverterRegistry tcr = camelContext.getTypeConverterRegistry();
                 TypeConverterExists exists = tcr.getTypeConverterExists();
@@ -99,7 +100,8 @@ public final class AnnotationDependencyInjection {
     private static class BindToRegistryCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance) throws Exception {
+        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+                throws Exception {
             if (instance == null) {
                 return;
             }
@@ -134,7 +136,8 @@ public final class AnnotationDependencyInjection {
     private static class SpringAnnotationCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance) throws Exception {
+        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+                throws Exception {
             if (instance == null) {
                 return;
             }
@@ -208,7 +211,8 @@ public final class AnnotationDependencyInjection {
     private static class QuarkusAnnotationCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance) throws Exception {
+        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+                throws Exception {
             if (instance == null) {
                 return;
             }

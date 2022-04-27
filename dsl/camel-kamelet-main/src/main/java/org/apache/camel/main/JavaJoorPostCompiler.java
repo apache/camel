@@ -16,29 +16,38 @@
  */
 package org.apache.camel.main;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.dsl.support.CompilePostProcessor;
-import org.apache.camel.spi.Registry;
-import org.apache.camel.util.IOHelper;
-
+import java.io.File;
 import java.io.FileOutputStream;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.dsl.support.CompilePostProcessor;
+import org.apache.camel.util.IOHelper;
+
+/**
+ * Post compiler for java-joor-dsl that stores the compiled .java sources as .class files to disk.
+ */
 public class JavaJoorPostCompiler {
 
-    // TODO: add option to turn this on|off, and configure disk location
-
-    public static void initJavaJoorPostCompiler(CamelContext context) {
-        Registry registry = context.getRegistry();
-
-        registry.bind("JavaJoorPostCompiler", new ByteCodeCompilePostProcessor());
+    public static void initJavaJoorPostCompiler(CamelContext context, String outputDirectory) {
+        context.getRegistry().bind("JavaJoorDslPostCompiler", new ByteCodeCompilePostProcessor(outputDirectory));
     }
 
     private static class ByteCodeCompilePostProcessor implements CompilePostProcessor {
 
+        private final String outputDirectory;
+
+        public ByteCodeCompilePostProcessor(String outputDirectory) {
+            this.outputDirectory = outputDirectory;
+        }
+
         @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance) throws Exception {
+        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+                throws Exception {
             if (byteCode != null) {
-                FileOutputStream fos = new FileOutputStream("." + name + ".class", false);
+                // create work-dir if needed
+                new File(outputDirectory).mkdirs();
+                // write to disk
+                FileOutputStream fos = new FileOutputStream(outputDirectory + "/" + name + ".class", false);
                 fos.write(byteCode);
                 IOHelper.close(fos);
             }

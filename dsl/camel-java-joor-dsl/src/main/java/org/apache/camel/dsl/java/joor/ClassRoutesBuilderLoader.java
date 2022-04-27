@@ -31,6 +31,7 @@ import org.apache.camel.dsl.support.ExtendedRouteBuilderLoaderSupport;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.annotations.RoutesLoader;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,6 +99,10 @@ public class ClassRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport 
 
     private static String asClassName(Resource resource) {
         String className = resource.getLocation();
+        if (className.contains(":")) {
+            // remove scheme such as classpath:foo.class
+            className = StringHelper.after(className, ":");
+        }
         className = className.replace('/', '.');
         if (className.endsWith(".class")) {
             className = className.substring(0, className.length() - 6);

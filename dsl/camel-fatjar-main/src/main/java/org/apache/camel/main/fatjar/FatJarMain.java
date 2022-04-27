@@ -68,8 +68,12 @@ public class FatJarMain extends KameletMain {
 
         // setup configurations
         for (String key : prop.stringPropertyNames()) {
-            String value = prop.getProperty(key);
+            if ("camel.main.routesReloadEnabled".equals(key)) {
+                // skip reload as this is not possible in fat-jar mode
+                continue;
+            }
             if (key.startsWith("camel.")) {
+                String value = prop.getProperty(key);
                 addInitialProperty(key, value);
             }
         }

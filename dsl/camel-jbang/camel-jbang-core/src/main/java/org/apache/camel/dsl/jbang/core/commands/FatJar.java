@@ -65,7 +65,7 @@ class FatJar implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        File settings = new File(Run.RUN_SETTINGS_FILE);
+        File settings = new File(Run.WORK_DIR + "/" + Run.RUN_SETTINGS_FILE);
         if (!settings.exists()) {
             System.out.println("Run Camel first to generate dependency file");
             return 0;
@@ -83,6 +83,8 @@ class FatJar implements Callable<Integer> {
         target = new File("target/camel-app/classes");
         target.mkdirs();
         copySourceFiles(settings, target);
+        // work sources
+        copyWorkFiles(Run.WORK_DIR, target);
         // settings
         copySettings(settings);
         // log4j configuration
@@ -151,7 +153,7 @@ class FatJar implements Callable<Integer> {
 
     private void copySettings(File settings) throws Exception {
         // the settings file itself
-        File target = new File("target/camel-app/classes", Run.RUN_SETTINGS_FILE.substring(1));
+        File target = new File("target/camel-app/classes", Run.RUN_SETTINGS_FILE);
 
         // need to adjust file: scheme to classpath as the files are now embedded in the fat-jar directly
         List<String> lines = Files.readAllLines(settings.toPath());
@@ -169,7 +171,9 @@ class FatJar implements Callable<Integer> {
     private static String fileToClasspath(String line, String key) {
         String value = StringHelper.after(line, key + "=");
         if (value != null) {
+            // file:foo.java is compiled to .class so we need to replace it
             value = value.replaceAll("file:", "classpath:");
+            value = value.replaceAll(".java", ".class");
             line = key + "=" + value;
         }
         return line;
@@ -284,6 +288,19 @@ class FatJar implements Callable<Integer> {
                         safeCopy(source, out, true);
                     }
                 }
+            }
+        }
+    }
+
+    private void copyWorkFiles(String work, File target) throws Exception {
+        File[] files = new File(work).listFiles();
+        if (files != null) {
+            for (File source : files) {
+                if (source.getName().equals(Run.RUN_SETTINGS_FILE)) {
+                    continue; // skip this file as we copy this specially
+                }
+                File out = new File(target, source.getName());
+                safeCopy(source, out, true);
             }
         }
     }

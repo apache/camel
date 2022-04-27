@@ -49,7 +49,8 @@ import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.fetchGithubU
 @Command(name = "run", description = "Run Camel")
 class Run implements Callable<Integer> {
 
-    public static final String RUN_SETTINGS_FILE = ".camel-jbang-run.properties";
+    public static final String WORK_DIR = ".camel-jbang";
+    public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
 
     private static final String[] ACCEPTED_FILE_EXT
             = new String[] { "properties", "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
@@ -164,7 +165,11 @@ class Run implements Callable<Integer> {
     }
 
     private int run() throws Exception {
-        settings = new FileOutputStream(RUN_SETTINGS_FILE, false);
+        File work = new File(WORK_DIR);
+        FileUtil.removeDir(work);
+        work.mkdirs();
+
+        settings = new FileOutputStream(WORK_DIR + "/" + RUN_SETTINGS_FILE, false);
 
         // configure logging first
         if (logging) {
@@ -201,14 +206,16 @@ class Run implements Callable<Integer> {
         main.addInitialProperty("camel.main.shutdownTimeout", "5");
         writeSettings("camel.main.shutdownTimeout", "5");
 
-        // turn off lightweight if we have routes reload enabled
         main.addInitialProperty("camel.main.routesReloadEnabled", reload ? "true" : "false");
+        writeSettings("camel.main.routesReloadEnabled", reload ? "true" : "false");
         main.addInitialProperty("camel.main.sourceLocationEnabled", "true");
         writeSettings("camel.main.sourceLocationEnabled", "true");
         main.addInitialProperty("camel.main.tracing", trace ? "true" : "false");
         writeSettings("camel.main.tracing", trace ? "true" : "false");
         main.addInitialProperty("camel.main.modeline", modeline ? "true" : "false");
         writeSettings("camel.main.modeline", modeline ? "true" : "false");
+        main.addInitialProperty("camel.jbang.work-directory", WORK_DIR);
+        writeSettings("camel.jbang.work-directory", WORK_DIR);
 
         // command line arguments
         if (property != null) {
