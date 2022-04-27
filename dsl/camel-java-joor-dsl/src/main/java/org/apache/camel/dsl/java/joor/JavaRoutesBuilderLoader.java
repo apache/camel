@@ -20,21 +20,26 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.support.ExtendedRouteBuilderLoaderSupport;
 import org.apache.camel.spi.CompilePostProcessor;
+import org.apache.camel.spi.ExtendedRoutesBuilderLoader;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
+import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.RouteWatcherReloadStrategy;
@@ -58,6 +63,17 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
     }
 
     @Override
+    protected RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
+        Collection<RoutesBuilder> answer = doLoadRoutesBuilders(List.of(resource));
+        if (answer.size() == 1) {
+            RoutesBuilder builder = answer.iterator().next();
+            return (RouteBuilder) builder;
+        }
+
+        return super.doLoadRouteBuilder(resource);
+    }
+
+    @Override
     protected Collection<RoutesBuilder> doLoadRoutesBuilders(Collection<Resource> resources) throws Exception {
         Collection<RoutesBuilder> answer = new ArrayList<>();
 
@@ -75,6 +91,14 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
                 String name = determineName(resource, content);
                 unit.addClass(name, content);
                 nameToResource.put(name, resource);
+            }
+        }
+
+        if (getCompileDirectory() != null && isCompileLoadFirst()) {
+            resources = doLoadCompiledFirst(nameToResource, answer);
+            if (resources.isEmpty()) {
+                // all resources are loaded from pre-compiled
+                return answer;
             }
         }
 
@@ -127,6 +151,31 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
         }
 
         return answer;
+    }
+
+    private Collection<Resource> doLoadCompiledFirst(Map<String, Resource> nameToResource, Collection<RoutesBuilder> answer) throws Exception {
+        // look for existing compiled and load them first, and any that are missing is to be compiled
+        Collection<Resource> toBeCompiled = new ArrayList<>();
+
+        Collection<Resource> byteCodes = new ArrayList<>();
+        for (String className : nameToResource.keySet()) {
+            File source = new File(getCompileDirectory() + "/" + className + ".class");
+            if (source.exists()) {
+                byte[] code = Files.readAllBytes(source.toPath());
+                byteCodes.add(ResourceHelper.fromBytes("class:" + className + ".class", code));
+            } else {
+                toBeCompiled.add(nameToResource.get(className));
+            }
+        }
+        if (!byteCodes.isEmpty()) {
+            // use the loader that can load from class byte codes
+            ExtendedRoutesBuilderLoader loader = (ExtendedRoutesBuilderLoader) getCamelContext().adapt(ExtendedCamelContext.class)
+                    .getRoutesLoader().getRoutesLoader("class");
+            Collection<RoutesBuilder> loaded = loader.loadRoutesBuilders(byteCodes);
+            answer.addAll(loaded);
+        }
+
+        return toBeCompiled;
     }
 
     private static void saveByteCodeToDisk(String outputDirectory, String name, byte[] byteCode) {

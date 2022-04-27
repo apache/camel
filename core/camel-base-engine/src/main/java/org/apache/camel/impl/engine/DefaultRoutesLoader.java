@@ -137,14 +137,8 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         resolveRoutesBuilderLoader(resource).preParseRoute(resource);
     }
 
-    /**
-     * Looks up a {@link RoutesBuilderLoader} in the registry or fallback to a factory finder mechanism if none found.
-     *
-     * @param  extension                the file extension for which a loader should be find.
-     * @return                          a {@link RoutesBuilderLoader}
-     * @throws IllegalArgumentException if no {@link RoutesBuilderLoader} can be found for the given file extension
-     */
-    protected RoutesBuilderLoader getRoutesLoader(String extension) throws Exception {
+    @Override
+    public RoutesBuilderLoader getRoutesLoader(String extension) throws Exception {
         RoutesBuilderLoader answer = getCamelContext().getRegistry().lookupByNameAndType(
                 ROUTES_LOADER_KEY_PREFIX + extension,
                 RoutesBuilderLoader.class);

@@ -64,11 +64,4 @@ public interface RoutesBuilderLoader extends StaticService, CamelContextAware {
         // noop
     }
 
-    /**
-     * Optional initializes the routes loader from the given set of options
-     *
-     * @param options options as key values
-     */
-    default void init(Map<String, Object> options) {
-    }
 }

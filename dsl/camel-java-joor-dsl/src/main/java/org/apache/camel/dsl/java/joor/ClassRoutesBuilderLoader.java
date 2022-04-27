@@ -51,6 +51,8 @@ public class ClassRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport 
     protected Collection<RoutesBuilder> doLoadRoutesBuilders(Collection<Resource> resources) throws Exception {
         Collection<RoutesBuilder> answer = new ArrayList<>();
 
+        LOG.debug("Loading .class resources from: {}", resources);
+
         // load all the byte code first from the resources
         Map<String, byte[]> byteCodes = new LinkedHashMap<>();
         for (Resource res : resources) {
