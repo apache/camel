@@ -93,10 +93,10 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String databasePassword;
     @UriParam(label = LABEL_NAME)
     private String databaseSslrootcert;
+    @UriParam(label = LABEL_NAME, defaultValue = "t")
+    private String skippedOperations = "t";
     @UriParam(label = LABEL_NAME, defaultValue = "2048")
     private int maxBatchSize = 2048;
-    @UriParam(label = LABEL_NAME)
-    private String skippedOperations;
     @UriParam(label = LABEL_NAME, defaultValue = "initial")
     private String snapshotMode = "initial";
     @UriParam(label = LABEL_NAME)
@@ -129,8 +129,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String binaryHandlingMode = "bytes";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean includeSchemaComments = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "skip")
-    private String truncateHandlingMode = "skip";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean tableIgnoreBuiltin = true;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
@@ -170,6 +168,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private boolean includeUnknownDatatypes = false;
     @UriParam(label = LABEL_NAME)
     private String databaseHostname;
+    @UriParam(label = LABEL_NAME, defaultValue = "avro")
+    private String schemaNameAdjustmentMode = "avro";
     @UriParam(label = LABEL_NAME)
     private String tableIncludeList;
     @UriParam(label = LABEL_NAME)
@@ -617,9 +617,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The name of the Postgres logical decoding plugin installed on the server.
-     * Supported values are 'decoderbufs', 'wal2json', 'pgoutput',
-     * 'wal2json_streaming', 'wal2json_rds' and 'wal2json_rds_streaming'.
-     * Defaults to 'decoderbufs'.
+     * Supported values are 'decoderbufs' and 'pgoutput'. Defaults to
+     * 'decoderbufs'.
      */
     public void setPluginName(String pluginName) {
         this.pluginName = pluginName;
@@ -703,6 +702,20 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The comma-separated list of operations to skip during streaming, defined
+     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes, 't' for
+     * truncates, and 'none' to indicate nothing skipped. By default, no
+     * operations will be skipped.
+     */
+    public void setSkippedOperations(String skippedOperations) {
+        this.skippedOperations = skippedOperations;
+    }
+
+    public String getSkippedOperations() {
+        return skippedOperations;
+    }
+
+    /**
      * Maximum size of each batch of source records. Defaults to 2048.
      */
     public void setMaxBatchSize(int maxBatchSize) {
@@ -711,19 +724,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public int getMaxBatchSize() {
         return maxBatchSize;
-    }
-
-    /**
-     * The comma-separated list of operations to skip during streaming, defined
-     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default,
-     * no operations will be skipped.
-     */
-    public void setSkippedOperations(String skippedOperations) {
-        this.skippedOperations = skippedOperations;
-    }
-
-    public String getSkippedOperations() {
-        return skippedOperations;
     }
 
     /**
@@ -946,20 +946,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public boolean isIncludeSchemaComments() {
         return includeSchemaComments;
-    }
-
-    /**
-     * Specify how TRUNCATE operations are handled for change events (supported
-     * only on pg11+ pgoutput plugin), including: 'skip' to skip / ignore
-     * TRUNCATE events (default), 'include' to handle and include TRUNCATE
-     * events
-     */
-    public void setTruncateHandlingMode(String truncateHandlingMode) {
-        this.truncateHandlingMode = truncateHandlingMode;
-    }
-
-    public String getTruncateHandlingMode() {
-        return truncateHandlingMode;
     }
 
     /**
@@ -1220,6 +1206,20 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specify how schema names should be adjusted for compatibility with the
+     * message converter used by the connector, including:'avro' replaces the
+     * characters that cannot be used in the Avro type name with underscore
+     * (default)'none' does not apply any adjustment
+     */
+    public void setSchemaNameAdjustmentMode(String schemaNameAdjustmentMode) {
+        this.schemaNameAdjustmentMode = schemaNameAdjustmentMode;
+    }
+
+    public String getSchemaNameAdjustmentMode() {
+        return schemaNameAdjustmentMode;
+    }
+
+    /**
      * The tables for which changes are to be captured
      */
     public void setTableIncludeList(String tableIncludeList) {
@@ -1286,8 +1286,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "table.exclude.list", tableExcludeList);
         addPropertyIfNotNull(configBuilder, "database.password", databasePassword);
         addPropertyIfNotNull(configBuilder, "database.sslrootcert", databaseSslrootcert);
-        addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
         addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
+        addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
         addPropertyIfNotNull(configBuilder, "message.prefix.include.list", messagePrefixIncludeList);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
@@ -1304,7 +1304,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
         addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
-        addPropertyIfNotNull(configBuilder, "truncate.handling.mode", truncateHandlingMode);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
         addPropertyIfNotNull(configBuilder, "database.tcpKeepAlive", databaseTcpkeepalive);
         addPropertyIfNotNull(configBuilder, "schema.exclude.list", schemaExcludeList);
@@ -1324,6 +1323,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
         addPropertyIfNotNull(configBuilder, "include.unknown.datatypes", includeUnknownDatatypes);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
+        addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
         addPropertyIfNotNull(configBuilder, "slot.stream.params", slotStreamParams);
         

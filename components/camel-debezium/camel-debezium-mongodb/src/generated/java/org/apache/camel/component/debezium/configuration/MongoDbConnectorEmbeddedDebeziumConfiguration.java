@@ -104,6 +104,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private int snapshotMaxThreads = 1;
     @UriParam(label = LABEL_NAME, defaultValue = "2m", javaType = "java.time.Duration")
     private long connectBackoffMaxDelayMs = 120000;
+    @UriParam(label = LABEL_NAME, defaultValue = "avro")
+    private String schemaNameAdjustmentMode = "avro";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean mongodbSslInvalidHostnameAllowed = false;
     @UriParam(label = LABEL_NAME)
@@ -396,8 +398,9 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The comma-separated list of operations to skip during streaming, defined
-     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default,
-     * no operations will be skipped.
+     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes, 't' for
+     * truncates, and 'none' to indicate nothing skipped. By default, no
+     * operations will be skipped.
      */
     public void setSkippedOperations(String skippedOperations) {
         this.skippedOperations = skippedOperations;
@@ -645,9 +648,9 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Unique name that identifies the MongoDB replica set or cluster and all
-     * recorded offsets, andthat is used as a prefix for all schemas and topics.
-     * Each distinct MongoDB installation should have a separate namespace and
-     * monitored by at most one Debezium connector.
+     * recorded offsets, and that is used as a prefix for all schemas and
+     * topics. Each distinct MongoDB installation should have a separate
+     * namespace and monitored by at most one Debezium connector.
      */
     public void setMongodbName(String mongodbName) {
         this.mongodbName = mongodbName;
@@ -680,6 +683,20 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public long getConnectBackoffMaxDelayMs() {
         return connectBackoffMaxDelayMs;
+    }
+
+    /**
+     * Specify how schema names should be adjusted for compatibility with the
+     * message converter used by the connector, including:'avro' replaces the
+     * characters that cannot be used in the Avro type name with underscore
+     * (default)'none' does not apply any adjustment
+     */
+    public void setSchemaNameAdjustmentMode(String schemaNameAdjustmentMode) {
+        this.schemaNameAdjustmentMode = schemaNameAdjustmentMode;
+    }
+
+    public String getSchemaNameAdjustmentMode() {
+        return schemaNameAdjustmentMode;
     }
 
     /**
@@ -756,6 +773,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "mongodb.name", mongodbName);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "connect.backoff.max.delay.ms", connectBackoffMaxDelayMs);
+        addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "mongodb.ssl.invalid.hostname.allowed", mongodbSslInvalidHostnameAllowed);
         addPropertyIfNotNull(configBuilder, "database.include.list", databaseIncludeList);
         

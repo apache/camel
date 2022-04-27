@@ -46,6 +46,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "databaseHistoryFileFilename": target.getConfiguration().setDatabaseHistoryFileFilename(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehistorykafkabootstrapservers":
         case "databaseHistoryKafkaBootstrapServers": target.getConfiguration().setDatabaseHistoryKafkaBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasehistorykafkaquerytimeoutms":
+        case "databaseHistoryKafkaQueryTimeoutMs": target.getConfiguration().setDatabaseHistoryKafkaQueryTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "databasehistorykafkarecoveryattempts":
         case "databaseHistoryKafkaRecoveryAttempts": target.getConfiguration().setDatabaseHistoryKafkaRecoveryAttempts(property(camelContext, int.class, value)); return true;
         case "databasehistorykafkarecoverypollintervalms":
@@ -138,6 +140,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "retriableRestartConnectorWaitMs": target.getConfiguration().setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": target.getConfiguration().setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": target.getConfiguration().setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
         case "signalDataCollection": target.getConfiguration().setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "skippedoperations":
@@ -210,6 +214,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "databaseHistoryFileFilename": return java.lang.String.class;
         case "databasehistorykafkabootstrapservers":
         case "databaseHistoryKafkaBootstrapServers": return java.lang.String.class;
+        case "databasehistorykafkaquerytimeoutms":
+        case "databaseHistoryKafkaQueryTimeoutMs": return long.class;
         case "databasehistorykafkarecoveryattempts":
         case "databaseHistoryKafkaRecoveryAttempts": return int.class;
         case "databasehistorykafkarecoverypollintervalms":
@@ -302,6 +308,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "retriableRestartConnectorWaitMs": return long.class;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return boolean.class;
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "signaldatacollection":
         case "signalDataCollection": return java.lang.String.class;
         case "skippedoperations":
@@ -375,6 +383,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "databaseHistoryFileFilename": return target.getConfiguration().getDatabaseHistoryFileFilename();
         case "databasehistorykafkabootstrapservers":
         case "databaseHistoryKafkaBootstrapServers": return target.getConfiguration().getDatabaseHistoryKafkaBootstrapServers();
+        case "databasehistorykafkaquerytimeoutms":
+        case "databaseHistoryKafkaQueryTimeoutMs": return target.getConfiguration().getDatabaseHistoryKafkaQueryTimeoutMs();
         case "databasehistorykafkarecoveryattempts":
         case "databaseHistoryKafkaRecoveryAttempts": return target.getConfiguration().getDatabaseHistoryKafkaRecoveryAttempts();
         case "databasehistorykafkarecoverypollintervalms":
@@ -467,6 +477,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "retriableRestartConnectorWaitMs": return target.getConfiguration().getRetriableRestartConnectorWaitMs();
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return target.getConfiguration().isSanitizeFieldNames();
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": return target.getConfiguration().getSchemaNameAdjustmentMode();
         case "signaldatacollection":
         case "signalDataCollection": return target.getConfiguration().getSignalDataCollection();
         case "skippedoperations":

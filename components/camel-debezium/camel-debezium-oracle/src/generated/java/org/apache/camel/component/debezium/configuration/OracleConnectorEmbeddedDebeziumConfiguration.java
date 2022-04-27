@@ -59,6 +59,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long snapshotLockTimeoutMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "3s", javaType = "java.time.Duration")
+    private long databaseHistoryKafkaQueryTimeoutMs = 3000;
+    @UriParam(label = LABEL_NAME, defaultValue = "3s", javaType = "java.time.Duration")
     private long logMiningSleepTimeMaxMs = 3000;
     @UriParam(label = LABEL_NAME, defaultValue = "1000000")
     private long logMiningScnGapDetectionGapSizeMin = 1000000;
@@ -184,6 +186,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String databaseHostname;
     @UriParam(label = LABEL_NAME, defaultValue = "1000")
     private long logMiningBatchSizeMin = 1000;
+    @UriParam(label = LABEL_NAME, defaultValue = "avro")
+    private String schemaNameAdjustmentMode = "avro";
     @UriParam(label = LABEL_NAME, defaultValue = "20000")
     private long logMiningBatchSizeDefault = 20000;
     @UriParam(label = LABEL_NAME)
@@ -504,6 +508,19 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The number of milliseconds to wait while fetching cluster information
+     * using Kafka admin client.
+     */
+    public void setDatabaseHistoryKafkaQueryTimeoutMs(
+            long databaseHistoryKafkaQueryTimeoutMs) {
+        this.databaseHistoryKafkaQueryTimeoutMs = databaseHistoryKafkaQueryTimeoutMs;
+    }
+
+    public long getDatabaseHistoryKafkaQueryTimeoutMs() {
+        return databaseHistoryKafkaQueryTimeoutMs;
+    }
+
+    /**
      * The maximum amount of time that the connector will sleep after reading
      * data from redo/archive logs and before starting reading data again. Value
      * is in milliseconds.
@@ -794,8 +811,9 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The comma-separated list of operations to skip during streaming, defined
-     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default,
-     * no operations will be skipped.
+     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes, 't' for
+     * truncates, and 'none' to indicate nothing skipped. By default, no
+     * operations will be skipped.
      */
     public void setSkippedOperations(String skippedOperations) {
         this.skippedOperations = skippedOperations;
@@ -1325,6 +1343,20 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specify how schema names should be adjusted for compatibility with the
+     * message converter used by the connector, including:'avro' replaces the
+     * characters that cannot be used in the Avro type name with underscore
+     * (default)'none' does not apply any adjustment
+     */
+    public void setSchemaNameAdjustmentMode(String schemaNameAdjustmentMode) {
+        this.schemaNameAdjustmentMode = schemaNameAdjustmentMode;
+    }
+
+    public String getSchemaNameAdjustmentMode() {
+        return schemaNameAdjustmentMode;
+    }
+
+    /**
      * The starting SCN interval size that the connector will use for reading
      * data from redo/archive logs.
      */
@@ -1386,6 +1418,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.schema_changes", logMiningBufferInfinispanCacheSchemaChanges);
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
+        addPropertyIfNotNull(configBuilder, "database.history.kafka.query.timeout.ms", databaseHistoryKafkaQueryTimeoutMs);
         addPropertyIfNotNull(configBuilder, "log.mining.sleep.time.max.ms", logMiningSleepTimeMaxMs);
         addPropertyIfNotNull(configBuilder, "log.mining.scn.gap.detection.gap.size.min", logMiningScnGapDetectionGapSizeMin);
         addPropertyIfNotNull(configBuilder, "database.user", databaseUser);
@@ -1448,6 +1481,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
         addPropertyIfNotNull(configBuilder, "log.mining.batch.size.min", logMiningBatchSizeMin);
+        addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "log.mining.batch.size.default", logMiningBatchSizeDefault);
         addPropertyIfNotNull(configBuilder, "snapshot.enhance.predicate.scn", snapshotEnhancePredicateScn);
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
