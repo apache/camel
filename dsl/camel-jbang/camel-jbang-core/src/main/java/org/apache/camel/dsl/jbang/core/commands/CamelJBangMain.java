@@ -36,7 +36,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("generate", new CommandLine(new CodeGenerator())
                         .addSubcommand("rest", new CodeRestGenerator()))
                 .addSubcommand("build", new CommandLine(new Build())
-                        .addSubcommand("resources", new Resource())
+                        .addSubcommand("manifests", new Manifest())
                         .addSubcommand("image", new Image()))
                 .addSubcommand("deploy", new CommandLine(new Deploy()))
                 .addSubcommand("undeploy", new CommandLine(new Undeploy()))

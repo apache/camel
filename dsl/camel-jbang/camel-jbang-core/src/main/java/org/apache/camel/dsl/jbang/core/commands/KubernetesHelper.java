@@ -27,10 +27,83 @@ import io.fabric8.kubernetes.api.model.ServicePortBuilder;
 import io.fabric8.kubernetes.api.model.ServiceSpecBuilder;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
+import io.fabric8.openshift.api.model.BinaryBuildSource;
+import io.fabric8.openshift.api.model.BuildConfig;
+import io.fabric8.openshift.api.model.BuildConfigBuilder;
+import io.fabric8.openshift.api.model.ImageStream;
+import io.fabric8.openshift.api.model.ImageStreamBuilder;
+import io.fabric8.openshift.api.model.Route;
+import io.fabric8.openshift.api.model.RouteBuilder;
+import io.fabric8.openshift.api.model.RoutePortBuilder;
 
 public final class KubernetesHelper {
 
     private KubernetesHelper() {
+    }
+
+    public static BuildConfig createBuildConfig(
+            String namespace, String name, String version, String filename, String sourceImage) {
+
+        ObjectMetaBuilder metadata = new ObjectMetaBuilder()
+                .withName(name)
+                .withAnnotations(Map.of("jarFileName", filename))
+                .withLabels(getLabels(name, version));
+        if (namespace != null) {
+            metadata.withNamespace(namespace);
+        }
+
+        return new BuildConfigBuilder()
+                .withMetadata(metadata.build())
+                .withNewSpec()
+                .withNewSource().withType("Binary").withBinary(new BinaryBuildSource(filename)).endSource()
+                .withNewOutput()
+                .withNewTo().withKind("ImageStreamTag").withName(name + ":" + version).endTo()
+                .endOutput()
+                .withNewStrategy().withType("Source")
+                .withNewSourceStrategy().withNewFrom().withKind("ImageStreamTag").withNamespace("openshift")
+                .withName(sourceImage).endFrom()
+                .endSourceStrategy()
+                .endStrategy()
+                .withNewSource().withType("Binary")
+                .endSource()
+                .endSpec()
+                .build();
+    }
+
+    public static ImageStream createImageStream(String namespace, String name, String version) {
+
+        ObjectMetaBuilder metadata = new ObjectMetaBuilder()
+                .withName(name)
+                .withLabels(getLabels(name, version));
+        if (namespace != null) {
+            metadata.withNamespace(namespace);
+        }
+
+        return new ImageStreamBuilder()
+                .withMetadata(metadata.build())
+                .withNewSpec()
+                .withNewLookupPolicy(false)
+                .endSpec()
+                .build();
+    }
+
+    public static Route createRoute(String namespace, String name, String version, int targetPort) {
+
+        ObjectMetaBuilder metadata = new ObjectMetaBuilder()
+                .withName(name)
+                .withLabels(getLabels(name, version));
+        if (namespace != null) {
+            metadata.withNamespace(namespace);
+        }
+
+        return new RouteBuilder()
+                .withMetadata(metadata.build())
+                .withNewSpec()
+                .withPort(new RoutePortBuilder().withNewTargetPort(targetPort).build())
+                .withNewTo().withKind("Service").withName(name)
+                .endTo()
+                .endSpec()
+                .build();
     }
 
     public static Service createService(
@@ -52,6 +125,7 @@ public final class KubernetesHelper {
         }
 
         ServiceSpecBuilder spec = new ServiceSpecBuilder()
+                .withSelector(getSelector(name, version))
                 .withPorts(servicePort.build());
         if (minikube) {
             spec.withType("NodePort");
@@ -65,6 +139,10 @@ public final class KubernetesHelper {
 
     public static Deployment createDeployment(
             String namespace, String name, String image, String version, int containerPort, int replica) {
+
+        if (image == null) {
+            image = namespace + "/" + name + ":" + version;
+        }
 
         EnvVar envVar = new EnvVarBuilder()
                 .withName("KUBERNETES_NAMESPACE")
@@ -87,7 +165,7 @@ public final class KubernetesHelper {
                 .withNewSpec()
                 .withReplicas(replica)
                 .withNewSelector()
-                .addToMatchLabels(getLabels(name, version))
+                .addToMatchLabels(getMatchLabels(name))
                 .endSelector()
                 .withNewTemplate()
                 .withNewMetadata()
@@ -118,8 +196,22 @@ public final class KubernetesHelper {
         return Map.of(
                 "app", name,
                 "app.kubernetes.io/name", name,
+                "app.kubernetes.io/component", name,
+                "app.kubernetes.io/instance", name,
                 "app.kubernetes.io/version", version,
                 "app.kubernetes.io/part-of", name,
-                "runtime", "camel");
+                "app.openshift.io/runtime", "camel",
+                "app.kubernetes.io/runtime", "camel");
+    }
+
+    public static Map<String, String> getMatchLabels(String name) {
+        return Map.of(
+                "app", name);
+    }
+
+    public static Map<String, String> getSelector(String name, String version) {
+        return Map.of(
+                "app.kubernetes.io/name", name,
+                "app.kubernetes.io/version", version);
     }
 }

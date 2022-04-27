@@ -16,12 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.util.Map;
 import java.util.concurrent.Callable;
 
-import io.fabric8.kubernetes.api.model.Service;
-import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.openshift.client.DefaultOpenShiftClient;
+import io.fabric8.openshift.client.OpenShiftClient;
+import io.fabric8.openshift.client.OpenShiftConfig;
+import io.fabric8.openshift.client.OpenShiftConfigBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -36,19 +39,41 @@ public class Undeploy implements Callable<Integer> {
     private String namespace;
     @CommandLine.Option(names = { "--name" }, description = "Application name", required = true)
     private String name;
+    @CommandLine.Option(names = { "--version" }, description = "Application version", required = true)
+    private String version;
+    @CommandLine.Option(names = { "--openshift" }, description = "Target is openshift")
+    private boolean openshift;
+    @CommandLine.Option(names = { "--server" }, description = "Master URL")
+    private String server;
+    @CommandLine.Option(names = { "--token" }, description = "Token")
+    private String token;
 
     @Override
     public Integer call() throws Exception {
-        Deployment deployment = KubernetesHelper.createDeployment(namespace, name, "", "", 0, 0);
-        Service service = KubernetesHelper.createService(namespace, name, "", 0, 0, false, 0);
-
-        try (KubernetesClient client = new DefaultKubernetesClient()) {
-            LOG.info("Deleting Service...");
-            client.services().inNamespace(namespace).delete(service);
-            LOG.info("Deleting Deployment...");
-            client.apps().deployments().inNamespace(namespace).delete(deployment);
-        } catch (Exception ex) {
-            LOG.error("Error", ex.getMessage());
+        Map labels = KubernetesHelper.getLabels(name, version);
+        if (openshift) {
+            OpenShiftConfig config = new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).build();
+            try (OpenShiftClient client = new DefaultOpenShiftClient(config)) {
+                LOG.info("Deleting Routes...");
+                client.routes().inNamespace(namespace).withLabels(labels).delete();
+                LOG.info("Deleting Service...");
+                client.services().inNamespace(namespace).withLabels(labels).delete();
+                LOG.info("Deleting Deployment...");
+                client.apps().deployments().inNamespace(namespace).withLabels(labels).delete();
+                LOG.info("Deleting ImageStream...");
+                client.imageStreams().inNamespace(namespace).withLabels(labels).delete();
+                LOG.info("Deleting BuildConfig...");
+                client.buildConfigs().inNamespace(namespace).withLabels(labels).delete();
+            }
+        } else {
+            try (KubernetesClient client = new DefaultKubernetesClient()) {
+                LOG.info("Deleting Service...");
+                client.services().inNamespace(namespace).withLabels(labels).delete();
+                LOG.info("Deleting Deployment...");
+                client.apps().deployments().inNamespace(namespace).withLabels(labels).delete();
+            } catch (Exception ex) {
+                LOG.error("Error", ex.getMessage());
+            }
         }
         return 0;
     }
