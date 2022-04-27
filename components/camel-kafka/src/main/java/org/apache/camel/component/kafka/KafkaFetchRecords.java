@@ -50,6 +50,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class KafkaFetchRecords implements Runnable {
+    /*
+     This keeps track of the state the record fetcher is. Because the Kafka consumer is not thread safe, it may take
+     some time between the pause or resume request is triggered and it is actually set.
+     Some of the states may be set but not read. This is done deliberately to avoid the code to enter multiple times
+     the branches that handle the *_REQUESTED states.
+     */
+    private enum State {
+        RUNNING,
+        PAUSE_REQUESTED,
+        PAUSED,
+        RESUME_REQUESTED,
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(KafkaFetchRecords.class);
 
     private final KafkaConsumer kafkaConsumer;
@@ -71,6 +84,8 @@ public class KafkaFetchRecords implements Runnable {
     private long currentBackoffInterval;
     private boolean reconnect; // must be false at init (this is the policy whether to reconnect)
     private boolean connected; // this is the state (connected or not)
+
+    private volatile State state = State.RUNNING;
 
     KafkaFetchRecords(KafkaConsumer kafkaConsumer,
                       BridgeExceptionHandlerToErrorHandler bridge, String topicName, Pattern topicPattern, String id,
@@ -313,6 +328,7 @@ public class KafkaFetchRecords implements Runnable {
                     setConnected(false);
                 }
 
+                updateTaskState();
             }
 
             if (!isConnected()) {
@@ -356,6 +372,23 @@ public class KafkaFetchRecords implements Runnable {
             }
 
             lock.unlock();
+        }
+    }
+
+    private void updateTaskState() {
+        switch (state) {
+            case PAUSE_REQUESTED:
+                LOG.info("Pausing the consumer as a response to a pause request");
+                consumer.pause(consumer.assignment());
+                state = State.PAUSED;
+                break;
+            case RESUME_REQUESTED:
+                LOG.info("Resuming the consumer as a response to a resume request");
+                consumer.resume(consumer.assignment());
+                state = State.RUNNING;
+                break;
+            default:
+                break;
         }
     }
 
@@ -516,7 +549,8 @@ public class KafkaFetchRecords implements Runnable {
      * or via JMX
      */
     public void pause() {
-        consumer.pause(consumer.assignment());
+        LOG.info("A pause request was issued and the consumer thread will pause after current processing has finished");
+        state = State.PAUSE_REQUESTED;
     }
 
     /*
@@ -524,6 +558,7 @@ public class KafkaFetchRecords implements Runnable {
      * mostly used for directly calling resume from Java code or via JMX
      */
     public void resume() {
-        consumer.resume(consumer.assignment());
+        LOG.info("A resume request was issued and the consumer thread will resume after current processing has finished");
+        state = State.RESUME_REQUESTED;
     }
 }
