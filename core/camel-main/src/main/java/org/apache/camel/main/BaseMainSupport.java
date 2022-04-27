@@ -31,6 +31,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelConfiguration;
@@ -390,10 +391,19 @@ public abstract class BaseMainSupport extends BaseService {
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
             autoConfigurationFailFast(camelContext, autoConfiguredProperties);
             autoConfigurationPropertiesComponent(camelContext, autoConfiguredProperties);
-            autoConfigurationRoutesIncludePattern(camelContext, autoConfiguredProperties);
+
+            autoConfigurationSingleOption(camelContext, autoConfiguredProperties, "camel.main.routesIncludePattern",
+                    value -> {
+                        mainConfigurationProperties.setRoutesIncludePattern(value);
+                        return null;
+                    });
+            autoConfigurationSingleOption(camelContext, autoConfiguredProperties, "camel.main.routesCompileDirectory",
+                    value -> {
+                        mainConfigurationProperties.setRoutesCompileDirectory(value);
+                        return null;
+                    });
 
             // eager configure dsl compiler as we may load routes when doing modeline scanning
-            autoConfigurationRoutesCompileDirectory(camelContext, autoConfiguredProperties);
             configureDslCompiler(camelContext);
 
             // eager load properties from modeline by scanning DSL sources and gather properties for auto configuration
@@ -743,15 +753,11 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    protected void autoConfigurationRoutesIncludePattern(
-            CamelContext camelContext, OrderedLocationProperties autoConfiguredProperties) {
+    protected void autoConfigurationSingleOption(
+            CamelContext camelContext, OrderedLocationProperties autoConfiguredProperties,
+            String optionName, Function<String, Object> setter) {
 
-        Object pattern = getInitialProperties().getProperty("camel.main.routesIncludePattern");
-        if (ObjectHelper.isNotEmpty(pattern)) {
-            mainConfigurationProperties
-                    .setRoutesIncludePattern(CamelContextHelper.parseText(camelContext, pattern.toString()));
-            autoConfiguredProperties.put("initial", "camel.main.routesIncludePattern", pattern.toString());
-        }
+        String lowerOptionName = optionName.toLowerCase(Locale.US);
 
         // load properties
         OrderedLocationProperties prop = (OrderedLocationProperties) camelContext.getPropertiesComponent()
@@ -760,26 +766,6 @@ public abstract class BaseMainSupport extends BaseService {
         for (String key : prop.stringPropertyNames()) {
             LOG.debug("    {}={}", key, prop.getProperty(key));
         }
-
-        // special for environment-variable-enabled as we need to know this early before we set all the other options
-        String loc = prop.getLocation("camel.main.routesIncludePattern");
-        pattern = prop.remove("camel.main.routesIncludePattern");
-        if (ObjectHelper.isNotEmpty(pattern)) {
-            mainConfigurationProperties.setRoutesIncludePattern(
-                    CamelContextHelper.parseText(camelContext, pattern.toString()));
-            autoConfiguredProperties.put(loc, "camel.main.routesIncludePattern",
-                    pattern.toString());
-        }
-        // special for system-properties-enabled as we need to know this early before we set all the other options
-        loc = prop.getLocation("camel.main.routesIncludePattern");
-        Object jvmEnabled = prop.remove("camel.main.routesIncludePattern");
-        if (ObjectHelper.isNotEmpty(jvmEnabled)) {
-            mainConfigurationProperties.setRoutesIncludePattern(
-                    CamelContextHelper.parseText(camelContext, jvmEnabled.toString()));
-            autoConfiguredProperties.put(loc, "camel.main.routesIncludePattern",
-                    jvmEnabled.toString());
-        }
-
         // load properties from ENV (override existing)
         Properties propENV = null;
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
@@ -804,116 +790,33 @@ public abstract class BaseMainSupport extends BaseService {
                 }
             }
         }
-
-        // special for fail-fast as we need to know this early before we set all the other options
-        loc = "ENV";
-        pattern = propENV != null ? propENV.remove("camel.main.routesincludepattern") : null;
+        // SYS and ENV take priority (ENV are in lower-case keys)
+        String loc = "ENV";
+        Object value = propENV != null ? propENV.remove(lowerOptionName) : null;
         if (ObjectHelper.isNotEmpty(propJVM)) {
-            Object val = propJVM.remove("camel.main.routesincludepattern");
+            Object val = propJVM.remove(optionName);
             if (ObjectHelper.isNotEmpty(val)) {
+                // SYS override ENV
                 loc = "SYS";
-                pattern = val;
+                value = val;
             }
         }
-        if (ObjectHelper.isNotEmpty(pattern)) {
-            mainConfigurationProperties
-                    .setRoutesIncludePattern(CamelContextHelper.parseText(camelContext, pattern.toString()));
-            autoConfiguredProperties.put(loc, "camel.main.routesIncludePattern", pattern.toString());
-        } else {
-            loc = prop.getLocation("camel.main.routesIncludePattern");
-            pattern = prop.remove("camel.main.routesIncludePattern");
-            if (ObjectHelper.isNotEmpty(pattern)) {
-                mainConfigurationProperties
-                        .setRoutesIncludePattern(CamelContextHelper.parseText(camelContext, pattern.toString()));
-                autoConfiguredProperties.put(loc, "camel.main.routesIncludePattern", pattern.toString());
-            }
+        if (ObjectHelper.isEmpty(value)) {
+            // then try properties
+            loc = prop.getLocation(optionName);
+            value = prop.remove(optionName);
         }
-    }
-
-    protected void autoConfigurationRoutesCompileDirectory(
-            CamelContext camelContext, OrderedLocationProperties autoConfiguredProperties) {
-
-        Object dir = getInitialProperties().getProperty("camel.main.routesCompileDirectory");
-        if (ObjectHelper.isNotEmpty(dir)) {
-            mainConfigurationProperties
-                    .setRoutesCompileDirectory(CamelContextHelper.parseText(camelContext, dir.toString()));
-            autoConfiguredProperties.put("initial", "camel.main.routesCompileDirectory", dir.toString());
+        if (ObjectHelper.isEmpty(value)) {
+            // fallback to initial properties
+            value = getInitialProperties().getProperty(optionName);
+            loc = "initial";
         }
 
-        // load properties
-        OrderedLocationProperties prop = (OrderedLocationProperties) camelContext.getPropertiesComponent()
-                .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
-        LOG.debug("Properties from Camel properties component:");
-        for (String key : prop.stringPropertyNames()) {
-            LOG.debug("    {}={}", key, prop.getProperty(key));
-        }
-
-        // special for environment-variable-enabled as we need to know this early before we set all the other options
-        String loc = prop.getLocation("camel.main.routesCompileDirectory");
-        dir = prop.remove("camel.main.routesCompileDirectory");
-        if (ObjectHelper.isNotEmpty(dir)) {
-            mainConfigurationProperties.setRoutesCompileDirectory(
-                    CamelContextHelper.parseText(camelContext, dir.toString()));
-            autoConfiguredProperties.put(loc, "camel.main.routesCompileDirectory",
-                    dir.toString());
-        }
-        // special for system-properties-enabled as we need to know this early before we set all the other options
-        loc = prop.getLocation("camel.main.routesCompileDirectory");
-        Object jvmEnabled = prop.remove("camel.main.routesCompileDirectory");
-        if (ObjectHelper.isNotEmpty(jvmEnabled)) {
-            mainConfigurationProperties.setRoutesIncludePattern(
-                    CamelContextHelper.parseText(camelContext, jvmEnabled.toString()));
-            autoConfiguredProperties.put(loc, "camel.main.routesCompileDirectory",
-                    jvmEnabled.toString());
-        }
-
-        // load properties from ENV (override existing)
-        Properties propENV = null;
-        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            propENV = helper.loadEnvironmentVariablesAsProperties(new String[] { "camel.main." });
-            if (!propENV.isEmpty()) {
-                prop.putAll("ENV", propENV);
-                LOG.debug("Properties from OS environment variables:");
-                for (String key : propENV.stringPropertyNames()) {
-                    LOG.debug("    {}={}", key, propENV.getProperty(key));
-                }
-            }
-        }
-        // load properties from JVM (override existing)
-        Properties propJVM = null;
-        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-            propJVM = helper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.main." });
-            if (!propJVM.isEmpty()) {
-                prop.putAll("SYS", propJVM);
-                LOG.debug("Properties from JVM system properties:");
-                for (String key : propJVM.stringPropertyNames()) {
-                    LOG.debug("    {}={}", key, propJVM.getProperty(key));
-                }
-            }
-        }
-
-        // special for fail-fast as we need to know this early before we set all the other options
-        loc = "ENV";
-        dir = propENV != null ? propENV.remove("camel.main.routesCompileDirectory") : null;
-        if (ObjectHelper.isNotEmpty(propJVM)) {
-            Object val = propJVM.remove("camel.main.routesCompileDirectory");
-            if (ObjectHelper.isNotEmpty(val)) {
-                loc = "SYS";
-                dir = val;
-            }
-        }
-        if (ObjectHelper.isNotEmpty(dir)) {
-            mainConfigurationProperties
-                    .setRoutesCompileDirectory(CamelContextHelper.parseText(camelContext, dir.toString()));
-            autoConfiguredProperties.put(loc, "camel.main.routesCompileDirectory", dir.toString());
-        } else {
-            loc = prop.getLocation("camel.main.routesCompileDirectory");
-            dir = prop.remove("camel.main.routesCompileDirectory");
-            if (ObjectHelper.isNotEmpty(dir)) {
-                mainConfigurationProperties
-                        .setRoutesCompileDirectory(CamelContextHelper.parseText(camelContext, dir.toString()));
-                autoConfiguredProperties.put(loc, "camel.main.routesCompileDirectory", dir.toString());
-            }
+        // set the option if we have a value
+        if (ObjectHelper.isNotEmpty(value)) {
+            String str = CamelContextHelper.parseText(camelContext, value.toString());
+            setter.apply(str);
+            autoConfiguredProperties.put(loc, optionName, value.toString());
         }
     }
 
