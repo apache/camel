@@ -16,34 +16,11 @@
  */
 package org.apache.camel.component.kafka.consumer;
 
-import java.util.Collection;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.spi.StateRepository;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.common.TopicPartition;
-
 public class DefaultKafkaManualAsyncCommitFactory implements KafkaManualCommitFactory {
 
     @Override
-    public KafkaManualCommit newInstance(CamelExchangePayload camelExchangePayload, KafkaRecordPayload kafkaRecordPayload) {
-        return new DefaultKafkaManualAsyncCommit(camelExchangePayload, kafkaRecordPayload);
-    }
-
-    /**
-     * @deprecated Use DefaultKafkaManualAsyncCommitFactory#newInstance(CamelExchangePayload, KafkaRecordPayload)
-     */
-    @Deprecated(since = "3.15.0")
-    @Override
     public KafkaManualCommit newInstance(
-            Exchange exchange, Consumer consumer, String topicName, String threadId,
-            StateRepository<String, String> offsetRepository,
-            TopicPartition partition, long recordOffset, long commitTimeout, Collection<KafkaAsyncManualCommit> asyncCommits) {
-
-        CamelExchangePayload camelExchangePayload
-                = new CamelExchangePayload(exchange, consumer, threadId, offsetRepository, asyncCommits);
-        KafkaRecordPayload kafkaRecordPayload = new KafkaRecordPayload(partition, recordOffset, commitTimeout);
-
-        return newInstance(camelExchangePayload, kafkaRecordPayload);
+            CamelExchangePayload camelExchangePayload, KafkaRecordPayload kafkaRecordPayload, CommitManager commitManager) {
+        return new DefaultKafkaManualAsyncCommit(camelExchangePayload, kafkaRecordPayload, commitManager);
     }
 }

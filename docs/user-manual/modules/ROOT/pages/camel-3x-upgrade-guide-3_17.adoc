@@ -96,6 +96,13 @@ Asynchronous, Synchronous or NO-OP commit policies from the former `autoCommitOn
 * Async can be set using `kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory`
 * Sync can be set using `kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory`
 
+The deprecated constructors for the kafkaManualCommitFactory have been removed. The constructor should now receive the following parameters:
+
+```
+CamelExchangePayload camelExchangePayload, KafkaRecordPayload kafkaRecordPayload, CommitManager commitManager
+```
+
+
 === camel-platform-http-vertx
 
 The configuration for body handler file uploads has changed from `true` to `false`.

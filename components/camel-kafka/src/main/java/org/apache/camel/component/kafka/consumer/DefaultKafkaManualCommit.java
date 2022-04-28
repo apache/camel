@@ -31,14 +31,6 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
         this.kafkaRecordPayload = kafkaRecordPayload;
     }
 
-    protected String serializeOffsetKey(TopicPartition topicPartition) {
-        return topicPartition.topic() + '/' + topicPartition.partition();
-    }
-
-    protected String serializeOffsetValue(long offset) {
-        return String.valueOf(offset);
-    }
-
     /**
      * @deprecated Use {@link #getCamelExchangePayload()}
      */
@@ -55,6 +47,7 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
         return camelExchangePayload.threadId;
     }
 
+    @Deprecated
     public StateRepository<String, String> getOffsetRepository() {
         return camelExchangePayload.offsetRepository;
     }

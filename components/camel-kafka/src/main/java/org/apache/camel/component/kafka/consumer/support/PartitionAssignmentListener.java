@@ -19,7 +19,6 @@ package org.apache.camel.component.kafka.consumer.support;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.camel.component.kafka.KafkaConfiguration;
@@ -36,15 +35,13 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
     private final KafkaConfiguration configuration;
     private final KafkaConsumerResumeStrategy resumeStrategy;
     private final CommitManager commitManager;
-    private final Supplier<Boolean> stopStateSupplier;
 
     public PartitionAssignmentListener(String threadId, KafkaConfiguration configuration,
-                                       Supplier<Boolean> stopStateSupplier, CommitManager commitManager,
+                                       CommitManager commitManager,
                                        KafkaConsumerResumeStrategy resumeStrategy) {
         this.threadId = threadId;
         this.configuration = configuration;
         this.commitManager = commitManager;
-        this.stopStateSupplier = stopStateSupplier;
         this.resumeStrategy = resumeStrategy;
     }
 

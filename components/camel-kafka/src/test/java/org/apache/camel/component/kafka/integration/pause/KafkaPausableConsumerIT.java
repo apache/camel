@@ -55,8 +55,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class KafkaPausableConsumerIT extends BaseEmbeddedKafkaTestSupport {
     // Just a wrapper for us to check if the expected methods are being called
     private static class TestListener extends KafkaConsumerListener {
-        boolean afterConsumeCalled;
-        boolean afterProcessCalled;
+        volatile boolean afterConsumeCalled;
+        volatile boolean afterProcessCalled;
 
         @Override
         public boolean afterConsume(Object ignored) {
@@ -190,8 +190,12 @@ public class KafkaPausableConsumerIT extends BaseEmbeddedKafkaTestSupport {
 
         await().atMost(30, TimeUnit.SECONDS).untilAdder(count, greaterThan(10L));
 
-        assertTrue(testConsumerListener.afterConsumeCalled, "The afterConsume method should have been called");
-        assertTrue(testConsumerListener.afterProcessCalled, "The afterProcess method should have been called");
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(testConsumerListener.afterConsumeCalled,
+                        "The afterConsume method should have been called"));
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(testConsumerListener.afterProcessCalled,
+                        "The afterProcess method should have been called"));
 
         to.assertIsSatisfied();
         assertEquals(5, to.getExchanges().size(), "Did not receive the expected amount of messages");

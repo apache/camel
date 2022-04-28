@@ -26,6 +26,11 @@ public interface CommitManager {
     KafkaManualCommit getManualCommit(Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> record);
 
     /**
+     * Commits everything that has been cached
+     */
+    void commit();
+
+    /**
      * Commits the offsets of the given partition
      * 
      * @param partition the partition to commit the offsets
@@ -47,11 +52,4 @@ public interface CommitManager {
      * @param partitionLastOffset the last offset to commit
      */
     void recordOffset(TopicPartition partition, long partitionLastOffset);
-
-    @Deprecated
-    default void processAsyncCommits() {
-
-    }
-
-    void commit();
 }
