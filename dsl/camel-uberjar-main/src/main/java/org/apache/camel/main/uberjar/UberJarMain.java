@@ -48,7 +48,7 @@ public class UberJarMain extends KameletMain {
     @Override
     protected void doBuild() throws Exception {
         setAppName("Apache Camel (UberJar)");
-        setDownload(false); // no need for download as all is included in fat-jar
+        setDownload(false); // no need for download as all is included in uber-jar
 
         // load configuration file
         OrderedProperties prop = new OrderedProperties();
@@ -69,7 +69,7 @@ public class UberJarMain extends KameletMain {
         // setup configurations
         for (String key : prop.stringPropertyNames()) {
             if ("camel.main.routesReloadEnabled".equals(key)) {
-                // skip reload as this is not possible in fat-jar mode
+                // skip reload as this is not possible in uber-jar mode
                 continue;
             }
             if (key.startsWith("camel.")) {

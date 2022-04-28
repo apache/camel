@@ -155,12 +155,12 @@ class UberJar implements Callable<Integer> {
         // the settings file itself
         File target = new File("target/camel-app/classes", Run.RUN_SETTINGS_FILE);
 
-        // need to adjust file: scheme to classpath as the files are now embedded in the fat-jar directly
+        // need to adjust file: scheme to classpath as the files are now embedded in the uber-jar directly
         List<String> lines = Files.readAllLines(settings.toPath());
         FileOutputStream fos = new FileOutputStream(target, false);
         for (String line : lines) {
             if (line.startsWith("camel.main.routesCompileDirectory")) {
-                continue; // skip as fat-jar should not compile to disk
+                continue; // skip as uber-jar should not compile to disk
             }
             for (String k : SETTINGS_PROP_SOURCE_KEYS) {
                 line = fileToClasspath(line, k);
