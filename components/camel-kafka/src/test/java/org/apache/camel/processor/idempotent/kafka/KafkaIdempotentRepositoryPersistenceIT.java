@@ -18,6 +18,7 @@ package org.apache.camel.processor.idempotent.kafka;
 
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import org.apache.camel.EndpointInject;
@@ -37,6 +38,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -91,7 +93,8 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
         sendMessages(count);
 
         // all records sent initially
-        assertEquals(count, mockBefore.getReceivedCounter());
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(count, mockBefore.getReceivedCounter()));
 
         // filters second attempt with same value
         assertEquals(5, kafkaIdempotentRepository.getDuplicateCount());
@@ -110,7 +113,8 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
         sendMessages(count);
 
         // all records sent initially
-        assertEquals(count, mockBefore.getReceivedCounter());
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(count, mockBefore.getReceivedCounter()));
 
         // the state from the previous test guarantees that all attempts now are blocked
         assertEquals(count, kafkaIdempotentRepository.getDuplicateCount());
@@ -131,7 +135,8 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
         }
 
         // all records sent initially
-        assertEquals(count * passes, mockBefore.getReceivedCounter());
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(count * passes, mockBefore.getReceivedCounter()));
 
         // the state from the previous test guarantees that all attempts now are blocked
         assertEquals(count * passes, kafkaIdempotentRepository.getDuplicateCount());
@@ -158,7 +163,8 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
         }
 
         // all records sent initially
-        assertEquals(count, mockBefore.getReceivedCounter());
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(count, mockBefore.getReceivedCounter()));
 
         // there are no duplicate messages on this pass
         assertEquals(0, kafkaIdempotentRepository.getDuplicateCount());
