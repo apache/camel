@@ -101,7 +101,7 @@ public final class PropertiesHelper {
             try (FileInputStream fis = new FileInputStream(defaultsFile)) {
                 properties.load(fis);
             } catch (IOException e) {
-                LOG.error("Error", e);
+                LOG.error("Error reading defaults file: {}", e.getMessage(), e);
             }
         }
         return properties;
