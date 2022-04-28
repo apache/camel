@@ -26,7 +26,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private boolean includeSchemaChanges = true;
     @UriParam(label = LABEL_NAME)
     private String gtidSourceIncludes;
-    @UriParam(label = LABEL_NAME, defaultValue = "class com.mysql.cj.jdbc.Driver")
+    @UriParam(label = LABEL_NAME, defaultValue = "com.mysql.cj.jdbc.Driver")
     private String databaseJdbcDriver = "com.mysql.cj.jdbc.Driver";
     @UriParam(label = LABEL_NAME)
     private String heartbeatActionQuery;

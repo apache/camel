@@ -68,6 +68,21 @@ public class ConnectorConfigField {
         return fieldDef.defaultValue;
     }
 
+    /**
+     * @return the default value as a {@code String} between 2 double quotes.
+     */
+    public String getDefaultValueAsStringLiteral() {
+        Object defaultValue = getDefaultValue();
+        if (defaultValue == null) {
+            return null;
+        }
+        if (fieldDef.type() == ConfigDef.Type.LIST
+                || fieldDef.type() == ConfigDef.Type.CLASS && defaultValue instanceof Class) {
+            defaultValue = ConfigDef.convertToString(defaultValue, fieldDef.type());
+        }
+        return String.format("\"%s\"", defaultValue);
+    }
+
     public String getDefaultValueAsString() {
         return getDefaultValueWrappedInString(fieldDef);
     }
@@ -142,17 +157,18 @@ public class ConnectorConfigField {
     }
 
     private String getDefaultValueWrappedInString(final ConfigDef.ConfigKey field) {
-        if (getDefaultValue() != null) {
-            if (field.type() == ConfigDef.Type.STRING || field.type() == ConfigDef.Type.PASSWORD
-                    || field.type() == ConfigDef.Type.CLASS) {
-                if (getDefaultValue() instanceof Class) {
-                    return "\"" + ((Class) getDefaultValue()).getName() + "\"";
-                }
-                return "\"" + getDefaultValue().toString() + "\"";
-            }
-            return getDefaultValue().toString();
+        final Object defaultValue = getDefaultValue();
+        if (defaultValue == null) {
+            return null;
         }
-        return null;
+        if (fieldDef.type() == ConfigDef.Type.LIST
+                || fieldDef.type() == ConfigDef.Type.CLASS && defaultValue instanceof Class) {
+            return String.format("\"%s\"", ConfigDef.convertToString(defaultValue, fieldDef.type()));
+        } else if (field.type() == ConfigDef.Type.STRING || field.type() == ConfigDef.Type.PASSWORD
+                || field.type() == ConfigDef.Type.CLASS) {
+            return String.format("\"%s\"", defaultValue);
+        }
+        return defaultValue.toString();
     }
 
     private String removeNonAsciiChars(final String text) {
