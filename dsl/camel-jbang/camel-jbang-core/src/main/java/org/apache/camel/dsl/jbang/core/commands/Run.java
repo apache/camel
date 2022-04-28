@@ -470,6 +470,9 @@ class Run implements Callable<Integer> {
         if ("build.gradle".equalsIgnoreCase(name)) {
             return true;
         }
+        if ("camel-runner.jar".equals(name)) {
+            return true;
+        }
 
         // skip dirs
         File f = new File(name);

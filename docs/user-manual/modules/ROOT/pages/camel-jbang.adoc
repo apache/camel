@@ -326,14 +326,14 @@ You simply do this by
 camel package uber-jar
 ----
 
-Which will generate `target/camel-runner.jar` as the output file.
+Which will generate `camel-runner.jar` as the output file.
 You can then run this JAR with Java that comes with everything included inside the .jar file.
 
 You can run the JAR with Java as follows:
 
 [source,bash]
 ----
-java -jar target/camel-runner.jar
+java -jar camel-runner.jar
 ----
 
 == Creating Projects

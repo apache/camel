@@ -49,6 +49,11 @@ import picocli.CommandLine.Option;
 @Command(name = "uber-jar", description = "Package application as a single uber-jar")
 class UberJar implements Callable<Integer> {
 
+    private static final String BUILD_DIR = ".camel-jbang/work";
+    private static final String CLASSES_DIR = BUILD_DIR + "/classes";
+    private static final String LIB_DIR = BUILD_DIR + "/lib";
+    private static final String BOOTSTRAP_DIR = BUILD_DIR + "/bootstrap";
+
     private static final String[] SETTINGS_PROP_SOURCE_KEYS = new String[] {
             "camel.main.routesIncludePattern",
             "camel.component.properties.location",
@@ -60,36 +65,37 @@ class UberJar implements Callable<Integer> {
     private boolean helpRequested = false;
     //CHECKSTYLE:ON
 
-    @CommandLine.Option(names = { "-j", "--jar" }, defaultValue = "target/camel-runner.jar", description = "Jar filename")
-    private String jar = "target/camel-runner.jar";
+    @CommandLine.Option(names = { "-j", "--jar" }, defaultValue = "camel-runner.jar", description = "Jar filename")
+    private String jar = "camel-runner.jar";
 
     @Override
     public Integer call() throws Exception {
+        // the settings file has information what to package in uber-jar so we need to read it from the run command
         File settings = new File(Run.WORK_DIR + "/" + Run.RUN_SETTINGS_FILE);
         if (!settings.exists()) {
             System.out.println("Run Camel first to generate dependency file");
             return 0;
         }
 
-        File target = new File("target/camel-app/");
-        FileUtil.removeDir(target);
-        target.mkdirs();
+        File buildDir = new File(BUILD_DIR);
+        FileUtil.removeDir(buildDir);
+        buildDir.mkdirs();
 
         // resolve all the needed dependencies
         ClassLoader parentCL = KameletMain.class.getClassLoader();
         final GroovyClassLoader gcl = new GroovyClassLoader(parentCL);
 
         // application sources
-        target = new File("target/camel-app/classes");
-        target.mkdirs();
-        copySourceFiles(settings, target);
+        buildDir = new File(CLASSES_DIR);
+        buildDir.mkdirs();
+        copySourceFiles(settings, buildDir);
         // work sources
-        copyWorkFiles(Run.WORK_DIR, target);
+        copyWorkFiles(Run.WORK_DIR, buildDir);
         // settings
         copySettings(settings);
         // log4j configuration
         InputStream is = UberJar.class.getResourceAsStream("/log4j2.properties");
-        safeCopy(is, new File("target/camel-app/classes", "log4j2.properties"), false);
+        safeCopy(is, new File(CLASSES_DIR, "log4j2.properties"));
 
         List<String> lines = Files.readAllLines(settings.toPath());
         String version = null;
@@ -118,8 +124,8 @@ class UberJar implements Callable<Integer> {
         }
 
         // JARs should be in lib sub-folder
-        target = new File("target/camel-app/lib");
-        target.mkdirs();
+        buildDir = new File(LIB_DIR);
+        buildDir.mkdirs();
         for (String l : lines) {
             if (l.startsWith("dependency=")) {
                 l = StringHelper.after(l, "dependency=");
@@ -132,7 +138,7 @@ class UberJar implements Callable<Integer> {
                 map.put("classifier", "");
 
                 URI[] u = Grape.resolve(map, map);
-                copyJars(u, target);
+                copyJars(u, buildDir);
             }
         }
 
@@ -145,19 +151,22 @@ class UberJar implements Callable<Integer> {
         // boostrap classloader
         boostrapClassLoader();
 
-        // and build target jar
+        // and build uber jar
         archiveUberJar();
+
+        // cleanup work folder
+        FileUtil.removeDir(new File(BUILD_DIR));
 
         return 0;
     }
 
     private void copySettings(File settings) throws Exception {
         // the settings file itself
-        File target = new File("target/camel-app/classes", Run.RUN_SETTINGS_FILE);
+        File setting = new File(CLASSES_DIR, Run.RUN_SETTINGS_FILE);
 
         // need to adjust file: scheme to classpath as the files are now embedded in the uber-jar directly
         List<String> lines = Files.readAllLines(settings.toPath());
-        FileOutputStream fos = new FileOutputStream(target, false);
+        FileOutputStream fos = new FileOutputStream(setting, false);
         for (String line : lines) {
             if (line.startsWith("camel.main.routesCompileDirectory")) {
                 continue; // skip as uber-jar should not compile to disk
@@ -183,22 +192,23 @@ class UberJar implements Callable<Integer> {
     }
 
     private void boostrapClassLoader() throws Exception {
-        File target = new File("target/camel-app/bootstrap");
-        target.mkdirs();
+        File dir = new File(BOOTSTRAP_DIR);
+        dir.mkdirs();
 
         // nested-jar classloader is named core
-        File fl = new File("target/camel-app/lib/core-1.0.2.jar");
+        File bootstrapJar = new File(LIB_DIR, "/core-1.0.2.jar");
 
-        JarInputStream jis = new JarInputStream(new FileInputStream(fl));
+        JarInputStream jis = new JarInputStream(new FileInputStream(bootstrapJar));
         JarEntry je;
         while ((je = jis.getNextJarEntry()) != null) {
             if (!je.isDirectory()) {
                 String name = je.getName();
                 if (name.endsWith(".class")) {
+                    name = BOOTSTRAP_DIR + "/" + name;
+                    String path = FileUtil.onlyPath(name);
                     // ensure sub-folders are created
-                    String path = FileUtil.onlyPath("target/camel-app/bootstrap/" + name);
                     new File(path).mkdirs();
-                    FileOutputStream fos = new FileOutputStream("target/camel-app/bootstrap/" + name);
+                    FileOutputStream fos = new FileOutputStream(name);
                     IOHelper.copy(jis, fos);
                     IOHelper.close(fos);
                 }
@@ -206,19 +216,22 @@ class UberJar implements Callable<Integer> {
         }
 
         // delete to avoid duplicate
-        fl.delete();
+        bootstrapJar.delete();
     }
 
     private void applicationClasses() throws Exception {
-        // build JAR of target/classes
-        JarOutputStream jos = new JarOutputStream(new FileOutputStream("target/camel-app/lib/application.jar", false));
+        // build application.jar that has the user source
+        JarOutputStream jos = new JarOutputStream(new FileOutputStream(LIB_DIR + "/application.jar", false));
 
-        File dir = new File("target/camel-app/classes");
+        File dir = new File(CLASSES_DIR);
         if (dir.exists() && dir.isDirectory()) {
-            for (File f : dir.listFiles()) {
-                JarEntry je = new JarEntry(f.getName());
-                jos.putNextEntry(je);
-                IOHelper.copyAndCloseInput(new FileInputStream(f), jos);
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    JarEntry je = new JarEntry(f.getName());
+                    jos.putNextEntry(je);
+                    IOHelper.copyAndCloseInput(new FileInputStream(f), jos);
+                }
             }
         }
 
@@ -235,22 +248,21 @@ class UberJar implements Callable<Integer> {
         IOHelper.close(is);
         context = context.replaceFirst("\\{\\{ \\.Version }}", version);
 
-        File f = new File("target/camel-app/META-INF");
+        File f = new File(BUILD_DIR, "META-INF");
         f.mkdirs();
         IOHelper.writeText(context, new FileOutputStream(f + "/MANIFEST.MF", false));
     }
 
     private void archiveUberJar() throws Exception {
-        // package all inside target/camel-app as a jar-file in target folder
         JarOutputStream jos = new JarOutputStream(new FileOutputStream(jar, false));
 
         // include manifest first
-        File fm = new File("target/camel-app/META-INF/MANIFEST.MF");
+        File fm = new File(BUILD_DIR, "META-INF/MANIFEST.MF");
         JarEntry je = new JarEntry("META-INF/MANIFEST.MF");
         jos.putNextEntry(je);
         IOHelper.copyAndCloseInput(new FileInputStream(fm), jos);
         // include boostrap
-        for (File fl : new File("target/camel-app/bootstrap/com/needhamsoftware/unojar").listFiles()) {
+        for (File fl : new File(BOOTSTRAP_DIR, "com/needhamsoftware/unojar").listFiles()) {
             if (fl.isFile()) {
                 je = new JarEntry("com/needhamsoftware/unojar/" + fl.getName());
                 jos.putNextEntry(je);
@@ -258,7 +270,7 @@ class UberJar implements Callable<Integer> {
             }
         }
         // include JARs
-        for (File fl : new File("target/camel-app/lib/").listFiles()) {
+        for (File fl : new File(LIB_DIR).listFiles()) {
             if (fl.isFile()) {
                 if (fl.getName().startsWith("camel-uberjar-main")) {
                     // must be in main folder
@@ -299,8 +311,9 @@ class UberJar implements Callable<Integer> {
         File[] files = new File(work).listFiles();
         if (files != null) {
             for (File source : files) {
-                if (source.getName().equals(Run.RUN_SETTINGS_FILE)) {
-                    continue; // skip this file as we copy this specially
+                // only copy files and skip settings file as we do this later specially
+                if (source.isDirectory() || source.getName().equals(Run.RUN_SETTINGS_FILE)) {
+                    continue;
                 }
                 File out = new File(target, source.getName());
                 safeCopy(source, out, true);
@@ -329,15 +342,13 @@ class UberJar implements Callable<Integer> {
         }
     }
 
-    private void safeCopy(InputStream source, File target, boolean override) throws Exception {
+    private void safeCopy(InputStream source, File target) throws Exception {
         if (source == null) {
             return;
         }
 
         if (!target.exists()) {
             Files.copy(source, target.toPath());
-        } else if (override) {
-            Files.copy(source, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
