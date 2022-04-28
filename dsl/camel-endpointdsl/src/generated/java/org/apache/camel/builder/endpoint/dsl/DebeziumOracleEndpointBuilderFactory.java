@@ -531,7 +531,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: class io.debezium.relational.history.KafkaDatabaseHistory
+         * Default: io.debezium.relational.history.KafkaDatabaseHistory
          * Group: oracle
          * 
          * @param databaseHistory the value to set
