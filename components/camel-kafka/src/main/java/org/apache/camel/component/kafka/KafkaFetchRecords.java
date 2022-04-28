@@ -276,8 +276,7 @@ public class KafkaFetchRecords implements Runnable {
         resumeStrategy.setConsumer(consumer);
 
         PartitionAssignmentListener listener = new PartitionAssignmentListener(
-                threadId, kafkaConsumer.getEndpoint().getConfiguration(),
-                this::isRunnable, commitManager, resumeStrategy);
+                threadId, kafkaConsumer.getEndpoint().getConfiguration(), commitManager, resumeStrategy);
 
         if (LOG.isInfoEnabled()) {
             LOG.info("Subscribing {} to {}", threadId, getPrintableTopic());
@@ -318,9 +317,7 @@ public class KafkaFetchRecords implements Runnable {
                     }
                 }
 
-                commitManager.processAsyncCommits();
-
-                ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords, consumer);
+                ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords);
 
                 if (result.isBreakOnErrorHit()) {
                     LOG.debug("We hit an error ... setting flags to force reconnect");
@@ -425,10 +422,6 @@ public class KafkaFetchRecords implements Runnable {
     private boolean isKafkaConsumerRunnable() {
         return kafkaConsumer.isRunAllowed() && !kafkaConsumer.isStoppingOrStopped()
                 && !kafkaConsumer.isSuspendingOrSuspended();
-    }
-
-    private boolean isRunnable() {
-        return kafkaConsumer.getEndpoint().getCamelContext().isStopping() && !kafkaConsumer.isRunAllowed();
     }
 
     private boolean isReconnect() {

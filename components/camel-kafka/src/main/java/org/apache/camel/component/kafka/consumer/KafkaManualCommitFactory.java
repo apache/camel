@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.kafka.consumer;
 
-import java.util.Collection;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -35,16 +33,13 @@ public interface KafkaManualCommitFactory {
         public final Consumer<?, ?> consumer;
         public final String threadId;
         public final StateRepository<String, String> offsetRepository;
-        public final Collection<KafkaAsyncManualCommit> asyncCommits;
 
         public CamelExchangePayload(Exchange exchange, Consumer<?, ?> consumer, String threadId,
-                                    StateRepository<String, String> offsetRepository,
-                                    Collection<KafkaAsyncManualCommit> asyncCommits) {
+                                    StateRepository<String, String> offsetRepository) {
             this.exchange = exchange;
             this.consumer = consumer;
             this.threadId = threadId;
             this.offsetRepository = offsetRepository;
-            this.asyncCommits = asyncCommits;
         }
     }
 
@@ -69,14 +64,6 @@ public interface KafkaManualCommitFactory {
      * @param camelExchangePayload the exchange-related payload from Camel
      * @param kafkaRecordPayload   the record-related payload from Kafka
      */
-    KafkaManualCommit newInstance(CamelExchangePayload camelExchangePayload, KafkaRecordPayload kafkaRecordPayload);
-
-    /**
-     * @deprecated Use KafkaManualCommitFactory#newInstance(CamelExchangePayload, KafkaRecordPayload)
-     */
-    @Deprecated(since = "3.15.0")
     KafkaManualCommit newInstance(
-            Exchange exchange, Consumer consumer, String topicName, String threadId,
-            StateRepository<String, String> offsetRepository,
-            TopicPartition partition, long recordOffset, long commitTimeout, Collection<KafkaAsyncManualCommit> asyncCommits);
+            CamelExchangePayload camelExchangePayload, KafkaRecordPayload kafkaRecordPayload, CommitManager commitManager);
 }

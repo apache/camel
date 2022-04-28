@@ -19,7 +19,6 @@ package org.apache.camel.component.kafka.consumer;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kafka.KafkaConsumer;
@@ -34,7 +33,6 @@ public class AsyncCommitManager extends AbstractCommitManager {
     private static final Logger LOG = LoggerFactory.getLogger(AsyncCommitManager.class);
     private final Consumer<?, ?> consumer;
 
-    private final ConcurrentLinkedQueue<KafkaAsyncManualCommit> asyncCommits = new ConcurrentLinkedQueue<>();
     private final OffsetCache offsetCache = new OffsetCache();
 
     public AsyncCommitManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
@@ -44,17 +42,7 @@ public class AsyncCommitManager extends AbstractCommitManager {
     }
 
     @Override
-    @Deprecated
-    public void processAsyncCommits() {
-        while (!asyncCommits.isEmpty()) {
-            asyncCommits.poll().processAsyncCommit();
-        }
-    }
-
-    @Override
     public void commit() {
-        processAsyncCommits();
-
         if (kafkaConsumer.getEndpoint().getConfiguration().isAutoCommitEnable()) {
             LOG.info("Auto commitAsync {} from {}", threadId, printableTopic);
             consumer.commitAsync();
@@ -90,7 +78,7 @@ public class AsyncCommitManager extends AbstractCommitManager {
             manualCommitFactory = new DefaultKafkaManualAsyncCommitFactory();
         }
 
-        return getManualCommit(exchange, partition, record, asyncCommits, manualCommitFactory);
+        return getManualCommit(exchange, partition, record, manualCommitFactory);
     }
 
     @Override

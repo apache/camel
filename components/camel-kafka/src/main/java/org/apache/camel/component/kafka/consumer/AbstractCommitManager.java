@@ -18,7 +18,6 @@
 package org.apache.camel.component.kafka.consumer;
 
 import java.time.Duration;
-import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.camel.Exchange;
@@ -53,19 +52,18 @@ public abstract class AbstractCommitManager implements CommitManager {
 
     protected KafkaManualCommit getManualCommit(
             Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> record,
-            Collection<KafkaAsyncManualCommit> asyncCommits,
             KafkaManualCommitFactory manualCommitFactory) {
 
         StateRepository<String, String> offsetRepository = configuration.getOffsetRepository();
         long commitTimeoutMs = configuration.getCommitTimeoutMs();
 
         KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload = new KafkaManualCommitFactory.CamelExchangePayload(
-                exchange, consumer, threadId, offsetRepository, asyncCommits);
+                exchange, consumer, threadId, offsetRepository);
         KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload = new KafkaManualCommitFactory.KafkaRecordPayload(
                 partition,
                 record.offset(), commitTimeoutMs);
 
-        return manualCommitFactory.newInstance(camelExchangePayload, kafkaRecordPayload);
+        return manualCommitFactory.newInstance(camelExchangePayload, kafkaRecordPayload, this);
     }
 
     @Override
@@ -77,7 +75,7 @@ public abstract class AbstractCommitManager implements CommitManager {
             manualCommitFactory = new DefaultKafkaManualCommitFactory();
         }
 
-        return getManualCommit(exchange, partition, record, null, manualCommitFactory);
+        return getManualCommit(exchange, partition, record, manualCommitFactory);
     }
 
     @Override
