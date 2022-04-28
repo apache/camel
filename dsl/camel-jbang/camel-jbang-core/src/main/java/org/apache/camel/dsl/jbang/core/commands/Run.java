@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -183,12 +184,46 @@ class Run implements Callable<Integer> {
         return 0;
     }
 
+    private OrderedProperties loadApplicationProperties(File source) throws Exception {
+        OrderedProperties prop = new OrderedProperties();
+        prop.load(new FileInputStream(source));
+
+        // special for routes include pattern that we need to "fix" after reading from application.properties
+        // to make this work in run command
+        String value = prop.getProperty("camel.main.routesIncludePattern");
+        if (value != null) {
+            // if not scheme then must use file: as this is what run command expects
+            StringJoiner sj = new StringJoiner(",");
+            for (String part : value.split(",")) {
+                if (!part.contains(":")) {
+                    part = "file:" + part;
+                }
+                sj.add(part);
+            }
+            value = sj.toString();
+            prop.setProperty("camel.main.routesIncludePattern", value);
+        }
+
+        return prop;
+    }
+
+    private static String prefixFile(String line, String key) {
+        String value = StringHelper.after(line, key + "=");
+        if (value != null) {
+
+            value = value.replaceAll("file:", "classpath:");
+            line = key + "=" + value;
+        }
+        return line;
+    }
+
+
     private int run() throws Exception {
         File work = new File(WORK_DIR);
         FileUtil.removeDir(work);
         work.mkdirs();
 
-        OrderedProperties existingProps = null;
+        OrderedProperties applicationProperties = null;
         if (files == null || files.length == 0) {
             // special when no files have been specified then we use application.properties as source to know what to run
             File source = new File("application.properties");
@@ -196,12 +231,10 @@ class Run implements Callable<Integer> {
                 System.out.println("Cannot run because application.properties file does not exist");
                 return 1;
             }
-
-            existingProps = new OrderedProperties();
-            existingProps.load(new FileInputStream(source));
+            applicationProperties = loadApplicationProperties(source);
 
             // logging level may be configured in the properties file
-            loggingLevel = existingProps.getProperty("loggingLevel", loggingLevel);
+            loggingLevel = applicationProperties.getProperty("loggingLevel", loggingLevel);
         }
 
         // configure logging first
@@ -232,18 +265,18 @@ class Run implements Callable<Integer> {
         });
         main.setAppName("Apache Camel (JBang)");
 
-        writeSetting(main, existingProps, "camel.main.name", name);
-        writeSetting(main, existingProps, "camel.main.shutdownTimeout", "5");
+        writeSetting(main, applicationProperties, "camel.main.name", name);
+        writeSetting(main, applicationProperties, "camel.main.shutdownTimeout", "5");
 
-        writeSetting(main, existingProps, "camel.main.routesReloadEnabled", reload ? "true" : "false");
-        writeSetting(main, existingProps, "camel.main.sourceLocationEnabled", "true");
-        writeSetting(main, existingProps, "camel.main.tracing", trace ? "true" : "false");
-        writeSetting(main, existingProps, "camel.main.modeline", modeline ? "true" : "false");
+        writeSetting(main, applicationProperties, "camel.main.routesReloadEnabled", reload ? "true" : "false");
+        writeSetting(main, applicationProperties, "camel.main.sourceLocationEnabled", "true");
+        writeSetting(main, applicationProperties, "camel.main.tracing", trace ? "true" : "false");
+        writeSetting(main, applicationProperties, "camel.main.modeline", modeline ? "true" : "false");
         // allow java-dsl to compile to .class which we need in uber-jar mode
-        writeSetting(main, existingProps, "camel.main.routesCompileDirectory", WORK_DIR);
-        writeSetting(main, existingProps, "camel.jbang.dependencies", dependencies);
-        writeSetting(main, existingProps, "camel.jbang.health", health ? "true" : "false");
-        writeSetting(main, existingProps, "camel.jbang.console", console ? "true" : "false");
+        writeSetting(main, applicationProperties, "camel.main.routesCompileDirectory", WORK_DIR);
+        writeSetting(main, applicationProperties, "camel.jbang.dependencies", dependencies);
+        writeSetting(main, applicationProperties, "camel.jbang.health", health ? "true" : "false");
+        writeSetting(main, applicationProperties, "camel.jbang.console", console ? "true" : "false");
 
         // command line arguments
         if (property != null) {
@@ -257,16 +290,16 @@ class Run implements Callable<Integer> {
             }
         }
 
-        writeSetting(main, existingProps, "camel.main.durationMaxMessages",
+        writeSetting(main, applicationProperties, "camel.main.durationMaxMessages",
                 () -> maxMessages > 0 ? String.valueOf(maxMessages) : null);
-        writeSetting(main, existingProps, "camel.main.durationMaxSeconds",
+        writeSetting(main, applicationProperties, "camel.main.durationMaxSeconds",
                 () -> maxSeconds > 0 ? String.valueOf(maxSeconds) : null);
-        writeSetting(main, existingProps, "camel.main.durationMaxIdleSeconds",
+        writeSetting(main, applicationProperties, "camel.main.durationMaxIdleSeconds",
                 () -> maxIdleSeconds > 0 ? String.valueOf(maxIdleSeconds) : null);
-        writeSetting(main, existingProps, "camel.jbang.platform-http.port",
+        writeSetting(main, applicationProperties, "camel.jbang.platform-http.port",
                 () -> port > 0 ? String.valueOf(port) : null);
-        writeSetting(main, existingProps, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null);
-        writeSetting(main, existingProps, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
+        writeSetting(main, applicationProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null);
+        writeSetting(main, applicationProperties, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
 
         if (fileLock) {
             lockFile = createLockFile();
@@ -381,13 +414,13 @@ class Run implements Callable<Integer> {
             main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
             writeSettings("camel.main.routesIncludePattern", js.toString());
         } else {
-            writeSetting(main, existingProps, "camel.main.routesIncludePattern", () -> null);
+            writeSetting(main, applicationProperties, "camel.main.routesIncludePattern", () -> null);
         }
         if (sjClasspathFiles.length() > 0) {
             main.addInitialProperty("camel.jbang.classpathFiles", sjClasspathFiles.toString());
             writeSettings("camel.jbang.classpathFiles", sjClasspathFiles.toString());
         } else {
-            writeSetting(main, existingProps, "camel.jbang.classpathFiles", () -> null);
+            writeSetting(main, applicationProperties, "camel.jbang.classpathFiles", () -> null);
         }
 
         if (sjKamelets.length() > 0) {
@@ -400,7 +433,7 @@ class Run implements Callable<Integer> {
             main.addInitialProperty("camel.component.kamelet.location", loc);
             writeSettings("camel.component.kamelet.location", loc);
         } else {
-            writeSetting(main, existingProps, "camel.component.kamelet.location", () -> null);
+            writeSetting(main, applicationProperties, "camel.component.kamelet.location", () -> null);
         }
 
         // we can only reload if file based
