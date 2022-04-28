@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -24,12 +25,14 @@ import java.nio.file.FileSystems;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
@@ -38,6 +41,7 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -59,7 +63,7 @@ class Run implements Callable<Integer> {
     private File lockFile;
     private ScheduledExecutorService executor;
 
-    @Parameters(description = "The Camel file(s) to run", arity = "1")
+    @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.", arity = "0..9")
     private String[] files;
 
     //CHECKSTYLE:OFF
@@ -144,6 +148,22 @@ class Run implements Callable<Integer> {
         }
     }
 
+    private void writeSetting(KameletMain main, Properties existing, String key, String value) {
+        String val = existing != null ? existing.getProperty(key, value) : value;
+        if (val != null) {
+            main.addInitialProperty(key, val);
+            writeSettings(key, val);
+        }
+    }
+
+    private void writeSetting(KameletMain main, Properties existing, String key, Supplier<String> value) {
+        String val = existing != null ? existing.getProperty(key, value.get()) : value.get();
+        if (val != null) {
+            main.addInitialProperty(key, val);
+            writeSettings(key, val);
+        }
+    }
+
     private int stop() {
         File currentDir = new File(".");
 
@@ -167,6 +187,22 @@ class Run implements Callable<Integer> {
         File work = new File(WORK_DIR);
         FileUtil.removeDir(work);
         work.mkdirs();
+
+        OrderedProperties existingProps = null;
+        if (files == null || files.length == 0) {
+            // special when no files have been specified then we use application.properties as source to know what to run
+            File source = new File("application.properties");
+            if (!source.exists()) {
+                System.out.println("Cannot run because application.properties file does not exist");
+                return 1;
+            }
+
+            existingProps = new OrderedProperties();
+            existingProps.load(new FileInputStream(source));
+
+            // logging level may be configured in the properties file
+            loggingLevel = existingProps.getProperty("loggingLevel", loggingLevel);
+        }
 
         // configure logging first
         if (logging) {
@@ -196,24 +232,18 @@ class Run implements Callable<Integer> {
         });
         main.setAppName("Apache Camel (JBang)");
 
-        main.addInitialProperty("camel.main.name", name);
-        writeSettings("camel.main.name", name);
+        writeSetting(main, existingProps, "camel.main.name", name);
+        writeSetting(main, existingProps, "camel.main.shutdownTimeout", "5");
 
-        // shutdown quickly
-        main.addInitialProperty("camel.main.shutdownTimeout", "5");
-        writeSettings("camel.main.shutdownTimeout", "5");
-
-        main.addInitialProperty("camel.main.routesReloadEnabled", reload ? "true" : "false");
-        writeSettings("camel.main.routesReloadEnabled", reload ? "true" : "false");
-        main.addInitialProperty("camel.main.sourceLocationEnabled", "true");
-        writeSettings("camel.main.sourceLocationEnabled", "true");
-        main.addInitialProperty("camel.main.tracing", trace ? "true" : "false");
-        writeSettings("camel.main.tracing", trace ? "true" : "false");
-        main.addInitialProperty("camel.main.modeline", modeline ? "true" : "false");
-        writeSettings("camel.main.modeline", modeline ? "true" : "false");
+        writeSetting(main, existingProps, "camel.main.routesReloadEnabled", reload ? "true" : "false");
+        writeSetting(main, existingProps, "camel.main.sourceLocationEnabled", "true");
+        writeSetting(main, existingProps, "camel.main.tracing", trace ? "true" : "false");
+        writeSetting(main, existingProps, "camel.main.modeline", modeline ? "true" : "false");
         // allow java-dsl to compile to .class which we need in uber-jar mode
-        main.addInitialProperty("camel.main.routesCompileDirectory", WORK_DIR);
-        writeSettings("camel.main.routesCompileDirectory", WORK_DIR);
+        writeSetting(main, existingProps, "camel.main.routesCompileDirectory", WORK_DIR);
+        writeSetting(main, existingProps, "camel.jbang.dependencies", dependencies);
+        writeSetting(main, existingProps, "camel.jbang.health", health ? "true" : "false");
+        writeSetting(main, existingProps, "camel.jbang.console", console ? "true" : "false");
 
         // command line arguments
         if (property != null) {
@@ -227,46 +257,16 @@ class Run implements Callable<Integer> {
             }
         }
 
-        if (maxMessages > 0) {
-            main.addInitialProperty("camel.main.durationMaxMessages", String.valueOf(maxMessages));
-            writeSettings("camel.main.durationMaxMessages", String.valueOf(maxMessages));
-        }
-        if (maxSeconds > 0) {
-            main.addInitialProperty("camel.main.durationMaxSeconds", String.valueOf(maxSeconds));
-            writeSettings("camel.main.durationMaxSeconds", String.valueOf(maxSeconds));
-        }
-        if (maxIdleSeconds > 0) {
-            main.addInitialProperty("camel.main.durationMaxIdleSeconds", String.valueOf(maxIdleSeconds));
-            writeSettings("camel.main.durationMaxIdleSeconds", String.valueOf(maxIdleSeconds));
-        }
-        if (port > 0) {
-            main.addInitialProperty("camel.jbang.platform-http.port", String.valueOf(port));
-            writeSettings("camel.jbang.platform-http.port", String.valueOf(port));
-        }
-        if (console) {
-            main.addInitialProperty("camel.jbang.console", "true");
-            writeSettings("camel.jbang.console", "true");
-        }
-        if (health) {
-            main.addInitialProperty("camel.jbang.health", "true");
-            writeSettings("camel.jbang.health", "true");
-        }
-
-        if (jfr) {
-            main.addInitialProperty("camel.jbang.jfr", "jfr");
-            writeSettings("camel.jbang.jfr", "jfr");
-        }
-        if (jfrProfile != null) {
-            // turn on jfr if a profile was specified
-            main.addInitialProperty("camel.jbang.jfr", "jfr");
-            writeSettings("camel.jbang.jfr", "jfr");
-            main.addInitialProperty("camel.jbang.jfr-profile", jfrProfile);
-            writeSettings("camel.jbang.jfr-profile", jfrProfile);
-        }
-        if (dependencies != null) {
-            main.addInitialProperty("camel.jbang.dependencies", dependencies);
-            writeSettings("camel.jbang.dependencies", dependencies);
-        }
+        writeSetting(main, existingProps, "camel.main.durationMaxMessages",
+                () -> maxMessages > 0 ? String.valueOf(maxMessages) : null);
+        writeSetting(main, existingProps, "camel.main.durationMaxSeconds",
+                () -> maxSeconds > 0 ? String.valueOf(maxSeconds) : null);
+        writeSetting(main, existingProps, "camel.main.durationMaxIdleSeconds",
+                () -> maxIdleSeconds > 0 ? String.valueOf(maxIdleSeconds) : null);
+        writeSetting(main, existingProps, "camel.jbang.platform-http.port",
+                () -> port > 0 ? String.valueOf(port) : null);
+        writeSetting(main, existingProps, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null);
+        writeSetting(main, existingProps, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
 
         if (fileLock) {
             lockFile = createLockFile();
@@ -289,99 +289,105 @@ class Run implements Callable<Integer> {
         StringJoiner sjClasspathFiles = new StringJoiner(",");
         StringJoiner sjKamelets = new StringJoiner(",");
 
-        for (String file : files) {
+        if (files != null) {
+            for (String file : files) {
 
-            if (skipFile(file)) {
-                continue;
-            }
-            if (!knownFile(file)) {
-                // non known files to be added on classpath
-                sjClasspathFiles.add(file);
-                continue;
-            }
+                if (skipFile(file)) {
+                    continue;
+                }
+                if (!knownFile(file)) {
+                    // non known files to be added on classpath
+                    sjClasspathFiles.add(file);
+                    continue;
+                }
 
-            // process known files as its likely DSLs or configuration files
+                // process known files as its likely DSLs or configuration files
 
-            // check for properties files
-            if (file.endsWith(".properties")) {
+                // check for properties files
+                if (file.endsWith(".properties")) {
+                    if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
+                        file = "file:" + file;
+                    }
+                    if (ObjectHelper.isEmpty(propertiesFiles)) {
+                        propertiesFiles = file;
+                    } else {
+                        propertiesFiles = propertiesFiles + "," + file;
+                    }
+                    if (reload && file.startsWith("file:")) {
+                        // we can only reload if file based
+                        sjReload.add(file.substring(5));
+                    }
+                    continue;
+                }
+
+                // Camel DSL files
                 if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
                     file = "file:" + file;
                 }
-                if (ObjectHelper.isEmpty(propertiesFiles)) {
-                    propertiesFiles = file;
-                } else {
-                    propertiesFiles = propertiesFiles + "," + file;
+                if (file.startsWith("file:")) {
+                    // check if file exist
+                    File inputFile = new File(file.substring(5));
+                    if (!inputFile.exists() && !inputFile.isFile()) {
+                        System.err.println("File does not exist: " + file);
+                        return 1;
+                    }
                 }
+
+                if (file.startsWith("file:") && file.endsWith(".kamelet.yaml")) {
+                    sjKamelets.add(file);
+                }
+
+                // automatic map github https urls to github resolver
+                if (file.startsWith("https://github.com/")) {
+                    String ext = FileUtil.onlyExt(file);
+                    boolean wildcard = FileUtil.onlyName(file, false).contains("*");
+                    if (ext != null && !wildcard) {
+                        // it is a single file so map to
+                        file = asGithubSingleUrl(file);
+                    } else {
+                        StringJoiner routes = new StringJoiner(",");
+                        StringJoiner kamelets = new StringJoiner(",");
+                        StringJoiner properties = new StringJoiner(",");
+                        fetchGithubUrls(file, routes, kamelets, properties);
+
+                        if (routes.length() > 0) {
+                            file = routes.toString();
+                        }
+                        if (properties.length() > 0) {
+                            main.addInitialProperty("camel.component.properties.location", properties.toString());
+                        }
+                        if (kamelets.length() > 0) {
+                            String loc = main.getInitialProperties().getProperty("camel.component.kamelet.location");
+                            if (loc != null) {
+                                // local kamelets first
+                                loc = kamelets + "," + loc;
+                            } else {
+                                loc = kamelets.toString();
+                            }
+                            main.addInitialProperty("camel.component.kamelet.location", loc);
+                        }
+                    }
+                }
+
+                js.add(file);
                 if (reload && file.startsWith("file:")) {
                     // we can only reload if file based
                     sjReload.add(file.substring(5));
                 }
-                continue;
-            }
-
-            // Camel DSL files
-            if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
-                file = "file:" + file;
-            }
-            if (file.startsWith("file:")) {
-                // check if file exist
-                File inputFile = new File(file.substring(5));
-                if (!inputFile.exists() && !inputFile.isFile()) {
-                    System.err.println("File does not exist: " + file);
-                    return 1;
-                }
-            }
-
-            if (file.startsWith("file:") && file.endsWith(".kamelet.yaml")) {
-                sjKamelets.add(file);
-            }
-
-            // automatic map github https urls to github resolver
-            if (file.startsWith("https://github.com/")) {
-                String ext = FileUtil.onlyExt(file);
-                boolean wildcard = FileUtil.onlyName(file, false).contains("*");
-                if (ext != null && !wildcard) {
-                    // it is a single file so map to
-                    file = asGithubSingleUrl(file);
-                } else {
-                    StringJoiner routes = new StringJoiner(",");
-                    StringJoiner kamelets = new StringJoiner(",");
-                    StringJoiner properties = new StringJoiner(",");
-                    fetchGithubUrls(file, routes, kamelets, properties);
-
-                    if (routes.length() > 0) {
-                        file = routes.toString();
-                    }
-                    if (properties.length() > 0) {
-                        main.addInitialProperty("camel.component.properties.location", properties.toString());
-                    }
-                    if (kamelets.length() > 0) {
-                        String loc = main.getInitialProperties().getProperty("camel.component.kamelet.location");
-                        if (loc != null) {
-                            // local kamelets first
-                            loc = kamelets + "," + loc;
-                        } else {
-                            loc = kamelets.toString();
-                        }
-                        main.addInitialProperty("camel.component.kamelet.location", loc);
-                    }
-                }
-            }
-
-            js.add(file);
-            if (reload && file.startsWith("file:")) {
-                // we can only reload if file based
-                sjReload.add(file.substring(5));
             }
         }
 
         if (js.length() > 0) {
             main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
             writeSettings("camel.main.routesIncludePattern", js.toString());
+        } else {
+            writeSetting(main, existingProps, "camel.main.routesIncludePattern", () -> null);
         }
         if (sjClasspathFiles.length() > 0) {
             main.addInitialProperty("camel.jbang.classpathFiles", sjClasspathFiles.toString());
             writeSettings("camel.jbang.classpathFiles", sjClasspathFiles.toString());
+        } else {
+            writeSetting(main, existingProps, "camel.jbang.classpathFiles", () -> null);
         }
 
         if (sjKamelets.length() > 0) {
@@ -393,6 +399,8 @@ class Run implements Callable<Integer> {
             }
             main.addInitialProperty("camel.component.kamelet.location", loc);
             writeSettings("camel.component.kamelet.location", loc);
+        } else {
+            writeSetting(main, existingProps, "camel.component.kamelet.location", () -> null);
         }
 
         // we can only reload if file based
