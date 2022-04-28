@@ -91,6 +91,9 @@ public final class VertxHttpServer {
                 phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
             }
 
+            // need to capture we use http-server
+            CamelJBangSettingsHelper.writeSettings("camel.jbang.platform-http.port", "" + port);
+
             // after camel is started then add event notifier
             camelContext.addStartupListener(new StartupListener() {
                 @Override

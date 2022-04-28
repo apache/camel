@@ -55,7 +55,6 @@ class Run implements Callable<Integer> {
     private static final String[] ACCEPTED_FILE_EXT
             = new String[] { "properties", "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
 
-    private FileOutputStream settings;
     private CamelContext context;
     private File lockFile;
     private ScheduledExecutorService executor;
@@ -168,8 +167,6 @@ class Run implements Callable<Integer> {
         File work = new File(WORK_DIR);
         FileUtil.removeDir(work);
         work.mkdirs();
-
-        settings = new FileOutputStream(WORK_DIR + "/" + RUN_SETTINGS_FILE, false);
 
         // configure logging first
         if (logging) {
@@ -437,8 +434,6 @@ class Run implements Callable<Integer> {
 
         main.run();
 
-        IOHelper.close(settings);
-
         int code = main.getExitCode();
         return code;
     }
@@ -492,12 +487,16 @@ class Run implements Callable<Integer> {
     }
 
     private void writeSettings(String key, String value) {
-        String line = key + "=" + value;
+        FileOutputStream fos = null;
         try {
-            settings.write(line.getBytes(StandardCharsets.UTF_8));
-            settings.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
+            fos = new FileOutputStream(WORK_DIR + "/" + RUN_SETTINGS_FILE, true);
+            String line = key + "=" + value;
+            fos.write(line.getBytes(StandardCharsets.UTF_8));
+            fos.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             // ignore
+        } finally {
+            IOHelper.close(fos);
         }
     }
 
