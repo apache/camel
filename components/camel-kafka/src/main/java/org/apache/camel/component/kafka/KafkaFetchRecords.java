@@ -154,7 +154,7 @@ public class KafkaFetchRecords implements Runnable {
                 setConnected(true);
             }
 
-            lastError = null;
+            setLastError(null);
             startPolling();
         } while ((pollExceptionStrategy.canContinue() || isReconnect()) && isKafkaConsumerRunnable());
 
@@ -172,7 +172,7 @@ public class KafkaFetchRecords implements Runnable {
         String msg = "Gave up subscribing org.apache.kafka.clients.consumer.KafkaConsumer " +
                      threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
         LOG.warn(msg);
-        lastError = new KafkaConsumerFatalException(msg, lastError);
+        setLastError(new KafkaConsumerFatalException(msg, lastError));
     }
 
     private void setupCreateConsumerException(ForegroundTask task, int max) {
@@ -180,7 +180,8 @@ public class KafkaFetchRecords implements Runnable {
         String topic = getPrintableTopic();
         String msg = "Gave up creating org.apache.kafka.clients.consumer.KafkaConsumer "
                      + threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
-        lastError = new KafkaConsumerFatalException(msg, lastError);
+
+        setLastError(new KafkaConsumerFatalException(msg, lastError));
     }
 
     private boolean initializeConsumerTask() {
@@ -191,7 +192,7 @@ public class KafkaFetchRecords implements Runnable {
             // ensure this is logged so users can see the problem
             LOG.warn("Error subscribing org.apache.kafka.clients.consumer.KafkaConsumer due to: {}", e.getMessage(),
                     e);
-            lastError = e;
+            setLastError(e);
             return false;
         }
 
@@ -219,7 +220,7 @@ public class KafkaFetchRecords implements Runnable {
             // ensure this is logged so users can see the problem
             LOG.warn("Error creating org.apache.kafka.clients.consumer.KafkaConsumer due to: {}", e.getMessage(),
                     e);
-            lastError = e;
+            setLastError(e);
             return false;
         }
 
@@ -551,4 +552,7 @@ public class KafkaFetchRecords implements Runnable {
         state = State.RESUME_REQUESTED;
     }
 
+    private synchronized void setLastError(Exception lastError) {
+        this.lastError = lastError;
+    }
 }
