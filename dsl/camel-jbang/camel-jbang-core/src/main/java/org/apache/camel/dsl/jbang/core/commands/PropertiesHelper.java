@@ -16,10 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import picocli.CommandLine;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,14 +27,17 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
+
 public final class PropertiesHelper {
     private static final Logger LOG = LoggerFactory.getLogger(CamelJBangMain.class);
-    public static final String APPLICATION_PROPERTIES_FILE = "application.properties";
-    public static final String PROPERTY_PREFIX = "camel-jbang";
-    public static final String COMMAND_PREFIX = "CamelJBang";
-
-    public static final String COMMON_PREFIX = COMMAND_PREFIX + ".project.";
-    public static final List<String> COMMON_ARGUMENTS = List.of("namespace", "name", "version");
+    private static final String APPLICATION_PROPERTIES_FILE = "application.properties";
+    private static final String PROPERTY_PREFIX = "camel-jbang";
+    private static final String COMMAND_PREFIX = "CamelJBang";
+    private static final String COMMON_PREFIX = COMMAND_PREFIX + ".project.";
+    private static final List<String> COMMON_ARGUMENTS = List.of("namespace", "name", "version");
 
     private PropertiesHelper() {
     }
@@ -53,10 +52,10 @@ public final class PropertiesHelper {
     private static Properties augmentProperties(Properties properties, final CommandLine commandLine) {
         List<String> commonArgumentList = commonArgumentList(new ArrayList<>(), commandLine.getSubcommands(), commandLine.getCommandName());
         commonArgumentList.forEach(key -> {
-            if (!properties.contains(key)){
+            if (!properties.contains(key)) {
                 String[] parts = key.split(Pattern.quote("."));
-                String arg = parts[parts.length-1];
-                if (COMMON_ARGUMENTS.contains(arg) && properties.containsKey(COMMON_PREFIX + arg)){
+                String arg = parts[parts.length - 1];
+                if (COMMON_ARGUMENTS.contains(arg) && properties.containsKey(COMMON_PREFIX + arg)) {
                     String value = properties.getProperty(COMMON_PREFIX + arg);
                     properties.put(key, value);
                 }
