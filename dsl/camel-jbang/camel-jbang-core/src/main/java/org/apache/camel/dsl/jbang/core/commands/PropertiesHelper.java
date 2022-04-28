@@ -34,7 +34,7 @@ import picocli.CommandLine;
 public final class PropertiesHelper {
     private static final Logger LOG = LoggerFactory.getLogger(CamelJBangMain.class);
     private static final String APPLICATION_PROPERTIES_FILE = "application.properties";
-    private static final String PROPERTY_PREFIX = "camel-jbang";
+    private static final String PROPERTY_PREFIX = "camel.jbang";
     private static final String COMMAND_PREFIX = "CamelJBang";
     private static final String COMMON_PREFIX = COMMAND_PREFIX + ".project.";
     private static final List<String> COMMON_ARGUMENTS = List.of("namespace", "name", "version");
