@@ -16,12 +16,12 @@
  */
 package org.apache.camel.main;
 
-import org.apache.camel.util.IOHelper;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
+
+import org.apache.camel.util.IOHelper;
 
 /**
  * When running we need to store

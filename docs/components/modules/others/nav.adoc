@@ -21,6 +21,7 @@
 *** xref:java-xml-jaxb-dsl.adoc[Jaxb XML Dsl]
 *** xref:kamelet-main.adoc[Kamelet Main]
 *** xref:kotlin-dsl.adoc[Kotlin DSL]
+*** xref:uberjar-main.adoc[Uberjar Main]
 *** xref:java-xml-io-dsl.adoc[XML Io Dsl]
 *** xref:yaml-dsl.adoc[YAML DSL]
 ** xref:elytron.adoc[Elytron]
