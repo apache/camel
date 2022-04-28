@@ -1217,9 +1217,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * The name of the Postgres logical decoding plugin installed on the
-         * server. Supported values are 'decoderbufs', 'wal2json', 'pgoutput',
-         * 'wal2json_streaming', 'wal2json_rds' and 'wal2json_rds_streaming'.
-         * Defaults to 'decoderbufs'.
+         * server. Supported values are 'decoderbufs' and 'pgoutput'. Defaults
+         * to 'decoderbufs'.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1494,6 +1493,25 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify how schema names should be adjusted for compatibility with
+         * the message converter used by the connector, including:'avro'
+         * replaces the characters that cannot be used in the Avro type name
+         * with underscore (default)'none' does not apply any adjustment.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: avro
+         * Group: postgres
+         * 
+         * @param schemaNameAdjustmentMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder schemaNameAdjustmentMode(
+                String schemaNameAdjustmentMode) {
+            doSetProperty("schemaNameAdjustmentMode", schemaNameAdjustmentMode);
+            return this;
+        }
+        /**
          * Specify the conditions that trigger a refresh of the in-memory schema
          * for a table. 'columns_diff' (the default) is the safest mode,
          * ensuring the in-memory schema stays in-sync with the database table's
@@ -1554,11 +1572,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * The comma-separated list of operations to skip during streaming,
-         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes.
-         * By default, no operations will be skipped.
+         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes,
+         * 't' for truncates, and 'none' to indicate nothing skipped. By
+         * default, no operations will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: t
          * Group: postgres
          * 
          * @param skippedOperations the value to set
@@ -2160,25 +2180,6 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder transactionTopic(
                 String transactionTopic) {
             doSetProperty("transactionTopic", transactionTopic);
-            return this;
-        }
-        /**
-         * Specify how TRUNCATE operations are handled for change events
-         * (supported only on pg11 pgoutput plugin), including: 'skip' to skip /
-         * ignore TRUNCATE events (default), 'include' to handle and include
-         * TRUNCATE events.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: skip
-         * Group: postgres
-         * 
-         * @param truncateHandlingMode the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresEndpointBuilder truncateHandlingMode(
-                String truncateHandlingMode) {
-            doSetProperty("truncateHandlingMode", truncateHandlingMode);
             return this;
         }
         /**
