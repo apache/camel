@@ -50,7 +50,8 @@ public final class PropertiesHelper {
     }
 
     private static Properties augmentProperties(Properties properties, final CommandLine commandLine) {
-        List<String> commonArgumentList = commonArgumentList(new ArrayList<>(), commandLine.getSubcommands(), commandLine.getCommandName());
+        List<String> commonArgumentList
+                = commonArgumentList(new ArrayList<>(), commandLine.getSubcommands(), commandLine.getCommandName());
         commonArgumentList.forEach(key -> {
             if (!properties.contains(key)) {
                 String[] parts = key.split(Pattern.quote("."));
@@ -64,7 +65,8 @@ public final class PropertiesHelper {
         return properties;
     }
 
-    private static List<String> commonArgumentList(List<String> list, Map<String, CommandLine> commandLines, String parentPrefix) {
+    private static List<String> commonArgumentList(
+            List<String> list, Map<String, CommandLine> commandLines, String parentPrefix) {
         commandLines.forEach((name, subCommand) -> {
             subCommand.getCommandSpec().args().stream()
                     .filter(arg -> arg instanceof CommandLine.Model.OptionSpec)
@@ -73,7 +75,8 @@ public final class PropertiesHelper {
                     .map(arg -> arg.longestName().replace("--", ""))
                     .forEach(arg -> list.add(generateParameter(parentPrefix, subCommand.getCommandName(), arg)));
 
-            list.addAll(commonArgumentList(new ArrayList<>(), subCommand.getSubcommands(), generateParameter(parentPrefix, name)));
+            list.addAll(
+                    commonArgumentList(new ArrayList<>(), subCommand.getSubcommands(), generateParameter(parentPrefix, name)));
         });
         return list;
     }
