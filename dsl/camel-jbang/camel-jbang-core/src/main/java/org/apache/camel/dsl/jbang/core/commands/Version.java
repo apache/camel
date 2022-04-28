@@ -16,27 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.exceptions.ResourceDoesNotExist;
-import org.apache.camel.github.GitHubResourceResolver;
-import org.apache.camel.impl.lw.LightweightCamelContext;
-import org.apache.camel.spi.Resource;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
-import org.apache.commons.io.IOUtils;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 
-import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.asGithubSingleUrl;
-import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.fetchGithubUrls;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 @Command(name = "init", description = "Display Camel version")
 class Version implements Callable<Integer> {
