@@ -37,27 +37,27 @@
     <tx:annotation-driven transaction-manager="txManager"/>
 
     <!-- In Memory Database #1 -->
-    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource1" type="DERBY">
+    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource1" type="H2">
         <jdbc:script location="classpath:/sql/init.sql"/>
     </jdbc:embedded-database>
 
     <!-- In Memory Database #2 -->
-    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource2" type="DERBY">
+    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource2" type="H2">
         <jdbc:script location="classpath:/sql/init2.sql"/>
     </jdbc:embedded-database>
 
     <!-- In Memory Database #3 -->
-    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource3" type="DERBY">
+    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource3" type="H2">
         <jdbc:script location="classpath:/sql/init3.sql"/>
     </jdbc:embedded-database>
 
     <!-- In Memory Database #4 -->
-    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource4" type="DERBY">
+    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource4" type="H2">
         <jdbc:script location="classpath:/sql/init4.sql"/>
     </jdbc:embedded-database>
     
     <!-- In Memory Database #5 -->
-    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource5" type="DERBY">
+    <jdbc:embedded-database id="{{testClassSimpleName}}-dataSource5" type="H2">
         <jdbc:script location="classpath:/sql/init5.sql"/>
     </jdbc:embedded-database>
     

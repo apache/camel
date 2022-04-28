@@ -40,7 +40,7 @@ public class SqlProducerWhereIssueTest extends CamelTestSupport {
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY)
+                .setType(EmbeddedDatabaseType.H2)
                 .addScript("sql/createAndPopulateDatabase.sql").build();
 
         super.setUp();
@@ -66,10 +66,10 @@ public class SqlProducerWhereIssueTest extends CamelTestSupport {
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         Map row = (Map) list.get(0);
         assertEquals("ASF", row.get("LICENSE"));
-        assertEquals(2, row.get("ROWCOUNT"));
+        assertEquals(2L, row.get("ROWCOUNT"));
         row = (Map) list.get(1);
         assertEquals("XXX", row.get("LICENSE"));
-        assertEquals(1, row.get("ROWCOUNT"));
+        assertEquals(1L, row.get("ROWCOUNT"));
     }
 
     @Override

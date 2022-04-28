@@ -27,7 +27,7 @@
            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 	<!-- START SNIPPET: e1 -->
-	<jdbc:embedded-database id="dataSource" type="DERBY" />
+	<jdbc:embedded-database id="dataSource" type="H2" />
     <!-- END SNIPPET: e1 -->
     
     <!-- START SNIPPET: e2 -->

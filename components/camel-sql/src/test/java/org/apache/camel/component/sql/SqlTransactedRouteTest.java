@@ -61,7 +61,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
 
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY).build();
+                .setType(EmbeddedDatabaseType.H2).build();
         reg.bind("testdb", db);
 
         DataSourceTransactionManager txMgr = new DataSourceTransactionManager();

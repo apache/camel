@@ -47,7 +47,7 @@ public class SqlEndpointLikeTest extends CamelTestSupport {
         // this is the database we create with some initial data for our unit test
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY)
+                .setType(EmbeddedDatabaseType.H2)
                 .addScript("sql/createAndPopulateDatabase.sql").build();
         reg.bind("jdbc/myDataSource", db);
         return reg;
