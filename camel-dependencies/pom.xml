@@ -152,7 +152,7 @@
     <couchbase-client-version>3.1.4</couchbase-client-version>
     <curator-version>4.3.0</curator-version>
     <cxf-codegen-plugin-version>3.4.5</cxf-codegen-plugin-version>
-    <cxf-version>3.4.5</cxf-version>
+    <cxf-version>3.4.7</cxf-version>
     <cxf-version-range>[3.4,3.5)</cxf-version-range>
     <cxf-xjc-plugin-version>3.3.1</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
@@ -320,7 +320,7 @@
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jetty-version>${jetty9-version}</jetty-version>
-    <jetty9-version>9.4.42.v20210604</jetty9-version>
+    <jetty9-version>9.4.46.v20220331</jetty9-version>
     <jgit-version>5.12.0.202106070339-r</jgit-version>
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
     <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
@@ -401,7 +401,7 @@
     <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>3.2.3</maven-war-plugin-version>
     <metrics-version>4.1.22</metrics-version>
-    <micrometer-version>1.7.0</micrometer-version>
+    <micrometer-version>1.7.11</micrometer-version>
     <microprofile-config-version>2.0</microprofile-config-version>
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
     <microprofile-health-version>3.0</microprofile-health-version>
@@ -427,7 +427,7 @@
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
     <nessus-weka-version>1.0.1</nessus-weka-version>
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
-    <netty-version>4.1.66.Final</netty-version>
+    <netty-version>4.1.76.Final</netty-version>
     <netty3-version>3.10.6.Final</netty3-version>
     <networknt-json-schema-validator-version>1.0.53</networknt-json-schema-validator-version>
     <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
@@ -518,11 +518,11 @@
     <spring-integration-version>5.4.3</spring-integration-version>
     <spring-ldap-version>2.3.4.RELEASE</spring-ldap-version>
     <spring-rabbitmq-version>2.3.10</spring-rabbitmq-version>
-    <spring-security-version>5.5.1</spring-security-version>
+    <spring-security-version>5.5.6</spring-security-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
     <spring-ws-version>3.1.3</spring-ws-version>
-    <spring5-version>5.3.18</spring5-version>
+    <spring5-version>5.3.19</spring5-version>
     <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
     <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
     <squareup-okio-version>1.17.2</squareup-okio-version>
@@ -541,7 +541,7 @@
     <trimStackTrace>false</trimStackTrace>
     <twilio-version>7.55.3</twilio-version>
     <twitter4j-version>4.0.7</twitter4j-version>
-    <undertow-version>2.2.8.Final</undertow-version>
+    <undertow-version>2.2.17.Final</undertow-version>
     <univocity-parsers-version>2.9.1</univocity-parsers-version>
     <validation-api-version>2.0.1.Final</validation-api-version>
     <vavr-version>0.10.2</vavr-version>
