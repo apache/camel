@@ -48,7 +48,7 @@
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-base</artifactId>
-            <version>${hapi-version}</version>
+            <version>${hapi-base-version}</version>
         </dependency>
         <dependency>
             <groupId>ca.uhn.hapi</groupId>

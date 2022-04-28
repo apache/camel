@@ -18,8 +18,6 @@ package org.apache.camel.component.kafka;
 
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -75,7 +73,6 @@ public class KafkaFetchRecords implements Runnable {
     private final Pattern topicPattern;
     private final String threadId;
     private final Properties kafkaProps;
-    private final Map<String, Long> lastProcessedOffset = new HashMap<>();
     private final PollExceptionStrategy pollExceptionStrategy;
     private final BridgeExceptionHandlerToErrorHandler bridge;
     private final ReentrantLock lock = new ReentrantLock();
@@ -279,8 +276,7 @@ public class KafkaFetchRecords implements Runnable {
         resumeStrategy.setConsumer(consumer);
 
         PartitionAssignmentListener listener = new PartitionAssignmentListener(
-                threadId, kafkaConsumer.getEndpoint().getConfiguration(), lastProcessedOffset,
-                this::isRunnable, commitManager, resumeStrategy);
+                threadId, kafkaConsumer.getEndpoint().getConfiguration(), commitManager, resumeStrategy);
 
         if (LOG.isInfoEnabled()) {
             LOG.info("Subscribing {} to {}", threadId, getPrintableTopic());
@@ -310,7 +306,7 @@ public class KafkaFetchRecords implements Runnable {
             }
 
             KafkaRecordProcessorFacade recordProcessorFacade = new KafkaRecordProcessorFacade(
-                    kafkaConsumer, lastProcessedOffset, threadId, commitManager, consumerListener);
+                    kafkaConsumer, threadId, commitManager, consumerListener);
 
             Duration pollDuration = Duration.ofMillis(pollTimeoutMs);
             while (isKafkaConsumerRunnable() && isConnected() && pollExceptionStrategy.canContinue()) {
@@ -321,9 +317,7 @@ public class KafkaFetchRecords implements Runnable {
                     }
                 }
 
-                commitManager.processAsyncCommits();
-
-                ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords, consumer);
+                ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords);
 
                 if (result.isBreakOnErrorHit()) {
                     LOG.debug("We hit an error ... setting flags to force reconnect");
@@ -359,11 +353,11 @@ public class KafkaFetchRecords implements Runnable {
             safeUnsubscribe();
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
-                LOG.warn("Exception {} caught while polling {} from kafka {} at offset {}: {}",
-                        e.getClass().getName(), threadId, getPrintableTopic(), lastProcessedOffset, e.getMessage(), e);
+                LOG.warn("Exception {} caught by thread {} while polling {} from kafka: {}",
+                        e.getClass().getName(), threadId, getPrintableTopic(), e.getMessage(), e);
             } else {
-                LOG.warn("Exception {} caught while polling {} from kafka {} at offset {}: {}",
-                        e.getClass().getName(), threadId, getPrintableTopic(), lastProcessedOffset, e.getMessage());
+                LOG.warn("Exception {} caught by thread {} while polling {} from kafka: {}",
+                        e.getClass().getName(), threadId, getPrintableTopic(), e.getMessage());
             }
 
             pollExceptionStrategy.handle(partitionLastOffset, e);
@@ -428,10 +422,6 @@ public class KafkaFetchRecords implements Runnable {
     private boolean isKafkaConsumerRunnable() {
         return kafkaConsumer.isRunAllowed() && !kafkaConsumer.isStoppingOrStopped()
                 && !kafkaConsumer.isSuspendingOrSuspended();
-    }
-
-    private boolean isRunnable() {
-        return kafkaConsumer.getEndpoint().getCamelContext().isStopping() && !kafkaConsumer.isRunAllowed();
     }
 
     private boolean isReconnect() {

@@ -19,36 +19,30 @@ package org.apache.camel.component.kafka.consumer.support;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kafka.KafkaConsumer;
 import org.apache.camel.component.kafka.consumer.CommitManager;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessor.serializeOffsetKey;
-
 public class KafkaRecordProcessorFacade {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaRecordProcessorFacade.class);
 
     private final KafkaConsumer camelKafkaConsumer;
-    private final Map<String, Long> lastProcessedOffset;
     private final String threadId;
     private final KafkaRecordProcessor kafkaRecordProcessor;
     private final CommitManager commitManager;
     private final KafkaConsumerListener consumerListener;
 
-    public KafkaRecordProcessorFacade(KafkaConsumer camelKafkaConsumer, Map<String, Long> lastProcessedOffset, String threadId,
+    public KafkaRecordProcessorFacade(KafkaConsumer camelKafkaConsumer, String threadId,
                                       CommitManager commitManager, KafkaConsumerListener consumerListener) {
         this.camelKafkaConsumer = camelKafkaConsumer;
-        this.lastProcessedOffset = lastProcessedOffset;
         this.threadId = threadId;
         this.commitManager = commitManager;
 
@@ -60,7 +54,7 @@ public class KafkaRecordProcessorFacade {
         return camelKafkaConsumer.isStopping();
     }
 
-    public ProcessingResult processPolledRecords(ConsumerRecords<Object, Object> allRecords, Consumer<?, ?> consumer) {
+    public ProcessingResult processPolledRecords(ConsumerRecords<Object, Object> allRecords) {
         logRecords(allRecords);
 
         Set<TopicPartition> partitions = allRecords.partitions();
@@ -85,7 +79,7 @@ public class KafkaRecordProcessorFacade {
 
                 if (consumerListener != null) {
                     if (!consumerListener.afterProcess(lastResult)) {
-                        commitManager.commitOffset(partition, lastResult.getPartitionLastOffset());
+                        commitManager.commit(partition);
                         return lastResult;
                     }
                 }
@@ -94,7 +88,7 @@ public class KafkaRecordProcessorFacade {
             if (!lastResult.isBreakOnErrorHit()) {
                 LOG.debug("Committing offset on successful execution");
                 // all records processed from partition so commit them
-                commitManager.commitOffset(partition, lastResult.getPartitionLastOffset());
+                commitManager.commit(partition);
             }
         }
 
@@ -131,7 +125,7 @@ public class KafkaRecordProcessorFacade {
                         recordHasNext, record, lastResult, camelKafkaConsumer.getExceptionHandler());
 
         if (!currentResult.isBreakOnErrorHit()) {
-            lastProcessedOffset.put(serializeOffsetKey(partition), currentResult.getPartitionLastOffset());
+            commitManager.recordOffset(partition, currentResult.getPartitionLastOffset());
         }
 
         // success so release the exchange

@@ -37,16 +37,14 @@ public class NoopCommitManager extends AbstractCommitManager {
     }
 
     @Override
-    public void commitOffsetOnStop(TopicPartition partition, long partitionLastOffset) {
+    public void commit(TopicPartition partition) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Auto commit on stop on {} from {} is enabled via Kafka consumer (NO-OP)", threadId, partition.topic());
+            LOG.debug("Auto commit to offset {} from topic {} is disabled (NO-OP)", threadId, partition.topic());
         }
     }
 
     @Override
-    public void commitOffset(TopicPartition partition, long partitionLastOffset) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Auto commit to offset {} from topic {} is disabled (NO-OP)", threadId, partition.topic());
-        }
+    public void recordOffset(TopicPartition partition, long partitionLastOffset) {
+        // NO-OP
     }
 }

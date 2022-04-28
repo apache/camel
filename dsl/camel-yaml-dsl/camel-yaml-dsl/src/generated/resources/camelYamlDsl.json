@@ -2229,7 +2229,7 @@
           "type" : "object",
           "properties" : {
             "errorHandler" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ErrorHandlerDefinition.class"
+              "$ref" : "#/items/definitions/org.apache.camel.model.ErrorHandlerDefinition"
             },
             "id" : {
               "type" : "string"

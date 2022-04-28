@@ -28,7 +28,8 @@ public class CamelJBangMain implements Callable<Integer> {
 
     public static void run(String... args) {
         commandLine = new CommandLine(new CamelJBangMain())
-                .addSubcommand("run", new Run())
+                .addSubcommand("version", new CommandLine(new Version()))
+                .addSubcommand("run", new CommandLine(new Run()))
                 .addSubcommand("init", new CommandLine(new Init()))
                 .addSubcommand("bind", new CommandLine(new Bind()))
                 .addSubcommand("package", new CommandLine(new Package())

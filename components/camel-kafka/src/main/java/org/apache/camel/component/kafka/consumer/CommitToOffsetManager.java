@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public class CommitToOffsetManager extends AbstractCommitManager {
     private static final Logger LOG = LoggerFactory.getLogger(CommitToOffsetManager.class);
+    private final OffsetCache offsetCache = new OffsetCache();
     private final StateRepository<String, String> offsetRepository;
 
     public CommitToOffsetManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
@@ -35,21 +36,17 @@ public class CommitToOffsetManager extends AbstractCommitManager {
     }
 
     @Override
-    public void commitOffsetOnStop(TopicPartition partition, long partitionLastOffset) {
-        saveStateToOffsetRepository(partition, partitionLastOffset, offsetRepository);
-    }
-
-    @Override
-    public void commitOffset(TopicPartition partition, long partitionLastOffset) {
-        if (partitionLastOffset == START_OFFSET) {
+    public void commit(TopicPartition partition) {
+        Long offset = offsetCache.getOffset(partition);
+        if (offset == null) {
             return;
         }
 
-        saveStateToOffsetRepository(partition, partitionLastOffset, offsetRepository);
+        saveStateToOffsetRepository(partition, offset, offsetRepository);
     }
 
     @Override
-    public void commitOffsetForce(TopicPartition partition, long partitionLastOffset) {
+    public void forceCommit(TopicPartition partition, long partitionLastOffset) {
         saveStateToOffsetRepository(partition, partitionLastOffset, offsetRepository);
     }
 
@@ -76,5 +73,14 @@ public class CommitToOffsetManager extends AbstractCommitManager {
 
     private static String serializeOffsetValue(long offset) {
         return String.valueOf(offset);
+    }
+
+    @Override
+    public void recordOffset(TopicPartition partition, long partitionLastOffset) {
+        if (partitionLastOffset == START_OFFSET) {
+            return;
+        }
+
+        offsetCache.recordOffset(partition, partitionLastOffset);
     }
 }
