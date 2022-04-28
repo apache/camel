@@ -87,6 +87,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("schemaBlacklist");
         props.add("schemaExcludeList");
         props.add("schemaIncludeList");
+        props.add("schemaNameAdjustmentMode");
         props.add("schemaRefreshMode");
         props.add("schemaWhitelist");
         props.add("signalDataCollection");
@@ -114,7 +115,6 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("timePrecisionMode");
         props.add("tombstonesOnDelete");
         props.add("transactionTopic");
-        props.add("truncateHandlingMode");
         props.add("unavailableValuePlaceholder");
         props.add("xminFetchIntervalMs");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
