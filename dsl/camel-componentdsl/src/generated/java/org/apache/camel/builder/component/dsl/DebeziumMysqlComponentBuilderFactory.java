@@ -744,7 +744,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: class com.mysql.cj.jdbc.Driver
+         * Default: com.mysql.cj.jdbc.Driver
          * Group: mysql
          * 
          * @param databaseJdbcDriver the value to set

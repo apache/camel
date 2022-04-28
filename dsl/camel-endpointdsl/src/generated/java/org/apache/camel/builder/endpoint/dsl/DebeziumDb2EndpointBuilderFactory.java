@@ -428,7 +428,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: class io.debezium.relational.history.KafkaDatabaseHistory
+         * Default: io.debezium.relational.history.KafkaDatabaseHistory
          * Group: db2
          * 
          * @param databaseHistory the value to set
