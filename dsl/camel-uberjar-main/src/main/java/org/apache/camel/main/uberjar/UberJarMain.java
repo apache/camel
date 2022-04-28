@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main.fatjar;
+package org.apache.camel.main.uberjar;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,14 +24,14 @@ import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.OrderedProperties;
 
 /**
- * Main class to run Camel as a fat-jar packaged by camel-jbang
+ * Main class to run Camel as a uber-jar packaged by camel-jbang
  */
-public class FatJarMain extends KameletMain {
+public class UberJarMain extends KameletMain {
 
     public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
 
     public static void main(String[] args) throws Exception {
-        FatJarMain main = new FatJarMain();
+        UberJarMain main = new UberJarMain();
         int code = main.run(args);
         if (code != 0) {
             System.exit(code);
@@ -47,7 +47,7 @@ public class FatJarMain extends KameletMain {
 
     @Override
     protected void doBuild() throws Exception {
-        setAppName("Apache Camel (FatJar)");
+        setAppName("Apache Camel (UberJar)");
         setDownload(false); // no need for download as all is included in fat-jar
 
         // load configuration file
@@ -56,7 +56,7 @@ public class FatJarMain extends KameletMain {
         if (f.exists()) {
             prop.load(new FileInputStream(f));
         } else {
-            InputStream is = FatJarMain.class.getClassLoader().getResourceAsStream("/" + RUN_SETTINGS_FILE);
+            InputStream is = UberJarMain.class.getClassLoader().getResourceAsStream("/" + RUN_SETTINGS_FILE);
             if (is != null) {
                 prop.load(is);
             }

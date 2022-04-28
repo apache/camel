@@ -102,7 +102,7 @@ class UberJar implements Callable<Integer> {
         // nested jar classloader
         lines.add("dependency=com.needhamsoftware.unojar:core:1.0.2");
 
-        // include camel-kamelet-main/camel-fatjar-main as they are needed
+        // include camel-kamelet-main/camel-uberjar-main as they are needed
         Optional<MavenGav> first = lines.stream()
                 .filter(l -> l.startsWith("dependency="))
                 .map(l -> MavenGav.parseGav(null, StringHelper.after(l, "dependency=")))
@@ -111,7 +111,7 @@ class UberJar implements Callable<Integer> {
         if (first.isPresent()) {
             version = first.get().getVersion();
             lines.add(0, "dependency=mvn:org.apache.camel:camel-kamelet-main:" + version);
-            lines.add(0, "dependency=mvn:org.apache.camel:camel-fatjar-main:" + version);
+            lines.add(0, "dependency=mvn:org.apache.camel:camel-uberjar-main:" + version);
         }
         if (version == null) {
             throw new IllegalStateException("Cannot determine Camel version");
@@ -146,7 +146,7 @@ class UberJar implements Callable<Integer> {
         boostrapClassLoader();
 
         // and build target jar
-        archiveFatJar();
+        archiveUberJar();
 
         return 0;
     }
@@ -240,7 +240,7 @@ class UberJar implements Callable<Integer> {
         IOHelper.writeText(context, new FileOutputStream(f + "/MANIFEST.MF", false));
     }
 
-    private void archiveFatJar() throws Exception {
+    private void archiveUberJar() throws Exception {
         // package all inside target/camel-app as a jar-file in target folder
         JarOutputStream jos = new JarOutputStream(new FileOutputStream(jar, false));
 
@@ -260,7 +260,7 @@ class UberJar implements Callable<Integer> {
         // include JARs
         for (File fl : new File("target/camel-app/lib/").listFiles()) {
             if (fl.isFile()) {
-                if (fl.getName().startsWith("camel-fatjar-main")) {
+                if (fl.getName().startsWith("camel-uberjar-main")) {
                     // must be in main folder
                     je = new JarEntry("main/" + fl.getName());
                 } else {

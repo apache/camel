@@ -1,15 +1,15 @@
 {
   "other": {
     "kind": "other",
-    "name": "fatjar-main",
-    "title": "Fatjar Main",
-    "description": "Main to run Camel as Fat-Jar standalone",
+    "name": "uberjar-main",
+    "title": "Uberjar Main",
+    "description": "Main to run Camel as Uber-Jar standalone",
     "deprecated": false,
     "firstVersion": "3.17.0",
     "label": "jbang",
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
-    "artifactId": "camel-fatjar-main",
+    "artifactId": "camel-uberjar-main",
     "version": "3.17.0-SNAPSHOT"
   }
 }
