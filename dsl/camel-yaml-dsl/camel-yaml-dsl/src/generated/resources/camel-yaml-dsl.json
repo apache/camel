@@ -2325,7 +2325,7 @@
           "type" : "object",
           "properties" : {
             "error-handler" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ErrorHandlerDefinition.class"
+              "$ref" : "#/items/definitions/org.apache.camel.model.ErrorHandlerDefinition"
             },
             "id" : {
               "type" : "string"
