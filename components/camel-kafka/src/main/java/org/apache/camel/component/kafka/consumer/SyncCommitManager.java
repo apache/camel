@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka.consumer;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Map;
 
 import org.apache.camel.component.kafka.KafkaConsumer;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 public class SyncCommitManager extends AbstractCommitManager {
     private static final Logger LOG = LoggerFactory.getLogger(SyncCommitManager.class);
 
+    private final OffsetCache offsetCache = new OffsetCache();
     private final Consumer<?, ?> consumer;
 
     public SyncCommitManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
@@ -45,27 +47,30 @@ public class SyncCommitManager extends AbstractCommitManager {
     }
 
     @Override
-    public void commitOffsetOnStop(TopicPartition partition, long partitionLastOffset) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Auto commitSync on stop {} from topic {}", threadId, partition.topic());
-        }
-
-        commitSync(partition, partitionLastOffset);
-    }
-
-    @Override
-    public void commitOffset(TopicPartition partition, long partitionLastOffset) {
+    public void commit(TopicPartition partition) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Auto commitSync from thread {} from topic {}", threadId, partition.topic());
         }
 
-        commitSync(partition, partitionLastOffset);
+        commitSync(partition);
     }
 
-    private void commitSync(TopicPartition partition, long partitionLastOffset) {
+    private void commitSync(TopicPartition partition) {
+        Long offset = offsetCache.getOffset(partition);
+        if (offset == null) {
+            return;
+        }
+
+        final Map<TopicPartition, OffsetAndMetadata> offsets
+                = Collections.singletonMap(partition, new OffsetAndMetadata(offset + 1));
         long timeout = configuration.getCommitTimeoutMs();
-        consumer.commitSync(
-                Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)),
-                Duration.ofMillis(timeout));
+        consumer.commitSync(offsets, Duration.ofMillis(timeout));
+
+        offsetCache.removeCommittedEntries(offsets, null);
+    }
+
+    @Override
+    public void recordOffset(TopicPartition partition, long partitionLastOffset) {
+        offsetCache.recordOffset(partition, partitionLastOffset);
     }
 }
