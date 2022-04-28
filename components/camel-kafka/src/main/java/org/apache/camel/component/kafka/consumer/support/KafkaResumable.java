@@ -22,7 +22,7 @@ import org.apache.camel.Resumable;
 import org.apache.camel.resume.Offsets;
 
 public class KafkaResumable implements Resumable<String, String> {
-    private String partition;
+    private final String partition;
     private String offset;
 
     public KafkaResumable(String partition, String offset) {

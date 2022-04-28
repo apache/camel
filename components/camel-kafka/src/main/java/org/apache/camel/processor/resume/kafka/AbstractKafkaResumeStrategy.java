@@ -66,8 +66,8 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
     private final List<Future<RecordMetadata>> sentItems = new ArrayList<>();
     private final ResumeCache<K, V> resumeCache;
     private boolean subscribed;
-    private Properties producerConfig;
-    private Properties consumerConfig;
+    private final Properties producerConfig;
+    private final Properties consumerConfig;
 
     public AbstractKafkaResumeStrategy(String bootstrapServers, String topic, ResumeCache<K, V> resumeCache) {
         this.topic = topic;

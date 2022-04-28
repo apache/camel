@@ -520,8 +520,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
 class KafkaTransactionSynchronization extends SynchronizationAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaTransactionSynchronization.class);
-    private String transactionId;
-    private Producer kafkaProducer;
+    private final String transactionId;
+    private final Producer kafkaProducer;
 
     public KafkaTransactionSynchronization(String transactionId, Producer kafkaProducer) {
         this.transactionId = transactionId;
