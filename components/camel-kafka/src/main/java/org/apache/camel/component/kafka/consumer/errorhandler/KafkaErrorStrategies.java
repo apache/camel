@@ -32,6 +32,8 @@ public final class KafkaErrorStrategies {
 
     public static PollExceptionStrategy strategies(
             KafkaFetchRecords recordFetcher, KafkaEndpoint endpoint, Consumer<?, ?> consumer) {
+        assert consumer != null;
+
         PollExceptionStrategy strategy = endpoint.getComponent().getPollExceptionStrategy();
         if (strategy != null) {
             return strategy;

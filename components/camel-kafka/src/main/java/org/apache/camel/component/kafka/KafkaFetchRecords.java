@@ -73,7 +73,7 @@ public class KafkaFetchRecords implements Runnable {
     private final Pattern topicPattern;
     private final String threadId;
     private final Properties kafkaProps;
-    private final PollExceptionStrategy pollExceptionStrategy;
+    private PollExceptionStrategy pollExceptionStrategy;
     private final BridgeExceptionHandlerToErrorHandler bridge;
     private final ReentrantLock lock = new ReentrantLock();
     private CommitManager commitManager;
@@ -98,8 +98,6 @@ public class KafkaFetchRecords implements Runnable {
         this.consumerListener = consumerListener;
         this.threadId = topicName + "-" + "Thread " + id;
         this.kafkaProps = kafkaProps;
-
-        this.pollExceptionStrategy = KafkaErrorStrategies.strategies(this, kafkaConsumer.getEndpoint(), consumer);
     }
 
     @Override
@@ -257,6 +255,8 @@ public class KafkaFetchRecords implements Runnable {
                     }
                 }
             }
+
+            this.pollExceptionStrategy = KafkaErrorStrategies.strategies(this, kafkaConsumer.getEndpoint(), consumer);
         } finally {
             Thread.currentThread().setContextClassLoader(threadClassLoader);
         }
