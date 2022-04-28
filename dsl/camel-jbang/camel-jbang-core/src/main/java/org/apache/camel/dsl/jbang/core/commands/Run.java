@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -64,7 +63,8 @@ class Run implements Callable<Integer> {
     private File lockFile;
     private ScheduledExecutorService executor;
 
-    @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.", arity = "0..9")
+    @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
+                arity = "0..9")
     private String[] files;
 
     //CHECKSTYLE:OFF
@@ -216,7 +216,6 @@ class Run implements Callable<Integer> {
         }
         return line;
     }
-
 
     private int run() throws Exception {
         File work = new File(WORK_DIR);
