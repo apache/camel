@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 public class ReconnectErrorStrategy implements PollExceptionStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(ReconnectErrorStrategy.class);
-    private KafkaFetchRecords recordFetcher;
+    private final KafkaFetchRecords recordFetcher;
 
     private boolean retry = true;
 

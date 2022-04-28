@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 public class StopErrorStrategy implements PollExceptionStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(StopErrorStrategy.class);
-    private KafkaFetchRecords recordFetcher;
+    private final KafkaFetchRecords recordFetcher;
     private boolean retry = true;
 
     public StopErrorStrategy(KafkaFetchRecords recordFetcher) {
