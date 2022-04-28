@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-name: build
+name: reformat and build
 
 on:
   push:
@@ -47,8 +47,8 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
-      - name: mvn sourcecheck
-        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Psourcecheck -Dcheckstyle.failOnViolation=true -DskipTests checkstyle:checkstyle verify
+      - name: mvn formatter and build
+        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pformat,fastinstall -DskipTests verify
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
@@ -61,7 +61,7 @@ jobs:
           branch: regen_bot
           title: "Generated sources regen"
           body: |
-            Regen bot :robot: found some uncommited changes after running build on :camel: main.
+            Regen bot :robot: found some uncommitted changes after running build on :camel: main.
             Please do not delete `regen_bot` branch after merge/rebase.
           labels: |
             regen
