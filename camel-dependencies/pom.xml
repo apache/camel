@@ -327,7 +327,7 @@
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jetty-version>${jetty9-version}</jetty-version>
-    <jetty9-version>9.4.43.v20210629</jetty9-version>
+    <jetty9-version>9.4.46.v20220331</jetty9-version>
     <jgit-version>5.13.0.202109080827-r</jgit-version>
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
     <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
@@ -406,7 +406,7 @@
     <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
     <metrics-version>4.2.3</metrics-version>
-    <micrometer-version>1.7.6</micrometer-version>
+    <micrometer-version>1.7.11</micrometer-version>
     <microprofile-config-version>2.0</microprofile-config-version>
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
     <microprofile-health-version>3.1</microprofile-health-version>
@@ -431,7 +431,7 @@
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
     <nessus-weka-version>1.0.1</nessus-weka-version>
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
-    <netty-version>4.1.70.Final</netty-version>
+    <netty-version>4.1.76.Final</netty-version>
     <networknt-json-schema-validator-version>1.0.64</networknt-json-schema-validator-version>
     <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
     <nitrite-version>3.4.3</nitrite-version>
@@ -516,10 +516,10 @@
     <spock-version>2.0-M4-groovy-3.0</spock-version>
     <spring-batch-version>4.3.5</spring-batch-version>
     <spring-data-redis-version>2.5.6</spring-data-redis-version>
-    <spring-integration-version>5.5.10</spring-integration-version>
+    <spring-integration-version>5.5.11</spring-integration-version>
     <spring-ldap-version>2.3.6.RELEASE</spring-ldap-version>
     <spring-rabbitmq-version>2.4.2</spring-rabbitmq-version>
-    <spring-security-version>5.6.2</spring-security-version>
+    <spring-security-version>5.6.3</spring-security-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
     <spring-ws-version>3.1.3</spring-ws-version>
@@ -542,7 +542,7 @@
     <trimStackTrace>false</trimStackTrace>
     <twilio-version>7.55.3</twilio-version>
     <twitter4j-version>4.0.7</twitter4j-version>
-    <undertow-version>2.2.10.Final</undertow-version>
+    <undertow-version>2.2.17.Final</undertow-version>
     <univocity-parsers-version>2.9.1</univocity-parsers-version>
     <validation-api-version>2.0.1.Final</validation-api-version>
     <vavr-version>0.10.2</vavr-version>
