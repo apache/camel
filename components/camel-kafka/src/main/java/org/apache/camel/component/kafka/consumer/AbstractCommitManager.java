@@ -81,7 +81,7 @@ public abstract class AbstractCommitManager implements CommitManager {
     }
 
     @Override
-    public void commitOffsetForce(TopicPartition partition, long partitionLastOffset) {
+    public void forceCommit(TopicPartition partition, long partitionLastOffset) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Forcing commitSync {} [topic: {} partition: {} offset: {}]", threadId, partition.topic(),
                     partition.partition(), partitionLastOffset);

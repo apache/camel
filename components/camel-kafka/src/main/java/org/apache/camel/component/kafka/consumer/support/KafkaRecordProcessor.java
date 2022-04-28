@@ -132,7 +132,7 @@ public class KafkaRecordProcessor {
             }
 
             // force commit, so we resume on next poll where we failed
-            commitManager.commitOffsetForce(partition, partitionLastOffset);
+            commitManager.forceCommit(partition, partitionLastOffset);
 
             // continue to next partition
             return true;

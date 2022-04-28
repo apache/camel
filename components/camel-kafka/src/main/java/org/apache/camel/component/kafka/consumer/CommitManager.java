@@ -25,11 +25,28 @@ public interface CommitManager {
 
     KafkaManualCommit getManualCommit(Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> record);
 
-    void commitOffset(TopicPartition partition, long partitionLastOffset);
+    /**
+     * Commits the offsets of the given partition
+     * 
+     * @param partition the partition to commit the offsets
+     */
+    void commit(TopicPartition partition);
 
-    void commitOffsetForce(TopicPartition partition, long partitionLastOffset);
+    /**
+     * Forcefully commits the offset of the given partition
+     * 
+     * @param partition           the partition to commit the offsets
+     * @param partitionLastOffset the last offset to commit
+     */
+    void forceCommit(TopicPartition partition, long partitionLastOffset);
 
-    void commitOffsetOnStop(TopicPartition partition, long partitionLastOffset);
+    /**
+     * Record the last processed offset for future commit
+     * 
+     * @param partition           the partition to commit the offsets
+     * @param partitionLastOffset the last offset to commit
+     */
+    void recordOffset(TopicPartition partition, long partitionLastOffset);
 
     @Deprecated
     default void processAsyncCommits() {
