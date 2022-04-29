@@ -28,7 +28,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
-import org.apache.camel.util.TimeUtils;
 
 /**
  * A Main class for booting up Camel with Kamelet in standalone mode.
