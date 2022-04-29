@@ -98,8 +98,8 @@ class Run implements Callable<Integer> {
             description = "For how long time in seconds Camel can be idle before stopping")
     private int maxIdleSeconds;
 
-    @Option(names = { "--reload" }, description = "Enables live reload when source file is changed (saved)")
-    private boolean reload;
+    @Option(names = { "--dev" }, description = "Enables dev mode (live reload when source files are updated and saved)")
+    private boolean dev;
 
     @Option(names = { "--trace" }, description = "Enables trace logging of the routed messages")
     private boolean trace;
@@ -267,7 +267,7 @@ class Run implements Callable<Integer> {
         writeSetting(main, applicationProperties, "camel.main.name", name);
         writeSetting(main, applicationProperties, "camel.main.shutdownTimeout", "5");
 
-        writeSetting(main, applicationProperties, "camel.main.routesReloadEnabled", reload ? "true" : "false");
+        writeSetting(main, applicationProperties, "camel.main.routesReloadEnabled", dev ? "true" : "false");
         writeSetting(main, applicationProperties, "camel.main.sourceLocationEnabled", "true");
         writeSetting(main, applicationProperties, "camel.main.tracing", trace ? "true" : "false");
         writeSetting(main, applicationProperties, "camel.main.modeline", modeline ? "true" : "false");
@@ -345,7 +345,7 @@ class Run implements Callable<Integer> {
                     } else {
                         propertiesFiles = propertiesFiles + "," + file;
                     }
-                    if (reload && file.startsWith("file:")) {
+                    if (dev && file.startsWith("file:")) {
                         // we can only reload if file based
                         sjReload.add(file.substring(5));
                     }
@@ -402,7 +402,7 @@ class Run implements Callable<Integer> {
                 }
 
                 js.add(file);
-                if (reload && file.startsWith("file:")) {
+                if (dev && file.startsWith("file:")) {
                     // we can only reload if file based
                     sjReload.add(file.substring(5));
                 }
@@ -436,7 +436,7 @@ class Run implements Callable<Integer> {
         }
 
         // we can only reload if file based
-        if (reload && sjReload.length() > 0) {
+        if (dev && sjReload.length() > 0) {
             main.addInitialProperty("camel.main.routesReloadEnabled", "true");
             main.addInitialProperty("camel.main.routesReloadDirectory", ".");
             // skip file: as prefix

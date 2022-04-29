@@ -102,14 +102,14 @@ camel run foo*
 
 TIP: The run goal can also detect files that are `properties`.
 
-=== Live reload
+=== Dev mode with live reload
 
-You can enable live reload of the route(s) when the source file is updated (saved),
-using the `--reload` options as shown:
+You can enable dev mode that comes with live reload of the route(s) when the source file is updated (saved),
+using the `--dev` options as shown:
 
 [source,bash]
 ----
-camel run jms-amqp-10-sink-binding.yaml --reload
+camel run jms-amqp-10-sink-binding.yaml --dev
 ----
 
 Then while the Camel application is running, you can update the YAML route and update when saving.
@@ -171,11 +171,11 @@ The example can then be run locally with:
 camel run *
 ----
 
-You can also run in reload mode, to hot-deploy on source code changes.
+You can also run in dev mode, to hot-deploy on source code changes.
 
 [source,bash]
 ----
-camel run * --reload
+camel run * --dev
 ----
 
 You can also download a single file, such as one of the Camel K examples:
