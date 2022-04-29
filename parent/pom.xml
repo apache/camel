@@ -296,8 +296,8 @@
         <jcache-bundle-version>1.1.1_1</jcache-bundle-version>
         <jclouds-version>2.5.0</jclouds-version>
         <!-- jclouds must use this guava version -->
-        <jclouds-google-guava-version>18.0</jclouds-google-guava-version>
-        <jclouds-google-guava-version-range>[18.0,19.0)</jclouds-google-guava-version-range>
+        <jclouds-google-guava-version>27.1-jre</jclouds-google-guava-version>
+        <jclouds-google-guava-version-range>[27.0,28.0)</jclouds-google-guava-version-range>
         <jcommander-version>1.72</jcommander-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>3.7.1</jedis-client-version>
