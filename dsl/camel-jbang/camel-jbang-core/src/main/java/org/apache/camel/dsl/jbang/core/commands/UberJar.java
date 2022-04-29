@@ -96,6 +96,8 @@ class UberJar implements Callable<Integer> {
         // log4j configuration
         InputStream is = UberJar.class.getResourceAsStream("/log4j2.properties");
         safeCopy(is, new File(CLASSES_DIR, "log4j2.properties"));
+        is = UberJar.class.getResourceAsStream("/log4j2.component.properties");
+        safeCopy(is, new File(CLASSES_DIR, "log4j2.component.properties"));
 
         List<String> lines = Files.readAllLines(settings.toPath());
         String version = null;
