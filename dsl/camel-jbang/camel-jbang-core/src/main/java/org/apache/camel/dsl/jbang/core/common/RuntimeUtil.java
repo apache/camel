@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.common;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.util.Constants;
 import org.slf4j.LoggerFactory;
 
 public final class RuntimeUtil {
