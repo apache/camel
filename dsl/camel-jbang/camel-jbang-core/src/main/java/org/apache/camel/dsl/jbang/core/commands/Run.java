@@ -513,6 +513,10 @@ class Run implements Callable<Integer> {
         if ("camel-runner.jar".equals(name)) {
             return true;
         }
+        if ("docker-compose.yml".equals(name) || "docker-compose.yaml".equals(name) || "compose.yml".equals(name)
+                || "compose.yaml".equals(name)) {
+            return true;
+        }
 
         // skip dirs
         File f = new File(name);
