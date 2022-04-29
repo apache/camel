@@ -14,33 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka.consumer.support;
 
-import org.apache.camel.ResumeStrategy;
-import org.apache.kafka.clients.consumer.Consumer;
+package org.apache.camel.processor.resume;
+
+import org.apache.camel.resume.ResumeAdapter;
+import org.apache.camel.resume.ResumeStrategy;
 
 /**
- * Defines a strategy for handling resume operations. Implementations can define different ways to handle how to resume
- * processing records.
- *
- * The resume runs in the scope of the Kafka Consumer thread and may run concurrently with other consumer instances when
- * the component is set up to use more than one of them. As such, implementations are responsible for ensuring the
- * thread-safety of the operations within the resume method.
+ * A resume strategy that keeps all the resume strategy information in memory. This is hardly useful for production
+ * level implementations, but can be useful for testing the resume strategies
  */
-public interface KafkaConsumerResumeStrategy extends ResumeStrategy {
-    void setConsumer(Consumer<?, ?> consumer);
+public class TransientResumeStrategy implements ResumeStrategy {
+    private final ResumeAdapter resumeAdapter;
 
-    default void resume(KafkaResumable resumable) {
-
+    public TransientResumeStrategy(ResumeAdapter resumeAdapter) {
+        this.resumeAdapter = resumeAdapter;
     }
 
     @Override
-    default void start() {
-
+    public ResumeAdapter getAdapter() {
+        return resumeAdapter;
     }
 
     @Override
-    default void stop() {
+    public void start() {
+        // this is NO-OP
+    }
 
+    @Override
+    public void stop() {
+        // this is NO-OP
     }
 }

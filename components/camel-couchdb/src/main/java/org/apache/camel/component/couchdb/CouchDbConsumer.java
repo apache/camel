@@ -21,17 +21,17 @@ import java.util.concurrent.ExecutorService;
 import com.google.gson.JsonObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.ResumeAware;
-import org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategy;
+import org.apache.camel.resume.ResumeAware;
+import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.DefaultConsumer;
 
-public class CouchDbConsumer extends DefaultConsumer implements ResumeAware<CouchDbResumeStrategy> {
+public class CouchDbConsumer extends DefaultConsumer implements ResumeAware<ResumeStrategy> {
 
     private final CouchDbClientWrapper couchClient;
     private final CouchDbEndpoint endpoint;
     private ExecutorService executor;
     private CouchDbChangesetTracker task;
-    private CouchDbResumeStrategy resumeStrategy;
+    private ResumeStrategy resumeStrategy;
 
     public CouchDbConsumer(CouchDbEndpoint endpoint, CouchDbClientWrapper couchClient, Processor processor) {
         super(endpoint, processor);
@@ -40,12 +40,12 @@ public class CouchDbConsumer extends DefaultConsumer implements ResumeAware<Couc
     }
 
     @Override
-    public void setResumeStrategy(CouchDbResumeStrategy resumeStrategy) {
+    public void setResumeStrategy(ResumeStrategy resumeStrategy) {
         this.resumeStrategy = resumeStrategy;
     }
 
     @Override
-    public CouchDbResumeStrategy getResumeStrategy() {
+    public ResumeStrategy getResumeStrategy() {
         return resumeStrategy;
     }
 

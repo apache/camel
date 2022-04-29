@@ -19,20 +19,20 @@ package org.apache.camel.processor.resume.kafka;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
-import org.apache.camel.Resumable;
-import org.apache.camel.ResumeCache;
-import org.apache.camel.Service;
-import org.apache.camel.UpdatableConsumerResumeStrategy;
+import org.apache.camel.resume.Resumable;
+import org.apache.camel.resume.ResumeAdapter;
+import org.apache.camel.resume.cache.ResumeCache;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -44,45 +44,64 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractKafkaResumeStrategy<K, V>
-        implements UpdatableConsumerResumeStrategy<K, V, Resumable<K, V>>, Service {
-    public static final int UNLIMITED = -1;
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractKafkaResumeStrategy.class);
+/**
+ * A resume strategy that publishes offsets to a Kafka topic. This resume strategy is suitable for single node
+ * integrations. For multi-node integrations (i.e: using clusters with the master component check
+ * {@link MultiNodeKafkaResumeStrategy}.
+ * 
+ * @param <K> the type of key
+ * @param <V> the type of the value
+ */
+public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<K, V> {
+    private static final Logger LOG = LoggerFactory.getLogger(SingleNodeKafkaResumeStrategy.class);
 
     private final String topic;
 
     private Consumer<K, V> consumer;
     private Producer<K, V> producer;
-    private long errorCount;
     private Duration pollDuration = Duration.ofSeconds(1);
 
-    private final List<Future<RecordMetadata>> sentItems = new ArrayList<>();
+    private final Queue<RecordError> producerErrors = new ConcurrentLinkedQueue<>();
     private final ResumeCache<K, V> resumeCache;
     private boolean subscribed;
     private final Properties producerConfig;
     private final Properties consumerConfig;
+    private ResumeAdapter resumeAdapter;
 
-    public AbstractKafkaResumeStrategy(String bootstrapServers, String topic, ResumeCache<K, V> resumeCache) {
-        this.topic = topic;
-
-        this.producerConfig = createProducer(bootstrapServers);
-        this.consumerConfig = createConsumer(bootstrapServers);
-        this.resumeCache = resumeCache;
-
-        init();
+    /**
+     * Builds an instance of this class
+     * 
+     * @param bootstrapServers the address of the Kafka broker
+     * @param topic            the topic where to publish the offsets
+     * @param resumeCache      a cache instance where to store the offsets locally for faster access
+     * @param resumeAdapter    the component-specific resume adapter
+     */
+    public SingleNodeKafkaResumeStrategy(String bootstrapServers, String topic, ResumeCache<K, V> resumeCache,
+                                         ResumeAdapter resumeAdapter) {
+        this(topic, resumeCache, resumeAdapter, createProducer(bootstrapServers), createConsumer(bootstrapServers));
     }
 
-    public AbstractKafkaResumeStrategy(String topic, ResumeCache<K, V> resumeCache, Properties producerConfig,
-                                       Properties consumerConfig) {
-        this.topic = topic;
+    /**
+     * Builds an instance of this class
+     *
+     * @param topic          the topic where to publish the offsets
+     * @param resumeCache    a cache instance where to store the offsets locally for faster access
+     * @param resumeAdapter  the component-specific resume adapter
+     * @param producerConfig the set of properties to be used by the Kafka producer within this class
+     * @param consumerConfig the set of properties to be used by the Kafka consumer within this class
+     */
+    public SingleNodeKafkaResumeStrategy(String topic, ResumeCache<K, V> resumeCache, ResumeAdapter resumeAdapter,
+                                         Properties producerConfig,
+                                         Properties consumerConfig) {
+        this.topic = ObjectHelper.notNull(topic, "The topic must not be null");
         this.resumeCache = resumeCache;
+        this.resumeAdapter = resumeAdapter;
         this.producerConfig = producerConfig;
         this.consumerConfig = consumerConfig;
 
@@ -132,24 +151,24 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
     }
 
     /**
-     * Sends data to a topic
-     * 
+     * Sends data to a topic. The records will always be sent asynchronously. If there's an error, a producer error
+     * counter will be increased.
+     *
+     * @see                         SingleNodeKafkaResumeStrategy#getProducerErrors()
      * @param  message              the message to send
      * @throws ExecutionException
      * @throws InterruptedException
+     *
      */
-    public void produce(K key, V message) throws ExecutionException, InterruptedException {
+    protected void produce(K key, V message) throws ExecutionException, InterruptedException {
         ProducerRecord<K, V> record = new ProducerRecord<>(topic, key, message);
 
-        errorCount = 0;
-        Future<RecordMetadata> future = producer.send(record, (recordMetadata, e) -> {
+        producer.send(record, (recordMetadata, e) -> {
             if (e != null) {
                 LOG.error("Failed to send message {}", e.getMessage(), e);
-                errorCount++;
+                producerErrors.add(new RecordError(recordMetadata, e));
             }
         });
-
-        sentItems.add(future);
     }
 
     @Override
@@ -164,6 +183,11 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
         resumeCache.add(key, offsetValue);
     }
 
+    /**
+     * Loads the existing data into the cache
+     * 
+     * @throws Exception
+     */
     protected void loadCache() throws Exception {
         subscribe();
 
@@ -192,11 +216,12 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
         unsubscribe();
     }
 
-    // TODO: bad method ...
     /**
+     * Subscribe to the topic if not subscribed yet
+     * 
      * @param topic the topic to consume the messages from
      */
-    public void checkAndSubscribe(String topic) {
+    protected void checkAndSubscribe(String topic) {
         if (!subscribed) {
             consumer.subscribe(Collections.singletonList(topic));
 
@@ -205,40 +230,54 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
     }
 
     /**
-     * @param topic the topic to consume the messages from
+     * Subscribe to the topic if not subscribed yet
+     * 
+     * @param topic     the topic to consume the messages from
+     * @param remaining the number of messages to rewind from the last offset position (used to fill the cache)
      */
     public void checkAndSubscribe(String topic, long remaining) {
         if (!subscribed) {
-            consumer.subscribe(Collections.singletonList(topic), new ConsumerRebalanceListener() {
-                @Override
-                public void onPartitionsRevoked(Collection<TopicPartition> collection) {
-
-                }
-
-                @Override
-                public void onPartitionsAssigned(Collection<TopicPartition> assignments) {
-                    consumer.seekToEnd(assignments);
-                    for (TopicPartition assignment : assignments) {
-                        final long endPosition = consumer.position(assignment);
-                        final long startPosition = endPosition - remaining;
-
-                        if (startPosition >= 0) {
-                            consumer.seek(assignment, startPosition);
-                        } else {
-                            LOG.info(
-                                    "Ignoring the seek command because the initial offset is negative (the topic is likely empty)");
-                        }
-                    }
-                }
-            });
+            consumer.subscribe(Collections.singletonList(topic), getConsumerRebalanceListener(remaining));
 
             subscribed = true;
         }
     }
 
-    public abstract void subscribe() throws Exception;
+    /**
+     * Creates a new consumer rebalance listener. This can be useful for setting the exact Kafka offset when necessary
+     * to read a limited amount of messages or customize the resume strategy behavior when a rebalance occurs.
+     * 
+     * @param  remaining
+     * @return
+     */
+    protected ConsumerRebalanceListener getConsumerRebalanceListener(long remaining) {
+        return new ConsumerRebalanceListener() {
+            @Override
+            public void onPartitionsRevoked(Collection<TopicPartition> collection) {
 
-    public void unsubscribe() {
+            }
+
+            @Override
+            public void onPartitionsAssigned(Collection<TopicPartition> assignments) {
+                for (TopicPartition assignment : assignments) {
+                    final long endPosition = consumer.position(assignment);
+                    final long startPosition = endPosition - remaining;
+
+                    if (startPosition >= 0) {
+                        consumer.seek(assignment, startPosition);
+                    } else {
+                        LOG.info(
+                                "Ignoring the seek command because the initial offset is negative (the topic is likely empty)");
+                    }
+                }
+            }
+        };
+    }
+
+    /**
+     * Unsubscribe from the topic
+     */
+    protected void unsubscribe() {
         try {
             consumer.unsubscribe();
         } catch (IllegalStateException e) {
@@ -249,17 +288,23 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
     }
 
     /**
-     * Consumes message from the given topic until the predicate returns false
+     * Consumes message from the topic previously setup
      *
-     * @return
+     * @return An instance of the consumer records
      */
-    public ConsumerRecords<K, V> consume() {
+    protected ConsumerRecords<K, V> consume() {
         int retries = 10;
 
         return consume(retries);
     }
 
-    public ConsumerRecords<K, V> consume(int retries) {
+    /**
+     * Consumes message from the topic previously setup
+     * 
+     * @param  retries how many times to retry consuming data from the topic
+     * @return         An instance of the consumer records
+     */
+    protected ConsumerRecords<K, V> consume(int retries) {
         while (retries > 0) {
             ConsumerRecords<K, V> records = consumer.poll(pollDuration);
             if (!records.isEmpty()) {
@@ -271,22 +316,35 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
         return ConsumerRecords.empty();
     }
 
-    public long getErrorCount() {
-        return errorCount;
+    public void subscribe() throws Exception {
+        if (resumeCache.capacity() >= 1) {
+            checkAndSubscribe(topic, resumeCache.capacity());
+        } else {
+            checkAndSubscribe(topic);
+        }
     }
 
-    public List<Future<RecordMetadata>> getSentItems() {
-        return Collections.unmodifiableList(sentItems);
+    @Override
+    public ResumeAdapter getAdapter() {
+        return resumeAdapter;
+    }
+
+    /**
+     * Gets the set record of sent items
+     *
+     * @return
+     */
+    protected Collection<RecordError> getProducerErrors() {
+        return Collections.unmodifiableCollection(producerErrors);
     }
 
     @Override
     public void build() {
-        Service.super.build();
+        // NO-OP
     }
 
     @Override
     public void init() {
-        Service.super.init();
 
         LOG.debug("Initializing the Kafka resume strategy");
         if (consumer == null) {
@@ -300,12 +358,16 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
 
     @Override
     public void stop() {
+        LOG.info("Closing the Kafka producer");
+        IOHelper.close(producer, "Kafka producer", LOG);
 
+        LOG.info("Closing the Kafka consumer");
+        IOHelper.close(producer, "Kafka consumer", LOG);
     }
 
     @Override
     public void close() throws IOException {
-        Service.super.close();
+        stop();
     }
 
     @Override
@@ -333,5 +395,28 @@ public abstract class AbstractKafkaResumeStrategy<K, V>
 
     protected Producer<K, V> getProducer() {
         return producer;
+    }
+
+    protected Properties getProducerConfig() {
+        return producerConfig;
+    }
+
+    protected Properties getConsumerConfig() {
+        return consumerConfig;
+    }
+
+    protected String getTopic() {
+        return topic;
+    }
+
+    protected ResumeCache<K, V> getResumeCache() {
+        return resumeCache;
+    }
+
+    /**
+     * Clear the producer errors
+     */
+    public void resetProducerErrors() {
+        producerErrors.clear();
     }
 }

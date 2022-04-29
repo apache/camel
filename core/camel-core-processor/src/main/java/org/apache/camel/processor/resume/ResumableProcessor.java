@@ -29,7 +29,7 @@ import org.apache.camel.ExtendedExchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.ResumeStrategy;
+import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.Synchronization;
@@ -65,6 +65,13 @@ public class ResumableProcessor extends AsyncProcessorSupport
         resumeStrategy.start();
 
         super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        LOG.info("Stopping the resumable strategy: {}", resumeStrategy.getClass().getSimpleName());
+        resumeStrategy.stop();
+        super.doStop();
     }
 
     @Override

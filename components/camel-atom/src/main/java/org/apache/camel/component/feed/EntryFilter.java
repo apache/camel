@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.feed;
 
-import org.apache.camel.ResumeStrategy;
+import org.apache.camel.resume.ResumeAdapter;
 
 /**
  * Filter used by the {@link org.apache.camel.component.feed.FeedEntryPollingConsumer} to filter entries from the feed.
  *
  * @param <E> entry type
  */
-public interface EntryFilter<E> extends ResumeStrategy {
+public interface EntryFilter<E> extends ResumeAdapter {
 
     /**
      * Tests to be used as filtering the feed for only entries of interest, such as only new entries, etc.
@@ -36,15 +36,5 @@ public interface EntryFilter<E> extends ResumeStrategy {
     @Override
     default void resume() {
         // NO-OP by default. Implementations can implement more complex behaviors if needed
-    }
-
-    @Override
-    default void start() {
-        // NO-OP
-    }
-
-    @Override
-    default void stop() {
-        // NO-OP
     }
 }

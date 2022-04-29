@@ -15,19 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.file.consumer;
-
-import org.apache.camel.ResumeStrategy;
+package org.apache.camel.resume;
 
 /**
- * Defines resume strategy for consumers of the file component.
+ * Generic offset without a concrete type
+ *
+ * @param <T> the type of the offset
  */
-public interface FileConsumerResumeStrategy<T> extends ResumeStrategy {
+public interface Offset<T> {
 
     /**
-     * Returns the last offset read for the given file.
+     * Gets the offset value
      *
-     * @param resumable the resumable file or resumable set to run the resume
+     * @return the offset value
      */
-    void resume(T resumable);
+    T offset();
+
 }

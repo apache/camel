@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel;
+package org.apache.camel.resume;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;

@@ -15,22 +15,31 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.aws2.kinesis.consumer;
+package org.apache.camel.resume;
 
-import org.apache.camel.ResumeStrategy;
-import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
+import org.apache.camel.Service;
 
-public interface KinesisResumeStrategy extends ResumeStrategy {
+/**
+ * Defines a strategy for handling resume operations. Implementations can define different ways to handle how to resume
+ * processing records.
+ */
+public interface ResumeStrategy extends Service {
 
-    void setRequestBuilder(GetShardIteratorRequest.Builder builder);
+    /**
+     * Gets an adapter for resuming operations
+     * 
+     * @return
+     */
+    ResumeAdapter getAdapter();
 
-    @Override
-    default void start() {
-
-    }
-
-    @Override
-    default void stop() {
-
+    /**
+     * Gets and adapter for resuming operations
+     * 
+     * @param  clazz the class of the adapter
+     * @return       the adapter or null if it can't be cast to the requested class
+     * @param  <T>   the type of the adapter
+     */
+    default <T extends ResumeAdapter> T getAdapter(Class<T> clazz) {
+        return clazz.cast(getAdapter());
     }
 }

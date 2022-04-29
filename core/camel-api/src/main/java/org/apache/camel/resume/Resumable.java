@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel;
+package org.apache.camel.resume;
 
 /**
  * This provides an interface for resumable objects. Such objects allow its users to address them at a specific offset.

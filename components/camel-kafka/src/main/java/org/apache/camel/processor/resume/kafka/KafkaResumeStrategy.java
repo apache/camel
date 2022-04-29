@@ -15,30 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.couchbase;
+package org.apache.camel.processor.resume.kafka;
 
-import com.couchbase.client.java.Bucket;
-import org.apache.camel.ResumeStrategy;
+import org.apache.camel.resume.Resumable;
+import org.apache.camel.resume.ResumeStrategy;
+import org.apache.camel.resume.UpdatableConsumerResumeStrategy;
 
 /**
- * Allow implementing resume strategies for couchbase consumers
+ * Base interface for resume strategies that publish the offsets to a Kafka topic
+ * 
+ * @param <K> the type of key
+ * @param <V> the type of the value
  */
-public interface CouchbaseResumeStrategy extends ResumeStrategy {
+public interface KafkaResumeStrategy<K, V> extends UpdatableConsumerResumeStrategy<K, V, Resumable<K, V>>, ResumeStrategy {
 
-    @Override
-    default void start() {
-
-    }
-
-    @Override
-    default void stop() {
-
-    }
-
-    /**
-     * Sets the bucket in use
-     * 
-     * @param bucket the bucket in use
-     */
-    void setBucket(Bucket bucket);
 }

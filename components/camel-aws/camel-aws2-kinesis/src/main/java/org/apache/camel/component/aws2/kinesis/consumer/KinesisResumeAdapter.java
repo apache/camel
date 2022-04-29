@@ -15,25 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.camel;
+package org.apache.camel.component.aws2.kinesis.consumer;
+
+import org.apache.camel.resume.ResumeAdapter;
+import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
 
 /**
- * An interface to represent an object which wishes to support listening for consumer events using the
- * {@link ConsumerListener}.
+ * The resume adapter for Kinesis
  */
-public interface ConsumerListenerAware<T extends ConsumerListener<?, ?>> {
-
+public interface KinesisResumeAdapter extends ResumeAdapter {
     /**
-     * Injects the {@link ConsumerListener} instance into the object
-     *
-     * @param consumerListener the consumer listener instance
+     * Sets the shard iterator request builder that can be used to customize the call and set the exact resume point
+     * 
+     * @param builder the builder instance
      */
-    void setConsumerListener(T consumerListener);
-
-    /**
-     * Gets the {@link ConsumerListener} instance
-     *
-     * @return the consumer listener instance
-     */
-    T getConsumerListener();
+    void setRequestBuilder(GetShardIteratorRequest.Builder builder);
 }

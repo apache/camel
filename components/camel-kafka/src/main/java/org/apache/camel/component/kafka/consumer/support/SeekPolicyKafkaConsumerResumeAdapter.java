@@ -24,20 +24,25 @@ import org.slf4j.LoggerFactory;
 /**
  * A resume strategy that uses Camel's seekTo configuration for resuming
  */
-public class SeekPolicyKafkaConsumerResumeStrategy implements KafkaConsumerResumeStrategy {
+public class SeekPolicyKafkaConsumerResumeAdapter implements KafkaConsumerResumeAdapter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SeekPolicyKafkaConsumerResumeStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SeekPolicyKafkaConsumerResumeAdapter.class);
 
     private final SeekPolicy seekPolicy;
     private Consumer<?, ?> consumer;
 
-    public SeekPolicyKafkaConsumerResumeStrategy(SeekPolicy seekPolicy) {
+    public SeekPolicyKafkaConsumerResumeAdapter(SeekPolicy seekPolicy) {
         this.seekPolicy = seekPolicy;
     }
 
     @Override
     public void setConsumer(Consumer<?, ?> consumer) {
         this.consumer = consumer;
+    }
+
+    @Override
+    public void setKafkaResumable(KafkaResumable kafkaResumable) {
+        // NO-OP
     }
 
     @Override
@@ -49,14 +54,5 @@ public class SeekPolicyKafkaConsumerResumeStrategy implements KafkaConsumerResum
             LOG.debug("Seeking from the end off the topic");
             consumer.seekToEnd(consumer.assignment());
         }
-    }
-
-    /*
-     * Note: when using the seek policy strategy, we don't use the resumable information
-     * because we use the consumer to set the policy.
-     */
-    @Override
-    public void resume(KafkaResumable resumable) {
-        resume();
     }
 }

@@ -19,9 +19,9 @@ package org.apache.camel.component.kafka.consumer.errorhandler;
 
 import java.util.function.Predicate;
 
-import org.apache.camel.ConsumerListener;
 import org.apache.camel.component.kafka.SeekPolicy;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
+import org.apache.camel.resume.ConsumerListener;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

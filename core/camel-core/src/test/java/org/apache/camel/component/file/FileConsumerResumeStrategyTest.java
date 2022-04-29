@@ -25,14 +25,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.consumer.FileResumeSet;
-import org.apache.camel.component.file.consumer.FileSetResumeStrategy;
+import org.apache.camel.component.file.consumer.FileSetResumeAdapter;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.resume.Resumables;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerResumeStrategyTest extends ContextTestSupport {
 
-    private static class TestResumeStrategy implements FileSetResumeStrategy {
+    private static class TestFileSetResumeAdapter implements FileSetResumeAdapter {
         private List<String> processedFiles = Arrays.asList("0.txt", "1.txt", "2.txt");
         private FileResumeSet resumeSet;
 
@@ -48,16 +49,6 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
             if (resumeSet != null) {
                 resumeSet.resumeEach(f -> !processedFiles.contains(f.getName()));
             }
-        }
-
-        @Override
-        public void start() {
-
-        }
-
-        @Override
-        public void stop() {
-
         }
     }
 
@@ -99,7 +90,7 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                bindToRegistry("testResumeStrategy", new TestResumeStrategy());
+                bindToRegistry("testResumeStrategy", new TransientResumeStrategy(new TestFileSetResumeAdapter()));
 
                 from(fileUri("resume?noop=true&recursive=true"))
                         .resumable("testResumeStrategy")

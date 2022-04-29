@@ -17,8 +17,6 @@
 
 package org.apache.camel.resume;
 
-import org.apache.camel.Offset;
-
 /**
  * Offset handling support
  */

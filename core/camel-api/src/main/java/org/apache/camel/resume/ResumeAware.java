@@ -15,20 +15,24 @@
  * limitations under the License.
  */
 
-package org.apache.camel;
+package org.apache.camel.resume;
 
 /**
- * Generic offset without a concrete type
- *
- * @param <T> the type of the offset
+ * An interface to represent an object which wishes to support resume operations using a {@link ResumeStrategy}.
  */
-public interface Offset<T> {
+public interface ResumeAware<T extends ResumeStrategy> {
 
     /**
-     * Gets the offset value
+     * Injects the {@link ResumeStrategy} instance into the object
      *
-     * @return the offset value
+     * @param resumeStrategy the resume strategy
      */
-    T offset();
+    void setResumeStrategy(T resumeStrategy);
 
+    /**
+     * Gets the {@link ResumeStrategy} instance
+     * 
+     * @return the resume strategy
+     */
+    T getResumeStrategy();
 }

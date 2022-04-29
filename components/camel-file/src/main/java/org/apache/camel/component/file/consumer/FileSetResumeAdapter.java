@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.file.consumer;
 
-public interface GenericFileResumeStrategy<T> extends FileConsumerResumeStrategy<GenericFileResumable<T>> {
-
+/**
+ * Allows the implementation of file adapters for handling resume operations for file sets (i.e.: file entries in a
+ * directory)
+ */
+public interface FileSetResumeAdapter extends FileResumeAdapter<FileResumeSet> {
 }

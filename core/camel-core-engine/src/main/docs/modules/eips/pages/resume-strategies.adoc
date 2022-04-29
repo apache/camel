@@ -34,7 +34,7 @@ This instance can be bound in the Context registry as follows:
 
 [source,java]
 ----
-getCamelContext().getRegistry().bind("testResumeStrategy", new MyTestResumeStrategy());
+getCamelContext().getRegistry().bind("testResumeStrategy", new MyTestResumeStrategy(new MyAdapter()));
 
 from("some:component")
     .resumable("testResumeStrategy")
@@ -46,129 +46,70 @@ Or the instance can be constructed as follows:
 [source,java]
 ----
 from("some:component")
-    .resumable(new MyTestResumeStrategy())
+    .resumable(new MyTestResumeStrategy(new MyAdapter()))
     .process(this::process)
 ----
+
+=== The Resume Adapter
+
+The adapter class responsibility is to bind the component-specific part of the logic to the more generic handling of the
+resume strategy. The adapter is always component specific and some components may have more than one. Integrations with
+more complex resume processes, may implement their own adapters, although the builtin ones should be useful in most of the
+cases. Currently, the following adapters are available:
+
+* camel-atom: `org.apache.camel.component.feed.EntryFilter`
+* camel-aws2-kinesis: `org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeAdapter`
+* camel-cassandracql: `org.apache.camel.component.cassandra.consumer.support.CassandraResumeAdapter`
+* camel-couchbase: `org.apache.camel.component.couchbase.CouchbaseResumeAdapter`
+* camel-couchdb: `org.apache.camel.component.couchdb.consumer.CouchDbResumeAdapter`
+* camel-file: `org.apache.camel.component.file.consumer.adapters.FileSetResumeAdapter` for directories
+* camel-file: `org.apache.camel.component.file.consumer.adapters.GenericFileResumeAdapter` for files
+* camel-kafka: `org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeAdapter`
+* camel-rss: `org.apache.camel.component.feed.EntryFilter`
+* generic: `org.apache.camel.processor.resume.DelegatingResumeAdapter`
+
+Note: in the future, these adapters will be resolved automatically by Camel.
 
 == The Resume API Interfaces
 
 These are the *core interfaces*:
 
-* `org.apache.camel.ResumeStrategy` - the basic resume strategy
-* `org.apache.camel.UpdatableConsumerResumeStrategy` - an extension to the resume strategy to allow updatable strategies
-* `org.apache.camel.ResumeCache` - an interface for local cache for resumable information
+* `org.apache.camel.resume.ResumeStrategy` - the resume strategy service
+* `org.apache.camel.resume.ResumeAdapter` - an adapter that binds the generic parts of the resume strategy with the component
+* `org.apache.camel.resume.UpdatableConsumerResumeStrategy` - an extension to the resume strategy to allow updatable strategies
+* `org.apache.camel.resume.cache.ResumeCache` - the base interface for local cache for resumable information
+* `org.apache.camel.resume.cache.SingleEntryCache` - an interface for local cache for resumable information where there is a one-to-one relationship between cache a key and its entry (i.e: a file and its offset)
+* `org.apache.camel.resume.cache.MultiEntryCache` - an interface for local cache for resumable information where there is a one-to-many relationship between the cache a keys and its entries (i.e.: a path and its file entries)
 
 These are the *core classes* supporting the strategies:
 
-* `org.apache.camel.Resumable` - an interface to allow users to work with abstract resumable entities (files, offsets, etc)
-* `org.apache.camel.ResumableSet` - an interface for resumables with a 1-to-many relationship
-* `org.apache.camel.Offset` - a generic offset without a concrete type (it may represent a long, a file name, etc)
+* `org.apache.camel.resume.Resumable` - an interface to allow users to work with abstract resumable entities (files, offsets, etc)
+* `org.apache.camel.resume.ResumableSet` - an interface for resumables with a 1-to-many relationship
+* `org.apache.camel.resume.Offset` - a generic offset without a concrete type (it may represent a long, a file name, etc)
 
 These are the *supporting classes*:
 
 * `org.apache.camel.support.Resumables` - resumables handling support
 * `org.apache.camel.support.Offsets` - offset handling support
 
-== Basic Strategies
+== Builtin Resume Strategies
 
-The basic strategies offer a component-specific skeleton that can be used to implement strategies.
+Camel comes with a few builtin strategies that can be used to store, retrieve and update the offsets. The following strategies are available:
 
-* `AbstractKafkaResumeStrategy` - a resume strategy from the `camel-kafka` component that uses Kafka as the store for the offsets.
-
-[source,java]
-----
-public class KafkaResumeStrategy<K> extends AbstractKafkaResumeStrategy<K, Long> implements GenericFileResumeStrategy<File> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaResumeStrategy.class);
-    public static final int CACHE_SIZE = 100;
-
-    private final String topic;
-    private final ResumeCache<K, Long> cache;
-
-    public KafkaResumeStrategy(String topic,
-                               ResumeCache<K, Long> cache,
-                               DefaultProducerPropertyFactory producerPropertyFactory,
-                               DefaultConsumerPropertyFactory consumerPropertyFactory)
-    {
-        super(topic, cache, producerPropertyFactory.getProperties(), consumerPropertyFactory.getProperties());
-        this.topic = topic;
-        this.cache = cache;
-    }
+* `SingleNodeKafkaResumeStrategy` - a resume strategy from the `camel-kafka` component that uses Kafka as the store for the offsets and is suitable for single node integrations.
+* `MultiNodeKafkaResumeStrategy` - a resume strategy from the `camel-kafka` component that uses Kafka as the store for the offsets and is suitable for multi node integrations (i.e.: integrations running on clusters using the xref:components::master-component.adoc[camel-master] component.
 
 
-    private Optional<Long> getLastOffset(GenericFileResumable<File> resumable) {
-        final File addressable = resumable.getAddressable();
-        return getLastOffset((K) addressable);
-    }
+=== Implementing New Builtin Resume Strategies
 
-    public Optional<Long> getLastOffset(K addressable) {
-        return cache.get(addressable);
-    }
-
-    @Override
-    public void subscribe() {
-        checkAndSubscribe(topic, 1);
-    }
-
-    @Override
-    public void resume(GenericFileResumable<File> resumable) {
-        final Optional<Long> lastOffsetOpt = getLastOffset(resumable);
-
-        if (!lastOffsetOpt.isPresent()) {
-            return;
-        }
-
-        final long lastOffset = lastOffsetOpt.get();
-        resumable.updateLastOffset(lastOffset);
-    }
-
-    @Override
-    public void resume() {
-        throw new UnsupportedOperationException("Cannot perform blind resume");
-    }
-}
-----
-
+New builtin resume strategies can be created by implementing the `UpdatableConsumerResumeStrategy` and the `ResumeStrategy` interfaces. Check the code for `SingleNodeKafkaResumeStrategy` for implementation details.
 
 == Local Cache Support
 
 A sample local cache implemented using https://github.com/ben-manes/caffeine[Caffeine].
 
-[source,java]
-----
-public class SingleItemCache<K> implements ResumeCache<K, Long> {
-    public static final int CACHE_SIZE = 100;
-    private final Cache<K, Long> cache = Caffeine.newBuilder()
-            .maximumSize(CACHE_SIZE)
-            .build();
-
-    @Override
-    public void add(K key, Long offsetValue) {
-        cache.put(key, offsetValue);
-    }
-
-    @Override
-    public Optional<Long> get(K key) {
-        Long entry = cache.getIfPresent(key);
-
-        if (entry == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(entry.longValue());
-    }
-
-    @Override
-    public boolean isFull() {
-        if (cache.estimatedSize() < CACHE_SIZE) {
-            return true;
-        }
-
-        return false;
-    }
-}
-----
-
+* `org.apache.camel.component.caffeine.resume.single.CaffeineCache`: for data with where 1 key can only point to 1 entry (1-to-1 relationship)
+* `org.apache.camel.component.caffeine.resume.multi.CaffeineCache`: for data with where 1 key can point to 1 or more entries (1-to-many relationship)
 
 == Known Limitations
 
@@ -209,7 +150,7 @@ Currently, support for pausable consumers is available for the following compone
 
 To use the API, it needs an instance of a Consumer listener along with a predicate that tests whether to continue.
 
-* `org.apache.camel.ConsumerListener` - the consumer listener interface. Camel already comes with pre-built consumer listeners, but users in need of more complex behaviors can create their own listeners.
+* `org.apache.camel.resume.ConsumerListener` - the consumer listener interface. Camel already comes with pre-built consumer listeners, but users in need of more complex behaviors can create their own listeners.
 * a predicate that returns true if data consumption should resume or false if consumption should be put on pause
 
 Usage example:

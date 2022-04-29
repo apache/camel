@@ -15,38 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.camel;
-
-import java.util.Optional;
+package org.apache.camel.resume.cache;
 
 /**
- * This cache stored the resumed data from a {@link ResumeStrategy}.
- * 
+ * A cache where an entry can point to one or more entries. For instance, a path as the key and the file entries as its
+ * entries
+ *
  * @param <K> the type of the key
- * @param <V> the type of the offset value
+ * @param <V> the type of the value
  */
-public interface ResumeCache<K, V> {
+public interface MultiEntryCache<K, V> extends ResumeCache<K, V> {
 
-    /**
-     * Adds a value to the cache
-     * 
-     * @param key         the key to add
-     * @param offsetValue the offset value
-     */
-    void add(K key, V offsetValue);
-
-    /**
-     * Checks whether the cache is full
-     * 
-     * @return true if full, or false otherwise
-     */
-    boolean isFull();
-
-    /**
-     * Gets the offset value for the key
-     * 
-     * @param  key the key
-     * @return     the key
-     */
-    Optional<V> get(K key);
 }

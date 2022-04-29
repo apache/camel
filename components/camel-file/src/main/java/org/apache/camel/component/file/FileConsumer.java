@@ -31,11 +31,13 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.ResumeAware;
-import org.apache.camel.component.file.consumer.FileConsumerResumeStrategy;
+import org.apache.camel.component.file.consumer.FileResumeAdapter;
 import org.apache.camel.component.file.consumer.FileResumeSet;
-import org.apache.camel.component.file.consumer.FileSetResumeStrategy;
-import org.apache.camel.component.file.consumer.GenericFileResumeStrategy;
+import org.apache.camel.component.file.consumer.FileSetResumeAdapter;
+import org.apache.camel.component.file.consumer.GenericFileResumeAdapter;
+import org.apache.camel.resume.ResumeAdapter;
+import org.apache.camel.resume.ResumeAware;
+import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -44,10 +46,10 @@ import org.slf4j.LoggerFactory;
 /**
  * File consumer.
  */
-public class FileConsumer extends GenericFileConsumer<File> implements ResumeAware<FileConsumerResumeStrategy> {
+public class FileConsumer extends GenericFileConsumer<File> implements ResumeAware<ResumeStrategy> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileConsumer.class);
-    private FileConsumerResumeStrategy resumeStrategy;
+    private ResumeStrategy resumeStrategy;
     private String endpointPath;
     private Set<String> extendedAttributes;
 
@@ -103,8 +105,11 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             GenericFile<File> gf
                     = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
 
-            if (resumeStrategy instanceof GenericFileResumeStrategy) {
-                ((GenericFileResumeStrategy<File>) resumeStrategy).resume(gf);
+            if (resumeStrategy != null) {
+                ResumeAdapter adapter = resumeStrategy.getAdapter();
+                if (adapter instanceof GenericFileResumeAdapter) {
+                    ((FileResumeAdapter) adapter).resume(gf);
+                }
             }
 
             if (file.isDirectory()) {
@@ -171,11 +176,15 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             }
         }
 
-        if (resumeStrategy instanceof FileSetResumeStrategy) {
-            FileResumeSet resumeSet = new FileResumeSet(dirFiles);
-            resumeStrategy.resume(resumeSet);
+        if (resumeStrategy != null) {
+            ResumeAdapter adapter = resumeStrategy.getAdapter();
+            if (adapter instanceof FileSetResumeAdapter) {
+                FileResumeSet resumeSet = new FileResumeSet(dirFiles);
 
-            return resumeSet.resumed();
+                ((FileResumeAdapter) adapter).resume(resumeSet);
+
+                return resumeSet.resumed();
+            }
         }
 
         return dirFiles;
@@ -307,12 +316,12 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     @Override
-    public FileConsumerResumeStrategy getResumeStrategy() {
+    public ResumeStrategy getResumeStrategy() {
         return resumeStrategy;
     }
 
     @Override
-    public void setResumeStrategy(FileConsumerResumeStrategy resumeStrategy) {
+    public void setResumeStrategy(ResumeStrategy resumeStrategy) {
         this.resumeStrategy = resumeStrategy;
     }
 

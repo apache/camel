@@ -15,33 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kafka.consumer.support;
+package org.apache.camel.component.couchdb.consumer;
 
-import org.apache.camel.resume.Offset;
-import org.apache.camel.resume.Offsets;
-import org.apache.camel.resume.Resumable;
+import org.apache.camel.resume.ResumeAdapter;
 
-public class KafkaResumable implements Resumable<String, String> {
-    private final String partition;
-    private String offset;
-
-    public KafkaResumable(String partition, String offset) {
-        this.partition = partition;
-        this.offset = offset;
-    }
-
-    @Override
-    public void updateLastOffset(String offset) {
-        this.offset = offset;
-    }
-
-    @Override
-    public Offset<String> getLastOffset() {
-        return Offsets.of(offset);
-    }
-
-    @Override
-    public String getAddressable() {
-        return partition;
-    }
+/**
+ * Defines a resumable adapter usable by the CouchDB component
+ */
+public interface CouchDbResumeAdapter extends ResumeAdapter {
+    /**
+     * Sets the resumable for the adapter
+     * 
+     * @param resumable the resumable instance
+     */
+    void setResumable(CouchDbResumable resumable);
 }

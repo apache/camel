@@ -15,23 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.couchdb.consumer;
+package org.apache.camel.component.file.consumer;
 
-import org.apache.camel.ResumeStrategy;
+import java.io.File;
+import java.util.Optional;
 
 /**
- * Defines a resumable strategy usable by the CouchDB component
+ * Allows the implementation of file adapters for handling resume operations for generic files
  */
-public interface CouchDbResumeStrategy extends ResumeStrategy {
-    void setResumable(CouchDbResumable resumable);
-
-    @Override
-    default void start() {
-
-    }
-
-    @Override
-    default void stop() {
-
-    }
+public interface GenericFileResumeAdapter extends FileResumeAdapter<GenericFileResumable<File>> {
+    /**
+     * Gets the last offset for the given file
+     *
+     * @param  addressable the file instance
+     * @return             An Optional with the offset value
+     */
+    Optional<Long> getLastOffset(File addressable);
 }
