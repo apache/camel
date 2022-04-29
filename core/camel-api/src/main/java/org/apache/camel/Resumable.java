@@ -29,7 +29,7 @@ package org.apache.camel;
 public interface Resumable<Y, T> {
 
     /**
-     * Updates the last offset the last offset as appropriate for the user of the interface
+     * Updates the last offset as appropriate for the user of the interface
      *
      * @param offset the offset value
      */
