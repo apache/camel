@@ -18,16 +18,18 @@
 package org.apache.camel.component.couchdb.consumer;
 
 import org.apache.camel.component.couchdb.CouchDbConsumer;
+import org.apache.camel.processor.resume.TransientResumeStrategy;
+import org.apache.camel.resume.ResumeStrategy;
 
 public final class CouchDbResumeStrategyFactory {
     private CouchDbResumeStrategyFactory() {
     }
 
-    public static CouchDbResumeStrategy newResumeStrategy(CouchDbConsumer consumer) {
-        CouchDbResumeStrategy resumeStrategy = consumer.getResumeStrategy();
+    public static ResumeStrategy newResumeStrategy(CouchDbConsumer consumer) {
+        ResumeStrategy resumeStrategy = consumer.getResumeStrategy();
 
         if (resumeStrategy == null) {
-            resumeStrategy = new LatestUpdateSequenceResumeStrategy();
+            resumeStrategy = new TransientResumeStrategy(new LatestUpdateSequenceResumeAdapter());
         }
 
         return resumeStrategy;

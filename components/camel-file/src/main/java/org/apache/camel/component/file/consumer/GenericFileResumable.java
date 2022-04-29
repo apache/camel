@@ -17,7 +17,7 @@
 
 package org.apache.camel.component.file.consumer;
 
-import org.apache.camel.Resumable;
+import org.apache.camel.resume.Resumable;
 
 public interface GenericFileResumable<T> extends Resumable<T, Long> {
 

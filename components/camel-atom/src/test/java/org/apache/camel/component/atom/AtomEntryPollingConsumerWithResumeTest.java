@@ -22,6 +22,7 @@ import java.util.Date;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,7 @@ public class AtomEntryPollingConsumerWithResumeTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=500")
-                        .resumable().resumeStrategy(new UpdatedDateFilter(getTestFilterDate()))
+                        .resumable().resumeStrategy(new TransientResumeStrategy(new UpdatedDateFilter(getTestFilterDate())))
                         .routeId("WithResume")
                         .to("mock:result");
             }

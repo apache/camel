@@ -18,11 +18,11 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
-import org.apache.camel.ResumeStrategy;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ResumableDefinition;
 import org.apache.camel.processor.resume.ResumableProcessor;
+import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.util.ObjectHelper;
 
 public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {

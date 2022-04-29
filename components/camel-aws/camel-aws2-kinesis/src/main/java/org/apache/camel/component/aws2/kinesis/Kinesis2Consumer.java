@@ -23,9 +23,10 @@ import java.util.Queue;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.ResumeAware;
-import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategy;
-import org.apache.camel.component.aws2.kinesis.consumer.KinesisUserConfigurationResumeStrategy;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeAdapter;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisUserConfigurationResumeAdapter;
+import org.apache.camel.resume.ResumeAware;
+import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -41,13 +42,13 @@ import software.amazon.awssdk.services.kinesis.model.GetShardIteratorResponse;
 import software.amazon.awssdk.services.kinesis.model.Record;
 import software.amazon.awssdk.services.kinesis.model.Shard;
 
-public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements ResumeAware<KinesisResumeStrategy> {
+public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements ResumeAware<ResumeStrategy> {
 
     private static final Logger LOG = LoggerFactory.getLogger(Kinesis2Consumer.class);
 
     private String currentShardIterator;
     private boolean isShardClosed;
-    private KinesisResumeStrategy resumeStrategy;
+    private ResumeStrategy resumeStrategy;
 
     public Kinesis2Consumer(Kinesis2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -173,12 +174,15 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     }
 
     private void resume(GetShardIteratorRequest.Builder req) {
-        if (resumeStrategy == null) {
-            resumeStrategy = new KinesisUserConfigurationResumeStrategy(getEndpoint().getConfiguration());
+        KinesisResumeAdapter adapter;
+        if (resumeStrategy != null) {
+            adapter = resumeStrategy.getAdapter(KinesisResumeAdapter.class);
+        } else {
+            adapter = new KinesisUserConfigurationResumeAdapter(getEndpoint().getConfiguration());
         }
 
-        resumeStrategy.setRequestBuilder(req);
-        resumeStrategy.resume();
+        adapter.setRequestBuilder(req);
+        adapter.resume();
     }
 
     private Queue<Exchange> createExchanges(List<Record> records) {
@@ -203,12 +207,12 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     }
 
     @Override
-    public void setResumeStrategy(KinesisResumeStrategy resumeStrategy) {
+    public void setResumeStrategy(ResumeStrategy resumeStrategy) {
         this.resumeStrategy = resumeStrategy;
     }
 
     @Override
-    public KinesisResumeStrategy getResumeStrategy() {
+    public ResumeStrategy getResumeStrategy() {
         return resumeStrategy;
     }
 }

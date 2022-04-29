@@ -15,22 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.camel;
+package org.apache.camel.resume;
 
 /**
- * An updatable resume strategy
+ * A resume adapter provides the component-specific logic that plugs the more generic strategic with the lower level
+ * requirements of the component being used.
  *
- * @param <K> the type of the key, name or object that can be addressed by the given offset
- * @param <T> the type of the addressable value for the resumable object (for example, a file would use a Long value)
- * @param <T> a resumable type capable of handling/storing/holding resumable information for the addressable and offset
+ * It is the responsibility of the supported components to implement the custom implementation for this part of the
+ * resume API, as well as to offer component-specific interfaces that can be specialized by other integrations.
  */
-public interface UpdatableConsumerResumeStrategy<K, V, T extends Resumable<K, V>> {
-
+public interface ResumeAdapter {
     /**
-     * Updates the last processed offset
-     * 
-     * @param  offset    the offset to update
-     * @throws Exception if unable to update the offset
+     * Execute the resume logic for the adapter
      */
-    void updateLastOffset(T offset) throws Exception;
+    void resume();
 }

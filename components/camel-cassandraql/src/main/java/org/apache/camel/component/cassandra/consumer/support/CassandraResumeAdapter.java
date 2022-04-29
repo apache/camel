@@ -15,33 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kafka.consumer.support;
+package org.apache.camel.component.cassandra.consumer.support;
 
-import org.apache.camel.resume.Offset;
-import org.apache.camel.resume.Offsets;
-import org.apache.camel.resume.Resumable;
+import com.datastax.oss.driver.api.core.CqlSession;
+import org.apache.camel.resume.ResumeAdapter;
 
-public class KafkaResumable implements Resumable<String, String> {
-    private final String partition;
-    private String offset;
+/**
+ * Provides a resume adapter for Cassandra consumers
+ */
+public interface CassandraResumeAdapter extends ResumeAdapter {
 
-    public KafkaResumable(String partition, String offset) {
-        this.partition = partition;
-        this.offset = offset;
-    }
-
-    @Override
-    public void updateLastOffset(String offset) {
-        this.offset = offset;
-    }
-
-    @Override
-    public Offset<String> getLastOffset() {
-        return Offsets.of(offset);
-    }
-
-    @Override
-    public String getAddressable() {
-        return partition;
-    }
+    /**
+     * Sets the session that allow implementations to run a one-time query on the DB
+     * 
+     * @param session
+     */
+    void setSession(CqlSession session);
 }

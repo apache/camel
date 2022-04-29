@@ -33,12 +33,12 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
 
     private final String threadId;
     private final KafkaConfiguration configuration;
-    private final KafkaConsumerResumeStrategy resumeStrategy;
+    private final KafkaConsumerResumeAdapter resumeStrategy;
     private final CommitManager commitManager;
 
     public PartitionAssignmentListener(String threadId, KafkaConfiguration configuration,
                                        CommitManager commitManager,
-                                       KafkaConsumerResumeStrategy resumeStrategy) {
+                                       KafkaConsumerResumeAdapter resumeStrategy) {
         this.threadId = threadId;
         this.configuration = configuration;
         this.commitManager = commitManager;
@@ -67,6 +67,11 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
         List<KafkaResumable> resumables = partitions.stream()
                 .map(p -> new KafkaResumable(String.valueOf(p.partition()), p.topic())).collect(Collectors.toList());
 
-        resumables.forEach(r -> resumeStrategy.resume(r));
+        resumables.forEach(this::doResume);
+    }
+
+    private void doResume(KafkaResumable r) {
+        resumeStrategy.setKafkaResumable(r);
+        resumeStrategy.resume();
     }
 }

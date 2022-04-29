@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka.consumer.support;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConsumer;
 import org.apache.camel.component.kafka.SeekPolicy;
+import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.slf4j.Logger;
@@ -29,12 +30,17 @@ public final class ResumeStrategyFactory {
     /**
      * A NO-OP resume strategy that does nothing (i.e.: no resume)
      */
-    private static class NoOpKafkaConsumerResumeStrategy implements KafkaConsumerResumeStrategy {
+    private static class NoOpKafkaConsumerResumeAdapter implements KafkaConsumerResumeAdapter {
 
         @SuppressWarnings("unused")
         @Override
         public void setConsumer(Consumer<?, ?> consumer) {
+            // NO-OP
+        }
 
+        @Override
+        public void setKafkaResumable(KafkaResumable kafkaResumable) {
+            // NO-OP
         }
 
         @SuppressWarnings("unused")
@@ -44,36 +50,40 @@ public final class ResumeStrategyFactory {
         }
     }
 
-    private static final NoOpKafkaConsumerResumeStrategy NO_OP_RESUME_STRATEGY = new NoOpKafkaConsumerResumeStrategy();
+    private static final NoOpKafkaConsumerResumeAdapter NO_OP_RESUME_STRATEGY = new NoOpKafkaConsumerResumeAdapter();
     private static final Logger LOG = LoggerFactory.getLogger(ResumeStrategyFactory.class);
 
     private ResumeStrategyFactory() {
     }
 
-    public static KafkaConsumerResumeStrategy newResumeStrategy(KafkaConsumer kafkaConsumer) {
+    public static KafkaConsumerResumeAdapter resolveResumeAdapter(KafkaConsumer kafkaConsumer) {
         // When using resumable routes, which register the strategy via service, it takes priority over everything else
-        KafkaConsumerResumeStrategy resumableRouteStrategy = kafkaConsumer.getResumeStrategy();
+        ResumeStrategy resumeStrategy = kafkaConsumer.getResumeStrategy();
+        if (resumeStrategy != null) {
+            KafkaConsumerResumeAdapter adapter = resumeStrategy.getAdapter(KafkaConsumerResumeAdapter.class);
 
-        if (resumableRouteStrategy != null) {
-            return resumableRouteStrategy;
+            // The strategy should not be able to be created without an adapter, but let's be safe
+            assert adapter != null;
+
+            return adapter;
         }
 
         KafkaConfiguration configuration = kafkaConsumer.getEndpoint().getConfiguration();
 
-        return builtinResumeStrategies(configuration);
+        return resolveBuiltinResumeAdapters(configuration);
     }
 
-    private static KafkaConsumerResumeStrategy builtinResumeStrategies(KafkaConfiguration configuration) {
+    private static KafkaConsumerResumeAdapter resolveBuiltinResumeAdapters(KafkaConfiguration configuration) {
         LOG.debug("No resume strategy was provided ... checking for built-ins ...");
         StateRepository<String, String> offsetRepository = configuration.getOffsetRepository();
         SeekPolicy seekTo = configuration.getSeekTo();
 
         if (offsetRepository != null) {
             LOG.info("Using resume from offset strategy");
-            return new OffsetKafkaConsumerResumeStrategy(offsetRepository);
+            return new OffsetKafkaConsumerResumeAdapter(offsetRepository);
         } else if (seekTo != null) {
             LOG.info("Using resume from seek policy strategy with seeking from {}", seekTo);
-            return new SeekPolicyKafkaConsumerResumeStrategy(seekTo);
+            return new SeekPolicyKafkaConsumerResumeAdapter(seekTo);
         }
 
         LOG.info("Using NO-OP resume strategy");

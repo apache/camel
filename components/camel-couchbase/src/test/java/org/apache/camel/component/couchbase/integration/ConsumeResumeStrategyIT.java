@@ -22,8 +22,9 @@ import java.util.concurrent.TimeUnit;
 import com.couchbase.client.java.Bucket;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.couchbase.CouchbaseResumeStrategy;
+import org.apache.camel.component.couchbase.CouchbaseResumeAdapter;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.resume.Resumables;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -32,7 +33,7 @@ import org.junit.jupiter.api.Test;
 import static org.awaitility.Awaitility.await;
 
 public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
-    static class TestResumeStrategy implements CouchbaseResumeStrategy {
+    static class TestCouchbaseResumeAdapter implements CouchbaseResumeAdapter {
         volatile boolean setBucketCalled;
         volatile boolean bucketNotNull;
         volatile boolean resumeCalled;
@@ -49,7 +50,7 @@ public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
         }
     }
 
-    TestResumeStrategy resumeStrategy = new TestResumeStrategy();
+    TransientResumeStrategy resumeStrategy = new TransientResumeStrategy(new TestCouchbaseResumeAdapter());
 
     @Test
     public void testQueryForBeers() throws Exception {
@@ -61,15 +62,18 @@ public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
 
         assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
 
+        TestCouchbaseResumeAdapter adapter = resumeStrategy.getAdapter(TestCouchbaseResumeAdapter.class);
+        await().atMost(30, TimeUnit.SECONDS).until(() -> adapter != null);
+
         await().atMost(30, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assertions.assertTrue(resumeStrategy.setBucketCalled,
+                .untilAsserted(() -> Assertions.assertTrue(adapter.setBucketCalled,
                         "The setBucket method should have been called"));
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assertions.assertTrue(resumeStrategy.bucketNotNull,
+                .untilAsserted(() -> Assertions.assertTrue(adapter.bucketNotNull,
                         "The input bucket should not have been null"));
         await().atMost(3, TimeUnit.SECONDS)
                 .untilAsserted(
-                        () -> Assertions.assertTrue(resumeStrategy.resumeCalled, "The resume method should have been called"));
+                        () -> Assertions.assertTrue(adapter.resumeCalled, "The resume method should have been called"));
     }
 
     @AfterEach

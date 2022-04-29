@@ -21,11 +21,11 @@ import org.apache.camel.component.aws2.kinesis.Kinesis2Configuration;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
-public class KinesisUserConfigurationResumeStrategy implements KinesisResumeStrategy {
+public class KinesisUserConfigurationResumeAdapter implements KinesisResumeAdapter {
     private final Kinesis2Configuration configuration;
     private GetShardIteratorRequest.Builder resumable;
 
-    public KinesisUserConfigurationResumeStrategy(Kinesis2Configuration configuration) {
+    public KinesisUserConfigurationResumeAdapter(Kinesis2Configuration configuration) {
         this.configuration = configuration;
     }
 

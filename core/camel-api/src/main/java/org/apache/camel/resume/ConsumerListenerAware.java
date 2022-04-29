@@ -15,25 +15,25 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.couchdb.consumer;
-
-import org.apache.camel.component.couchdb.CouchDbClientWrapper;
+package org.apache.camel.resume;
 
 /**
- * A resume strategy that resumes from the last update sequence
+ * An interface to represent an object which wishes to support listening for consumer events using the
+ * {@link ConsumerListener}.
  */
-public final class LatestUpdateSequenceResumeStrategy implements CouchDbResumeStrategy {
-    private CouchDbResumable resumable;
+public interface ConsumerListenerAware<T extends ConsumerListener<?, ?>> {
 
-    @Override
-    public void setResumable(CouchDbResumable resumable) {
-        this.resumable = resumable;
-    }
+    /**
+     * Injects the {@link ConsumerListener} instance into the object
+     *
+     * @param consumerListener the consumer listener instance
+     */
+    void setConsumerListener(T consumerListener);
 
-    @Override
-    public void resume() {
-        CouchDbClientWrapper clientWrapper = resumable.getClientWrapper();
-
-        resumable.updateLastOffset(clientWrapper.getLatestUpdateSequence());
-    }
+    /**
+     * Gets the {@link ConsumerListener} instance
+     *
+     * @return the consumer listener instance
+     */
+    T getConsumerListener();
 }

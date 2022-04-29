@@ -21,7 +21,7 @@ import java.io.File;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import org.apache.camel.ResumableSet;
+import org.apache.camel.resume.ResumableSet;
 
 /**
  * This contains the input/output file set for resume operations.

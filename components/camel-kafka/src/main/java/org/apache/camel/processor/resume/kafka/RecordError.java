@@ -15,18 +15,27 @@
  * limitations under the License.
  */
 
-package org.apache.camel;
+package org.apache.camel.processor.resume.kafka;
+
+import org.apache.kafka.clients.producer.RecordMetadata;
 
 /**
- * Defines a strategy for handling resume operations. Implementations can define different ways to handle how to resume
- * processing records.
+ * Contains the error details when failing to produce records
  */
-public interface ResumeStrategy extends Service {
+public class RecordError {
+    private final RecordMetadata recordMetadata;
+    private final Exception exception;
 
-    /**
-     * A consumer, iterator or value class that can be used to set the index position from which to resume from. The
-     * type is specific to the component.
-     *
-     */
-    void resume();
+    public RecordError(RecordMetadata recordMetadata, Exception exception) {
+        this.recordMetadata = recordMetadata;
+        this.exception = exception;
+    }
+
+    public RecordMetadata getRecordMetadata() {
+        return recordMetadata;
+    }
+
+    public Exception getException() {
+        return exception;
+    }
 }

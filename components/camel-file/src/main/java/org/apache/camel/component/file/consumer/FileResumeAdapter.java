@@ -15,30 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.cassandra.consumer.support;
+package org.apache.camel.component.file.consumer;
 
-import com.datastax.oss.driver.api.core.CqlSession;
-import org.apache.camel.ResumeStrategy;
+import org.apache.camel.resume.ResumeAdapter;
 
 /**
- * Provides a resume strategy for Cassandra consumers
+ * Defines resume adapter for consumers of the file component.
  */
-public interface CassandraResumeStrategy extends ResumeStrategy {
+public interface FileResumeAdapter<T> extends ResumeAdapter {
 
     /**
-     * Sets the session that allow implementations to run a one-time query on the DB
-     * 
-     * @param session
+     * Returns the last offset read for the given file.
+     *
+     * @param resumable the resumable file or resumable set to run the resume
      */
-    void setSession(CqlSession session);
-
-    @Override
-    default void start() {
-
-    }
-
-    @Override
-    default void stop() {
-
-    }
+    void resume(T resumable);
 }

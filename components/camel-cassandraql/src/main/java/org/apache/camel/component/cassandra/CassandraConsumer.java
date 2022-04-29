@@ -22,21 +22,22 @@ import com.datastax.oss.driver.api.core.cql.ResultSet;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.ResumeAware;
-import org.apache.camel.component.cassandra.consumer.support.CassandraResumeStrategy;
+import org.apache.camel.component.cassandra.consumer.support.CassandraResumeAdapter;
+import org.apache.camel.resume.ResumeAware;
+import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.ScheduledPollConsumer;
 
 /**
  * Cassandra 2 CQL3 consumer.
  */
-public class CassandraConsumer extends ScheduledPollConsumer implements ResumeAware<CassandraResumeStrategy> {
+public class CassandraConsumer extends ScheduledPollConsumer implements ResumeAware<ResumeStrategy> {
 
     /**
      * Prepared statement used for polling
      */
     private PreparedStatement preparedStatement;
 
-    private CassandraResumeStrategy resumeStrategy;
+    private ResumeStrategy resumeStrategy;
 
     public CassandraConsumer(CassandraEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -86,8 +87,11 @@ public class CassandraConsumer extends ScheduledPollConsumer implements ResumeAw
         if (resumeStrategy != null) {
             CqlSession session = getEndpoint().getSessionHolder().getSession();
 
-            resumeStrategy.setSession(session);
-            resumeStrategy.resume();
+            CassandraResumeAdapter resumeAdapter = resumeStrategy.getAdapter(CassandraResumeAdapter.class);
+            if (resumeAdapter != null) {
+                resumeAdapter.setSession(session);
+                resumeAdapter.resume();
+            }
         }
     }
 
@@ -102,12 +106,12 @@ public class CassandraConsumer extends ScheduledPollConsumer implements ResumeAw
     }
 
     @Override
-    public CassandraResumeStrategy getResumeStrategy() {
+    public ResumeStrategy getResumeStrategy() {
         return resumeStrategy;
     }
 
     @Override
-    public void setResumeStrategy(CassandraResumeStrategy resumeStrategy) {
+    public void setResumeStrategy(ResumeStrategy resumeStrategy) {
         this.resumeStrategy = resumeStrategy;
     }
 }

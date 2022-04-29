@@ -15,24 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.camel;
+package org.apache.camel.resume;
 
 /**
- * An interface to represent an object which wishes to support resume operations using a {@link ResumeStrategy}.
+ * An updatable resume strategy
+ *
+ * @param <K> the type of the key, name or object that can be addressed by the given offset
+ * @param <T> the type of the addressable value for the resumable object (for example, a file would use a Long value)
+ * @param <T> a resumable type capable of handling/storing/holding resumable information for the addressable and offset
  */
-public interface ResumeAware<T extends ResumeStrategy> {
+public interface UpdatableConsumerResumeStrategy<K, V, T extends Resumable<K, V>> {
 
     /**
-     * Injects the {@link ResumeStrategy} instance into the object
-     *
-     * @param resumeStrategy the resume strategy
-     */
-    void setResumeStrategy(T resumeStrategy);
-
-    /**
-     * Gets the {@link ResumeStrategy} instance
+     * Updates the last processed offset
      * 
-     * @return the resume strategy
+     * @param  offset    the offset to update
+     * @throws Exception if unable to update the offset
      */
-    T getResumeStrategy();
+    void updateLastOffset(T offset) throws Exception;
 }

@@ -15,33 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kafka.consumer.support;
+package org.apache.camel.resume.cache;
 
-import org.apache.camel.resume.Offset;
-import org.apache.camel.resume.Offsets;
-import org.apache.camel.resume.Resumable;
+import java.util.Optional;
 
-public class KafkaResumable implements Resumable<String, String> {
-    private final String partition;
-    private String offset;
+/**
+ * A resume cache where a single key can only be mapped to a single entry
+ *
+ * @param <K> the type the key
+ * @param <V> the type of the entry
+ */
+public interface SingleEntryCache<K, V> extends ResumeCache<K, V> {
+    /**
+     * Gets the offset value for the key
+     *
+     * @param  key the key
+     * @return     the key
+     */
+    Optional<V> get(K key);
 
-    public KafkaResumable(String partition, String offset) {
-        this.partition = partition;
-        this.offset = offset;
-    }
-
-    @Override
-    public void updateLastOffset(String offset) {
-        this.offset = offset;
-    }
-
-    @Override
-    public Offset<String> getLastOffset() {
-        return Offsets.of(offset);
-    }
-
-    @Override
-    public String getAddressable() {
-        return partition;
-    }
 }

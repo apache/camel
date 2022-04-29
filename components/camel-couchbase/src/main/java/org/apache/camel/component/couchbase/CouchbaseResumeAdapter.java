@@ -15,8 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.file.consumer;
+package org.apache.camel.component.couchbase;
 
-public interface FileSetResumeStrategy extends FileConsumerResumeStrategy<FileResumeSet> {
+import com.couchbase.client.java.Bucket;
+import org.apache.camel.resume.ResumeAdapter;
 
+/**
+ * Allow implementing resume adapters for couchbase consumers
+ */
+public interface CouchbaseResumeAdapter extends ResumeAdapter {
+
+    /**
+     * Sets the bucket in use
+     * 
+     * @param bucket the bucket in use
+     */
+    void setBucket(Bucket bucket);
 }
