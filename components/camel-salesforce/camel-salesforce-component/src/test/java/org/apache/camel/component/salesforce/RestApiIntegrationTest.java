@@ -516,8 +516,11 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     public void testQueryStreamResults() throws Exception {
         final int createCount = 300;
         createLineItems(createCount);
-        final Iterator<Line_Item__c> queryRecords
-                = template().requestBody("direct:queryStreamResult", "", Iterator.class);
+        Exchange exchange = new DefaultExchange(context);
+        template().send("direct:queryStreamResult", exchange);
+        @SuppressWarnings("unchecked")
+        Iterator<Line_Item__c> queryRecords = (Iterator<Line_Item__c>) exchange.getOut().getBody();
+        assertNotNull(exchange.getOut().getHeader("CamelSalesforceQueryResultTotalSize"));
         int count = 0;
         while (queryRecords.hasNext()) {
             count = count + 1;

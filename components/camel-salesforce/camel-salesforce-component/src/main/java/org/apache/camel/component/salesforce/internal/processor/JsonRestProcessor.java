@@ -46,6 +46,8 @@ import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 
 public class JsonRestProcessor extends AbstractRestProcessor {
 
+    public static final String HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE = "CamelSalesforceQueryResultTotalSize";
+
     // it is ok to use a single thread safe ObjectMapper
     private final ObjectMapper objectMapper;
 
@@ -252,6 +254,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                 final AbstractQueryRecordsBase<?> response;
                 Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
                 response = (AbstractQueryRecordsBase<?>) objectMapper.readValue(responseEntity, responseClass);
+                out.setHeader(HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE, response.getTotalSize());
                 QueryResultIterator iterator
                         = new QueryResultIterator(
                                 objectMapper, responseClass, restClient, determineHeaders(exchange), response);
