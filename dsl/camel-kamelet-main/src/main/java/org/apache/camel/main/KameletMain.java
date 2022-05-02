@@ -143,7 +143,9 @@ public class KameletMain extends MainCommandLineSupport {
                 completed();
             }
         });
-        addOption(new ParameterOption("download", "download", "Whether to allow automatic downloaded JAR dependencies, over the internet.", "download") {
+        addOption(new ParameterOption(
+                "download", "download", "Whether to allow automatic downloaded JAR dependencies, over the internet.",
+                "download") {
             @Override
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 if (arg.equals("-download")) {
