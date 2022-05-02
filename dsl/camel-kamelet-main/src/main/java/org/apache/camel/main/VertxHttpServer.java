@@ -35,6 +35,7 @@ import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StartupListener;
+import org.apache.camel.component.platform.http.HttpEndpointModel;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
@@ -100,7 +101,7 @@ public final class VertxHttpServer {
                 public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
                     camelContext.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
 
-                        private Set<String> last;
+                        private Set<HttpEndpointModel> last;
 
                         @Override
                         public boolean isEnabled(CamelEvent event) {
@@ -119,7 +120,7 @@ public final class VertxHttpServer {
                                 }
                             }
 
-                            Set<String> endpoints = phc.getHttpEndpoints();
+                            Set<HttpEndpointModel> endpoints = phc.getHttpEndpoints();
                             if (endpoints.isEmpty()) {
                                 return;
                             }
@@ -127,8 +128,13 @@ public final class VertxHttpServer {
                             // log only if changed
                             if (last == null || last.size() != endpoints.size() || !last.containsAll(endpoints)) {
                                 LOG.info("HTTP endpoints summary");
-                                for (String u : endpoints) {
-                                    LOG.info("    http://0.0.0.0:" + port + u);
+                                for (HttpEndpointModel u : endpoints) {
+                                    String v = u.getVerbs();
+                                    String line = "http://0.0.0.0:" + port + u.getUri();
+                                    if (u.getVerbs() != null) {
+                                        line += " (" + u.getVerbs() + ")";
+                                    }
+                                    LOG.info("    {}", line);
                                 }
                             }
 
@@ -183,7 +189,7 @@ public final class VertxHttpServer {
                 }
             }
         });
-        phc.addHttpEndpoint("/q/dev");
+        phc.addHttpEndpoint("/q/dev", null);
     }
 
     public static void registerHealthCheck(CamelContext camelContext) {
@@ -254,7 +260,7 @@ public final class VertxHttpServer {
         live.handler(handler);
         ready.handler(handler);
 
-        phc.addHttpEndpoint("/q/health");
+        phc.addHttpEndpoint("/q/health", null);
     }
 
     private static void healthCheckStatus(StringBuilder sb, boolean up) {
