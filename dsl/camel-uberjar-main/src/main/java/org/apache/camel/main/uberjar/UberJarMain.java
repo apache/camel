@@ -19,9 +19,12 @@ package org.apache.camel.main.uberjar;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.util.LinkedList;
 
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.OrderedProperties;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Main class to run Camel as an uber-jar packaged by camel-jbang
@@ -30,14 +33,72 @@ public class UberJarMain extends KameletMain {
 
     public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
 
+    private UberJarMain main;
+
     public static void main(String[] args) throws Exception {
         UberJarMain main = new UberJarMain();
-        main.run(); // run without args as they are for legacy camel-main
-        int code = main.getExitCode();
+        main.main = main;
+        int code = main.run(args);
         if (code != 0) {
             System.exit(code);
         }
         // normal exit
+    }
+
+    @Override
+    public void showOptionsHeader() {
+        System.out.println("Apache Camel (UberJar) takes the following options");
+        System.out.println();
+    }
+
+    @Override
+    protected void addInitialOptions() {
+        addOption(new Option("h", "help", "Displays the help screen") {
+            protected void doProcess(String arg, LinkedList<String> remainingArgs) {
+                showOptions();
+                completed();
+            }
+        });
+        addOption(new ParameterOption("prop", "property", "Additional properties (override existing)", "property") {
+            @Override
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                if (arg.equals("-prop") || arg.equals("-property")) {
+                    String k = StringHelper.before(parameter, "=");
+                    String v = StringHelper.after(parameter, "=");
+                    if (k != null && v != null) {
+                        main.addArgumentProperty(k, v);
+                    }
+                }
+            }
+        });
+        addOption(new ParameterOption(
+                "properties", "properties",
+                "Load properties file for route placeholders (ex. /path/to/file.properties",
+                "properties") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                if (arg.equals("-properties") && parameter != null) {
+                    String[] filesLocation = parameter.split(",");
+                    StringBuilder locations = new StringBuilder();
+                    for (String file : filesLocation) {
+                        if (!file.startsWith("file:")) {
+                            if (!file.startsWith("/")) {
+                                file = FileSystems.getDefault().getPath("").toAbsolutePath() + File.separator + file;
+                            }
+                            file = "file://" + file;
+                        }
+                        locations.append(file).append(",");
+                    }
+                    // there may be existing properties
+                    String loc = main.getInitialProperties().getProperty("camel.component.properties.location");
+                    if (loc != null) {
+                        loc = loc + "," + locations;
+                    } else {
+                        loc = locations.toString();
+                    }
+                    main.addInitialProperty("camel.component.properties.location", loc);
+                }
+            }
+        });
     }
 
     @Override
