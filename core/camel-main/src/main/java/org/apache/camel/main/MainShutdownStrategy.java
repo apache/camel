@@ -74,4 +74,15 @@ public interface MainShutdownStrategy {
      * This is used for restarting await with timeout.
      */
     void restartAwait();
+
+    int getExtraShutdownTimeout();
+
+    /**
+     * Extra timeout in seconds to graceful shutdown Camel.
+     *
+     * When Camel is shutting down then Camel first shutdown all the routes (shutdownTimeout). Then additional services
+     * is shutdown (extraShutdownTimeout).
+     */
+    void setExtraShutdownTimeout(int extraShutdownTimeout);
+
 }

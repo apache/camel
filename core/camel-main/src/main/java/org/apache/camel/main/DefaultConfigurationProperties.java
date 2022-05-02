@@ -221,7 +221,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Timeout in seconds to graceful shutdown Camel.
+     * Timeout in seconds to graceful shutdown all the Camel routes.
      */
     public void setShutdownTimeout(int shutdownTimeout) {
         this.shutdownTimeout = shutdownTimeout;
@@ -1541,7 +1541,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Timeout in seconds to graceful shutdown Camel.
+     * Timeout in seconds to graceful shutdown all the Camel routes.
      */
     public T withShutdownTimeout(int shutdownTimeout) {
         this.shutdownTimeout = shutdownTimeout;

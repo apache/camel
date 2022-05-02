@@ -18,7 +18,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 111 options, which are listed below.
+The camel.main supports 112 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -56,6 +56,7 @@ The camel.main supports 111 options, which are listed below.
 | *camel.main.exchangeFactory* | Controls whether to pool (reuse) exchanges or create new exchanges (prototype). Using pooled will reduce JVM garbage collection overhead by avoiding to re-create Exchange instances per message each consumer receives. The default is prototype mode. | default | String
 | *camel.main.exchangeFactory{zwsp}Capacity* | The capacity the pool (for each consumer) uses for storing exchanges. The default capacity is 100. | 100 | int
 | *camel.main.exchangeFactory{zwsp}StatisticsEnabled* | Configures whether statistics is enabled on exchange factory. | false | boolean
+| *camel.main.extraShutdown{zwsp}Timeout* | Extra timeout in seconds to graceful shutdown Camel. When Camel is shutting down then Camel first shutdown all the routes (shutdownTimeout). Then additional services is shutdown (extraShutdownTimeout). | 15 | int
 | *camel.main.fileConfigurations* | Directory to load additional configuration files that contains configuration values that takes precedence over any other configuration. This can be used to refer to files that may have secret configuration that has been mounted on the file system for containers. You can specify a pattern to load from sub directories and a name pattern such as /var/app/secret/.properties, multiple directories can be separated by comma. |  | String
 | *camel.main.globalOptions* | Sets global options that can be referenced in the camel context Important: This has nothing to do with property placeholders, and is just a plain set of key/value pairs which are used to configure global options on CamelContext, such as a maximum debug logging length etc. |  | Map
 | *camel.main.inflightRepository{zwsp}BrowseEnabled* | Sets whether the inflight repository should allow browsing each inflight exchange. This is by default disabled as there is a very slight performance overhead when enabled. | false | boolean
@@ -106,7 +107,7 @@ The camel.main supports 111 options, which are listed below.
 | *camel.main.shutdownNowOn{zwsp}Timeout* | Sets whether to force shutdown of all consumers when a timeout occurred and thus not all consumers was shutdown within that period. You should have good reasons to set this option to false as it means that the routes keep running and is halted abruptly when CamelContext has been shutdown. | true | boolean
 | *camel.main.shutdownRoutesIn{zwsp}ReverseOrder* | Sets whether routes should be shutdown in reverse or the same order as they were started. | true | boolean
 | *camel.main.shutdownSuppress{zwsp}LoggingOnTimeout* | Whether Camel should try to suppress logging during shutdown and timeout was triggered, meaning forced shutdown is happening. And during forced shutdown we want to avoid logging errors/warnings et all in the logs as a side-effect of the forced timeout. Notice the suppress is a best effort as there may still be some logs coming from 3rd party libraries and whatnot, which Camel cannot control. This option is default false. | false | boolean
-| *camel.main.shutdownTimeout* | Timeout in seconds to graceful shutdown Camel. | 45 | int
+| *camel.main.shutdownTimeout* | Timeout in seconds to graceful shutdown all the Camel routes. | 45 | int
 | *camel.main.sourceLocation{zwsp}Enabled* | Whether to capture precise source location:line-number for all EIPs in Camel routes. Enabling this will impact parsing Java based routes (also Groovy, Kotlin, etc.) on startup as this uses JDK StackTraceElement to calculate the location from the Camel route, which comes with a performance cost. This only impact startup, not the performance of the routes at runtime. | false | boolean
 | *camel.main.startupRecorder* | To use startup recorder for capturing execution time during starting Camel. The recorder can be one of: false (or off), logging, java-flight-recorder (or jfr). |  | String
 | *camel.main.startupRecorderDir* | Directory to store the recording. By default the current directory will be used. Use false to turn off saving recording to disk. |  | String

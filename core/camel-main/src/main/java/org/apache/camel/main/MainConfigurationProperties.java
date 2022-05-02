@@ -39,6 +39,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private boolean autoConfigurationFailFast = true;
     private boolean autoConfigurationLogSummary = true;
     private int durationHitExitCode;
+    private int extraShutdownTimeout = 15;
     private String basePackageScan;
     private boolean basePackageScanEnabled = true;
     private String routesCompileDirectory;
@@ -395,6 +396,20 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.durationHitExitCode = durationHitExitCode;
     }
 
+    public int getExtraShutdownTimeout() {
+        return extraShutdownTimeout;
+    }
+
+    /**
+     * Extra timeout in seconds to graceful shutdown Camel.
+     *
+     * When Camel is shutting down then Camel first shutdown all the routes (shutdownTimeout). Then additional services
+     * is shutdown (extraShutdownTimeout).
+     */
+    public void setExtraShutdownTimeout(int extraShutdownTimeout) {
+        this.extraShutdownTimeout = extraShutdownTimeout;
+    }
+
     // getter and setters - configurations
     // --------------------------------------------------------------
 
@@ -595,6 +610,17 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withDurationHitExitCode(int durationHitExitCode) {
         this.durationHitExitCode = durationHitExitCode;
+        return this;
+    }
+
+    /**
+     * Extra timeout in seconds to graceful shutdown Camel.
+     *
+     * When Camel is shutting down then Camel first shutdown all the routes (shutdownTimeout). Then additional services
+     * is shutdown (extraShutdownTimeout).
+     */
+    public MainConfigurationProperties withExtraShutdownTimeout(int extraShutdownTimeout) {
+        this.extraShutdownTimeout = extraShutdownTimeout;
         return this;
     }
 

@@ -69,6 +69,14 @@ public abstract class MainSupport extends BaseMainSupport {
         super.doInit();
     }
 
+    @Override
+    protected void autoconfigure(CamelContext camelContext) throws Exception {
+        super.autoconfigure(camelContext);
+
+        // additional main configuration after auto-configuration
+        shutdownStrategy.setExtraShutdownTimeout(configure().getExtraShutdownTimeout());
+    }
+
     /**
      * Runs this process with the given arguments, and will wait until completed, or the JVM terminates.
      */

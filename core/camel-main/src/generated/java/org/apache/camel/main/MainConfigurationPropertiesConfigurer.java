@@ -87,6 +87,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ExchangeFactoryCapacity": target.setExchangeFactoryCapacity(property(camelContext, int.class, value)); return true;
         case "exchangefactorystatisticsenabled":
         case "ExchangeFactoryStatisticsEnabled": target.setExchangeFactoryStatisticsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "extrashutdowntimeout":
+        case "ExtraShutdownTimeout": target.setExtraShutdownTimeout(property(camelContext, int.class, value)); return true;
         case "fileconfigurations":
         case "FileConfigurations": target.setFileConfigurations(property(camelContext, java.lang.String.class, value)); return true;
         case "globaloptions":
@@ -316,6 +318,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ExchangeFactoryCapacity": return int.class;
         case "exchangefactorystatisticsenabled":
         case "ExchangeFactoryStatisticsEnabled": return boolean.class;
+        case "extrashutdowntimeout":
+        case "ExtraShutdownTimeout": return int.class;
         case "fileconfigurations":
         case "FileConfigurations": return java.lang.String.class;
         case "globaloptions":
@@ -546,6 +550,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ExchangeFactoryCapacity": return target.getExchangeFactoryCapacity();
         case "exchangefactorystatisticsenabled":
         case "ExchangeFactoryStatisticsEnabled": return target.isExchangeFactoryStatisticsEnabled();
+        case "extrashutdowntimeout":
+        case "ExtraShutdownTimeout": return target.getExtraShutdownTimeout();
         case "fileconfigurations":
         case "FileConfigurations": return target.getFileConfigurations();
         case "globaloptions":
