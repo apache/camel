@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import java.lang.management.ManagementFactory;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 
@@ -54,8 +55,7 @@ public class KameletMain extends MainCommandLineSupport {
 
     public static void main(String... args) throws Exception {
         KameletMain main = new KameletMain();
-        main.run(); // run without args as they are for legacy camel-main
-        int code = main.getExitCode();;
+        int code = main.run(args);
         if (code != 0) {
             System.exit(code);
         }
@@ -128,6 +128,30 @@ public class KameletMain extends MainCommandLineSupport {
 
     // Implementation methods
     // -------------------------------------------------------------------------
+
+    @Override
+    public void showOptionsHeader() {
+        System.out.println("Apache Camel (KameletMain) takes the following options");
+        System.out.println();
+    }
+
+    @Override
+    protected void addInitialOptions() {
+        addOption(new Option("h", "help", "Displays the help screen") {
+            protected void doProcess(String arg, LinkedList<String> remainingArgs) {
+                showOptions();
+                completed();
+            }
+        });
+        addOption(new ParameterOption("download", "download", "Whether to allow automatic downloaded JAR dependencies, over the internet.", "download") {
+            @Override
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                if (arg.equals("-download")) {
+                    setDownload("true".equalsIgnoreCase(parameter));
+                }
+            }
+        });
+    }
 
     @Override
     protected void doInit() throws Exception {
