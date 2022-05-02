@@ -98,7 +98,7 @@ public abstract class MainSupport extends BaseMainSupport {
                 // while running then just log errors
                 LOG.error("Failed: {}", e, e);
             }
-            LOG.info("{} {} shutdown (uptime:{})", appName, helper.getVersion(), helper.getUptime());
+            LOG.info("{} {} shutdown", appName, helper.getVersion());
         }
     }
 
