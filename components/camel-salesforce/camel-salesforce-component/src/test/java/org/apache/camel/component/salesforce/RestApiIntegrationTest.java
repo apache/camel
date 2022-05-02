@@ -231,8 +231,8 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     public void returnsHttpResponseStatusAndText() {
         Exchange exchange = new DefaultExchange(context);
         template().send("direct:query", exchange);
-        assertEquals("200", exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertNotNull(exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_TEXT));
+        assertEquals("200", exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertNotNull(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT));
     }
 
     @Test
@@ -518,9 +518,8 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         createLineItems(createCount);
         Exchange exchange = new DefaultExchange(context);
         template().send("direct:queryStreamResult", exchange);
-        @SuppressWarnings("unchecked")
-        Iterator<Line_Item__c> queryRecords = (Iterator<Line_Item__c>) exchange.getOut().getBody();
-        assertNotNull(exchange.getOut().getHeader("CamelSalesforceQueryResultTotalSize"));
+        Iterator<?> queryRecords = exchange.getMessage(Iterator.class);
+        assertNotNull(exchange.getMessage().getHeader("CamelSalesforceQueryResultTotalSize"));
         int count = 0;
         while (queryRecords.hasNext()) {
             count = count + 1;
