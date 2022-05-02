@@ -24,7 +24,7 @@ import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.OrderedProperties;
 
 /**
- * Main class to run Camel as a uber-jar packaged by camel-jbang
+ * Main class to run Camel as an uber-jar packaged by camel-jbang
  */
 public class UberJarMain extends KameletMain {
 
@@ -32,7 +32,8 @@ public class UberJarMain extends KameletMain {
 
     public static void main(String[] args) throws Exception {
         UberJarMain main = new UberJarMain();
-        int code = main.run(args);
+        main.run(); // run without args as they are for legacy camel-main
+        int code = main.getExitCode();
         if (code != 0) {
             System.exit(code);
         }

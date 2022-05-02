@@ -54,7 +54,8 @@ public class KameletMain extends MainCommandLineSupport {
 
     public static void main(String... args) throws Exception {
         KameletMain main = new KameletMain();
-        int code = main.run(args);
+        main.run(); // run without args as they are for legacy camel-main
+        int code = main.getExitCode();;
         if (code != 0) {
             System.exit(code);
         }
