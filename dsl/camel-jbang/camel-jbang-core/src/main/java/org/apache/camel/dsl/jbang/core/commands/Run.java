@@ -492,9 +492,24 @@ class Run implements Callable<Integer> {
         return lockFile;
     }
 
-    private boolean knownFile(String file) {
+    private boolean knownFile(String file) throws Exception {
         String ext = FileUtil.onlyExt(file, true);
         if (ext != null) {
+            // special for yaml or xml, as we need to check if they have camel or not
+            if ("xml".equals(ext) || "yaml".equals(ext)) {
+                // load content into memory
+                try (FileInputStream fis = new FileInputStream(file)) {
+                    String data = IOHelper.loadText(fis);
+                    if ("xml".equals(ext)) {
+                        return data.contains("<routes") || data.contains("<routeConfiguration") || data.contains("<rests");
+                    } else {
+                        return data.contains("- from:") || data.contains("- route:") || data.contains("- route-configuration:")
+                                || data.contains("- rest:");
+                    }
+                }
+            }
+            // if the ext is an accepted file then we include it as a potential route
+            // (java files need to be included as route to support pojos/processors with routes)
             return Arrays.stream(ACCEPTED_FILE_EXT).anyMatch(e -> e.equalsIgnoreCase(ext));
         } else {
             // assume match as it can be wildcard or dir
