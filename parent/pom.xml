@@ -283,7 +283,7 @@
         <javax-activation-version-range>[0,2)</javax-activation-version-range>
         <javax-activation-version>1.2.0</javax-activation-version>
         <javax-annotation-api-version>1.3.2</javax-annotation-api-version>
-        <jakarta-mail-version>1.6.6</jakarta-mail-version>
+        <jakarta-mail-version>1.6.7</jakarta-mail-version>
         <javax-servlet-api-version>3.1.0</javax-servlet-api-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
         <jakarta.el-version>3.0.3</jakarta.el-version>
