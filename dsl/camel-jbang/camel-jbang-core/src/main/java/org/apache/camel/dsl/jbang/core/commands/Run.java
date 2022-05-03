@@ -265,8 +265,10 @@ class Run implements Callable<Integer> {
         main.setAppName("Apache Camel (JBang)");
 
         writeSetting(main, applicationProperties, "camel.main.name", name);
-        writeSetting(main, applicationProperties, "camel.main.shutdownTimeout", "5");
-
+        if (dev) {
+            // allow quick shutdown during development
+            writeSetting(main, applicationProperties, "camel.main.shutdownTimeout", "5");
+        }
         writeSetting(main, applicationProperties, "camel.main.routesReloadEnabled", dev ? "true" : "false");
         writeSetting(main, applicationProperties, "camel.main.sourceLocationEnabled", "true");
         writeSetting(main, applicationProperties, "camel.main.tracing", trace ? "true" : "false");
