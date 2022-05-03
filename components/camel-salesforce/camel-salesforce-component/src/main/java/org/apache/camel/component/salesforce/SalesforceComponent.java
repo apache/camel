@@ -30,7 +30,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.utils.SecurityUtils;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
@@ -342,7 +342,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     private Map<String, Class<?>> parsePackages() {
         Map<String, Class<?>> result = new HashMap<>();
         Set<Class<?>> classes = getCamelContext().adapt(ExtendedCamelContext.class).getPackageScanClassResolver()
-                .findImplementations(AbstractSObjectBase.class, getPackagesAsArray());
+                .findImplementations(AbstractDTOBase.class, getPackagesAsArray());
         for (Class<?> aClass : classes) {
             result.put(aClass.getSimpleName(), aClass);
         }

@@ -529,7 +529,8 @@ Runs a Salesforce SOQL query
 
 | Body or `sObjectQuery` | `String`  | SOQL query | | x
 | streamQueryResult | `Boolean` | If true, returns a streaming `Iterator` and transparently retrieves all pages as needed. The `sObjectClass` option must reference an `AbstractQueryRecordsBase` subclass. | false |
-| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |x
+| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| | One of sObjectClass or sObjectName is required
+| `sObjectName` | `String` | Simple name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `QueryRecordsAccount`. Requires the `package` option be set.| |One of sObjectClass or sObjectName is required
 |===
 
 *Output*
@@ -547,7 +548,9 @@ Retrieves more results (in case of large number of results) using result link re
 | Parameter | Type | Description | Default | Required
 
 | Body or `sObjectQuery` | `String`  | `nextRecords` value. Can be found in a prior query result in the `AbstractQueryRecordsBase.nextRecordsUrl` property | | X
-| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |x
+| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |One of sObjectClass or sObjectName is required
+| `sObjectName` | `String` | Simple name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `QueryRecordsAccount`. Requires the `package` option be set. | |One of sObjectClass or sObjectName is required
+
 |===
 
 *Output*
@@ -566,7 +569,8 @@ Executes the specified SOQL query. Unlike the `query` operation , `queryAll` ret
 
 | Body or `sObjectQuery` | `String`  | SOQL query | | x
 | streamQueryResult | `Boolean` | If true, returns a streaming `Iterable` and transparently retrieves all pages as needed. The `sObjectClass` option must reference an `AbstractQueryRecordsBase` subclass. | false |
-| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |x
+| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |One of sObjectClass or sObjectName is required
+| `sObjectName` | `String` | Simple name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `QueryRecordsAccount`. Requires the `package` option be set.| |One of sObjectClass or sObjectName is required
 |===
 
 *Output*

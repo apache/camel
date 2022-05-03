@@ -513,6 +513,20 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
+    public void testQueryWithSObjectName() throws Exception {
+        createLineItem();
+        final QueryRecordsLine_Item__c queryRecords
+                = template().requestBody("direct:queryWithSObjectName", null, QueryRecordsLine_Item__c.class);
+        assertNotNull(queryRecords);
+        // verify polymorphic query resulted in the correct type
+        assertEquals(User.class, queryRecords.getRecords().get(0).getOwner().getClass());
+        final Line_Item__c lineItem = queryRecords.getRecords().get(0);
+        User user = (User) queryRecords.getRecords().get(0).getOwner();
+        assertNotNull(user.getUsername());
+        assertNotNull(lineItem.getRecordType());
+    }
+
+    @Test
     public void testQueryStreamResults() throws Exception {
         final int createCount = 300;
         createLineItems(createCount);
@@ -813,6 +827,11 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                 from("direct:query")
                         .to("salesforce:query?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name from Line_Item__c&sObjectClass="
                             + QueryRecordsLine_Item__c.class.getName());
+
+                // testQuery
+                from("direct:queryWithSObjectName")
+                        .to("salesforce:query?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name from Line_Item__c&sObjectName="
+                            + "QueryRecordsLine_Item__c");
 
                 // testQuery
                 from("direct:queryStreamResult")
