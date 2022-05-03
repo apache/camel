@@ -36,8 +36,11 @@ public class PlatformHttpConsole extends AbstractDevConsole {
 
         PlatformHttpComponent http = getCamelContext().getComponent("platform-http", PlatformHttpComponent.class);
         if (http != null) {
+            String server = "http://0.0.0.0";
             int port = http.getEngine().getServerPort();
-            String server = "http://0.0.0.0:" + port;
+            if (port > 0) {
+                server += ":" + port;
+            }
             Set<HttpEndpointModel> models = http.getHttpEndpoints();
             for (HttpEndpointModel model : models) {
                 if (model.getVerbs() != null) {

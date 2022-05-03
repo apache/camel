@@ -35,8 +35,10 @@ public interface PlatformHttpEngine {
     Consumer createConsumer(PlatformHttpEndpoint platformHttpEndpoint, Processor processor);
 
     /**
-     * The port number the HTTP server is using
+     * The port number the HTTP server is using, if possible to determine.
      */
-    int getServerPort();
+    default int getServerPort() {
+        return 0;
+    }
 
 }

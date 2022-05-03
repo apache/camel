@@ -22,7 +22,6 @@ import java.util.Map;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.AllowForwardHeaders;
 import io.vertx.ext.web.Route;
