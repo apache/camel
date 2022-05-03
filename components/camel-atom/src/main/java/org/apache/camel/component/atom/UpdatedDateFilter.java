@@ -40,10 +40,6 @@ public class UpdatedDateFilter implements EntryFilter<Entry> {
         this.lastUpdate = lastUpdate;
     }
 
-    private Date getLastUpdate() {
-        return this.lastUpdate;
-    }
-
     @Override
     public boolean isValidEntry(Entry entry) {
         Date updated = entry.getUpdated();
