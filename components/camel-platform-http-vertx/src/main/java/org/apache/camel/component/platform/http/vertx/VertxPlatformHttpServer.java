@@ -72,6 +72,10 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
         this.context = context;
     }
 
+    public HttpServer getServer() {
+        return server;
+    }
+
     public Vertx getVertx() {
         return vertx;
     }
@@ -151,7 +155,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
 
         context.getRegistry().bind(
                 VertxPlatformHttpRouter.PLATFORM_HTTP_ROUTER_NAME,
-                new VertxPlatformHttpRouter(vertx, subRouter) {
+                new VertxPlatformHttpRouter(this, vertx, subRouter) {
                     @Override
                     public Handler<RoutingContext> bodyHandler() {
                         return createBodyHandler(configuration);

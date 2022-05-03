@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.platform.http;
 
-import org.apache.camel.util.StringHelper;
-
 import java.util.Locale;
 import java.util.Objects;
+
+import org.apache.camel.util.StringHelper;
 
 /**
  * Model of available http endpoints.

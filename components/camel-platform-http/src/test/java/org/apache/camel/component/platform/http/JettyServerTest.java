@@ -24,12 +24,14 @@ public class JettyServerTest {
     public static final String JETTY_SERVER_NAME = "JettyServerTest";
 
     private Server server;
+    private int port;
     private HandlerCollection contextHandlerCollection;
 
     public JettyServerTest(int port) {
-        server = new Server(port);
-        contextHandlerCollection = new HandlerCollection(true);
-        server.setHandler(contextHandlerCollection);
+        this.server = new Server(port);
+        this.port = port;
+        this.contextHandlerCollection = new HandlerCollection(true);
+        this.server.setHandler(contextHandlerCollection);
     }
 
     public void start() throws Exception {
@@ -40,14 +42,12 @@ public class JettyServerTest {
         server.stop();
     }
 
-    /**
-     * adds a context handler and starts it
-     *
-     * @param  contextHandler
-     * @throws Exception
-     */
     public void addHandler(ContextHandler contextHandler) throws Exception {
         contextHandlerCollection.addHandler(contextHandler);
         contextHandler.start();
+    }
+
+    public int getServerPort() {
+        return port;
     }
 }
