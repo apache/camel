@@ -60,7 +60,6 @@ import org.apache.camel.component.telegram.model.SendLocationMessage;
 import org.apache.camel.component.telegram.model.SendVenueMessage;
 import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
-import org.apache.camel.component.telegram.model.WebhookInfo;
 import org.apache.camel.component.telegram.model.WebhookResult;
 import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.util.IOHelper;
@@ -182,16 +181,9 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
 
     @Override
     public boolean setWebhook(String url) {
-        final String uri = baseUri + "/setWebhook";
-        final RequestBuilder request = new RequestBuilder("POST")
+        final String uri = baseUri + "/setWebhook?url=" + url;
+        final RequestBuilder request = new RequestBuilder("GET")
                 .setUrl(uri);
-        final WebhookInfo message = new WebhookInfo(url);
-        try {
-            final String body = mapper.writeValueAsString(message);
-            request.setBody(body);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeCamelException("Could not serialize " + message);
-        }
         WebhookResult res = sendSyncRequest(request.build(), WebhookResult.class);
         return res.isOk() && res.isResult();
     }
