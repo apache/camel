@@ -68,23 +68,25 @@ class UberJar implements Callable<Integer> {
     @CommandLine.Option(names = { "-j", "--jar" }, defaultValue = "camel-runner.jar", description = "Jar filename")
     private String jar = "camel-runner.jar";
 
+    @Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
+    private boolean fresh;
+
     @Override
     public Integer call() throws Exception {
         // the settings file has information what to package in uber-jar so we need to read it from the run command
         File settings = new File(Run.WORK_DIR + "/" + Run.RUN_SETTINGS_FILE);
-        if (!settings.exists()) {
+        if (fresh || !settings.exists()) {
             // allow to automatic build
+            System.out.println("Generating fresh run data");
             int silent = runSilently();
             if (silent != 0) {
                 return silent;
             }
-        }
-        settings = new File(Run.WORK_DIR + "/" + Run.RUN_SETTINGS_FILE);
-        if (!settings.exists()) {
-            System.out.println("Run Camel first to generate dependency file");
-            return 0;
+        } else {
+            System.out.println("Reusing existing run data");
         }
 
+        System.out.println("Packaging " + jar);
         File buildDir = new File(BUILD_DIR);
         FileUtil.removeDir(buildDir);
         buildDir.mkdirs();
@@ -172,7 +174,8 @@ class UberJar implements Callable<Integer> {
 
     private Integer runSilently() throws Exception {
         Run run = new Run();
-        return run.runSilent();
+        Integer code = run.runSilent();
+        return code;
     }
 
     private void copySettings(File settings) throws Exception {
