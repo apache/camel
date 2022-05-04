@@ -323,6 +323,18 @@ Listening for transport dt_socket at address: 4004
 
 As you can see the default listening port is 4004 but can be configured as described in https://www.jbang.dev/documentation/guide/latest/debugging.html[JBang Debugging].
 
+== Open API
+
+Camel JBang allows to quickly expose an Open API service using _contract first_ apprach,
+where you have an existing OpenAPI specification file.
+
+Then Camel JBang is able to bridge each API endpoints from the OpenAPI specification to
+a Camel route with the naming convention `direct:<operationId>`.
+
+This make it quick to implement a Camel route for a given operation.
+
+See the https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-api)[open-api example] for more details.
+
 == Packaging
 
 The Camel JBang application can be packaged as a standalone _uber-jar_ without the need for JBang to run the application.
