@@ -16,28 +16,17 @@
  */
 package org.apache.camel.component.file.remote.sftp.integration;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
+import java.security.interfaces.ECPublicKey;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
 @EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
-public class SftpKeyPairDSAConsumeIT extends SftpServerTestSupport {
-
-    private static KeyPair keyPair;
-
-    @BeforeAll
-    public static void createKeys() throws Exception {
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
-        keyGen.initialize(1024);
-        keyPair = keyGen.generateKeyPair();
-    }
+public class SftpEDDSAKeyFileConsumeIT extends SftpServerTestSupport {
 
     @Test
     public void testSftpSimpleConsume() throws Exception {
@@ -57,20 +46,18 @@ public class SftpKeyPairDSAConsumeIT extends SftpServerTestSupport {
     }
 
     protected PublickeyAuthenticator getPublickeyAuthenticator() {
-        return (username, key, session) -> key.equals(keyPair.getPublic());
+        return (username, key, session) -> key instanceof ECPublicKey;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        context.getRegistry().bind("keyPair", keyPair);
-        context.getRegistry().bind("knownHosts", service.buildKnownHosts());
-
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&knownHosts=#knownHosts&keyPair=#keyPair&delay=10000&strictHostKeyChecking=yes&useUserKnownHostsFile=false&disconnect=true")
-                             .routeId("foo").noAutoStartup()
+            public void configure() {
+                from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&knownHostsFile="
+                     + service.getKnownHostsFile()
+                     + "&privateKeyFile=./src/test/resources/ed25519.pem&delay=10000&disconnect=true").routeId("foo")
+                             .noAutoStartup()
                              .to("mock:result");
             }
         };

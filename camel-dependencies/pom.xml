@@ -345,7 +345,7 @@
     <joor-version>0.9.14</joor-version>
     <jose4j-version>0.6.4</jose4j-version>
     <jota-version>1.0.0-beta9</jota-version>
-    <jsch-version>0.1.55</jsch-version>
+    <jsch-version>0.2.0</jsch-version>
     <jsendnsca-version>2.1.1</jsendnsca-version>
     <jslt-version>0.1.11</jslt-version>
     <jsmpp-version>2.3.11</jsmpp-version>
@@ -527,7 +527,7 @@
     <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
     <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
     <squareup-okio-version>1.17.2</squareup-okio-version>
-    <sshd-version>2.7.0</sshd-version>
+    <sshd-version>2.8.0</sshd-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stompjms-version>1.19</stompjms-version>
     <stringtemplate-version>4.3</stringtemplate-version>
