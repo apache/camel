@@ -98,7 +98,11 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
                 = doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration,
                         parameters, false);
         if (uriTemplate != null) {
-            addHttpEndpoint(basePath + "/" + uriTemplate, verb);
+            if (uriTemplate.startsWith("/")) {
+                addHttpEndpoint(basePath + uriTemplate, verb);
+            } else {
+                addHttpEndpoint(basePath + "/" + uriTemplate, verb);
+            }
         } else {
             addHttpEndpoint(basePath, verb);
         }
