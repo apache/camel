@@ -327,8 +327,7 @@ class Run implements Callable<Integer> {
 
         if (silentRun) {
             // do not run for very long in silent run
-            // TODO main.addInitialProperty("camel.main.autoStartup", "false");
-            // need modeline-parser to work
+            main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "1");
         }
         writeSetting(main, applicationProperties, "camel.main.durationMaxMessages",
