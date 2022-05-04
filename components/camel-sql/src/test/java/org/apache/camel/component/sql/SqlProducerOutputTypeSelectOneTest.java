@@ -54,7 +54,9 @@ public class SqlProducerOutputTypeSelectOneTest {
     @AfterEach
     public void tearDown() {
         camel1.stop();
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Test
