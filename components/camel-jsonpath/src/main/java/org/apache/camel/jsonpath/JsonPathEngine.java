@@ -27,11 +27,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -61,11 +63,11 @@ public class JsonPathEngine {
 
     @Deprecated
     public JsonPathEngine(String expression) {
-        this(expression, false, false, true, null, null);
+        this(expression, false, false, true, null, null, null);
     }
 
     public JsonPathEngine(String expression, boolean writeAsString, boolean suppressExceptions, boolean allowSimple,
-                          String headerName, Option[] options) {
+                          String headerName, Option[] options, CamelContext context) {
         this.expression = expression;
         this.writeAsString = writeAsString;
         this.headerName = headerName;
@@ -74,8 +76,16 @@ public class JsonPathEngine {
         if (options != null) {
             builder.options(options);
         }
-        builder.jsonProvider(new JacksonJsonProvider());
-        builder.mappingProvider(new JacksonMappingProvider());
+        // Use custom ObjectMapper if provided (CAMEL-17956)
+        ObjectMapper objectMapper = findRegisteredMapper(context);
+        if (objectMapper != null) {
+            builder.jsonProvider(new JacksonJsonProvider(objectMapper));
+            builder.mappingProvider(new JacksonMappingProvider(objectMapper));
+        } else {
+            builder.jsonProvider(new JacksonJsonProvider());
+            builder.mappingProvider(new JacksonMappingProvider());
+        }
+
         if (suppressExceptions) {
             builder.options(SUPPRESS_EXCEPTIONS);
         }
@@ -90,6 +100,13 @@ public class JsonPathEngine {
             }
         }
         this.hasSimple = simpleInUse;
+    }
+
+    private ObjectMapper findRegisteredMapper(CamelContext context) {
+        if (context != null) {
+            return context.getRegistry().findSingleByType(ObjectMapper.class);
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")

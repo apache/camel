@@ -175,7 +175,7 @@ public class JsonPathExpression extends ExpressionAdapter {
 
         LOG.debug("Initializing {} using: {}", predicate ? "predicate" : "expression", exp);
         try {
-            engine = new JsonPathEngine(exp, writeAsString, suppressExceptions, allowSimple, headerName, options);
+            engine = new JsonPathEngine(exp, writeAsString, suppressExceptions, allowSimple, headerName, options, context);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(exp, e);
         }
