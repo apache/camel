@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -105,10 +104,7 @@ public class JsonPathEngine {
 
     private ObjectMapper findRegisteredMapper(CamelContext context) {
         if (context != null) {
-            Set<ObjectMapper> mappers = context.getRegistry().findByType(ObjectMapper.class);
-            if (mappers.size() == 1) {
-                return mappers.iterator().next();
-            }
+            return context.getRegistry().findSingleByType(ObjectMapper.class);
         }
         return null;
     }
