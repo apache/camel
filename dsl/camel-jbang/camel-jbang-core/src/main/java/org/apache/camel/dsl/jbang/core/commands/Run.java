@@ -87,7 +87,7 @@ class Run implements Callable<Integer> {
     //CHECKSTYLE:ON
 
     @Option(names = {
-            "--deps" }, description = "Add additional dependencies (Use commas to separate them).")
+            "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate them).")
     private String dependencies;
 
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
