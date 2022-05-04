@@ -136,6 +136,10 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
             fixVerb(node, v);
             toTagUris.addAll(fixToTags(xmlMapper, node, v));
         }
+        for (String v : VERBS) {
+            fixVerbNodes(xmlMapper, node, v);
+        }
+
         // the root tag should be an array
         node = fixRootNode(xmlMapper, node);
 
@@ -255,6 +259,24 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
     }
 
     /**
+     * verb nodes should be an array list, but if there is only 1 verb then there is only 1 <verb> in XML and jackson
+     * parses that into a single node, so we need to change that into an array node
+     */
+    private static void fixVerbNodes(XmlMapper xmlMapper, JsonNode node, String verb) {
+        JsonNode verbs = node.path("rest").path(verb);
+        if (verbs == null || verbs.isMissingNode()) {
+            return;
+        }
+        if (verbs.isObject()) {
+            ArrayNode arr = xmlMapper.createArrayNode();
+            ObjectNode on = (ObjectNode) verbs;
+            arr.add(on);
+            ObjectNode n = (ObjectNode) node.path("rest");
+            n.set(verb, arr);
+        }
+    }
+
+    /**
      * to tag should be in implicit mode, ex: to: "direct:directX"
      */
     private static List<String> fixToTags(XmlMapper xmlMapper, JsonNode node, String verb) {
@@ -277,15 +299,6 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
                 toTags.add(uri.textValue());
             }
         }
-        return toTags;
-    }
-
-    /**
-     * Get all URIs for 'to' tags
-     */
-    private static List<String> getToUris(RestsDefinition rests) {
-        List<String> toTags = new ArrayList<>();
-
         return toTags;
     }
 

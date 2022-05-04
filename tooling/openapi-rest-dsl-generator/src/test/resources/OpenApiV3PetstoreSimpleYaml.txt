@@ -1,6 +1,6 @@
 - rest:
     put:
-      consumes: "application/json,text/xml"
+    - consumes: "application/json,text/xml"
       path: "/pet"
       produces: "application/json,text/xml"
       param:
