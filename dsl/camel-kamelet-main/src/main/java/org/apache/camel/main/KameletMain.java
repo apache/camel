@@ -40,6 +40,7 @@ public class KameletMain extends MainCommandLineSupport {
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
     private DownloadListener downloadListener;
+    private GroovyClassLoader groovyClassLoader;
 
     public KameletMain() {
         configureInitialProperties(DEFAULT_KAMELETS_LOCATION);
@@ -198,6 +199,9 @@ public class KameletMain extends MainCommandLineSupport {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
         answer.setLogJvmUptime(true);
+        if (download) {
+            answer.setApplicationContextClassLoader(createApplicationContextClassLoader());
+        }
 
         // register download listener
         if (downloadListener != null) {
@@ -292,14 +296,18 @@ public class KameletMain extends MainCommandLineSupport {
     }
 
     protected ClassLoader createApplicationContextClassLoader() {
-        // any additional files to add to classpath
-        ClassLoader parentCL = KameletMain.class.getClassLoader();
-        String cpFiles = getInitialProperties().getProperty("camel.jbang.classpathFiles");
-        if (cpFiles != null) {
-            parentCL = new ExtraFilesClassLoader(parentCL, cpFiles.split(","));
-            LOG.info("Additional files added to classpath: {}", cpFiles);
+        if (groovyClassLoader == null) {
+            // create class loader (that are download capable) only once
+            // any additional files to add to classpath
+            ClassLoader parentCL = KameletMain.class.getClassLoader();
+            String cpFiles = getInitialProperties().getProperty("camel.jbang.classpathFiles");
+            if (cpFiles != null) {
+                parentCL = new ExtraFilesClassLoader(parentCL, cpFiles.split(","));
+                LOG.info("Additional files added to classpath: {}", cpFiles);
+            }
+            groovyClassLoader = new GroovyClassLoader(parentCL);
         }
-        return new GroovyClassLoader(parentCL);
+        return groovyClassLoader;
     }
 
     @Override
