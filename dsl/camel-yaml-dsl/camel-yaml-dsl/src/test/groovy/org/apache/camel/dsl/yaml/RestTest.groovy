@@ -121,10 +121,12 @@ class RestTest extends YamlTestSupport {
                 - rest:
                     post:
                       - path: "/foo"
+                        id: "foolish"
                         type: ${MyFooBar.name}
                         out-type: ${MyBean.name}
                         to: "direct:foo"
                       - path: "/baz"
+                        id: "bazzy"
                         to: "direct:baz"
                     get:
                       - path: "/getFoo"

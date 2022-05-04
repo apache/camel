@@ -22,8 +22,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
@@ -34,8 +38,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.apicurio.datamodels.Library;
+import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
+import org.apache.camel.generator.openapi.RestDslGenerator;
+import org.apache.camel.impl.lw.LightweightCamelContext;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
@@ -43,6 +53,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -58,6 +70,8 @@ class Run implements Callable<Integer> {
 
     private static final String[] ACCEPTED_FILE_EXT
             = new String[] { "properties", "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
+
+    private static final String OPENAPI_GENERATED_FILE = ".camel-jbang/generated-openapi.yaml";
 
     private CamelContext context;
     private File lockFile;
@@ -138,6 +152,9 @@ class Run implements Callable<Integer> {
 
     @Option(names = { "--modeline" }, description = "Enables Camel-K style modeline")
     private boolean modeline = true;
+
+    @Option(names = { "--open-api" }, description = "Add an OpenAPI spec from the given file")
+    private String openapi;
 
     @Override
     public Integer call() throws Exception {
@@ -221,6 +238,11 @@ class Run implements Callable<Integer> {
         File work = new File(WORK_DIR);
         FileUtil.removeDir(work);
         work.mkdirs();
+
+        // generate open-api early
+        if (openapi != null) {
+            generateOpenApi();
+        }
 
         OrderedProperties applicationProperties = null;
         if (files == null || files.length == 0) {
@@ -322,6 +344,16 @@ class Run implements Callable<Integer> {
         StringJoiner sjReload = new StringJoiner(",");
         StringJoiner sjClasspathFiles = new StringJoiner(",");
         StringJoiner sjKamelets = new StringJoiner(",");
+
+        // include generated openapi to files to run
+        if (openapi != null) {
+            List<String> list = new ArrayList<>();
+            if (files != null) {
+                list.addAll(Arrays.asList(files));
+            }
+            list.add(OPENAPI_GENERATED_FILE);
+            files = list.toArray(new String[0]);
+        }
 
         if (files != null) {
             for (String file : files) {
@@ -480,6 +512,17 @@ class Run implements Callable<Integer> {
         return code;
     }
 
+    private void generateOpenApi() throws Exception {
+        final ObjectMapper mapper = new ObjectMapper();
+        final JsonNode node = mapper.readTree(Paths.get(openapi).toFile());
+        OasDocument document = (OasDocument) Library.readDocument(node);
+        Configurator.setRootLevel(Level.OFF);
+        try (CamelContext context = new LightweightCamelContext()) {
+            String out = RestDslGenerator.toYaml(document).generate(context, false);
+            Files.write(Paths.get(OPENAPI_GENERATED_FILE), out.getBytes());
+        }
+    }
+
     public File createLockFile() throws IOException {
         File lockFile = File.createTempFile(".run", ".camel.lock", new File("."));
 
@@ -518,6 +561,9 @@ class Run implements Callable<Integer> {
     }
 
     private boolean skipFile(String name) {
+        if (OPENAPI_GENERATED_FILE.equals(name)) {
+            return false;
+        }
         if (name.startsWith(".")) {
             return true;
         }
