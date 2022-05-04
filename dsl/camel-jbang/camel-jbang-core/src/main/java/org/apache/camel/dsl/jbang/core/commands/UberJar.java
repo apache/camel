@@ -188,6 +188,8 @@ class UberJar implements Callable<Integer> {
             // file:foo.java is compiled to .class so we need to replace it
             value = value.replaceAll("file:", "classpath:");
             value = value.replaceAll(".java", ".class");
+            // special fix for generated files inside .camel-jbang
+            value = value.replaceAll("classpath:.camel-jbang/", "classpath:");
             line = key + "=" + value;
         }
         return line;
