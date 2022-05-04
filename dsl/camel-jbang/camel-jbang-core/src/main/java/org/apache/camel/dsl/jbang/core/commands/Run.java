@@ -76,6 +76,7 @@ class Run implements Callable<Integer> {
     private CamelContext context;
     private File lockFile;
     private ScheduledExecutorService executor;
+    private boolean silentRun;
 
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
                 arity = "0..9")
@@ -166,6 +167,12 @@ class Run implements Callable<Integer> {
         }
     }
 
+    protected Integer runSilent() throws Exception {
+        // just boot silently and exit
+        silentRun = true;
+        return run();
+    }
+
     private void writeSetting(KameletMain main, Properties existing, String key, String value) {
         String val = existing != null ? existing.getProperty(key, value) : value;
         if (val != null) {
@@ -248,18 +255,23 @@ class Run implements Callable<Integer> {
         if (files == null || files.length == 0) {
             // special when no files have been specified then we use application.properties as source to know what to run
             File source = new File("application.properties");
-            if (!source.exists()) {
+            if (source.exists()) {
+                applicationProperties = loadApplicationProperties(source);
+                // logging level may be configured in the properties file
+                loggingLevel = applicationProperties.getProperty("loggingLevel", loggingLevel);
+            } else if (!silentRun && !source.exists()) {
                 System.out.println("Cannot run because application.properties file does not exist");
                 return 1;
+            } else {
+                // silent-run then auto-detect all files
+                files = new File(".").list();
             }
-            applicationProperties = loadApplicationProperties(source);
-
-            // logging level may be configured in the properties file
-            loggingLevel = applicationProperties.getProperty("loggingLevel", loggingLevel);
         }
 
         // configure logging first
-        if (logging) {
+        if (silentRun) {
+            RuntimeUtil.configureLog("off");
+        } else if (logging) {
             RuntimeUtil.configureLog(loggingLevel);
             writeSettings("loggingLevel", loggingLevel);
         } else {
@@ -313,6 +325,12 @@ class Run implements Callable<Integer> {
             }
         }
 
+        if (silentRun) {
+            // do not run for very long in silent run
+            // TODO main.addInitialProperty("camel.main.autoStartup", "false");
+            // need modeline-parser to work
+            main.addInitialProperty("camel.main.durationMaxSeconds", "1");
+        }
         writeSetting(main, applicationProperties, "camel.main.durationMaxMessages",
                 () -> maxMessages > 0 ? String.valueOf(maxMessages) : null);
         writeSetting(main, applicationProperties, "camel.main.durationMaxSeconds",
@@ -536,14 +554,20 @@ class Run implements Callable<Integer> {
     }
 
     private boolean knownFile(String file) throws Exception {
-        String ext = FileUtil.onlyExt(file, true);
-        if (ext != null) {
+        // always include kamelets
+        String ext = FileUtil.onlyExt(file, false);
+        if ("kamelet.yaml".equals(ext)) {
+            return true;
+        }
+
+        String ext2 = FileUtil.onlyExt(file, true);
+        if (ext2 != null) {
             // special for yaml or xml, as we need to check if they have camel or not
-            if ("xml".equals(ext) || "yaml".equals(ext)) {
+            if ("xml".equals(ext2) || "yaml".equals(ext2)) {
                 // load content into memory
                 try (FileInputStream fis = new FileInputStream(file)) {
                     String data = IOHelper.loadText(fis);
-                    if ("xml".equals(ext)) {
+                    if ("xml".equals(ext2)) {
                         return data.contains("<routes") || data.contains("<routeConfiguration") || data.contains("<rests");
                     } else {
                         return data.contains("- from:") || data.contains("- route:") || data.contains("- route-configuration:")
@@ -553,7 +577,7 @@ class Run implements Callable<Integer> {
             }
             // if the ext is an accepted file then we include it as a potential route
             // (java files need to be included as route to support pojos/processors with routes)
-            return Arrays.stream(ACCEPTED_FILE_EXT).anyMatch(e -> e.equalsIgnoreCase(ext));
+            return Arrays.stream(ACCEPTED_FILE_EXT).anyMatch(e -> e.equalsIgnoreCase(ext2));
         } else {
             // assume match as it can be wildcard or dir
             return true;

@@ -73,6 +73,14 @@ class UberJar implements Callable<Integer> {
         // the settings file has information what to package in uber-jar so we need to read it from the run command
         File settings = new File(Run.WORK_DIR + "/" + Run.RUN_SETTINGS_FILE);
         if (!settings.exists()) {
+            // allow to automatic build
+            int silent = runSilently();
+            if (silent != 0) {
+                return silent;
+            }
+        }
+        settings = new File(Run.WORK_DIR + "/" + Run.RUN_SETTINGS_FILE);
+        if (!settings.exists()) {
             System.out.println("Run Camel first to generate dependency file");
             return 0;
         }
@@ -160,6 +168,11 @@ class UberJar implements Callable<Integer> {
         FileUtil.removeDir(new File(BUILD_DIR));
 
         return 0;
+    }
+
+    private Integer runSilently() throws Exception {
+        Run run = new Run();
+        return run.runSilent();
     }
 
     private void copySettings(File settings) throws Exception {
