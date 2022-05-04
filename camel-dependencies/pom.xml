@@ -286,7 +286,7 @@
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jakarta-api-version>2.1.5</jakarta-api-version>
     <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>
-    <jakarta-mail-version>1.6.6</jakarta-mail-version>
+    <jakarta-mail-version>1.6.7</jakarta-mail-version>
     <jakarta.el-version>3.0.3</jakarta.el-version>
     <jandex-version>2.4.1.Final</jandex-version>
     <jansi-version>1.18</jansi-version>
