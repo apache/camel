@@ -29,10 +29,13 @@ import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Schema;
 import io.apicurio.datamodels.openapi.v2.models.Oas20SchemaDefinition;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30AnyOfSchema;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SchemaDefinition;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,6 +125,51 @@ public class RestModelConverters {
                              ref.substring(RestOpenApiReader.OAS30_SCHEMA_DEFINITION_PREFIX.length());
             } else {
                 model.$ref = ref;
+            }
+        }
+
+        // xxxOf support
+        if (model instanceof Oas30SchemaDefinition && schema instanceof ComposedSchema) {
+            ComposedSchema composedSchema = (ComposedSchema) schema;
+            Oas30SchemaDefinition modelDefinition = (Oas30SchemaDefinition) model;
+
+            // oneOf
+            if (null != composedSchema.getOneOf()) {
+                for (Schema oneOfSchema : composedSchema.getOneOf()) {
+                    if (null != oneOfSchema.get$ref()) {
+                        Oas30OneOfSchema oneOfModel = modelDefinition.createOneOfSchema();
+                        oneOfModel.setReference(oneOfSchema.get$ref());
+                        modelDefinition.addOneOfSchema(oneOfModel);
+                        type = null; // No longer typed
+                        model.type = null;
+                    }
+                }
+            }
+
+            // allOf
+            if (null != composedSchema.getAllOf()) {
+                for (Schema allOfSchema : composedSchema.getAllOf()) {
+                    if (null != allOfSchema.get$ref()) {
+                        OasSchema allOfModel = modelDefinition.createAllOfSchema();
+                        allOfModel.setReference(allOfSchema.get$ref());
+                        modelDefinition.addAllOfSchema(allOfModel);
+                        type = null; // No longer typed
+                        model.type = null;
+                    }
+                }
+            }
+
+            // anyOf
+            if (null != composedSchema.getAnyOf()) {
+                for (Schema anyOfSchema : composedSchema.getAnyOf()) {
+                    if (null != anyOfSchema.get$ref()) {
+                        Oas30AnyOfSchema anyOfModel = modelDefinition.createAnyOfSchema();
+                        anyOfModel.setReference(anyOfSchema.get$ref());
+                        modelDefinition.addAnyOfSchema(anyOfModel);
+                        type = null; // No longer typed
+                        model.type = null;
+                    }
+                }
             }
         }
 
