@@ -28,7 +28,7 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ServiceBusSpanDecoratorTest {
+public class AzureServiceBusSpanDecoratorTest {
 
     @Test
     public void testGetMessageId() {
