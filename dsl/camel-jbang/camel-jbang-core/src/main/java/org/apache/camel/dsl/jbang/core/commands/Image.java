@@ -95,7 +95,7 @@ public class Image implements Callable<Integer> {
         if (openshift) {
             LOG.info("Generating resources...");
             OpenShiftConfig config
-                    = new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).withNamespace(namespace).build();
+                    = new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).withNamespace(namespace).withTrustCerts(true).build();
             try (OpenShiftClient client = new DefaultOpenShiftClient(config)) {
                 ImageStream imageStream = KubernetesHelper.createImageStream(namespace, name, version);
                 BuildConfig buildConfig
