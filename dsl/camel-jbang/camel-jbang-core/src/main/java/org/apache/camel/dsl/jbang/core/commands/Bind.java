@@ -16,15 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.github.GitHubResourceResolver;
+import org.apache.camel.impl.engine.DefaultResourceResolvers;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.snakeyaml.engine.v2.api.LoadSettings;
@@ -96,13 +96,24 @@ class Bind implements Callable<Integer> {
     protected String kameletProperties(String kamelet) throws Exception {
         StringBuilder sb = new StringBuilder();
 
-        String loc = new GitHubResourceResolver()
-                .resolve(
-                        "github:apache:camel-kamelets:main:kamelets/" + kamelet + ".kamelet.yaml")
-                .getLocation();
-        if (loc != null) {
+        InputStream is = null;
+        String loc = null;
+
+        // try local disk first before github
+        Resource res = new DefaultResourceResolvers.FileResolver().resolve("file:" + kamelet + ".kamelet.yaml");
+        if (res.exists()) {
+            is = res.getInputStream();
+            loc = res.getLocation();
+        } else {
+            res = new GitHubResourceResolver().resolve(
+                    "github:apache:camel-kamelets:main:kamelets/" + kamelet + ".kamelet.yaml");
+            if (res.exists()) {
+                is = res.getInputStream();
+                loc = res.getLocation();
+            }
+        }
+        if (is != null) {
             try {
-                InputStream is = new URL(loc).openStream();
                 LoadSettings local = LoadSettings.builder().setLabel(loc).build();
                 final StreamReader reader = new StreamReader(local, new YamlUnicodeReader(is));
                 final Parser parser = new ParserImpl(local, reader);
@@ -136,12 +147,11 @@ class Bind implements Callable<Integer> {
                     }
                 }
                 IOHelper.close(is);
-            } catch (FileNotFoundException e) {
-                System.err.println("Kamelet not found on github: " + loc);
             } catch (Exception e) {
-                e.printStackTrace();
                 System.err.println("Error parsing Kamelet: " + loc + " due to: " + e.getMessage());
             }
+        } else {
+            System.err.println("Kamelet not found on github: " + kamelet);
         }
 
         // create a dummy placeholder, so it is easier to add new properties manually
