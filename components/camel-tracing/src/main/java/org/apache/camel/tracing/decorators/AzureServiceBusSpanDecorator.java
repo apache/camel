@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
 
-public class ServiceBusSpanDecorator extends AbstractMessagingSpanDecorator {
+public class AzureServiceBusSpanDecorator extends AbstractMessagingSpanDecorator {
 
     static final String SERVICEBUS_CONTENT_TYPE = "contentType";
     static final String SERVICEBUS_CORRELATION_ID = "correlationId";
