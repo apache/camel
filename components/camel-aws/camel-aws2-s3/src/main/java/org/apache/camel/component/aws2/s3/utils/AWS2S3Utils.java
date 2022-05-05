@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.aws2.s3.AWS2S3Configuration;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.util.ObjectHelper;
@@ -81,6 +82,13 @@ public final class AWS2S3Utils {
     }
 
     public static long determineLengthInputStream(InputStream is) throws IOException {
+        if (is instanceof StreamCache) {
+            long len = ((StreamCache) is).length();
+            if (len > 0) {
+                return len;
+            }
+        }
+
         if (!is.markSupported()) {
             return -1;
         }

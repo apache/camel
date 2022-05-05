@@ -37,7 +37,7 @@ public final class BlobUtils {
     public static long getInputStreamLength(InputStream is) throws IOException {
         if (is instanceof StreamCache) {
             long len = ((StreamCache) is).length();
-            if (len != -1) {
+            if (len > 0) {
                 return len;
             }
         }
