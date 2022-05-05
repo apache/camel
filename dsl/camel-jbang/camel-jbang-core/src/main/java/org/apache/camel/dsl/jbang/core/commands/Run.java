@@ -569,8 +569,9 @@ class Run implements Callable<Integer> {
                     if ("xml".equals(ext2)) {
                         return data.contains("<routes") || data.contains("<routeConfiguration") || data.contains("<rests");
                     } else {
+                        // also support kamelet bindings
                         return data.contains("- from:") || data.contains("- route:") || data.contains("- route-configuration:")
-                                || data.contains("- rest:");
+                                || data.contains("- rest:") || data.contains("KameletBinding");
                     }
                 }
             }
