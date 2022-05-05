@@ -95,7 +95,8 @@ public class Deploy implements Callable<Integer> {
             LOG.info("Generating Route...");
             Route route = KubernetesHelper.createRoute(namespace, name, version, containerPort);
 
-            OpenShiftConfig config = new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).withTrustCerts(true).build();
+            OpenShiftConfig config
+                    = new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).withTrustCerts(true).build();
             try (OpenShiftClient client = new DefaultOpenShiftClient(config)) {
                 LOG.info("Creating Deployment in Openshift");
                 client.apps().deployments().inNamespace(namespace).createOrReplace(deployment);

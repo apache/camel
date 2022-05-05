@@ -52,7 +52,8 @@ public class Undeploy implements Callable<Integer> {
     public Integer call() throws Exception {
         Map labels = KubernetesHelper.getLabels(name, version);
         if (openshift) {
-            OpenShiftConfig config = new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).withTrustCerts(true).build();
+            OpenShiftConfig config
+                    = new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).withTrustCerts(true).build();
             try (OpenShiftClient client = new DefaultOpenShiftClient(config)) {
                 LOG.info("Deleting Routes...");
                 client.routes().inNamespace(namespace).withLabels(labels).delete();
