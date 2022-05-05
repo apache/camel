@@ -458,12 +458,35 @@ public class ExpressionClause<T> implements Expression, Predicate {
     /**
      * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a> with writeAsString enabled.
      *
+     * @param  text       the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @return            the builder to continue processing the DSL
+     */
+    public T jsonpathWriteAsString(String text, Class<?> resultType) {
+        return delegate.jsonpathWriteAsString(text, resultType);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a> with writeAsString enabled.
+     *
      * @param  text               the expression to be evaluated
      * @param  suppressExceptions whether to suppress exceptions such as PathNotFoundException
      * @return                    the builder to continue processing the DSL
      */
     public T jsonpathWriteAsString(String text, boolean suppressExceptions) {
         return delegate.jsonpathWriteAsString(text, suppressExceptions);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a> with writeAsString enabled.
+     *
+     * @param  text               the expression to be evaluated
+     * @param  suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param  resultType         the return type expected by the expression
+     * @return                    the builder to continue processing the DSL
+     */
+    public T jsonpathWriteAsString(String text, boolean suppressExceptions, Class<?> resultType) {
+        return delegate.jsonpathWriteAsString(text, suppressExceptions, resultType);
     }
 
     /**
