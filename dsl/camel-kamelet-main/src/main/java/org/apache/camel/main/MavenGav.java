@@ -17,7 +17,6 @@
 package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.StringHelper;
 
 /**
  * Maven GAV model
