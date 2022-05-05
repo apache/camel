@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.azure.storage.blob;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.io.IOUtils;
 
 public final class BlobUtils {
 
@@ -33,11 +33,26 @@ public final class BlobUtils {
         return ObjectHelper.isEmpty(exchange) ? null : exchange.getIn();
     }
 
-    public static Long getInputStreamLength(final InputStream inputStream) throws IOException {
-        final long length = IOUtils.toByteArray(inputStream).length;
-        inputStream.reset();
-
-        return length;
+    public static long getInputStreamLength(InputStream is) throws IOException {
+        if (!is.markSupported()) {
+            return -1;
+        }
+        if (is instanceof ByteArrayInputStream) {
+            return is.available();
+        }
+        long size = 0;
+        try {
+            is.mark(1024);
+            int i = is.available();
+            while (i > 0) {
+                long skip = is.skip(i);
+                size += skip;
+                i = is.available();
+            }
+        } finally {
+            is.reset();
+        }
+        return size;
     }
 
     public static String getContainerName(final BlobConfiguration configuration, final Exchange exchange) {
