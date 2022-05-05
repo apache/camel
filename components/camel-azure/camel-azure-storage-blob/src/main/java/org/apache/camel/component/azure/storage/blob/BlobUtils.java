@@ -22,6 +22,7 @@ import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
 import org.apache.camel.util.ObjectHelper;
 
 public final class BlobUtils {
@@ -34,8 +35,16 @@ public final class BlobUtils {
     }
 
     public static long getInputStreamLength(InputStream is) throws IOException {
+        if (is instanceof StreamCache) {
+            long len = ((StreamCache) is).length();
+            if (len != -1) {
+                return len;
+            }
+        }
+
         if (!is.markSupported()) {
-            return -1;
+            // azure cannot use -1
+            return 0;
         }
         if (is instanceof ByteArrayInputStream) {
             return is.available();
