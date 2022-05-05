@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Maven GAV model
@@ -57,6 +58,15 @@ public final class MavenGav {
             }
             answer.setArtifactId(a);
             if (context != null) {
+                answer.setVersion(context.getVersion());
+            }
+        } else if (gav.startsWith("org.apache.camel:")) {
+            String[] parts = gav.split(":");
+            answer.setGroupId(parts[0]);
+            answer.setArtifactId(parts[1]);
+            if (parts.length == 3) {
+                answer.setVersion(parts[2]);
+            } else if (context != null) {
                 answer.setVersion(context.getVersion());
             }
         } else if (gav.startsWith("github:")) {
