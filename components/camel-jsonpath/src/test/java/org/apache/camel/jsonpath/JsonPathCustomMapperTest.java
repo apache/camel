@@ -18,6 +18,7 @@ package org.apache.camel.jsonpath;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -39,7 +40,7 @@ public class JsonPathCustomMapperTest extends CamelTestSupport {
 
         @Override
         public void serialize(Double value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeRawValue(String.format("%.6f", value));
+            gen.writeRawValue(String.format(Locale.US, "%.6f", value));
         }
     }
 
