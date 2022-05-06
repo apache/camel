@@ -50,7 +50,7 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-blob-changefeed</artifactId>
-            <version>${azure-storage-blob-changedfeed-version}</version>
+            <version>${azure-storage-blob-changefeed-version}</version>
         </dependency>
 
         <dependency>

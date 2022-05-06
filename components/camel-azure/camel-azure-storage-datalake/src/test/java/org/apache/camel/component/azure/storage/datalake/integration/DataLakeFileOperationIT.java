@@ -29,7 +29,6 @@ import java.nio.file.Path;
 import com.azure.storage.file.datalake.options.FileParallelUploadOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConstants;
-import org.apache.camel.component.azure.storage.datalake.DataLakeUtils;
 import org.apache.camel.component.azure.storage.datalake.client.DataLakeFileClientWrapper;
 import org.apache.camel.component.azure.storage.datalake.client.DataLakeFileSystemClientWrapper;
 import org.apache.camel.component.azure.storage.datalake.client.DataLakeServiceClientWrapper;
@@ -61,7 +60,7 @@ public class DataLakeFileOperationIT extends Base {
 
         final InputStream inputStream = new ByteArrayInputStream("testing".getBytes(Charset.defaultCharset()));
         final FileParallelUploadOptions options
-                = new FileParallelUploadOptions(inputStream, DataLakeUtils.getInputStreamLength(inputStream));
+                = new FileParallelUploadOptions(inputStream);
         fileSystemClientWrapper.getDataLakeFileClientWrapper(randomFileName).uploadWithResponse(options, null);
     }
 

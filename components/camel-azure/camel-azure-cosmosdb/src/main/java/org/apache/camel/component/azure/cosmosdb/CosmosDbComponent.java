@@ -24,16 +24,12 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Azure CosmosDB component
  */
 @Component("azure-cosmosdb")
 public class CosmosDbComponent extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CosmosDbComponent.class);
 
     @Metadata
     private CosmosDbConfiguration configuration = new CosmosDbConfiguration();
