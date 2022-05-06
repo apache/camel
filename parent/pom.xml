@@ -84,16 +84,16 @@
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-jackson2-version>2.13.2</azure-jackson2-version>
-        <azure-cosmos-version>4.26.0</azure-cosmos-version>
-        <azure-eventhubs-version>5.11.0</azure-eventhubs-version>
-        <azure-identity-version>1.4.0</azure-identity-version>
-        <azure-keyvault-secrets-version>4.3.8</azure-keyvault-secrets-version>
-        <azure-messaging-eventhubs-checkpointstore-blob-version>1.10.1</azure-messaging-eventhubs-checkpointstore-blob-version>
-        <azure-messaging-servicebus-version>7.4.2</azure-messaging-servicebus-version>
-        <azure-storage-blob-version>12.14.4</azure-storage-blob-version>
-        <azure-storage-blob-changedfeed-version>12.0.0-beta.10</azure-storage-blob-changedfeed-version>
-        <azure-storage-datalake-version>12.7.1</azure-storage-datalake-version>
-        <azure-storage-queue-version>12.11.4</azure-storage-queue-version>
+        <azure-cosmos-version>4.28.1</azure-cosmos-version>
+        <azure-eventhubs-version>5.11.2</azure-eventhubs-version>
+        <azure-identity-version>1.5.0</azure-identity-version>
+        <azure-keyvault-secrets-version>4.4.1</azure-keyvault-secrets-version>
+        <azure-messaging-eventhubs-checkpointstore-blob-version>1.12.1</azure-messaging-eventhubs-checkpointstore-blob-version>
+        <azure-messaging-servicebus-version>7.8.0</azure-messaging-servicebus-version>
+        <azure-storage-blob-version>12.16.0</azure-storage-blob-version>
+        <azure-storage-blob-changefeed-version>12.0.0-beta.17</azure-storage-blob-changefeed-version>
+        <azure-storage-datalake-version>12.9.0</azure-storage-datalake-version>
+        <azure-storage-queue-version>12.12.1</azure-storage-queue-version>
         <bouncycastle-version>1.70</bouncycastle-version>
         <box-java-sdk-version>2.58.0</box-java-sdk-version>
         <braintree-gateway-version>3.15.0</braintree-gateway-version>

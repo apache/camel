@@ -199,7 +199,7 @@ public class DataLakeFileOperations {
         final String umask = configurationProxy.getUmask(exchange);
 
         final FileParallelUploadOptions uploadOptions
-                = new FileParallelUploadOptions(fileStreamAndLength.getInputStream(), fileStreamAndLength.getStreamLength())
+                = new FileParallelUploadOptions(fileStreamAndLength.getInputStream())
                         .setHeaders(commonRequestOptions.getPathHttpHeaders()).setParallelTransferOptions(transferOptions)
                         .setMetadata(commonRequestOptions.getMetadata()).setPermissions(permission)
                         .setRequestConditions(commonRequestOptions.getRequestConditions())

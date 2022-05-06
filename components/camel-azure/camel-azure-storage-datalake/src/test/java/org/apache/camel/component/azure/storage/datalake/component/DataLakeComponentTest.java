@@ -80,7 +80,6 @@ class DataLakeComponentTest extends CamelTestSupport {
     }
 
     private StorageSharedKeyCredential storageSharedKeyCredentials() {
-        final String accountKey = "";
-        return new StorageSharedKeyCredential("cameltesting", accountKey);
+        return new StorageSharedKeyCredential("cameltesting", "myAccountKey");
     }
 }

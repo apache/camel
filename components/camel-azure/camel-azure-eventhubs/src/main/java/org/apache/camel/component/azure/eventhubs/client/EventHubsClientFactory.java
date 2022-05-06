@@ -46,7 +46,7 @@ public final class EventHubsClientFactory {
         return new EventHubClientBuilder()
                 .connectionString(buildConnectionString(configuration))
                 .transportType(configuration.getAmqpTransportType())
-                .retry(configuration.getAmqpRetryOptions())
+                .retryOptions(configuration.getAmqpRetryOptions())
                 .buildAsyncProducerClient();
     }
 
@@ -56,7 +56,7 @@ public final class EventHubsClientFactory {
                 .consumerGroup(configuration.getConsumerGroupName())
                 .prefetchCount(configuration.getPrefetchCount())
                 .transportType(configuration.getAmqpTransportType())
-                .retry(configuration.getAmqpRetryOptions())
+                .retryOptions(configuration.getAmqpRetryOptions())
                 .buildAsyncConsumerClient();
     }
 
@@ -68,7 +68,7 @@ public final class EventHubsClientFactory {
                 .connectionString(buildConnectionString(configuration))
                 .checkpointStore(createCheckpointStore(configuration))
                 .consumerGroup(configuration.getConsumerGroupName())
-                .retry(configuration.getAmqpRetryOptions())
+                .retryOptions(configuration.getAmqpRetryOptions())
                 .transportType(configuration.getAmqpTransportType())
                 .processError(processError)
                 .processEvent(processEvent)
