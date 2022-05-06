@@ -154,6 +154,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "schemaExcludeList": getOrCreateConfiguration(target).setSchemaExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "schemaincludelist":
         case "schemaIncludeList": getOrCreateConfiguration(target).setSchemaIncludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": getOrCreateConfiguration(target).setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "schemarefreshmode":
         case "schemaRefreshMode": getOrCreateConfiguration(target).setSchemaRefreshMode(property(camelContext, java.lang.String.class, value)); return true;
         case "schemawhitelist":
@@ -208,8 +210,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "tombstonesOnDelete": getOrCreateConfiguration(target).setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
         case "transactiontopic":
         case "transactionTopic": getOrCreateConfiguration(target).setTransactionTopic(property(camelContext, java.lang.String.class, value)); return true;
-        case "truncatehandlingmode":
-        case "truncateHandlingMode": getOrCreateConfiguration(target).setTruncateHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": getOrCreateConfiguration(target).setUnavailableValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
         case "xminfetchintervalms":
@@ -347,6 +347,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "schemaExcludeList": return java.lang.String.class;
         case "schemaincludelist":
         case "schemaIncludeList": return java.lang.String.class;
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "schemarefreshmode":
         case "schemaRefreshMode": return java.lang.String.class;
         case "schemawhitelist":
@@ -401,8 +403,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "tombstonesOnDelete": return boolean.class;
         case "transactiontopic":
         case "transactionTopic": return java.lang.String.class;
-        case "truncatehandlingmode":
-        case "truncateHandlingMode": return java.lang.String.class;
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": return java.lang.String.class;
         case "xminfetchintervalms":
@@ -541,6 +541,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "schemaExcludeList": return getOrCreateConfiguration(target).getSchemaExcludeList();
         case "schemaincludelist":
         case "schemaIncludeList": return getOrCreateConfiguration(target).getSchemaIncludeList();
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": return getOrCreateConfiguration(target).getSchemaNameAdjustmentMode();
         case "schemarefreshmode":
         case "schemaRefreshMode": return getOrCreateConfiguration(target).getSchemaRefreshMode();
         case "schemawhitelist":
@@ -595,8 +597,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "tombstonesOnDelete": return getOrCreateConfiguration(target).isTombstonesOnDelete();
         case "transactiontopic":
         case "transactionTopic": return getOrCreateConfiguration(target).getTransactionTopic();
-        case "truncatehandlingmode":
-        case "truncateHandlingMode": return getOrCreateConfiguration(target).getTruncateHandlingMode();
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": return getOrCreateConfiguration(target).getUnavailableValuePlaceholder();
         case "xminfetchintervalms":

@@ -39,8 +39,11 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private boolean autoConfigurationFailFast = true;
     private boolean autoConfigurationLogSummary = true;
     private int durationHitExitCode;
+    private int extraShutdownTimeout = 15;
     private String basePackageScan;
     private boolean basePackageScanEnabled = true;
+    private String routesCompileDirectory;
+    private boolean routesCompileLoadFirst;
 
     private String routesBuilderClasses;
     private String configurationClasses;
@@ -353,6 +356,35 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.basePackageScanEnabled = basePackageScanEnabled;
     }
 
+    public String getRoutesCompileDirectory() {
+        return routesCompileDirectory;
+    }
+
+    /**
+     * Directory to use for saving runtime compiled Camel routes to class files, when using camel-java-joor-dsl as Java
+     * DSL (such as when using Camel K with Java source routes). Camel will compile to in-memory only by default.
+     * Specifying this option, allows Camel to persist the compiled class to disk. And when starting the application
+     * again the routes are loaded from the pre-compiled class files instead of re-compiling again.
+     */
+    public void setRoutesCompileDirectory(String routesCompileDirectory) {
+        this.routesCompileDirectory = routesCompileDirectory;
+    }
+
+    public boolean isRoutesCompileLoadFirst() {
+        return routesCompileLoadFirst;
+    }
+
+    /**
+     * Whether to load preexisting compiled Camel routes class files, when using camel-java-joor-dsl as Java DSL (such
+     * as when using Camel K with Java source routes).
+     *
+     * If enabled then Camel will look in the routes compile directory if a compiled Java route already exists and load
+     * its bytecode instead of runtime compiling from its java source file.
+     */
+    public void setRoutesCompileLoadFirst(boolean routesCompileLoadFirst) {
+        this.routesCompileLoadFirst = routesCompileLoadFirst;
+    }
+
     public int getDurationHitExitCode() {
         return durationHitExitCode;
     }
@@ -362,6 +394,20 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public void setDurationHitExitCode(int durationHitExitCode) {
         this.durationHitExitCode = durationHitExitCode;
+    }
+
+    public int getExtraShutdownTimeout() {
+        return extraShutdownTimeout;
+    }
+
+    /**
+     * Extra timeout in seconds to graceful shutdown Camel.
+     *
+     * When Camel is shutting down then Camel first shutdown all the routes (shutdownTimeout). Then additional services
+     * is shutdown (extraShutdownTimeout).
+     */
+    public void setExtraShutdownTimeout(int extraShutdownTimeout) {
+        this.extraShutdownTimeout = extraShutdownTimeout;
     }
 
     // getter and setters - configurations
@@ -568,6 +614,17 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * Extra timeout in seconds to graceful shutdown Camel.
+     *
+     * When Camel is shutting down then Camel first shutdown all the routes (shutdownTimeout). Then additional services
+     * is shutdown (extraShutdownTimeout).
+     */
+    public MainConfigurationProperties withExtraShutdownTimeout(int extraShutdownTimeout) {
+        this.extraShutdownTimeout = extraShutdownTimeout;
+        return this;
+    }
+
+    /**
      * Package name to use as base (offset) for classpath scanning of {@link RouteBuilder}, and
      * {@link org.apache.camel.TypeConverter} classes.
      *
@@ -584,6 +641,29 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withBasePackageScanEnabled(boolean basePackageScanEnabled) {
         this.basePackageScanEnabled = basePackageScanEnabled;
+        return this;
+    }
+
+    /**
+     * Directory to use for saving runtime compiled Camel routes to class files, when using camel-java-joor-dsl as Java
+     * DSL (such as when using Camel K with Java source routes). Camel will compile to in-memory only by default.
+     * Specifying this option, allows Camel to persist the compiled class to disk. And when starting the application
+     * again the routes are loaded from the pre-compiled class files instead of re-compiling again.
+     */
+    public MainConfigurationProperties withRoutesCompileDirectory(String routeCompileDirectory) {
+        this.routesCompileDirectory = routeCompileDirectory;
+        return this;
+    }
+
+    /**
+     * Whether to load preexisting compiled Camel routes class files, when using camel-java-joor-dsl as Java DSL (such
+     * as when using Camel K with Java source routes).
+     *
+     * If enabled then Camel will look in the routes compile directory if a compiled Java route already exists and load
+     * its bytecode instead of runtime compiling from its java source file.
+     */
+    public MainConfigurationProperties withRoutesCompileLoadFirst(boolean routesCompileLoadFirst) {
+        this.routesCompileLoadFirst = routesCompileLoadFirst;
         return this;
     }
 

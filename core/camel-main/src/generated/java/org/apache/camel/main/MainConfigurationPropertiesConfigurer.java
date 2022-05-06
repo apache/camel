@@ -87,6 +87,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ExchangeFactoryCapacity": target.setExchangeFactoryCapacity(property(camelContext, int.class, value)); return true;
         case "exchangefactorystatisticsenabled":
         case "ExchangeFactoryStatisticsEnabled": target.setExchangeFactoryStatisticsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "extrashutdowntimeout":
+        case "ExtraShutdownTimeout": target.setExtraShutdownTimeout(property(camelContext, int.class, value)); return true;
         case "fileconfigurations":
         case "FileConfigurations": target.setFileConfigurations(property(camelContext, java.lang.String.class, value)); return true;
         case "globaloptions":
@@ -159,6 +161,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesBuilders": target.setRoutesBuilders(property(camelContext, java.util.List.class, value)); return true;
         case "routescollectorenabled":
         case "RoutesCollectorEnabled": target.setRoutesCollectorEnabled(property(camelContext, boolean.class, value)); return true;
+        case "routescompiledirectory":
+        case "RoutesCompileDirectory": target.setRoutesCompileDirectory(property(camelContext, java.lang.String.class, value)); return true;
+        case "routescompileloadfirst":
+        case "RoutesCompileLoadFirst": target.setRoutesCompileLoadFirst(property(camelContext, boolean.class, value)); return true;
         case "routesexcludepattern":
         case "RoutesExcludePattern": target.setRoutesExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "routesincludepattern":
@@ -312,6 +318,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ExchangeFactoryCapacity": return int.class;
         case "exchangefactorystatisticsenabled":
         case "ExchangeFactoryStatisticsEnabled": return boolean.class;
+        case "extrashutdowntimeout":
+        case "ExtraShutdownTimeout": return int.class;
         case "fileconfigurations":
         case "FileConfigurations": return java.lang.String.class;
         case "globaloptions":
@@ -384,6 +392,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesBuilders": return java.util.List.class;
         case "routescollectorenabled":
         case "RoutesCollectorEnabled": return boolean.class;
+        case "routescompiledirectory":
+        case "RoutesCompileDirectory": return java.lang.String.class;
+        case "routescompileloadfirst":
+        case "RoutesCompileLoadFirst": return boolean.class;
         case "routesexcludepattern":
         case "RoutesExcludePattern": return java.lang.String.class;
         case "routesincludepattern":
@@ -538,6 +550,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ExchangeFactoryCapacity": return target.getExchangeFactoryCapacity();
         case "exchangefactorystatisticsenabled":
         case "ExchangeFactoryStatisticsEnabled": return target.isExchangeFactoryStatisticsEnabled();
+        case "extrashutdowntimeout":
+        case "ExtraShutdownTimeout": return target.getExtraShutdownTimeout();
         case "fileconfigurations":
         case "FileConfigurations": return target.getFileConfigurations();
         case "globaloptions":
@@ -610,6 +624,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RoutesBuilders": return target.getRoutesBuilders();
         case "routescollectorenabled":
         case "RoutesCollectorEnabled": return target.isRoutesCollectorEnabled();
+        case "routescompiledirectory":
+        case "RoutesCompileDirectory": return target.getRoutesCompileDirectory();
+        case "routescompileloadfirst":
+        case "RoutesCompileLoadFirst": return target.isRoutesCompileLoadFirst();
         case "routesexcludepattern":
         case "RoutesExcludePattern": return target.getRoutesExcludePattern();
         case "routesincludepattern":

@@ -20,8 +20,5 @@ package org.apache.camel.component.kafka.consumer;
  * Can be used for forcing async manual offset commit when using Kafka consumer.
  */
 public interface KafkaAsyncManualCommit extends KafkaManualCommit {
-    /**
-     * Used in the consumer loop to effectively call org.apache.kafka.clients.consumer.KafkaConsumer#commitAsync()
-     */
-    void processAsyncCommit();
+
 }

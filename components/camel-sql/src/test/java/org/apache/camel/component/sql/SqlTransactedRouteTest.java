@@ -61,7 +61,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
 
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY).build();
+                .setType(EmbeddedDatabaseType.H2).build();
         reg.bind("testdb", db);
 
         DataSourceTransactionManager txMgr = new DataSourceTransactionManager();
@@ -81,7 +81,9 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Test

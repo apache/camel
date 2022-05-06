@@ -10,7 +10,9 @@ Then follow these simple guidelines for working on the code and committing your 
 
 - Build the project using Maven:
 
-    mvn clean install -Pfastinstall
+    mvn clean install -Pfastinstall,format
+
+Note: the `format` profile will ensure that the code is properly formatted according to the project standards:
 
 - Add a unit test with assertions for your changes.
 

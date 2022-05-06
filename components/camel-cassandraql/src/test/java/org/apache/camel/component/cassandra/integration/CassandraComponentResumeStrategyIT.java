@@ -24,15 +24,16 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cassandra.consumer.support.CassandraResumeStrategy;
+import org.apache.camel.component.cassandra.consumer.support.CassandraResumeAdapter;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CassandraComponentResumeStrategyIT extends BaseCassandra {
 
-    private static class TestCassandraResumeStrategy implements CassandraResumeStrategy {
+    private static class TestCassandraResumeAdapter implements CassandraResumeAdapter {
         private boolean sessionCalled;
         private boolean sessionNotNull;
         private boolean resumeCalled;
@@ -62,7 +63,7 @@ public class CassandraComponentResumeStrategyIT extends BaseCassandra {
     }
 
     private static final String CQL = "select login, first_name, last_name from camel_user";
-    private final TestCassandraResumeStrategy resumeStrategy = new TestCassandraResumeStrategy();
+    private final TestCassandraResumeAdapter resumeStrategy = new TestCassandraResumeAdapter();
 
     @Test
     public void testConsumeAll() throws Exception {
@@ -88,7 +89,7 @@ public class CassandraComponentResumeStrategyIT extends BaseCassandra {
         return new RouteBuilder() {
             public void configure() {
                 fromF("cql://%s/%s?cql=%s", getUrl(), KEYSPACE_NAME, CQL)
-                        .resumable(resumeStrategy)
+                        .resumable(new TransientResumeStrategy(resumeStrategy))
                         .to("mock:resultAll");
             }
         };

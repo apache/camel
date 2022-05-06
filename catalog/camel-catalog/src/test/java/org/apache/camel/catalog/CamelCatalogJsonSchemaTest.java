@@ -75,7 +75,19 @@ public class CamelCatalogJsonSchemaTest {
                 }
             }
         }
-        List<String> syntaxParts = Arrays.asList(syntax.split("[/:#.]"));
+        // special for jt400
+        List<String> syntaxParts;
+        if ("jt400".equals(name)) {
+            syntaxParts = new ArrayList<>();
+            syntaxParts.add("jt400");
+            syntaxParts.add("userID");
+            syntaxParts.add("password");
+            syntaxParts.add("systemName");
+            syntaxParts.add("objectPath");
+            syntaxParts.add("type");
+        } else {
+            syntaxParts = Arrays.asList(syntax.split("[/:#.]"));
+        }
         assertEquals(name, syntaxParts.get(0), "Syntax must start with component name");
 
         for (String part : syntaxParts.subList(1, syntaxParts.size())) {

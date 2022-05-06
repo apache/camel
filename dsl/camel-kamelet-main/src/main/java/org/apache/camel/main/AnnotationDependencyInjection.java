@@ -35,10 +35,10 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverterExists;
-import org.apache.camel.dsl.support.CompilePostProcessor;
 import org.apache.camel.impl.engine.CamelPostProcessorHelper;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelBeanPostProcessorInjector;
+import org.apache.camel.spi.CompilePostProcessor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
@@ -77,7 +77,8 @@ public final class AnnotationDependencyInjection {
     private static class TypeConverterCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, Object instance) throws Exception {
+        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+                throws Exception {
             if (clazz.isAnnotationPresent(Converter.class)) {
                 TypeConverterRegistry tcr = camelContext.getTypeConverterRegistry();
                 TypeConverterExists exists = tcr.getTypeConverterExists();
@@ -99,7 +100,12 @@ public final class AnnotationDependencyInjection {
     private static class BindToRegistryCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, Object instance) throws Exception {
+        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+                throws Exception {
+            if (instance == null) {
+                return;
+            }
+
             BindToRegistry bir = instance.getClass().getAnnotation(BindToRegistry.class);
             Configuration cfg = instance.getClass().getAnnotation(Configuration.class);
             if (bir != null || cfg != null || instance instanceof CamelConfiguration) {
@@ -130,12 +136,15 @@ public final class AnnotationDependencyInjection {
     private static class SpringAnnotationCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, Object instance) throws Exception {
+        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+                throws Exception {
+            if (instance == null) {
+                return;
+            }
             // @Component and @Service are the same
             Component comp = clazz.getAnnotation(Component.class);
             Service service = clazz.getAnnotation(Service.class);
             if (comp != null || service != null) {
-                CamelBeanPostProcessor bpp = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
                 if (comp != null && ObjectHelper.isNotEmpty(comp.value())) {
                     name = comp.value();
                 } else if (service != null && ObjectHelper.isNotEmpty(service.value())) {
@@ -202,7 +211,11 @@ public final class AnnotationDependencyInjection {
     private static class QuarkusAnnotationCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, Object instance) throws Exception {
+        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+                throws Exception {
+            if (instance == null) {
+                return;
+            }
             // @ApplicationScoped and @Singleton are considered the same
             ApplicationScoped as = clazz.getAnnotation(ApplicationScoped.class);
             Singleton ss = clazz.getAnnotation(Singleton.class);

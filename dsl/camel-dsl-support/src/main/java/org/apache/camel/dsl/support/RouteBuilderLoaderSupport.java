@@ -27,6 +27,7 @@ import org.apache.camel.StartupStep;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteBuilderLifecycleStrategy;
+import org.apache.camel.spi.CompilePostProcessor;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.StartupStepRecorder;

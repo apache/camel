@@ -35,6 +35,15 @@ public interface RoutesLoader extends CamelContextAware {
     String FACTORY = "routes-loader";
 
     /**
+     * Looks up a {@link RoutesBuilderLoader} in the registry or fallback to a factory finder mechanism if none found.
+     *
+     * @param  extension                the file extension for which a loader should be found.
+     * @return                          a {@link RoutesBuilderLoader}
+     * @throws IllegalArgumentException if no {@link RoutesBuilderLoader} can be found for the given file extension
+     */
+    RoutesBuilderLoader getRoutesLoader(String extension) throws Exception;
+
+    /**
      * Loads {@link RoutesBuilder} from the give list of {@link Resource} into the current
      * {@link org.apache.camel.CamelContext}.
      *
@@ -125,6 +134,13 @@ public interface RoutesLoader extends CamelContextAware {
      * @param resource the resource to be pre parsed.
      */
     default void preParseRoute(Resource resource) throws Exception {
+        // noop
+    }
+
+    /**
+     * Initializes the discovered {@link RoutesBuilderLoader} before its started and used for the first time.
+     */
+    default void initRoutesBuilderLoader(RoutesBuilderLoader loader) {
         // noop
     }
 }

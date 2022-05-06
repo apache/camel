@@ -25,7 +25,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <!-- In Memory Database -->
-  <jdbc:embedded-database id="{{testClassSimpleName}}" type="DERBY">
+  <jdbc:embedded-database id="{{testClassSimpleName}}" type="H2">
     <jdbc:script location="classpath:/sql/createAndPopulateDatabase.sql"/>
   </jdbc:embedded-database>
 

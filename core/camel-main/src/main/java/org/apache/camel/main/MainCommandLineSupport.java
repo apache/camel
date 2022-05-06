@@ -83,6 +83,11 @@ public abstract class MainCommandLineSupport extends MainSupport {
         if (initOptionsDone) {
             return;
         }
+        addInitialOptions();
+        initOptionsDone = true;
+    }
+
+    protected void addInitialOptions() {
         addOption(new Option("h", "help", "Displays the help screen") {
             protected void doProcess(String arg, LinkedList<String> remainingArgs) {
                 showOptions();
@@ -156,7 +161,6 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 setPropertyPlaceholderLocations(parameter);
             }
         });
-        initOptionsDone = true;
     }
 
     /**
@@ -276,7 +280,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
         private final String fullName;
         private final String description;
 
-        protected Option(String abbreviation, String fullName, String description) {
+        public Option(String abbreviation, String fullName, String description) {
             this.abbreviation = "-" + abbreviation;
             this.fullName = "-" + fullName;
             this.description = description;
@@ -312,7 +316,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
     public abstract class ParameterOption extends Option {
         private final String parameterName;
 
-        protected ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
+        public ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
             super(abbreviation, fullName, description);
             this.parameterName = parameterName;
         }

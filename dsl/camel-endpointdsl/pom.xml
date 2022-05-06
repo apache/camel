@@ -167,6 +167,10 @@
                     <maxmem>1024M</maxmem>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
 

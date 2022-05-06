@@ -1,0 +1,28 @@
+- rest:
+    path: "/camel/"
+    get:
+    - id: "greeting-api"
+      path: "/greetings/{name}"
+      param:
+      - dataType: "string"
+        name: "name"
+        required: true
+        type: "path"
+      to: "direct:greeting-api"
+    post:
+    - id: "post-greeting-api"
+      path: "/greetings/{name}"
+      param:
+      - dataType: "string"
+        name: "name"
+        required: true
+        type: "path"
+      to: "direct:post-greeting-api"
+    - id: "bye-api"
+      path: "/bye/{name}"
+      param:
+      - dataType: "string"
+        name: "name"
+        required: true
+        type: "path"
+      to: "direct:bye-api"

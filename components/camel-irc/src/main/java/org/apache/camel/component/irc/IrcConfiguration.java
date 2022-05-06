@@ -29,7 +29,6 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.schwering.irc.lib.ssl.SSLDefaultTrustManager;
 import org.schwering.irc.lib.ssl.SSLTrustManager;
 import org.slf4j.Logger;
@@ -543,14 +542,5 @@ public class IrcConfiguration implements Cloneable {
     public static String sanitize(String uri) {
         //symbol # has to be encoded. otherwise value after '#' won't be propagated into parameters
         return uri.replace("#", "%23");
-    }
-
-    private static void addQueryParameter(StringBuilder sb, String key, Object value) {
-        sb.append(sb.length() == 0 ? "" : "&");
-        sb.append(key);
-        if (value != null) {
-            String s = value.toString();
-            sb.append(s.isEmpty() ? "" : "=" + UnsafeUriCharactersEncoder.encode(s));
-        }
     }
 }

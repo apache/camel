@@ -23,6 +23,7 @@ import java.io.InputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.converter.stream.FileInputStreamCache;
+import org.apache.camel.StreamCache;
 import org.apache.camel.util.ObjectHelper;
 
 public final class BlobUtils {
@@ -43,6 +44,12 @@ public final class BlobUtils {
         }
         if (!is.markSupported()) {
             return 0;
+        }
+        if (is instanceof StreamCache) {
+            long len = ((StreamCache) is).length();
+            if (len > 0) {
+                return len;
+            }
         }
         long size = 0;
         try {

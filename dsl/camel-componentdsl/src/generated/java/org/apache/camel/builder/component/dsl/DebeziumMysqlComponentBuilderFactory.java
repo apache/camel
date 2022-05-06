@@ -580,6 +580,23 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
+         * The number of milliseconds to wait while fetching cluster information
+         * using Kafka admin client.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 3s
+         * Group: mysql
+         * 
+         * @param databaseHistoryKafkaQueryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder databaseHistoryKafkaQueryTimeoutMs(
+                long databaseHistoryKafkaQueryTimeoutMs) {
+            doSetProperty("databaseHistoryKafkaQueryTimeoutMs", databaseHistoryKafkaQueryTimeoutMs);
+            return this;
+        }
+        /**
          * The number of attempts in a row that no data are returned from Kafka
          * before recover completes. The maximum amount of time to wait after
          * receiving no data is (recovery.attempts) x
@@ -744,7 +761,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: class com.mysql.cj.jdbc.Driver
+         * Default: com.mysql.cj.jdbc.Driver
          * Group: mysql
          * 
          * @param databaseJdbcDriver the value to set
@@ -843,8 +860,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
-         * Location of the Java keystore file containing an application
-         * process's own certificate and private key.
+         * The location of the key store file. This is optional and can be used
+         * for two-way authentication between the client and the MySQL Server.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -859,11 +876,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
-         * Password to access the private key from the keystore file specified
-         * by 'ssl.keystore' configuration property or the
-         * 'javax.net.ssl.keyStore' system or JVM property. This password is
-         * used to unlock the keystore file (store password), and to decrypt the
-         * private key stored in the keystore (key password).
+         * The password for the key store file. This is optional and only needed
+         * if 'database.ssl.keystore' is configured.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -904,8 +918,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
-         * Location of the Java truststore file containing the collection of CA
-         * certificates trusted by this application process (trust store).
+         * The location of the trust store file for the server certificate
+         * verification.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -920,9 +934,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
-         * Password to unlock the keystore file (store password) specified by
-         * 'ssl.trustore' configuration property or the
-         * 'javax.net.ssl.trustStore' system or JVM property.
+         * The password for the trust store file. Used to check the integrity of
+         * the truststore, and unlock the truststore.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1453,6 +1466,25 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
+         * Specify how schema names should be adjusted for compatibility with
+         * the message converter used by the connector, including:'avro'
+         * replaces the characters that cannot be used in the Avro type name
+         * with underscore (default)'none' does not apply any adjustment.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: avro
+         * Group: mysql
+         * 
+         * @param schemaNameAdjustmentMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder schemaNameAdjustmentMode(
+                java.lang.String schemaNameAdjustmentMode) {
+            doSetProperty("schemaNameAdjustmentMode", schemaNameAdjustmentMode);
+            return this;
+        }
+        /**
          * The name of the data collection that is used to send signals/commands
          * to Debezium. Signaling is disabled when not set.
          * 
@@ -1470,8 +1502,9 @@ public interface DebeziumMysqlComponentBuilderFactory {
         }
         /**
          * The comma-separated list of operations to skip during streaming,
-         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes.
-         * By default, no operations will be skipped.
+         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes,
+         * 't' for truncates, and 'none' to indicate nothing skipped. By
+         * default, no operations will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1891,6 +1924,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "databaseHistory": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHistory((java.lang.String) value); return true;
             case "databaseHistoryFileFilename": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHistoryFileFilename((java.lang.String) value); return true;
             case "databaseHistoryKafkaBootstrapServers": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHistoryKafkaBootstrapServers((java.lang.String) value); return true;
+            case "databaseHistoryKafkaQueryTimeoutMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHistoryKafkaQueryTimeoutMs((long) value); return true;
             case "databaseHistoryKafkaRecoveryAttempts": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHistoryKafkaRecoveryAttempts((int) value); return true;
             case "databaseHistoryKafkaRecoveryPollIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHistoryKafkaRecoveryPollIntervalMs((int) value); return true;
             case "databaseHistoryKafkaTopic": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHistoryKafkaTopic((java.lang.String) value); return true;
@@ -1939,6 +1973,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "queryFetchSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setQueryFetchSize((int) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "sanitizeFieldNames": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSanitizeFieldNames((boolean) value); return true;
+            case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSignalDataCollection((java.lang.String) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotDelayMs((long) value); return true;

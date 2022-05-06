@@ -44,7 +44,7 @@ public class SqlDataSourceTest extends CamelTestSupport {
         // this is the database we create with some initial data for our unit test
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY)
+                .setType(EmbeddedDatabaseType.H2)
                 .addScript("sql/createAndPopulateDatabase.sql").build();
 
         reg.bind("dataSource", db);
@@ -76,7 +76,9 @@ public class SqlDataSourceTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Override

@@ -61,4 +61,5 @@ public interface RoutesBuilderLoader extends StaticService, CamelContextAware {
     default void preParseRoute(Resource resource) throws Exception {
         // noop
     }
+
 }

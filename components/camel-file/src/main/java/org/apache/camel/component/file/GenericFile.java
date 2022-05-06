@@ -22,9 +22,9 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Offset;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.consumer.GenericFileResumable;
+import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.Offsets;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;

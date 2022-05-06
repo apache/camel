@@ -45,7 +45,7 @@ public class SqlConsumerOutputTypeSelectOneTest {
     public void setUp() {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY)
+                .setType(EmbeddedDatabaseType.H2)
                 .addScript("sql/createAndPopulateDatabase.sql").build();
 
         camel1 = new DefaultCamelContext();
@@ -56,7 +56,9 @@ public class SqlConsumerOutputTypeSelectOneTest {
     @AfterEach
     public void tearDown() {
         camel1.stop();
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
     @Test

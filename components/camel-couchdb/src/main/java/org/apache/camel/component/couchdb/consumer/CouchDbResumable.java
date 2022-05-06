@@ -17,10 +17,10 @@
 
 package org.apache.camel.component.couchdb.consumer;
 
-import org.apache.camel.Offset;
-import org.apache.camel.Resumable;
 import org.apache.camel.component.couchdb.CouchDbClientWrapper;
+import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.Offsets;
+import org.apache.camel.resume.Resumable;
 
 /**
  * Wraps the resume data for CouchDb

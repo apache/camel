@@ -68,17 +68,17 @@ public final class ConnectorConfigGenerator {
     }
 
     public static ConnectorConfigGenerator create(
-            final SourceConnector connector, final Class<?> dbzConfigClass, final Map<String, Object> overridenDefaultValues) {
-        return create(connector, dbzConfigClass, Collections.emptySet(), overridenDefaultValues);
+            final SourceConnector connector, final Class<?> dbzConfigClass, final Map<String, Object> overriddenDefaultValues) {
+        return create(connector, dbzConfigClass, Collections.emptySet(), overriddenDefaultValues);
     }
 
     public static ConnectorConfigGenerator create(
             final SourceConnector connector, final Class<?> dbzConfigClass, final Set<String> requiredFields,
-            final Map<String, Object> overridenDefaultValues) {
+            final Map<String, Object> overriddenDefaultValues) {
         ObjectHelper.notNull(connector, "connector");
         ObjectHelper.notNull(dbzConfigClass, "dbzConfigClass");
         ObjectHelper.notNull(requiredFields, "requiredFields");
-        ObjectHelper.notNull(overridenDefaultValues, "overridenDefaultValues");
+        ObjectHelper.notNull(overriddenDefaultValues, "overriddenDefaultValues");
 
         // check if config class is correct
         if (!isConfigClassValid(dbzConfigClass)) {
@@ -94,7 +94,7 @@ public final class ConnectorConfigGenerator {
 
         return new ConnectorConfigGenerator(
                 connector, ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(configDef, dbzConfigClass, requiredFields,
-                        overridenDefaultValues),
+                        overriddenDefaultValues),
                 connectorName);
     }
 
@@ -194,7 +194,7 @@ public final class ConnectorConfigGenerator {
                         annotation.setLiteralValue("defaultValue",
                                 String.format("\"%s\"", ConnectorConfigGeneratorUtils.toTimeAsString(defaultValueAsLong)));
                     } else {
-                        annotation.setLiteralValue("defaultValue", String.format("\"%s\"", fieldConfig.getDefaultValue()));
+                        annotation.setLiteralValue("defaultValue", fieldConfig.getDefaultValueAsStringLiteral());
                     }
                 }
 

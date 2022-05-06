@@ -50,7 +50,7 @@
         <!-- dependency versions -->
         <abdera-version>1.1.3</abdera-version>
         <!-- Note that activemq dependency is only used for testing! -->
-        <activemq-version>5.17.0</activemq-version>
+        <activemq-version>5.17.1</activemq-version>
         <activemq-artemis-version>2.20.0</activemq-artemis-version>
         <ahc-version>2.12.3</ahc-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
@@ -80,7 +80,7 @@
         <avro-ipc-jetty-version>1.11.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.0</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.17.175</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.17.185</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-jackson2-version>2.13.2</azure-jackson2-version>
@@ -100,10 +100,10 @@
         <brave-zipkin-version>5.13.3</brave-zipkin-version>
         <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
-        <caffeine-version>3.0.6</caffeine-version>
+        <caffeine-version>3.1.0</caffeine-version>
         <californium-version>2.6.6</californium-version>
-        <cassandra-driver-version>4.14.0</cassandra-driver-version>
-        <cassandra-version>3.11.12</cassandra-version>
+        <cassandra-driver-version>4.14.1</cassandra-driver-version>
+        <cassandra-version>4.0.3</cassandra-version>
         <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.2.12</cglib-version>
@@ -140,9 +140,9 @@
         <corda-version>4.8</corda-version>
         <couchbase-client-version>3.2.0</couchbase-client-version>
         <curator-version>4.3.0</curator-version>
-        <cxf-version>3.5.1</cxf-version>
+        <cxf-version>3.5.2</cxf-version>
         <cxf-version-range>[3.5,3.6)</cxf-version-range>
-        <cxf-codegen-plugin-version>3.5.1</cxf-codegen-plugin-version>
+        <cxf-codegen-plugin-version>3.5.2</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>3.3.1</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
@@ -154,14 +154,14 @@
         <directory-watcher-version>0.15.1</directory-watcher-version>
         <disruptor-version>3.4.4</disruptor-version>
         <dnsjava-version>3.5.0</dnsjava-version>
-        <djl-version>0.11.0</djl-version>
+        <djl-version>0.16.0</djl-version>
         <djl-mxnet-native-version>1.8.0</djl-mxnet-native-version>
         <djl-pytorch-native-version>1.8.1</djl-pytorch-native-version>
         <djl-tensorflow-native-version>2.4.1</djl-tensorflow-native-version>
         <docker-java-version>3.2.13</docker-java-version>
         <dozer-version>6.5.2</dozer-version>
         <dropbox-version>3.2.0</dropbox-version>
-        <debezium-version>1.8.1.Final</debezium-version>
+        <debezium-version>1.9.1.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.28</debezium-mysql-connector-version>
         <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
@@ -227,6 +227,7 @@
         <hadoop3-guava-version>29.0-jre</hadoop3-guava-version>
         <hamcrest-version>2.2</hamcrest-version>
         <hapi-version>2.3</hapi-version>
+        <hapi-base-version>2.3</hapi-base-version>
         <hapi-fhir-version>4.2.0</hapi-fhir-version>
         <hawtbuf-version>1.11</hawtbuf-version>
         <hawtdispatch-version>1.22</hawtdispatch-version>
@@ -247,7 +248,7 @@
         <icu4j-version>70.1</icu4j-version>
         <ignite-version>2.12.0</ignite-version>
         <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
-        <infinispan-version>13.0.8.Final</infinispan-version>
+        <infinispan-version>13.0.9.Final</infinispan-version>
         <influx-java-driver-version>2.22</influx-java-driver-version>
         <influx-guava-version>20.0</influx-guava-version>
         <irclib-version>1.10</irclib-version>
@@ -263,7 +264,7 @@
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.1.9</java-grok-version>
         <java-util-version>2.0.0</java-util-version>
-        <jnats-version>2.14.0</jnats-version>
+        <jnats-version>2.14.1</jnats-version>
         <javacc-maven-plugin-version>2.6</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
         <javaparser-version>3.13.10</javaparser-version>
@@ -275,7 +276,7 @@
         <javax-activation-version-range>[0,2)</javax-activation-version-range>
         <javax-activation-version>1.2.0</javax-activation-version>
         <javax-annotation-api-version>1.3.2</javax-annotation-api-version>
-        <jakarta-mail-version>1.6.6</jakarta-mail-version>
+        <jakarta-mail-version>1.6.7</jakarta-mail-version>
         <javax-servlet-api-version>3.1.0</javax-servlet-api-version>
         <jakarta-cdi-api-version>2.0.2</jakarta-cdi-api-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
@@ -293,15 +294,15 @@
         <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
         <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
         <jcache-bundle-version>1.1.1_1</jcache-bundle-version>
-        <jclouds-version>2.2.1</jclouds-version>
+        <jclouds-version>2.5.0</jclouds-version>
         <!-- jclouds must use this guava version -->
-        <jclouds-google-guava-version>18.0</jclouds-google-guava-version>
-        <jclouds-google-guava-version-range>[18.0,19.0)</jclouds-google-guava-version-range>
+        <jclouds-google-guava-version>27.1-jre</jclouds-google-guava-version>
+        <jclouds-google-guava-version-range>[27.0,28.0)</jclouds-google-guava-version-range>
         <jcommander-version>1.72</jcommander-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>3.7.1</jedis-client-version>
         <jetcd-version>0.5.11</jetcd-version>
-        <jetty9-version>9.4.45.v20220203</jetty9-version>
+        <jetty9-version>9.4.46.v20220331</jetty9-version>
         <jetty-version>${jetty9-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -321,7 +322,7 @@
         <jool-version>0.9.14</jool-version>
         <jooq-version>3.16.4</jooq-version>
         <joor-version>0.9.14</joor-version>
-        <johnzon-version>1.2.16</johnzon-version>
+        <johnzon-version>1.2.17</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
         <jslt-version>0.1.11</jslt-version>
         <jsmpp-version>2.3.11</jsmpp-version>
@@ -351,7 +352,7 @@
         <leveldb-api-version>0.12</leveldb-api-version>
         <leveldb-version>0.12</leveldb-version>
         <leveldb-guava-version>21.0</leveldb-guava-version>
-        <libphonenumber-version>8.12.45</libphonenumber-version>
+        <libphonenumber-version>8.12.47</libphonenumber-version>
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.17.2</log4j2-version>
@@ -367,7 +368,7 @@
         <maven-assembly-plugin-version>3.3.0</maven-assembly-plugin-version>
         <maven-checkstyle-plugin-version>3.1.2</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>8.45.1</maven-checkstyle-version>
-        <maven-owasp-plugin-version>7.0.4</maven-owasp-plugin-version>
+        <maven-owasp-plugin-version>7.1.0</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.2.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
         <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
@@ -384,7 +385,7 @@
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
         <metrics-version>4.2.9</metrics-version>
-        <micrometer-version>1.8.4</micrometer-version>
+        <micrometer-version>1.8.5</micrometer-version>
         <microprofile-config-version>2.0.1</microprofile-config-version>
         <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
         <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
@@ -393,7 +394,7 @@
         <mina-version>2.1.5</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
-        <minio-version>8.3.8</minio-version>
+        <minio-version>8.3.9</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>0.1.8</mockwebserver-version>
         <mockito-version>3.12.4</mockito-version>
@@ -486,13 +487,13 @@
         <spock-version>2.1-groovy-3.0</spock-version>
         <spring-batch-version>4.3.5</spring-batch-version>
         <spring-data-redis-version>2.6.2</spring-data-redis-version>
-        <spring-integration-version>5.5.10</spring-integration-version>
-        <spring-ldap-version>2.3.6.RELEASE</spring-ldap-version>
+        <spring-integration-version>5.5.11</spring-integration-version>
+        <spring-ldap-version>2.3.7.RELEASE</spring-ldap-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
         <spring5-version>5.3.19</spring5-version>
         <spring-rabbitmq-version>2.4.2</spring-rabbitmq-version>
-        <spring-security-version>5.6.2</spring-security-version>
+        <spring-security-version>5.6.3</spring-security-version>
         <spring-ws-version>3.1.3</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
@@ -504,13 +505,13 @@
         <swagger-java-parser-version>1.0.56</swagger-java-parser-version>
         <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
         <stax-api-version>1.0.1</stax-api-version>
-        <stringtemplate-version>4.3.1</stringtemplate-version>
+        <stringtemplate-version>4.3.3</stringtemplate-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
         <testcontainers-version>1.17.1</testcontainers-version>
         <tika-version>2.3.0</tika-version>
         <twilio-version>7.55.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
-        <undertow-version>2.2.16.Final</undertow-version>
+        <undertow-version>2.2.17.Final</undertow-version>
         <univocity-parsers-version>2.9.1</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
         <vavr-version>0.10.2</vavr-version>
@@ -2789,7 +2790,7 @@
 			</dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-fatjar-main</artifactId>
+                <artifactId>camel-uberjar-main</artifactId>
                 <version>${project.version}</version>
             </dependency>
 			<dependency>
@@ -4571,14 +4572,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>net.revelc.code</groupId>
-                <artifactId>impsort-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -4684,7 +4678,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
-
+        
         <profile>
             <id>fastinstall</id>
             <activation>
@@ -4699,6 +4693,25 @@
                 <fastinstall>true</fastinstall>
                 <noassembly>true</noassembly>
             </properties>
+        </profile>
+
+        <profile>
+            <id>format</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>net.revelc.code</groupId>
+                        <artifactId>impsort-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>net.revelc.code.formatter</groupId>
+                        <artifactId>formatter-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
         <profile>

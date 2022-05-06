@@ -29,6 +29,13 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "columnBlacklist": target.getConfiguration().setColumnBlacklist(property(camelContext, java.lang.String.class, value)); return true;
         case "columnexcludelist":
         case "columnExcludeList": target.getConfiguration().setColumnExcludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnincludelist":
+        case "columnIncludeList": target.getConfiguration().setColumnIncludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": target.getConfiguration().setColumnPropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnwhitelist":
+        case "columnWhitelist": target.getConfiguration().setColumnWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "converters": target.getConfiguration().setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "databasedbname":
         case "databaseDbname": target.getConfiguration().setDatabaseDbname(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehistory":
@@ -37,12 +44,20 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "databaseHistoryFileFilename": target.getConfiguration().setDatabaseHistoryFileFilename(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehistorykafkabootstrapservers":
         case "databaseHistoryKafkaBootstrapServers": target.getConfiguration().setDatabaseHistoryKafkaBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasehistorykafkaquerytimeoutms":
+        case "databaseHistoryKafkaQueryTimeoutMs": target.getConfiguration().setDatabaseHistoryKafkaQueryTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "databasehistorykafkarecoveryattempts":
         case "databaseHistoryKafkaRecoveryAttempts": target.getConfiguration().setDatabaseHistoryKafkaRecoveryAttempts(property(camelContext, int.class, value)); return true;
         case "databasehistorykafkarecoverypollintervalms":
         case "databaseHistoryKafkaRecoveryPollIntervalMs": target.getConfiguration().setDatabaseHistoryKafkaRecoveryPollIntervalMs(property(camelContext, int.class, value)); return true;
         case "databasehistorykafkatopic":
         case "databaseHistoryKafkaTopic": target.getConfiguration().setDatabaseHistoryKafkaTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasehistoryskipunparseableddl":
+        case "databaseHistorySkipUnparseableDdl": target.getConfiguration().setDatabaseHistorySkipUnparseableDdl(property(camelContext, boolean.class, value)); return true;
+        case "databasehistorystoreonlycapturedtablesddl":
+        case "databaseHistoryStoreOnlyCapturedTablesDdl": target.getConfiguration().setDatabaseHistoryStoreOnlyCapturedTablesDdl(property(camelContext, boolean.class, value)); return true;
+        case "databasehistorystoreonlymonitoredtablesddl":
+        case "databaseHistoryStoreOnlyMonitoredTablesDdl": target.getConfiguration().setDatabaseHistoryStoreOnlyMonitoredTablesDdl(property(camelContext, boolean.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": target.getConfiguration().setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "databasepassword":
@@ -53,6 +68,8 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "databaseServerName": target.getConfiguration().setDatabaseServerName(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseuser":
         case "databaseUser": target.getConfiguration().setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": target.getConfiguration().setDatatypePropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
         case "decimalhandlingmode":
         case "decimalHandlingMode": target.getConfiguration().setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
@@ -65,6 +82,10 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "heartbeatIntervalMs": target.getConfiguration().setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": target.getConfiguration().setHeartbeatTopicsPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "includeschemachanges":
+        case "includeSchemaChanges": target.getConfiguration().setIncludeSchemaChanges(property(camelContext, boolean.class, value)); return true;
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": target.getConfiguration().setIncrementalSnapshotChunkSize(property(camelContext, int.class, value)); return true;
         case "internalkeyconverter":
         case "internalKeyConverter": target.getConfiguration().setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "internalvalueconverter":
@@ -73,6 +94,10 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "maxBatchSize": target.getConfiguration().setMaxBatchSize(property(camelContext, int.class, value)); return true;
         case "maxqueuesize":
         case "maxQueueSize": target.getConfiguration().setMaxQueueSize(property(camelContext, int.class, value)); return true;
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": target.getConfiguration().setMaxQueueSizeInBytes(property(camelContext, long.class, value)); return true;
+        case "messagekeycolumns":
+        case "messageKeyColumns": target.getConfiguration().setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": target.getConfiguration().setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommittimeoutms":
@@ -91,10 +116,28 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "offsetStorageTopic": target.getConfiguration().setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
         case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": target.getConfiguration().setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
+        case "queryfetchsize":
+        case "queryFetchSize": target.getConfiguration().setQueryFetchSize(property(camelContext, int.class, value)); return true;
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": target.getConfiguration().setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": target.getConfiguration().setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": target.getConfiguration().setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "signaldatacollection":
+        case "signalDataCollection": target.getConfiguration().setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "skippedoperations":
+        case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": target.getConfiguration().setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotfetchsize":
         case "snapshotFetchSize": target.getConfiguration().setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": target.getConfiguration().setSnapshotIncludeCollectionList(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotlocktimeoutms":
+        case "snapshotLockTimeoutMs": target.getConfiguration().setSnapshotLockTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotmode":
         case "snapshotMode": target.getConfiguration().setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotselectstatementoverrides":
@@ -113,6 +156,10 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "tableWhitelist": target.getConfiguration().setTableWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "timeprecisionmode":
         case "timePrecisionMode": target.getConfiguration().setTimePrecisionMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "tombstonesondelete":
+        case "tombstonesOnDelete": target.getConfiguration().setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
+        case "transactiontopic":
+        case "transactionTopic": target.getConfiguration().setTransactionTopic(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -128,6 +175,13 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "columnBlacklist": return java.lang.String.class;
         case "columnexcludelist":
         case "columnExcludeList": return java.lang.String.class;
+        case "columnincludelist":
+        case "columnIncludeList": return java.lang.String.class;
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": return java.lang.String.class;
+        case "columnwhitelist":
+        case "columnWhitelist": return java.lang.String.class;
+        case "converters": return java.lang.String.class;
         case "databasedbname":
         case "databaseDbname": return java.lang.String.class;
         case "databasehistory":
@@ -136,12 +190,20 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "databaseHistoryFileFilename": return java.lang.String.class;
         case "databasehistorykafkabootstrapservers":
         case "databaseHistoryKafkaBootstrapServers": return java.lang.String.class;
+        case "databasehistorykafkaquerytimeoutms":
+        case "databaseHistoryKafkaQueryTimeoutMs": return long.class;
         case "databasehistorykafkarecoveryattempts":
         case "databaseHistoryKafkaRecoveryAttempts": return int.class;
         case "databasehistorykafkarecoverypollintervalms":
         case "databaseHistoryKafkaRecoveryPollIntervalMs": return int.class;
         case "databasehistorykafkatopic":
         case "databaseHistoryKafkaTopic": return java.lang.String.class;
+        case "databasehistoryskipunparseableddl":
+        case "databaseHistorySkipUnparseableDdl": return boolean.class;
+        case "databasehistorystoreonlycapturedtablesddl":
+        case "databaseHistoryStoreOnlyCapturedTablesDdl": return boolean.class;
+        case "databasehistorystoreonlymonitoredtablesddl":
+        case "databaseHistoryStoreOnlyMonitoredTablesDdl": return boolean.class;
         case "databasehostname":
         case "databaseHostname": return java.lang.String.class;
         case "databasepassword":
@@ -152,6 +214,8 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "databaseServerName": return java.lang.String.class;
         case "databaseuser":
         case "databaseUser": return java.lang.String.class;
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": return java.lang.String.class;
         case "decimalhandlingmode":
         case "decimalHandlingMode": return java.lang.String.class;
         case "eventprocessingfailurehandlingmode":
@@ -164,6 +228,10 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "heartbeatIntervalMs": return int.class;
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": return java.lang.String.class;
+        case "includeschemachanges":
+        case "includeSchemaChanges": return boolean.class;
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": return int.class;
         case "internalkeyconverter":
         case "internalKeyConverter": return java.lang.String.class;
         case "internalvalueconverter":
@@ -172,6 +240,10 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "maxBatchSize": return int.class;
         case "maxqueuesize":
         case "maxQueueSize": return int.class;
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": return long.class;
+        case "messagekeycolumns":
+        case "messageKeyColumns": return java.lang.String.class;
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": return java.lang.String.class;
         case "offsetcommittimeoutms":
@@ -190,10 +262,28 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "offsetStorageTopic": return java.lang.String.class;
         case "pollintervalms":
         case "pollIntervalMs": return long.class;
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": return boolean.class;
+        case "queryfetchsize":
+        case "queryFetchSize": return int.class;
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": return long.class;
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": return boolean.class;
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": return java.lang.String.class;
+        case "signaldatacollection":
+        case "signalDataCollection": return java.lang.String.class;
+        case "skippedoperations":
+        case "skippedOperations": return java.lang.String.class;
         case "snapshotdelayms":
         case "snapshotDelayMs": return long.class;
         case "snapshotfetchsize":
         case "snapshotFetchSize": return int.class;
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": return java.lang.String.class;
+        case "snapshotlocktimeoutms":
+        case "snapshotLockTimeoutMs": return long.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
         case "snapshotselectstatementoverrides":
@@ -212,6 +302,10 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "tableWhitelist": return java.lang.String.class;
         case "timeprecisionmode":
         case "timePrecisionMode": return java.lang.String.class;
+        case "tombstonesondelete":
+        case "tombstonesOnDelete": return boolean.class;
+        case "transactiontopic":
+        case "transactionTopic": return java.lang.String.class;
         default: return null;
         }
     }
@@ -228,6 +322,13 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "columnBlacklist": return target.getConfiguration().getColumnBlacklist();
         case "columnexcludelist":
         case "columnExcludeList": return target.getConfiguration().getColumnExcludeList();
+        case "columnincludelist":
+        case "columnIncludeList": return target.getConfiguration().getColumnIncludeList();
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": return target.getConfiguration().getColumnPropagateSourceType();
+        case "columnwhitelist":
+        case "columnWhitelist": return target.getConfiguration().getColumnWhitelist();
+        case "converters": return target.getConfiguration().getConverters();
         case "databasedbname":
         case "databaseDbname": return target.getConfiguration().getDatabaseDbname();
         case "databasehistory":
@@ -236,12 +337,20 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "databaseHistoryFileFilename": return target.getConfiguration().getDatabaseHistoryFileFilename();
         case "databasehistorykafkabootstrapservers":
         case "databaseHistoryKafkaBootstrapServers": return target.getConfiguration().getDatabaseHistoryKafkaBootstrapServers();
+        case "databasehistorykafkaquerytimeoutms":
+        case "databaseHistoryKafkaQueryTimeoutMs": return target.getConfiguration().getDatabaseHistoryKafkaQueryTimeoutMs();
         case "databasehistorykafkarecoveryattempts":
         case "databaseHistoryKafkaRecoveryAttempts": return target.getConfiguration().getDatabaseHistoryKafkaRecoveryAttempts();
         case "databasehistorykafkarecoverypollintervalms":
         case "databaseHistoryKafkaRecoveryPollIntervalMs": return target.getConfiguration().getDatabaseHistoryKafkaRecoveryPollIntervalMs();
         case "databasehistorykafkatopic":
         case "databaseHistoryKafkaTopic": return target.getConfiguration().getDatabaseHistoryKafkaTopic();
+        case "databasehistoryskipunparseableddl":
+        case "databaseHistorySkipUnparseableDdl": return target.getConfiguration().isDatabaseHistorySkipUnparseableDdl();
+        case "databasehistorystoreonlycapturedtablesddl":
+        case "databaseHistoryStoreOnlyCapturedTablesDdl": return target.getConfiguration().isDatabaseHistoryStoreOnlyCapturedTablesDdl();
+        case "databasehistorystoreonlymonitoredtablesddl":
+        case "databaseHistoryStoreOnlyMonitoredTablesDdl": return target.getConfiguration().isDatabaseHistoryStoreOnlyMonitoredTablesDdl();
         case "databasehostname":
         case "databaseHostname": return target.getConfiguration().getDatabaseHostname();
         case "databasepassword":
@@ -252,6 +361,8 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "databaseServerName": return target.getConfiguration().getDatabaseServerName();
         case "databaseuser":
         case "databaseUser": return target.getConfiguration().getDatabaseUser();
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": return target.getConfiguration().getDatatypePropagateSourceType();
         case "decimalhandlingmode":
         case "decimalHandlingMode": return target.getConfiguration().getDecimalHandlingMode();
         case "eventprocessingfailurehandlingmode":
@@ -264,6 +375,10 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "heartbeatIntervalMs": return target.getConfiguration().getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": return target.getConfiguration().getHeartbeatTopicsPrefix();
+        case "includeschemachanges":
+        case "includeSchemaChanges": return target.getConfiguration().isIncludeSchemaChanges();
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": return target.getConfiguration().getIncrementalSnapshotChunkSize();
         case "internalkeyconverter":
         case "internalKeyConverter": return target.getConfiguration().getInternalKeyConverter();
         case "internalvalueconverter":
@@ -272,6 +387,10 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "maxBatchSize": return target.getConfiguration().getMaxBatchSize();
         case "maxqueuesize":
         case "maxQueueSize": return target.getConfiguration().getMaxQueueSize();
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": return target.getConfiguration().getMaxQueueSizeInBytes();
+        case "messagekeycolumns":
+        case "messageKeyColumns": return target.getConfiguration().getMessageKeyColumns();
         case "offsetcommitpolicy":
         case "offsetCommitPolicy": return target.getConfiguration().getOffsetCommitPolicy();
         case "offsetcommittimeoutms":
@@ -290,10 +409,28 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "offsetStorageTopic": return target.getConfiguration().getOffsetStorageTopic();
         case "pollintervalms":
         case "pollIntervalMs": return target.getConfiguration().getPollIntervalMs();
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": return target.getConfiguration().isProvideTransactionMetadata();
+        case "queryfetchsize":
+        case "queryFetchSize": return target.getConfiguration().getQueryFetchSize();
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": return target.getConfiguration().getRetriableRestartConnectorWaitMs();
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": return target.getConfiguration().isSanitizeFieldNames();
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": return target.getConfiguration().getSchemaNameAdjustmentMode();
+        case "signaldatacollection":
+        case "signalDataCollection": return target.getConfiguration().getSignalDataCollection();
+        case "skippedoperations":
+        case "skippedOperations": return target.getConfiguration().getSkippedOperations();
         case "snapshotdelayms":
         case "snapshotDelayMs": return target.getConfiguration().getSnapshotDelayMs();
         case "snapshotfetchsize":
         case "snapshotFetchSize": return target.getConfiguration().getSnapshotFetchSize();
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": return target.getConfiguration().getSnapshotIncludeCollectionList();
+        case "snapshotlocktimeoutms":
+        case "snapshotLockTimeoutMs": return target.getConfiguration().getSnapshotLockTimeoutMs();
         case "snapshotmode":
         case "snapshotMode": return target.getConfiguration().getSnapshotMode();
         case "snapshotselectstatementoverrides":
@@ -312,6 +449,10 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "tableWhitelist": return target.getConfiguration().getTableWhitelist();
         case "timeprecisionmode":
         case "timePrecisionMode": return target.getConfiguration().getTimePrecisionMode();
+        case "tombstonesondelete":
+        case "tombstonesOnDelete": return target.getConfiguration().isTombstonesOnDelete();
+        case "transactiontopic":
+        case "transactionTopic": return target.getConfiguration().getTransactionTopic();
         default: return null;
         }
     }

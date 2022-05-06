@@ -458,7 +458,7 @@ public interface DebeziumOracleComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: class io.debezium.relational.history.KafkaDatabaseHistory
+         * Default: io.debezium.relational.history.KafkaDatabaseHistory
          * Group: oracle
          * 
          * @param databaseHistory the value to set
@@ -502,6 +502,23 @@ public interface DebeziumOracleComponentBuilderFactory {
         default DebeziumOracleComponentBuilder databaseHistoryKafkaBootstrapServers(
                 java.lang.String databaseHistoryKafkaBootstrapServers) {
             doSetProperty("databaseHistoryKafkaBootstrapServers", databaseHistoryKafkaBootstrapServers);
+            return this;
+        }
+        /**
+         * The number of milliseconds to wait while fetching cluster information
+         * using Kafka admin client.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 3s
+         * Group: oracle
+         * 
+         * @param databaseHistoryKafkaQueryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder databaseHistoryKafkaQueryTimeoutMs(
+                long databaseHistoryKafkaQueryTimeoutMs) {
+            doSetProperty("databaseHistoryKafkaQueryTimeoutMs", databaseHistoryKafkaQueryTimeoutMs);
             return this;
         }
         /**
@@ -1490,6 +1507,25 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
+         * Specify how schema names should be adjusted for compatibility with
+         * the message converter used by the connector, including:'avro'
+         * replaces the characters that cannot be used in the Avro type name
+         * with underscore (default)'none' does not apply any adjustment.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: avro
+         * Group: oracle
+         * 
+         * @param schemaNameAdjustmentMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder schemaNameAdjustmentMode(
+                java.lang.String schemaNameAdjustmentMode) {
+            doSetProperty("schemaNameAdjustmentMode", schemaNameAdjustmentMode);
+            return this;
+        }
+        /**
          * The name of the data collection that is used to send signals/commands
          * to Debezium. Signaling is disabled when not set.
          * 
@@ -1507,8 +1543,9 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
         /**
          * The comma-separated list of operations to skip during streaming,
-         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes.
-         * By default, no operations will be skipped.
+         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes,
+         * 't' for truncates, and 'none' to indicate nothing skipped. By
+         * default, no operations will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1903,6 +1940,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "databaseHistory": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistory((java.lang.String) value); return true;
             case "databaseHistoryFileFilename": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistoryFileFilename((java.lang.String) value); return true;
             case "databaseHistoryKafkaBootstrapServers": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistoryKafkaBootstrapServers((java.lang.String) value); return true;
+            case "databaseHistoryKafkaQueryTimeoutMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistoryKafkaQueryTimeoutMs((long) value); return true;
             case "databaseHistoryKafkaRecoveryAttempts": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistoryKafkaRecoveryAttempts((int) value); return true;
             case "databaseHistoryKafkaRecoveryPollIntervalMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistoryKafkaRecoveryPollIntervalMs((int) value); return true;
             case "databaseHistoryKafkaTopic": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistoryKafkaTopic((java.lang.String) value); return true;
@@ -1959,6 +1997,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "racNodes": getOrCreateConfiguration((DebeziumOracleComponent) component).setRacNodes((java.lang.String) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "sanitizeFieldNames": getOrCreateConfiguration((DebeziumOracleComponent) component).setSanitizeFieldNames((boolean) value); return true;
+            case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumOracleComponent) component).setSignalDataCollection((java.lang.String) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumOracleComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotDelayMs((long) value); return true;

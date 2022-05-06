@@ -30,6 +30,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,8 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import org.joor.ReflectException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
 
@@ -52,6 +55,8 @@ import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
  * https://github.com/jOOQ/jOOR/pull/119
  */
 public final class MultiCompile {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MultiCompile.class);
 
     private MultiCompile() {
     }
@@ -73,7 +78,7 @@ public final class MultiCompile {
         unit.getInput().forEach((cn, code) -> {
             try {
                 Class<?> clazz = cl.loadClass(cn);
-                result.addResult(cn, clazz);
+                result.addResult(cn, clazz, null);
             } catch (ClassNotFoundException ignore) {
                 files.add(new CharSequenceJavaFileObject(cn, code));
             }
@@ -111,6 +116,9 @@ public final class MultiCompile {
                     }
                 }
 
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Java JooR Compile -classpath: {}", classpath);
+                }
                 options.addAll(Arrays.asList("-classpath", classpath.toString()));
             }
 
@@ -140,20 +148,38 @@ public final class MultiCompile {
                     //       The heuristic will work only with classes that follow standard naming conventions.
                     //       A better implementation is difficult at this point.
                     Lookup privateLookup = MethodHandles.privateLookupIn(caller, lookup);
+                    final Map<String, byte[]> byteCodes = new HashMap<>();
                     Class<?> clazz = fileManager.loadAndReturnMainClass(className,
-                            (name, bytes) -> privateLookup.defineClass(bytes));
+                            (name, bytes) -> {
+                                Class<?> loaded = privateLookup.defineClass(bytes);
+                                if (loaded != null) {
+                                    byteCodes.put(name, bytes);
+                                }
+                                return loaded;
+                            });
                     if (clazz != null) {
-                        result.addResult(className, clazz);
+                        result.addResult(className, clazz, byteCodes.get(className));
                     }
+                    // we may have compiled additional classes that the className is using, so add these as result as well
+                    byteCodes.forEach((cn, bc) -> result.addResult(cn, null, bc));
                 } else {
                     // Otherwise, use an arbitrary class loader. This approach doesn't allow for
                     // loading private-access interfaces in the compiled class's type hierarchy
                     ByteArrayClassLoader c = new ByteArrayClassLoader(fileManager.classes());
+                    final Map<String, byte[]> byteCodes = new HashMap<>();
                     Class<?> clazz = fileManager.loadAndReturnMainClass(className,
-                            (name, bytes) -> c.loadClass(name));
+                            (name, bytes) -> {
+                                Class<?> loaded = c.loadClass(name);
+                                if (loaded != null) {
+                                    byteCodes.put(name, bytes);
+                                }
+                                return loaded;
+                            });
                     if (clazz != null) {
-                        result.addResult(className, clazz);
+                        result.addResult(className, clazz, byteCodes.get(className));
                     }
+                    // we may have compiled additional classes that the className is using, so add these as result as well
+                    byteCodes.forEach((cn, bc) -> result.addResult(cn, null, bc));
                 }
             }
 
@@ -173,28 +199,6 @@ public final class MultiCompile {
                         .findFirst()
                         .orElse(null));
         return sf != null ? sf.getDeclaringClass() : null;
-    }
-
-    /* [java-9] */
-    static final class ByteArrayClassLoader extends ClassLoader {
-        private final Map<String, byte[]> classes;
-
-        ByteArrayClassLoader(Map<String, byte[]> classes) {
-            super(ByteArrayClassLoader.class.getClassLoader());
-
-            this.classes = classes;
-        }
-
-        @Override
-        protected Class<?> findClass(String name) throws ClassNotFoundException {
-            byte[] bytes = classes.get(name);
-
-            if (bytes == null) {
-                return super.findClass(name);
-            } else {
-                return defineClass(name, bytes, 0, bytes.length);
-            }
-        }
     }
 
     static final class JavaFileObject extends SimpleJavaFileObject {

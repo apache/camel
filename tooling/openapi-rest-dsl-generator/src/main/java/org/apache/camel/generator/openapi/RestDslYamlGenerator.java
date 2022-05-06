@@ -132,10 +132,12 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         List<String> toTagUris = new ArrayList<>();
 
         for (String v : VERBS) {
+            fixVerbNodes(xmlMapper, node, v);
             fixParamNodes(xmlMapper, node, v);
-            fixVerb(node, v);
+            sortVerb(node, v);
             toTagUris.addAll(fixToTags(xmlMapper, node, v));
         }
+
         // the root tag should be an array
         node = fixRootNode(xmlMapper, node);
 
@@ -174,7 +176,7 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
      * we want verbs to have its children sorted in a specific order so the generated rest-dsl is always the same
      * structure and that we have id, uri, ... in the top
      */
-    private static void fixVerb(JsonNode node, String verb) {
+    private static void sortVerb(JsonNode node, String verb) {
         JsonNode verbs = node.path("rest").path(verb);
         if (verbs == null || verbs.isMissingNode()) {
             return;
@@ -183,7 +185,7 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
             List<String> names = new ArrayList<>();
             if (n.isObject()) {
                 ObjectNode on = (ObjectNode) n;
-                // sort the elements: id, uri, description, consumes, produces, type, outType, param
+                // sort the elements: id, path, description, consumes, produces, type, outType, param
                 Iterator<String> it = on.fieldNames();
                 while (it.hasNext()) {
                     names.add(it.next());
@@ -255,6 +257,24 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
     }
 
     /**
+     * verb nodes should be an array list, but if there is only 1 verb then there is only 1 <verb> in XML and jackson
+     * parses that into a single node, so we need to change that into an array node
+     */
+    private static void fixVerbNodes(XmlMapper xmlMapper, JsonNode node, String verb) {
+        JsonNode verbs = node.path("rest").path(verb);
+        if (verbs == null || verbs.isMissingNode()) {
+            return;
+        }
+        if (verbs.isObject()) {
+            ArrayNode arr = xmlMapper.createArrayNode();
+            ObjectNode on = (ObjectNode) verbs;
+            arr.add(on);
+            ObjectNode n = (ObjectNode) node.path("rest");
+            n.set(verb, arr);
+        }
+    }
+
+    /**
      * to tag should be in implicit mode, ex: to: "direct:directX"
      */
     private static List<String> fixToTags(XmlMapper xmlMapper, JsonNode node, String verb) {
@@ -277,15 +297,6 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
                 toTags.add(uri.textValue());
             }
         }
-        return toTags;
-    }
-
-    /**
-     * Get all URIs for 'to' tags
-     */
-    private static List<String> getToUris(RestsDefinition rests) {
-        List<String> toTags = new ArrayList<>();
-
         return toTags;
     }
 

@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import java.lang.management.ManagementFactory;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,10 +37,10 @@ public class KameletMain extends MainCommandLineSupport {
 
     public static final String DEFAULT_KAMELETS_LOCATION = "classpath:/kamelets,github:apache:camel-kamelets/kamelets";
 
-    private static ClassLoader kameletClassLoader;
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
     private DownloadListener downloadListener;
+    private GroovyClassLoader groovyClassLoader;
 
     public KameletMain() {
         configureInitialProperties(DEFAULT_KAMELETS_LOCATION);
@@ -130,6 +131,32 @@ public class KameletMain extends MainCommandLineSupport {
     // -------------------------------------------------------------------------
 
     @Override
+    public void showOptionsHeader() {
+        System.out.println("Apache Camel (KameletMain) takes the following options");
+        System.out.println();
+    }
+
+    @Override
+    protected void addInitialOptions() {
+        addOption(new Option("h", "help", "Displays the help screen") {
+            protected void doProcess(String arg, LinkedList<String> remainingArgs) {
+                showOptions();
+                completed();
+            }
+        });
+        addOption(new ParameterOption(
+                "download", "download", "Whether to allow automatic downloaded JAR dependencies, over the internet.",
+                "download") {
+            @Override
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                if (arg.equals("-download")) {
+                    setDownload("true".equalsIgnoreCase(parameter));
+                }
+            }
+        });
+    }
+
+    @Override
     protected void doInit() throws Exception {
         super.doInit();
         initCamelContext();
@@ -171,6 +198,10 @@ public class KameletMain extends MainCommandLineSupport {
     protected CamelContext createCamelContext() {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
+        answer.setLogJvmUptime(true);
+        if (download) {
+            answer.setApplicationContextClassLoader(createApplicationContextClassLoader());
+        }
 
         // register download listener
         if (downloadListener != null) {
@@ -182,17 +213,6 @@ public class KameletMain extends MainCommandLineSupport {
             LOG.info(info);
         }
 
-        // any additional files to add to classpath
-        ClassLoader parentCL = KameletMain.class.getClassLoader();
-        String cpFiles = getInitialProperties().getProperty("camel.jbang.classpathFiles");
-        if (cpFiles != null) {
-            parentCL = new ExtraFilesClassLoader(parentCL, cpFiles.split(","));
-            LOG.info("Additional files added to classpath: {}", cpFiles);
-        }
-        if (kameletClassLoader == null) {
-            kameletClassLoader = new GroovyClassLoader(parentCL);
-        }
-        answer.setApplicationContextClassLoader(kameletClassLoader);
         answer.setRegistry(registry);
         // load camel component and custom health-checks
         answer.setLoadHealthChecks(true);
@@ -258,7 +278,6 @@ public class KameletMain extends MainCommandLineSupport {
                 answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer));
                 answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer));
                 answer.setLanguageResolver(new DependencyDownloaderLanguageResolver(answer));
-                answer.setRoutesLoader(new DependencyDownloaderRoutesLoader());
                 answer.addService(new DependencyDownloaderKamelet());
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
@@ -266,6 +285,39 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         return answer;
+    }
+
+    @Override
+    protected void autoconfigure(CamelContext camelContext) throws Exception {
+        // create classloader that may include additional JARs
+        camelContext.setApplicationContextClassLoader(createApplicationContextClassLoader());
+        // auto configure camel afterwards
+        super.autoconfigure(camelContext);
+    }
+
+    protected ClassLoader createApplicationContextClassLoader() {
+        if (groovyClassLoader == null) {
+            // create class loader (that are download capable) only once
+            // any additional files to add to classpath
+            ClassLoader parentCL = KameletMain.class.getClassLoader();
+            String cpFiles = getInitialProperties().getProperty("camel.jbang.classpathFiles");
+            if (cpFiles != null) {
+                parentCL = new ExtraFilesClassLoader(parentCL, cpFiles.split(","));
+                LOG.info("Additional files added to classpath: {}", cpFiles);
+            }
+            groovyClassLoader = new GroovyClassLoader(parentCL);
+        }
+        return groovyClassLoader;
+    }
+
+    @Override
+    protected void configureRoutesLoader(CamelContext camelContext) {
+        if (download) {
+            // use resolvers that can auto downloaded
+            camelContext.adapt(ExtendedCamelContext.class).setRoutesLoader(new DependencyDownloaderRoutesLoader(configure()));
+        } else {
+            super.configureRoutesLoader(camelContext);
+        }
     }
 
     /**

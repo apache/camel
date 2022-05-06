@@ -25,15 +25,16 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.Offset;
-import org.apache.camel.Resumable;
-import org.apache.camel.Service;
-import org.apache.camel.UpdatableConsumerResumeStrategy;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeStrategy;
+import org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeAdapter;
 import org.apache.camel.component.kafka.consumer.support.KafkaResumable;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.resume.TransientResumeStrategy;
+import org.apache.camel.resume.Offset;
+import org.apache.camel.resume.Resumable;
 import org.apache.camel.resume.Resumables;
+import org.apache.camel.resume.ResumeAdapter;
+import org.apache.camel.resume.UpdatableConsumerResumeStrategy;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -45,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTestSupport {
@@ -56,16 +58,13 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
     private MockEndpoint result;
 
     @BindToRegistry("resumeStrategy")
-    private TestKafkaConsumerResumeStrategy resumeStrategy;
+    private TestUpdateStrategy resumeStrategy;
     private CountDownLatch messagesLatch;
     private KafkaProducer<Object, Object> producer;
 
-    private static class TestKafkaConsumerResumeStrategy
-            implements KafkaConsumerResumeStrategy,
-            UpdatableConsumerResumeStrategy<String, Integer, Resumable<String, Integer>>, Service {
+    private static class TestUpdateStrategy extends TransientResumeStrategy
+            implements UpdatableConsumerResumeStrategy<String, Integer, Resumable<String, Integer>> {
         private final CountDownLatch messagesLatch;
-        private boolean resumeCalled;
-        private boolean consumerIsNull = true;
         private boolean startCalled;
         private boolean offsetNull = true;
         private boolean offsetAddressableNull = true;
@@ -74,34 +73,10 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
         private boolean offsetValueEmpty = true;
         private int lastOffset;
 
-        public TestKafkaConsumerResumeStrategy(CountDownLatch messagesLatch) {
+        public TestUpdateStrategy(ResumeAdapter resumeAdapter, CountDownLatch messagesLatch) {
+            super(resumeAdapter);
+
             this.messagesLatch = messagesLatch;
-        }
-
-        @Override
-        public void setConsumer(Consumer<?, ?> consumer) {
-            if (consumer != null) {
-                consumerIsNull = false;
-            }
-        }
-
-        @Override
-        public void resume(KafkaResumable resumable) {
-            resumeCalled = true;
-
-        }
-
-        @Override
-        public void resume() {
-            resumeCalled = true;
-        }
-
-        public boolean isResumeCalled() {
-            return resumeCalled;
-        }
-
-        public boolean isConsumerIsNull() {
-            return consumerIsNull;
         }
 
         @Override
@@ -115,12 +90,8 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
             LOG.warn("Init was called");
         }
 
-        public boolean isStartCalled() {
-            return startCalled;
-        }
-
         @Override
-        public void updateLastOffset(Resumable<String, Integer> offset) {
+        public void updateLastOffset(Resumable<String, Integer> offset) throws Exception {
             try {
                 if (offset != null) {
                     offsetNull = false;
@@ -166,6 +137,40 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
         public boolean isOffsetValueEmpty() {
             return offsetValueEmpty;
         }
+
+        public boolean isStartCalled() {
+            return startCalled;
+        }
+    }
+
+    private static class TestKafkaConsumerResumeAdapter implements KafkaConsumerResumeAdapter {
+        private boolean resumeCalled;
+        private boolean consumerIsNull = true;
+
+        @Override
+        public void setConsumer(Consumer<?, ?> consumer) {
+            if (consumer != null) {
+                consumerIsNull = false;
+            }
+        }
+
+        @Override
+        public void setKafkaResumable(KafkaResumable kafkaResumable) {
+
+        }
+
+        @Override
+        public void resume() {
+            resumeCalled = true;
+        }
+
+        public boolean isResumeCalled() {
+            return resumeCalled;
+        }
+
+        public boolean isConsumerIsNull() {
+            return consumerIsNull;
+        }
     }
 
     @BeforeEach
@@ -183,7 +188,7 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
         super.doPreSetup();
 
         messagesLatch = new CountDownLatch(1);
-        resumeStrategy = new TestKafkaConsumerResumeStrategy(messagesLatch);
+        resumeStrategy = new TestUpdateStrategy(new TestKafkaConsumerResumeAdapter(), messagesLatch);
     }
 
     @Test
@@ -191,9 +196,11 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
     public void testOffsetIsBeingChecked() throws InterruptedException {
         assertTrue(messagesLatch.await(100, TimeUnit.SECONDS), "The resume was not called");
 
-        assertTrue(resumeStrategy.isResumeCalled(),
+        final TestKafkaConsumerResumeAdapter adapter = resumeStrategy.getAdapter(TestKafkaConsumerResumeAdapter.class);
+        assertNotNull(adapter, "The adapter should not be null");
+        assertTrue(adapter.isResumeCalled(),
                 "The resume strategy should have been called when the partition was assigned");
-        assertFalse(resumeStrategy.isConsumerIsNull(),
+        assertFalse(adapter.isConsumerIsNull(),
                 "The consumer passed to the strategy should not be null");
         assertTrue(resumeStrategy.isStartCalled(),
                 "The resume strategy should have been started");

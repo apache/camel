@@ -500,6 +500,17 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a> with writeAsString enabled.
      *
+     * @param  text       the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @return            the builder to continue processing the DSL
+     */
+    public T jsonpathWriteAsString(String text, Class<?> resultType) {
+        return jsonpathWriteAsString(text, false, resultType);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a> with writeAsString enabled.
+     *
      * @param  text               the expression to be evaluated
      * @param  suppressExceptions whether to suppress exceptions such as PathNotFoundException
      * @return                    the builder to continue processing the DSL
@@ -508,6 +519,22 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
         JsonPathExpression expression = new JsonPathExpression(text);
         expression.setWriteAsString(Boolean.toString(true));
         expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        return expression(expression);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a> with writeAsString enabled.
+     *
+     * @param  text               the expression to be evaluated
+     * @param  suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param  resultType         the return type expected by the expression
+     * @return                    the builder to continue processing the DSL
+     */
+    public T jsonpathWriteAsString(String text, boolean suppressExceptions, Class<?> resultType) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setWriteAsString(Boolean.toString(true));
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setResultType(resultType);
         return expression(expression);
     }
 
@@ -542,6 +569,27 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
         expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
         expression.setAllowSimple(Boolean.toString(allowSimple));
         expression.setHeaderName(headerName);
+        return expression(expression);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a> with writeAsString enabled.
+     *
+     * @param  text               the expression to be evaluated
+     * @param  suppressExceptions whether to suppress exceptions such as PathNotFoundException
+     * @param  allowSimple        whether to allow in inlined simple exceptions in the json path expression
+     * @param  headerName         the name of the header to apply the expression to
+     * @param  resultType         the return type expected by the expression
+     * @return                    the builder to continue processing the DSL
+     */
+    public T jsonpathWriteAsString(
+            String text, boolean suppressExceptions, boolean allowSimple, String headerName, Class<?> resultType) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setWriteAsString(Boolean.toString(true));
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setAllowSimple(Boolean.toString(allowSimple));
+        expression.setHeaderName(headerName);
+        expression.setResultType(resultType);
         return expression(expression);
     }
 

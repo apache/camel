@@ -492,9 +492,10 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     private void processQuery(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         final String sObjectQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
         final boolean streamQueryResults = getParameter(STREAM_QUERY_RESULT, exchange, IGNORE_BODY, IS_OPTIONAL, Boolean.class);
+        final String sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
 
         // use custom response class property
-        setResponseClass(exchange, null);
+        setResponseClass(exchange, sObjectName);
 
         if (streamQueryResults) {
             restClient.query(sObjectQuery, determineHeaders(exchange), processWithStreamResultCallback(exchange, callback));
@@ -506,9 +507,10 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     private void processQueryMore(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         // reuse SOBJECT_QUERY parameter name for nextRecordsUrl
         final String nextRecordsUrl = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
+        final String sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
 
         // use custom response class property
-        setResponseClass(exchange, null);
+        setResponseClass(exchange, sObjectName);
 
         restClient.queryMore(nextRecordsUrl, determineHeaders(exchange), processWithResponseCallback(exchange, callback));
     }
@@ -516,9 +518,10 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     private void processQueryAll(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         final String sObjectQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
         final boolean streamQueryResults = getParameter(STREAM_QUERY_RESULT, exchange, IGNORE_BODY, IS_OPTIONAL, Boolean.class);
+        final String sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
 
         // use custom response class property
-        setResponseClass(exchange, null);
+        setResponseClass(exchange, sObjectName);
 
         if (streamQueryResults) {
             restClient.queryAll(sObjectQuery, determineHeaders(exchange), processWithStreamResultCallback(exchange, callback));

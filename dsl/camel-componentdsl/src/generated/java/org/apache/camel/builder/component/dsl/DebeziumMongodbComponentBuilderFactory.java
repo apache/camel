@@ -701,8 +701,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
         }
         /**
          * Unique name that identifies the MongoDB replica set or cluster and
-         * all recorded offsets, andthat is used as a prefix for all schemas and
-         * topics. Each distinct MongoDB installation should have a separate
+         * all recorded offsets, and that is used as a prefix for all schemas
+         * and topics. Each distinct MongoDB installation should have a separate
          * namespace and monitored by at most one Debezium connector.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -914,6 +914,25 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
+         * Specify how schema names should be adjusted for compatibility with
+         * the message converter used by the connector, including:'avro'
+         * replaces the characters that cannot be used in the Avro type name
+         * with underscore (default)'none' does not apply any adjustment.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: avro
+         * Group: mongodb
+         * 
+         * @param schemaNameAdjustmentMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder schemaNameAdjustmentMode(
+                java.lang.String schemaNameAdjustmentMode) {
+            doSetProperty("schemaNameAdjustmentMode", schemaNameAdjustmentMode);
+            return this;
+        }
+        /**
          * The name of the data collection that is used to send signals/commands
          * to Debezium. Signaling is disabled when not set.
          * 
@@ -931,8 +950,9 @@ public interface DebeziumMongodbComponentBuilderFactory {
         }
         /**
          * The comma-separated list of operations to skip during streaming,
-         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes.
-         * By default, no operations will be skipped.
+         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes,
+         * 't' for truncates, and 'none' to indicate nothing skipped. By
+         * default, no operations will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1178,6 +1198,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "queryFetchSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setQueryFetchSize((int) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "sanitizeFieldNames": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSanitizeFieldNames((boolean) value); return true;
+            case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSignalDataCollection((java.lang.String) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotCollectionFilterOverrides": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotCollectionFilterOverrides((java.lang.String) value); return true;

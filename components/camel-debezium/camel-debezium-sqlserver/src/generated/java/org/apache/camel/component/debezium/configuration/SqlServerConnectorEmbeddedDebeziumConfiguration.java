@@ -44,6 +44,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private long snapshotLockTimeoutMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "commit")
     private String sourceTimestampMode = "commit";
+    @UriParam(label = LABEL_NAME, defaultValue = "3s", javaType = "java.time.Duration")
+    private long databaseHistoryKafkaQueryTimeoutMs = 3000;
     @UriParam(label = LABEL_NAME)
     private String databaseDbname;
     @UriParam(label = LABEL_NAME)
@@ -142,6 +144,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private String columnExcludeList;
     @UriParam(label = LABEL_NAME)
     private String databaseHostname;
+    @UriParam(label = LABEL_NAME, defaultValue = "avro")
+    private String schemaNameAdjustmentMode = "avro";
     @UriParam(label = LABEL_NAME)
     private String tableIncludeList;
 
@@ -353,6 +357,19 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public String getSourceTimestampMode() {
         return sourceTimestampMode;
+    }
+
+    /**
+     * The number of milliseconds to wait while fetching cluster information
+     * using Kafka admin client.
+     */
+    public void setDatabaseHistoryKafkaQueryTimeoutMs(
+            long databaseHistoryKafkaQueryTimeoutMs) {
+        this.databaseHistoryKafkaQueryTimeoutMs = databaseHistoryKafkaQueryTimeoutMs;
+    }
+
+    public long getDatabaseHistoryKafkaQueryTimeoutMs() {
+        return databaseHistoryKafkaQueryTimeoutMs;
     }
 
     /**
@@ -586,8 +603,9 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The comma-separated list of operations to skip during streaming, defined
-     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default,
-     * no operations will be skipped.
+     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes, 't' for
+     * truncates, and 'none' to indicate nothing skipped. By default, no
+     * operations will be skipped.
      */
     public void setSkippedOperations(String skippedOperations) {
         this.skippedOperations = skippedOperations;
@@ -1007,6 +1025,20 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specify how schema names should be adjusted for compatibility with the
+     * message converter used by the connector, including:'avro' replaces the
+     * characters that cannot be used in the Avro type name with underscore
+     * (default)'none' does not apply any adjustment
+     */
+    public void setSchemaNameAdjustmentMode(String schemaNameAdjustmentMode) {
+        this.schemaNameAdjustmentMode = schemaNameAdjustmentMode;
+    }
+
+    public String getSchemaNameAdjustmentMode() {
+        return schemaNameAdjustmentMode;
+    }
+
+    /**
      * The tables for which changes are to be captured
      */
     public void setTableIncludeList(String tableIncludeList) {
@@ -1037,6 +1069,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
         addPropertyIfNotNull(configBuilder, "source.timestamp.mode", sourceTimestampMode);
+        addPropertyIfNotNull(configBuilder, "database.history.kafka.query.timeout.ms", databaseHistoryKafkaQueryTimeoutMs);
         addPropertyIfNotNull(configBuilder, "database.dbname", databaseDbname);
         addPropertyIfNotNull(configBuilder, "database.user", databaseUser);
         addPropertyIfNotNull(configBuilder, "datatype.propagate.source.type", datatypePropagateSourceType);
@@ -1085,6 +1118,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "max.iteration.transactions", maxIterationTransactions);
         addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
+        addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
         
         return configBuilder.build();

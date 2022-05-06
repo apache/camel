@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -561,10 +562,17 @@ public class AWS2S3Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(getConfiguration().getAmazonS3Presigner())) {
             presigner = getConfiguration().getAmazonS3Presigner();
         } else {
-            presigner = S3Presigner.builder()
-                    .credentialsProvider(StaticCredentialsProvider.create(
-                            AwsBasicCredentials.create(getConfiguration().getAccessKey(), getConfiguration().getSecretKey())))
-                    .region(Region.of(getConfiguration().getRegion())).build();
+            S3Presigner.Builder builder = S3Presigner.builder();
+            builder.credentialsProvider(StaticCredentialsProvider.create(
+                    AwsBasicCredentials.create(getConfiguration().getAccessKey(), getConfiguration().getSecretKey())))
+                    .region(Region.of(getConfiguration().getRegion()));
+
+            String uriEndpointOverride = getConfiguration().getUriEndpointOverride();
+            if (ObjectHelper.isNotEmpty(uriEndpointOverride)) {
+                builder.endpointOverride(URI.create(uriEndpointOverride));
+            }
+
+            presigner = builder.build();
         }
 
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()

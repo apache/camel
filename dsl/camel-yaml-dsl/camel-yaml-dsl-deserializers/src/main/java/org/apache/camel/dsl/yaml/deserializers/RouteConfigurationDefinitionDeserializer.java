@@ -42,7 +42,7 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
           properties = {
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "precondition", type = "string"),
-                  @YamlProperty(name = "error-handler", type = "object:org.apache.camel.model.ErrorHandlerDefinition.class"),
+                  @YamlProperty(name = "error-handler", type = "object:org.apache.camel.model.ErrorHandlerDefinition"),
                   @YamlProperty(name = "intercept", type = "array:org.apache.camel.model.InterceptDefinition"),
                   @YamlProperty(name = "intercept-from", type = "array:org.apache.camel.model.InterceptFromDefinition"),
                   @YamlProperty(name = "intercept-send-to-endpoint",

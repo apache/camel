@@ -20,14 +20,16 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.ResumeAware;
+import org.apache.camel.resume.ResumeAdapter;
+import org.apache.camel.resume.ResumeAware;
+import org.apache.camel.resume.ResumeStrategy;
 
 /**
  * Consumer to poll feeds and return each entry from the feed step by step.
  */
-public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer implements ResumeAware<EntryFilter<E>> {
+public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer implements ResumeAware<ResumeStrategy> {
     protected int entryIndex;
-    protected EntryFilter<E> entryFilter;
+    protected ResumeStrategy resumeStrategy;
     @SuppressWarnings("rawtypes")
     protected List<E> list;
     protected boolean throttleEntries;
@@ -52,8 +54,12 @@ public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer im
             polledMessages++;
 
             boolean valid = true;
-            if (entryFilter != null) {
-                valid = entryFilter.isValidEntry(entry);
+            if (resumeStrategy != null) {
+                ResumeAdapter adapter = resumeStrategy.getAdapter();
+
+                if (adapter instanceof EntryFilter) {
+                    valid = ((EntryFilter) adapter).isValidEntry(entry);
+                }
             }
             if (valid) {
                 Exchange exchange = endpoint.createExchange(feed, entry);
@@ -73,13 +79,13 @@ public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer im
     }
 
     @Override
-    public void setResumeStrategy(EntryFilter<E> resumeStrategy) {
-        this.entryFilter = resumeStrategy;
+    public void setResumeStrategy(ResumeStrategy resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
     }
 
     @Override
-    public EntryFilter<E> getResumeStrategy() {
-        return entryFilter;
+    public ResumeStrategy getResumeStrategy() {
+        return resumeStrategy;
     }
 
     protected abstract void resetList();

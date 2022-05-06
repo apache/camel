@@ -102,14 +102,14 @@ camel run foo*
 
 TIP: The run goal can also detect files that are `properties`.
 
-=== Live reload
+=== Dev mode with live reload
 
-You can enable live reload of the route(s) when the source file is updated (saved),
-using the `--reload` options as shown:
+You can enable dev mode that comes with live reload of the route(s) when the source file is updated (saved),
+using the `--dev` options as shown:
 
 [source,bash]
 ----
-camel run jms-amqp-10-sink-binding.yaml --reload
+camel run jms-amqp-10-sink-binding.yaml --dev
 ----
 
 Then while the Camel application is running, you can update the YAML route and update when saving.
@@ -171,11 +171,11 @@ The example can then be run locally with:
 camel run *
 ----
 
-You can also run in reload mode, to hot-deploy on source code changes.
+You can also run in dev mode, to hot-deploy on source code changes.
 
 [source,bash]
 ----
-camel run * --reload
+camel run * --dev
 ----
 
 You can also download a single file, such as one of the Camel K examples:
@@ -268,6 +268,14 @@ curl http://localhost:8080/hello
 Hello World%
 ----
 
+=== Using Java beans and processors
+
+There is basic support for including regular Java source files together with Camel routes,
+and let Camel JBang runtime compile the Java source. This means you can include smaller utility
+classes, POJOs, Camel Processors and whatnot that the application needs.
+
+NOTE: The Java source files cannot use package names. This may change in the future.
+
 === Dependency Injection in Java classes
 
 When running Camel applications with camel-jbang, then the runtime is `camel-main` based. This means
@@ -315,7 +323,46 @@ Listening for transport dt_socket at address: 4004
 
 As you can see the default listening port is 4004 but can be configured as described in https://www.jbang.dev/documentation/guide/latest/debugging.html[JBang Debugging].
 
+== Open API
+
+Camel JBang allows to quickly expose an Open API service using _contract first_ apprach,
+where you have an existing OpenAPI specification file.
+
+Then Camel JBang is able to bridge each API endpoints from the OpenAPI specification to
+a Camel route with the naming convention `direct:<operationId>`.
+
+This make it quick to implement a Camel route for a given operation.
+
+See the https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-api)[open-api example] for more details.
+
+== Packaging
+
+The Camel JBang application can be packaged as a standalone _uber-jar_ without the need for JBang to run the application.
+
+You simply do this by
+
+[source,bash]
+----
+camel package uber-jar
+----
+
+Which will generate `camel-runner.jar` as the output file.
+You can then run this JAR with Java that comes with everything included inside the .jar file.
+
+You can run the JAR with Java as follows:
+
+[source,bash]
+----
+java -jar camel-runner.jar
+----
+
+== Creating Projects
+
+You can _export_ your Camel JBang application to a traditional Java based project such as Spring Boot or Quarkus.
+
 === Create Quarkus Project
+
+NOTE: New implementation on the way
 
 The create project command can be used to generate a maven project. After running the integration with the `run` command `create project` will generate a maven quarkus project with some required dependencies that can be used as a starting point for complex integrations. 
 

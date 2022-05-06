@@ -53,7 +53,6 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
         ContextHandler contextHandler = createHandler(endpoint, path);
         // add handler after starting server.
         jettyServerTest.addHandler(contextHandler);
-
     }
 
     private ContextHandler createHandler(PlatformHttpEndpoint endpoint, String path) {

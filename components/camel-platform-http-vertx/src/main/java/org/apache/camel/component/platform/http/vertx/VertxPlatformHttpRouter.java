@@ -35,11 +35,13 @@ import org.apache.camel.support.CamelContextHelper;
 public class VertxPlatformHttpRouter implements Router {
     public static final String PLATFORM_HTTP_ROUTER_NAME = PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME + "-router";
 
+    private final VertxPlatformHttpServer server;
     private final Vertx vertx;
     private final Router delegate;
     private AllowForwardHeaders allowForward;
 
-    public VertxPlatformHttpRouter(Vertx vertx, Router delegate) {
+    public VertxPlatformHttpRouter(VertxPlatformHttpServer server, Vertx vertx, Router delegate) {
+        this.server = server;
         this.vertx = vertx;
         this.delegate = delegate;
         this.allowForward = AllowForwardHeaders.NONE;
@@ -47,6 +49,10 @@ public class VertxPlatformHttpRouter implements Router {
 
     public Vertx vertx() {
         return vertx;
+    }
+
+    public VertxPlatformHttpServer getServer() {
+        return server;
     }
 
     @Override

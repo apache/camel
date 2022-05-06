@@ -561,6 +561,40 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
+         * The number of milliseconds to wait while fetching cluster information
+         * using Kafka admin client.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 3s
+         * Group: sqlserver
+         * 
+         * @param databaseHistoryKafkaQueryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaQueryTimeoutMs(
+                long databaseHistoryKafkaQueryTimeoutMs) {
+            doSetProperty("databaseHistoryKafkaQueryTimeoutMs", databaseHistoryKafkaQueryTimeoutMs);
+            return this;
+        }
+        /**
+         * The number of milliseconds to wait while fetching cluster information
+         * using Kafka admin client.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 3s
+         * Group: sqlserver
+         * 
+         * @param databaseHistoryKafkaQueryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaQueryTimeoutMs(
+                String databaseHistoryKafkaQueryTimeoutMs) {
+            doSetProperty("databaseHistoryKafkaQueryTimeoutMs", databaseHistoryKafkaQueryTimeoutMs);
+            return this;
+        }
+        /**
          * The number of attempts in a row that no data are returned from Kafka
          * before recover completes. The maximum amount of time to wait after
          * receiving no data is (recovery.attempts) x
@@ -1556,6 +1590,25 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify how schema names should be adjusted for compatibility with
+         * the message converter used by the connector, including:'avro'
+         * replaces the characters that cannot be used in the Avro type name
+         * with underscore (default)'none' does not apply any adjustment.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: avro
+         * Group: sqlserver
+         * 
+         * @param schemaNameAdjustmentMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder schemaNameAdjustmentMode(
+                String schemaNameAdjustmentMode) {
+            doSetProperty("schemaNameAdjustmentMode", schemaNameAdjustmentMode);
+            return this;
+        }
+        /**
          * The name of the data collection that is used to send signals/commands
          * to Debezium. Signaling is disabled when not set.
          * 
@@ -1573,8 +1626,9 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         }
         /**
          * The comma-separated list of operations to skip during streaming,
-         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes.
-         * By default, no operations will be skipped.
+         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes,
+         * 't' for truncates, and 'none' to indicate nothing skipped. By
+         * default, no operations will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

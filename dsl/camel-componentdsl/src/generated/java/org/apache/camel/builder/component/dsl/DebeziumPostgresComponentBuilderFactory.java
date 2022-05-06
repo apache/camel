@@ -983,9 +983,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
         }
         /**
          * The name of the Postgres logical decoding plugin installed on the
-         * server. Supported values are 'decoderbufs', 'wal2json', 'pgoutput',
-         * 'wal2json_streaming', 'wal2json_rds' and 'wal2json_rds_streaming'.
-         * Defaults to 'decoderbufs'.
+         * server. Supported values are 'decoderbufs' and 'pgoutput'. Defaults
+         * to 'decoderbufs'.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1176,6 +1175,25 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
+         * Specify how schema names should be adjusted for compatibility with
+         * the message converter used by the connector, including:'avro'
+         * replaces the characters that cannot be used in the Avro type name
+         * with underscore (default)'none' does not apply any adjustment.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: avro
+         * Group: postgres
+         * 
+         * @param schemaNameAdjustmentMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder schemaNameAdjustmentMode(
+                java.lang.String schemaNameAdjustmentMode) {
+            doSetProperty("schemaNameAdjustmentMode", schemaNameAdjustmentMode);
+            return this;
+        }
+        /**
          * Specify the conditions that trigger a refresh of the in-memory schema
          * for a table. 'columns_diff' (the default) is the safest mode,
          * ensuring the in-memory schema stays in-sync with the database table's
@@ -1236,11 +1254,13 @@ public interface DebeziumPostgresComponentBuilderFactory {
         }
         /**
          * The comma-separated list of operations to skip during streaming,
-         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes.
-         * By default, no operations will be skipped.
+         * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes,
+         * 't' for truncates, and 'none' to indicate nothing skipped. By
+         * default, no operations will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: t
          * Group: postgres
          * 
          * @param skippedOperations the value to set
@@ -1670,25 +1690,6 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * Specify how TRUNCATE operations are handled for change events
-         * (supported only on pg11 pgoutput plugin), including: 'skip' to skip /
-         * ignore TRUNCATE events (default), 'include' to handle and include
-         * TRUNCATE events.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: skip
-         * Group: postgres
-         * 
-         * @param truncateHandlingMode the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresComponentBuilder truncateHandlingMode(
-                java.lang.String truncateHandlingMode) {
-            doSetProperty("truncateHandlingMode", truncateHandlingMode);
-            return this;
-        }
-        /**
          * Specify the constant that will be provided by Debezium to indicate
          * that the original value is a toasted value not provided by the
          * database. If starts with 'hex:' prefix it is expected that the rest
@@ -1818,6 +1819,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "schemaBlacklist": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaBlacklist((java.lang.String) value); return true;
             case "schemaExcludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaExcludeList((java.lang.String) value); return true;
             case "schemaIncludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaIncludeList((java.lang.String) value); return true;
+            case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "schemaRefreshMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaRefreshMode((java.lang.String) value); return true;
             case "schemaWhitelist": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaWhitelist((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSignalDataCollection((java.lang.String) value); return true;
@@ -1845,7 +1847,6 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "timePrecisionMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTimePrecisionMode((java.lang.String) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTombstonesOnDelete((boolean) value); return true;
             case "transactionTopic": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTransactionTopic((java.lang.String) value); return true;
-            case "truncateHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTruncateHandlingMode((java.lang.String) value); return true;
             case "unavailableValuePlaceholder": getOrCreateConfiguration((DebeziumPostgresComponent) component).setUnavailableValuePlaceholder((java.lang.String) value); return true;
             case "xminFetchIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setXminFetchIntervalMs((long) value); return true;
             default: return false;

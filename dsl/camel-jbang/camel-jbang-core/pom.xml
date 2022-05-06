@@ -69,6 +69,11 @@
             <version>${velocity-version}</version>
         </dependency>
         <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>${freemarker-version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
         </dependency>
@@ -93,6 +98,12 @@
         <dependency>
             <groupId>io.fabric8</groupId>
             <artifactId>kubernetes-client</artifactId>
+            <version>${kubernetes-client-version}</version>
+        </dependency>
+        <!-- OpenShift client -->
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>openshift-client</artifactId>
             <version>${kubernetes-client-version}</version>
         </dependency>
         <!-- Docker generator -->

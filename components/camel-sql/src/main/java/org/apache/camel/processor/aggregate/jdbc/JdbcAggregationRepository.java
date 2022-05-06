@@ -388,6 +388,7 @@ public class JdbcAggregationRepository extends ServiceSupport
                             key, version);
 
                     insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version);
+                    LOG.debug("Removed key {}", key);
 
                 } catch (Exception e) {
                     throw new RuntimeException("Error removing key " + key + " from repository " + repositoryName, e);
@@ -398,8 +399,13 @@ public class JdbcAggregationRepository extends ServiceSupport
 
     @Override
     public void confirm(final CamelContext camelContext, final String exchangeId) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
+        confirmWithResult(camelContext, exchangeId);
+    }
+
+    @Override
+    public boolean confirmWithResult(final CamelContext camelContext, final String exchangeId) {
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            public Boolean doInTransaction(TransactionStatus status) {
                 LOG.debug("Confirming exchangeId {}", exchangeId);
                 final String confirmKey = exchangeId;
                 final int mustBeOne = jdbcTemplate
@@ -407,8 +413,9 @@ public class JdbcAggregationRepository extends ServiceSupport
                 if (mustBeOne != 1) {
                     LOG.error("problem removing row " + confirmKey + " from " + getRepositoryNameCompleted()
                               + " - DELETE statement did not return 1 but " + mustBeOne);
+                    return false;
                 }
-
+                return true;
             }
         });
     }

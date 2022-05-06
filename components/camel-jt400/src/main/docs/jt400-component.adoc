@@ -35,19 +35,19 @@ for this component:
 To send or receive data from a data queue
 
 ----------------------------------------------------------------------
-jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ[?options]
+jt400://user:password/system/QSYS.LIB/library.LIB/queue.DTAQ[?options]
 ----------------------------------------------------------------------
 
 To send or receive messages from a message queue
 
 ----------------------------------------------------------------------
-jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/QUEUE.MSGQ[?options]
+jt400://user:password/system/QSYS.LIB/library.LIB/queue.MSGQ[?options]
 ----------------------------------------------------------------------
 
 To call program
 
 -----------------------------------------------------------------------
-jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/program.PGM[?options]
+jt400://user:password/system/QSYS.LIB/library.LIB/program.PGM[?options]
 -----------------------------------------------------------------------
 
 

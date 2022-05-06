@@ -120,6 +120,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "retriableRestartConnectorWaitMs": target.getConfiguration().setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": target.getConfiguration().setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": target.getConfiguration().setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
         case "signalDataCollection": target.getConfiguration().setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "skippedoperations":
@@ -248,6 +250,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "retriableRestartConnectorWaitMs": return long.class;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return boolean.class;
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "signaldatacollection":
         case "signalDataCollection": return java.lang.String.class;
         case "skippedoperations":
@@ -377,6 +381,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "retriableRestartConnectorWaitMs": return target.getConfiguration().getRetriableRestartConnectorWaitMs();
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return target.getConfiguration().isSanitizeFieldNames();
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": return target.getConfiguration().getSchemaNameAdjustmentMode();
         case "signaldatacollection":
         case "signalDataCollection": return target.getConfiguration().getSignalDataCollection();
         case "skippedoperations":

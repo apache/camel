@@ -26,7 +26,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private boolean includeSchemaChanges = true;
     @UriParam(label = LABEL_NAME)
     private String gtidSourceIncludes;
-    @UriParam(label = LABEL_NAME, defaultValue = "class com.mysql.cj.jdbc.Driver")
+    @UriParam(label = LABEL_NAME, defaultValue = "com.mysql.cj.jdbc.Driver")
     private String databaseJdbcDriver = "com.mysql.cj.jdbc.Driver";
     @UriParam(label = LABEL_NAME)
     private String heartbeatActionQuery;
@@ -50,6 +50,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private int snapshotFetchSize;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long snapshotLockTimeoutMs = 10000;
+    @UriParam(label = LABEL_NAME, defaultValue = "3s", javaType = "java.time.Duration")
+    private long databaseHistoryKafkaQueryTimeoutMs = 3000;
     @UriParam(label = LABEL_NAME)
     private String databaseUser;
     @UriParam(label = LABEL_NAME)
@@ -172,6 +174,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String columnExcludeList;
     @UriParam(label = LABEL_NAME)
     private String databaseHostname;
+    @UriParam(label = LABEL_NAME, defaultValue = "avro")
+    private String schemaNameAdjustmentMode = "avro";
     @UriParam(label = LABEL_NAME, defaultValue = "10000")
     private long databaseServerIdOffset = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "1m", javaType = "java.time.Duration")
@@ -447,6 +451,19 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The number of milliseconds to wait while fetching cluster information
+     * using Kafka admin client.
+     */
+    public void setDatabaseHistoryKafkaQueryTimeoutMs(
+            long databaseHistoryKafkaQueryTimeoutMs) {
+        this.databaseHistoryKafkaQueryTimeoutMs = databaseHistoryKafkaQueryTimeoutMs;
+    }
+
+    public long getDatabaseHistoryKafkaQueryTimeoutMs() {
+        return databaseHistoryKafkaQueryTimeoutMs;
+    }
+
+    /**
      * Name of the database user to be used when connecting to the database.
      */
     public void setDatabaseUser(String databaseUser) {
@@ -534,8 +551,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Location of the Java keystore file containing an application process's
-     * own certificate and private key.
+     * The location of the key store file. This is optional and can be used for
+     * two-way authentication between the client and the MySQL Server.
      */
     public void setDatabaseSslKeystore(String databaseSslKeystore) {
         this.databaseSslKeystore = databaseSslKeystore;
@@ -583,9 +600,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Password to unlock the keystore file (store password) specified by
-     * 'ssl.trustore' configuration property or the 'javax.net.ssl.trustStore'
-     * system or JVM property.
+     * The password for the trust store file. Used to check the integrity of the
+     * truststore, and unlock the truststore.
      */
     public void setDatabaseSslTruststorePassword(
             String databaseSslTruststorePassword) {
@@ -763,8 +779,9 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The comma-separated list of operations to skip during streaming, defined
-     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes. By default,
-     * no operations will be skipped.
+     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes, 't' for
+     * truncates, and 'none' to indicate nothing skipped. By default, no
+     * operations will be skipped.
      */
     public void setSkippedOperations(String skippedOperations) {
         this.skippedOperations = skippedOperations;
@@ -1211,8 +1228,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Location of the Java truststore file containing the collection of CA
-     * certificates trusted by this application process (trust store).
+     * The location of the trust store file for the server certificate
+     * verification.
      */
     public void setDatabaseSslTruststore(String databaseSslTruststore) {
         this.databaseSslTruststore = databaseSslTruststore;
@@ -1244,11 +1261,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Password to access the private key from the keystore file specified by
-     * 'ssl.keystore' configuration property or the 'javax.net.ssl.keyStore'
-     * system or JVM property. This password is used to unlock the keystore file
-     * (store password), and to decrypt the private key stored in the keystore
-     * (key password).
+     * The password for the key store file. This is optional and only needed if
+     * 'database.ssl.keystore' is configured.
      */
     public void setDatabaseSslKeystorePassword(
             String databaseSslKeystorePassword) {
@@ -1279,6 +1293,20 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getDatabaseHostname() {
         return databaseHostname;
+    }
+
+    /**
+     * Specify how schema names should be adjusted for compatibility with the
+     * message converter used by the connector, including:'avro' replaces the
+     * characters that cannot be used in the Avro type name with underscore
+     * (default)'none' does not apply any adjustment
+     */
+    public void setSchemaNameAdjustmentMode(String schemaNameAdjustmentMode) {
+        this.schemaNameAdjustmentMode = schemaNameAdjustmentMode;
+    }
+
+    public String getSchemaNameAdjustmentMode() {
+        return schemaNameAdjustmentMode;
     }
 
     /**
@@ -1369,6 +1397,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "binlog.buffer.size", binlogBufferSize);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
+        addPropertyIfNotNull(configBuilder, "database.history.kafka.query.timeout.ms", databaseHistoryKafkaQueryTimeoutMs);
         addPropertyIfNotNull(configBuilder, "database.user", databaseUser);
         addPropertyIfNotNull(configBuilder, "datatype.propagate.source.type", datatypePropagateSourceType);
         addPropertyIfNotNull(configBuilder, "sanitize.field.names", sanitizeFieldNames);
@@ -1429,6 +1458,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.ssl.keystore.password", databaseSslKeystorePassword);
         addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
+        addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "database.server.id.offset", databaseServerIdOffset);
         addPropertyIfNotNull(configBuilder, "connect.keep.alive.interval.ms", connectKeepAliveIntervalMs);
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);

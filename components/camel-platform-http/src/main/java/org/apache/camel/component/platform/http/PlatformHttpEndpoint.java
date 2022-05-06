@@ -106,7 +106,7 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
             protected void doStart() throws Exception {
                 super.doStart();
                 ServiceHelper.startService(delegatedConsumer);
-                getComponent().addHttpEndpoint(getPath());
+                getComponent().addHttpEndpoint(getPath(), httpMethodRestrict);
             }
 
             @Override
@@ -205,6 +205,6 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
     PlatformHttpEngine getOrCreateEngine() {
         return platformHttpEngine != null
                 ? platformHttpEngine
-                : ((PlatformHttpComponent) getComponent()).getOrCreateEngine();
+                : getComponent().getOrCreateEngine();
     }
 }

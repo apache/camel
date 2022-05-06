@@ -20,25 +20,27 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Resumable;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.UpdatableConsumerResumeStrategy;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.consumer.GenericFileResumable;
-import org.apache.camel.component.file.consumer.GenericFileResumeStrategy;
+import org.apache.camel.component.file.consumer.GenericFileResumeAdapter;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.resume.TransientResumeStrategy;
+import org.apache.camel.resume.Resumable;
 import org.apache.camel.resume.Resumables;
+import org.apache.camel.resume.UpdatableConsumerResumeStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport {
 
-    private static class TestResumeStrategy implements GenericFileResumeStrategy<File> {
+    private static class TestFileResumeAdapter implements GenericFileResumeAdapter {
         @Override
         public void resume(GenericFileResumable<File> resumable) {
             if (!resumable.getAddressable().getName().startsWith("resume-from-offset")) {
@@ -55,17 +57,12 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
         }
 
         @Override
-        public void start() {
-
-        }
-
-        @Override
-        public void stop() {
-
+        public Optional<Long> getLastOffset(File addressable) {
+            return Optional.empty();
         }
     }
 
-    private static class FailResumeStrategy extends TestResumeStrategy
+    private static class FailResumeAdapter extends TestFileResumeAdapter
             implements UpdatableConsumerResumeStrategy<File, Long, Resumable<File, Long>> {
         private boolean called;
 
@@ -75,7 +72,7 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
         }
     }
 
-    private static final FailResumeStrategy FAIL_RESUME_STRATEGY = new FailResumeStrategy();
+    private static final TransientResumeStrategy FAIL_RESUME_STRATEGY = new TransientResumeStrategy(new FailResumeAdapter());
 
     @DisplayName("Tests whether it can resume from an offset")
     @Test
@@ -106,7 +103,7 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
 
         List<Exchange> exchangeList = mock.getExchanges();
         Assertions.assertFalse(exchangeList.isEmpty(), "It should have received a few messages");
-        Assertions.assertFalse(FAIL_RESUME_STRATEGY.called);
+        Assertions.assertFalse(((FailResumeAdapter) FAIL_RESUME_STRATEGY.getAdapter()).called);
     }
 
     @DisplayName("Tests whether we can start from the beginning (i.e.: no resume strategy)")
@@ -127,7 +124,7 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
             @Override
             public void configure() {
 
-                bindToRegistry("myResumeStrategy", new TestResumeStrategy());
+                bindToRegistry("myResumeStrategy", new TransientResumeStrategy(new TestFileResumeAdapter()));
                 bindToRegistry("resumeNotToBeCalledStrategy", FAIL_RESUME_STRATEGY);
 
                 from(fileUri("resumeOff?noop=true&recursive=true"))

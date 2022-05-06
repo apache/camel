@@ -75,7 +75,7 @@ public class SqlEndpointMisconfigureDataSourceTest extends CamelTestSupport {
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.DERBY)
+                .setType(EmbeddedDatabaseType.H2)
                 .addScript("sql/createAndPopulateDatabase.sql").build();
 
         super.setUp();
@@ -86,7 +86,9 @@ public class SqlEndpointMisconfigureDataSourceTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        db.shutdown();
+        if (db != null) {
+            db.shutdown();
+        }
     }
 
 }

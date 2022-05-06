@@ -15,7 +15,7 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class Jt400EndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":userID:password/systemName/objectPath.type";
+    private static final String BASE = ":userID:password@systemName/QSYS.LIB/objectPath.type";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;

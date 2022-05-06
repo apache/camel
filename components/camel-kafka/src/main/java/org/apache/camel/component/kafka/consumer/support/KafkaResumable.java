@@ -17,12 +17,12 @@
 
 package org.apache.camel.component.kafka.consumer.support;
 
-import org.apache.camel.Offset;
-import org.apache.camel.Resumable;
+import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.Offsets;
+import org.apache.camel.resume.Resumable;
 
 public class KafkaResumable implements Resumable<String, String> {
-    private String partition;
+    private final String partition;
     private String offset;
 
     public KafkaResumable(String partition, String offset) {

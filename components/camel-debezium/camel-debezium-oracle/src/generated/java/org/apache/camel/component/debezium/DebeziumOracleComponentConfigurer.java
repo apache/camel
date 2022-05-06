@@ -58,6 +58,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "databaseHistoryFileFilename": getOrCreateConfiguration(target).setDatabaseHistoryFileFilename(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehistorykafkabootstrapservers":
         case "databaseHistoryKafkaBootstrapServers": getOrCreateConfiguration(target).setDatabaseHistoryKafkaBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasehistorykafkaquerytimeoutms":
+        case "databaseHistoryKafkaQueryTimeoutMs": getOrCreateConfiguration(target).setDatabaseHistoryKafkaQueryTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "databasehistorykafkarecoveryattempts":
         case "databaseHistoryKafkaRecoveryAttempts": getOrCreateConfiguration(target).setDatabaseHistoryKafkaRecoveryAttempts(property(camelContext, int.class, value)); return true;
         case "databasehistorykafkarecoverypollintervalms":
@@ -190,6 +192,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "retriableRestartConnectorWaitMs": getOrCreateConfiguration(target).setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": getOrCreateConfiguration(target).setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": getOrCreateConfiguration(target).setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
         case "signalDataCollection": getOrCreateConfiguration(target).setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "skippedoperations":
@@ -267,6 +271,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "databaseHistoryFileFilename": return java.lang.String.class;
         case "databasehistorykafkabootstrapservers":
         case "databaseHistoryKafkaBootstrapServers": return java.lang.String.class;
+        case "databasehistorykafkaquerytimeoutms":
+        case "databaseHistoryKafkaQueryTimeoutMs": return long.class;
         case "databasehistorykafkarecoveryattempts":
         case "databaseHistoryKafkaRecoveryAttempts": return int.class;
         case "databasehistorykafkarecoverypollintervalms":
@@ -399,6 +405,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "retriableRestartConnectorWaitMs": return long.class;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return boolean.class;
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "signaldatacollection":
         case "signalDataCollection": return java.lang.String.class;
         case "skippedoperations":
@@ -477,6 +485,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "databaseHistoryFileFilename": return getOrCreateConfiguration(target).getDatabaseHistoryFileFilename();
         case "databasehistorykafkabootstrapservers":
         case "databaseHistoryKafkaBootstrapServers": return getOrCreateConfiguration(target).getDatabaseHistoryKafkaBootstrapServers();
+        case "databasehistorykafkaquerytimeoutms":
+        case "databaseHistoryKafkaQueryTimeoutMs": return getOrCreateConfiguration(target).getDatabaseHistoryKafkaQueryTimeoutMs();
         case "databasehistorykafkarecoveryattempts":
         case "databaseHistoryKafkaRecoveryAttempts": return getOrCreateConfiguration(target).getDatabaseHistoryKafkaRecoveryAttempts();
         case "databasehistorykafkarecoverypollintervalms":
@@ -609,6 +619,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "retriableRestartConnectorWaitMs": return getOrCreateConfiguration(target).getRetriableRestartConnectorWaitMs();
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return getOrCreateConfiguration(target).isSanitizeFieldNames();
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": return getOrCreateConfiguration(target).getSchemaNameAdjustmentMode();
         case "signaldatacollection":
         case "signalDataCollection": return getOrCreateConfiguration(target).getSignalDataCollection();
         case "skippedoperations":

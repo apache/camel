@@ -18,6 +18,7 @@ package org.apache.camel.impl.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -357,6 +358,7 @@ public abstract class AbstractCamelContext extends BaseService
     private long startDate;
     private SSLContextParameters sslContextParameters;
     private StartupSummaryLevel startupSummaryLevel = StartupSummaryLevel.Default;
+    private boolean logJvmUptime;
 
     /**
      * Creates the {@link CamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
@@ -3183,9 +3185,17 @@ public abstract class AbstractCamelContext extends BaseService
             String start = TimeUtils.printDuration(taken);
             String init = TimeUtils.printDuration(initTaken);
             String built = TimeUtils.printDuration(buildTaken);
-            LOG.info("Apache Camel {} ({}) started in {} (build:{} init:{} start:{})", getVersion(), getName(), total, built,
-                    init,
-                    start);
+            String jvm = logJvmUptime ? getJvmUptime() : null;
+            if (jvm != null) {
+                LOG.info("Apache Camel {} ({}) started in {} (build:{} init:{} start:{} JVM-uptime:{})", getVersion(),
+                        getName(), total, built,
+                        init, start, jvm);
+            } else {
+                LOG.info("Apache Camel {} ({}) started in {} (build:{} init:{} start:{})", getVersion(), getName(), total,
+                        built,
+                        init,
+                        start);
+            }
         }
     }
 
@@ -3506,7 +3516,13 @@ public abstract class AbstractCamelContext extends BaseService
         if (startupSummaryLevel != StartupSummaryLevel.Off) {
             if (LOG.isInfoEnabled()) {
                 String taken = TimeUtils.printDuration(stopWatch.taken());
-                LOG.info("Apache Camel {} ({}) shutdown in {} (uptime:{})", getVersion(), getName(), taken, getUptime());
+                String jvm = logJvmUptime ? getJvmUptime() : null;
+                if (jvm != null) {
+                    LOG.info("Apache Camel {} ({}) shutdown in {} (uptime:{} JVM-uptime:{})", getVersion(), getName(), taken,
+                            getUptime(), jvm);
+                } else {
+                    LOG.info("Apache Camel {} ({}) shutdown in {} (uptime:{})", getVersion(), getName(), taken, getUptime());
+                }
             }
         }
 
@@ -4217,6 +4233,15 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.warn("Error setting up management due {}", e.getMessage());
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
+    }
+
+    private static String getJvmUptime() {
+        try {
+            return TimeUtils.printDuration(ManagementFactory.getRuntimeMXBean().getUptime());
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
     }
 
     @Override
@@ -5142,6 +5167,17 @@ public abstract class AbstractCamelContext extends BaseService
 
     public void setBeanProcessorFactory(BeanProcessorFactory beanProcessorFactory) {
         this.beanProcessorFactory = doAddService(beanProcessorFactory);
+    }
+
+    public boolean isLogJvmUptime() {
+        return logJvmUptime;
+    }
+
+    /**
+     * Whether to log the JVM uptime on startup and shutdown
+     */
+    public void setLogJvmUptime(boolean logJvmUptime) {
+        this.logJvmUptime = logJvmUptime;
     }
 
     protected Map<String, RouteService> getRouteServices() {

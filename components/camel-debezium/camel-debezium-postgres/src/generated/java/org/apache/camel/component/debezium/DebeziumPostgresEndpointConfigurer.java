@@ -148,6 +148,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "schemaExcludeList": target.getConfiguration().setSchemaExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "schemaincludelist":
         case "schemaIncludeList": target.getConfiguration().setSchemaIncludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": target.getConfiguration().setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "schemarefreshmode":
         case "schemaRefreshMode": target.getConfiguration().setSchemaRefreshMode(property(camelContext, java.lang.String.class, value)); return true;
         case "schemawhitelist":
@@ -202,8 +204,6 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "tombstonesOnDelete": target.getConfiguration().setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
         case "transactiontopic":
         case "transactionTopic": target.getConfiguration().setTransactionTopic(property(camelContext, java.lang.String.class, value)); return true;
-        case "truncatehandlingmode":
-        case "truncateHandlingMode": target.getConfiguration().setTruncateHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": target.getConfiguration().setUnavailableValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
         case "xminfetchintervalms":
@@ -342,6 +342,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "schemaExcludeList": return java.lang.String.class;
         case "schemaincludelist":
         case "schemaIncludeList": return java.lang.String.class;
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "schemarefreshmode":
         case "schemaRefreshMode": return java.lang.String.class;
         case "schemawhitelist":
@@ -396,8 +398,6 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "tombstonesOnDelete": return boolean.class;
         case "transactiontopic":
         case "transactionTopic": return java.lang.String.class;
-        case "truncatehandlingmode":
-        case "truncateHandlingMode": return java.lang.String.class;
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": return java.lang.String.class;
         case "xminfetchintervalms":
@@ -537,6 +537,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "schemaExcludeList": return target.getConfiguration().getSchemaExcludeList();
         case "schemaincludelist":
         case "schemaIncludeList": return target.getConfiguration().getSchemaIncludeList();
+        case "schemanameadjustmentmode":
+        case "schemaNameAdjustmentMode": return target.getConfiguration().getSchemaNameAdjustmentMode();
         case "schemarefreshmode":
         case "schemaRefreshMode": return target.getConfiguration().getSchemaRefreshMode();
         case "schemawhitelist":
@@ -591,8 +593,6 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "tombstonesOnDelete": return target.getConfiguration().isTombstonesOnDelete();
         case "transactiontopic":
         case "transactionTopic": return target.getConfiguration().getTransactionTopic();
-        case "truncatehandlingmode":
-        case "truncateHandlingMode": return target.getConfiguration().getTruncateHandlingMode();
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": return target.getConfiguration().getUnavailableValuePlaceholder();
         case "xminfetchintervalms":

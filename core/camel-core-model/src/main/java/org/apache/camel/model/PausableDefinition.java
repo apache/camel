@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.ConsumerListener;
+import org.apache.camel.resume.ConsumerListener;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -40,7 +40,7 @@ public class PausableDefinition extends NoOutputDefinition<PausableDefinition> {
     private ConsumerListener<?, ?> consumerListenerBean;
 
     @XmlAttribute(required = true)
-    @Metadata(required = true, javaType = "org.apache.camel.ConsumerListener")
+    @Metadata(required = true, javaType = "org.apache.camel.resume.ConsumerListener")
     private String consumerListener;
 
     @XmlTransient

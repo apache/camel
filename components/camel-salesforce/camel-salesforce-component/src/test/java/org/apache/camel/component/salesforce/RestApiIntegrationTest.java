@@ -231,8 +231,8 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     public void returnsHttpResponseStatusAndText() {
         Exchange exchange = new DefaultExchange(context);
         template().send("direct:query", exchange);
-        assertEquals("200", exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertNotNull(exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_TEXT));
+        assertEquals("200", exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertNotNull(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT));
     }
 
     @Test
@@ -513,11 +513,27 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
+    public void testQueryWithSObjectName() throws Exception {
+        createLineItem();
+        final QueryRecordsLine_Item__c queryRecords
+                = template().requestBody("direct:queryWithSObjectName", null, QueryRecordsLine_Item__c.class);
+        assertNotNull(queryRecords);
+        // verify polymorphic query resulted in the correct type
+        assertEquals(User.class, queryRecords.getRecords().get(0).getOwner().getClass());
+        final Line_Item__c lineItem = queryRecords.getRecords().get(0);
+        User user = (User) queryRecords.getRecords().get(0).getOwner();
+        assertNotNull(user.getUsername());
+        assertNotNull(lineItem.getRecordType());
+    }
+
+    @Test
     public void testQueryStreamResults() throws Exception {
         final int createCount = 300;
         createLineItems(createCount);
-        final Iterator<Line_Item__c> queryRecords
-                = template().requestBody("direct:queryStreamResult", "", Iterator.class);
+        Exchange exchange = new DefaultExchange(context);
+        template().send("direct:queryStreamResult", exchange);
+        Iterator<?> queryRecords = exchange.getMessage(Iterator.class);
+        assertNotNull(exchange.getMessage().getHeader("CamelSalesforceQueryResultTotalSize"));
         int count = 0;
         while (queryRecords.hasNext()) {
             count = count + 1;
@@ -811,6 +827,11 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                 from("direct:query")
                         .to("salesforce:query?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name from Line_Item__c&sObjectClass="
                             + QueryRecordsLine_Item__c.class.getName());
+
+                // testQuery
+                from("direct:queryWithSObjectName")
+                        .to("salesforce:query?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name from Line_Item__c&sObjectName="
+                            + "QueryRecordsLine_Item__c");
 
                 // testQuery
                 from("direct:queryStreamResult")

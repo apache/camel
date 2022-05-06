@@ -52,9 +52,9 @@ public class PlatformHttpTest extends AbstractPlatformHttpTest {
 
         PlatformHttpComponent phc = getContext().getComponent("platform-http", PlatformHttpComponent.class);
         assertEquals(2, phc.getHttpEndpoints().size());
-        Iterator<String> it = phc.getHttpEndpoints().iterator();
-        assertEquals("/get", it.next());
-        assertEquals("/post", it.next());
+        Iterator<HttpEndpointModel> it = phc.getHttpEndpoints().iterator();
+        assertEquals("/get", it.next().getUri());
+        assertEquals("/post", it.next().getUri());
     }
 
     @Override

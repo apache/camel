@@ -28,15 +28,16 @@ public class CamelJBangMain implements Callable<Integer> {
 
     public static void run(String... args) {
         commandLine = new CommandLine(new CamelJBangMain())
-                .addSubcommand("run", new Run())
+                .addSubcommand("version", new CommandLine(new Version()))
+                .addSubcommand("run", new CommandLine(new Run()))
                 .addSubcommand("init", new CommandLine(new Init()))
                 .addSubcommand("bind", new CommandLine(new Bind()))
                 .addSubcommand("package", new CommandLine(new Package())
-                        .addSubcommand("fat-jar", new FatJar()))
+                        .addSubcommand("uber-jar", new UberJar()))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator())
                         .addSubcommand("rest", new CodeRestGenerator()))
                 .addSubcommand("build", new CommandLine(new Build())
-                        .addSubcommand("resources", new Resource())
+                        .addSubcommand("manifests", new Manifest())
                         .addSubcommand("image", new Image()))
                 .addSubcommand("deploy", new CommandLine(new Deploy()))
                 .addSubcommand("undeploy", new CommandLine(new Undeploy()))
@@ -48,6 +49,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("create", new CommandLine(new Create())
                         .addSubcommand("project", new Project()));
 
+        PropertiesHelper.augmentWithProperties(commandLine);
         int exitCode = commandLine.execute(args);
         System.exit(exitCode);
     }

@@ -19,9 +19,9 @@ package org.apache.camel.processor.resume;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.Resumable;
-import org.apache.camel.ResumeStrategy;
-import org.apache.camel.UpdatableConsumerResumeStrategy;
+import org.apache.camel.resume.Resumable;
+import org.apache.camel.resume.ResumeStrategy;
+import org.apache.camel.resume.UpdatableConsumerResumeStrategy;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ExchangeHelper;

@@ -36,6 +36,7 @@ public class SimpleMainShutdownStrategy implements MainShutdownStrategy {
     private final AtomicBoolean timeoutEnabled = new AtomicBoolean();
     private final AtomicBoolean restarting = new AtomicBoolean();
     private volatile CountDownLatch latch;
+    private int extraShutdownTimeout = 15;
 
     public SimpleMainShutdownStrategy() {
         this.completed = new AtomicBoolean();
@@ -103,5 +104,15 @@ public class SimpleMainShutdownStrategy implements MainShutdownStrategy {
             restarting.set(true);
             latch.countDown();
         }
+    }
+
+    @Override
+    public int getExtraShutdownTimeout() {
+        return extraShutdownTimeout;
+    }
+
+    @Override
+    public void setExtraShutdownTimeout(int extraShutdownTimeout) {
+        this.extraShutdownTimeout = extraShutdownTimeout;
     }
 }

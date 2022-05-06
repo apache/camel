@@ -17,7 +17,7 @@
 
 package org.apache.camel.component.kafka.consumer.support;
 
-import org.apache.camel.Offset;
+import org.apache.camel.resume.Offset;
 import org.apache.camel.util.KeyValueHolder;
 
 /**

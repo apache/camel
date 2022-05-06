@@ -18,7 +18,6 @@ package org.apache.camel.main;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.impl.engine.DefaultRoutesLoader;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.support.ResolverHelper;
@@ -27,15 +26,10 @@ import org.apache.camel.support.service.ServiceHelper;
 /**
  * Auto downloaded needed DSL JARs.
  */
-public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
+public class DependencyDownloaderRoutesLoader extends MainRoutesLoader {
 
-    @Override
-    protected RoutesBuilderLoader getRoutesLoader(String extension) throws Exception {
-        RoutesBuilderLoader loader = super.getRoutesLoader(extension);
-        if (loader == null) {
-            loader = resolveService(extension);
-        }
-        return loader;
+    public DependencyDownloaderRoutesLoader(MainConfigurationProperties configuration) {
+        super(configuration);
     }
 
     @Override
@@ -68,6 +62,8 @@ public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
 
             if (answer != null) {
                 CamelContextAware.trySetCamelContext(answer, getCamelContext());
+                // allows for custom initialization
+                initRoutesBuilderLoader(answer);
                 ServiceHelper.startService(answer);
             }
 
