@@ -261,7 +261,8 @@ class Run implements Callable<Integer> {
                 applicationProperties = loadApplicationProperties(source);
                 // logging level/color may be configured in the properties file
                 loggingLevel = applicationProperties.getProperty("loggingLevel", loggingLevel);
-                loggingColor = "true".equals(applicationProperties.getProperty("loggingColor", loggingColor ? "true" : "false"));
+                loggingColor
+                        = "true".equals(applicationProperties.getProperty("loggingColor", loggingColor ? "true" : "false"));
             } else if (!silentRun && !source.exists()) {
                 System.out.println("Cannot run because application.properties file does not exist");
                 return 1;

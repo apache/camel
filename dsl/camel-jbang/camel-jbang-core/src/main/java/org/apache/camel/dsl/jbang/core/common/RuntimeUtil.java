@@ -16,11 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class RuntimeUtil {
 
