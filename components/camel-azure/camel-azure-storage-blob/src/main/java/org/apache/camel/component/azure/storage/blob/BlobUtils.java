@@ -22,6 +22,7 @@ import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.converter.stream.FileInputStreamCache;
 import org.apache.camel.util.ObjectHelper;
 
 public final class BlobUtils {
@@ -34,11 +35,14 @@ public final class BlobUtils {
     }
 
     public static long getInputStreamLength(InputStream is) throws IOException {
-        if (!is.markSupported()) {
-            return -1;
+        if (is instanceof FileInputStreamCache) {
+            return ((FileInputStreamCache) is).length();
         }
         if (is instanceof ByteArrayInputStream) {
             return is.available();
+        }
+        if (!is.markSupported()) {
+            return 0;
         }
         long size = 0;
         try {
