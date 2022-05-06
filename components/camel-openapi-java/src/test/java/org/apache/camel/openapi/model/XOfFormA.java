@@ -17,7 +17,7 @@
 package org.apache.camel.openapi.model;
 
 public class XOfFormA implements OneOfForm {
-    String code;
+    String code = "a-1234";
 
     String a;
     int b;
