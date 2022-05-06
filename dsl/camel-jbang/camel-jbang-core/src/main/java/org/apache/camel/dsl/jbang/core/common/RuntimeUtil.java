@@ -20,16 +20,24 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public final class RuntimeUtil {
 
-    static {
-        Configurator.initialize("CamelJBang", "log4j2.properties");
-    }
+    private static final AtomicBoolean initDone = new AtomicBoolean();
 
     private RuntimeUtil() {
     }
 
-    public static void configureLog(String level) {
+    public static void configureLog(String level, boolean color) {
+        if (initDone.compareAndSet(false, true)) {
+            if (color) {
+                Configurator.initialize("CamelJBang", "log4j2.properties");
+            } else {
+                Configurator.initialize("CamelJBang", "log4j2-no-color.properties");
+            }
+        }
+
         level = level.toLowerCase();
 
         switch (level) {

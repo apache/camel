@@ -94,11 +94,14 @@ class Run implements Callable<Integer> {
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     private String name;
 
-    @Option(names = { "--logging" }, description = "Can be used to turn off logging")
+    @Option(names = { "--logging" }, defaultValue = "true", description = "Can be used to turn off logging")
     private boolean logging = true;
 
     @Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
     private String loggingLevel;
+
+    @Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored loggging")
+    private boolean loggingColor = true;
 
     @Option(names = { "--stop" }, description = "Stop all running instances of Camel JBang")
     private boolean stopRequested;
@@ -151,7 +154,7 @@ class Run implements Callable<Integer> {
     @Option(names = { "--health" }, description = "Health check at /q/health on local HTTP server (port 8080 by default)")
     private boolean health;
 
-    @Option(names = { "--modeline" }, description = "Enables Camel-K style modeline")
+    @Option(names = { "--modeline" }, defaultValue = "true", description = "Enables Camel-K style modeline")
     private boolean modeline = true;
 
     @Option(names = { "--open-api" }, description = "Add an OpenAPI spec from the given file")
@@ -234,7 +237,6 @@ class Run implements Callable<Integer> {
     private static String prefixFile(String line, String key) {
         String value = StringHelper.after(line, key + "=");
         if (value != null) {
-
             value = value.replaceAll("file:", "classpath:");
             line = key + "=" + value;
         }
@@ -257,8 +259,9 @@ class Run implements Callable<Integer> {
             File source = new File("application.properties");
             if (source.exists()) {
                 applicationProperties = loadApplicationProperties(source);
-                // logging level may be configured in the properties file
+                // logging level/color may be configured in the properties file
                 loggingLevel = applicationProperties.getProperty("loggingLevel", loggingLevel);
+                loggingColor = "true".equals(applicationProperties.getProperty("loggingColor", loggingColor ? "true" : "false"));
             } else if (!silentRun && !source.exists()) {
                 System.out.println("Cannot run because application.properties file does not exist");
                 return 1;
@@ -270,12 +273,13 @@ class Run implements Callable<Integer> {
 
         // configure logging first
         if (silentRun) {
-            RuntimeUtil.configureLog("off");
+            RuntimeUtil.configureLog("off", false);
         } else if (logging) {
-            RuntimeUtil.configureLog(loggingLevel);
+            RuntimeUtil.configureLog(loggingLevel, loggingColor);
             writeSettings("loggingLevel", loggingLevel);
+            writeSettings("loggingColor", loggingColor ? "true" : "false");
         } else {
-            RuntimeUtil.configureLog("off");
+            RuntimeUtil.configureLog("off", false);
             writeSettings("loggingLevel", "off");
         }
 
