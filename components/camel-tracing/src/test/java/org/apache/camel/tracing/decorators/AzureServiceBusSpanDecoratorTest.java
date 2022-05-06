@@ -68,10 +68,12 @@ public class AzureServiceBusSpanDecoratorTest {
         Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.DELIVERY_COUNT, Long.class)).thenReturn(deliveryCount);
         Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.ENQUEUED_SEQUENCE_NUMBER, OffsetDateTime.class))
                 .thenReturn(enqueuedSequenceNumber);
-        Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.ENQUEUED_TIME, OffsetDateTime.class)).thenReturn(enqueuedTime);
+        Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.ENQUEUED_TIME, OffsetDateTime.class))
+                .thenReturn(enqueuedTime);
         Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.EXPIRES_AT, OffsetDateTime.class)).thenReturn(expiresAt);
         Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.PARTITION_KEY, String.class)).thenReturn(partitionKey);
-        Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.REPLY_TO_SESSION_ID, String.class)).thenReturn(replyToSessionId);
+        Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.REPLY_TO_SESSION_ID, String.class))
+                .thenReturn(replyToSessionId);
         Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.SESSION_ID, String.class)).thenReturn(sessionId);
         Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.TIME_TO_LIVE, Duration.class)).thenReturn(ttl);
 
