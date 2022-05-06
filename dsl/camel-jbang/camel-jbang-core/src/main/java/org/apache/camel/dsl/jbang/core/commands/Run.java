@@ -116,7 +116,7 @@ class Run implements Callable<Integer> {
             description = "For how long time in seconds Camel can be idle before stopping")
     private int maxIdleSeconds;
 
-    @Option(names = { "--dev" }, description = "Enables dev mode (live reload when source files are updated and saved)")
+    @Option(names = { "--reload", "--dev" }, description = "Enables dev mode (live reload when source files are updated and saved)")
     private boolean dev;
 
     @Option(names = { "--trace" }, description = "Enables trace logging of the routed messages")
