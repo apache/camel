@@ -24,13 +24,13 @@ import org.slf4j.LoggerFactory;
 
 public final class RuntimeUtil {
 
-    private static final AtomicBoolean initDone = new AtomicBoolean();
+    private static final AtomicBoolean INIT_DONE = new AtomicBoolean();
 
     private RuntimeUtil() {
     }
 
     public static void configureLog(String level, boolean color) {
-        if (initDone.compareAndSet(false, true)) {
+        if (INIT_DONE.compareAndSet(false, true)) {
             if (color) {
                 Configurator.initialize("CamelJBang", "log4j2.properties");
             } else {
