@@ -113,7 +113,7 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
                         // ignore
                     }
                 }
-                boolean success = main.getCamelContext().isStopped();
+                boolean success = done || main.getCamelContext().isStopped();
                 if (!success) {
                     LOG.warn("CamelContext not yet shutdown completely after: {}. Forcing shutdown.",
                             TimeUtils.printDuration(watch.taken()));
