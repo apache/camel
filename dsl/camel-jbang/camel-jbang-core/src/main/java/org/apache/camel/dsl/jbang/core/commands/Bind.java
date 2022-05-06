@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -107,10 +108,9 @@ class Bind implements Callable<Integer> {
         } else {
             res = new GitHubResourceResolver().resolve(
                     "github:apache:camel-kamelets:main:kamelets/" + kamelet + ".kamelet.yaml");
-            if (res.exists()) {
-                is = res.getInputStream();
-                loc = res.getLocation();
-            }
+            loc = res.getLocation();
+            URL u = new URL(loc);
+            is = u.openStream();
         }
         if (is != null) {
             try {
