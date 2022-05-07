@@ -40,9 +40,9 @@ public class SqlSpanDecorator extends AbstractSpanDecorator {
         super.pre(span, exchange, endpoint);
         span.setTag(Tag.DB_TYPE, "sql");
 
-        Object sqlquery = exchange.getIn().getHeader(CAMEL_SQL_QUERY);
-        if (sqlquery instanceof String) {
-            span.setTag(Tag.DB_STATEMENT, (String) sqlquery);
+        String sqlquery = exchange.getIn().getHeader(CAMEL_SQL_QUERY, String.class);
+        if (sqlquery != null) {
+            span.setTag(Tag.DB_STATEMENT, sqlquery);
         }
     }
 

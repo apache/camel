@@ -64,7 +64,7 @@ public class CqlSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn("cql://host1,host2?consistencyLevel=quorum");
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(CqlSpanDecorator.CAMEL_CQL_QUERY)).thenReturn(cql);
+        Mockito.when(message.getHeader(CqlSpanDecorator.CAMEL_CQL_QUERY, String.class)).thenReturn(cql);
 
         SpanDecorator decorator = new CqlSpanDecorator();
 

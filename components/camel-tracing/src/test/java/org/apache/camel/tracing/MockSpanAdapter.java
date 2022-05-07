@@ -24,7 +24,7 @@ import java.util.Map;
 public class MockSpanAdapter implements SpanAdapter {
 
     private List<LogEntry> logEntries = new ArrayList<>();
-    private HashMap<String, Object> tags = new HashMap<>();
+    private Map<String, Object> tags = new HashMap<>();
     private String traceId;
     private String spanId;
 
@@ -36,7 +36,7 @@ public class MockSpanAdapter implements SpanAdapter {
         return new MockSpanAdapter().setOperation(operation);
     }
 
-    public HashMap<String, Object> tags() {
+    public Map<String, Object> tags() {
         return tags;
     }
 
