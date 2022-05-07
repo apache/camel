@@ -17,6 +17,9 @@ Added method `findRouteResourcesFromDirectory` to `org.apache.camel.main.RoutesC
 
 === camel-yaml-dsl
 
+Removed deprecated `spec/flows` and `spec/flow` from the kamelet yaml loader.
+Must use `spec/template` as key for the kamelet template.
+
 Removed _endpoint-dsl_ notation which was not well known,
 causing problems for tools, and yaml-validation against the json-schema standard.
 

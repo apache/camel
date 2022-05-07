@@ -55,7 +55,7 @@ spec:
         description: A message warning to log
         type: string
         example: "error while checking the source"
-  flow:
+  template:
     from:
       uri: kamelet:source
       steps:

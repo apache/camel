@@ -52,7 +52,7 @@ class KameletTemplatingTest extends YamlTestSupport {
                         title: Template
                         description: The inline template
                         type: binary
-                  flow:
+                  template:
                     from:
                       uri: "kamelet:source"
                       steps:

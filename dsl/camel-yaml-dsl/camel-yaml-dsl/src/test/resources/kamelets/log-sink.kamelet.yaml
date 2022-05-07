@@ -50,7 +50,7 @@ spec:
   dependencies:
     - "camel:kamelet"
     - "camel:log"
-  flow:
+  template:
     from:
       uri: "kamelet:source"
       steps:

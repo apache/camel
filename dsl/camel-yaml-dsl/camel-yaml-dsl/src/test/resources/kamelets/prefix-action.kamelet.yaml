@@ -37,7 +37,7 @@ spec:
       mediaType: text/plain
     out:
       mediaType: text/plain
-  flow:
+  template:
     from:
       uri: "kamelet:source"
       steps:

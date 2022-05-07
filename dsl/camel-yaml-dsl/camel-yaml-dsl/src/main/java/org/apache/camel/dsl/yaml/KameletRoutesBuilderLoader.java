@@ -56,14 +56,6 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
         Node template = nodeAt(root, "/spec/template");
         if (template == null) {
-            // fallback till flows get removed
-            template = nodeAt(root, "/spec/flows");
-        }
-        if (template == null) {
-            // fallback till flow get removed
-            template = nodeAt(root, "/spec/flow");
-        }
-        if (template == null) {
             throw new IllegalArgumentException("No template defined");
         }
 
