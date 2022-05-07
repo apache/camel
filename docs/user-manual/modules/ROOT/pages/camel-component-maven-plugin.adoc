@@ -17,6 +17,8 @@ This goal will generate the following metadata files and Java files:
 * SPIs: it will generate all Service Provider Interfaces (SPI) for the component. This allows Camel to auto-discover your component without adding it manually to the Camel context.
 * Configurers: it will generate all configurer Java classes from `@Configurer` annotated classes.
 * Endpoint Schema: it will generate the property configurers as well as schema JSONs extracted from the component's Endpoint and Component classes. This allows Camel to avoid reflections while configuring the properties, thus allows for better efficiency.
+* Endpoint URI Factory: it will generate endpoint factory to build URIs from a map of properties.
+* Invoke on Header: it will generate source code for components using `@InvokeOnHeader`
 * Prepare Component: it analyzes if the maven module contains Camel modules such as `components`, `dataformats`, `languages` and others. And for each of those generates extra descriptors and schema files for easier auto-discovery in Camel and tooling. 
 * Validate Component: it validates the Camel component if the meta-files for `components`, `dataformats`, `languages` and others, all contains the needed meta-data such as assigned labels, documentation for each option.
 
@@ -51,6 +53,29 @@ This will attach the plugin `generate` goal to Maven's `process-classes`,
 in order to generate all the necessary files being described above upon compilation.
 
 Thus, `mvn test`, `mvn package`, `mvn verify` and `mvn install` phases should run this plugin.
+
+=== Re-compile to include latest generated code
+
+The `camel-component-maven-plugin` is executed after the compiler, and because it outputs java source
+code, then the compiler must execute again (will only compile if source code has actually changed).
+
+To ensure this the following should be added to the `pom.xml` file:
+
+[source,xml]
+----
+<plugin>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <executions>
+        <execution>
+            <id>recompile</id>
+            <goals>
+                <goal>compile</goal>
+            </goals>
+            <phase>process-classes</phase>
+        </execution>
+    </executions>
+</plugin>
+----
 
 === Configuring output directory
 
