@@ -38,7 +38,7 @@ public class NsqSpanDecorator extends AbstractMessagingSpanDecorator {
 
     @Override
     public String getDestination(Exchange exchange, Endpoint endpoint) {
-        String topic = (String) exchange.getIn().getHeader(NSQ_TOPIC);
+        String topic = exchange.getIn().getHeader(NSQ_TOPIC, String.class);
         if (topic == null) {
             Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
             topic = queryParameters.get("topic");

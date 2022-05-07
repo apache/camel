@@ -40,7 +40,7 @@ public class AbstractHttpSpanDecoratorTest {
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(message.getHeader(Exchange.HTTP_METHOD)).thenReturn("PUT");
 
-        AbstractHttpSpanDecorator decorator = new AbstractHttpSpanDecorator() {
+        SpanDecorator decorator = new AbstractHttpSpanDecorator() {
             @Override
             public String getComponent() {
                 return null;
@@ -97,7 +97,8 @@ public class AbstractHttpSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn("http://localhost:8080/endpoint?query=hello");
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(Exchange.HTTP_URI)).thenReturn("http://localhost:8080/endpoint?query=hello");
+        Mockito.when(message.getHeader(Exchange.HTTP_URI, String.class))
+                .thenReturn("http://localhost:8080/endpoint?query=hello");
 
         assertEquals(AbstractHttpSpanDecorator.GET_METHOD,
                 AbstractHttpSpanDecorator.getHttpMethod(exchange, endpoint));
@@ -111,7 +112,7 @@ public class AbstractHttpSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn(TEST_URI);
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(Exchange.HTTP_URI)).thenReturn(TEST_URI);
+        Mockito.when(message.getHeader(Exchange.HTTP_URI, String.class)).thenReturn(TEST_URI);
         Mockito.when(message.getBody()).thenReturn("Message Body");
 
         assertEquals(AbstractHttpSpanDecorator.POST_METHOD,
@@ -140,7 +141,7 @@ public class AbstractHttpSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn(TEST_URI);
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(Exchange.HTTP_URI)).thenReturn(TEST_URI);
+        Mockito.when(message.getHeader(Exchange.HTTP_URI, String.class)).thenReturn(TEST_URI);
 
         SpanDecorator decorator = new AbstractHttpSpanDecorator() {
             @Override
@@ -170,8 +171,8 @@ public class AbstractHttpSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn(TEST_URI);
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(Exchange.HTTP_URI)).thenReturn("Another URL");
-        Mockito.when(message.getHeader(Exchange.HTTP_URL)).thenReturn(TEST_URI);
+        Mockito.when(message.getHeader(Exchange.HTTP_URI, String.class)).thenReturn("Another URL");
+        Mockito.when(message.getHeader(Exchange.HTTP_URL, String.class)).thenReturn(TEST_URI);
 
         AbstractHttpSpanDecorator decorator = new AbstractHttpSpanDecorator() {
             @Override
@@ -196,7 +197,7 @@ public class AbstractHttpSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn(TEST_URI);
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(Exchange.HTTP_URI)).thenReturn(TEST_URI);
+        Mockito.when(message.getHeader(Exchange.HTTP_URI, String.class)).thenReturn(TEST_URI);
 
         AbstractHttpSpanDecorator decorator = new AbstractHttpSpanDecorator() {
             @Override

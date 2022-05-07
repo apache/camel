@@ -39,7 +39,7 @@ public class SqlSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn("test");
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(SqlSpanDecorator.CAMEL_SQL_QUERY)).thenReturn(SQL_STATEMENT);
+        Mockito.when(message.getHeader(SqlSpanDecorator.CAMEL_SQL_QUERY, String.class)).thenReturn(SQL_STATEMENT);
 
         SpanDecorator decorator = new SqlSpanDecorator();
 

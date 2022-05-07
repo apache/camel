@@ -30,7 +30,7 @@ public class StompSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn("stomp:queue:test");
 
-        StompSpanDecorator decorator = new StompSpanDecorator();
+        AbstractMessagingSpanDecorator decorator = new StompSpanDecorator();
 
         assertEquals("test", decorator.getDestination(null, endpoint));
     }

@@ -36,7 +36,7 @@ public class KafkaSpanDecoratorTest {
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(message.getHeader(KafkaSpanDecorator.OVERRIDE_TOPIC, String.class)).thenReturn("test");
 
-        KafkaSpanDecorator decorator = new KafkaSpanDecorator();
+        AbstractMessagingSpanDecorator decorator = new KafkaSpanDecorator();
 
         assertEquals("test", decorator.getDestination(exchange, null));
     }
@@ -51,7 +51,7 @@ public class KafkaSpanDecoratorTest {
         Mockito.when(endpoint.getEndpointUri())
                 .thenReturn("kafka:test?brokers=localhost:9092&consumersCount=1");
 
-        KafkaSpanDecorator decorator = new KafkaSpanDecorator();
+        AbstractMessagingSpanDecorator decorator = new KafkaSpanDecorator();
 
         assertEquals("test", decorator.getDestination(exchange, endpoint));
     }

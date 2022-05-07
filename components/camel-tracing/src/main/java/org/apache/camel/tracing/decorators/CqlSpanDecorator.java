@@ -50,9 +50,9 @@ public class CqlSpanDecorator extends AbstractSpanDecorator {
             span.setTag(Tag.DB_INSTANCE, uri.getPath().substring(1));
         }
 
-        Object cql = exchange.getIn().getHeader(CAMEL_CQL_QUERY);
+        String cql = exchange.getIn().getHeader(CAMEL_CQL_QUERY, String.class);
         if (cql != null) {
-            span.setTag(Tag.DB_STATEMENT, cql.toString());
+            span.setTag(Tag.DB_STATEMENT, cql);
         } else {
             Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
             if (queryParameters.containsKey("cql")) {

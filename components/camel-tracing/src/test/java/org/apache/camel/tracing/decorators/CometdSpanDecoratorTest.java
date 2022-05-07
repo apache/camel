@@ -28,10 +28,10 @@ public class CometdSpanDecoratorTest {
     public void testGetDestination() {
         Endpoint endpoint = Mockito.mock(Endpoint.class);
 
-        Mockito.when(endpoint.getEndpointUri()).thenReturn("cometd://localhost:8080/MyQueue?hello=world");
+        Mockito.when(endpoint.getEndpointUri()).thenReturn("cometd://localhost:8080/service/mychannel");
 
-        CometdSpanDecorator decorator = new CometdSpanDecorator();
+        AbstractMessagingSpanDecorator decorator = new CometdSpanDecorator();
 
-        assertEquals("MyQueue", decorator.getDestination(null, endpoint));
+        assertEquals("service/mychannel", decorator.getDestination(null, endpoint));
     }
 }

@@ -33,9 +33,9 @@ public class JmsSpanDecoratorTest {
         Message message = Mockito.mock(Message.class);
 
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(JmsSpanDecorator.JMS_MESSAGE_ID)).thenReturn(messageId);
+        Mockito.when(message.getHeader(JmsSpanDecorator.JMS_MESSAGE_ID, String.class)).thenReturn(messageId);
 
-        JmsSpanDecorator decorator = new JmsSpanDecorator();
+        AbstractMessagingSpanDecorator decorator = new JmsSpanDecorator();
 
         assertEquals(messageId, decorator.getMessageId(exchange));
     }
@@ -50,7 +50,7 @@ public class JmsSpanDecoratorTest {
         Mockito.when(exchange.getMessage()).thenReturn(message);
         Mockito.when(endpoint.getEndpointUri()).thenReturn("jms:cheese?clientId=123");
 
-        JmsSpanDecorator decorator = new JmsSpanDecorator();
+        AbstractMessagingSpanDecorator decorator = new JmsSpanDecorator();
         assertEquals("cheese", decorator.getDestination(exchange, endpoint));
     }
 
@@ -65,7 +65,7 @@ public class JmsSpanDecoratorTest {
         Mockito.when(exchange.getMessage().getHeader("CamelJmsDestinationName", String.class)).thenReturn("gauda");
         Mockito.when(endpoint.getEndpointUri()).thenReturn("jms:${header.foo}?clientId=123");
 
-        JmsSpanDecorator decorator = new JmsSpanDecorator();
+        AbstractMessagingSpanDecorator decorator = new JmsSpanDecorator();
         assertEquals("gauda", decorator.getDestination(exchange, endpoint));
     }
 
