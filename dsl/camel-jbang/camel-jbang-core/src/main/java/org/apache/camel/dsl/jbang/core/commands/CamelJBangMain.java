@@ -52,7 +52,7 @@ public class CamelJBangMain implements Callable<Integer> {
         commandLine.getCommandSpec().versionProvider(() -> {
             CamelCatalog catalog = new DefaultCamelCatalog();
             String v = catalog.getCatalogVersion();
-            return new String[]{v};
+            return new String[] { v };
         });
 
         PropertiesHelper.augmentWithProperties(commandLine);
