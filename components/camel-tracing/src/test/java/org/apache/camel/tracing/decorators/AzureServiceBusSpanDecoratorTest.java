@@ -49,7 +49,7 @@ public class AzureServiceBusSpanDecoratorTest {
         String contentType = "application/json";
         String correlationId = "1234";
         Long deliveryCount = 27L;
-        OffsetDateTime enqueuedSequenceNumber = OffsetDateTime.now();
+        Long enqueuedSequenceNumber = 1L;
         OffsetDateTime enqueuedTime = OffsetDateTime.now();
         OffsetDateTime expiresAt = OffsetDateTime.now();
         String partitionKey = "MyPartitionKey";
@@ -66,7 +66,7 @@ public class AzureServiceBusSpanDecoratorTest {
         Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.CONTENT_TYPE, String.class)).thenReturn(contentType);
         Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.CORRELATION_ID, String.class)).thenReturn(correlationId);
         Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.DELIVERY_COUNT, Long.class)).thenReturn(deliveryCount);
-        Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.ENQUEUED_SEQUENCE_NUMBER, OffsetDateTime.class))
+        Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.ENQUEUED_SEQUENCE_NUMBER, Long.class))
                 .thenReturn(enqueuedSequenceNumber);
         Mockito.when(message.getHeader(AzureServiceBusSpanDecorator.ENQUEUED_TIME, OffsetDateTime.class))
                 .thenReturn(enqueuedTime);
@@ -86,8 +86,7 @@ public class AzureServiceBusSpanDecoratorTest {
         assertEquals(contentType, span.tags().get(AzureServiceBusSpanDecorator.SERVICEBUS_CONTENT_TYPE));
         assertEquals(correlationId, span.tags().get(AzureServiceBusSpanDecorator.SERVICEBUS_CORRELATION_ID));
         assertEquals(deliveryCount, span.tags().get(AzureServiceBusSpanDecorator.SERVICEBUS_DELIVERY_COUNT));
-        assertEquals(enqueuedSequenceNumber.toString(),
-                span.tags().get(AzureServiceBusSpanDecorator.SERVICEBUS_ENQUEUED_SEQUENCE_NUMBER));
+        assertEquals(enqueuedSequenceNumber, span.tags().get(AzureServiceBusSpanDecorator.SERVICEBUS_ENQUEUED_SEQUENCE_NUMBER));
         assertEquals(enqueuedTime.toString(), span.tags().get(AzureServiceBusSpanDecorator.SERVICEBUS_ENQUEUED_TIME));
         assertEquals(expiresAt.toString(), span.tags().get(AzureServiceBusSpanDecorator.SERVICEBUS_EXPIRES_AT));
         assertEquals(partitionKey, span.tags().get(AzureServiceBusSpanDecorator.SERVICEBUS_PARTITION_KEY));

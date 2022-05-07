@@ -80,9 +80,9 @@ public class AzureServiceBusSpanDecorator extends AbstractMessagingSpanDecorator
             span.setTag(SERVICEBUS_DELIVERY_COUNT, deliveryCount);
         }
 
-        OffsetDateTime enqueuedSequenceNumber = exchange.getIn().getHeader(ENQUEUED_SEQUENCE_NUMBER, OffsetDateTime.class);
+        Long enqueuedSequenceNumber = exchange.getIn().getHeader(ENQUEUED_SEQUENCE_NUMBER, Long.class);
         if (enqueuedSequenceNumber != null) {
-            span.setTag(SERVICEBUS_ENQUEUED_SEQUENCE_NUMBER, enqueuedSequenceNumber.toString());
+            span.setTag(SERVICEBUS_ENQUEUED_SEQUENCE_NUMBER, enqueuedSequenceNumber);
         }
 
         OffsetDateTime enqueuedTime = exchange.getIn().getHeader(ENQUEUED_TIME, OffsetDateTime.class);
