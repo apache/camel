@@ -18,17 +18,17 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.util.concurrent.Callable;
 
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "CamelJBang", mixinStandardHelpOptions = true, version = "CamelJBang",
-         description = "A JBang-based Camel app")
+@Command(name = "camel", description = "Apache Camel CLI", mixinStandardHelpOptions = true)
 public class CamelJBangMain implements Callable<Integer> {
     private static CommandLine commandLine;
 
     public static void run(String... args) {
         commandLine = new CommandLine(new CamelJBangMain())
-                .addSubcommand("version", new CommandLine(new Version()))
                 .addSubcommand("run", new CommandLine(new Run()))
                 .addSubcommand("init", new CommandLine(new Init()))
                 .addSubcommand("bind", new CommandLine(new Bind()))
@@ -48,6 +48,12 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("others", new SearchOthers()))
                 .addSubcommand("create", new CommandLine(new Create())
                         .addSubcommand("project", new Project()));
+
+        commandLine.getCommandSpec().versionProvider(() -> {
+            CamelCatalog catalog = new DefaultCamelCatalog();
+            String v = catalog.getCatalogVersion();
+            return new String[]{v};
+        });
 
         PropertiesHelper.augmentWithProperties(commandLine);
         int exitCode = commandLine.execute(args);
