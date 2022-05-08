@@ -138,7 +138,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
         if (vertx == null) {
             vertx = lookupVertx();
             if (vertx == null) {
-                LOGGER.info("Creating new Vert.x instance");
+                LOGGER.debug("Creating new Vert.x instance");
                 vertx = createVertxInstance();
                 localVertx = true;
             }
