@@ -45,7 +45,7 @@ public class SqlGeneratedKeysInLoopTest extends CamelTestSupport {
         // Only HSQLDB seem to handle:
         // - more than one generated column in row
         // - return all keys generated in batch insert
-        db = new EmbeddedDatabaseBuilder()
+        db = new EmbeddedDatabaseBuilder().generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.HSQL).addScript("sql/createAndPopulateDatabase3.sql").build();
 
         super.setUp();
