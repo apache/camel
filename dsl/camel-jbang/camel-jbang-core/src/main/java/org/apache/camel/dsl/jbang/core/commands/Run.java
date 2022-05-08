@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -73,6 +76,7 @@ class Run implements Callable<Integer> {
             = new String[] { "properties", "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
 
     private static final String OPENAPI_GENERATED_FILE = ".camel-jbang/generated-openapi.yaml";
+    private static final String CLIPBOARD_GENERATED_FILE = ".camel-jbang/generated-clipboard";
 
     private CamelContext context;
     private File lockFile;
@@ -382,10 +386,23 @@ class Run implements Callable<Integer> {
         if (files != null) {
             for (String file : files) {
 
-                if (skipFile(file)) {
+                if (file.startsWith("clipboard")) {
+                    // run from clipboard
+                    String ext = FileUtil.onlyExt(file, true);
+                    if (ext == null || ext.isEmpty()) {
+                        throw new IllegalArgumentException(
+                                "When running from clipboard, an extension is required to let Camel know what kind of file to use");
+                    }
+                    Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    Object t = c.getData(DataFlavor.stringFlavor);
+                    if (t != null) {
+                        String fn = CLIPBOARD_GENERATED_FILE + "." + ext;
+                        Files.write(Paths.get(fn), t.toString().getBytes(StandardCharsets.UTF_8));
+                        file = "file:" + fn;
+                    }
+                } else if (skipFile(file)) {
                     continue;
-                }
-                if (!knownFile(file)) {
+                } else if (!knownFile(file)) {
                     // non known files to be added on classpath
                     sjClasspathFiles.add(file);
                     continue;

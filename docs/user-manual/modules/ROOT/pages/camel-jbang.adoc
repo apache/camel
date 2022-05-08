@@ -268,6 +268,37 @@ Can be run with camel:
 camel run joke.yaml
 ----
 
+=== Run from clipboard
+
+You can also run Camel routes directly from the OS clipboard. This allows to copy some code,
+and then quickly run this.
+
+The syntax is
+
+[source,bash]
+----
+camel run clipboard.<extension>
+----
+
+Where `<extension>` is what kind of file the content of the clipboard is, such as `java`, `xml`, or `yaml` etc.
+
+For example. you can copy this to your clipboard and then run it afterwards:
+
+[source,xml]
+----
+<route>
+  <from uri="timer:foo"/>
+  <log message="Hello World"/>
+</route>
+----
+
+[source,bash]
+----
+camel run clipboard.xml
+----
+
+
+
 === Using platform-http component
 
 When a route is started from `platform-http` then CamelJBang will automatically include a VertX HTTP server
