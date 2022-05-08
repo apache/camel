@@ -150,6 +150,20 @@ Or you can run all files starting with rou*
 camel run https://github.com/apache/camel-k/tree/main/examples/languages/rou*
 ----
 
+==== Running routes from GitHub gists
+
+Using gists from GitHub is a quick way to share small Camel routes that you can easily run.
+
+For example to run a gist you simply do:
+
+[source,bash]
+----
+camel run https://gist.github.com/davsclaus/477ddff5cdeb1ae03619aa544ce47e92
+----
+
+A gist can contain one or more files, and Camel JBang will gather all relevant files, so a gist
+can contain multiple routes, properties files, Java beans, etc.
+
 === Downloading routes hosted on GitHub
 
 We have made it easy for Camel JBang to download existing examples from GitHub to local disk,
