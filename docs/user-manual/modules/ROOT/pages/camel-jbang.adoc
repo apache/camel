@@ -215,6 +215,22 @@ You can also use Camel JBang to try local Kamelets, without the need to publish 
 camel run --local-kamelet-dir=/path/to/local/kamelets earthquake.yaml
 ----
 
+==== Downloading routes form GitHub gists
+
+You can also download files from gists easily as shown:
+
+[source,bash]
+----
+camel init https://gist.github.com/davsclaus/477ddff5cdeb1ae03619aa544ce47e92
+----
+
+This will then download the files to local disk, which you can run afterwards:
+
+[source,bash]
+----
+camel run *
+----
+
 === Running Camel K integrations or bindings
 
 Camel also supports running Camel K integrations and binding files, which are in CRD format (Kubernetes Custom Resource Definitions).

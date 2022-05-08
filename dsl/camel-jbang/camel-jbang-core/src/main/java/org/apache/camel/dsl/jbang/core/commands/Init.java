@@ -23,6 +23,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.common.exceptions.ResourceDoesNotExist;
+import org.apache.camel.github.GistResourceResolver;
 import org.apache.camel.github.GitHubResourceResolver;
 import org.apache.camel.impl.lw.LightweightCamelContext;
 import org.apache.camel.spi.Resource;
@@ -33,6 +34,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
+import static org.apache.camel.dsl.jbang.core.commands.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.asGithubSingleUrl;
 import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.fetchGithubUrls;
 
@@ -54,10 +56,12 @@ class Init implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
 
-        // is the file referring to an existing file on github
+        // is the file referring to an existing file on github/gist
         // then we should download the file to local for use
         if (file.startsWith("https://github.com/")) {
             return downloadFromGithub();
+        } else if (file.startsWith("https://gist.github.com/")) {
+            return downloadFromGist();
         }
 
         String ext = FileUtil.onlyExt(file, false);
@@ -95,6 +99,33 @@ class Init implements Callable<Integer> {
         if (all.length() > 0) {
             CamelContext tiny = new LightweightCamelContext();
             GitHubResourceResolver resolver = new GitHubResourceResolver();
+            resolver.setCamelContext(tiny);
+            for (String u : all.toString().split(",")) {
+                Resource resource = resolver.resolve(u);
+                if (!resource.exists()) {
+                    throw new ResourceDoesNotExist(resource);
+                }
+
+                String loc = resource.getLocation();
+                String name = FileUtil.stripPath(loc);
+
+                try (FileOutputStream fo = new FileOutputStream(name)) {
+                    IOUtils.copy(resource.getInputStream(), fo);
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    private Integer downloadFromGist() throws Exception {
+        StringJoiner all = new StringJoiner(",");
+
+        fetchGistUrls(file, all);
+
+        if (all.length() > 0) {
+            CamelContext tiny = new LightweightCamelContext();
+            GistResourceResolver resolver = new GistResourceResolver();
             resolver.setCamelContext(tiny);
             for (String u : all.toString().split(",")) {
                 Resource resource = resolver.resolve(u);

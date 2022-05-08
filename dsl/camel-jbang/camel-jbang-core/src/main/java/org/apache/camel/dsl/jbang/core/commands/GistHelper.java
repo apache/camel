@@ -47,6 +47,10 @@ public final class GistHelper {
         return "gist:" + url;
     }
 
+    public static void fetchGistUrls(String url, StringJoiner all) throws Exception {
+        doFetchGistUrls(url, null, null, null, all);
+    }
+
     public static void fetchGistUrls(String url, StringJoiner routes, StringJoiner kamelets, StringJoiner properties)
             throws Exception {
         doFetchGistUrls(url, routes, kamelets, properties, null);
