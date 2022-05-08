@@ -302,7 +302,7 @@ public final class DefaultResourceResolvers {
                 @Override
                 public InputStream getInputStream() throws IOException {
                     if (!exists()) {
-                        throw new IOException("There is no bean in the registry with name " + remaining + "and type String");
+                        throw new IOException("There is no bean in the registry with name " + remaining + " and type String");
                     }
 
                     return new ByteArrayInputStream(val.getBytes());
