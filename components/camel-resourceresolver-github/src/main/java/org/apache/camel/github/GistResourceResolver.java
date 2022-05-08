@@ -24,9 +24,9 @@ import org.apache.camel.support.service.ServiceSupport;
 @ResourceResolver("gist")
 public class GistResourceResolver extends ServiceSupport implements org.apache.camel.spi.ResourceResolver {
 
-    // gist:davsclaus:477ddff5cdeb1ae03619aa544ce47e92
-    // https://gist.githubusercontent.com/davsclaus/477ddff5cdeb1ae03619aa544ce47e92/raw
-    private static final String GIST_URL = "https://gist.githubusercontent.com/%s/%s/raw";
+    // gist:davsclaus:477ddff5cdeb1ae03619aa544ce47e92:cd1be96034748e42e43879a4d27ed297752b6115:mybeer.xml
+    // https://gist.githubusercontent.com/davsclaus/477ddff5cdeb1ae03619aa544ce47e92/raw/cd1be96034748e42e43879a4d27ed297752b6115/mybeer.xml
+    private static final String GIST_URL = "https://gist.githubusercontent.com/%s/%s/raw/%s/%s";
 
     private CamelContext camelContext;
 
@@ -51,16 +51,20 @@ public class GistResourceResolver extends ServiceSupport implements org.apache.c
         // scheme not in use as its gist
         String user = null;
         String gid = null;
+        String gid2 = null;
+        String fileName = null;
 
-        if (parts.length == 3) {
+        if (parts.length == 5) {
             user = parts[1];
             gid = parts[2];
+            gid2 = parts[3];
+            fileName = parts[4];
         }
-        if (user == null || gid == null) {
+        if (user == null || gid == null || gid2 == null || fileName == null) {
             throw new IllegalArgumentException(location);
         }
 
-        String target = String.format(GIST_URL, user, gid);
+        String target = String.format(GIST_URL, user, gid, gid2, fileName);
         return new GistResource(camelContext, target);
     }
 }

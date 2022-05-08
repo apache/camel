@@ -30,10 +30,10 @@ public class GistResourceResolverTest extends CamelTestSupport {
     @Test
     public void testGist() throws Exception {
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        Resource res = ecc.getResourceLoader().resolveResource("gist:davsclaus:123");
+        Resource res = ecc.getResourceLoader().resolveResource("gist:davsclaus:123:456:beer.xml");
         assertNotNull(res);
         assertFalse(res.exists());
-        assertEquals("https://gist.githubusercontent.com/davsclaus/123/raw", res.getLocation());
+        assertEquals("https://gist.githubusercontent.com/davsclaus/123/raw/456/beer.xml", res.getLocation());
     }
 
 }

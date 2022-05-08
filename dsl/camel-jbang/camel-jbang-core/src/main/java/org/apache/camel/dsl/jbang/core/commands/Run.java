@@ -59,6 +59,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
+import static org.apache.camel.dsl.jbang.core.commands.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.asGithubSingleUrl;
 import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.fetchGithubUrls;
 
@@ -455,6 +456,30 @@ class Run implements Callable<Integer> {
                             }
                             main.addInitialProperty("camel.component.kamelet.location", loc);
                         }
+                    }
+                }
+
+                if (file.startsWith("https://gist.github.com/")) {
+                    StringJoiner routes = new StringJoiner(",");
+                    StringJoiner kamelets = new StringJoiner(",");
+                    StringJoiner properties = new StringJoiner(",");
+                    fetchGistUrls(file, routes, kamelets, properties);
+
+                    if (routes.length() > 0) {
+                        file = routes.toString();
+                    }
+                    if (properties.length() > 0) {
+                        main.addInitialProperty("camel.component.properties.location", properties.toString());
+                    }
+                    if (kamelets.length() > 0) {
+                        String loc = main.getInitialProperties().getProperty("camel.component.kamelet.location");
+                        if (loc != null) {
+                            // local kamelets first
+                            loc = kamelets + "," + loc;
+                        } else {
+                            loc = kamelets.toString();
+                        }
+                        main.addInitialProperty("camel.component.kamelet.location", loc);
                     }
                 }
 
