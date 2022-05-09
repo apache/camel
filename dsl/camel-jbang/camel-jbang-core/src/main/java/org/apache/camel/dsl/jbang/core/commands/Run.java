@@ -594,14 +594,14 @@ class Run implements Callable<Integer> {
 
     private void configureLogging() {
         if (silentRun) {
-            RuntimeUtil.configureLog("off", false);
+            RuntimeUtil.configureLog("off", false, false);
         } else if (logging) {
-            RuntimeUtil.configureLog(loggingLevel, loggingColor);
+            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson);
             writeSettings("loggingLevel", loggingLevel);
             writeSettings("loggingColor", loggingColor ? "true" : "false");
             writeSettings("loggingJson", loggingJson ? "true" : "false");
         } else {
-            RuntimeUtil.configureLog("off", false);
+            RuntimeUtil.configureLog("off", false, false);
             writeSettings("loggingLevel", "off");
         }
     }
