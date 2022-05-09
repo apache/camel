@@ -25,13 +25,10 @@ import io.fabric8.openshift.client.DefaultOpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftConfig;
 import io.fabric8.openshift.client.OpenShiftConfigBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "undeploy", description = "Undeploy resources from Kubernetes, OpenShift, Minikube")
 public class Undeploy implements Callable<Integer> {
-    private static final Logger LOG = LoggerFactory.getLogger(Undeploy.class);
 
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested;
@@ -55,25 +52,25 @@ public class Undeploy implements Callable<Integer> {
             OpenShiftConfig config
                     = new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).withTrustCerts(true).build();
             try (OpenShiftClient client = new DefaultOpenShiftClient(config)) {
-                LOG.info("Deleting Routes...");
+                System.out.println("Deleting Routes...");
                 client.routes().inNamespace(namespace).withLabels(labels).delete();
-                LOG.info("Deleting Service...");
+                System.out.println("Deleting Service...");
                 client.services().inNamespace(namespace).withLabels(labels).delete();
-                LOG.info("Deleting Deployment...");
+                System.out.println("Deleting Deployment...");
                 client.apps().deployments().inNamespace(namespace).withLabels(labels).delete();
-                LOG.info("Deleting ImageStream...");
+                System.out.println("Deleting ImageStream...");
                 client.imageStreams().inNamespace(namespace).withLabels(labels).delete();
-                LOG.info("Deleting BuildConfig...");
+                System.out.println("Deleting BuildConfig...");
                 client.buildConfigs().inNamespace(namespace).withLabels(labels).delete();
             }
         } else {
             try (KubernetesClient client = new DefaultKubernetesClient()) {
-                LOG.info("Deleting Service...");
+                System.out.println("Deleting Service...");
                 client.services().inNamespace(namespace).withLabels(labels).delete();
-                LOG.info("Deleting Deployment...");
+                System.out.println("Deleting Deployment...");
                 client.apps().deployments().inNamespace(namespace).withLabels(labels).delete();
             } catch (Exception ex) {
-                LOG.error("Error", ex.getMessage());
+                System.out.println("Error Undeploying " + ex.getMessage());
             }
         }
         return 0;

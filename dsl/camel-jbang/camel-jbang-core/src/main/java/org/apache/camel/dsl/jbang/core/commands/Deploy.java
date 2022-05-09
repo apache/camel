@@ -29,14 +29,10 @@ import io.fabric8.openshift.client.DefaultOpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftConfig;
 import io.fabric8.openshift.client.OpenShiftConfigBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "deploy", description = "Deploy resources to Kubernetes, OpenShift, Minikube")
 public class Deploy implements Callable<Integer> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Deploy.class);
 
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested;
@@ -68,50 +64,50 @@ public class Deploy implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         if (minikube) {
-            LOG.info("Generating Deployment...");
+            System.out.println("Generating Deployment...");
             Deployment deployment = KubernetesHelper.createDeployment(namespace, name, image, version, containerPort, replicas);
-            LOG.info("Generating Service...");
+            System.out.println("Generating Service...");
             Service service
                     = KubernetesHelper.createService(namespace, name, version, servicePort, containerPort, minikube, nodePort);
 
             try (KubernetesClient client = new DefaultKubernetesClient()) {
-                LOG.info("Creating Deployment in " + (minikube ? "Minikube" : "Kubernetes"));
+                System.out.println("Creating Deployment in " + (minikube ? "Minikube" : "Kubernetes"));
                 client.apps().deployments().inNamespace(namespace).createOrReplace(deployment);
                 client.services().inNamespace(namespace).delete(service);
-                LOG.info("Creating Service in " + (minikube ? "Minikube" : "Kubernetes"));
+                System.out.println("Creating Service in " + (minikube ? "Minikube" : "Kubernetes"));
                 client.services().inNamespace(namespace).createOrReplace(service);
             } catch (Exception ex) {
-                LOG.error("Error", ex.getMessage());
+                System.out.println("ERROR: " + ex.getMessage());
             }
         } else if (openshift) {
             if (!image.startsWith("image-registry.openshift-image-registry.svc:5000") && image.split("/").length != 3) {
                 image = "image-registry.openshift-image-registry.svc:5000/" + image;
             }
-            LOG.info("Generating Deployment...");
+            System.out.println("Generating Deployment...");
             Deployment deployment = KubernetesHelper.createDeployment(namespace, name, image, version, containerPort, replicas);
-            LOG.info("Generating Service...");
+            System.out.println("Generating Service...");
             Service service
                     = KubernetesHelper.createService(namespace, name, version, servicePort, containerPort, minikube, nodePort);
-            LOG.info("Generating Route...");
+            System.out.println("Generating Route...");
             Route route = KubernetesHelper.createRoute(namespace, name, version, containerPort);
 
             OpenShiftConfig config
                     = new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).withTrustCerts(true).build();
             try (OpenShiftClient client = new DefaultOpenShiftClient(config)) {
-                LOG.info("Creating Deployment in Openshift");
+                System.out.println("Creating Deployment in Openshift");
                 client.apps().deployments().inNamespace(namespace).createOrReplace(deployment);
                 client.services().inNamespace(namespace).delete(service);
-                LOG.info("Creating Service in Openshift");
+                System.out.println("Creating Service in Openshift");
                 client.services().inNamespace(namespace).createOrReplace(service);
-                LOG.info("Creating Route in Openshift");
+                System.out.println("Creating Route in Openshift");
                 client.routes().inNamespace(namespace).createOrReplace(route);
             } catch (KubernetesClientException ex) {
                 Status status = ex.getStatus();
                 if (status != null) {
-                    LOG.error("Error: [%d %s] [%s] %s", status.getCode(), status.getStatus(), status.getReason(),
-                            status.getMessage());
+                    System.out.println("ERROR: " + status.getCode() + " " + status.getStatus() + " " + status.getReason() + " "
+                                       + ex.getMessage());
                 } else {
-                    LOG.error(ex.getMessage());
+                    System.out.println("ERROR " + ex.getMessage());
                 }
             }
         }

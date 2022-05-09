@@ -255,7 +255,7 @@ class Run implements Callable<Integer> {
 
     private int run() throws Exception {
         File work = new File(WORK_DIR);
-        FileUtil.removeDir(work);
+        removeDir(work);
         work.mkdirs();
 
         // generate open-api early
@@ -592,7 +592,7 @@ class Run implements Callable<Integer> {
         return main;
     }
 
-    private void configureLogging() {
+    private void configureLogging() throws Exception {
         if (silentRun) {
             RuntimeUtil.configureLog("off", false, false);
         } else if (logging) {
@@ -708,6 +708,35 @@ class Run implements Callable<Integer> {
             // ignore
         } finally {
             IOHelper.close(fos);
+        }
+    }
+
+    private static void removeDir(File d) {
+        String[] list = d.list();
+        if (list == null) {
+            list = new String[0];
+        }
+        for (String s : list) {
+            File f = new File(d, s);
+            if (f.isDirectory()) {
+                removeDir(f);
+            } else {
+                delete(f);
+            }
+        }
+        delete(d);
+    }
+
+    private static void delete(File f) {
+        if (!f.delete()) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+                // Ignore Exception
+            }
+            if (!f.delete()) {
+                f.deleteOnExit();
+            }
         }
     }
 

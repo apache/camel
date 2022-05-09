@@ -43,14 +43,11 @@ import io.fabric8.openshift.client.DefaultOpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftConfig;
 import io.fabric8.openshift.client.OpenShiftConfigBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "image", description = "Create Docker and OCI container images")
 public class Image implements Callable<Integer> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Image.class);
     private static final int LOG_TAIL_SIZE = 10;
 
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
@@ -93,7 +90,7 @@ public class Image implements Callable<Integer> {
     public Integer call() throws Exception {
         File jarFile = Paths.get(jar).toFile();
         if (openshift) {
-            LOG.info("Generating resources...");
+            System.out.println("Generating resources...");
             OpenShiftConfig config
                     = new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).withNamespace(namespace)
                             .withTrustCerts(true).build();
@@ -101,11 +98,11 @@ public class Image implements Callable<Integer> {
                 ImageStream imageStream = KubernetesHelper.createImageStream(namespace, name, version);
                 BuildConfig buildConfig
                         = KubernetesHelper.createBuildConfig(namespace, name, version, jarFile.getName(), sourceImage);
-                LOG.info("Creating ImageStream...");
+                System.out.println("Creating ImageStream...");
                 client.imageStreams().createOrReplace(imageStream);
-                LOG.info("Creating BuildConfig...");
+                System.out.println("Creating BuildConfig...");
                 client.buildConfigs().createOrReplace(buildConfig);
-                LOG.info("Creating Build...");
+                System.out.println("Creating Build...");
                 Build build = client.buildConfigs()
                         .inNamespace(namespace)
                         .withName(buildConfig.getMetadata().getName())
@@ -129,7 +126,7 @@ public class Image implements Callable<Integer> {
                         } catch (IOException e) {
                             // This may happen if the LogWatch is closed while we are still reading.
                             // We shouldn't let the build fail, so let's log a warning and display last few lines of the log
-                            LOG.warn("Log stream closed, redisplaying last " + LOG_TAIL_SIZE + " entries:");
+                            System.out.println("Log stream closed, redisplaying last " + LOG_TAIL_SIZE + " entries:");
                             try {
                                 display(client.builds().withName(buildName).tailingLines(LOG_TAIL_SIZE)
                                         .getLogReader());
@@ -183,16 +180,16 @@ public class Image implements Callable<Integer> {
         return event -> {
             switch (event.getLevel()) {
                 case ERROR:
-                    LOG.error(event.getMessage());
+                    System.out.println("ERROR: " + event.getMessage());
                     break;
                 case WARN:
-                    LOG.warn(event.getMessage());
+                    System.out.println("WARN: " + event.getMessage());
                     break;
                 case DEBUG:
-                    LOG.debug(event.getMessage());
+                    System.out.println("DEBUG: " + event.getMessage());
                     break;
                 default:
-                    LOG.info(event.getMessage());
+                    System.out.println(event.getMessage());
                     break;
             }
         };
@@ -201,7 +198,7 @@ public class Image implements Callable<Integer> {
     private static void display(Reader logReader) throws IOException {
         BufferedReader reader = new BufferedReader(logReader);
         for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-            LOG.info(line);
+            System.out.println(line);
         }
     }
 

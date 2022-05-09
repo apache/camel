@@ -27,12 +27,9 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 public final class PropertiesHelper {
-    private static final Logger LOG = LoggerFactory.getLogger(CamelJBangMain.class);
     private static final String APPLICATION_PROPERTIES_FILE = "application.properties";
     private static final String PROPERTY_PREFIX = "camel.jbang";
     private static final String COMMAND_PREFIX = "CamelJBang";
@@ -104,7 +101,7 @@ public final class PropertiesHelper {
             try (FileInputStream fis = new FileInputStream(defaultsFile)) {
                 properties.load(fis);
             } catch (IOException e) {
-                LOG.error("Error reading defaults file: {}", e.getMessage(), e);
+                // ignore
             }
         }
         return properties;

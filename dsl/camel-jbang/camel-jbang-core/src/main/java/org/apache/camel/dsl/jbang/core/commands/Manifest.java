@@ -30,13 +30,10 @@ import io.fabric8.kubernetes.client.utils.Serialization;
 import io.fabric8.openshift.api.model.BuildConfig;
 import io.fabric8.openshift.api.model.ImageStream;
 import io.fabric8.openshift.api.model.Route;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "manifests", description = "Create Kubernetes resources")
 public class Manifest implements Callable<Integer> {
-    private static final Logger LOG = LoggerFactory.getLogger(Manifest.class);
 
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested;
@@ -71,7 +68,7 @@ public class Manifest implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            LOG.info("Generating resources...");
+            System.out.println("Generating resources...");
             if (minikube) {
                 Deployment deployment
                         = KubernetesHelper.createDeployment(namespace, name, image, version, containerPort, replicas);
@@ -96,7 +93,6 @@ public class Manifest implements Callable<Integer> {
                 write(buildConfig, "build-config.yaml");
             }
         } catch (Exception ex) {
-            LOG.error("Error", ex.getMessage());
         }
         return 0;
     }
@@ -104,10 +100,10 @@ public class Manifest implements Callable<Integer> {
     private void write(Object object, String filename) throws IOException {
         Path output = Paths.get(path != null ? path : System.getProperty("user.dir"));
         if (!Files.exists(output)) {
-            LOG.info("Creating output folder " + output);
+            System.out.println("Creating output folder " + output);
             Files.createDirectories(output);
         }
-        LOG.info("Writing {}...", filename);
+        System.out.println("Writing " + filename);
         Files.write(Paths.get(output.toString(), filename),
                 Serialization.asYaml(object).getBytes(StandardCharsets.UTF_8));
     }

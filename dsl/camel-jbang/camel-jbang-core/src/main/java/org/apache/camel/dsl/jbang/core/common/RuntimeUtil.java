@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.slf4j.LoggerFactory;
 
 public final class RuntimeUtil {
 
@@ -66,7 +65,6 @@ public final class RuntimeUtil {
                 break;
             default: {
                 Configurator.setRootLevel(Level.INFO);
-                LoggerFactory.getLogger(RuntimeUtil.class).warn("Invalid logging level: {}", level);
             }
         }
     }
