@@ -56,7 +56,7 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
 
                         .consumes("application/json")
                         .produces("application/json")
-                        .type(OneOfFormWrapper.class)
+                         .type(OneOfFormWrapper.class)
                         .responseMessage()
                         .code(200).message("Ok")
                         .endResponseMessage()
@@ -132,7 +132,10 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         assertTrue(json.contains(
                 "\"OneOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"formType\" : { \"type\" : \"string\" }, \"form\" : { \"$ref\" : \"#/components/schemas/OneOfForm\" } },"));
         assertTrue(json.contains(
-                "\"OneOfForm\" : { \"oneOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ]"));
+                "\"OneOfForm\" : { \"oneOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ],"
+                                 +
+                                 " \"discriminator\" : { \"propertyName\" : \"code\", \"mapping\" : " +
+                                 "{ \"a-123\" : \"#/components/schemas/org.apache.camel.openapi.model.XOfFormA\", \"b-456\" : \"#/components/schemas/org.apache.camel.openapi.model.XOfFormB\" } },"));
 
         context.stop();
     }
