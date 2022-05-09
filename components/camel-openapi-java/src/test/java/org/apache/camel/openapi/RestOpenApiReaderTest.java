@@ -61,6 +61,28 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
                         .param().name("greeting").type(RestParamType.body)
                         .dataType("string").description("Message to use as greeting")
                         .example("application/xml", "<hello>Hi</hello>").endParam().to("log:bye");
+
+                rest("/tag")
+                        .get("single")
+                        .tag("Organisation")
+                        .consumes("application/json")
+                        .produces("application/json")
+                        .to("log:bye");
+
+                rest("/tag")
+                        .get("multiple/a")
+                        .tag("Organisation,Group A")
+                        .consumes("application/json")
+                        .produces("application/json")
+                        .to("log:bye");
+
+                rest("/tag")
+                        .get("multiple/b")
+                        .tag("Organisation,Group B")
+                        .consumes("application/json")
+                        .produces("application/json")
+                        .to("log:bye");
+
             }
         };
     }
@@ -85,6 +107,7 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
+        String flatJson = json.replace("\n", " ").replaceAll("\\s+", " ");
 
         log.info(json);
 
@@ -101,6 +124,17 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"success\" : \"123\""));
         assertTrue(json.contains("\"error\" : \"-1\""));
         assertTrue(json.contains("\"type\" : \"array\""));
+
+        assertTrue(flatJson.contains(
+                "\"/hello/bye\" : { \"post\" : { \"consumes\" : [ \"application/xml\" ], \"produces\" : [ \"application/xml\" ], \"tags\" : [ \"/hello\" ],"));
+        assertTrue(flatJson.contains(
+                "\"/tag/single\" : { \"get\" : { \"consumes\" : [ \"application/json\" ], \"produces\" : [ \"application/json\" ], \"tags\" : [ \"Organisation\" ],"));
+        assertTrue(flatJson.contains(
+                "\"/tag/multiple/a\" : { \"get\" : { \"consumes\" : [ \"application/json\" ], \"produces\" : [ \"application/json\" ], \"tags\" : [ \"Organisation\", \"Group A\" ],"));
+        assertTrue(flatJson.contains(
+                "\"/tag/multiple/b\" : { \"get\" : { \"consumes\" : [ \"application/json\" ], \"produces\" : [ \"application/json\" ], \"tags\" : [ \"Organisation\", \"Group B\" ],"));
+        assertTrue(flatJson.contains(
+                "\"tags\" : [ { \"name\" : \"Group B\" }, { \"name\" : \"Organisation\" }, { \"name\" : \"Group A\" }, { \"name\" : \"/hello\" } ]"));
 
         context.stop();
     }
@@ -124,6 +158,7 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
+        String flatJson = json.replace("\n", " ").replaceAll("\\s+", " ");
 
         log.info(json);
 
@@ -140,6 +175,13 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"error\" : \"-1\""));
         assertTrue(json.contains("\"type\" : \"array\""));
         assertTrue(json.contains("\"format\" : \"date-time\""));
+
+        assertTrue(flatJson.contains("\"/hello/bye/{name}\" : { \"get\" : { \"tags\" : [ \"/hello\" ],"));
+        assertTrue(flatJson.contains("\"/tag/single\" : { \"get\" : { \"tags\" : [ \"Organisation\" ],"));
+        assertTrue(flatJson.contains("\"/tag/multiple/a\" : { \"get\" : { \"tags\" : [ \"Organisation\", \"Group A\" ],"));
+        assertTrue(flatJson.contains("\"/tag/multiple/b\" : { \"get\" : { \"tags\" : [ \"Organisation\", \"Group B\" ],"));
+        assertTrue(flatJson.contains(
+                "\"tags\" : [ { \"name\" : \"Group B\" }, { \"name\" : \"Organisation\" }, { \"name\" : \"Group A\" }, { \"name\" : \"/hello\" } ]"));
 
         context.stop();
     }
