@@ -29,9 +29,11 @@ public final class RuntimeUtil {
     private RuntimeUtil() {
     }
 
-    public static void configureLog(String level, boolean color) {
+    public static void configureLog(String level, boolean color, boolean json) {
         if (INIT_DONE.compareAndSet(false, true)) {
-            if (color) {
+            if (json) {
+                Configurator.initialize("CamelJBang", "log4j2-json.properties");
+            } else if (color) {
                 Configurator.initialize("CamelJBang", "log4j2.properties");
             } else {
                 Configurator.initialize("CamelJBang", "log4j2-no-color.properties");

@@ -108,6 +108,9 @@ class Run implements Callable<Integer> {
     @Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored loggging")
     private boolean loggingColor = true;
 
+    @Option(names = { "--logging-json" }, description = "Use JSON logging (ECS Layout)")
+    private boolean loggingJson;
+
     @Option(names = { "--stop" }, description = "Stop all running instances of Camel JBang")
     private boolean stopRequested;
 
@@ -269,6 +272,8 @@ class Run implements Callable<Integer> {
                 loggingLevel = applicationProperties.getProperty("loggingLevel", loggingLevel);
                 loggingColor
                         = "true".equals(applicationProperties.getProperty("loggingColor", loggingColor ? "true" : "false"));
+                loggingJson
+                        = "true".equals(applicationProperties.getProperty("loggingJson", loggingJson ? "true" : "false"));
             } else if (!silentRun && !source.exists()) {
                 System.out.println("Cannot run because application.properties file does not exist");
                 return 1;
@@ -280,13 +285,14 @@ class Run implements Callable<Integer> {
 
         // configure logging first
         if (silentRun) {
-            RuntimeUtil.configureLog("off", false);
+            RuntimeUtil.configureLog("off", false, false);
         } else if (logging) {
-            RuntimeUtil.configureLog(loggingLevel, loggingColor);
+            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson);
             writeSettings("loggingLevel", loggingLevel);
             writeSettings("loggingColor", loggingColor ? "true" : "false");
+            writeSettings("loggingJson", loggingJson ? "true" : "false");
         } else {
-            RuntimeUtil.configureLog("off", false);
+            RuntimeUtil.configureLog("off", false, false);
             writeSettings("loggingLevel", "off");
         }
 
