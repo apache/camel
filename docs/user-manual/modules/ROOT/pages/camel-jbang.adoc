@@ -297,8 +297,6 @@ For example. you can copy this to your clipboard and then run it afterwards:
 camel run clipboard.xml
 ----
 
-
-
 === Using platform-http component
 
 When a route is started from `platform-http` then CamelJBang will automatically include a VertX HTTP server
@@ -396,7 +394,7 @@ This make it quick to implement a Camel route for a given operation.
 
 See the https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-api)[open-api example] for more details.
 
-== Packaging
+== Packaging as uber-jar
 
 The Camel JBang application can be packaged as a standalone _uber-jar_ without the need for JBang to run the application.
 
@@ -416,6 +414,9 @@ You can run the JAR with Java as follows:
 ----
 java -jar camel-runner.jar
 ----
+
+NOTE: Packaging as uber-jar does not support using Camel K modeline style configurations.
+It is better practice specifying configurations in external files such as `application.properties`.
 
 == Creating Projects
 
