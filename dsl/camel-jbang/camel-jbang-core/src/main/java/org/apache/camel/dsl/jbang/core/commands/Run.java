@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -284,26 +285,9 @@ class Run implements Callable<Integer> {
         }
 
         // configure logging first
-        if (silentRun) {
-            RuntimeUtil.configureLog("off", false, false);
-        } else if (logging) {
-            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson);
-            writeSettings("loggingLevel", loggingLevel);
-            writeSettings("loggingColor", loggingColor ? "true" : "false");
-            writeSettings("loggingJson", loggingJson ? "true" : "false");
-        } else {
-            RuntimeUtil.configureLog("off", false, false);
-            writeSettings("loggingLevel", "off");
-        }
+        configureLogging();
 
-        KameletMain main;
-
-        if (localKameletDir == null) {
-            main = new KameletMain();
-        } else {
-            main = new KameletMain("file://" + localKameletDir);
-            writeSettings("localKameletDir", localKameletDir);
-        }
+        final KameletMain main = createMainInstnace();
 
         final Set<String> downloaded = new HashSet<>();
         main.setDownloadListener((groupId, artifactId, version) -> {
@@ -393,19 +377,7 @@ class Run implements Callable<Integer> {
             for (String file : files) {
 
                 if (file.startsWith("clipboard") && !(new File(file).exists())) {
-                    // run from clipboard (not real file exists)
-                    String ext = FileUtil.onlyExt(file, true);
-                    if (ext == null || ext.isEmpty()) {
-                        throw new IllegalArgumentException(
-                                "When running from clipboard, an extension is required to let Camel know what kind of file to use");
-                    }
-                    Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    Object t = c.getData(DataFlavor.stringFlavor);
-                    if (t != null) {
-                        String fn = CLIPBOARD_GENERATED_FILE + "." + ext;
-                        Files.write(Paths.get(fn), t.toString().getBytes(StandardCharsets.UTF_8));
-                        file = "file:" + fn;
-                    }
+                    file = loadFromClipboard(file);
                 } else if (skipFile(file)) {
                     continue;
                 } else if (!knownFile(file)) {
@@ -452,58 +424,11 @@ class Run implements Callable<Integer> {
 
                 // automatic map github https urls to github resolver
                 if (file.startsWith("https://github.com/")) {
-                    String ext = FileUtil.onlyExt(file);
-                    boolean wildcard = FileUtil.onlyName(file, false).contains("*");
-                    if (ext != null && !wildcard) {
-                        // it is a single file so map to
-                        file = asGithubSingleUrl(file);
-                    } else {
-                        StringJoiner routes = new StringJoiner(",");
-                        StringJoiner kamelets = new StringJoiner(",");
-                        StringJoiner properties = new StringJoiner(",");
-                        fetchGithubUrls(file, routes, kamelets, properties);
-
-                        if (routes.length() > 0) {
-                            file = routes.toString();
-                        }
-                        if (properties.length() > 0) {
-                            main.addInitialProperty("camel.component.properties.location", properties.toString());
-                        }
-                        if (kamelets.length() > 0) {
-                            String loc = main.getInitialProperties().getProperty("camel.component.kamelet.location");
-                            if (loc != null) {
-                                // local kamelets first
-                                loc = kamelets + "," + loc;
-                            } else {
-                                loc = kamelets.toString();
-                            }
-                            main.addInitialProperty("camel.component.kamelet.location", loc);
-                        }
-                    }
+                    file = evalGithubSource(main, file);
                 }
 
                 if (file.startsWith("https://gist.github.com/")) {
-                    StringJoiner routes = new StringJoiner(",");
-                    StringJoiner kamelets = new StringJoiner(",");
-                    StringJoiner properties = new StringJoiner(",");
-                    fetchGistUrls(file, routes, kamelets, properties);
-
-                    if (routes.length() > 0) {
-                        file = routes.toString();
-                    }
-                    if (properties.length() > 0) {
-                        main.addInitialProperty("camel.component.properties.location", properties.toString());
-                    }
-                    if (kamelets.length() > 0) {
-                        String loc = main.getInitialProperties().getProperty("camel.component.kamelet.location");
-                        if (loc != null) {
-                            // local kamelets first
-                            loc = kamelets + "," + loc;
-                        } else {
-                            loc = kamelets.toString();
-                        }
-                        main.addInitialProperty("camel.component.kamelet.location", loc);
-                    }
+                    file = evalGistSource(main, file);
                 }
 
                 js.add(file);
@@ -579,8 +504,106 @@ class Run implements Callable<Integer> {
 
         main.run();
 
-        int code = main.getExitCode();
-        return code;
+        return main.getExitCode();
+    }
+
+    private String evalGistSource(KameletMain main, String file) throws Exception {
+        StringJoiner routes = new StringJoiner(",");
+        StringJoiner kamelets = new StringJoiner(",");
+        StringJoiner properties = new StringJoiner(",");
+        fetchGistUrls(file, routes, kamelets, properties);
+
+        if (routes.length() > 0) {
+            file = routes.toString();
+        }
+        if (properties.length() > 0) {
+            main.addInitialProperty("camel.component.properties.location", properties.toString());
+        }
+        if (kamelets.length() > 0) {
+            String loc = main.getInitialProperties().getProperty("camel.component.kamelet.location");
+            if (loc != null) {
+                // local kamelets first
+                loc = kamelets + "," + loc;
+            } else {
+                loc = kamelets.toString();
+            }
+            main.addInitialProperty("camel.component.kamelet.location", loc);
+        }
+        return file;
+    }
+
+    private String evalGithubSource(KameletMain main, String file) throws Exception {
+        String ext = FileUtil.onlyExt(file);
+        boolean wildcard = FileUtil.onlyName(file, false).contains("*");
+        if (ext != null && !wildcard) {
+            // it is a single file so map to
+            file = asGithubSingleUrl(file);
+        } else {
+            StringJoiner routes = new StringJoiner(",");
+            StringJoiner kamelets = new StringJoiner(",");
+            StringJoiner properties = new StringJoiner(",");
+            fetchGithubUrls(file, routes, kamelets, properties);
+
+            if (routes.length() > 0) {
+                file = routes.toString();
+            }
+            if (properties.length() > 0) {
+                main.addInitialProperty("camel.component.properties.location", properties.toString());
+            }
+            if (kamelets.length() > 0) {
+                String loc = main.getInitialProperties().getProperty("camel.component.kamelet.location");
+                if (loc != null) {
+                    // local kamelets first
+                    loc = kamelets + "," + loc;
+                } else {
+                    loc = kamelets.toString();
+                }
+                main.addInitialProperty("camel.component.kamelet.location", loc);
+            }
+        }
+        return file;
+    }
+
+    private String loadFromClipboard(String file) throws UnsupportedFlavorException, IOException {
+        // run from clipboard (not real file exists)
+        String ext = FileUtil.onlyExt(file, true);
+        if (ext == null || ext.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "When running from clipboard, an extension is required to let Camel know what kind of file to use");
+        }
+        Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Object t = c.getData(DataFlavor.stringFlavor);
+        if (t != null) {
+            String fn = CLIPBOARD_GENERATED_FILE + "." + ext;
+            Files.write(Paths.get(fn), t.toString().getBytes(StandardCharsets.UTF_8));
+            file = "file:" + fn;
+        }
+        return file;
+    }
+
+    private KameletMain createMainInstnace() {
+        KameletMain main;
+        if (localKameletDir == null) {
+            main = new KameletMain();
+        } else {
+            main = new KameletMain("file://" + localKameletDir);
+            writeSettings("localKameletDir", localKameletDir);
+        }
+        return main;
+    }
+
+    private void configureLogging() {
+        if (silentRun) {
+            RuntimeUtil.configureLog("off", false);
+        } else if (logging) {
+            RuntimeUtil.configureLog(loggingLevel, loggingColor);
+            writeSettings("loggingLevel", loggingLevel);
+            writeSettings("loggingColor", loggingColor ? "true" : "false");
+            writeSettings("loggingJson", loggingJson ? "true" : "false");
+        } else {
+            RuntimeUtil.configureLog("off", false);
+            writeSettings("loggingLevel", "off");
+        }
     }
 
     private void generateOpenApi() throws Exception {
