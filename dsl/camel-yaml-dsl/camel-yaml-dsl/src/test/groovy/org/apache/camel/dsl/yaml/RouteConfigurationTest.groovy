@@ -92,7 +92,12 @@ class RouteConfigurationTest extends YamlTestSupport {
                         steps:
                           - transform:
                               constant: "Activated"
-                          - to: "mock:on-exception"  
+                          - to: "mock:on-exception"
+                    - on-completion:
+                        steps:
+                          - transform:
+                              constant: "Completed"
+                          - to: "mock:on-completion"
                 - from:
                     uri: "direct:start"
                     steps:
@@ -102,6 +107,10 @@ class RouteConfigurationTest extends YamlTestSupport {
 
         withMock('mock:on-exception') {
             expectedBodiesReceived 'Activated'
+        }
+
+        withMock('mock:on-completion') {
+            expectedBodiesReceived 'Completed'
         }
 
         when:
