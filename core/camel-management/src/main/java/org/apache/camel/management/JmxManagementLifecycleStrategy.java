@@ -806,6 +806,11 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             registerPerformanceCounters(route, child, registeredCounters);
         }
 
+        //skip processors if ManagementStatisticsLevel.RoutesOnly is set
+        if(!getManagementStrategy().getManagementAgent().getStatisticsLevel().isDefaultOrExtended()) {
+            return;
+        }
+
         // skip processors that should not be registered
         if (!registerProcessor(processor)) {
             return;

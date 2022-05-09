@@ -54,18 +54,13 @@ public class ManagedStatisticsLevelRoutesOnlyTest extends ManagementTestSupport 
 
         ObjectName on = set.iterator().next();
 
+        // no processors should be registered
         set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
-        assertEquals(1, set.size());
-
-        ObjectName on2 = set.iterator().next();
+        assertEquals(0, set.size());
 
         // route should have stats enabled
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(2, completed.longValue());
-
-        // but not processor
-        Long completed2 = (Long) mbeanServer.getAttribute(on2, "ExchangesCompleted");
-        assertEquals(0, completed2.longValue());
 
         // send in another message
         template.sendBody("direct:start", "Goodday World");
@@ -73,9 +68,6 @@ public class ManagedStatisticsLevelRoutesOnlyTest extends ManagementTestSupport 
         // should be 3
         completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(3, completed.longValue());
-
-        completed2 = (Long) mbeanServer.getAttribute(on2, "ExchangesCompleted");
-        assertEquals(0, completed2.longValue());
     }
 
     @Override
