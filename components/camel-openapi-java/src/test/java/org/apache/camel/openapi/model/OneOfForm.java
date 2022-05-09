@@ -16,9 +16,15 @@
  */
 package org.apache.camel.openapi.model;
 
+import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(oneOf = { XOfFormA.class, XOfFormB.class })
+@Schema(oneOf = { XOfFormA.class, XOfFormB.class },
+        discriminatorProperty = "code",
+        discriminatorMapping = {
+                @DiscriminatorMapping(value = "a-123", schema = XOfFormA.class),
+                @DiscriminatorMapping(value = "b-456", schema = XOfFormB.class) })
 public interface OneOfForm {
-
+    // The discriminator explicitly declares which property you can inspect to determine the object type.
+    // The discriminator must apply to the same level of the schema it is declared in (common mistake when using nested objects).
 }

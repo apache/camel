@@ -28,6 +28,7 @@ import io.apicurio.datamodels.openapi.models.OasSchema;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Schema;
 import io.apicurio.datamodels.openapi.v2.models.Oas20SchemaDefinition;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Discriminator;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30AnyOfSchema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema;
@@ -36,6 +37,7 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
+import io.swagger.v3.oas.models.media.Discriminator;
 import io.swagger.v3.oas.models.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,7 +136,9 @@ public class RestModelConverters {
             Oas30SchemaDefinition modelDefinition = (Oas30SchemaDefinition) model;
 
             // oneOf
+            boolean xOf = false;
             if (null != composedSchema.getOneOf()) {
+                xOf = true;
                 for (Schema oneOfSchema : composedSchema.getOneOf()) {
                     if (null != oneOfSchema.get$ref()) {
                         Oas30OneOfSchema oneOfModel = modelDefinition.createOneOfSchema();
@@ -148,6 +152,7 @@ public class RestModelConverters {
 
             // allOf
             if (null != composedSchema.getAllOf()) {
+                xOf = true;
                 for (Schema allOfSchema : composedSchema.getAllOf()) {
                     if (null != allOfSchema.get$ref()) {
                         OasSchema allOfModel = modelDefinition.createAllOfSchema();
@@ -161,6 +166,7 @@ public class RestModelConverters {
 
             // anyOf
             if (null != composedSchema.getAnyOf()) {
+                xOf = true;
                 for (Schema anyOfSchema : composedSchema.getAnyOf()) {
                     if (null != anyOfSchema.get$ref()) {
                         Oas30AnyOfSchema anyOfModel = modelDefinition.createAnyOfSchema();
@@ -170,6 +176,19 @@ public class RestModelConverters {
                         model.type = null;
                     }
                 }
+            }
+
+            // Discriminator
+            if (xOf && null != composedSchema.getDiscriminator()) {
+                Discriminator discriminator = schema.getDiscriminator();
+                Oas30Discriminator modelDiscriminator = modelDefinition.createDiscriminator();
+                modelDiscriminator.propertyName = discriminator.getPropertyName();
+
+                if (null != discriminator.getMapping()) {
+                    discriminator.getMapping().entrySet().stream()
+                            .forEach(e -> modelDiscriminator.addMapping(e.getKey(), e.getValue()));
+                }
+                modelDefinition.discriminator = modelDiscriminator;
             }
         }
 

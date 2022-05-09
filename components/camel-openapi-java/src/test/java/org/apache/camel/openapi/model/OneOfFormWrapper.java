@@ -29,8 +29,8 @@ public class OneOfFormWrapper {
     @JsonProperty("form")
     @JsonTypeInfo(
                   use = JsonTypeInfo.Id.NAME,
-                  include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
-                  property = "system")
+                  include = JsonTypeInfo.As.EXISTING_PROPERTY,
+                  property = "code")
     @JsonSubTypes({
             @Type(value = XOfFormA.class, name = "Form A"),
             @Type(value = XOfFormB.class, name = "Form B")
