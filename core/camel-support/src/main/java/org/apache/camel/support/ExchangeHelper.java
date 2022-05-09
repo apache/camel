@@ -65,6 +65,8 @@ import org.slf4j.Logger;
 @EagerClassloaded
 public final class ExchangeHelper {
 
+    private static String defaultCharset = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
+
     /**
      * Utility classes should not have a public constructor.
      */
@@ -964,7 +966,7 @@ public final class ExchangeHelper {
     }
 
     private static String getDefaultCharsetName() {
-        return ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
+        return defaultCharset;
     }
 
     /**
