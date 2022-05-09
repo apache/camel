@@ -386,8 +386,8 @@ class Run implements Callable<Integer> {
         if (files != null) {
             for (String file : files) {
 
-                if (file.startsWith("clipboard")) {
-                    // run from clipboard
+                if (file.startsWith("clipboard") && !(new File(file).exists())) {
+                    // run from clipboard (not real file exists)
                     String ext = FileUtil.onlyExt(file, true);
                     if (ext == null || ext.isEmpty()) {
                         throw new IllegalArgumentException(
