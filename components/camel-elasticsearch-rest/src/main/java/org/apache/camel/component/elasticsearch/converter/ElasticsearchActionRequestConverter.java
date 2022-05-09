@@ -174,7 +174,7 @@ public final class ElasticsearchActionRequestConverter {
         }
         SearchRequest searchRequest = new SearchRequest();
 
-        // Only setup the indexName and indexType if the message header has the
+        // Only setup the indexName if the message header has the
         // setting
 
         Integer size = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_SIZE, Integer.class);

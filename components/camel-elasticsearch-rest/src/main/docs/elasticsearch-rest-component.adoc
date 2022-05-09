@@ -71,7 +71,7 @@ the key "indexId".
 
 |GetById |*String* or *GetRequest* index id of content to retrieve |Retrieves the specified index and returns a GetResult object in the body
 
-|Delete |*String* or *DeleteRequest* index name and type of content to delete |Deletes the specified indexName and indexType and returns a DeleteResponse object in the
+|Delete |*String* or *DeleteRequest* index name and type of content to delete |Deletes the specified indexName and returns a DeleteResponse object in the
 body
 
 |DeleteIndex |*String* or *DeleteRequest* index name of the index to delete |Deletes the specified indexName and returns a status code the
