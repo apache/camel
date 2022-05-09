@@ -425,10 +425,14 @@ class Run implements Callable<Integer> {
                 // automatic map github https urls to github resolver
                 if (file.startsWith("https://github.com/")) {
                     file = evalGithubSource(main, file);
-                }
-
-                if (file.startsWith("https://gist.github.com/")) {
+                    if (file == null) {
+                        continue; // all mapped continue to next
+                    }
+                } else if (file.startsWith("https://gist.github.com/")) {
                     file = evalGistSource(main, file);
+                    if (file == null) {
+                        continue; // all mapped continue to next
+                    }
                 }
 
                 js.add(file);
@@ -513,9 +517,6 @@ class Run implements Callable<Integer> {
         StringJoiner properties = new StringJoiner(",");
         fetchGistUrls(file, routes, kamelets, properties);
 
-        if (routes.length() > 0) {
-            file = routes.toString();
-        }
         if (properties.length() > 0) {
             main.addInitialProperty("camel.component.properties.location", properties.toString());
         }
@@ -529,7 +530,10 @@ class Run implements Callable<Integer> {
             }
             main.addInitialProperty("camel.component.kamelet.location", loc);
         }
-        return file;
+        if (routes.length() > 0) {
+            return routes.toString();
+        }
+        return null;
     }
 
     private String evalGithubSource(KameletMain main, String file) throws Exception {
@@ -537,16 +541,13 @@ class Run implements Callable<Integer> {
         boolean wildcard = FileUtil.onlyName(file, false).contains("*");
         if (ext != null && !wildcard) {
             // it is a single file so map to
-            file = asGithubSingleUrl(file);
+            return asGithubSingleUrl(file);
         } else {
             StringJoiner routes = new StringJoiner(",");
             StringJoiner kamelets = new StringJoiner(",");
             StringJoiner properties = new StringJoiner(",");
             fetchGithubUrls(file, routes, kamelets, properties);
 
-            if (routes.length() > 0) {
-                file = routes.toString();
-            }
             if (properties.length() > 0) {
                 main.addInitialProperty("camel.component.properties.location", properties.toString());
             }
@@ -560,8 +561,11 @@ class Run implements Callable<Integer> {
                 }
                 main.addInitialProperty("camel.component.kamelet.location", loc);
             }
+            if (routes.length() > 0) {
+                return routes.toString();
+            }
+            return null;
         }
-        return file;
     }
 
     private String loadFromClipboard(String file) throws UnsupportedFlavorException, IOException {
