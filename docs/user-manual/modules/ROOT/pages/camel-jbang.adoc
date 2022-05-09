@@ -4,7 +4,7 @@ A JBang-based Camel app for easily running Camel routes.
 
 == Installation
 
-It is not necessary to install Camel JBang. However, if you prefer to do so, JBang makes it easy for us by providing an installation feature that works with Github. If you have JBang installed on your system, then you can run the following command to install CamelJBang:
+It is not necessary to install Camel JBang. However, if you prefer to do so, JBang makes it easy for us by providing an installation feature that works with GitHub. If you have JBang installed on your system, then you can run the following command to install Camel JBang:
 
 [source,bash]
 ----
@@ -13,7 +13,7 @@ jbang app install camel@apache/camel
 
 == Using Camel JBang
 
-The CamelJBang supports multiple commands. Running the command below, will print all of them:
+The Camel JBang supports multiple commands. Running the command below, will print all of them:
 
 [source,bash]
 ----
@@ -208,7 +208,7 @@ camel run simple.groovy
 
 === Running local Kamelets
 
-You can also use Camel JBang to try local Kamelets, without the need to publish them on Github or package them in a jar.
+You can also use Camel JBang to try local Kamelets, without the need to publish them on GitHub or package them in a jar.
 
 [source,bash]
 ----
@@ -299,7 +299,7 @@ camel run clipboard.xml
 
 === Using platform-http component
 
-When a route is started from `platform-http` then CamelJBang will automatically include a VertX HTTP server
+When a route is started from `platform-http` then Camel JBang will automatically include a VertX HTTP server
 running on port 8080. For example the following route in a file named `server.yaml`:
 
 [source,yaml]
@@ -426,7 +426,7 @@ You can _export_ your Camel JBang application to a traditional Java based projec
 
 NOTE: New implementation on the way
 
-The create project command can be used to generate a maven project. After running the integration with the `run` command `create project` will generate a maven quarkus project with some required dependencies that can be used as a starting point for complex integrations. 
+The `create project` command can be used to generate a Maven project. After running the integration with the `run` command `create project` will generate a Maven Quarkus project with some required dependencies that can be used as a starting point for complex integrations. 
 
 To execute this feature run:
 
@@ -435,7 +435,7 @@ To execute this feature run:
 jbang camel@apache/camel create project integration.java integration.yaml integration.xml
 ----
 
-this command generates a folder named CamelJBang that contains the quarkus project, in order to execute it the following command can be run:
+This command generates a folder named CamelJBang that contains the Quarkus project, in order to execute it the following command can be run:
 
 [source,bash]
 ----
