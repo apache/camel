@@ -196,11 +196,17 @@ public class RestOpenApiReader {
         verbs.sort(new VerbOrdering(camelContext));
 
         // we need to group the operations within the same tag, so use the path as default if not configured
-        String pathAsTag = getValue(camelContext, rest.getTag() != null ? rest.getTag() : rest.getPath());
+        // Multi tag support for a comma delimeted tag
+        String[] pathAsTags = null != rest.getTag()
+                ? getValue(camelContext, rest.getTag()).split(",")
+                : null != rest.getPath()
+                        ? new String[] { getValue(camelContext, rest.getPath()) }
+                : new String[0];
+
         if (openApi instanceof Oas20Document) {
-            parseOas20(camelContext, (Oas20Document) openApi, rest, pathAsTag);
+            parseOas20(camelContext, (Oas20Document) openApi, rest, pathAsTags);
         } else if (openApi instanceof Oas30Document) {
-            parseOas30((Oas30Document) openApi, rest, pathAsTag);
+            parseOas30((Oas30Document) openApi, rest, pathAsTags);
         }
 
         // gather all types in use
@@ -253,7 +259,7 @@ public class RestOpenApiReader {
             appendModels(clazz, openApi);
         }
 
-        doParseVerbs(camelContext, openApi, rest, camelContextId, verbs, pathAsTag);
+        doParseVerbs(camelContext, openApi, rest, camelContextId, verbs, pathAsTags);
 
         // setup root security node if necessary
         List<SecurityDefinition> securityRequirements = rest.getSecurityRequirements();
@@ -270,12 +276,12 @@ public class RestOpenApiReader {
         });
     }
 
-    private void parseOas30(Oas30Document openApi, RestDefinition rest, String pathAsTag) {
+    private void parseOas30(Oas30Document openApi, RestDefinition rest, String[] pathAsTags) {
         String summary = rest.getDescriptionText();
 
-        if (org.apache.camel.util.ObjectHelper.isNotEmpty(pathAsTag)) {
+        for (String tag : pathAsTags) {
             // add rest as tag
-            openApi.addTag(pathAsTag, summary);
+            openApi.addTag(tag, summary);
         }
 
         // setup security definitions
@@ -382,12 +388,12 @@ public class RestOpenApiReader {
         }
     }
 
-    private void parseOas20(CamelContext camelContext, Oas20Document openApi, RestDefinition rest, String pathAsTag) {
+    private void parseOas20(CamelContext camelContext, Oas20Document openApi, RestDefinition rest, String[] pathAsTags) {
         String summary = getValue(camelContext, rest.getDescriptionText());
 
-        if (org.apache.camel.util.ObjectHelper.isNotEmpty(pathAsTag)) {
+        for (String tag : pathAsTags) {
             // add rest as tag
-            openApi.addTag(pathAsTag, summary);
+            openApi.addTag(tag, summary);
         }
 
         // setup security definitions
@@ -479,7 +485,7 @@ public class RestOpenApiReader {
 
     private void doParseVerbs(
             CamelContext camelContext, OasDocument openApi, RestDefinition rest, String camelContextId,
-            List<VerbDefinition> verbs, String pathAsTag) {
+            List<VerbDefinition> verbs, String[] pathAsTags) {
 
         String basePath = buildBasePath(camelContext, rest);
 
@@ -510,12 +516,12 @@ public class RestOpenApiReader {
             }
 
             OasOperation op = path.createOperation(method);
-            if (org.apache.camel.util.ObjectHelper.isNotEmpty(pathAsTag)) {
+            for (String tag : pathAsTags) {
                 // group in the same tag
                 if (op.tags == null) {
                     op.tags = new ArrayList<>();
                 }
-                op.tags.add(pathAsTag);
+                op.tags.add(tag);
             }
 
             // favour ids from verb, rest, route
