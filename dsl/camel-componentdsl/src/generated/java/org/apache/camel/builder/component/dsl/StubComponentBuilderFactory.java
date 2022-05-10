@@ -49,6 +49,24 @@ public interface StubComponentBuilderFactory {
      */
     interface StubComponentBuilder extends ComponentBuilder<StubComponent> {
         /**
+         * If shadow is enabled then the stub component will register a shadow
+         * endpoint with the actual uri that refers to the stub endpoint,
+         * meaning you can lookup the endpoint via both stub:kafka:cheese and
+         * kafka:cheese.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param shadow the value to set
+         * @return the dsl builder
+         */
+        default StubComponentBuilder shadow(boolean shadow) {
+            doSetProperty("shadow", shadow);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -255,6 +273,7 @@ public interface StubComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "shadow": ((StubComponent) component).setShadow((boolean) value); return true;
             case "bridgeErrorHandler": ((StubComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "concurrentConsumers": ((StubComponent) component).setConcurrentConsumers((int) value); return true;
             case "defaultPollTimeout": ((StubComponent) component).setDefaultPollTimeout((int) value); return true;
