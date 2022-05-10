@@ -2539,6 +2539,37 @@ public interface AWS2S3EndpointBuilderFactory {
             doSetProperty("useCustomerKey", useCustomerKey);
             return this;
         }
+        /**
+         * Define if SSE S3 must be used or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param useSSES3 the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointProducerBuilder useSSES3(boolean useSSES3) {
+            doSetProperty("useSSES3", useSSES3);
+            return this;
+        }
+        /**
+         * Define if SSE S3 must be used or not.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param useSSES3 the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointProducerBuilder useSSES3(String useSSES3) {
+            doSetProperty("useSSES3", useSSES3);
+            return this;
+        }
     }
 
     /**
