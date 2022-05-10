@@ -170,6 +170,10 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             createMultipartUploadRequest.serverSideEncryption(ServerSideEncryption.AWS_KMS);
         }
 
+        if (getConfiguration().isUseSSES3()) {
+            createMultipartUploadRequest.serverSideEncryption(ServerSideEncryption.AES256);
+        }
+
         if (getConfiguration().isUseCustomerKey()) {
             if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
                 createMultipartUploadRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
