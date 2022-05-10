@@ -257,6 +257,11 @@ public final class VertxHttpServer {
                     healthCheckDetails(sb, downs, up);
                 }
                 sb.append("}\n");
+
+                if (!up) {
+                    // we need to fail with a http status so lets use 500
+                    ctx.response().setStatusCode(500);
+                }
                 ctx.end(sb.toString());
             }
         };
