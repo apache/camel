@@ -20,13 +20,11 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.camel.Component;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.component.vm.VmComponent;
 import org.apache.camel.spi.EndpointRegistry;
-import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.NormalizedUri;
 
@@ -85,9 +83,8 @@ public class StubComponent extends VmComponent {
     }
 
     /**
-     * If shadow is enabled then the stub component will register a shadow endpoint
-     * with the actual uri that refers to the stub endpoint, meaning you can lookup
-     * the endpoint via both stub:kafka:cheese and kafka:cheese.
+     * If shadow is enabled then the stub component will register a shadow endpoint with the actual uri that refers to
+     * the stub endpoint, meaning you can lookup the endpoint via both stub:kafka:cheese and kafka:cheese.
      */
     public void setShadow(boolean shadow) {
         this.shadow = shadow;
