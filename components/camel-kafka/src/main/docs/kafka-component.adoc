@@ -423,5 +423,16 @@ from("kafka:my_topic?headerFilterStrategy=#myStrategy")
 
 `myStrategy` object should be subclass of `HeaderFilterStrategy` and must be placed in the Camel registry, either manually or by registration as a bean in Spring/Blueprint, as it is `CamelContext` aware.
 
+== Kafka Transaction
+
+You need to add `transactional.id`, `enable.idempotence` and `retries` in `additional-properties` to enable kafka transaction with the producer.
+[source,java]
+----
+from("direct:transaction")
+.to("kafka:my_topic?additional-properties[transactional.id]=1234&additional-properties[enable.idempotence]=true&additional-properties[retries]=5");
+----
+At the end of exchange routing, the kafka producer would commit the transaction or abort it if there is an Exception throwing or the exchange is `RollbackOnly`. Since Kafka does not support transactions in multi threads, it will throw `ProducerFencedException` if there is another producer with the same `transaction.id` to make the transactional request.
+
+It would work with JTA `camel-jta` by using `transacted()` and if it involves some resources (SQL or JMS) which supports XA, then they would work in tandem, where they both will either commit or rollback at the end of the exchange routing. In some cases, if the JTA transaction manager fails to commit (during the 2PC processing), but kafka transaction has been committed before and there is no chance to rollback the changes since the kafka transaction does not support JTA/XA spec. There is still a risk with the data consistency.
 
 include::spring-boot:partial$starter.adoc[]
