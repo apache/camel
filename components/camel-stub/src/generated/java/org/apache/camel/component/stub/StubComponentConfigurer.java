@@ -17,5 +17,30 @@ import org.apache.camel.component.vm.VmComponentConfigurer;
 @SuppressWarnings("unchecked")
 public class StubComponentConfigurer extends VmComponentConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    @Override
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        StubComponent target = (StubComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "shadow": target.setShadow(property(camelContext, boolean.class, value)); return true;
+        default: return super.configure(camelContext, obj, name, value, ignoreCase);
+        }
+    }
+
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "shadow": return boolean.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
+    }
+
+    @Override
+    public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
+        StubComponent target = (StubComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "shadow": return target.isShadow();
+        default: return super.getOptionValue(obj, name, ignoreCase);
+        }
+    }
 }
 

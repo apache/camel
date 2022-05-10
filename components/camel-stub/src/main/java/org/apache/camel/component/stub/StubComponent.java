@@ -20,9 +20,15 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.camel.Component;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.component.vm.VmComponent;
+import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.NormalizedUri;
 
 /**
  * The <a href="http://camel.apache.org/stub.html">Stub Component</a> is for stubbing out endpoints while developing or
@@ -33,6 +39,9 @@ import org.apache.camel.component.vm.VmComponent;
  */
 @org.apache.camel.spi.annotations.Component("stub")
 public class StubComponent extends VmComponent {
+
+    @Metadata
+    private boolean shadow;
 
     public StubComponent() {
     }
@@ -59,4 +68,47 @@ public class StubComponent extends VmComponent {
         return new StubEndpoint(endpointUri, component, queue, concurrentConsumers);
     }
 
+    /**
+     * Strategy to resolve the shadow uri to use for the stub endpoints
+     */
+    protected String resolveShadowUri(String uri) {
+        if (uri.startsWith("stub://")) {
+            uri = uri.substring(7);
+        } else if (uri.startsWith("stub:")) {
+            uri = uri.substring(5);
+        }
+        return uri;
+    }
+
+    public boolean isShadow() {
+        return shadow;
+    }
+
+    /**
+     * If shadow is enabled then the stub component will register a shadow endpoint
+     * with the actual uri that refers to the stub endpoint, meaning you can lookup
+     * the endpoint via both stub:kafka:cheese and kafka:cheese.
+     */
+    public void setShadow(boolean shadow) {
+        this.shadow = shadow;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (shadow) {
+            final EndpointRegistry registry = getCamelContext().adapt(ExtendedCamelContext.class).getEndpointRegistry();
+            getCamelContext().adapt(ExtendedCamelContext.class).registerEndpointCallback((uri, endpoint) -> {
+                String shadowUri = resolveShadowUri(uri);
+                if (!uri.equals(shadowUri)) {
+                    NormalizedUri nuri = NormalizedUri.newNormalizedUri(shadowUri, false);
+                    // put the shadow uri directly into the endpoint registry,
+                    // so we can lookup the stubbed endpoint using its actual uri
+                    registry.put(nuri, endpoint);
+                }
+                return endpoint;
+            });
+        }
+    }
 }

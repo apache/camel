@@ -327,6 +327,8 @@ class Run implements Callable<Integer> {
         }
 
         if (silentRun) {
+            // enable stub in silent mode so we do not use real components
+            main.setStub(true);
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "1");

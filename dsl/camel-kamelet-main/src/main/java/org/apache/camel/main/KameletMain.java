@@ -39,6 +39,7 @@ public class KameletMain extends MainCommandLineSupport {
 
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
+    private boolean stub;
     private DownloadListener downloadListener;
     private GroovyClassLoader groovyClassLoader;
 
@@ -114,6 +115,18 @@ public class KameletMain extends MainCommandLineSupport {
      */
     public void setDownload(boolean download) {
         this.download = download;
+    }
+
+    public boolean isStub() {
+        return stub;
+    }
+
+    /**
+     * Whether to use stub endpoints instead of creating the actual endpoints.
+     * This allows to simulate using real components but run without them on the classpath.
+     */
+    public void setStub(boolean stub) {
+        this.stub = stub;
     }
 
     public DownloadListener getDownloadListener() {
@@ -202,6 +215,10 @@ public class KameletMain extends MainCommandLineSupport {
         if (download) {
             answer.setApplicationContextClassLoader(createApplicationContextClassLoader());
         }
+        if (stub) {
+            // turn off auto-wiring when running in stub mode
+            mainConfigurationProperties.setAutowiredEnabled(false);
+        }
 
         // register download listener
         if (downloadListener != null) {
@@ -222,12 +239,12 @@ public class KameletMain extends MainCommandLineSupport {
         // embed HTTP server if port is specified
         Object port = getInitialProperties().get("camel.jbang.platform-http.port");
         if (port != null) {
-            VertxHttpServer.registerServer(answer, Integer.parseInt(port.toString()));
+            VertxHttpServer.registerServer(answer, Integer.parseInt(port.toString()), stub);
         }
         boolean console = "true".equals(getInitialProperties().get("camel.jbang.console"));
         if (console && port == null) {
             // use default port 8080 if console is enabled
-            VertxHttpServer.registerServer(answer, 8080);
+            VertxHttpServer.registerServer(answer, 8080, stub);
         }
         if (console) {
             // turn on developer console
@@ -240,7 +257,7 @@ public class KameletMain extends MainCommandLineSupport {
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
         if (health && port == null) {
             // use default port 8080 if console is enabled
-            VertxHttpServer.registerServer(answer, 8080);
+            VertxHttpServer.registerServer(answer, 8080, stub);
         }
         if (health) {
             VertxHttpServer.registerHealthCheck(answer);
@@ -275,7 +292,7 @@ public class KameletMain extends MainCommandLineSupport {
                 answer.getRegistry().bind(DependencyDownloaderStrategy.class.getName(),
                         new DependencyDownloaderStrategy(answer));
                 answer.setClassResolver(new DependencyDownloaderClassResolver(answer, known));
-                answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer));
+                answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer, stub));
                 answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer));
                 answer.setLanguageResolver(new DependencyDownloaderLanguageResolver(answer));
                 answer.addService(new DependencyDownloaderKamelet());
@@ -327,6 +344,10 @@ public class KameletMain extends MainCommandLineSupport {
         addInitialProperty("camel.component.kamelet.location", location);
         addInitialProperty("camel.component.rest.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.producerComponentName", "vertx-http");
+        if (stub) {
+            // enable shadow mode on stub component
+            addInitialProperty("camel.component.stub.shadow", "true");
+        }
     }
 
     protected String startupInfo() {

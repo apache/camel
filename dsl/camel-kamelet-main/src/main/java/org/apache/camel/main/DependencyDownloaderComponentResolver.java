@@ -30,11 +30,15 @@ import org.apache.camel.tooling.model.ComponentModel;
  */
 final class DependencyDownloaderComponentResolver extends DefaultComponentResolver implements CamelContextAware {
 
+    private static final String ACCEPTED_STUB_NAMES = "stub,bean,class,kamelet,rest,rest-api,platform-http,vertx-http";
+
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private CamelContext camelContext;
+    private boolean stub;
 
-    public DependencyDownloaderComponentResolver(CamelContext camelContext) {
+    public DependencyDownloaderComponentResolver(CamelContext camelContext, boolean stub) {
         this.camelContext = camelContext;
+        this.stub = stub;
     }
 
     @Override
@@ -53,15 +57,32 @@ final class DependencyDownloaderComponentResolver extends DefaultComponentResolv
         if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getArtifactId(), model.getVersion())) {
             DownloaderHelper.downloadDependency(camelContext, model.getGroupId(), model.getArtifactId(), model.getVersion());
         }
-        Component answer = super.resolveComponent(name, context);
+
+        Component answer;
+        boolean accept = accept(name);
+        if (accept) {
+            answer = super.resolveComponent(name, context);
+        } else {
+            answer = super.resolveComponent("stub", context);
+        }
 
         if (answer instanceof PlatformHttpComponent) {
             // setup a default http server on port 8080 if not already done
             VertxHttpServer.phc = (PlatformHttpComponent) answer;
-            VertxHttpServer.registerServer(camelContext);
+            VertxHttpServer.registerServer(camelContext, stub);
         }
 
         return answer;
+    }
+
+    private boolean accept(String name) {
+        // kamelet component must not be stubbed
+        if (!stub) {
+            return true;
+        }
+
+        // we are stubbing but need to accept the following
+        return ACCEPTED_STUB_NAMES.contains(name);
     }
 
 }

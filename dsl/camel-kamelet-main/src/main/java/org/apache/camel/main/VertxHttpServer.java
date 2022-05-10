@@ -68,19 +68,26 @@ public final class VertxHttpServer {
     private VertxHttpServer() {
     }
 
-    public static void registerServer(CamelContext camelContext) {
+    public static void registerServer(CamelContext camelContext, boolean stub) {
         if (REGISTERED.compareAndSet(false, true)) {
-            doRegisterServer(camelContext, 8080);
+            doRegisterServer(camelContext, 8080, stub);
         }
     }
 
-    public static void registerServer(CamelContext camelContext, int port) {
+    public static void registerServer(CamelContext camelContext, int port, boolean stub) {
         if (REGISTERED.compareAndSet(false, true)) {
-            doRegisterServer(camelContext, port);
+            doRegisterServer(camelContext, port, stub);
         }
     }
 
-    private static void doRegisterServer(CamelContext camelContext, int port) {
+    private static void doRegisterServer(CamelContext camelContext, int port, boolean stub) {
+        // need to capture we use http-server
+        CamelJBangSettingsHelper.writeSettings("camel.jbang.platform-http.port", "" + port);
+
+        if (stub) {
+            return;
+        }
+
         try {
             VertxPlatformHttpServerConfiguration config = new VertxPlatformHttpServerConfiguration();
             config.setPort(port);
@@ -91,9 +98,6 @@ public final class VertxHttpServer {
             if (phc == null) {
                 phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
             }
-
-            // need to capture we use http-server
-            CamelJBangSettingsHelper.writeSettings("camel.jbang.platform-http.port", "" + port);
 
             // after camel is started then add event notifier
             camelContext.addStartupListener(new StartupListener() {
