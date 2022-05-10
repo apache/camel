@@ -25,8 +25,8 @@ and support the delivery of the project from end to end.
 
 == http://ibm.biz/OSSupport[IBM]
 
-http://ibm.biz/OSSupport[IBM] provides cross-platform support for
-Apache Camel and many other open source packages.
+http://ibm.biz/OSSupport[IBM] provides cross-platform consulting for
+https://www.ibm.com/downloads/cas/KOAB4E9V[Apache Camel and many other open source packages].
 
 
 == https://linuxpolska.com/[Linux Polska]
