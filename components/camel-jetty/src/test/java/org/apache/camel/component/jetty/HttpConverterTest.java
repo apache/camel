@@ -112,6 +112,7 @@ public class HttpConverterTest extends BaseJettyTest {
                 }).transform(constant("Bye World"));
             }
         });
+        context.setStreamCaching(false); // this test requires stream caching disabled to work with raw servlet
         context.start();
 
         String out = template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);

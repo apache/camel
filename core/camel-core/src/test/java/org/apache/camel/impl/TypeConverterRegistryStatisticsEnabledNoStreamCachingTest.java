@@ -22,13 +22,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSupport {
+public class TypeConverterRegistryStatisticsEnabledNoStreamCachingTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.setStreamCaching(false);
         context.setTypeConverterStatisticsEnabled(true);
         return context;
     }
@@ -48,7 +51,7 @@ public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSuppo
         Long failed = reg.getStatistics().getFailedCounter();
         assertEquals(0, failed.intValue());
         Long miss = reg.getStatistics().getMissCounter();
-        assertEquals(4, miss.intValue()); // stream caching misses
+        assertEquals(0, miss.intValue());
 
         try {
             template.sendBody("direct:start", "foo");
@@ -61,7 +64,7 @@ public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSuppo
         failed = reg.getStatistics().getFailedCounter();
         assertEquals(1, failed.intValue());
         miss = reg.getStatistics().getMissCounter();
-        assertEquals(5, miss.intValue()); // stream caching misses
+        assertEquals(0, miss.intValue());
 
         // reset
         reg.getStatistics().reset();

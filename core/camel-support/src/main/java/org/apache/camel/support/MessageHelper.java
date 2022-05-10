@@ -83,7 +83,8 @@ public final class MessageHelper {
         }
 
         // we need to favor using stream cache so the body can be re-read later
-        StreamCache newBody = message.getBody(StreamCache.class);
+        StreamCache newBody = message.getExchange().getContext().getTypeConverter().tryConvertTo(StreamCache.class,
+                message.getExchange(), body);
         if (newBody != null) {
             message.setBody(newBody);
         }

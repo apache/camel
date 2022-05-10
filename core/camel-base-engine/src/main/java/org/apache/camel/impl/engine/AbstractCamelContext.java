@@ -265,7 +265,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean messageHistory = Boolean.FALSE;
     private Boolean logMask = Boolean.FALSE;
     private Boolean logExhaustedMessageBody = Boolean.FALSE;
-    private Boolean streamCache = Boolean.FALSE;
+    private Boolean streamCache = Boolean.TRUE;
     private Boolean disableJMX = Boolean.FALSE;
     private Boolean loadTypeConverters = Boolean.FALSE;
     private Boolean loadHealthChecks = Boolean.FALSE;
@@ -3209,8 +3209,9 @@ public abstract class AbstractCamelContext extends BaseService
                     getClassResolver(),
                     getPackageScanClassResolver(), getApplicationContextClassLoader(), getRouteController());
         }
-        if (isStreamCaching()) {
-            LOG.info("StreamCaching is enabled on CamelContext: {}", getName());
+        if (!isStreamCaching()) {
+            // stream caching is default enabled so lets report if it has been disabled
+            LOG.info("StreamCaching is disabled on CamelContext: {}", getName());
         }
         if (isBacklogTracing()) {
             // tracing is added in the DefaultChannel so we can enable it on the fly
