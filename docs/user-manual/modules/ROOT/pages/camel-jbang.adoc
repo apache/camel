@@ -371,6 +371,8 @@ You can use the following Quarkus annotations:
 
 === Debugging
 
+==== Java debugging
+
 You can debug both Camel JBang and your integration scripts by making use of the `--debug` flag provided by JBang:
 
 [source,bash]
@@ -382,9 +384,19 @@ Listening for transport dt_socket at address: 4004
 
 As you can see the default listening port is 4004 but can be configured as described in https://www.jbang.dev/documentation/guide/latest/debugging.html[JBang Debugging].
 
+This is a standard Java debug socket. You can then use the IDE of your choice. For instance, see the generic documentation for [IntelliJ](https://www.jetbrains.com/help/idea/attaching-to-local-process.html#create-rc), [VS Code](https://code.visualstudio.com/docs/java/java-debugging#_attach) and [Eclipse Desktop](https://www.vogella.com/tutorials/EclipseDebugging/article.html#remote-debugging). You will surely want to add `Processor` to be able to put breakpoints hit during route execution (as opposed to route definition creation).
+
+==== Camel debugging
+
+The Camel debugger is available by default (the `camel-debug` component is automatically added to the classpath). By default, it can be reached through JMX at the URL `service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel`.
+
+You can then use the Integrated Development Environment (IDE) of your choice. For instance [IntelliJ](https://plugins.jetbrains.com/plugin/9371-apache-camel), [VS Code](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-debug-adapter-apache-camel) or [Eclipse Desktop](https://marketplace.eclipse.org/content/textual-debugging-apache-camel).
+
+A specific how-to is available for VS Code, see this [video](https://youtu.be/owNhWxf42qk) or this [blogpost](/blog/2022/05/start-camel-quarkus-application-with-camel-textual-debug-in-vscode/).
+
 == Open API
 
-Camel JBang allows to quickly expose an Open API service using _contract first_ apprach,
+Camel JBang allows to quickly expose an Open API service using _contract first_ approach,
 where you have an existing OpenAPI specification file.
 
 Then Camel JBang is able to bridge each API endpoints from the OpenAPI specification to
