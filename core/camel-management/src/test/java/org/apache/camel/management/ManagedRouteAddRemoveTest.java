@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
-    private static final int SERVICES = 13;
+    private static final int SERVICES = 14;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

@@ -913,14 +913,23 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         @Override
         public StreamCache before(Exchange exchange) throws Exception {
             // check if body is already cached
-            Object body = exchange.getIn().getBody();
-            if (body == null) {
-                return null;
-            } else if (body instanceof StreamCache) {
-                StreamCache sc = (StreamCache) body;
-                // reset so the cache is ready to be used before processing
-                sc.reset();
-                return sc;
+            try {
+                Object body = exchange.getIn().getBody();
+                if (body == null) {
+                    return null;
+                } else if (body instanceof StreamCache) {
+                    StreamCache sc = (StreamCache) body;
+                    // reset so the cache is ready to be used before processing
+                    sc.reset();
+                    return sc;
+                }
+            } catch (Exception e) {
+                // lets allow Camels error handler to deal with stream cache failures
+                StreamCacheException tce = new StreamCacheException(null, e);
+                exchange.setException(tce);
+                // because this is stream caching error then we cannot use redelivery as the message body is corrupt
+                // so mark as redelivery exhausted
+                exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(true);
             }
             // check if we somewhere failed due to a stream caching exception
             Throwable cause = exchange.getException();

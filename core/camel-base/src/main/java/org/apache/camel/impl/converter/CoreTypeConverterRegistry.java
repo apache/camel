@@ -350,11 +350,15 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     protected Object doConvertTo(
             final Class<?> type, final Exchange exchange, final Object value,
             final boolean mandatory, final boolean tryConvert) {
+
+        boolean statisticsEnabled = !tryConvert && statistics.isStatisticsEnabled(); // we only capture if not try-convert in use
+
         Object answer;
         try {
             answer = doConvertTo(type, exchange, value, tryConvert);
         } catch (Exception e) {
-            if (statistics.isStatisticsEnabled()) {
+            // only record if not try
+            if (statisticsEnabled) {
                 failedCounter.increment();
             }
             if (tryConvert) {
@@ -373,12 +377,12 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         }
         if (answer == TypeConverter.MISS_VALUE) {
             // Could not find suitable conversion
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 missCounter.increment();
             }
             return null;
         } else {
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 hitCounter.increment();
             }
             return answer;
@@ -390,7 +394,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
             final boolean tryConvert)
             throws Exception {
         boolean trace = LOG.isTraceEnabled();
-        boolean statisticsEnabled = statistics.isStatisticsEnabled();
+        boolean statisticsEnabled = !tryConvert && statistics.isStatisticsEnabled(); // we only capture if not try-convert in use
 
         if (trace) {
             LOG.trace("Finding type converter to convert {} -> {} with value: {}",

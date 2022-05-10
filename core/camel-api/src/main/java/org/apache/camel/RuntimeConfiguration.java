@@ -23,7 +23,7 @@ package org.apache.camel;
 public interface RuntimeConfiguration {
 
     /**
-     * Sets whether stream caching is enabled or not (default is disabled).
+     * Sets whether stream caching is enabled or not (default is enabled).
      *
      * @param cache whether stream caching is enabled or not
      */

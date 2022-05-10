@@ -6,6 +6,37 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.16 to 3.17
 
+=== camel-core
+
+We have enabled xref:stream-caching.adoc[Stream Caching] by default on `CamelContext`. The reason is that Camel users
+may often hit this problem without knowing what is causing this, and blaming it on Apache Camel.
+
+This means that Camel would automatically cache message bodies that are based on `java.util.InputStream`
+such as often seen with HTTP components. This makes it safe to log the message body, and elsewhere.
+
+The cost is a tiny overhead in the routing engine as Camel will automatic type convert
+to `StreamCache` if needed. Users can turn this off:
+
+[source,java]
+----
+CamelContext context = ...
+context.setStreamCaching(false);
+----
+
+Or via Camel Main / Camel K / Quarkus:
+
+[source,properties]
+----
+camel.main.streamCachingEnabled=false
+----
+
+Or in Spring Boot
+
+[source,properties]
+----
+camel.springboot.streamCachingEnabled=false
+----
+
 === camel-health
 
 Camel now reports DOWN when Camel is being stopped, during the graceful shutdown process.
