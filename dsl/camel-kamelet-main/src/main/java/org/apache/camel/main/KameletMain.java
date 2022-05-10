@@ -122,8 +122,8 @@ public class KameletMain extends MainCommandLineSupport {
     }
 
     /**
-     * Whether to use stub endpoints instead of creating the actual endpoints.
-     * This allows to simulate using real components but run without them on the classpath.
+     * Whether to use stub endpoints instead of creating the actual endpoints. This allows to simulate using real
+     * components but run without them on the classpath.
      */
     public void setStub(boolean stub) {
         this.stub = stub;
