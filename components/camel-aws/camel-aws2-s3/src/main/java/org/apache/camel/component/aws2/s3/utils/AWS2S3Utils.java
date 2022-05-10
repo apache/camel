@@ -25,6 +25,8 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.component.aws2.s3.AWS2S3Configuration;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.util.ObjectHelper;
+import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
+import software.amazon.awssdk.services.s3.model.ServerSideEncryption;
 
 public final class AWS2S3Utils {
 
@@ -119,5 +121,28 @@ public final class AWS2S3Utils {
             throw new IllegalArgumentException("AWS S3 Key header missing.");
         }
         return key;
+    }
+
+    public static void setEncryption(CreateMultipartUploadRequest.Builder createMultipartUploadRequest, AWS2S3Configuration configuration) {
+        if (configuration.isUseAwsKMS()) {
+            createMultipartUploadRequest.ssekmsKeyId(configuration.getAwsKMSKeyId());
+            createMultipartUploadRequest.serverSideEncryption(ServerSideEncryption.AWS_KMS);
+        }
+
+        if (configuration.isUseSSES3()) {
+            createMultipartUploadRequest.serverSideEncryption(ServerSideEncryption.AES256);
+        }
+
+        if (configuration.isUseCustomerKey()) {
+            if (ObjectHelper.isNotEmpty(configuration.getCustomerKeyId())) {
+                createMultipartUploadRequest.sseCustomerKey(configuration.getCustomerKeyId());
+            }
+            if (ObjectHelper.isNotEmpty(configuration.getCustomerKeyMD5())) {
+                createMultipartUploadRequest.sseCustomerKeyMD5(configuration.getCustomerKeyMD5());
+            }
+            if (ObjectHelper.isNotEmpty(configuration.getCustomerAlgorithm())) {
+                createMultipartUploadRequest.sseCustomerAlgorithm(configuration.getCustomerAlgorithm());
+            }
+        }
     }
 }
