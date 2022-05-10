@@ -353,7 +353,7 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         if (getConfiguration().isUseSSES3()) {
-                putObjectRequest.serverSideEncryption(ServerSideEncryption.AES256);
+            putObjectRequest.serverSideEncryption(ServerSideEncryption.AES256);
         }
 
         if (getConfiguration().isUseCustomerKey()) {

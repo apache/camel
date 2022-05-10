@@ -22,23 +22,14 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and -Daws.manual.secret.key
 @EnabledIfSystemProperties({
@@ -52,9 +43,9 @@ public class s3UploadWithSSES3IT extends CamelTestSupport {
     @BindToRegistry("amazonS3Client")
     S3Client client
             = S3Client.builder()
-            .credentialsProvider(StaticCredentialsProvider.create(
-                    AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY)))
-            .region(Region.EU_CENTRAL_1).build();
+                    .credentialsProvider(StaticCredentialsProvider.create(
+                            AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY)))
+                    .region(Region.EU_CENTRAL_1).build();
 
     @EndpointInject
     private ProducerTemplate template;
