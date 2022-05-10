@@ -123,7 +123,8 @@ public final class AWS2S3Utils {
         return key;
     }
 
-    public static void setEncryption(CreateMultipartUploadRequest.Builder createMultipartUploadRequest, AWS2S3Configuration configuration) {
+    public static void setEncryption(
+            CreateMultipartUploadRequest.Builder createMultipartUploadRequest, AWS2S3Configuration configuration) {
         if (configuration.isUseAwsKMS()) {
             createMultipartUploadRequest.ssekmsKeyId(configuration.getAwsKMSKeyId());
             createMultipartUploadRequest.serverSideEncryption(ServerSideEncryption.AWS_KMS);
