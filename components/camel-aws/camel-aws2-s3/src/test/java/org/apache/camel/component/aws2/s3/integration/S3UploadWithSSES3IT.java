@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.s3.S3Client;
         @EnabledIfSystemProperty(named = "aws.manual.access.key", matches = ".*", disabledReason = "Access key not provided"),
         @EnabledIfSystemProperty(named = "aws.manual.secret.key", matches = ".*", disabledReason = "Secret key not provided")
 })
-public class s3UploadWithSSES3IT extends CamelTestSupport {
+public class S3UploadWithSSES3IT extends CamelTestSupport {
     private static final String ACCESS_KEY = System.getProperty("aws.manual.access.key");
     private static final String SECRET_KEY = System.getProperty("aws.manual.secret.key");
 
