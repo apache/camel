@@ -17,7 +17,7 @@ The Camel JBang supports multiple commands. Running the command below, will prin
 
 [source,bash]
 ----
-jbang camel@apache/camel [command]
+jbang camel@apache/camel --help
 ----
 
 TIP: The first time you run this command, it may cause dependencies to be cached, therefore taking a few extra seconds to run.
