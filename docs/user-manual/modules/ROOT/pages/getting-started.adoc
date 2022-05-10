@@ -22,6 +22,5 @@ To get started with Camel:
 
 When your application is closing you may wish to stop the context
 
-When you are ready, why not xref:walk-through-an-example.adoc[Walk through an Example]?
-And then continue the walk xref:walk-through-another-example.adoc[Walk through another example].
-
+When you are ready, why not xref:walk-through-an-example.adoc[walk through an example]?
+And then xref:walk-through-another-example.adoc[walk through another example].
