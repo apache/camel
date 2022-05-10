@@ -82,6 +82,10 @@ The Camel JMX can be configured with the following options.
 |`mbeanObjectDomainName` |`org.apache.camel.jmx.mbeanObjectDomainName` |`org.apache.camel`
 |The JMX domain that all object names will use
 
+|`mbeansLevel` |  |`Default`
+|Configures the level for which MBeans are registered.
+See section _Registering MBeans for specific resources only_ for more details.
+
 |`onlyRegisterProcessorWithCustomId`
 |`org.apache.camel.jmx.onlyRegisterProcessorWithCustomId` |`false`
 |If this option is enabled then only processors with a
@@ -113,6 +117,15 @@ usage of each incoming and outgoing endpoints).
 from MBean names and attributes.
 |=======================================================================
 
+=== Registering MBeans for specific resources only
+
+By default Camel registers MBeans for the context, all the routes and the processors when its starting. You can set a level whether MBeans are registered or not when Camel starts up. The levels are:
+
+* `Default` - Camel will register MBeans for the context, all the routes and the processors.
+
+* `RoutesOnly` - Camel will register MBeans for the context and for all the routes. (not for any processor).
+
+* `ContextOnly` -  Camel will register MBeans for the context (neither for any route nor for any processor).
 
 === Registering new MBeans for new routes or endpoints
 

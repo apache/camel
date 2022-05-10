@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.ManagementMBeansLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.spi.Metadata;
@@ -87,6 +88,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean useDataType;
     private boolean useBreadcrumb;
     private boolean beanPostProcessorEnabled = true;
+    @Metadata(defaultValue = "Default")
+    private ManagementMBeansLevel jmxManagementMBeansLevel = ManagementMBeansLevel.Default;
     @Metadata(defaultValue = "Default")
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
@@ -832,6 +835,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setBeanPostProcessorEnabled(boolean beanPostProcessorEnabled) {
         this.beanPostProcessorEnabled = beanPostProcessorEnabled;
+    }
+
+    public ManagementMBeansLevel getJmxManagementMBeansLevel() {
+        return jmxManagementMBeansLevel;
+    }
+
+    /**
+     * Sets the mbeans registration level.
+     *
+     * The default value is Default.
+     */
+    public void setJmxManagementMBeansLevel(ManagementMBeansLevel jmxManagementMBeansLevel) {
+        this.jmxManagementMBeansLevel = jmxManagementMBeansLevel;
     }
 
     public ManagementStatisticsLevel getJmxManagementStatisticsLevel() {
@@ -1966,6 +1982,16 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withBeanPostProcessorEnabled(boolean beanPostProcessorEnabled) {
         this.beanPostProcessorEnabled = beanPostProcessorEnabled;
+        return (T) this;
+    }
+
+    /**
+     * Sets the mbeans registration level.
+     *
+     * The default value is Default.
+     */
+    public T withJmxManagementMBeansLevel(ManagementMBeansLevel jmxManagementMBeansLevel) {
+        this.jmxManagementMBeansLevel = jmxManagementMBeansLevel;
         return (T) this;
     }
 
