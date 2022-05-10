@@ -182,6 +182,10 @@ public class AWS2S3Producer extends DefaultProducer {
             createMultipartUploadRequest.serverSideEncryption(ServerSideEncryption.AWS_KMS);
         }
 
+        if (getConfiguration().isUseSSES3()) {
+            createMultipartUploadRequest.serverSideEncryption(ServerSideEncryption.AES256);
+        }
+
         if (getConfiguration().isUseCustomerKey()) {
             if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
                 createMultipartUploadRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
@@ -348,6 +352,10 @@ public class AWS2S3Producer extends DefaultProducer {
             }
         }
 
+        if (getConfiguration().isUseSSES3()) {
+                putObjectRequest.serverSideEncryption(ServerSideEncryption.AES256);
+        }
+
         if (getConfiguration().isUseCustomerKey()) {
             if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
                 putObjectRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
@@ -409,6 +417,10 @@ public class AWS2S3Producer extends DefaultProducer {
                     copyObjectRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
                     copyObjectRequest.serverSideEncryption(ServerSideEncryption.AWS_KMS);
                 }
+            }
+
+            if (getConfiguration().isUseSSES3()) {
+                copyObjectRequest.serverSideEncryption(ServerSideEncryption.AES256);
             }
 
             if (getConfiguration().isUseCustomerKey()) {

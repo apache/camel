@@ -102,6 +102,8 @@ public class AWS2S3Configuration implements Cloneable {
     private String customerKeyMD5;
     @UriParam(label = "common,advanced")
     private String customerAlgorithm;
+    @UriParam(label = "producer,advanced", defaultValue = "false")
+    private boolean useSSES3;
     @UriParam(defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
     @UriParam(label = "producer")
@@ -667,6 +669,17 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setRestartingPolicy(AWSS3RestartingPolicyEnum restartingPolicy) {
         this.restartingPolicy = restartingPolicy;
+    }
+
+    public boolean isUseSSES3() {
+        return useSSES3;
+    }
+
+    /**
+     * Define if SSE S3 must be used or not
+     */
+    public void setUseSSES3(boolean useSSES3) {
+        this.useSSES3 = useSSES3;
     }
 
     public AWS2S3Configuration copy() {

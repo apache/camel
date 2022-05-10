@@ -122,6 +122,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "useCustomerKey": getOrCreateConfiguration(target).setUseCustomerKey(property(camelContext, boolean.class, value)); return true;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "usesses3":
+        case "useSSES3": getOrCreateConfiguration(target).setUseSSES3(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -228,6 +230,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "useCustomerKey": return boolean.class;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return boolean.class;
+        case "usesses3":
+        case "useSSES3": return boolean.class;
         default: return null;
         }
     }
@@ -330,6 +334,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "useCustomerKey": return getOrCreateConfiguration(target).isUseCustomerKey();
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
+        case "usesses3":
+        case "useSSES3": return getOrCreateConfiguration(target).isUseSSES3();
         default: return null;
         }
     }

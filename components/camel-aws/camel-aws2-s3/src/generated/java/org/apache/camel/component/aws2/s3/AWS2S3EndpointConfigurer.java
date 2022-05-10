@@ -149,6 +149,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "usesses3":
+        case "useSSES3": target.getConfiguration().setUseSSES3(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -289,6 +291,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "useDefaultCredentialsProvider": return boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
+        case "usesses3":
+        case "useSSES3": return boolean.class;
         default: return null;
         }
     }
@@ -425,6 +429,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "usesses3":
+        case "useSSES3": return target.getConfiguration().isUseSSES3();
         default: return null;
         }
     }
