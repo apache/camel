@@ -25,6 +25,7 @@ package org.apache.camel.resume;
  * resume API, as well as to offer component-specific interfaces that can be specialized by other integrations.
  */
 public interface ResumeAdapter {
+
     /**
      * Execute the resume logic for the adapter
      */

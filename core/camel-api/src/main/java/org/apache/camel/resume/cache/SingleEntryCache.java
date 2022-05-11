@@ -26,6 +26,7 @@ import java.util.Optional;
  * @param <V> the type of the entry
  */
 public interface SingleEntryCache<K, V> extends ResumeCache<K, V> {
+
     /**
      * Gets the offset value for the key
      *

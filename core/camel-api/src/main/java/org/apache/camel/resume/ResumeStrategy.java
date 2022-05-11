@@ -27,8 +27,6 @@ public interface ResumeStrategy extends Service {
 
     /**
      * Gets an adapter for resuming operations
-     * 
-     * @return
      */
     ResumeAdapter getAdapter();
 

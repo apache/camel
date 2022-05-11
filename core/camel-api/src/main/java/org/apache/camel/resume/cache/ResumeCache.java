@@ -53,8 +53,6 @@ public interface ResumeCache<K, V> {
 
     /**
      * Gets the cache pool size
-     * 
-     * @return
      */
     long capacity();
 }
