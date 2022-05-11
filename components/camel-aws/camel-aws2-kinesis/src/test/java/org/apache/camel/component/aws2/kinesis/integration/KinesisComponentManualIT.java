@@ -71,8 +71,7 @@ public class KinesisComponentManualIT extends CamelTestSupport {
     }
 
     private void assertResultExchange(Exchange resultExchange, String data, String partition) {
-        Record record = resultExchange.getIn().getBody(Record.class);
-        assertEquals(data, new String(record.data().asByteArray()));
+        assertEquals(data,resultExchange.getIn().getBody(String.class));
         assertEquals(partition, resultExchange.getIn().getHeader(Kinesis2Constants.PARTITION_KEY));
         assertNotNull(resultExchange.getIn().getHeader(Kinesis2Constants.APPROX_ARRIVAL_TIME));
         assertNotNull(resultExchange.getIn().getHeader(Kinesis2Constants.SEQUENCE_NUMBER));
