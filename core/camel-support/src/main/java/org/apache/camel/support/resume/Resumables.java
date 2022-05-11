@@ -15,7 +15,10 @@
  * limitations under the License.
  */
 
-package org.apache.camel.resume;
+package org.apache.camel.support.resume;
+
+import org.apache.camel.resume.Offset;
+import org.apache.camel.resume.Resumable;
 
 /**
  * A wrapper for resumable entities

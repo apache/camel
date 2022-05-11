@@ -34,6 +34,7 @@
     <properties>
         <firstVersion>2.4.0</firstVersion>
         <camel.osgi.import>
+            org.apache.camel.resume;${camel.osgi.import.camel.version},
             javax.xml.bind*;version="[2.2,3.0)",
             *
         </camel.osgi.import>

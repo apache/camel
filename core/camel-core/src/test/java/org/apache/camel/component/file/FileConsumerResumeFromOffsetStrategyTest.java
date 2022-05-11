@@ -32,7 +32,7 @@ import org.apache.camel.component.file.consumer.GenericFileResumeAdapter;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.resume.Resumable;
-import org.apache.camel.resume.Resumables;
+import org.apache.camel.support.resume.Resumables;
 import org.apache.camel.resume.UpdatableConsumerResumeStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

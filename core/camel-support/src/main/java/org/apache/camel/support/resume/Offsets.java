@@ -15,19 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.camel.resume;
+package org.apache.camel.support.resume;
+
+import org.apache.camel.resume.Offset;
 
 /**
  * Offset handling support
  */
 public final class Offsets {
+
     /**
      * Default initial offset when using long offsets
      */
     public static final Offset<Long> INITIAL_LONG = Offsets.of(0L);
 
     private Offsets() {
-
     }
 
     /**

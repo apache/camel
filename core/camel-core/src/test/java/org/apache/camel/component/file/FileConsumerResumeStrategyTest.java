@@ -28,7 +28,7 @@ import org.apache.camel.component.file.consumer.FileResumeSet;
 import org.apache.camel.component.file.consumer.FileSetResumeAdapter;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.resume.TransientResumeStrategy;
-import org.apache.camel.resume.Resumables;
+import org.apache.camel.support.resume.Resumables;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerResumeStrategyTest extends ContextTestSupport {
