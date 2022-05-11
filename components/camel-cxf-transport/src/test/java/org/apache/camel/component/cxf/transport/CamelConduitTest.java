@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.cxf.transport;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -28,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.IOHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;

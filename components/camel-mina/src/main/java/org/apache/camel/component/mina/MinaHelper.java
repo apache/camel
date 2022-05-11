@@ -20,13 +20,10 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.StreamCache;
-import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.future.WriteFuture;
 import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
 
 /**
  * Helper class used internally by camel-mina using Apache MINA.
