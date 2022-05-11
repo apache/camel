@@ -56,12 +56,16 @@ public class XChangeComponent extends DefaultComponent {
         xchanges.clear();
     }
 
+    protected Exchange createExchange(Class<? extends Exchange> exchangeClass) {
+        return ExchangeFactory.INSTANCE.createExchange(exchangeClass);
+    }
+
     private synchronized XChange getOrCreateXChange(String name) {
         XChange xchange = xchanges.get(name);
         if (xchange == null) {
             Class<? extends Exchange> exchangeClass = XChangeHelper.loadXChangeClass(getCamelContext(), name);
             Assert.notNull(exchangeClass, "XChange not supported: " + name);
-            xchange = new XChange(ExchangeFactory.INSTANCE.createExchange(exchangeClass));
+            xchange = new XChange(createExchange(exchangeClass));
             xchanges.put(name, xchange);
         }
 
