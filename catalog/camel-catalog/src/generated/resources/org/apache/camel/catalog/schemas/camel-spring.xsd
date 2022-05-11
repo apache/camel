@@ -9417,7 +9417,7 @@ failure. If this option is enabled then its considered handled as well.
         <xs:attribute name="redeliveryPolicyRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets a reference to a RedeliveryPolicy to lookup in the
+Sets a reference to a redelivery policy to lookup in the
 org.apache.camel.spi.Registry to be used.
             ]]></xs:documentation>
           </xs:annotation>
