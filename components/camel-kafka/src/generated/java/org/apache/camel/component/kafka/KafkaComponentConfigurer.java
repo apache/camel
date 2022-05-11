@@ -90,6 +90,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "interceptorclasses":
         case "interceptorClasses": getOrCreateConfiguration(target).setInterceptorClasses(property(camelContext, java.lang.String.class, value)); return true;
+        case "isolationlevel":
+        case "isolationLevel": getOrCreateConfiguration(target).setIsolationLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "kafkaclientfactory":
         case "kafkaClientFactory": target.setKafkaClientFactory(property(camelContext, org.apache.camel.component.kafka.KafkaClientFactory.class, value)); return true;
         case "kafkamanualcommitfactory":
@@ -308,6 +310,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "heartbeatIntervalMs": return java.lang.Integer.class;
         case "interceptorclasses":
         case "interceptorClasses": return java.lang.String.class;
+        case "isolationlevel":
+        case "isolationLevel": return java.lang.String.class;
         case "kafkaclientfactory":
         case "kafkaClientFactory": return org.apache.camel.component.kafka.KafkaClientFactory.class;
         case "kafkamanualcommitfactory":
@@ -522,6 +526,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "heartbeatIntervalMs": return getOrCreateConfiguration(target).getHeartbeatIntervalMs();
         case "interceptorclasses":
         case "interceptorClasses": return getOrCreateConfiguration(target).getInterceptorClasses();
+        case "isolationlevel":
+        case "isolationLevel": return getOrCreateConfiguration(target).getIsolationLevel();
         case "kafkaclientfactory":
         case "kafkaClientFactory": return target.getKafkaClientFactory();
         case "kafkamanualcommitfactory":

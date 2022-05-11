@@ -145,6 +145,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private PollOnError pollOnError = PollOnError.ERROR_HANDLER;
     @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
     private Long commitTimeoutMs = 5000L;
+    @UriParam(label = "consumer,advanced", defaultValue = "read_uncommitted", enums = "read_uncommitted,read_committed")
+    private String isolationLevel;
 
     // Producer configuration properties
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
@@ -466,6 +468,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotEmpty(props, ConsumerConfig.RECONNECT_BACKOFF_MS_CONFIG, getReconnectBackoffMs());
         addPropertyIfNotEmpty(props, ConsumerConfig.RETRY_BACKOFF_MS_CONFIG, getRetryBackoffMs());
         addPropertyIfNotEmpty(props, ConsumerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, getReconnectBackoffMaxMs());
+        addPropertyIfNotEmpty(props, ConsumerConfig.ISOLATION_LEVEL_CONFIG, getIsolationLevel());
         addPropertyIfNotEmpty(props, "schema.registry.url", getSchemaRegistryURL());
         addPropertyIfNotFalse(props, "specific.avro.reader", isSpecificAvroReader());
 
@@ -1804,10 +1807,27 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     /**
      * The maximum time, in milliseconds, that the code will wait for a synchronous commit to complete
-     * 
-     * @param commitTimeoutMs
      */
     public void setCommitTimeoutMs(Long commitTimeoutMs) {
         this.commitTimeoutMs = commitTimeoutMs;
+    }
+
+    public String getIsolationLevel() {
+        return isolationLevel;
+    }
+
+    /**
+     * Controls how to read messages written transactionally. If set to read_committed, consumer.poll() will only return
+     * transactional messages which have been committed. If set to read_uncommitted (the default), consumer.poll() will
+     * return all messages, even transactional messages which have been aborted. Non-transactional messages will be
+     * returned unconditionally in either mode. Messages will always be returned in offset order. Hence, in
+     * read_committed mode, consumer.poll() will only return messages up to the last stable offset (LSO), which is the
+     * one less than the offset of the first open transaction. In particular any messages appearing after messages
+     * belonging to ongoing transactions will be withheld until the relevant transaction has been completed. As a
+     * result, read_committed</code> consumers will not be able to read up to the high watermark when there are in
+     * flight transactions. Further, when in read_committed the seekToEnd method will return the LSO
+     */
+    public void setIsolationLevel(String isolationLevel) {
+        this.isolationLevel = isolationLevel;
     }
 }

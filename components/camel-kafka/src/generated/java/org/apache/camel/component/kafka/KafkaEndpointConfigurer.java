@@ -80,6 +80,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "heartbeatIntervalMs": target.getConfiguration().setHeartbeatIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "interceptorclasses":
         case "interceptorClasses": target.getConfiguration().setInterceptorClasses(property(camelContext, java.lang.String.class, value)); return true;
+        case "isolationlevel":
+        case "isolationLevel": target.getConfiguration().setIsolationLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "kafkaclientfactory":
         case "kafkaClientFactory": target.setKafkaClientFactory(property(camelContext, org.apache.camel.component.kafka.KafkaClientFactory.class, value)); return true;
         case "kafkamanualcommitfactory":
@@ -282,6 +284,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "heartbeatIntervalMs": return java.lang.Integer.class;
         case "interceptorclasses":
         case "interceptorClasses": return java.lang.String.class;
+        case "isolationlevel":
+        case "isolationLevel": return java.lang.String.class;
         case "kafkaclientfactory":
         case "kafkaClientFactory": return org.apache.camel.component.kafka.KafkaClientFactory.class;
         case "kafkamanualcommitfactory":
@@ -485,6 +489,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "heartbeatIntervalMs": return target.getConfiguration().getHeartbeatIntervalMs();
         case "interceptorclasses":
         case "interceptorClasses": return target.getConfiguration().getInterceptorClasses();
+        case "isolationlevel":
+        case "isolationLevel": return target.getConfiguration().getIsolationLevel();
         case "kafkaclientfactory":
         case "kafkaClientFactory": return target.getKafkaClientFactory();
         case "kafkamanualcommitfactory":
