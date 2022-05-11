@@ -103,6 +103,10 @@ public class AbstractEndpointBuilder {
         return computeUri(new LinkedHashMap<>(), null, false, true).getUri();
     }
 
+    public String getRawUri() {
+        return computeUri(new LinkedHashMap<>(), null, false, false).getUri();
+    }
+
     protected NormalizedUri computeUri(
             Map<String, Object> remaining, CamelContext camelContext, boolean bindToRegistry, boolean encode) {
         NormalizedUri answer;

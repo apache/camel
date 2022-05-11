@@ -120,20 +120,20 @@ public final class JaxbHelper {
     public static void resolveEndpointDslUris(RouteDefinition route) {
         FromDefinition from = route.getInput();
         if (from != null && from.getEndpointConsumerBuilder() != null) {
-            String uri = from.getEndpointConsumerBuilder().getUri();
+            String uri = from.getEndpointConsumerBuilder().getRawUri();
             from.setUri(uri);
         }
         Collection<SendDefinition> col = filterTypeInOutputs(route.getOutputs(), SendDefinition.class);
         for (SendDefinition<?> to : col) {
             if (to.getEndpointProducerBuilder() != null) {
-                String uri = to.getEndpointProducerBuilder().getUri();
+                String uri = to.getEndpointProducerBuilder().getRawUri();
                 to.setUri(uri);
             }
         }
         Collection<ToDynamicDefinition> col2 = filterTypeInOutputs(route.getOutputs(), ToDynamicDefinition.class);
         for (ToDynamicDefinition to : col2) {
             if (to.getEndpointProducerBuilder() != null) {
-                String uri = to.getEndpointProducerBuilder().getUri();
+                String uri = to.getEndpointProducerBuilder().getRawUri();
                 to.setUri(uri);
             }
         }
