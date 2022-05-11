@@ -40,7 +40,6 @@ import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.transform.dom.DOMSource;
 
-import org.apache.camel.StreamCache;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -49,6 +48,7 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
 import org.apache.camel.language.xpath.DefaultNamespaceContext;
 import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.spi.DataFormat;

@@ -21,7 +21,6 @@ import java.nio.file.Path;
 import java.util.regex.Pattern;
 
 import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.specialized.BlobInputStream;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;

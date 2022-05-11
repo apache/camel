@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.transport;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 

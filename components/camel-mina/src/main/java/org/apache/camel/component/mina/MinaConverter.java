@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mina;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInput;
@@ -25,8 +24,6 @@ import java.io.ObjectInputStream;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.mina.core.buffer.IoBuffer;
 
 /**

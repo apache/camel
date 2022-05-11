@@ -16,11 +16,11 @@
  */
 package org.apache.camel.dataformat.tarfile;
 
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 
 /**
  * Keeps a handle on the original {@link InputStream} even after closing the buffered input stream.

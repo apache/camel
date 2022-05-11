@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.hl7;
 
+import java.io.ByteArrayOutputStream;
+
 import ca.uhn.hl7v2.model.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import org.apache.camel.StreamCache;
-
-import java.io.ByteArrayOutputStream;
 
 /**
  * HL7 MLLP Encoder for Netty
