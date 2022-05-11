@@ -23,8 +23,6 @@ import java.util.Map;
 
 import groovy.grape.Grape;
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.StopWatch;
-import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +30,8 @@ public final class DownloaderHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(DownloaderHelper.class);
     private static final String CP = System.getProperty("java.class.path");
+
+    private static final DownloadThreadPool downloader = new DownloadThreadPool();
 
     private DownloaderHelper() {
     }
@@ -59,7 +59,6 @@ public final class DownloaderHelper {
             }
         }
 
-        StopWatch watch = new StopWatch();
         Map<String, Object> map = new HashMap<>();
         map.put("classLoader", camelContext.getApplicationContextClassLoader());
         map.put("group", groupId);
@@ -67,19 +66,11 @@ public final class DownloaderHelper {
         map.put("version", version);
         map.put("classifier", "");
 
-        LOG.debug("Downloading dependency: {}:{}:{}", groupId, artifactId, version);
-        Grape.grab(map);
-
-        // only report at INFO if downloading took > 1s because loading from cache is faster
-        // and then it is not downloaded over the internet
-        long taken = watch.taken();
-        String msg = "Downloaded dependency: " + groupId + ":" + artifactId + ":" + version + " took: "
-                     + TimeUtils.printDuration(taken);
-        if (taken < 1000) {
-            LOG.debug(msg);
-        } else {
-            LOG.info(msg);
-        }
+        String gav = groupId + ":" + artifactId + ":" + version;
+        downloader.download(LOG, () -> {
+            LOG.debug("Downloading: {}", gav);
+            Grape.grab(map);
+        }, gav);
     }
 
     public static boolean alreadyOnClasspath(CamelContext camelContext, String artifactId, String version) {
