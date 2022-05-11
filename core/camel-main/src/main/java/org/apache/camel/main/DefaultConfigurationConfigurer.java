@@ -248,6 +248,8 @@ public final class DefaultConfigurationConfigurer {
             camelContext.getManagementStrategy().getManagementAgent()
                     .setStatisticsLevel(config.getJmxManagementStatisticsLevel());
             camelContext.getManagementStrategy().getManagementAgent()
+                    .setMBeansLevel(config.getJmxManagementMBeansLevel());
+            camelContext.getManagementStrategy().getManagementAgent()
                     .setManagementNamePattern(config.getJmxManagementNamePattern());
         }
 
