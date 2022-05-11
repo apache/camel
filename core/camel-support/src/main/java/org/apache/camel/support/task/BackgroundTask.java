@@ -47,7 +47,7 @@ public class BackgroundTask implements BlockingTask {
         /**
          * Sets a time budget for the task
          * 
-         * @param  timeBudget the time budget
+         * @param timeBudget the time budget
          */
         public BackgroundTaskBuilder withBudget(TimeBudget timeBudget) {
             this.budget = timeBudget;
@@ -58,7 +58,7 @@ public class BackgroundTask implements BlockingTask {
         /**
          * Sets an executor service manager for managing the threads
          *
-         * @param  service an instance of an executor service to use
+         * @param service an instance of an executor service to use
          */
         public BackgroundTaskBuilder withScheduledExecutor(ScheduledExecutorService service) {
             this.service = service;
