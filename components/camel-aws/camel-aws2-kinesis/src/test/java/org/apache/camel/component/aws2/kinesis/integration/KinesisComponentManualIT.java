@@ -29,7 +29,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
-import software.amazon.awssdk.services.kinesis.model.Record;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -71,7 +70,7 @@ public class KinesisComponentManualIT extends CamelTestSupport {
     }
 
     private void assertResultExchange(Exchange resultExchange, String data, String partition) {
-        assertEquals(data,resultExchange.getIn().getBody(String.class));
+        assertEquals(data, resultExchange.getIn().getBody(String.class));
         assertEquals(partition, resultExchange.getIn().getHeader(Kinesis2Constants.PARTITION_KEY));
         assertNotNull(resultExchange.getIn().getHeader(Kinesis2Constants.APPROX_ARRIVAL_TIME));
         assertNotNull(resultExchange.getIn().getHeader(Kinesis2Constants.SEQUENCE_NUMBER));
