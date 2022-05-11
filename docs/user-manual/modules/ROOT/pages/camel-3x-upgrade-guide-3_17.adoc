@@ -8,6 +8,8 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 === camel-core
 
+==== Stream Caching
+
 We have enabled xref:stream-caching.adoc[Stream Caching] by default on `CamelContext`. The reason is that Camel users
 may often hit this problem without knowing what is causing this, and blaming it on Apache Camel.
 
@@ -35,6 +37,45 @@ Or in Spring Boot
 [source,properties]
 ----
 camel.springboot.streamCachingEnabled=false
+----
+
+And in legacy Spring XML or OSGi Blueprint:
+
+[source,xml]
+----
+<streamCaching enabled="true" .../>
+----
+
+We also changed the default settings for stream caching to not spool to disk, meaning that the cache
+is an in-memory on cache.
+
+To enable spool to disk, you can configure this as follows:
+
+[source,java]
+----
+CamelContext context = ...
+context.getStreamCachingStrategy().setSpoolEnabled(true);
+----
+
+Or via Camel Main / Camel K / Quarkus:
+
+[source,properties]
+----
+camel.main.streamCachingSpoolEnabled=true
+----
+
+Or in Spring Boot
+
+[source,properties]
+----
+camel.springboot.streamCachingSpoolEnabled=true
+----
+
+And in legacy Spring XML or OSGi Blueprint:
+
+[source,xml]
+----
+<streamCaching spoolEnabled="true" .../>
 ----
 
 === camel-health

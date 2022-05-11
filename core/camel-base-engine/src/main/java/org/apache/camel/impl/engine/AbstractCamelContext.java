@@ -3209,13 +3209,13 @@ public abstract class AbstractCamelContext extends BaseService
                     getClassResolver(),
                     getPackageScanClassResolver(), getApplicationContextClassLoader(), getRouteController());
         }
-        if (!isStreamCaching()) {
+        if (isStreamCaching()) {
             // stream caching is default enabled so lets report if it has been disabled
-            LOG.info("StreamCaching is disabled on CamelContext: {}", getName());
+            LOG.debug("StreamCaching is disabled on CamelContext: {}", getName());
         }
         if (isBacklogTracing()) {
             // tracing is added in the DefaultChannel so we can enable it on the fly
-            LOG.info("Backlog Tracing is enabled on CamelContext: {}", getName());
+            LOG.debug("Backlog Tracing is enabled on CamelContext: {}", getName());
         }
         if (isTracing()) {
             // tracing is added in the DefaultChannel so we can enable it on the fly
@@ -3298,7 +3298,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         if (isUseDataType()) {
             // log if DataType has been enabled
-            LOG.info("Message DataType is enabled on CamelContext: {}", getName());
+            LOG.debug("Message DataType is enabled on CamelContext: {}", getName());
         }
 
         // is there any stream caching enabled then log an info about this and

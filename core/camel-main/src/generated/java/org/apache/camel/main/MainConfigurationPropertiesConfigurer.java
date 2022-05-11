@@ -221,6 +221,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "StreamCachingSpoolCipher": target.setStreamCachingSpoolCipher(property(camelContext, java.lang.String.class, value)); return true;
         case "streamcachingspooldirectory":
         case "StreamCachingSpoolDirectory": target.setStreamCachingSpoolDirectory(property(camelContext, java.lang.String.class, value)); return true;
+        case "streamcachingspoolenabled":
+        case "StreamCachingSpoolEnabled": target.setStreamCachingSpoolEnabled(property(camelContext, boolean.class, value)); return true;
         case "streamcachingspoolthreshold":
         case "StreamCachingSpoolThreshold": target.setStreamCachingSpoolThreshold(property(camelContext, long.class, value)); return true;
         case "streamcachingspoolusedheapmemorylimit":
@@ -454,6 +456,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "StreamCachingSpoolCipher": return java.lang.String.class;
         case "streamcachingspooldirectory":
         case "StreamCachingSpoolDirectory": return java.lang.String.class;
+        case "streamcachingspoolenabled":
+        case "StreamCachingSpoolEnabled": return boolean.class;
         case "streamcachingspoolthreshold":
         case "StreamCachingSpoolThreshold": return long.class;
         case "streamcachingspoolusedheapmemorylimit":
@@ -688,6 +692,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "StreamCachingSpoolCipher": return target.getStreamCachingSpoolCipher();
         case "streamcachingspooldirectory":
         case "StreamCachingSpoolDirectory": return target.getStreamCachingSpoolDirectory();
+        case "streamcachingspoolenabled":
+        case "StreamCachingSpoolEnabled": return target.isStreamCachingSpoolEnabled();
         case "streamcachingspoolthreshold":
         case "StreamCachingSpoolThreshold": return target.getStreamCachingSpoolThreshold();
         case "streamcachingspoolusedheapmemorylimit":

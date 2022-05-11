@@ -103,6 +103,7 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
             public void configure() {
                 // enable stream caching
                 context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
+                context.getStreamCachingStrategy().setSpoolEnabled(true);
                 context.getStreamCachingStrategy().setEnabled(true);
                 context.getStreamCachingStrategy().setRemoveSpoolDirectoryWhenStopping(false);
                 context.getStreamCachingStrategy().setSpoolThreshold(1L);

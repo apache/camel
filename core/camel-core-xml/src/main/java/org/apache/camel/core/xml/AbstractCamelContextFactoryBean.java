@@ -724,12 +724,20 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     protected void initStreamCachingStrategy() throws Exception {
         CamelStreamCachingStrategyDefinition streamCaching = getCamelStreamCachingStrategy();
         if (streamCaching == null) {
+            getContext().getStreamCachingStrategy().setEnabled(true);
             return;
         }
 
         Boolean enabled = CamelContextHelper.parseBoolean(getContext(), streamCaching.getEnabled());
         if (enabled != null) {
             getContext().getStreamCachingStrategy().setEnabled(enabled);
+        } else {
+            // stream-caching is default enabled
+            getContext().getStreamCachingStrategy().setEnabled(true);
+        }
+        Boolean spoolEnabled = CamelContextHelper.parseBoolean(getContext(), streamCaching.getSpoolEnabled());
+        if (spoolEnabled != null) {
+            getContext().getStreamCachingStrategy().setSpoolEnabled(spoolEnabled);
         }
         String spoolDirectory = CamelContextHelper.parseText(getContext(), streamCaching.getSpoolDirectory());
         if (spoolDirectory != null) {

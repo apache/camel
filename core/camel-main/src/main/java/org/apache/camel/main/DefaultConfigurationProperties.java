@@ -58,6 +58,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean modeline;
     private int logDebugMaxChars;
     private boolean streamCachingEnabled = true;
+    private boolean streamCachingSpoolEnabled;
     private String streamCachingSpoolDirectory;
     private String streamCachingSpoolCipher;
     private long streamCachingSpoolThreshold;
@@ -433,7 +434,9 @@ public abstract class DefaultConfigurationProperties<T> {
      * reasons, they also have an important drawback: they can only be read once. In order to be able to work with
      * message content multiple times, the stream needs to be cached.
      *
-     * Streams are cached in memory. However, for large stream messages (over 128 KB by default) will be cached in a
+     * Streams are cached in memory only (by default).
+     *
+     * If streamCachingSpoolEnabled=true, then, for large stream messages (over 128 KB by default) will be cached in a
      * temporary file instead, and Camel will handle deleting the temporary file once the cached stream is no longer
      * necessary.
      *
@@ -441,6 +444,21 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setStreamCachingEnabled(boolean streamCachingEnabled) {
         this.streamCachingEnabled = streamCachingEnabled;
+    }
+
+    public boolean isStreamCachingSpoolEnabled() {
+        return streamCachingSpoolEnabled;
+    }
+
+    /**
+     * To enable stream caching spooling to disk. This means, for large stream messages (over 128 KB by default) will be cached in a
+     * temporary file instead, and Camel will handle deleting the temporary file once the cached stream is no longer
+     * necessary.
+     *
+     * Default is false.
+     */
+    public void setStreamCachingSpoolEnabled(boolean streamCachingSpoolEnabled) {
+        this.streamCachingSpoolEnabled = streamCachingSpoolEnabled;
     }
 
     public String getStreamCachingSpoolDirectory() {
@@ -1711,10 +1729,32 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether stream caching is enabled or not.
      *
-     * Default is false.
+     * While stream types (like StreamSource, InputStream and Reader) are commonly used in messaging for performance
+     * reasons, they also have an important drawback: they can only be read once. In order to be able to work with
+     * message content multiple times, the stream needs to be cached.
+     *
+     * Streams are cached in memory only (by default).
+     *
+     * If streamCachingSpoolEnabled=true, then, for large stream messages (over 128 KB by default) will be cached in a
+     * temporary file instead, and Camel will handle deleting the temporary file once the cached stream is no longer
+     * necessary.
+     *
+     * Default is true.
      */
     public T withStreamCachingEnabled(boolean streamCachingEnabled) {
         this.streamCachingEnabled = streamCachingEnabled;
+        return (T) this;
+    }
+
+    /**
+     * To enable stream caching spooling to disk. This means, for large stream messages (over 128 KB by default) will be cached in a
+     * temporary file instead, and Camel will handle deleting the temporary file once the cached stream is no longer
+     * necessary.
+     *
+     * Default is false.
+     */
+    public T withStreamCachingSpoolEnabled(boolean streamCachingSpoolEnabled) {
+        this.streamCachingSpoolEnabled = streamCachingSpoolEnabled;
         return (T) this;
     }
 

@@ -177,6 +177,7 @@ public final class DefaultConfigurationConfigurer {
 
         // stream caching
         camelContext.setStreamCaching(config.isStreamCachingEnabled());
+        camelContext.getStreamCachingStrategy().setSpoolEnabled(config.isStreamCachingSpoolEnabled());
         camelContext.getStreamCachingStrategy().setAnySpoolRules(config.isStreamCachingAnySpoolRules());
         camelContext.getStreamCachingStrategy().setBufferSize(config.getStreamCachingBufferSize());
         camelContext.getStreamCachingStrategy()

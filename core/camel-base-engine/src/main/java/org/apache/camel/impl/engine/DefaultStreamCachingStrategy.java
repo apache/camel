@@ -44,6 +44,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
     private CamelContext camelContext;
     private boolean enabled;
+    private boolean spoolEnabled;
     private File spoolDirectory;
     private transient String spoolDirectoryName = "${java.io.tmpdir}/camel/camel-tmp-#uuid#";
     private long spoolThreshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
@@ -74,6 +75,16 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public boolean isSpoolEnabled() {
+        return spoolEnabled;
+    }
+
+    @Override
+    public void setSpoolEnabled(boolean spoolEnabled) {
+        this.spoolEnabled = spoolEnabled;
     }
 
     @Override
@@ -279,12 +290,10 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         }
 
         // if we can overflow to disk then make sure directory exists / is created
-        if (spoolThreshold > 0 || spoolUsedHeapMemoryThreshold > 0) {
-
+        if (spoolEnabled && (spoolThreshold > 0 || spoolUsedHeapMemoryThreshold > 0)) {
             if (spoolDirectory == null && spoolDirectoryName == null) {
                 throw new IllegalArgumentException("SpoolDirectory must be configured when using SpoolThreshold > 0");
             }
-
             if (spoolDirectory == null) {
                 String name = resolveSpoolDirectory(spoolDirectoryName);
                 if (name != null) {
@@ -294,7 +303,6 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                     throw new IllegalStateException("Cannot resolve spool directory from pattern: " + spoolDirectoryName);
                 }
             }
-
             if (spoolDirectory.exists()) {
                 if (spoolDirectory.isDirectory()) {
                     LOG.debug("Using spool directory: {}", spoolDirectory);
@@ -312,9 +320,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                 } else {
                     LOG.debug("Created spool directory: {}", spoolDirectory);
                 }
-
             }
-
             if (spoolThreshold > 0) {
                 spoolRules.add(new FixedThresholdSpoolRule());
             }
@@ -331,14 +337,17 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
         if (spoolDirectory != null) {
             LOG.info("StreamCaching in use with spool directory: {} and rules: {}", spoolDirectory.getPath(), spoolRules);
-        } else {
+        } else if (!spoolRules.isEmpty()) {
             LOG.info("StreamCaching in use with rules: {}", spoolRules);
+        } else {
+            // reduce logging noise when its in-memory stream caching
+            LOG.debug("StreamCaching in use");
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (spoolThreshold > 0 & spoolDirectory != null && isRemoveSpoolDirectoryWhenStopping()) {
+        if (spoolEnabled && (spoolThreshold > 0 & spoolDirectory != null && isRemoveSpoolDirectoryWhenStopping())) {
             LOG.debug("Removing spool directory: {}", spoolDirectory);
             FileUtil.removeDir(spoolDirectory);
         }
@@ -353,7 +362,8 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     @Override
     public String toString() {
         return "DefaultStreamCachingStrategy["
-               + "spoolDirectory=" + spoolDirectory
+               + "spoolDirectoryEnabled=" + spoolEnabled
+               + ", spoolDirectory=" + spoolDirectory
                + ", spoolCipher=" + spoolCipher
                + ", spoolThreshold=" + spoolThreshold
                + ", spoolUsedHeapMemoryThreshold=" + spoolUsedHeapMemoryThreshold

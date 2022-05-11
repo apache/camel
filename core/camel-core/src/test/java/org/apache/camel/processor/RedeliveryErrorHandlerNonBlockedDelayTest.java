@@ -34,12 +34,12 @@ public class RedeliveryErrorHandlerNonBlockedDelayTest extends ContextTestSuppor
     @Test
     public void testRedelivery() throws Exception {
         MockEndpoint before = getMockEndpoint("mock:result");
-        before.expectedBodiesReceived("Hello World", "Hello Camel");
+        before.expectedBodiesReceivedInAnyOrder("Hello World", "Hello Camel");
 
         // we use NON blocked redelivery delay so the messages arrive which
         // completes first
         MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedBodiesReceived("Hello Camel", "Hello World");
+        result.expectedBodiesReceivedInAnyOrder("Hello Camel", "Hello World");
 
         template.sendBody("seda:start", "World");
         template.sendBody("seda:start", "Camel");

@@ -90,6 +90,7 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
+                context.getStreamCachingStrategy().setSpoolEnabled(true);
                 context.getStreamCachingStrategy().addSpoolRule(spoolRule);
                 context.getStreamCachingStrategy().setAnySpoolRules(true);
                 context.setStreamCaching(true);

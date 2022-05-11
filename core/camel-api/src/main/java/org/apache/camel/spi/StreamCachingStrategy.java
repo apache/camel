@@ -115,6 +115,20 @@ public interface StreamCachingStrategy extends StaticService {
     boolean isEnabled();
 
     /**
+     * Enables spooling to disk.
+     * <p/>
+     * <b>Notice:</b> This cannot be changed at runtime.
+     *
+     * Default is disabled.
+     */
+    void setSpoolEnabled(boolean spoolEnabled);
+
+    /**
+     * Is spooling to disk enabled.
+     */
+    boolean isSpoolEnabled();
+
+    /**
      * Sets the spool (temporary) directory to use for overflow and spooling to disk.
      * <p/>
      * If no spool directory has been explicit configured, then a temporary directory is created in the
