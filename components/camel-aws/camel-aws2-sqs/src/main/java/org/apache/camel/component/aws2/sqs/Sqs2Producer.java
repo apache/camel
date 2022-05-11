@@ -56,6 +56,8 @@ public class Sqs2Producer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(Sqs2Producer.class);
 
     private static final int MAX_ATTRIBUTES = 10;
+    private static final String MAX_MESSAGE
+            = "Number of message headers exceeded. At most " + MAX_ATTRIBUTES + " headers is allowed when sending to AWS SQS.";
 
     private transient String sqsProducerToString;
 
@@ -302,22 +304,18 @@ public class Sqs2Producer extends DefaultProducer {
                     MessageAttributeValue mav = Sqs2MessageHelper.toMessageAttributeValue(entry.getValue());
                     if (mav != null) {
                         result.put(entry.getKey(), mav);
-                    } else {
-                        String action = getConfiguration().getMessageHeaderExceededLimit();
-                        if ("WARN".equalsIgnoreCase(action) || "WARN_ONCE".equalsIgnoreCase(action)) {
-                            // cannot translate the message header to message attribute value
-                            LOG.warn("Cannot put the message header key={}, value={} into SQS MessageAttribute", entry.getKey(),
-                                    entry.getValue());
-                            if ("WARN_ONCE".equalsIgnoreCase(action)) {
-                                break;
-                            }
-                        } else if ("IGNORE".equalsIgnoreCase(action)) {
+                    }
+                } else {
+                    String action = getConfiguration().getMessageHeaderExceededLimit();
+                    if ("WARN".equalsIgnoreCase(action) || "WARN_ONCE".equalsIgnoreCase(action)) {
+                        LOG.warn("Cannot put message header with key={} due: {}", entry.getKey(), MAX_MESSAGE);
+                        if ("WARN_ONCE".equalsIgnoreCase(action)) {
                             break;
-                        } else if ("FAIL".equalsIgnoreCase(action)) {
-                            throw new IllegalArgumentException(
-                                    "Number of message headers exceeded. At most " + MAX_ATTRIBUTES
-                                                               + " headers is allowed when sending to AWS SQS.");
                         }
+                    } else if ("IGNORE".equalsIgnoreCase(action)) {
+                        break;
+                    } else if ("FAIL".equalsIgnoreCase(action)) {
+                        throw new IllegalArgumentException(MAX_MESSAGE);
                     }
                 }
             }
