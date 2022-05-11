@@ -2699,9 +2699,7 @@ stopping routes). The default logging level is DEBUG. Default value: DEBUG
   <xs:complexType name="camelStreamCachingStrategyDefinition">
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="spoolThreshold" type="xs:string"/>
-        </xs:sequence>
+        <xs:sequence/>
         <xs:attribute name="enabled" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
@@ -2741,6 +2739,15 @@ is created in the java.io.tmpdir directory.
             <xs:documentation xml:lang="en"><![CDATA[
 Sets a cipher name to use when spooling to disk to write with encryption. By
 default the data is not encrypted.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="spoolThreshold" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Threshold in bytes when overflow to disk is activated. The default threshold is
+org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD bytes (eg 128kb). Use -1 to
+disable overflow to disk. Default value: 131072
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
