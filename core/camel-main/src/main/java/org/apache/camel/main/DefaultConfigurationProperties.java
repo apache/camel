@@ -451,9 +451,9 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * To enable stream caching spooling to disk. This means, for large stream messages (over 128 KB by default) will be cached in a
-     * temporary file instead, and Camel will handle deleting the temporary file once the cached stream is no longer
-     * necessary.
+     * To enable stream caching spooling to disk. This means, for large stream messages (over 128 KB by default) will be
+     * cached in a temporary file instead, and Camel will handle deleting the temporary file once the cached stream is
+     * no longer necessary.
      *
      * Default is false.
      */
@@ -1747,9 +1747,9 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * To enable stream caching spooling to disk. This means, for large stream messages (over 128 KB by default) will be cached in a
-     * temporary file instead, and Camel will handle deleting the temporary file once the cached stream is no longer
-     * necessary.
+     * To enable stream caching spooling to disk. This means, for large stream messages (over 128 KB by default) will be
+     * cached in a temporary file instead, and Camel will handle deleting the temporary file once the cached stream is
+     * no longer necessary.
      *
      * Default is false.
      */

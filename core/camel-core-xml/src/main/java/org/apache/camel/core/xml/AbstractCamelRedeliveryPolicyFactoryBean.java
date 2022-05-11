@@ -78,33 +78,40 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean", description = "Sets whether to log retry attempts")
     private String logRetryAttempted;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean", description = "Sets whether stack traces should be logged or not")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Sets whether stack traces should be logged or not")
     private String logStackTrace;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean", description = "Sets whether stack traces should be logged or not")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Sets whether stack traces should be logged or not")
     private String logRetryStackTrace;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean", description = "Sets whether errors should be logged even if its handled")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Sets whether errors should be logged even if its handled")
     private String logHandled;
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",
               description = "Sets whether errors should be logged when a new exception occurred during handling a previous exception")
     private String logNewException;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean", description = "Sets whether errors should be logged even if its continued")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Sets whether errors should be logged even if its continued")
     private String logContinued;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean", description = "Sets whether exhausted exceptions should be logged or not")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean",
+              description = "Sets whether exhausted exceptions should be logged or not")
     private String logExhausted;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean", description = "Sets whether to log exhausted errors including message history")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Sets whether to log exhausted errors including message history")
     private String logExhaustedMessageHistory;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
               description = "Sets whether exhausted message body/headers should be logged with message history included")
     private String logExhaustedMessageBody;
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean", description = "Disables redelivery by setting maximum redeliveries to 0.")
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Disables redelivery by setting maximum redeliveries to 0.")
     private String disableRedelivery;
     @XmlAttribute
     @Metadata(description = "Sets an optional delay pattern to use instead of fixed delay.")
