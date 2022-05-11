@@ -37,6 +37,7 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpUtil;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.component.netty.NettyConverter;
@@ -344,6 +345,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     @Override
     protected Exchange createExchange(ChannelHandlerContext ctx, Object message) throws Exception {
         Exchange exchange = this.consumer.createExchange(false);
+
+        exchange.adapt(ExtendedExchange.class).setUnitOfWork(null);
 
         // create a new IN message as we cannot reuse with netty
         Message in;
