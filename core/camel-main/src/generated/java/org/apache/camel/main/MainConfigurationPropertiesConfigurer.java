@@ -101,6 +101,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JavaRoutesIncludePattern": target.setJavaRoutesIncludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "jmxenabled":
         case "JmxEnabled": target.setJmxEnabled(property(camelContext, boolean.class, value)); return true;
+        case "jmxmanagementmbeanslevel":
+        case "JmxManagementMBeansLevel": target.setJmxManagementMBeansLevel(property(camelContext, org.apache.camel.ManagementMBeansLevel.class, value)); return true;
         case "jmxmanagementnamepattern":
         case "JmxManagementNamePattern": target.setJmxManagementNamePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "jmxmanagementstatisticslevel":
@@ -332,6 +334,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JavaRoutesIncludePattern": return java.lang.String.class;
         case "jmxenabled":
         case "JmxEnabled": return boolean.class;
+        case "jmxmanagementmbeanslevel":
+        case "JmxManagementMBeansLevel": return org.apache.camel.ManagementMBeansLevel.class;
         case "jmxmanagementnamepattern":
         case "JmxManagementNamePattern": return java.lang.String.class;
         case "jmxmanagementstatisticslevel":
@@ -564,6 +568,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "JavaRoutesIncludePattern": return target.getJavaRoutesIncludePattern();
         case "jmxenabled":
         case "JmxEnabled": return target.isJmxEnabled();
+        case "jmxmanagementmbeanslevel":
+        case "JmxManagementMBeansLevel": return target.getJmxManagementMBeansLevel();
         case "jmxmanagementnamepattern":
         case "JmxManagementNamePattern": return target.getJmxManagementNamePattern();
         case "jmxmanagementstatisticslevel":

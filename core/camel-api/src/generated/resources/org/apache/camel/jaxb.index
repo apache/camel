@@ -2,6 +2,7 @@
 BeanScope
 ExchangePattern
 LoggingLevel
+ManagementMBeansLevel
 ManagementStatisticsLevel
 ShutdownRoute
 ShutdownRunningTask

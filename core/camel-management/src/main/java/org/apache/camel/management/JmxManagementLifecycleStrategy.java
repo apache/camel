@@ -829,6 +829,11 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
      * Should the given processor be registered.
      */
     protected boolean registerProcessor(ProcessorDefinition<?> processor) {
+
+        //skip processors according the ManagementMBeansLevel
+        if (!getManagementStrategy().getManagementAgent().getMBeansLevel().isProcessors()) {
+            return false;
+        }
         // skip on exception
         if (processor instanceof OnExceptionDefinition) {
             return false;
@@ -913,6 +918,11 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         }
 
         LOG.trace("Checking whether to register {} from route: {}", service, route);
+
+        //skip route according the ManagementMBeansLevel
+        if (!getManagementStrategy().getManagementAgent().getMBeansLevel().isRoutes()) {
+            return false;
+        }
 
         ManagementAgent agent = getManagementStrategy().getManagementAgent();
         if (agent == null) {
