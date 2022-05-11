@@ -53,7 +53,7 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     @Metadata(description = "Sets the maximum number of tasks in the work queue. Use -1 for an unbounded queue")
     private String maxQueueSize;
     @XmlAttribute
-    @Metadata(description = "Sets whether to allow core threads to timeout")
+    @Metadata(description = "Sets whether to allow core threads to timeout", javaType = "java.lang.Boolean")
     private String allowCoreThreadTimeOut;
     @XmlAttribute
     @Metadata(description = "Sets the handler for tasks which cannot be executed by the thread pool.",
@@ -64,8 +64,8 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     @Metadata(description = "To use a custom thread name / pattern")
     private String threadName;
     @XmlAttribute
-    @Metadata(description = "Whether to use a scheduled thread pool", defaultValue = "false")
-    private Boolean scheduled;
+    @Metadata(description = "Whether to use a scheduled thread pool", defaultValue = "false", javaType = "java.lang.Boolean")
+    private String scheduled;
 
     @Override
     public ExecutorService getObject() throws Exception {
@@ -103,6 +103,7 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
                 .build();
 
         ExecutorService answer;
+        Boolean scheduled = CamelContextHelper.parseBoolean(getCamelContext(), getScheduled());
         if (scheduled != null && scheduled) {
             answer = getCamelContext().getExecutorServiceManager().newScheduledThreadPool(getId(), getThreadName(), profile);
         } else {
@@ -180,12 +181,11 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
         this.threadName = threadName;
     }
 
-    public Boolean getScheduled() {
+    public String getScheduled() {
         return scheduled;
     }
 
-    public void setScheduled(Boolean scheduled) {
+    public void setScheduled(String scheduled) {
         this.scheduled = scheduled;
     }
-
 }

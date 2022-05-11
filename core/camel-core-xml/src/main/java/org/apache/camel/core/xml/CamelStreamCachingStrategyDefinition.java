@@ -21,8 +21,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.StreamCache;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.IOHelper;
 
 /**
  * Stream caching configuration.
@@ -43,6 +45,7 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     @XmlAttribute
     private String spoolCipher;
     @XmlAttribute
+    @Metadata(defaultValue = "" + StreamCache.DEFAULT_SPOOL_THRESHOLD)
     private String spoolThreshold;
     @XmlAttribute
     private String spoolUsedHeapMemoryThreshold;
@@ -51,9 +54,10 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     @XmlAttribute
     private String spoolRules;
     @XmlAttribute
+    @Metadata(defaultValue = "" + IOHelper.DEFAULT_BUFFER_SIZE)
     private String bufferSize;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String removeSpoolDirectoryWhenStopping;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")

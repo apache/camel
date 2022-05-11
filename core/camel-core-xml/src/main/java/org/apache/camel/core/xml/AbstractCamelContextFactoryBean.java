@@ -35,6 +35,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.ManagementMBeansLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
@@ -715,6 +716,12 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 ManagementStatisticsLevel msLevel
                         = getContext().getTypeConverter().mandatoryConvertTo(ManagementStatisticsLevel.class, level);
                 properties.put("statisticsLevel", msLevel);
+            }
+            if (camelJMXAgent.getMbeansLevel() != null) {
+                String level = CamelContextHelper.parseText(getContext(), camelJMXAgent.getMbeansLevel());
+                ManagementMBeansLevel mbLevel
+                        = getContext().getTypeConverter().mandatoryConvertTo(ManagementMBeansLevel.class, level);
+                properties.put("mBeansLevel", mbLevel);
             }
 
             getContext().adapt(ExtendedCamelContext.class).setupManagement(properties);

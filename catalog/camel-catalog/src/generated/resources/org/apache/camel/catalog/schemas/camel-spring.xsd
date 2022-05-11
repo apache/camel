@@ -2333,7 +2333,7 @@ queue.
         <xs:attribute name="allowCoreThreadTimeOut" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets whether to allow core threads to timeout.
+Sets whether to allow core threads to timeout. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -2352,7 +2352,7 @@ To use a custom thread name / pattern.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="scheduled" type="xs:boolean">
+        <xs:attribute name="scheduled" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Whether to use a scheduled thread pool. Default value: false
@@ -2424,6 +2424,14 @@ Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 Level of granularity for performance statistics enabled. Default value: Default
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="mbeansLevel" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the mbeans registration level. The default value is Default. Default value:
+Default
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -2691,12 +2699,31 @@ stopping routes). The default logging level is DEBUG. Default value: DEBUG
   <xs:complexType name="camelStreamCachingStrategyDefinition">
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
-        <xs:sequence/>
+        <xs:sequence>
+          <xs:element minOccurs="0" name="spoolThreshold" type="xs:string"/>
+        </xs:sequence>
         <xs:attribute name="enabled" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets whether the stream caching is enabled. Notice: This cannot be changed at
-runtime. Default value: false
+Sets whether stream caching is enabled or not. While stream types (like
+StreamSource, InputStream and Reader) are commonly used in messaging for
+performance reasons, they also have an important drawback: they can only be read
+once. In order to be able to work with message content multiple times, the
+stream needs to be cached. Streams are cached in memory only (by default). If
+streamCachingSpoolEnabled=true, then, for large stream messages (over 128 KB by
+default) will be cached in a temporary file instead, and Camel will handle
+deleting the temporary file once the cached stream is no longer necessary.
+Default is true. Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="spoolEnabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To enable stream caching spooling to disk. This means, for large stream messages
+(over 128 KB by default) will be cached in a temporary file instead, and Camel
+will handle deleting the temporary file once the cached stream is no longer
+necessary. Default is false. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -2714,15 +2741,6 @@ is created in the java.io.tmpdir directory.
             <xs:documentation xml:lang="en"><![CDATA[
 Sets a cipher name to use when spooling to disk to write with encryption. By
 default the data is not encrypted.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="spoolThreshold" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Threshold in bytes when overflow to disk is activated. The default threshold is
-org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD bytes (eg 128kb). Use -1 to
-disable overflow to disk.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -2756,7 +2774,7 @@ be separated by comma.
             <xs:documentation xml:lang="en"><![CDATA[
 Sets the buffer size to use when allocating in-memory buffers used for in-memory
 stream caches. The default size is
-org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE.
+org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE. Default value: 4096
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -2771,7 +2789,7 @@ true. Default value: true
         <xs:attribute name="statisticsEnabled" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Sets whether statistics is enabled.
+Sets whether statistics is enabled. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
