@@ -37,7 +37,7 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
 
     @Override
     public int size() {
-        return 94;
+        return 95;
     }
 
     @Override
@@ -207,6 +207,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (value instanceof byte[]) {
                 return getXmlConverter().toDOMSource((byte[]) value);
             }
+            if (value instanceof org.apache.camel.StreamCache) {
+                return getXmlConverter().toDOMSource((org.apache.camel.StreamCache) value, exchange);
+            }
             if (value instanceof java.io.InputStream) {
                 return getXmlConverter().toDOMSource((java.io.InputStream) value, exchange);
             }
@@ -319,6 +322,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (value instanceof byte[]) {
                 return getXmlConverter().toDOMDocument((byte[]) value, exchange);
             }
+            if (value instanceof org.apache.camel.StreamCache) {
+                return getXmlConverter().toDOMDocument((org.apache.camel.StreamCache) value, exchange);
+            }
             if (value instanceof java.io.InputStream) {
                 return getXmlConverter().toDOMDocument((java.io.InputStream) value, exchange);
             }
@@ -344,9 +350,6 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 } else {
                     return obj;
                 }
-            }
-            if (value instanceof org.apache.camel.StreamCache) {
-                return getXmlConverter().toDOMDocument((org.apache.camel.StreamCache) value, exchange);
             }
         } else if (to == org.w3c.dom.Element.class) {
             if (value instanceof javax.xml.transform.Source) {
@@ -535,6 +538,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (from == byte[].class) {
                 return this;
             }
+            if (from == org.apache.camel.StreamCache.class) {
+                return this;
+            }
             if (from == java.io.InputStream.class) {
                 return this;
             }
@@ -647,6 +653,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (from == byte[].class) {
                 return this;
             }
+            if (from == org.apache.camel.StreamCache.class) {
+                return this;
+            }
             if (from == java.io.InputStream.class) {
                 return this;
             }
@@ -666,9 +675,6 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 return this;
             }
             if (from == org.w3c.dom.NodeList.class) {
-                return this;
-            }
-            if (from == org.apache.camel.StreamCache.class) {
                 return this;
             }
         } else if (to == org.w3c.dom.Element.class) {

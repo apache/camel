@@ -23,6 +23,7 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.camel.StreamCache;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -196,12 +197,16 @@ public class TestHelper {
     }
 
     private Document getDocumentForInMessage(Exchange exchange) {
-        byte[] body = exchange.getIn().getBody(byte[].class);
-        Document d = createDocumentfromInputStream(new ByteArrayInputStream(body), exchange.getContext());
+        Object body = exchange.getIn().getBody();
+        if (body instanceof StreamCache) {
+            ((StreamCache) body).reset();
+        }
+        byte[] arr = exchange.getIn().getBody(byte[].class);
+        Document d = createDocumentFromInputStream(new ByteArrayInputStream(arr), exchange.getContext());
         return d;
     }
 
-    private Document createDocumentfromInputStream(InputStream is, CamelContext context) {
+    private Document createDocumentFromInputStream(InputStream is, CamelContext context) {
         return context.getTypeConverter().convertTo(Document.class, is);
     }
 

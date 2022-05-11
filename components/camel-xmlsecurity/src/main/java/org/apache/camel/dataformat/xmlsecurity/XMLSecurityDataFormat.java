@@ -40,6 +40,7 @@ import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.transform.dom.DOMSource;
 
+import org.apache.camel.StreamCache;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -456,6 +457,12 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         Document encodedDocument = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, stream);
+
+        // we may access the message body on the exchange again when decoding, so we need to reset stream cache
+        Object body = exchange.getMessage().getBody();
+        if (body instanceof StreamCache) {
+            ((StreamCache) body).reset();
+        }
 
         if (null != keyCipherAlgorithm
                 && (keyCipherAlgorithm.equals(XMLCipher.RSA_v1dot5) || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP)
