@@ -24,8 +24,8 @@ import org.slf4j.MDC;
  */
 public final class ActiveSpanManager {
 
-    public static final String MDC_TRACE_ID = "traceId";
-    public static final String MDC_SPAN_ID = "spanId";
+    public static final String MDC_TRACE_ID = "trace_id";
+    public static final String MDC_SPAN_ID = "span_id";
     private static final String ACTIVE_SPAN_PROPERTY = "OpenTracing.activeSpan";
 
     private ActiveSpanManager() {

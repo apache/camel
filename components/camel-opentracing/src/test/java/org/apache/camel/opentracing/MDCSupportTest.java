@@ -62,8 +62,8 @@ public class MDCSupportTest extends CamelOpenTracingTestSupport {
                 from("seda:a").routeId("a")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
-                                assertNotNull(MDC.get("traceId"));
-                                assertNotNull(MDC.get("spanId"));
+                                assertNotNull(MDC.get("trace_id"));
+                                assertNotNull(MDC.get("span_id"));
                             }
                         });
             }

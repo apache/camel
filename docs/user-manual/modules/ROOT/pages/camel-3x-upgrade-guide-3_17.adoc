@@ -173,25 +173,33 @@ Asynchronous, Synchronous or NO-OP commit policies from the former `autoCommitOn
 
 The deprecated constructors for the kafkaManualCommitFactory have been removed. The constructor should now receive the following parameters:
 
-```
+[source,java]
+----
 CamelExchangePayload camelExchangePayload, KafkaRecordPayload kafkaRecordPayload, CommitManager commitManager
-```
-
+----
 
 === camel-platform-http-vertx
 
 The configuration for body handler file uploads has changed from `true` to `false`.
 The configuration can be enabled via the `VertxPlatformHttpServerConfiguration` class.
 
+=== camel-opentracing / camel-opentelemetry
+
+We aligned the MDC keys with OpenTelemetry, so they are changed from:
+
+- `traceId` -> `trace_id`
+- `spanId` -> `span_id`
+
 === camel-atom
 
 This component was refactored to support the Resume API v2. As such, the options `filter` and `lastUpdate` where removed.
 
-```
+[source,java]
+----
 from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=500")
     .resumable().resumeStrategy(new UpdatedDateFilter(new Date()))
     .to("mock:result");
-```
+----
 
 More complex filters can be implemented by extending the `UpdatedDateFilter` or by implementing a new `EntryFilter` resume strategy.
 

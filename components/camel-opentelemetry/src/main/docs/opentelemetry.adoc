@@ -61,6 +61,7 @@ The `OpenTelemetryTracer` will be implicitly obtained from the camel context's `
 a `OpenTelemetryTracer` bean has been defined by the application.
 
 == Java Agent
+
 Download the https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/[latest version].
 
 This package includes the instrumentation agent as well as instrumentations for all supported libraries and all available data exporters.
@@ -84,4 +85,5 @@ java -javaagent:path/to/opentelemetry-javaagent.jar \
 include::spring-boot:partial$starter.adoc[]
 
 == MDC Logging
-When MDC Logging is enabled for the active Camel context the Trace ID and Span ID will be added and removed from the MDC for each route, the keys are `traceId` and `spanId`, respectively.
+
+When MDC Logging is enabled for the active Camel context the Trace ID and Span ID will be added and removed from the MDC for each route, the keys are `trace_id` and `span_id`, respectively.
