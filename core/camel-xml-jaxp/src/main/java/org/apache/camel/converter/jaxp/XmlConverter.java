@@ -56,6 +56,7 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.camel.StreamCache;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -852,6 +853,19 @@ public class XmlConverter {
             is = new ByteArrayInputStream(s.getBytes());
         }
         return is;
+    }
+
+    @Converter(order = 64)
+    public Source toSource(StreamCache cache, Exchange exchange) {
+        byte[] arr = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, cache);
+        return toSource(arr);
+    }
+
+    @Converter(order = 65)
+    public Document toDOMDocument(StreamCache cache, Exchange exchange)
+            throws IOException, SAXException, ParserConfigurationException {
+        byte[] arr = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, cache);
+        return toDOMDocument(arr, exchange);
     }
 
     /**

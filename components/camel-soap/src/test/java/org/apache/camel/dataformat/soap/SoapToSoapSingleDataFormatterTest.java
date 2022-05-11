@@ -71,7 +71,7 @@ public class SoapToSoapSingleDataFormatterTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         Exchange result = endpoint.assertExchangeReceived(0);
 
-        byte[] body = (byte[]) result.getIn().getBody();
+        byte[] body = result.getIn().getBody(byte[].class);
         InputStream stream = new ByteArrayInputStream(body);
         SOAPMessage request = MessageFactory.newInstance().createMessage(null, stream);
         assertTrue(null != request.getSOAPHeader()

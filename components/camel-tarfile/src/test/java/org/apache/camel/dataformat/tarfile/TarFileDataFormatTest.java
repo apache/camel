@@ -73,7 +73,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".tar", exchange.getIn().getHeader(FILE_NAME));
         assertTrue(ObjectHelper.equalByteArray(getTaredText(exchange.getIn().getMessageId()),
-                (byte[]) exchange.getIn().getBody()));
+                exchange.getIn().getBody(byte[].class)));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
-        assertTrue(ObjectHelper.equalByteArray(getTaredText("poem.txt"), (byte[]) exchange.getIn().getBody()));
+        assertTrue(ObjectHelper.equalByteArray(getTaredText("poem.txt"), exchange.getIn().getBody(byte[].class)));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
-        assertTrue(ObjectHelper.equalByteArray(getTaredText("poem.txt"), (byte[]) exchange.getIn().getBody()));
+        assertTrue(ObjectHelper.equalByteArray(getTaredText("poem.txt"), exchange.getIn().getBody(byte[].class)));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertTrue(ObjectHelper.equalByteArray(getTaredTextInFolder("poems/", "poems/poem.txt"),
-                (byte[]) exchange.getIn().getBody()));
+                exchange.getIn().getBody(byte[].class)));
     }
 
     @Test
@@ -150,7 +150,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId(), exchange.getIn().getHeader(FILE_NAME));
-        assertEquals(TEXT, new String((byte[]) exchange.getIn().getBody(), StandardCharsets.UTF_8));
+        assertEquals(TEXT, new String(exchange.getIn().getBody(byte[].class), StandardCharsets.UTF_8));
     }
 
     @Test

@@ -27,6 +27,8 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import java.io.InputStream;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -36,7 +38,6 @@ public class JacksonProtobufLookupResolverTest extends CamelTestSupport {
     public void testMarshalUnmarshalPojo() throws Exception {
         MockEndpoint mock1 = getMockEndpoint("mock:serialized");
         mock1.expectedMessageCount(1);
-        mock1.message(0).body().isInstanceOf(byte[].class);
 
         Pojo pojo = new Pojo("Hello");
         template.sendBody("direct:pojo", pojo);

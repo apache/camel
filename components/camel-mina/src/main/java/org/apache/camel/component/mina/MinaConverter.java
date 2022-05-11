@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInput;
@@ -23,6 +24,9 @@ import java.io.ObjectInputStream;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.mina.core.buffer.IoBuffer;
 
 /**
@@ -66,5 +70,11 @@ public final class MinaConverter {
         IoBuffer buf = IoBuffer.allocate(bytes.length);
         buf.put(bytes);
         return buf;
+    }
+
+    @Converter
+    public static IoBuffer toIoBuffer(StreamCache cache, Exchange exchange) throws Exception {
+        byte[] arr = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, cache);
+        return toIoBuffer(arr);
     }
 }

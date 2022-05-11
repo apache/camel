@@ -20,11 +20,10 @@ import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FtpSimpleConsumeStreamingStepwiseFalseIT extends FtpServerTestSupport {
 
@@ -51,8 +50,8 @@ public class FtpSimpleConsumeStreamingStepwiseFalseIT extends FtpServerTestSuppo
     }
 
     void assertMore(MockEndpoint mock) {
-        GenericFile<?> remoteFile = (GenericFile<?>) mock.getExchanges().get(0).getIn().getBody();
-        assertTrue(remoteFile.getBody() instanceof InputStream);
+        InputStream is = mock.getExchanges().get(0).getIn().getBody(InputStream.class);
+        assertNotNull(is);
     }
 
     MockEndpoint getMockEndpoint() {

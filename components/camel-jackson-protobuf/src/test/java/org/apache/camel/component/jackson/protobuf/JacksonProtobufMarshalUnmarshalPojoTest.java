@@ -35,7 +35,6 @@ public class JacksonProtobufMarshalUnmarshalPojoTest extends CamelTestSupport {
     public void testMarshalUnmarshalPojo() throws Exception {
         MockEndpoint mock1 = getMockEndpoint("mock:serialized");
         mock1.expectedMessageCount(1);
-        mock1.message(0).body().isInstanceOf(byte[].class);
 
         Pojo pojo = new Pojo("Hello");
         template.sendBody("direct:pojo", pojo);

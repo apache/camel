@@ -21,11 +21,11 @@ import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpStreamingMoveIT extends FtpServerTestSupport {
@@ -46,8 +46,8 @@ public class FtpStreamingMoveIT extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        GenericFile<?> remoteFile = (GenericFile<?>) mock.getExchanges().get(0).getIn().getBody();
-        assertTrue(remoteFile.getBody() instanceof InputStream);
+        InputStream is = mock.getExchanges().get(0).getIn().getBody(InputStream.class);
+        assertNotNull(is);
 
         // give time for consumer to rename file
         File file = ftpFile("mymove/done/hello.txt").toFile();

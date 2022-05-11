@@ -20,12 +20,11 @@ import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpSimpleConsumeStreamingIT extends SftpServerTestSupport {
@@ -45,8 +44,9 @@ public class SftpSimpleConsumeStreamingIT extends SftpServerTestSupport {
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
-        GenericFile<?> remoteFile = mock.getExchanges().get(0).getIn().getBody(GenericFile.class);
-        assertTrue(remoteFile.getBody() instanceof InputStream);
+
+        InputStream is = mock.getExchanges().get(0).getIn().getBody(InputStream.class);
+        assertNotNull(is);
     }
 
     @Override

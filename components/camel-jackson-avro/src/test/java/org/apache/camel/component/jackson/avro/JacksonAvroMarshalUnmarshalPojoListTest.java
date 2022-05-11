@@ -38,7 +38,6 @@ public class JacksonAvroMarshalUnmarshalPojoListTest extends CamelTestSupport {
     public void testMarshalUnmarshalPojoList() throws Exception {
         MockEndpoint mock1 = getMockEndpoint("mock:serialized");
         mock1.expectedMessageCount(1);
-        mock1.message(0).body().isInstanceOf(byte[].class);
 
         List<Pojo> pojos = new ArrayList<>();
         pojos.add(new Pojo("Hello"));

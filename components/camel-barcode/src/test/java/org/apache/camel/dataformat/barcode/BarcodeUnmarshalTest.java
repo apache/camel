@@ -46,7 +46,7 @@ public class BarcodeUnmarshalTest extends BarcodeTestBase {
             }
         });
 
-        assertEquals(180, exchange.getOut().getHeader("ORIENTATION"));
+        assertEquals(180, exchange.getMessage().getHeader("ORIENTATION"));
 
     }
 
@@ -63,7 +63,7 @@ public class BarcodeUnmarshalTest extends BarcodeTestBase {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                ByteArrayInputStream bis = new ByteArrayInputStream((byte[]) exchange.getIn().getBody());
+                                InputStream bis = exchange.getIn().getBody(InputStream.class);
                                 BinaryBitmap bitmap = new BinaryBitmap(
                                         new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(bis))));
                                 BitMatrix blackMatrix = bitmap.getBlackMatrix();

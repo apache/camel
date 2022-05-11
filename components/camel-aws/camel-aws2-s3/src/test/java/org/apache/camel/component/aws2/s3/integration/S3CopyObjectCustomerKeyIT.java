@@ -16,12 +16,7 @@
  */
 package org.apache.camel.component.aws2.s3.integration;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.List;
@@ -37,10 +32,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.utils.Md5Utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -100,9 +94,9 @@ public class S3CopyObjectCustomerKeyIT extends Aws2S3Base {
             }
         });
 
-        ResponseInputStream<GetObjectResponse> s3 = res.getIn().getBody(ResponseInputStream.class);
-
-        assertEquals("Test", readInputStream(s3));
+        InputStream is = res.getIn().getBody(InputStream.class);
+        Assertions.assertNotNull(is);
+        assertEquals("Test", context.getTypeConverter().convertTo(String.class, is));
 
         Exchange res1 = template.request("direct:listObject", new Processor() {
 
@@ -153,15 +147,4 @@ public class S3CopyObjectCustomerKeyIT extends Aws2S3Base {
         }
     }
 
-    private String readInputStream(ResponseInputStream<GetObjectResponse> s3Object) throws IOException {
-        StringBuilder textBuilder = new StringBuilder();
-        try (Reader reader
-                = new BufferedReader(new InputStreamReader(s3Object, Charset.forName(StandardCharsets.UTF_8.name())))) {
-            int c = 0;
-            while ((c = reader.read()) != -1) {
-                textBuilder.append((char) c);
-            }
-        }
-        return textBuilder.toString();
-    }
 }

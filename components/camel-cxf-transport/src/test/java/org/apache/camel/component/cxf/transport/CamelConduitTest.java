@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.IOHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
@@ -154,15 +155,10 @@ public class CamelConduitTest extends CamelTransportTestSupport {
     }
 
     public void verifyReceivedMessage(String content) {
-        ByteArrayInputStream bis = (ByteArrayInputStream) inMessage.getContent(InputStream.class);
-        byte bytes[] = new byte[bis.available()];
-        try {
-            bis.read(bytes);
-        } catch (IOException ex) {
-            LOG.warn("I/O error receiving messages: {}", ex.getMessage(), ex);
-        }
-        String reponse = new String(bytes);
-        assertEquals(content, reponse, "The reponse date should be equals");
+        InputStream is = inMessage.getContent(InputStream.class);
+        byte[] bytes = context().getTypeConverter().convertTo(byte[].class, is);
+        String response = new String(bytes);
+        assertEquals(content, response, "The response date should be equals");
 
     }
 }

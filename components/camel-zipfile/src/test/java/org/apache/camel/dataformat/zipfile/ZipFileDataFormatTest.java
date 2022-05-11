@@ -99,7 +99,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".zip", exchange.getIn().getHeader(FILE_NAME));
-        assertArrayEquals(getZippedText(exchange.getIn().getMessageId()), (byte[]) exchange.getIn().getBody());
+        assertArrayEquals(getZippedText(exchange.getIn().getMessageId()), exchange.getIn().getBody(byte[].class));
     }
 
     @Test
@@ -183,7 +183,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId(), exchange.getIn().getHeader(FILE_NAME));
-        assertEquals(TEXT, new String((byte[]) exchange.getIn().getBody(), "UTF-8"));
+        assertEquals(TEXT, new String(exchange.getIn().getBody(byte[].class), "UTF-8"));
     }
 
     @Test

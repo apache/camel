@@ -17,6 +17,7 @@
 package org.apache.camel.component.hl7;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 
 import ca.uhn.hl7v2.model.Message;
@@ -51,7 +52,7 @@ public class HL7DataFormatTest extends CamelTestSupport {
     public void testMarshal() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
         mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(byte[].class);
+        mock.message(0).body().isInstanceOf(InputStream.class);
         mock.message(0).body(String.class).contains("MSA|AA|123");
         mock.message(0).body(String.class).contains("QRD|20080805120000");
 
@@ -65,7 +66,7 @@ public class HL7DataFormatTest extends CamelTestSupport {
     public void testMarshalISO8859() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
         mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(byte[].class);
+        mock.message(0).body().isInstanceOf(InputStream.class);
         mock.message(0).body(String.class).contains("MSA|AA|123");
         mock.message(0).body(String.class).contains("QRD|20080805120000");
         mock.message(0).body(String.class).not().contains(NONE_ISO_8859_1);
@@ -84,7 +85,7 @@ public class HL7DataFormatTest extends CamelTestSupport {
         template.sendBodyAndProperty("direct:marshal", message, Exchange.CHARSET_NAME, charsetName);
         assertMockEndpointsSatisfied();
 
-        byte[] body = (byte[]) mock.getExchanges().get(0).getIn().getBody();
+        byte[] body = mock.getExchanges().get(0).getIn().getBody(byte[].class);
         String msg = new String(body, Charset.forName(charsetName));
         assertTrue(msg.contains("MSA|AA|123"));
         assertTrue(msg.contains("QRD|20080805120000"));
@@ -94,7 +95,7 @@ public class HL7DataFormatTest extends CamelTestSupport {
     public void testMarshalUTF8() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
         mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(byte[].class);
+        mock.message(0).body().isInstanceOf(InputStream.class);
         mock.message(0).body(String.class).contains("MSA|AA|123");
         mock.message(0).body(String.class).contains("QRD|20080805120000");
         mock.message(0).body(String.class).contains(NONE_ISO_8859_1);

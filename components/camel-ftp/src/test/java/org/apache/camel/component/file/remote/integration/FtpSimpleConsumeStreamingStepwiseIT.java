@@ -22,13 +22,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 // README (informative only, to be removed in final version):
 // The filesize at which this test fails is arbitrary, I suppose it depends on the FTP we are using and Java
@@ -54,10 +53,11 @@ public class FtpSimpleConsumeStreamingStepwiseIT extends FtpServerTestSupport {
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
+
         resultEndpoint.assertIsSatisfied();
 
-        GenericFile<?> remoteFile = (GenericFile<?>) resultEndpoint.getExchanges().get(0).getIn().getBody();
-        assertTrue(remoteFile.getBody() instanceof InputStream);
+        InputStream is = resultEndpoint.getExchanges().get(0).getIn().getBody(InputStream.class);
+        assertNotNull(is);
     }
 
     private void prepareFtpServer() throws Exception {

@@ -23,13 +23,13 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -52,8 +52,9 @@ public class SftpSimpleConsumeStreamingPartialReadIT extends SftpServerTestSuppo
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
-        GenericFile<?> remoteFile1 = (GenericFile<?>) mock.getExchanges().get(0).getIn().getBody();
-        assertTrue(remoteFile1.getBody() instanceof InputStream);
+
+        InputStream is = mock.getExchanges().get(0).getIn().getBody(InputStream.class);
+        assertNotNull(is);
 
         // Wait a little bit for the move to finish.
         File resultFile = new File(service.getFtpRootDir() + File.separator + "failed", "hello.txt");

@@ -37,7 +37,7 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
 
     @Override
     public int size() {
-        return 92;
+        return 94;
     }
 
     @Override
@@ -191,6 +191,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (value instanceof org.w3c.dom.Document) {
                 return getXmlConverter().toSource((org.w3c.dom.Document) value);
             }
+            if (value instanceof org.apache.camel.StreamCache) {
+                return getXmlConverter().toSource((org.apache.camel.StreamCache) value, exchange);
+            }
         } else if (to == javax.xml.transform.dom.DOMSource.class) {
             if (value instanceof org.w3c.dom.Document) {
                 return getXmlConverter().toDOMSource((org.w3c.dom.Document) value);
@@ -341,6 +344,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 } else {
                     return obj;
                 }
+            }
+            if (value instanceof org.apache.camel.StreamCache) {
+                return getXmlConverter().toDOMDocument((org.apache.camel.StreamCache) value, exchange);
             }
         } else if (to == org.w3c.dom.Element.class) {
             if (value instanceof javax.xml.transform.Source) {
@@ -513,6 +519,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (from == org.w3c.dom.Document.class) {
                 return this;
             }
+            if (from == org.apache.camel.StreamCache.class) {
+                return this;
+            }
         } else if (to == javax.xml.transform.dom.DOMSource.class) {
             if (from == org.w3c.dom.Document.class) {
                 return this;
@@ -657,6 +666,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 return this;
             }
             if (from == org.w3c.dom.NodeList.class) {
+                return this;
+            }
+            if (from == org.apache.camel.StreamCache.class) {
                 return this;
             }
         } else if (to == org.w3c.dom.Element.class) {

@@ -40,7 +40,6 @@ public class JacksonAvroMarshalUnmarshalJsonNodeTest extends CamelTestSupport {
     public void testMarshalUnmarshalJsonNode() throws Exception {
         MockEndpoint mock1 = getMockEndpoint("mock:serialized");
         mock1.expectedMessageCount(1);
-        mock1.message(0).body().isInstanceOf(byte[].class);
 
         Pojo pojo = new Pojo("Hello");
         template.sendBody("direct:pojo", pojo);
@@ -67,7 +66,6 @@ public class JacksonAvroMarshalUnmarshalJsonNodeTest extends CamelTestSupport {
     public void testMarshalUnmarshalJsonNodeList() throws Exception {
         MockEndpoint mock1 = getMockEndpoint("mock:serialized");
         mock1.expectedMessageCount(1);
-        mock1.message(0).body().isInstanceOf(byte[].class);
 
         List<JacksonAvroMarshalUnmarshalPojoListTest.Pojo> pojos = new ArrayList<>();
         pojos.add(new JacksonAvroMarshalUnmarshalPojoListTest.Pojo("Hello"));

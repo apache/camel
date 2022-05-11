@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import java.io.File;
-import java.io.InputStream;
-
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -28,23 +23,27 @@ import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.jms.ConnectionFactory;
+import java.io.File;
+
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsStreamMessageTypeTest extends CamelTestSupport {
+public class JmsStreamMessageTypeNoStreamCachingTest extends CamelTestSupport {
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/stream");
+        deleteDirectory("target/nostream");
         super.setUp();
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
+        camelContext.setStreamCaching(false);
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
@@ -63,7 +62,10 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         Object body = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody();
-        InputStream is = assertIsInstanceOf(InputStream.class, body);
+        StreamMessageInputStream is = assertIsInstanceOf(StreamMessageInputStream.class, body);
+
+        // no more bytes should be available on the inputstream
+        assertEquals(0, is.available());
 
         // assert on the content of input versus output file
         String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/message1.xml"));
@@ -82,7 +84,10 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         Object body = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody();
-        InputStream is = assertIsInstanceOf(InputStream.class, body);
+        StreamMessageInputStream is = assertIsInstanceOf(StreamMessageInputStream.class, body);
+
+        // no more bytes should be available on the inputstream
+        assertEquals(0, is.available());
 
         // assert on the content of input versus output file
         String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/message1.txt"));

@@ -151,12 +151,11 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         destination.shutdown();
     }
 
-    private void verifyReceivedMessage(Message inMessage, String content) throws IOException {
-        ByteArrayInputStream bis = (ByteArrayInputStream) inMessage.getContent(InputStream.class);
-        byte bytes[] = new byte[bis.available()];
-        bis.read(bytes);
-        String reponse = new String(bytes);
-        assertEquals(content, reponse, "The reponse date should be equals");
+    private void verifyReceivedMessage(Message inMessage, String content) {
+        InputStream is = inMessage.getContent(InputStream.class);
+        byte[] bytes = context().getTypeConverter().convertTo(byte[].class, is);
+        String response = new String(bytes);
+        assertEquals(content, response, "The response date should be equals");
     }
 
     @Test

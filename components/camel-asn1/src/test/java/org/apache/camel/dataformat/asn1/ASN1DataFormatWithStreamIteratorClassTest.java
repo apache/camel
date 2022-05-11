@@ -77,7 +77,6 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
 
         assertEquals(1, exchanges.size());
         for (Exchange exchange : exchanges) {
-            assertTrue(exchange.getIn().getBody() instanceof byte[]);
             // assertTrue(Arrays.equals(FileUtils.readFileToByteArray(testFile),
             // exchange.getIn().getBody(byte[].class)));
 

@@ -51,6 +51,8 @@ public final class MinaConverterLoader implements TypeConverterLoader, CamelCont
             (type, exchange, value) -> org.apache.camel.component.mina.MinaConverter.toString((org.apache.mina.core.buffer.IoBuffer) value, exchange));
         addTypeConverter(registry, org.apache.mina.core.buffer.IoBuffer.class, byte[].class, false,
             (type, exchange, value) -> org.apache.camel.component.mina.MinaConverter.toIoBuffer((byte[]) value));
+        addTypeConverter(registry, org.apache.mina.core.buffer.IoBuffer.class, org.apache.camel.StreamCache.class, false,
+            (type, exchange, value) -> org.apache.camel.component.mina.MinaConverter.toIoBuffer((org.apache.camel.StreamCache) value, exchange));
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) { 

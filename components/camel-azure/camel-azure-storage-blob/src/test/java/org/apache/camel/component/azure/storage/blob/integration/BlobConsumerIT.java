@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.azure.storage.blob.integration;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 
@@ -100,12 +98,8 @@ class BlobConsumerIT extends Base {
         mockEndpoint.expectedMessageCount(1);
         mockEndpoint.assertIsSatisfied();
 
-        final BlobInputStream blobInputStream = mockEndpoint.getExchanges().get(0).getIn().getBody(BlobInputStream.class);
-        assertNotNull(blobInputStream, "BlobInputStream must be set");
-
-        final String bufferedText = new BufferedReader(new InputStreamReader(blobInputStream)).readLine();
-
-        assertEquals("Block Blob", bufferedText);
+        String text = mockEndpoint.getExchanges().get(0).getIn().getBody(String.class);
+        assertEquals("Block Blob", text);
     }
 
     @Test
@@ -132,24 +126,15 @@ class BlobConsumerIT extends Base {
 
         MockEndpoint.assertIsSatisfied(context());
 
-        final BlobInputStream blobInputStream = mockEndpoint.getExchanges().get(0).getIn().getBody(BlobInputStream.class);
-        final BlobInputStream blobInputStream2 = mockEndpoint.getExchanges().get(1).getIn().getBody(BlobInputStream.class);
-
-        assertNotNull(blobInputStream, "BlobInputStream must be set");
-        assertNotNull(blobInputStream2, "BlobInputStream must be set");
-
-        final String bufferedText = context().getTypeConverter().convertTo(String.class, blobInputStream);
-        final String bufferedText2 = context().getTypeConverter().convertTo(String.class, blobInputStream2);
-
-        assertEquals("Block Batch Blob 1", bufferedText);
-        assertEquals("Block Batch Blob 2", bufferedText2);
+        String text = mockEndpoint.getExchanges().get(0).getIn().getBody(String.class);
+        String text2 = mockEndpoint.getExchanges().get(1).getIn().getBody(String.class);
+        assertEquals("Block Batch Blob 1", text);
+        assertEquals("Block Batch Blob 2", text2);
 
         final File file = mockEndpointFile.getExchanges().get(0).getIn().getBody(File.class);
         final File file2 = mockEndpointFile.getExchanges().get(1).getIn().getBody(File.class);
-
         assertNotNull(file, "File must be set");
         assertNotNull(file2, "File must be set");
-
         assertEquals("Block Batch Blob 1", context().getTypeConverter().convertTo(String.class, file));
         assertEquals("Block Batch Blob 2", context().getTypeConverter().convertTo(String.class, file2));
     }

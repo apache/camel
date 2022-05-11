@@ -53,7 +53,7 @@ public class SpringTarFileDataFormatTest extends CamelSpringTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".tar", exchange.getIn().getHeader(FILE_NAME));
-        assertArrayEquals(getTaredText(exchange.getIn().getMessageId()), (byte[]) exchange.getIn().getBody());
+        assertArrayEquals(getTaredText(exchange.getIn().getMessageId()), exchange.getIn().getBody(byte[].class));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class SpringTarFileDataFormatTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
-        assertArrayEquals(getTaredText("poem.txt"), (byte[]) exchange.getIn().getBody());
+        assertArrayEquals(getTaredText("poem.txt"), exchange.getIn().getBody(byte[].class));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class SpringTarFileDataFormatTest extends CamelSpringTestSupport {
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId(), exchange.getIn().getHeader(FILE_NAME));
-        assertArrayEquals(TEXT.getBytes(UTF_8), (byte[]) exchange.getIn().getBody());
+        assertArrayEquals(TEXT.getBytes(UTF_8), exchange.getIn().getBody(byte[].class));
     }
 
     @Test

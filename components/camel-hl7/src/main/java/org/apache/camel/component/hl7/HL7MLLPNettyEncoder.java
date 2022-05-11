@@ -20,6 +20,9 @@ import ca.uhn.hl7v2.model.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import org.apache.camel.StreamCache;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * HL7 MLLP Encoder for Netty
@@ -46,7 +49,13 @@ class HL7MLLPNettyEncoder extends MessageToByteEncoder<Object> {
         }
 
         byte[] body;
-        if (message instanceof Message) {
+        if (message instanceof StreamCache) {
+            // need to convert to byte array for the encoder
+            StreamCache sc = (StreamCache) message;
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            sc.writeTo(bos);
+            body = bos.toByteArray();
+        } else if (message instanceof Message) {
             body = ((Message) message).encode().getBytes(config.getCharset());
         } else if (message instanceof String) {
             body = ((String) message).getBytes(config.getCharset());

@@ -50,9 +50,9 @@ public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupp
 
         assertEquals(1, exchanges.size());
         for (Exchange exchange : exchanges) {
-            assertTrue(exchange.getIn().getBody() instanceof byte[]);
-            assertTrue(Arrays.equals(FileUtils.readFileToByteArray(testFile), exchange.getIn().getBody(byte[].class)));
-            assertTrue(ASN1Primitive.fromByteArray(exchange.getIn().getBody(byte[].class)) instanceof ASN1Primitive);
+            byte[] arr = exchange.getIn().getBody(byte[].class);
+            assertTrue(Arrays.equals(FileUtils.readFileToByteArray(testFile), arr));
+            assertTrue(ASN1Primitive.fromByteArray(arr) instanceof ASN1Primitive);
         }
 
         assertMockEndpointsSatisfied();
