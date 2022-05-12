@@ -512,9 +512,7 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets the message for the LWT.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -531,9 +529,8 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets the quality of service to publish the message
+         * at (0, 1 or 2).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -550,9 +547,8 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets the quality of service to publish the message
+         * at (0, 1 or 2).
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -569,9 +565,7 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets whether or not the message should be retained.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -589,9 +583,7 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets whether or not the message should be retained.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -610,9 +602,8 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets the topic that the willPayload will be
+         * published to.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1575,9 +1566,7 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets the message for the LWT.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1594,9 +1583,8 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets the quality of service to publish the message
+         * at (0, 1 or 2).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1613,9 +1601,8 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets the quality of service to publish the message
+         * at (0, 1 or 2).
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1632,9 +1619,7 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets whether or not the message should be retained.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1652,9 +1637,7 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets whether or not the message should be retained.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1673,9 +1656,8 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets the topic that the willPayload will be
+         * published to.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2566,9 +2548,7 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets the message for the LWT.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2585,9 +2565,8 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets the quality of service to publish the message
+         * at (0, 1 or 2).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -2604,9 +2583,8 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets the quality of service to publish the message
+         * at (0, 1 or 2).
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -2623,9 +2601,7 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets whether or not the message should be retained.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -2643,9 +2619,7 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets whether or not the message should be retained.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -2664,9 +2638,8 @@ public interface PahoEndpointBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. The topic to publish to The byte payload for the
-         * message. The quality of service to publish the message at (0, 1 or
-         * 2). Whether or not the message should be retained.
+         * supplied details. Sets the topic that the willPayload will be
+         * published to.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
