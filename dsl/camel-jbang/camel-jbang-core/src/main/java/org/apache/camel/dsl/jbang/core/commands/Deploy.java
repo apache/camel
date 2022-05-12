@@ -42,7 +42,7 @@ public class Deploy implements Callable<Integer> {
     private String name;
     @CommandLine.Option(names = { "--version" }, description = "Application version (label)")
     private String version = "latest";
-    @CommandLine.Option(names = { "--image" }, description = "Deployment container image name", required = true)
+    @CommandLine.Option(names = { "--image" }, description = "Deployment container image name")
     private String image;
     @CommandLine.Option(names = { "--container-port" }, description = "Container port", defaultValue = "8080")
     private int containerPort;
@@ -63,23 +63,8 @@ public class Deploy implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        if (minikube) {
-            System.out.println("Generating Deployment...");
-            Deployment deployment = KubernetesHelper.createDeployment(namespace, name, image, version, containerPort, replicas);
-            System.out.println("Generating Service...");
-            Service service
-                    = KubernetesHelper.createService(namespace, name, version, servicePort, containerPort, minikube, nodePort);
-
-            try (KubernetesClient client = new DefaultKubernetesClient()) {
-                System.out.println("Creating Deployment in " + (minikube ? "Minikube" : "Kubernetes"));
-                client.apps().deployments().inNamespace(namespace).createOrReplace(deployment);
-                client.services().inNamespace(namespace).delete(service);
-                System.out.println("Creating Service in " + (minikube ? "Minikube" : "Kubernetes"));
-                client.services().inNamespace(namespace).createOrReplace(service);
-            } catch (Exception ex) {
-                System.out.println("ERROR: " + ex.getMessage());
-            }
-        } else if (openshift) {
+        if (openshift) {
+            image = image == null ? namespace + "/" + name + ":" + version : image;
             if (!image.startsWith("image-registry.openshift-image-registry.svc:5000") && image.split("/").length != 3) {
                 image = "image-registry.openshift-image-registry.svc:5000/" + image;
             }
@@ -109,6 +94,22 @@ public class Deploy implements Callable<Integer> {
                 } else {
                     System.out.println("ERROR " + ex.getMessage());
                 }
+            }
+        } else {
+            System.out.println("Generating Deployment...");
+            Deployment deployment = KubernetesHelper.createDeployment(namespace, name, image, version, containerPort, replicas);
+            System.out.println("Generating Service...");
+            Service service
+                    = KubernetesHelper.createService(namespace, name, version, servicePort, containerPort, minikube, nodePort);
+
+            try (KubernetesClient client = new DefaultKubernetesClient()) {
+                System.out.println("Creating Deployment in " + (minikube ? "Minikube" : "Kubernetes"));
+                client.apps().deployments().inNamespace(namespace).createOrReplace(deployment);
+                client.services().inNamespace(namespace).delete(service);
+                System.out.println("Creating Service in " + (minikube ? "Minikube" : "Kubernetes"));
+                client.services().inNamespace(namespace).createOrReplace(service);
+            } catch (Exception ex) {
+                System.out.println("ERROR: " + ex.getMessage());
             }
         }
         return 0;
