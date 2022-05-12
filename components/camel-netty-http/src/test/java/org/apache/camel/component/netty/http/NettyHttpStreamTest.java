@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,6 +52,7 @@ public class NettyHttpStreamTest extends BaseNettyTest {
         assertEquals(SIZE, requestSize.longValue(), "request size not matching.");
     }
 
+    @Disabled("Flaky test that should be run manually")
     @Test
     public void testDownloadStream() {
         //prepare new request
