@@ -288,6 +288,7 @@
                             <exclude>**/*.md</exclude>
                             <exclude>**/*.sh</exclude>
                             <exclude>**/*.bat</exclude>
+                            <exclude>**/*.tmpl</exclude>
                             <exclude>**/java9-maven-settings</exclude>
                             <exclude>**/*.pfx</exclude>
                             <!-- tooling for component docs -->
