@@ -59,6 +59,9 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
         Boolean enabled = (Boolean) mbeanServer.getAttribute(name, "Enabled");
         assertEquals(Boolean.TRUE, enabled);
 
+        enabled = (Boolean) mbeanServer.getAttribute(name, "SpoolEnabled");
+        assertEquals(Boolean.TRUE, enabled);
+
         String dir = (String) mbeanServer.getAttribute(name, "SpoolDirectory");
         assertEquals(normalizePath(testDirectory("myCamel").toString()), normalizePath(dir));
 
@@ -96,6 +99,7 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
                 dcc.setName("myCamel");
 
                 context.setStreamCaching(true);
+                context.getStreamCachingStrategy().setSpoolEnabled(true);
                 context.getStreamCachingStrategy().setSpoolDirectory(testDirectory("#name#").toString());
 
                 from("direct:start").routeId("foo")

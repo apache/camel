@@ -49,6 +49,7 @@ public class HttpStreamCacheFileIssueTest extends BaseJettyTest {
             public void configure() {
                 // enable stream caching and use a low threshold so its forced
                 // to write to file
+                context.getStreamCachingStrategy().setSpoolEnabled(true);
                 context.getStreamCachingStrategy().setSpoolThreshold(16);
                 context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
                 context.setStreamCaching(true);

@@ -31,6 +31,7 @@ public class JettyStreamCacheIssueTest extends BaseJettyTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         // ensure we overflow and spool to disk
+        context.getStreamCachingStrategy().setSpoolEnabled(true);
         context.getStreamCachingStrategy().setSpoolThreshold(5000);
         context.setStreamCaching(true);
         return context;

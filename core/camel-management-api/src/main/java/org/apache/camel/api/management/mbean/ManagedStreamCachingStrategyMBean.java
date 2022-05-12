@@ -32,6 +32,9 @@ public interface ManagedStreamCachingStrategyMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Whether stream caching is enabled")
     boolean isEnabled();
 
+    @ManagedAttribute(description = "Whether spooling to disk enabled")
+    boolean isSpoolEnabled();
+
     @ManagedAttribute(description = "Directory used when overflow and spooling to disk")
     String getSpoolDirectory();
 

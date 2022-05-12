@@ -47,8 +47,17 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
     }
 
     @Override
+    public boolean isSpoolEnabled() {
+        return streamCachingStrategy.isSpoolEnabled();
+    }
+
+    @Override
     public String getSpoolDirectory() {
-        return streamCachingStrategy.getSpoolDirectory().getPath();
+        if (streamCachingStrategy.getSpoolDirectory() != null) {
+            return streamCachingStrategy.getSpoolDirectory().getPath();
+        } else {
+            return null;
+        }
     }
 
     @Override
