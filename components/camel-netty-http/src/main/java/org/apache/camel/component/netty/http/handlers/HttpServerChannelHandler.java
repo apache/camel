@@ -344,6 +344,10 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     protected Exchange createExchange(ChannelHandlerContext ctx, Object message) throws Exception {
         Exchange exchange = this.consumer.createExchange(false);
 
+        if (exchange.getUnitOfWork() != null) {
+            System.out.println(">>> UoW is NOT NULL <<< " + exchange);
+        }
+
         // create a new IN message as we cannot reuse with netty
         Message in;
         if (message instanceof FullHttpRequest) {
