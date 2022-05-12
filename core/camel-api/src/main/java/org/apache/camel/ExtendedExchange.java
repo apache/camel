@@ -117,6 +117,16 @@ public interface ExtendedExchange extends Exchange {
     void setHistoryNodeSource(String historyNodeSource);
 
     /**
+     * Is stream caching disabled on the given exchange
+     */
+    boolean isStreamCacheDisabled();
+
+    /**
+     * Used to force disabling stream caching which some components can do in special use-cases.
+     */
+    void setStreamCacheDisabled(boolean streamCacheDisabled);
+
+    /**
      * Sets whether the exchange is routed in a transaction.
      */
     void setTransacted(boolean transacted);

@@ -86,6 +86,7 @@ class AbstractExchange implements ExtendedExchange {
     boolean interrupted;
     boolean interruptable = true;
     boolean redeliveryExhausted;
+    boolean streamCacheDisabled;
     Boolean errorHandlerHandled;
     AsyncCallback defaultConsumerCallback; // optimize (do not reset)
     Map<String, SafeCopyProperty> safeCopyProperties;
@@ -154,6 +155,7 @@ class AbstractExchange implements ExtendedExchange {
         exchange.setNotifyEvent(notifyEvent);
         exchange.setRedeliveryExhausted(redeliveryExhausted);
         exchange.setErrorHandlerHandled(errorHandlerHandled);
+        exchange.setStreamCacheDisabled(streamCacheDisabled);
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
@@ -868,6 +870,16 @@ class AbstractExchange implements ExtendedExchange {
     @Override
     public void setErrorHandlerHandled(Boolean errorHandlerHandled) {
         this.errorHandlerHandled = errorHandlerHandled;
+    }
+
+    @Override
+    public boolean isStreamCacheDisabled() {
+        return streamCacheDisabled;
+    }
+
+    @Override
+    public void setStreamCacheDisabled(boolean streamCacheDisabled) {
+        this.streamCacheDisabled = streamCacheDisabled;
     }
 
     /**

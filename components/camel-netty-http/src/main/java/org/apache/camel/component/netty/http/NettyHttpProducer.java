@@ -78,6 +78,10 @@ public class NettyHttpProducer extends NettyProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        if (getConfiguration().isDisableStreamCache() || getConfiguration().isHttpProxy()) {
+            exchange.adapt(ExtendedExchange.class).setStreamCacheDisabled(true);
+        }
+
         return super.process(exchange, new NettyHttpProducerCallback(exchange, callback, getConfiguration()));
     }
 

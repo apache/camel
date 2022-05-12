@@ -938,6 +938,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             }
             boolean failed = cause != null && ObjectHelper.getException(StreamCacheException.class, cause) != null;
             if (!failed) {
+                boolean disabled = exchange.adapt(ExtendedExchange.class).isStreamCacheDisabled();
+                if (disabled) {
+                    return null;
+                }
                 try {
                     // cache the body and if we could do that replace it as the new body
                     StreamCache sc = strategy.cache(exchange);
