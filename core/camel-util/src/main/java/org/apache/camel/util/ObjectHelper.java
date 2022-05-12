@@ -123,6 +123,12 @@ public final class ObjectHelper {
         if (value instanceof Boolean) {
             return (Boolean) value;
         }
+        if (value instanceof byte[]) {
+            String str = new String((byte[]) value);
+            if ("true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str)) {
+                return Boolean.valueOf(str);
+            }
+        }
         if (value instanceof String) {
             // we only want to accept true or false as accepted values
             String str = (String) value;

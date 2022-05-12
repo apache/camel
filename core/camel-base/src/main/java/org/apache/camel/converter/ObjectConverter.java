@@ -16,11 +16,14 @@
  */
 package org.apache.camel.converter;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Iterator;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
 
 /**
@@ -90,16 +93,33 @@ public final class ObjectConverter {
     }
 
     @Converter(order = 7)
+    public static Byte toByte(byte[] value, Exchange exchange) throws IOException {
+        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        return Byte.valueOf(str);
+    }
+
+    @Converter(order = 8)
     public static char[] toCharArray(String value) {
         return value.toCharArray();
     }
 
-    @Converter(order = 8)
+    @Converter(order = 9)
+    public static char[] toCharArray(byte[] value, Exchange exchange) throws IOException {
+        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        return str.toCharArray();
+    }
+
+    @Converter(order = 10)
     public static Character toCharacter(String value) {
         return toChar(value);
     }
 
-    @Converter(order = 9)
+    @Converter(order = 11)
+    public static Character toCharacter(byte[] value) {
+        return toChar(value);
+    }
+
+    @Converter(order = 12)
     public static char toChar(String value) {
         // must be string with the length of 1
         if (value.length() != 1) {
@@ -108,7 +128,17 @@ public final class ObjectConverter {
         return value.charAt(0);
     }
 
-    @Converter(order = 10)
+    @Converter(order = 13)
+    public static char toChar(byte[] value) {
+        // must be string with the length of 1
+        if (value.length != 1) {
+            throw new IllegalArgumentException("byte[] must have exactly a length of 1: " + value.length);
+        }
+        byte b = value[0];
+        return (char) b;
+    }
+
+    @Converter(order = 14)
     public static String fromCharArray(char[] value) {
         return new String(value);
     }
@@ -116,7 +146,7 @@ public final class ObjectConverter {
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter(order = 11)
+    @Converter(order = 15)
     public static Class<?> toClass(String value, CamelContext camelContext) {
         // prefer to use class resolver API
         if (camelContext != null) {
@@ -129,7 +159,7 @@ public final class ObjectConverter {
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter(order = 12, allowNull = true)
+    @Converter(order = 16, allowNull = true)
     public static Short toShort(Number value) {
         if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return null;
@@ -137,15 +167,21 @@ public final class ObjectConverter {
         return value.shortValue();
     }
 
-    @Converter(order = 13)
+    @Converter(order = 17)
     public static Short toShort(String value) {
         return Short.valueOf(value);
+    }
+
+    @Converter(order = 18)
+    public static Short toShort(byte[] value, Exchange exchange) throws IOException {
+        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        return Short.valueOf(str);
     }
 
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter(order = 14, allowNull = true)
+    @Converter(order = 19, allowNull = true)
     public static Integer toInteger(Number value) {
         if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return null;
@@ -153,15 +189,21 @@ public final class ObjectConverter {
         return value.intValue();
     }
 
-    @Converter(order = 15)
+    @Converter(order = 20)
     public static Integer toInteger(String value) {
         return Integer.valueOf(value);
+    }
+
+    @Converter(order = 21)
+    public static Integer toInteger(byte[] value, Exchange exchange) throws IOException {
+        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        return Integer.valueOf(str);
     }
 
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter(order = 16, allowNull = true)
+    @Converter(order = 22, allowNull = true)
     public static Long toLong(Number value) {
         if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return null;
@@ -169,15 +211,21 @@ public final class ObjectConverter {
         return value.longValue();
     }
 
-    @Converter(order = 17)
+    @Converter(order = 23)
     public static Long toLong(String value) {
         return Long.valueOf(value);
+    }
+
+    @Converter(order = 24)
+    public static Long toLong(byte[] value, Exchange exchange) throws IOException {
+        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        return Long.valueOf(str);
     }
 
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter(order = 18, allowNull = true)
+    @Converter(order = 25, allowNull = true)
     public static BigInteger toBigInteger(Object value) {
         if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return null;
@@ -201,7 +249,7 @@ public final class ObjectConverter {
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter(order = 19)
+    @Converter(order = 26)
     public static Float toFloat(Number value) {
         if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return Float.NaN;
@@ -209,15 +257,21 @@ public final class ObjectConverter {
         return value.floatValue();
     }
 
-    @Converter(order = 20)
+    @Converter(order = 27)
     public static Float toFloat(String value) {
         return Float.valueOf(value);
+    }
+
+    @Converter(order = 28)
+    public static Float toFloat(byte[] value, Exchange exchange) throws IOException {
+        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        return Float.valueOf(str);
     }
 
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter(order = 21)
+    @Converter(order = 29)
     public static Double toDouble(Number value) {
         if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return Double.NaN;
@@ -225,44 +279,56 @@ public final class ObjectConverter {
         return value.doubleValue();
     }
 
-    @Converter(order = 22)
+    @Converter(order = 30)
     public static Double toDouble(String value) {
         return Double.valueOf(value);
     }
 
+    @Converter(order = 31)
+    public static Double toDouble(byte[] value, Exchange exchange) throws IOException {
+        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        return Double.valueOf(str);
+    }
+
     // add fast type converters from most common used
 
-    @Converter(order = 23)
+    @Converter(order = 32)
     public static String toString(Integer value) {
         return value.toString();
     }
 
-    @Converter(order = 24)
+    @Converter(order = 33)
     public static String toString(Long value) {
         return value.toString();
     }
 
-    @Converter(order = 25)
+    @Converter(order = 34)
     public static String toString(Boolean value) {
         return value.toString();
     }
 
-    @Converter(order = 26)
+    @Converter(order = 35)
     public static String toString(StringBuffer value) {
         return value.toString();
     }
 
-    @Converter(order = 27)
+    @Converter(order = 36)
     public static String toString(StringBuilder value) {
         return value.toString();
     }
 
-    @Converter(order = 28)
+    @Converter(order = 37)
     public static Boolean toBoolean(String value) {
         return org.apache.camel.util.ObjectHelper.toBoolean(value);
     }
 
-    @Converter(order = 29)
+    @Converter(order = 38)
+    public static Boolean toBoolean(byte[] value, Exchange exchange) throws IOException {
+        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        return toBoolean(str);
+    }
+
+    @Converter(order = 39)
     public static Number toNumber(String text) {
         // what kind of numeric is it
         boolean dot = text.indexOf('.') != -1;
@@ -277,6 +343,12 @@ public final class ObjectConverter {
                 return lon;
             }
         }
+    }
+
+    @Converter(order = 40)
+    public static Number toNumber(byte[] value, Exchange exchange) throws IOException {
+        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        return toNumber(str);
     }
 
 }
