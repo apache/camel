@@ -151,7 +151,7 @@ public class CachedOutputStream extends OutputStream {
         flush();
         ByteArrayOutputStream bout = (ByteArrayOutputStream) currentStream;
         try {
-            // creates an tmp file and a file output stream
+            // creates a tmp file and a file output stream
             currentStream = tempFileManager.createOutputStream(strategy);
             bout.writeTo(currentStream);
         } finally {
