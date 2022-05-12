@@ -347,7 +347,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
     @Override
     protected void doStop() throws Exception {
-        if (spoolEnabled && (spoolThreshold > 0 & spoolDirectory != null && isRemoveSpoolDirectoryWhenStopping())) {
+        if (spoolEnabled && isSpoolRemovable()) {
             LOG.debug("Removing spool directory: {}", spoolDirectory);
             FileUtil.removeDir(spoolDirectory);
         }
@@ -357,6 +357,10 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         }
 
         statistics.reset();
+    }
+
+    private boolean isSpoolRemovable() {
+        return spoolThreshold > 0 & spoolDirectory != null && isRemoveSpoolDirectoryWhenStopping();
     }
 
     @Override
