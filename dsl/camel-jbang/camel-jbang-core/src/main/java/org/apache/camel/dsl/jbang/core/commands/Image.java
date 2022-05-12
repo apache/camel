@@ -40,8 +40,6 @@ import io.fabric8.openshift.api.model.BuildConfig;
 import io.fabric8.openshift.api.model.ImageStream;
 import io.fabric8.openshift.client.DefaultOpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftClient;
-import io.fabric8.openshift.client.OpenShiftConfig;
-import io.fabric8.openshift.client.OpenShiftConfigBuilder;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "image", description = "Create Docker and OCI container images")
@@ -67,6 +65,8 @@ public class Image implements Callable<Integer> {
     private boolean openshift;
     @CommandLine.Option(names = { "--build-config" }, description = "Build in OpenShift using BuildConfig")
     private boolean buildConfig;
+    @CommandLine.Option(names = { "--image" }, description = "Image name")
+    private String image;
     @CommandLine.Option(names = { "--server" }, description = "Master URL")
     private String server;
     @CommandLine.Option(names = { "--token" }, description = "Token")
@@ -84,11 +84,12 @@ public class Image implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         File jarFile = Paths.get(jar).toFile();
+        image = image == null ? namespace + "/" + name + ":" + version : image;
         if (openshift && buildConfig) {
             buildInOpenshiftWithBuildConfig(jarFile);
         } else {
             String host = openshift ? getOpenshiftRegistryHost() : registry;
-            String imageReference = host + "/" + namespace + "/" + name + ":" + version;
+            String imageReference = host + "/" + image;
             Jib.from(from)
                     .addLayer(Arrays.asList(Paths.get(jar)), "/deployments/")
                     .setWorkingDirectory(AbsoluteUnixPath.get("/deployments"))
@@ -99,21 +100,16 @@ public class Image implements Callable<Integer> {
     }
 
     private String getOpenshiftRegistryHost() {
-        OpenShiftConfig config
-                = new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).withNamespace(namespace)
-                        .withTrustCerts(true).build();
-        try (OpenShiftClient client = new DefaultOpenShiftClient(config)) {
-            String host = client.routes().inNamespace("openshift-image-registry").list().getItems().get(0).getSpec().getHost();
-            return host + "/" + namespace + "/" + name + ":" + version;
+        try (OpenShiftClient client
+                = new DefaultOpenShiftClient(KubernetesHelper.getOpenShiftConfig(server, username, password, token))) {
+            return client.routes().inNamespace("openshift-image-registry").list().getItems().get(0).getSpec().getHost();
         }
     }
 
     private void buildInOpenshiftWithBuildConfig(File jarFile) throws InvalidImageReferenceException {
         System.out.println("Generating resources...");
-        OpenShiftConfig config
-                = new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).withNamespace(namespace)
-                        .withTrustCerts(true).build();
-        try (OpenShiftClient client = new DefaultOpenShiftClient(config)) {
+        try (OpenShiftClient client
+                = new DefaultOpenShiftClient(KubernetesHelper.getOpenShiftConfig(server, username, password, token))) {
             ImageStream imageStream = KubernetesHelper.createImageStream(namespace, name, version);
             BuildConfig buildConfig
                     = KubernetesHelper.createBuildConfig(namespace, name, version, jarFile.getName(), sourceImage);
