@@ -37,21 +37,24 @@ public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
     public void testOne() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("World");
 
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "World", String.class);
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "World", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void testTwo() throws Exception {
-        getMockEndpoint("mock:input").expectedBodiesReceived("World", "Camel");
+    public void testThree() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("World", "Camel", "Earth");
 
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "World", String.class);
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "World", String.class);
         assertEquals("Bye World", out);
 
-        out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "Camel", String.class);
+        out = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "Camel", String.class);
         assertEquals("Bye Camel", out);
+
+        out = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "Earth", String.class);
+        assertEquals("Bye Earth", out);
 
         assertMockEndpointsSatisfied();
     }
@@ -61,7 +64,7 @@ public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty-http:http://0.0.0.0:{{port}}/foo")
+                from("netty-http:http://0.0.0.0:{{port}}/pooled")
                         .convertBodyTo(String.class)
                         .to("mock:input")
                         .transform().simple("Bye ${body}");
