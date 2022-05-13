@@ -142,7 +142,7 @@ public final class DomConverter {
     @Converter(order = 7)
     public byte[] toByteArray(NodeList nodeList, Exchange exchange) throws TransformerException, UnsupportedEncodingException {
         String data = toString(nodeList, exchange);
-        return data.getBytes(ExchangeHelper.getCharsetName(exchange));
+        return data.getBytes(ExchangeHelper.getCharset(exchange));
     }
 
     private static void append(StringBuilder buffer, NodeList nodeList) {

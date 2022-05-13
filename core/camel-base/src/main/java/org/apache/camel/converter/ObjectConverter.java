@@ -94,7 +94,7 @@ public final class ObjectConverter {
 
     @Converter(order = 7)
     public static Byte toByte(byte[] value, Exchange exchange) throws IOException {
-        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        String str = new String(value, ExchangeHelper.getCharset(exchange));
         return Byte.valueOf(str);
     }
 
@@ -105,7 +105,7 @@ public final class ObjectConverter {
 
     @Converter(order = 9)
     public static char[] toCharArray(byte[] value, Exchange exchange) throws IOException {
-        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        String str = new String(value, ExchangeHelper.getCharset(exchange));
         return str.toCharArray();
     }
 
@@ -174,7 +174,7 @@ public final class ObjectConverter {
 
     @Converter(order = 18)
     public static Short toShort(byte[] value, Exchange exchange) throws IOException {
-        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        String str = new String(value, ExchangeHelper.getCharset(exchange));
         return Short.valueOf(str);
     }
 
@@ -196,7 +196,7 @@ public final class ObjectConverter {
 
     @Converter(order = 21)
     public static Integer toInteger(byte[] value, Exchange exchange) throws IOException {
-        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        String str = new String(value, ExchangeHelper.getCharset(exchange));
         return Integer.valueOf(str);
     }
 
@@ -218,7 +218,7 @@ public final class ObjectConverter {
 
     @Converter(order = 24)
     public static Long toLong(byte[] value, Exchange exchange) throws IOException {
-        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        String str = new String(value, ExchangeHelper.getCharset(exchange));
         return Long.valueOf(str);
     }
 
@@ -264,7 +264,7 @@ public final class ObjectConverter {
 
     @Converter(order = 28)
     public static Float toFloat(byte[] value, Exchange exchange) throws IOException {
-        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        String str = new String(value, ExchangeHelper.getCharset(exchange));
         return Float.valueOf(str);
     }
 
@@ -286,7 +286,7 @@ public final class ObjectConverter {
 
     @Converter(order = 31)
     public static Double toDouble(byte[] value, Exchange exchange) throws IOException {
-        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        String str = new String(value, ExchangeHelper.getCharset(exchange));
         return Double.valueOf(str);
     }
 
@@ -324,7 +324,7 @@ public final class ObjectConverter {
 
     @Converter(order = 38)
     public static Boolean toBoolean(byte[] value, Exchange exchange) throws IOException {
-        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        String str = new String(value, ExchangeHelper.getCharset(exchange));
         return toBoolean(str);
     }
 
@@ -347,7 +347,7 @@ public final class ObjectConverter {
 
     @Converter(order = 40)
     public static Number toNumber(byte[] value, Exchange exchange) throws IOException {
-        String str = new String(value, ExchangeHelper.getCharsetName(exchange));
+        String str = new String(value, ExchangeHelper.getCharset(exchange));
         return toNumber(str);
     }
 

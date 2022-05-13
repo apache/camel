@@ -83,7 +83,7 @@ public final class IOConverter {
 
     @Converter(order = 4)
     public static BufferedReader toReader(File file, Exchange exchange) throws IOException {
-        return IOHelper.toReader(file, ExchangeHelper.getCharsetName(exchange));
+        return IOHelper.toReader(file, ExchangeHelper.getCharset(exchange));
     }
 
     @Converter(order = 5)
@@ -99,12 +99,12 @@ public final class IOConverter {
     @Converter(order = 7)
     public static BufferedWriter toWriter(File file, Exchange exchange) throws IOException {
         FileOutputStream os = new FileOutputStream(file, false);
-        return IOHelper.toWriter(os, ExchangeHelper.getCharsetName(exchange));
+        return IOHelper.toWriter(os, ExchangeHelper.getCharset(exchange));
     }
 
     @Converter(order = 8)
     public static Reader toReader(InputStream in, Exchange exchange) throws IOException {
-        return IOHelper.buffered(new InputStreamReader(in, ExchangeHelper.getCharsetName(exchange)));
+        return IOHelper.buffered(new InputStreamReader(in, ExchangeHelper.getCharset(exchange)));
     }
 
     @Converter(order = 9)
@@ -114,7 +114,7 @@ public final class IOConverter {
 
     @Converter(order = 10)
     public static Writer toWriter(OutputStream out, Exchange exchange) throws IOException {
-        return IOHelper.buffered(new OutputStreamWriter(out, ExchangeHelper.getCharsetName(exchange)));
+        return IOHelper.buffered(new OutputStreamWriter(out, ExchangeHelper.getCharset(exchange)));
     }
 
     @Converter(order = 11)
@@ -126,7 +126,7 @@ public final class IOConverter {
 
     @Converter(order = 12)
     public static InputStream toInputStream(String text, Exchange exchange) throws IOException {
-        return toInputStream(text.getBytes(ExchangeHelper.getCharsetName(exchange)));
+        return toInputStream(text.getBytes(ExchangeHelper.getCharset(exchange)));
     }
 
     @Converter(order = 13)
@@ -146,7 +146,7 @@ public final class IOConverter {
 
     @Converter(order = 16)
     public static String toString(byte[] data, Exchange exchange) throws IOException {
-        return new String(data, ExchangeHelper.getCharsetName(exchange));
+        return new String(data, ExchangeHelper.getCharset(exchange));
     }
 
     @Converter(order = 17)
@@ -197,7 +197,7 @@ public final class IOConverter {
 
     @Converter(order = 24)
     public static byte[] toByteArray(String value, Exchange exchange) throws IOException {
-        return value.getBytes(ExchangeHelper.getCharsetName(exchange));
+        return value.getBytes(ExchangeHelper.getCharset(exchange));
     }
 
     @Converter(order = 25)
@@ -272,7 +272,7 @@ public final class IOConverter {
 
     @Converter(order = 32)
     public static String toString(ByteArrayOutputStream os, Exchange exchange) throws IOException {
-        return os.toString(ExchangeHelper.getCharsetName(exchange));
+        return os.toString(ExchangeHelper.getCharset(exchange));
     }
 
     @Converter(order = 33)

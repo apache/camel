@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,8 @@ import org.slf4j.Logger;
 @EagerClassloaded
 public final class ExchangeHelper {
 
-    private static String defaultCharset = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
+    private static String defaultCharsetName = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
+    private static Charset defaultCharset = Charset.forName(defaultCharsetName);
 
     /**
      * Utility classes should not have a public constructor.
@@ -940,6 +942,13 @@ public final class ExchangeHelper {
     }
 
     /**
+     * @see #getCharset(Exchange, boolean)
+     */
+    public static Charset getCharset(Exchange exchange) {
+        return getCharset(exchange, true);
+    }
+
+    /**
      * Gets the charset name if set as header or property {@link Exchange#CHARSET_NAME}. <b>Notice:</b> The lookup from
      * the header has priority over the property.
      *
@@ -965,7 +974,38 @@ public final class ExchangeHelper {
         }
     }
 
+    /**
+     * Gets the charset if set as header or property {@link Exchange#CHARSET_NAME}. <b>Notice:</b> The lookup from
+     * the header has priority over the property.
+     *
+     * @param  exchange   the exchange
+     * @param  useDefault should we fallback and use JVM default charset if no property existed?
+     * @return            the charset, or <tt>null</tt> if no found
+     */
+    public static Charset getCharset(Exchange exchange, boolean useDefault) {
+        if (exchange != null) {
+            // header takes precedence
+            String charsetName = exchange.getIn().getHeader(Exchange.CHARSET_NAME, String.class);
+            if (charsetName == null) {
+                charsetName = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
+            }
+            if (charsetName != null) {
+                charsetName = IOHelper.normalizeCharset(charsetName);
+                return Charset.forName(charsetName);
+            }
+        }
+        if (useDefault) {
+            return getDefaultCharset();
+        } else {
+            return null;
+        }
+    }
+
     private static String getDefaultCharsetName() {
+        return defaultCharsetName;
+    }
+
+    private static Charset getDefaultCharset() {
         return defaultCharset;
     }
 

@@ -636,8 +636,17 @@ public final class IOHelper {
          * @param in      file to read
          * @param charset character set to use
          */
-        public EncodingFileReader(FileInputStream in, String charset) throws FileNotFoundException,
+        public EncodingFileReader(FileInputStream in, String charset) throws
                                                                       UnsupportedEncodingException {
+            super(in, charset);
+            this.in = in;
+        }
+
+        /**
+         * @param in      file to read
+         * @param charset character set to use
+         */
+        public EncodingFileReader(FileInputStream in, Charset charset) {
             super(in, charset);
             this.in = in;
         }
@@ -663,8 +672,17 @@ public final class IOHelper {
          * @param out     file to write
          * @param charset character set to use
          */
-        public EncodingFileWriter(FileOutputStream out, String charset) throws FileNotFoundException,
+        public EncodingFileWriter(FileOutputStream out, String charset) throws
                                                                         UnsupportedEncodingException {
+            super(out, charset);
+            this.out = out;
+        }
+
+        /**
+         * @param out     file to write
+         * @param charset character set to use
+         */
+        public EncodingFileWriter(FileOutputStream out, Charset charset) {
             super(out, charset);
             this.out = out;
         }
@@ -699,7 +717,16 @@ public final class IOHelper {
         return IOHelper.buffered(new EncodingFileReader(in, charset));
     }
 
+    public static BufferedReader toReader(File file, Charset charset) throws IOException {
+        FileInputStream in = new FileInputStream(file);
+        return IOHelper.buffered(new EncodingFileReader(in, charset));
+    }
+
     public static BufferedWriter toWriter(FileOutputStream os, String charset) throws IOException {
+        return IOHelper.buffered(new EncodingFileWriter(os, charset));
+    }
+
+    public static BufferedWriter toWriter(FileOutputStream os, Charset charset) throws IOException {
         return IOHelper.buffered(new EncodingFileWriter(os, charset));
     }
 }

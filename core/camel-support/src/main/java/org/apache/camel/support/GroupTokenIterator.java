@@ -158,7 +158,7 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
         }
 
         // prepare and return answer as String using exchange's charset
-        String answer = bos.toString(ExchangeHelper.getCharsetName(exchange));
+        String answer = bos.toString(ExchangeHelper.getCharset(exchange));
         bos.reset();
         return answer;
     }

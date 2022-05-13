@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -125,4 +126,21 @@ public class IOHelperTest {
         charsetName = IOHelper.getCharsetNameFromContentType("text/html");
         assertEquals("UTF-8", charsetName);
     }
+
+    @Test
+    public void testCharset() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+
+        assertNull(ExchangeHelper.getCharset(exchange, false));
+
+        exchange.getIn().setHeader(Exchange.CHARSET_NAME, "iso-8859-1");
+        Charset cs = ExchangeHelper.getCharset(exchange, false);
+        assertEquals("ISO-8859-1", cs.name());
+
+        exchange.getIn().removeHeader(Exchange.CHARSET_NAME);
+        exchange.setProperty(Exchange.CHARSET_NAME, "iso-8859-1");
+        cs = ExchangeHelper.getCharset(exchange, false);
+        assertEquals("ISO-8859-1", cs.name());
+    }
+
 }
