@@ -636,8 +636,7 @@ public final class IOHelper {
          * @param in      file to read
          * @param charset character set to use
          */
-        public EncodingFileReader(FileInputStream in, String charset) throws
-                                                                      UnsupportedEncodingException {
+        public EncodingFileReader(FileInputStream in, String charset) throws UnsupportedEncodingException {
             super(in, charset);
             this.in = in;
         }
@@ -672,8 +671,7 @@ public final class IOHelper {
          * @param out     file to write
          * @param charset character set to use
          */
-        public EncodingFileWriter(FileOutputStream out, String charset) throws
-                                                                        UnsupportedEncodingException {
+        public EncodingFileWriter(FileOutputStream out, String charset) throws UnsupportedEncodingException {
             super(out, charset);
             this.out = out;
         }
