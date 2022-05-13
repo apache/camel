@@ -332,7 +332,7 @@
         <jsendnsca-version>2.1.1</jsendnsca-version>
         <jslt-version>0.1.11</jslt-version>
         <jsmpp-version>2.3.11</jsmpp-version>
-        <jsch-version>0.2.0</jsch-version>
+        <jsch-version>0.2.1</jsch-version>
         <json-api>1.0</json-api>
         <jsonassert-version>1.5.0</jsonassert-version>
         <json-path-version>2.6.0</json-path-version>
