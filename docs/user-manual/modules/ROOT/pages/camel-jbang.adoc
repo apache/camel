@@ -125,7 +125,7 @@ For example to run one of the Camel K examples you can do:
 
 [source,bash]
 ----
-camel run run github:apache:camel-k:examples/languages/routes.yaml
+camel run github:apache:camel-k:examples/languages/routes.yaml
 ----
 
 You can also use the `https` URL for GitHub. For example, you can browse the examples from a web-browser and
