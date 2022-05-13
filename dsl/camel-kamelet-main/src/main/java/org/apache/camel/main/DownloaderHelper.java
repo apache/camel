@@ -26,12 +26,15 @@ import org.apache.camel.CamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * For downloading dependencies.
+ */
 public final class DownloaderHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(DownloaderHelper.class);
     private static final String CP = System.getProperty("java.class.path");
 
-    private static final DownloadThreadPool downloader = new DownloadThreadPool();
+    private static final DownloadThreadPool DOWNLOAD_THREAD_POOL = new DownloadThreadPool();
 
     private DownloaderHelper() {
     }
@@ -67,7 +70,7 @@ public final class DownloaderHelper {
         map.put("classifier", "");
 
         String gav = groupId + ":" + artifactId + ":" + version;
-        downloader.download(LOG, () -> {
+        DOWNLOAD_THREAD_POOL.download(LOG, () -> {
             LOG.debug("Downloading: {}", gav);
             Grape.grab(map);
         }, gav);

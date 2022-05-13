@@ -25,6 +25,9 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 
+/**
+ * A basic thread pool that run each download task in their own thread, and LOG download activity during download.
+ */
 class DownloadThreadPool {
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
