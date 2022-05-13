@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.LogDefinition
+import org.apache.camel.model.ToDefinition
 import org.apache.camel.spi.PropertiesComponent
 
 class IntegrationLoaderTest extends YamlTestSupport {
@@ -126,6 +127,109 @@ class IntegrationLoaderTest extends YamlTestSupport {
         pc.resolveProperty("camel.component.seda.queueSize").get() == "456"
         pc.resolveProperty("camel.component.seda.default-block-when-full").get() == "true"
         pc.resolveProperty("TEST_MESSAGE").get() == "Hello World"
+    }
+
+    def "integration"() {
+        when:
+        loadIntegrations('''
+                apiVersion: camel.apache.org/v1
+                kind: Integration
+                metadata:
+                  name: foobar3
+                spec:
+                  flows:
+                    - from:
+                        uri: "seda:foo"
+                        steps:    
+                          - to: "mock:result"   
+                          ''')
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0].outputs[0], ToDefinition) {
+            uri == "mock:result"
+        }
+    }
+
+    def "integrationTwo"() {
+        when:
+        loadIntegrations('''
+                apiVersion: camel.apache.org/v1
+                kind: Integration
+                metadata:
+                  name: foobar3
+                spec:
+                  flows:
+                    - from:
+                        uri: "seda:foo"
+                        steps:    
+                          - to: "mock:result"   
+                    - from:
+                        uri: "seda:foo2"
+                        steps:    
+                          - to: "mock:result2"   
+                          ''')
+        then:
+        context.routeDefinitions.size() == 2
+
+        with(context.routeDefinitions[0].outputs[0], ToDefinition) {
+            uri == "mock:result"
+        }
+        with(context.routeDefinitions[1].outputs[0], ToDefinition) {
+            uri == "mock:result2"
+        }
+    }
+
+    def "integration with route"() {
+        when:
+        loadIntegrations('''
+                apiVersion: camel.apache.org/v1
+                kind: Integration
+                metadata:
+                  name: foobar3
+                spec:
+                  flows:
+                    - route:
+                        id: myRoute
+                        from:
+                          uri: "seda:foo"
+                          steps:    
+                            - to: "mock:result"   
+                          ''')
+        then:
+        context.routeDefinitions.size() == 1
+
+        context.routeDefinitions[0].id == "myRoute"
+
+        with(context.routeDefinitions[0].outputs[0], ToDefinition) {
+            uri == "mock:result"
+        }
+    }
+
+    def "integration with route backward"() {
+        when:
+        loadIntegrations('''
+                apiVersion: camel.apache.org/v1
+                kind: Integration
+                metadata:
+                  name: foobar3
+                spec:
+                  flows:
+                    - route:
+                        id: myRoute2
+                        from:
+                          uri: "seda:foo"
+                        steps:    
+                          - to: "mock:result"   
+                          ''')
+        then:
+        context.routeDefinitions.size() == 1
+
+        context.routeDefinitions[0].id == "myRoute2"
+
+        with(context.routeDefinitions[0].outputs[0], ToDefinition) {
+            uri == "mock:result"
+        }
     }
 
 }
