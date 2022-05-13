@@ -27,8 +27,6 @@ import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.openshift.api.model.Route;
 import io.fabric8.openshift.client.DefaultOpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftClient;
-import io.fabric8.openshift.client.OpenShiftConfig;
-import io.fabric8.openshift.client.OpenShiftConfigBuilder;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "deploy", description = "Deploy resources to Kubernetes, OpenShift, Minikube")
@@ -60,6 +58,10 @@ public class Deploy implements Callable<Integer> {
     private String server;
     @CommandLine.Option(names = { "--token" }, description = "Token")
     private String token;
+    @CommandLine.Option(names = { "-u", "--username" }, description = "Username")
+    private String username;
+    @CommandLine.Option(names = { "-p", "--password" }, description = "Password")
+    private String password;
 
     @Override
     public Integer call() throws Exception {
@@ -76,9 +78,8 @@ public class Deploy implements Callable<Integer> {
             System.out.println("Generating Route...");
             Route route = KubernetesHelper.createRoute(namespace, name, version, containerPort);
 
-            OpenShiftConfig config
-                    = new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).withTrustCerts(true).build();
-            try (OpenShiftClient client = new DefaultOpenShiftClient(config)) {
+            try (OpenShiftClient client
+                    = new DefaultOpenShiftClient(KubernetesHelper.getOpenShiftConfig(server, username, password, token))) {
                 System.out.println("Creating Deployment in Openshift");
                 client.apps().deployments().inNamespace(namespace).createOrReplace(deployment);
                 client.services().inNamespace(namespace).delete(service);
@@ -96,13 +97,14 @@ public class Deploy implements Callable<Integer> {
                 }
             }
         } else {
-            System.out.println("Generating Deployment...");
+            System.out.println("Generating Deployment for " + (minikube ? "Minikube" : "Kubernetes"));
             Deployment deployment = KubernetesHelper.createDeployment(namespace, name, image, version, containerPort, replicas);
-            System.out.println("Generating Service...");
+            System.out.println("Generating Service " + (minikube ? "Minikube" : "Kubernetes"));
             Service service
                     = KubernetesHelper.createService(namespace, name, version, servicePort, containerPort, minikube, nodePort);
 
-            try (KubernetesClient client = new DefaultKubernetesClient()) {
+            try (KubernetesClient client
+                    = new DefaultKubernetesClient(KubernetesHelper.getConfig(server, username, password, token))) {
                 System.out.println("Creating Deployment in " + (minikube ? "Minikube" : "Kubernetes"));
                 client.apps().deployments().inNamespace(namespace).createOrReplace(deployment);
                 client.services().inNamespace(namespace).delete(service);
@@ -110,6 +112,7 @@ public class Deploy implements Callable<Integer> {
                 client.services().inNamespace(namespace).createOrReplace(service);
             } catch (Exception ex) {
                 System.out.println("ERROR: " + ex.getMessage());
+                ex.printStackTrace();
             }
         }
         return 0;

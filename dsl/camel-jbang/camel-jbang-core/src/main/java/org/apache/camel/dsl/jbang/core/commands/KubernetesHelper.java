@@ -27,6 +27,8 @@ import io.fabric8.kubernetes.api.model.ServicePortBuilder;
 import io.fabric8.kubernetes.api.model.ServiceSpecBuilder;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
+import io.fabric8.kubernetes.client.Config;
+import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.openshift.api.model.BinaryBuildSource;
 import io.fabric8.openshift.api.model.BuildConfig;
 import io.fabric8.openshift.api.model.BuildConfigBuilder;
@@ -35,6 +37,8 @@ import io.fabric8.openshift.api.model.ImageStreamBuilder;
 import io.fabric8.openshift.api.model.Route;
 import io.fabric8.openshift.api.model.RouteBuilder;
 import io.fabric8.openshift.api.model.RoutePortBuilder;
+import io.fabric8.openshift.client.OpenShiftConfig;
+import io.fabric8.openshift.client.OpenShiftConfigBuilder;
 
 public final class KubernetesHelper {
 
@@ -213,5 +217,25 @@ public final class KubernetesHelper {
         return Map.of(
                 "app.kubernetes.io/name", name,
                 "app.kubernetes.io/version", version);
+    }
+
+    public static OpenShiftConfig getOpenShiftConfig(String server, String username, String password, String token) {
+        if (token != null) {
+            return new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).withTrustCerts(true).build();
+        } else {
+            return new OpenShiftConfigBuilder().withMasterUrl(server).withUsername(username).withPassword(password)
+                    .withTrustCerts(true).build();
+        }
+    }
+
+    public static Config getConfig(String server, String username, String password, String token) {
+        if (token != null && server != null) {
+            return new ConfigBuilder().withMasterUrl(server).withOauthToken(token).withTrustCerts(true).build();
+        } else if (username != null && token != null && server != null) {
+            return new ConfigBuilder().withMasterUrl(server).withUsername(username).withPassword(password).withTrustCerts(true)
+                    .build();
+        } else {
+            return new ConfigBuilder().build();
+        }
     }
 }

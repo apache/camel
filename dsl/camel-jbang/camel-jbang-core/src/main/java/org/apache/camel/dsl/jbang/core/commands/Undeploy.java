@@ -23,8 +23,6 @@ import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.openshift.client.DefaultOpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftClient;
-import io.fabric8.openshift.client.OpenShiftConfig;
-import io.fabric8.openshift.client.OpenShiftConfigBuilder;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "undeploy", description = "Undeploy resources from Kubernetes, OpenShift, Minikube")
@@ -44,14 +42,17 @@ public class Undeploy implements Callable<Integer> {
     private String server;
     @CommandLine.Option(names = { "--token" }, description = "Token")
     private String token;
+    @CommandLine.Option(names = { "-u", "--username" }, description = "Username")
+    private String username;
+    @CommandLine.Option(names = { "-p", "--password" }, description = "Password")
+    private String password;
 
     @Override
     public Integer call() throws Exception {
         Map labels = KubernetesHelper.getLabels(name, version);
         if (openshift) {
-            OpenShiftConfig config
-                    = new OpenShiftConfigBuilder().withMasterUrl(server).withOauthToken(token).withTrustCerts(true).build();
-            try (OpenShiftClient client = new DefaultOpenShiftClient(config)) {
+            try (OpenShiftClient client
+                    = new DefaultOpenShiftClient(KubernetesHelper.getOpenShiftConfig(server, username, password, token))) {
                 System.out.println("Deleting Routes...");
                 client.routes().inNamespace(namespace).withLabels(labels).delete();
                 System.out.println("Deleting Service...");
@@ -64,13 +65,15 @@ public class Undeploy implements Callable<Integer> {
                 client.buildConfigs().inNamespace(namespace).withLabels(labels).delete();
             }
         } else {
-            try (KubernetesClient client = new DefaultKubernetesClient()) {
+            try (KubernetesClient client
+                    = new DefaultKubernetesClient(KubernetesHelper.getConfig(server, username, password, token))) {
                 System.out.println("Deleting Service...");
                 client.services().inNamespace(namespace).withLabels(labels).delete();
                 System.out.println("Deleting Deployment...");
                 client.apps().deployments().inNamespace(namespace).withLabels(labels).delete();
             } catch (Exception ex) {
-                System.out.println("Error Undeploying " + ex.getMessage());
+                System.out.println("Error undeploy " + ex.getMessage());
+                ex.printStackTrace();
             }
         }
         return 0;
