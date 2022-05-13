@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -30,20 +31,41 @@ import java.util.stream.Collectors;
 import picocli.CommandLine;
 
 public final class PropertiesHelper {
-    private static final String APPLICATION_PROPERTIES_FILE = "application.properties";
+    private static final String PROPERTIES_FILE_EXTENSION = ".properties";
+    private static final String DEFAULT_PROFILE = "application";
+    private static final String PROFILE = "profile";
     private static final String PROPERTY_PREFIX = "camel.jbang";
     private static final String COMMAND_PREFIX = "camel";
     private static final String COMMON_PREFIX = COMMAND_PREFIX + ".project.";
     private static final List<String> COMMON_ARGUMENTS = List.of("namespace", "name", "version");
+    private static String propertiesFilename = "application.properties";
 
     private PropertiesHelper() {
     }
 
-    public static void augmentWithProperties(CommandLine commandLine) {
+    public static void augmentWithProperties(CommandLine commandLine, String... args) {
+
+        String profile = getProfile(args);
+        System.out.println("Augmenting properties with profile " + profile);
+        if (!Objects.equals(profile, DEFAULT_PROFILE)) {
+            propertiesFilename = profile + PROPERTIES_FILE_EXTENSION;
+        }
+
         Properties fileProperties = readProperties();
         Properties properties = replacePrefix(fileProperties);
         Properties augmentedProperties = augmentProperties(properties, commandLine);
         commandLine.setDefaultValueProvider(new CommandLine.PropertiesDefaultProvider(augmentedProperties));
+    }
+
+    private static String getProfile(String... args) {
+        CommandLine.ParseResult results = new CommandLine(new Profile())
+                .setStopAtUnmatched(false)
+                .setStopAtPositional(false).parseArgs(args);
+        if (results.hasMatchedOption(PROFILE)) {
+            return results.matchedOption(PROFILE).getValue().toString();
+        } else {
+            return DEFAULT_PROFILE;
+        }
     }
 
     private static Properties augmentProperties(Properties properties, final CommandLine commandLine) {
@@ -95,7 +117,7 @@ public final class PropertiesHelper {
     }
 
     private static Properties readProperties() {
-        File defaultsFile = new File(APPLICATION_PROPERTIES_FILE);
+        File defaultsFile = new File(propertiesFilename);
         Properties properties = new Properties();
         if (defaultsFile.exists()) {
             try (FileInputStream fis = new FileInputStream(defaultsFile)) {

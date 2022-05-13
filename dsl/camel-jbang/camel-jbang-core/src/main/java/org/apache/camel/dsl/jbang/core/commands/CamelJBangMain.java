@@ -26,6 +26,9 @@ import picocli.CommandLine.Command;
 @Command(name = "camel", description = "Apache Camel CLI", mixinStandardHelpOptions = true)
 public class CamelJBangMain implements Callable<Integer> {
     private static CommandLine commandLine;
+    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
+                        description = "Profile")
+    private String profile;
 
     public static void run(String... args) {
         commandLine = new CommandLine(new CamelJBangMain())
@@ -55,7 +58,7 @@ public class CamelJBangMain implements Callable<Integer> {
             return new String[] { v };
         });
 
-        PropertiesHelper.augmentWithProperties(commandLine);
+        PropertiesHelper.augmentWithProperties(commandLine, args);
         int exitCode = commandLine.execute(args);
         System.exit(exitCode);
     }
