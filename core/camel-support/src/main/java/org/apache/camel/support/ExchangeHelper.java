@@ -975,8 +975,8 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Gets the charset if set as header or property {@link Exchange#CHARSET_NAME}. <b>Notice:</b> The lookup from
-     * the header has priority over the property.
+     * Gets the charset if set as header or property {@link Exchange#CHARSET_NAME}. <b>Notice:</b> The lookup from the
+     * header has priority over the property.
      *
      * @param  exchange   the exchange
      * @param  useDefault should we fallback and use JVM default charset if no property existed?
