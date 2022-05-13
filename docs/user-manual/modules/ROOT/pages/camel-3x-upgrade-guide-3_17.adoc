@@ -207,6 +207,37 @@ More complex filters can be implemented by extending the `UpdatedDateFilter` or 
 
 The support for the Camel XML configuration import, that had been marked as deprecated in previous releases, was removed.
 
+=== camel-cxf-blueprint
+
+When using OSGi Blueprint with CXF endpoints defined in their own namespace as below,
+then you must use `depends-on` to refer to the ID of the `<camelContext>`.
+
+Notice how we must use `depends-on="VerySimple-context"` in the `cxf:cxfEndpoint` to refer to the `CamelContext`.
+
+[source,xml]
+----
+<?xml version="1.0" encoding="utf-8"?>
+<osgi:blueprint xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                xmlns:camel="http://camel.apache.org/schema/blueprint"
+                xmlns:osgi="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+                xmlns:cxf="http://camel.apache.org/schema/blueprint/cxf">
+
+	<camel:camelContext id="VerySimple-context">
+		<camel:route id="VerySimple-route">
+			<camel:from uri="VerySimple"/>
+			<camel:to uri="log:proxy.VerySimple"/>
+		</camel:route>
+	</camel:camelContext>
+
+	<cxf:cxfEndpoint id="VerySimple" depends-on="VerySimple-context" address="http://localhost:8088/VerySimple" serviceName="tns:VerySimple" endpointName="tns:VerySimplePort" wsdlURL="file:deploy/VerySimple.wsdl" xmlns:tns="http://www.talend.org/service/">
+		<cxf:properties>
+			<osgi:entry key="dataFormat" value="PAYLOAD"/>
+		</cxf:properties>
+	</cxf:cxfEndpoint>
+
+</osgi:blueprint>
+----
+
 === Deprecated Components
 
 The following components that had been marked as deprecated, were removed in this release:
