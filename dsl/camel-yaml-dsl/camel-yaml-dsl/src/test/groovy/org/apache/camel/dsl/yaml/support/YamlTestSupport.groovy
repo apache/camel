@@ -47,13 +47,15 @@ class YamlTestSupport extends Specification implements HasCamelContext {
     @AutoCleanup
     def context = new DefaultCamelContext()
 
-    def loadRoutes(Collection<Resource> resources) {
-        for (def resource: resources) {
-            def target = MAPPER.readTree(resource.inputStream)
-            def report = SCHEMA.validate(target)
+    def loadRoutes(Collection<Resource> resources, boolean validate = true) {
+        if (validate) {
+            for (def resource : resources) {
+                def target = MAPPER.readTree(resource.inputStream)
+                def report = SCHEMA.validate(target)
 
-            if (!report.isSuccess()) {
-                throw new IllegalArgumentException("${report}")
+                if (!report.isSuccess()) {
+                    throw new IllegalArgumentException("${report}")
+                }
             }
         }
 
@@ -82,6 +84,16 @@ class YamlTestSupport extends Specification implements HasCamelContext {
             resources.collect {
                 it -> ResourceHelper.fromString("route-${index++}.yaml", it.stripIndent())
             }
+        )
+    }
+
+    def loadRoutesNoValidate(String... resources) {
+        int index = 0
+
+        loadRoutes(
+            resources.collect {
+                it -> ResourceHelper.fromString("route-${index++}.yaml", it.stripIndent())
+            }, false
         )
     }
 

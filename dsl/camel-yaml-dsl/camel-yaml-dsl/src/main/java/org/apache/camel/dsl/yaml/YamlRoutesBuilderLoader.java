@@ -67,12 +67,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.YamlUnicodeReader;
+import org.snakeyaml.engine.v2.common.ScalarStyle;
 import org.snakeyaml.engine.v2.composer.Composer;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 import org.snakeyaml.engine.v2.nodes.NodeType;
+import org.snakeyaml.engine.v2.nodes.ScalarNode;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
+import org.snakeyaml.engine.v2.nodes.Tag;
 import org.snakeyaml.engine.v2.parser.Parser;
 import org.snakeyaml.engine.v2.parser.ParserImpl;
 import org.snakeyaml.engine.v2.scanner.StreamReader;
@@ -248,7 +251,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     }
 
     private Object preConfigureNode(Node root, YamlDeserializationContext ctx, boolean preParse) {
-        Object target = root;
+        // backwards compatible fixes
+        Object target = routeBackwardsCompatible(root, ctx, preParse);
 
         // check if the yaml is a camel-k yaml with embedded binding/routes (called flow(s))
         if (Objects.equals(root.getNodeType(), NodeType.MAPPING)) {
@@ -264,6 +268,48 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             } else if (binding && !preParse) {
                 // kamelet binding does not take part in pre-parse phase
                 target = preConfigureKameletBinding(root, ctx, target);
+            }
+        }
+
+        return target;
+    }
+
+    private Object routeBackwardsCompatible(Node root, YamlDeserializationContext ctx, boolean preParse) {
+        Object target = root;
+
+        // look for every route (the root must be a sequence)
+        if (!isSequenceNode(root)) {
+            return target;
+        }
+
+        SequenceNode seq = asSequenceNode(root);
+        for (Node node : seq.getValue()) {
+            Node route = nodeAt(node, "/route");
+            if (route != null) {
+                // backwards compatible steps are under route, but should be under from
+                Node steps = nodeAt(route, "/steps");
+                if (steps != null) {
+                    int line = -1;
+                    if (steps.getStartMark().isPresent()) {
+                        line = steps.getStartMark().get().getLine();
+                    }
+                    String file = ctx.getResource().getLocation();
+                    LOG.warn("Deprecated route/steps detected in {}:{}", file, line
+                                                                               + ". To migrate move route/steps to route/from/steps");
+                    // move steps from route to from
+                    Node from = nodeAt(route, "/from");
+                    MappingNode mn = asMappingNode(from);
+                    if (mn != null && mn.getValue() != null) {
+                        ScalarNode sn = new ScalarNode(Tag.STR, "steps", ScalarStyle.PLAIN);
+                        NodeTuple nt = new NodeTuple(sn, steps);
+                        mn.getValue().add(nt);
+                        mn = asMappingNode(route);
+                        mn.getValue().removeIf(t -> {
+                            String k = asText(t.getKeyNode());
+                            return "steps".equals(k);
+                        });
+                    }
+                }
             }
         }
 
@@ -321,6 +367,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 if (routes.getNodeType() != NodeType.SEQUENCE) {
                     throw new InvalidNodeTypeException(routes, NodeType.SEQUENCE);
                 }
+                routes = (Node) routeBackwardsCompatible(routes, ctx, preParse);
                 answer.add(routes);
             }
         }
