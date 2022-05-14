@@ -21,9 +21,6 @@ import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
-import org.apache.camel.util.ObjectHelper;
-
-import java.util.Locale;
 
 import static java.lang.String.format;
 import static java.util.Locale.ROOT;
