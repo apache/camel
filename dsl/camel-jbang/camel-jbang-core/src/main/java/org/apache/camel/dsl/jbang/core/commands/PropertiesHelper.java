@@ -46,9 +46,10 @@ public final class PropertiesHelper {
     public static void augmentWithProperties(CommandLine commandLine, String... args) {
 
         String profile = getProfile(args);
-        System.out.println("Augmenting properties with profile " + profile);
         if (!Objects.equals(profile, DEFAULT_PROFILE)) {
             propertiesFilename = profile + PROPERTIES_FILE_EXTENSION;
+            // only show if not default
+            System.out.println("Augmenting properties with profile " + profile);
         }
 
         Properties fileProperties = readProperties();
