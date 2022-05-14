@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.azure.storage.blob;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.CamelContext;
@@ -26,6 +23,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+
+import java.util.Map;
+import java.util.Set;
+
+import static org.apache.camel.component.azure.storage.blob.CredentialType.*;
 
 /**
  * Azure Blob Storage component using azure java sdk v12.x
@@ -66,7 +68,7 @@ public class BlobComponent extends DefaultComponent {
         final BlobEndpoint endpoint = new BlobEndpoint(uri, this, config);
         setProperties(endpoint, parameters);
 
-        checkCredentials(config);
+        initCredentialConfig(config);
         validateConfigurations(config);
 
         return endpoint;
@@ -83,24 +85,27 @@ public class BlobComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
-    private void checkCredentials(final BlobConfiguration configuration) {
+    private void initCredentialConfig(final BlobConfiguration configuration) {
         final BlobServiceClient client = configuration.getServiceClient();
 
-        // if no azureBlobClient is provided fallback to credentials
         if (client == null) {
-            Set<StorageSharedKeyCredential> storageSharedKeyCredentials
-                    = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
-            if (storageSharedKeyCredentials.size() == 1) {
-                configuration.setCredentials(storageSharedKeyCredentials.stream().findFirst().get());
+            //default to AZURE_AD
+            if (configuration.getCredentialType() == null) {
+                configuration.setCredentialType(azure_identity);
+            } else if (shared_key_credential.equals(configuration.getCredentialType())) {
+                Set<StorageSharedKeyCredential> storageSharedKeyCredentials = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
+                storageSharedKeyCredentials.stream().findFirst().ifPresent(configuration::setCredentials);
             }
         }
     }
 
     private void validateConfigurations(final BlobConfiguration configuration) {
-        if (configuration.getServiceClient() == null
-                && configuration.getAccessKey() == null
-                && configuration.getCredentials() == null) {
-            throw new IllegalArgumentException("Azure Storage accessKey or BlobServiceClient must be specified.");
+        if (configuration.getServiceClient() == null) {
+            if (shared_key_credential.equals(configuration.getCredentialType()) && configuration.getCredentials() == null) {
+                throw new IllegalArgumentException("When using shared key credential, credentials must be provided.");
+            } else if (shared_account_key.equals(configuration.getCredentialType()) && configuration.getAccessKey() == null) {
+                throw new IllegalArgumentException("When using shared account key, access key must be provided.");
+            }
         }
     }
 }
