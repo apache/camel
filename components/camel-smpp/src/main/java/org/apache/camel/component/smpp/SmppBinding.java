@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.smpp;
 
+import static org.apache.camel.component.smpp.SmppUtils.getMessageBody;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Date;
@@ -97,29 +99,18 @@ public class SmppBinding {
     public SmppMessage createSmppMessage(CamelContext camelContext, DeliverSm deliverSm) throws Exception {
         SmppMessage smppMessage = new SmppMessage(camelContext, deliverSm, configuration);
 
-        String messagePayload = null;
-
-        if (deliverSm.getShortMessage() == null && deliverSm.getOptionalParameters() != null) {
-            List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParameters());
-
-            for (OptionalParameter optPara : oplist) {
-                if (OptionalParameter.Tag.MESSAGE_PAYLOAD.code() == optPara.tag && OctetString.class
-                        .isInstance(optPara)) {
-                    messagePayload = ((OctetString) optPara).getValueAsString();
-                    break;
-                }
-            }
-        }
+        byte[] body = getMessageBody(deliverSm);
+        String decodedBody = decodeBodyIfPossible(body, deliverSm.getDataCoding());
 
         if (deliverSm.isSmscDeliveryReceipt()) {
             smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.DeliveryReceipt.toString());
 
             DeliveryReceipt smscDeliveryReceipt = null;
-
-            if (deliverSm.getShortMessage() != null) {
-                smscDeliveryReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
-            } else if (messagePayload != null) {
-                smscDeliveryReceipt = DefaultDecomposer.getInstance().deliveryReceipt(messagePayload);
+            if (decodedBody != null) {
+                smscDeliveryReceipt = DefaultDecomposer.getInstance().deliveryReceipt(decodedBody);
+            } else if (body != null) {
+                // fallback approach
+                smscDeliveryReceipt = DefaultDecomposer.getInstance().deliveryReceipt(body);
             }
 
             if (smscDeliveryReceipt != null) {
@@ -136,6 +127,8 @@ public class SmppBinding {
                 smppMessage.setHeader(SmppConstants.FINAL_STATUS, smscDeliveryReceipt.getFinalStatus());
             }
 
+            //TODO: Move this block outside the if block, optional parameters are valid for
+            // delivery receipts and MO messages.
             if (deliverSm.getOptionalParameters() != null && deliverSm.getOptionalParameters().length > 0) {
                 // the deprecated way
                 Map<String, Object> optionalParameters = createOptionalParameterByName(deliverSm);
@@ -148,15 +141,8 @@ public class SmppBinding {
         } else {
             smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.DeliverSm.toString());
 
-            if (deliverSm.getShortMessage() != null) {
-                Alphabet alphabet = Alphabet.parseDataCoding(deliverSm.getDataCoding());
-                if (SmppUtils.is8Bit(alphabet)) {
-                    smppMessage.setBody(deliverSm.getShortMessage());
-                } else {
-                    smppMessage.setBody(new String(deliverSm.getShortMessage(), configuration.getEncoding()));
-                }
-            } else if (messagePayload != null) {
-                smppMessage.setBody(messagePayload);
+            if (body != null) {
+                smppMessage.setBody((decodedBody != null) ? decodedBody : body);
             }
 
             smppMessage.setHeader(SmppConstants.SEQUENCE_NUMBER, deliverSm.getSequenceNumber());
@@ -172,8 +158,27 @@ public class SmppBinding {
             smppMessage.setHeader(SmppConstants.VALIDITY_PERIOD, deliverSm.getValidityPeriod());
             smppMessage.setHeader(SmppConstants.SERVICE_TYPE, deliverSm.getServiceType());
         }
-
         return smppMessage;
+    }
+
+    /**
+     * This method would try to decode the bytes provided a dataCoding.
+     *
+     * Currently, only the default encoding is supported
+     *
+     * @param  body                         Body of the message in bytes
+     * @param  dataCoding                   The data coding value
+     * @return                              null if the data coding is the 8bit unspecified encoding or the content as
+     *                                      String using the default encoding
+     * @throws UnsupportedEncodingException If the mapped charset for this data coding is not supported
+     */
+    private String decodeBodyIfPossible(byte[] body, byte dataCoding)
+            throws UnsupportedEncodingException {
+        Alphabet alphabet = Alphabet.parseDataCoding(dataCoding);
+        if (body == null || SmppUtils.is8Bit(alphabet)) {
+            return null;
+        }
+        return new String(body, configuration.getEncoding());
     }
 
     private Map<String, Object> createOptionalParameterByName(DeliverSm deliverSm) {
@@ -260,7 +265,7 @@ public class SmppBinding {
 
     /**
      * Returns the current date. Externalized for better test support.
-     * 
+     *
      * @return the current date
      */
     Date getCurrentDate() {
@@ -269,7 +274,7 @@ public class SmppBinding {
 
     /**
      * Returns the smpp configuration
-     * 
+     *
      * @return the configuration
      */
     public SmppConfiguration getConfiguration() {
@@ -278,7 +283,7 @@ public class SmppBinding {
 
     /**
      * Set the smpp configuration.
-     * 
+     *
      * @param configuration smppConfiguration
      */
     public void setConfiguration(SmppConfiguration configuration) {

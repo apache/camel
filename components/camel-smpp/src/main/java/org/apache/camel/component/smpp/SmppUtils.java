@@ -31,6 +31,10 @@ import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.DeliverSm;
+import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.OctetString;
+import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.SessionState;
@@ -125,6 +129,24 @@ public final class SmppUtils {
             // should never happen
             return year;
         }
+    }
+
+    /**
+     * Returns the payload of a deliverSm
+     *
+     * @param  deliverSm
+     * @return           the shortMessage, by first looking in the shortMessage field of the deliver_sm and if its null
+     *                   or empty, fallbacks to the optional parameter "MESSAGE_PAYLOAD".
+     */
+    public static byte[] getMessageBody(DeliverSm deliverSm) {
+        byte[] body = deliverSm.getShortMessage();
+        if (body == null || body.length == 0) {
+            OptionalParameter param = deliverSm.getOptionalParameter(Tag.MESSAGE_PAYLOAD);
+            if (param instanceof OctetString) {
+                body = ((OctetString) param).getValue();
+            }
+        }
+        return body;
     }
 
     public static boolean is8Bit(Alphabet alphabet) {
