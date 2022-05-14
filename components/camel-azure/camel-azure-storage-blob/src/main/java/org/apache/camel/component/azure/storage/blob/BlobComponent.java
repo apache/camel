@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.azure.storage.blob;
 
+import java.util.Map;
+import java.util.Set;
+
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.CamelContext;
@@ -23,9 +26,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-
-import java.util.Map;
-import java.util.Set;
 
 import static org.apache.camel.component.azure.storage.blob.CredentialType.*;
 
