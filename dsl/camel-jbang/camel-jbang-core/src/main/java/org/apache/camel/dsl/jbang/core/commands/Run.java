@@ -67,7 +67,7 @@ import static org.apache.camel.dsl.jbang.core.commands.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.asGithubSingleUrl;
 import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.fetchGithubUrls;
 
-@Command(name = "run", description = "Run Camel")
+@Command(name = "run", description = "Run as local Camel application")
 class Run implements Callable<Integer> {
 
     public static final String WORK_DIR = ".camel-jbang";

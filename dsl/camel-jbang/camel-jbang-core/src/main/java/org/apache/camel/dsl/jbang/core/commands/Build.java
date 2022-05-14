@@ -22,7 +22,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "build", description = "Build Camel container image and resources (use --help)")
+@Command(name = "build", description = "Build Camel container image and resources")
 class Build implements Callable<Integer> {
     //CHECKSTYLE:OFF
     @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")

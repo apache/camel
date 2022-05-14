@@ -20,7 +20,7 @@ import java.util.concurrent.Callable;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "generate", description = "Generate source code")
+@CommandLine.Command(name = "generate", description = "Generate source code (use --help to see sub commands)")
 public class CodeGenerator implements Callable<Integer> {
 
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")

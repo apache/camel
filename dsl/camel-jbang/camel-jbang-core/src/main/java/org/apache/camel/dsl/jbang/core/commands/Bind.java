@@ -43,7 +43,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asStringS
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 
-@Command(name = "bind", description = "Bind Kubernetes resources, such as Kamelets, in an integration flow")
+@Command(name = "bind", description = "Bind source and sink Kamelets as a new Camel integration")
 class Bind implements Callable<Integer> {
 
     @CommandLine.Parameters(description = "Source such as a Kamelet or Camel endpoint uri", arity = "1")

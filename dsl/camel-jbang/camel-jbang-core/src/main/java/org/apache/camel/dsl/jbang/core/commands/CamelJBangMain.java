@@ -43,7 +43,8 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("manifests", new Manifest())
                         .addSubcommand("image", new Image()))
                 .addSubcommand("deploy", new CommandLine(new Deploy()))
-                .addSubcommand("undeploy", new CommandLine(new Undeploy()))
+                .addSubcommand("undeploy", new CommandLine(new Undeploy()));
+/* // TODO: do not show commands that are deprecated and to be either removed or reworked
                 .addSubcommand("search", new CommandLine(new Search())
                         .addSubcommand("kamelets", new SearchKamelets())
                         .addSubcommand("components", new SearchComponents())
@@ -51,6 +52,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("others", new SearchOthers()))
                 .addSubcommand("create", new CommandLine(new Create())
                         .addSubcommand("project", new Project()));
+*/
 
         commandLine.getCommandSpec().versionProvider(() -> {
             CamelCatalog catalog = new DefaultCamelCatalog();
