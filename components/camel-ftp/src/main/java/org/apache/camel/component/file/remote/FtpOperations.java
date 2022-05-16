@@ -571,7 +571,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             exchange.getIn().setHeader(FtpConstants.FILE_LOCAL_WORK_PATH, local.getPath());
 
         } catch (Exception e) {
-            throw new GenericFileOperationFailedException("Cannot create new local work file: " + local);
+            throw new GenericFileOperationFailedException("Cannot create new local work file: " + local, e);
         }
 
         boolean result;

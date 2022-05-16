@@ -870,7 +870,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             // set header with the path to the local work file
             exchange.getIn().setHeader(FtpConstants.FILE_LOCAL_WORK_PATH, local.getPath());
         } catch (Exception e) {
-            throw new GenericFileOperationFailedException("Cannot create new local work file: " + local);
+            throw new GenericFileOperationFailedException("Cannot create new local work file: " + local, e);
         }
         String currentDir = null;
         try {
