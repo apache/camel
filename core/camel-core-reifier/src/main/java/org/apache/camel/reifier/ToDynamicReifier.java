@@ -40,7 +40,7 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
         String uri;
         Expression exp;
         if (definition.getEndpointProducerBuilder() != null) {
-            uri = definition.getEndpointProducerBuilder().getUri();
+            uri = definition.getEndpointProducerBuilder().getRawUri();
             exp = definition.getEndpointProducerBuilder().expr(camelContext);
         } else {
             uri = StringHelper.notEmpty(definition.getUri(), "uri", this);

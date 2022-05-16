@@ -56,7 +56,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         // optimize to only use dynamic processor if really needed
         String uri;
         if (definition.getEndpointProducerBuilder() != null) {
-            uri = definition.getEndpointProducerBuilder().getUri();
+            uri = definition.getEndpointProducerBuilder().getRawUri();
         } else {
             uri = StringHelper.notEmpty(definition.getUri(), "uri", this);
         }
@@ -69,7 +69,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
 
         SendDynamicProcessor dynamicSendProcessor = null;
         SendProcessor sendProcessor = null;
-        boolean simple = LanguageSupport.hasSimpleFunction(definition.getUri());
+        boolean simple = LanguageSupport.hasSimpleFunction(uri);
         boolean dynamic = parseBoolean(definition.getDynamicUri(), true);
         if (dynamic && simple) {
             // dynamic so we need the dynamic send processor
