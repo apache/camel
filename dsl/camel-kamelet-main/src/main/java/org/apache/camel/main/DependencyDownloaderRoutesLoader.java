@@ -41,6 +41,7 @@ public class DependencyDownloaderRoutesLoader extends MainRoutesLoader {
                 downloadLoader("camel-groovy-dsl");
             } else if ("java".equals(extension)) {
                 downloadLoader("camel-java-joor-dsl");
+                downloadLoader("camel-endpointdsl");
             } else if ("js".equals(extension)) {
                 downloadLoader("camel-js-dsl");
             } else if ("jsh".equals(extension)) {
