@@ -27,7 +27,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-import static org.apache.camel.component.azure.storage.blob.CredentialType.*;
+import static org.apache.camel.component.azure.storage.blob.CredentialType.azure_identity;
+import static org.apache.camel.component.azure.storage.blob.CredentialType.shared_account_key;
+import static org.apache.camel.component.azure.storage.blob.CredentialType.shared_key_credential;
 
 /**
  * Azure Blob Storage component using azure java sdk v12.x
