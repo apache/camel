@@ -270,7 +270,7 @@ public class SmppBindingTest {
         SmppMessage smppMessage = binding.createSmppMessage(camelContext, deliverSm);
 
         assertEquals("Hello SMPP world!", smppMessage.getBody());
-        assertEquals(13, smppMessage.getHeaders().size());
+        assertEquals(15, smppMessage.getHeaders().size());
         assertEquals(1, smppMessage.getHeader(SmppConstants.SEQUENCE_NUMBER));
         assertEquals(1, smppMessage.getHeader(SmppConstants.COMMAND_ID));
         assertEquals("1818", smppMessage.getHeader(SmppConstants.SOURCE_ADDR));
