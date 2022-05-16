@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.smpp;
 
-import static org.apache.camel.component.smpp.SmppUtils.getMessageBody;
-
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +24,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.jsmpp.bean.AlertNotification;
-import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
@@ -97,8 +94,8 @@ public class SmppBinding {
     public SmppMessage createSmppMessage(CamelContext camelContext, DeliverSm deliverSm) throws Exception {
         SmppMessage smppMessage = new SmppMessage(camelContext, deliverSm, configuration);
 
-        byte[] body = getMessageBody(deliverSm);
-        String decodedBody = decodeBodyIfPossible(body, deliverSm.getDataCoding());
+        byte[] body = SmppUtils.getMessageBody(deliverSm);
+        String decodedBody = SmppUtils.decodeBody(body, deliverSm.getDataCoding(), configuration.getEncoding());
 
         if (deliverSm.isSmscDeliveryReceipt()) {
             smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.DeliveryReceipt.toString());
@@ -155,26 +152,6 @@ public class SmppBinding {
             smppMessage.setHeader(SmppConstants.OPTIONAL_PARAMETER, optionalParameter);
         }
         return smppMessage;
-    }
-
-    /**
-     * This method would try to decode the bytes provided a dataCoding.
-     *
-     * Currently, only the default encoding is supported
-     *
-     * @param  body                         Body of the message in bytes
-     * @param  dataCoding                   The data coding value
-     * @return                              null if the data coding is the 8bit unspecified encoding or the content as
-     *                                      String using the default encoding
-     * @throws UnsupportedEncodingException If the mapped charset for this data coding is not supported
-     */
-    private String decodeBodyIfPossible(byte[] body, byte dataCoding)
-            throws UnsupportedEncodingException {
-        Alphabet alphabet = Alphabet.parseDataCoding(dataCoding);
-        if (body == null || SmppUtils.is8Bit(alphabet)) {
-            return null;
-        }
-        return new String(body, configuration.getEncoding());
     }
 
     private Map<String, Object> createOptionalParameterByName(DeliverSm deliverSm) {

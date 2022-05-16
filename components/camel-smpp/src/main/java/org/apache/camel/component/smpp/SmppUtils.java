@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
@@ -339,6 +341,35 @@ public final class SmppUtils {
             LOG.warn("The reconnect service did not finish executing within the timeout");
 
             service.shutdownNow();
+        }
+    }
+
+    /**
+     * This method would try to decode the bytes provided a dataCoding.
+     *
+     * Supports: US_ASCII, ISO_8859_1, UTF_16_BE alphabet values
+     *
+     * @param  body                         Body of the message in bytes
+     * @param  dataCoding                   The data coding value
+     * @param  defaultEncoding              The default encoding
+     * @return                              null if body is null or 8bit encoded, or the decoded body on success
+     * @throws UnsupportedEncodingException when the default encoding is unsupported
+     */
+    public static String decodeBody(byte[] body, byte dataCoding, String defaultEncoding)
+            throws UnsupportedEncodingException {
+        Alphabet alphabet = Alphabet.parseDataCoding(dataCoding);
+        if (body == null || SmppUtils.is8Bit(alphabet)) {
+            return null;
+        }
+        switch (alphabet) {
+            case ALPHA_IA5:
+                return new String(body, StandardCharsets.US_ASCII);
+            case ALPHA_LATIN1:
+                return new String(body, StandardCharsets.ISO_8859_1);
+            case ALPHA_UCS2:
+                return new String(body, StandardCharsets.UTF_16BE);
+            default:
+                return new String(body, defaultEncoding);
         }
     }
 }
