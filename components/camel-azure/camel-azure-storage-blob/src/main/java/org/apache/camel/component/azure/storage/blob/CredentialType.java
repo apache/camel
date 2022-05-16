@@ -21,11 +21,11 @@ public enum CredentialType {
      * Shared key credential
      * @see com.azure.storage.common.StorageSharedKeyCredential
      */
-    shared_key_credential,
+    SHARED_KEY_CREDENTIAL,
     /**
      * storage shared account key
      */
-    shared_account_key,
+    SHARED_ACCOUNT_KEY,
     /**
      * Includes:
      * <uL>
@@ -35,5 +35,5 @@ public enum CredentialType {
      * </uL>
      * @see com.azure.identity.DefaultAzureCredentialBuilder
      */
-    azure_identity
+    AZURE_IDENTITY
 }

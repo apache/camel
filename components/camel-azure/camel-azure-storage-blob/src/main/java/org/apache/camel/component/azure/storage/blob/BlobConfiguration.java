@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.component.azure.storage.blob.CredentialType.azure_identity;
+import static org.apache.camel.component.azure.storage.blob.CredentialType.AZURE_IDENTITY;
 
 @UriParams
 public class BlobConfiguration implements Cloneable {
@@ -100,7 +100,7 @@ public class BlobConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String sourceBlobAccessKey;
     @UriParam(label = "common", enums = "shared_account_key,shared_key_credential,azure_identity", defaultValue = "azure_identity")
-    private CredentialType credentialType = azure_identity;
+    private CredentialType credentialType = AZURE_IDENTITY;
 
     /**
      * Azure account name to be used for authentication with azure blob services

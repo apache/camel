@@ -70,9 +70,9 @@ To use this component, you have multiple options in order to provide the require
 
 - By providing your own https://azuresdkdocs.blob.core.windows.net/$web/java/azure-storage-blob/12.0.0/com/azure/storage/blob/BlobServiceClient.html[BlobServiceClient] instance which can be injected into `blobServiceClient`. Note: You don't need to create a specific client, e.g: BlockBlobClient, the BlobServiceClient represents the upper level which
 can be used to retrieve lower level clients.
-- Via Azure Identity, when specifying `credentialType=azure_identity` and providing required https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity#environment-variables[environment variables]. This enables service principal (e.g. app registration) authentication with secret/certificate as well as username password. Note that this is the default authentication strategy.
-- Via shared storage account key, when specifying `credentialType=shared_account_key` and providing `accountName` and `accessKey` for your Azure account, this is the simplest way to get started. The accessKey can be generated through your Azure portal.
-- Via shared storage account key, when specifying `credentialType=shared_key_credential` and providing a https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-java/staging/apidocs/com/azure/storage/common/StorageSharedKeyCredential.html[StorageSharedKeyCredential] instance which can be injected into `credentials` option.
+- Via Azure Identity, when specifying `credentialType=AZURE_IDENTITY` and providing required https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity#environment-variables[environment variables]. This enables service principal (e.g. app registration) authentication with secret/certificate as well as username password. Note that this is the default authentication strategy.
+- Via shared storage account key, when specifying `credentialType=SHARED_ACCOUNT_KEY` and providing `accountName` and `accessKey` for your Azure account, this is the simplest way to get started. The accessKey can be generated through your Azure portal.
+- Via shared storage account key, when specifying `credentialType=SHARED_KEY_CREDENTIAL` and providing a https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-java/staging/apidocs/com/azure/storage/common/StorageSharedKeyCredential.html[StorageSharedKeyCredential] instance which can be injected into `credentials` option.
 
 == Usage
 

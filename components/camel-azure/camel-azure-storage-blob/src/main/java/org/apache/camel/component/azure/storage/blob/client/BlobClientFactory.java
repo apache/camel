@@ -26,8 +26,8 @@ import static java.lang.String.format;
 import static java.util.Locale.ROOT;
 import static java.util.Optional.ofNullable;
 import static java.util.Set.of;
-import static org.apache.camel.component.azure.storage.blob.CredentialType.shared_account_key;
-import static org.apache.camel.component.azure.storage.blob.CredentialType.shared_key_credential;
+import static org.apache.camel.component.azure.storage.blob.CredentialType.SHARED_ACCOUNT_KEY;
+import static org.apache.camel.component.azure.storage.blob.CredentialType.SHARED_KEY_CREDENTIAL;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 public final class BlobClientFactory {
@@ -40,7 +40,7 @@ public final class BlobClientFactory {
     public static BlobServiceClient createBlobServiceClient(final BlobConfiguration configuration) {
         BlobServiceClientBuilder blobServiceClientBuilder = new BlobServiceClientBuilder().endpoint(buildAzureEndpointUri(configuration));
 
-        if (of(shared_key_credential, shared_account_key).contains(configuration.getCredentialType())) {
+        if (of(SHARED_KEY_CREDENTIAL, SHARED_ACCOUNT_KEY).contains(configuration.getCredentialType())) {
             blobServiceClientBuilder.credential(getSharedKeyCredential(configuration));
         } else {
             blobServiceClientBuilder.credential(new DefaultAzureCredentialBuilder().build());
