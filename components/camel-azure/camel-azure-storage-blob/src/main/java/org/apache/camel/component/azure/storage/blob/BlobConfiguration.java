@@ -99,7 +99,7 @@ public class BlobConfiguration implements Cloneable {
     private String regex;
     @UriParam(label = "security", secret = true)
     private String sourceBlobAccessKey;
-    @UriParam(label = "common", enums = "shared_account_key,shared_key_credential,azure_identity", defaultValue = "azure_identity")
+    @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY", defaultValue = "AZURE_IDENTITY")
     private CredentialType credentialType = AZURE_IDENTITY;
 
     /**
