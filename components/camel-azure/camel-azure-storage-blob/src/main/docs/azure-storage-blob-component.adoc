@@ -81,7 +81,7 @@ located on the `container1` in the `camelazure` storage account, use the followi
 
 [source,java]
 --------------------------------------------------------------------------------
-from("azure-storage-blob://camelazure/container1?blobName=hello.txt&credentialType=shared_account_key&accessKey=RAW(yourAccessKey)").
+from("azure-storage-blob://camelazure/container1?blobName=hello.txt&credentialType=SHARED_ACCOUNT_KEY&accessKey=RAW(yourAccessKey)").
 to("file://blobdirectory");
 --------------------------------------------------------------------------------
 
@@ -544,7 +544,7 @@ To run the integration tests, on this component directory, run the following mav
 
 [source,bash]
 ----
-mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey -DcredentialType=shared_account_key
+mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey -DcredentialType=SHARED_ACCOUNT_KEY
 ----
 
 Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.
