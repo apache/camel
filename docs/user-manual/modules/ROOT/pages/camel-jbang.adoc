@@ -329,6 +329,18 @@ HELLO
 WORLD
 ----
 
+Camel stores logs to file in the `.camel-jbang/camel-pipe.log` file. You can turn this off by
+setting `--logging=false` such as:
+
+[source,bash]
+----
+echo "Hello\nWorld" | ./upper.yaml --logging=false
+----
+
+NOTE: Every time the script is executed a JVM is started with Camel. This is not very fast or low on memory usage,
+so use Camel JBang terminal scripting where using Camel makes sense. For example to use the
+many Camel components or Kamelets to more easily send or receive data from disparate IT systems.
+
 === Running local Kamelets
 
 You can also use Camel JBang to try local Kamelets, without the need to publish them on GitHub or package them in a jar.
