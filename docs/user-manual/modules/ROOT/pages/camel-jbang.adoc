@@ -206,15 +206,6 @@ This is a groovy route, which you can run with (or use `*`):
 camel run simple.groovy
 ----
 
-=== Running local Kamelets
-
-You can also use Camel JBang to try local Kamelets, without the need to publish them on GitHub or package them in a jar.
-
-[source,bash]
-----
-camel run --local-kamelet-dir=/path/to/local/kamelets earthquake.yaml
-----
-
 ==== Downloading routes form GitHub gists
 
 You can also download files from gists easily as shown:
@@ -295,6 +286,56 @@ For example. you can copy this to your clipboard and then run it afterwards:
 [source,bash]
 ----
 camel run clipboard.xml
+----
+
+=== Scripting from terminal using pipes
+
+You can also execute a Camel JBang file as a script that can be used for terminal scripting with pipes and filters.
+
+This requires to add the following line in top of the file, for example as in the `upper.yaml` file below:
+
+[source,text]
+----
+///usr/bin/env jbang --quiet camel@apache/camel pipe "$0" "$@" ; exit $?
+
+# Will upper-case the input
+- from:
+    uri: "stream:in"
+    steps:
+      - setBody:
+          simple: "${body.toUpperCase()}"
+      - to: "stream:out"
+----
+
+To be able to execute this as a script, you need to set execute file permission:
+
+[source,bash]
+----
+chmod +x upper.yaml
+----
+
+Then you can then execute this as a script:
+
+[source,bash]
+----
+echo "Hello\nWorld" | ./upper.yaml
+----
+
+Which should output:
+
+[source,text]
+----
+HELLO
+WORLD
+----
+
+=== Running local Kamelets
+
+You can also use Camel JBang to try local Kamelets, without the need to publish them on GitHub or package them in a jar.
+
+[source,bash]
+----
+camel run --local-kamelet-dir=/path/to/local/kamelets earthquake.yaml
 ----
 
 === Using platform-http component

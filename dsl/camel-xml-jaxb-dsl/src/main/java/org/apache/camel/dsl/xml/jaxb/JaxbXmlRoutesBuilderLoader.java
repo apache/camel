@@ -50,28 +50,28 @@ public class JaxbXmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             @Override
             public void configure() throws Exception {
                 // we use configure to load the routes
-                try (InputStream is = resource.getInputStream()) {
+                try (InputStream is = resourceInputStream(resource)) {
                     RouteTemplatesDefinition templates = loadRouteTemplatesDefinition(getCamelContext(), is);
                     if (templates != null) {
                         setRouteTemplateCollection(templates);
                     }
                 }
 
-                try (InputStream is = resource.getInputStream()) {
+                try (InputStream is = resourceInputStream(resource)) {
                     TemplatedRoutesDefinition templates = loadTemplatedRoutesDefinition(getCamelContext(), is);
                     if (templates != null) {
                         setTemplatedRouteCollection(templates);
                     }
                 }
 
-                try (InputStream is = resource.getInputStream()) {
+                try (InputStream is = resourceInputStream(resource)) {
                     RestsDefinition rests = loadRestsDefinition(getCamelContext(), is);
                     if (rests != null) {
                         setRestCollection(rests);
                     }
                 }
 
-                try (InputStream is = resource.getInputStream()) {
+                try (InputStream is = resourceInputStream(resource)) {
                     RoutesDefinition routes = loadRoutesDefinition(getCamelContext(), is);
                     if (routes != null) {
                         CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());

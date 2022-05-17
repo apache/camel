@@ -76,7 +76,7 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
             throw new FileNotFoundException("Resource not found: " + resource.getLocation());
         }
 
-        try (InputStream is = resource.getInputStream()) {
+        try (InputStream is = resourceInputStream(resource)) {
             // need a local settings because we want the label to be the resource we parse so the parser
             // can show parsing errors referring to actual resource file being parsed.
             LoadSettings local = LoadSettings.builder().setLabel(resource.getLocation()).build();

@@ -16,6 +16,12 @@
  */
 package org.apache.camel.dsl.support;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +38,9 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.RoutesBuilderLoaderSupport;
+import org.apache.camel.util.IOHelper;
+
+import static org.apache.camel.util.IOHelper.buffered;
 
 /**
  * Base class for {@link RoutesBuilderLoader} implementations.
@@ -115,5 +124,51 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
         return builder;
     }
 
+    /**
+     * Gets the input stream to the resource
+     *
+     * @param resource  the resource
+     * @return  the input stream
+     */
+    protected InputStream resourceInputStream(Resource resource) throws IOException {
+        // load into memory as we need to skip a specific first-line if present
+        String data = loadResource(resource.getInputStream());
+        return new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
+    }
+
+
+    /**
+     * Loads {@link RoutesBuilder} from {@link Resource} from the DSL implementation.
+     *
+     * @param  resource the resource to be loaded.
+     * @return          a {@link RoutesBuilder}
+     */
     protected abstract RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception;
+
+    private static String loadResource(InputStream in) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        InputStreamReader isr = new InputStreamReader(in);
+        boolean first = true;
+        try {
+            BufferedReader reader = IOHelper.buffered(isr);
+            while (true) {
+                String line = reader.readLine();
+                if (line != null) {
+                    // we need to skip first line if it starts with a special script marker for camel-jbang in pipe mode
+                    if (first && line.startsWith("///usr/bin/env jbang --quiet camel@apache/camel pipe")) {
+                        line = ""; // use an empty line so line numbers still matches
+                    }
+                    builder.append(line);
+                    builder.append("\n");
+                    first = false;
+                } else {
+                    break;
+                }
+            }
+            return builder.toString();
+        } finally {
+            IOHelper.close(isr, in);
+        }
+    }
+
 }

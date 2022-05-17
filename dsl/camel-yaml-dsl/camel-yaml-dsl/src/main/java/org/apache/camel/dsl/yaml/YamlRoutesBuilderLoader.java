@@ -712,7 +712,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             throw new FileNotFoundException("Resource not found: " + resource.getLocation());
         }
 
-        try (InputStream is = resource.getInputStream()) {
+        try (InputStream is = resourceInputStream(resource)) {
             LoadSettings local = LoadSettings.builder().setLabel(resource.getLocation()).build();
             final YamlDeserializationContext ctx = newYamlDeserializationContext(local, resource);
             final StreamReader reader = new StreamReader(local, new YamlUnicodeReader(is));

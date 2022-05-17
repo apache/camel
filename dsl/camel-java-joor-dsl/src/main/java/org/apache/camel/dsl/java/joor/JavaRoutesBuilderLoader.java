@@ -82,7 +82,7 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
         Map<String, Resource> nameToResource = new HashMap<>();
         for (Resource resource : resources) {
-            try (InputStream is = resource.getInputStream()) {
+            try (InputStream is = resourceInputStream(resource)) {
                 if (is == null) {
                     throw new FileNotFoundException(resource.getLocation());
                 }

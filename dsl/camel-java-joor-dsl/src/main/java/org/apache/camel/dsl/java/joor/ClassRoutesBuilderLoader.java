@@ -57,7 +57,7 @@ public class ClassRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport 
         Map<String, byte[]> byteCodes = new LinkedHashMap<>();
         for (Resource res : resources) {
             String className = asClassName(res);
-            InputStream is = res.getInputStream();
+            InputStream is = resourceInputStream(res);
             if (is != null) {
                 byte[] code = is.readAllBytes();
                 byteCodes.put(className, code);
