@@ -42,8 +42,8 @@ class Pipe implements Callable<Integer> {
                         description = "For how long time in seconds Camel can be idle before stopping")
     int maxIdleSeconds;
 
-    @CommandLine.Option(names = { "--logging" }, defaultValue = "true", description = "Can be used to turn off logging")
-    boolean logging = true;
+    @CommandLine.Option(names = { "--logging" }, defaultValue = "false", description = "Can be used to turn on logging (logs to file in .camel-jbang directory)")
+    boolean logging;
 
     @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
     String loggingLevel;
