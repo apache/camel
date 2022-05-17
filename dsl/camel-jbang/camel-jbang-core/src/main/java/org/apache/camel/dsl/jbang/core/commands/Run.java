@@ -83,6 +83,7 @@ class Run implements Callable<Integer> {
     private File lockFile;
     private ScheduledExecutorService executor;
     private boolean silentRun;
+    private boolean pipeRun;
 
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
                 arity = "0..9")
@@ -186,6 +187,12 @@ class Run implements Callable<Integer> {
         return run();
     }
 
+    protected Integer runPipe(String file) throws Exception {
+        this.files = new String[]{file};
+        pipeRun = true;
+        return run();
+    }
+
     private void writeSetting(KameletMain main, Properties existing, String key, String value) {
         String val = existing != null ? existing.getProperty(key, value) : value;
         if (val != null) {
@@ -278,7 +285,7 @@ class Run implements Callable<Integer> {
             } else if (!silentRun && !source.exists()) {
                 System.out.println("Cannot run because application.properties file does not exist");
                 return 1;
-            } else {
+            } else if (silentRun) {
                 // silent-run then auto-detect all files
                 files = new File(".").list();
             }
@@ -332,6 +339,9 @@ class Run implements Callable<Integer> {
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "1");
+        } else if (pipeRun) {
+            // auto terminate if being idle
+            main.addInitialProperty("camel.main.durationMaxIdleSeconds", "1");
         }
         writeSetting(main, applicationProperties, "camel.main.durationMaxMessages",
                 () -> maxMessages > 0 ? String.valueOf(maxMessages) : null);
@@ -599,7 +609,7 @@ class Run implements Callable<Integer> {
     }
 
     private void configureLogging() throws Exception {
-        if (silentRun) {
+        if (silentRun || pipeRun) {
             RuntimeUtil.configureLog("off", false, false);
         } else if (logging) {
             RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson);
