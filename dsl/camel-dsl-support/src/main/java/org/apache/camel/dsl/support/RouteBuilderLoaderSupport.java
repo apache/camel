@@ -154,7 +154,7 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
                 String line = reader.readLine();
                 if (line != null) {
                     // we need to skip first line if it starts with a special script marker for camel-jbang in pipe mode
-                    if (first && line.startsWith("///usr/bin/env jbang --quiet camel@apache/camel pipe")) {
+                    if (first && line.startsWith("///usr/bin/env jbang") && line.contains("camel@apache/camel pipe")) {
                         line = ""; // use an empty line so line numbers still matches
                     }
                     builder.append(line);
