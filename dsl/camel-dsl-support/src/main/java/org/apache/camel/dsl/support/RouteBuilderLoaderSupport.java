@@ -127,15 +127,14 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
     /**
      * Gets the input stream to the resource
      *
-     * @param resource  the resource
-     * @return  the input stream
+     * @param  resource the resource
+     * @return          the input stream
      */
     protected InputStream resourceInputStream(Resource resource) throws IOException {
         // load into memory as we need to skip a specific first-line if present
         String data = loadResource(resource.getInputStream());
         return new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
     }
-
 
     /**
      * Loads {@link RoutesBuilder} from {@link Resource} from the DSL implementation.

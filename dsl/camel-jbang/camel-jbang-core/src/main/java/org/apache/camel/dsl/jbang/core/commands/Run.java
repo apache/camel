@@ -188,7 +188,7 @@ class Run implements Callable<Integer> {
     }
 
     protected Integer runPipe(String file) throws Exception {
-        this.files = new String[]{file};
+        this.files = new String[] { file };
         pipeRun = true;
         return run();
     }
