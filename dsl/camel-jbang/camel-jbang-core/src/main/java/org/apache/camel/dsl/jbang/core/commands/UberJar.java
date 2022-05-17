@@ -57,7 +57,8 @@ class UberJar implements Callable<Integer> {
     private static final String[] SETTINGS_PROP_SOURCE_KEYS = new String[] {
             "camel.main.routesIncludePattern",
             "camel.component.properties.location",
-            "camel.component.kamelet.location"
+            "camel.component.kamelet.location",
+            "camel.jbang.classpathFiles"
     };
 
     //CHECKSTYLE:OFF
@@ -316,12 +317,13 @@ class UberJar implements Callable<Integer> {
             String files = prop.getProperty(k);
             if (files != null) {
                 for (String f : files.split(",")) {
-                    if (f.startsWith("file:")) {
-                        f = f.substring(5);
-                        File source = new File(f);
-                        File out = new File(target, source.getName());
-                        safeCopy(source, out, true);
+                    String scheme = getScheme(f);
+                    if (scheme != null) {
+                        f = f.substring(scheme.length() + 1);
                     }
+                    File source = new File(f);
+                    File out = new File(target, source.getName());
+                    safeCopy(source, out, true);
                 }
             }
         }
@@ -371,5 +373,14 @@ class UberJar implements Callable<Integer> {
             Files.copy(source, target.toPath());
         }
     }
+
+    private static String getScheme(String name) {
+        int pos = name.indexOf(":");
+        if (pos != -1) {
+            return name.substring(0, pos);
+        }
+        return null;
+    }
+
 
 }
