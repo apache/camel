@@ -17,8 +17,8 @@
 package org.apache.camel.language.simple.myconverter;
 
 /**
- * This custom date object allows to check that Simple expressions can call
- * custom type converters when needing real java.util.Date instances
+ * This custom date object allows to check that Simple expressions can call custom type converters when needing real
+ * java.util.Date instances
  */
 public final class MyCustomDate {
 
