@@ -481,7 +481,10 @@ public final class SimpleExpressionBuilder {
                     } else if (obj instanceof Long) {
                         date = new Date((Long) obj);
                     } else {
-                        throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
+                        date = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, obj);
+                        if (date == null) {
+                            throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
+                        }
                     }
                 } else if (command.startsWith("exchangeProperty.")) {
                     String key = command.substring(command.lastIndexOf('.') + 1);
@@ -491,7 +494,10 @@ public final class SimpleExpressionBuilder {
                     } else if (obj instanceof Long) {
                         date = new Date((Long) obj);
                     } else {
-                        throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
+                        date = exchange.getContext().getTypeConverter().tryConvertTo(Date.class, exchange, obj);
+                        if (date == null) {
+                            throw new IllegalArgumentException("Cannot find Date/long object at command: " + command);
+                        }
                     }
                 } else if ("file".equals(command)) {
                     Long num = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);

@@ -16,3 +16,4 @@
 #
 
 org.apache.camel.converter.myconverter
+org.apache.camel.language.simple.myconverter
