@@ -38,6 +38,7 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
+import org.apache.camel.language.simple.myconverter.MyCustomDate;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
@@ -602,6 +603,23 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertExpression("${date:header.birthday - 10s:yyyy-MM-dd'T'HH:mm:ss:SSS}", "1974-04-20T08:55:37:123");
         assertExpression("${date:header.birthday:yyyy-MM-dd'T'HH:mm:ss:SSS}", "1974-04-20T08:55:47:123");
+    }
+
+    @Test
+    public void testDateWithConverterExpressions() throws Exception {
+        exchange.getIn().setHeader("birthday", new MyCustomDate(1974, Calendar.APRIL, 20));
+        exchange.setProperty("birthday", new MyCustomDate(1974, Calendar.APRIL, 20));
+        exchange.getIn().setHeader("other", new ArrayList<>());
+
+        assertExpression("${date:header.birthday:yyyyMMdd}", "19740420");
+        assertExpression("${date:exchangeProperty.birthday:yyyyMMdd}", "19740420");
+
+        try {
+            assertExpression("${date:header.other:yyyyMMdd}", "19740420");
+            fail("Should thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Cannot find Date/long object at command: header.other", e.getMessage());
+        }
     }
 
     @Test
