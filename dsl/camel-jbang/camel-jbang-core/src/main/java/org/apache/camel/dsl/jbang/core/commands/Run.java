@@ -85,91 +85,91 @@ class Run implements Callable<Integer> {
     private boolean silentRun;
     private boolean pipeRun;
 
+    //CHECKSTYLE:OFF
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
                 arity = "0..9")
-    private String[] files;
+    String[] files;
 
-    //CHECKSTYLE:OFF
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested;
-    //CHECKSTYLE:ON
+    boolean helpRequested;
 
     @Option(names = {
             "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate them).")
-    private String dependencies;
+    String dependencies;
 
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
-    private String name;
+    String name;
 
     @Option(names = { "--logging" }, defaultValue = "true", description = "Can be used to turn off logging")
-    private boolean logging = true;
+    boolean logging = true;
 
     @Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
-    private String loggingLevel;
+    String loggingLevel;
 
-    @Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored loggging")
-    private boolean loggingColor = true;
+    @Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    boolean loggingColor = true;
 
     @Option(names = { "--logging-json" }, description = "Use JSON logging (ECS Layout)")
-    private boolean loggingJson;
+    boolean loggingJson;
 
     @Option(names = { "--stop" }, description = "Stop all running instances of Camel JBang")
-    private boolean stopRequested;
+    boolean stopRequested;
 
     @Option(names = { "--max-messages" }, defaultValue = "0", description = "Max number of messages to process before stopping")
-    private int maxMessages;
+    int maxMessages;
 
     @Option(names = { "--max-seconds" }, defaultValue = "0", description = "Max seconds to run before stopping")
-    private int maxSeconds;
+    int maxSeconds;
 
     @Option(names = { "--max-idle-seconds" }, defaultValue = "0",
             description = "For how long time in seconds Camel can be idle before stopping")
-    private int maxIdleSeconds;
+    int maxIdleSeconds;
 
     @Option(names = { "--reload", "--dev" },
             description = "Enables dev mode (live reload when source files are updated and saved)")
-    private boolean dev;
+    boolean dev;
 
     @Option(names = { "--trace" }, description = "Enables trace logging of the routed messages")
-    private boolean trace;
+    boolean trace;
 
     @Option(names = { "--properties" },
             description = "Load properties file for route placeholders (ex. /path/to/file.properties")
-    private String propertiesFiles;
+    String propertiesFiles;
 
     @Option(names = { "-p", "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
-    private String[] property;
+    String[] property;
 
     @Option(names = { "--file-lock" },
             description = "Whether to create a temporary file lock, which upon deleting triggers this process to terminate")
-    private boolean fileLock;
+    boolean fileLock;
 
     @Option(names = { "--jfr" },
             description = "Enables Java Flight Recorder saving recording to disk on exit")
-    private boolean jfr;
+    boolean jfr;
 
     @Option(names = { "--jfr-profile" },
             description = "Java Flight Recorder profile to use (such as default or profile)")
-    private String jfrProfile;
+    String jfrProfile;
 
     @Option(names = { "--local-kamelet-dir" },
             description = "Local directory for loading Kamelets (takes precedence)")
-    private String localKameletDir;
+    String localKameletDir;
 
     @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
-    private int port;
+    int port;
 
     @Option(names = { "--console" }, description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
-    private boolean console;
+    boolean console;
 
     @Option(names = { "--health" }, description = "Health check at /q/health on local HTTP server (port 8080 by default)")
-    private boolean health;
+    boolean health;
 
     @Option(names = { "--modeline" }, defaultValue = "true", description = "Enables Camel-K style modeline")
-    private boolean modeline = true;
+    boolean modeline = true;
 
     @Option(names = { "--open-api" }, description = "Add an OpenAPI spec from the given file")
-    private String openapi;
+    String openapi;
+    //CHECKSTYLE:ON
 
     @Override
     public Integer call() throws Exception {
@@ -609,15 +609,15 @@ class Run implements Callable<Integer> {
     }
 
     private void configureLogging() throws Exception {
-        if (silentRun || pipeRun) {
-            RuntimeUtil.configureLog("off", false, false);
+        if (silentRun) {
+            RuntimeUtil.configureLog("off", false, false, false);
         } else if (logging) {
-            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson);
+            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson, pipeRun);
             writeSettings("loggingLevel", loggingLevel);
             writeSettings("loggingColor", loggingColor ? "true" : "false");
             writeSettings("loggingJson", loggingJson ? "true" : "false");
         } else {
-            RuntimeUtil.configureLog("off", false, false);
+            RuntimeUtil.configureLog("off", false, false, false);
             writeSettings("loggingLevel", "off");
         }
     }

@@ -55,7 +55,7 @@ public abstract class AbstractSearch {
 
     protected void downloadResource(File indexFile) throws ResourceDoesNotExist, IOException {
         // turn off logging as we use camel to download
-        RuntimeUtil.configureLog("off", true, false);
+        RuntimeUtil.configureLog("off", true, false, false);
 
         KameletMain main = new KameletMain();
         main.start();

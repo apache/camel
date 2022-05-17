@@ -35,6 +35,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("run", new CommandLine(new Run()))
                 .addSubcommand("init", new CommandLine(new Init()))
                 .addSubcommand("bind", new CommandLine(new Bind()))
+                .addSubcommand("pipe", new CommandLine(new Pipe()))
                 .addSubcommand("package", new CommandLine(new Package())
                         .addSubcommand("uber-jar", new UberJar()))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator())
@@ -53,23 +54,6 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("create", new CommandLine(new Create())
                         .addSubcommand("project", new Project()));
         */
-
-        // special for pipe mode
-        if (args.length == 2 && "pipe".equals(args[0])) {
-            Pipe pipe = new Pipe();
-            pipe.file = args[1];
-            if (pipe.file.startsWith("./")) {
-                pipe.file = pipe.file.substring(2);
-            }
-            int exitCode;
-            try {
-                exitCode = pipe.call();
-            } catch (Exception e) {
-                e.printStackTrace();
-                exitCode = 1;
-            }
-            System.exit(exitCode);
-        }
 
         commandLine.getCommandSpec().versionProvider(() -> {
             CamelCatalog catalog = new DefaultCamelCatalog();

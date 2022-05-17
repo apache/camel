@@ -23,12 +23,45 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "pipe", description = "Run Camel in pipe and filters mode for terminal scripting")
 class Pipe implements Callable<Integer> {
 
-    // the name of the file itself
+    @CommandLine.Parameters(description = "Name of file", arity = "1")
     String file;
+
+    //CHECKSTYLE:OFF
+    @CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "Display the help and sub-commands")
+    boolean helpRequested;
+    //CHECKSTYLE:ON
+
+    @CommandLine.Option(names = { "--max-messages" }, defaultValue = "0",
+                        description = "Max number of messages to process before stopping")
+    int maxMessages;
+
+    @CommandLine.Option(names = { "--max-seconds" }, defaultValue = "0", description = "Max seconds to run before stopping")
+    int maxSeconds;
+
+    @CommandLine.Option(names = { "--max-idle-seconds" }, defaultValue = "1",
+                        description = "For how long time in seconds Camel can be idle before stopping")
+    int maxIdleSeconds;
+
+    @CommandLine.Option(names = { "--logging" }, defaultValue = "true", description = "Can be used to turn off logging")
+    boolean logging = true;
+
+    @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
+    String loggingLevel;
 
     @Override
     public Integer call() throws Exception {
+        // remove leading ./ when calling a script in pipe mode
+        if (file != null && file.startsWith("./")) {
+            file = file.substring(2);
+        }
+
         Run run = new Run();
+        run.logging = logging;
+        run.loggingLevel = loggingLevel;
+        run.loggingColor = false;
+        run.maxSeconds = maxSeconds;
+        run.maxMessages = maxMessages;
+        run.maxIdleSeconds = maxIdleSeconds;
         return run.runPipe(file);
     }
 
