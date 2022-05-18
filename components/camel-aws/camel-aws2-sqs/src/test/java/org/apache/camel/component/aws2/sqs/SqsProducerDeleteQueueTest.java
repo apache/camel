@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SqsProducerDeleteQueueTest extends CamelTestSupport {
     @BindToRegistry("client")
-    AmazonSQSClientMock mock = new AmazonSQSClientMock();
+    AmazonSQSClientMock mock = new AmazonSQSClientMock("camel-1");
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -47,7 +47,6 @@ public class SqsProducerDeleteQueueTest extends CamelTestSupport {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Sqs2Constants.SQS_QUEUE_PREFIX, "camel-1");
             }
         });
         assertMockEndpointsSatisfied();

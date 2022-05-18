@@ -183,9 +183,7 @@ public class Sqs2Producer extends DefaultProducer {
 
     private void purgeQueue(SqsClient amazonSQS, Exchange exchange) {
         PurgeQueueRequest.Builder request = PurgeQueueRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Sqs2Constants.SQS_QUEUE_PREFIX))) {
-            request.queueUrl(getQueueUrl());
-        }
+        request.queueUrl(getQueueUrl());
         PurgeQueueResponse result = amazonSQS.purgeQueue(request.build());
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
@@ -193,9 +191,7 @@ public class Sqs2Producer extends DefaultProducer {
 
     private void deleteQueue(SqsClient amazonSQS, Exchange exchange) {
         DeleteQueueRequest.Builder request = DeleteQueueRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Sqs2Constants.SQS_QUEUE_PREFIX))) {
-            request.queueUrl(getQueueUrl());
-        }
+        request.queueUrl(getQueueUrl());
         DeleteQueueResponse result = amazonSQS.deleteQueue(request.build());
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
