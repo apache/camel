@@ -59,6 +59,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "createAppendBlob": target.getConfiguration().setCreateAppendBlob(property(camelContext, boolean.class, value)); return true;
         case "createpageblob":
         case "createPageBlob": target.getConfiguration().setCreatePageBlob(property(camelContext, boolean.class, value)); return true;
+        case "credentialtype":
+        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.storage.blob.CredentialType.class, value)); return true;
         case "credentials": target.getConfiguration().setCredentials(property(camelContext, com.azure.storage.common.StorageSharedKeyCredential.class, value)); return true;
         case "datacount":
         case "dataCount": target.getConfiguration().setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
@@ -159,6 +161,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "createAppendBlob": return boolean.class;
         case "createpageblob":
         case "createPageBlob": return boolean.class;
+        case "credentialtype":
+        case "credentialType": return org.apache.camel.component.azure.storage.blob.CredentialType.class;
         case "credentials": return com.azure.storage.common.StorageSharedKeyCredential.class;
         case "datacount":
         case "dataCount": return java.lang.Long.class;
@@ -255,6 +259,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "createAppendBlob": return target.getConfiguration().isCreateAppendBlob();
         case "createpageblob":
         case "createPageBlob": return target.getConfiguration().isCreatePageBlob();
+        case "credentialtype":
+        case "credentialType": return target.getConfiguration().getCredentialType();
         case "credentials": return target.getConfiguration().getCredentials();
         case "datacount":
         case "dataCount": return target.getConfiguration().getDataCount();

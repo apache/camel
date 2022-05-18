@@ -66,17 +66,13 @@ include::partial$component-endpoint-options.adoc[]
 
 *Required information options:*
 
-To use this component, you have 3 options in order to provide the required Azure authentication information:
+To use this component, you have multiple options in order to provide the required Azure authentication information:
 
-- Provide `accountName` and `accessKey` for your Azure account, this is the simplest way to get started. The accessKey can
-be generated through your Azure portal.
-- Provide a https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-java/staging/apidocs/com/azure/storage/common/StorageSharedKeyCredential.html[StorageSharedKeyCredential] instance which can be
-provided into `credentials` option.
-- Provide a https://azuresdkdocs.blob.core.windows.net/$web/java/azure-storage-blob/12.0.0/com/azure/storage/blob/BlobServiceClient.html[BlobServiceClient] instance which can be
-provided into `blobServiceClient`. Note: You don't need to create a specific client, e.g: BlockBlobClient, the BlobServiceClient represents the upper level which
+- By providing your own https://azuresdkdocs.blob.core.windows.net/$web/java/azure-storage-blob/12.0.0/com/azure/storage/blob/BlobServiceClient.html[BlobServiceClient] instance which can be injected into `blobServiceClient`. Note: You don't need to create a specific client, e.g: BlockBlobClient, the BlobServiceClient represents the upper level which
 can be used to retrieve lower level clients.
-
-
+- Via Azure Identity, when specifying `credentialType=AZURE_IDENTITY` and providing required https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity#environment-variables[environment variables]. This enables service principal (e.g. app registration) authentication with secret/certificate as well as username password. Note that this is the default authentication strategy.
+- Via shared storage account key, when specifying `credentialType=SHARED_ACCOUNT_KEY` and providing `accountName` and `accessKey` for your Azure account, this is the simplest way to get started. The accessKey can be generated through your Azure portal.
+- Via shared storage account key, when specifying `credentialType=SHARED_KEY_CREDENTIAL` and providing a https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-java/staging/apidocs/com/azure/storage/common/StorageSharedKeyCredential.html[StorageSharedKeyCredential] instance which can be injected into `credentials` option.
 
 == Usage
 
@@ -85,7 +81,7 @@ located on the `container1` in the `camelazure` storage account, use the followi
 
 [source,java]
 --------------------------------------------------------------------------------
-from("azure-storage-blob://camelazure/container1?blobName=hello.txt&accessKey=yourAccessKey").
+from("azure-storage-blob://camelazure/container1?blobName=hello.txt&credentialType=SHARED_ACCOUNT_KEY&accessKey=RAW(yourAccessKey)").
 to("file://blobdirectory");
 --------------------------------------------------------------------------------
 
@@ -164,9 +160,9 @@ For these operations, `accountName`, `containerName` and `blobName` are *require
 |`uploadBlockBlob` |BlockBlob|Creates a new block blob, or updates the content of an existing block blob. Updating an existing block blob overwrites any existing metadata on the blob. Partial updates are not supported with PutBlob; the content of the existing blob is overwritten with the new content.
 |`stageBlockBlobList`|`BlockBlob`|Uploads the specified block to the block blob's "staging area" to be later committed by a call to commitBlobBlockList. However in case header `CamelAzureStorageBlobCommitBlobBlockListLater` or config `commitBlockListLater` is set to false, this will commit the blocks immediately after staging the blocks.
 |`commitBlobBlockList`|`BlockBlob`|Writes a blob by specifying the list of block IDs that are to make up the blob. In order to be written as part
-                                    of a blob, a block must have been successfully written to the server in a prior `stageBlockBlobList` operation. You can
-                                    call `commitBlobBlockList` to update a blob by uploading only those blocks that have changed, then committing the new
-                                    and existing blocks together. Any blocks not specified in the block list and permanently deleted.
+of a blob, a block must have been successfully written to the server in a prior `stageBlockBlobList` operation. You can
+call `commitBlobBlockList` to update a blob by uploading only those blocks that have changed, then committing the new
+and existing blocks together. Any blocks not specified in the block list and permanently deleted.
 |`getBlobBlockList`  |`BlockBlob`|Returns the list of blocks that have been uploaded as part of a block blob using the specified block list filter.
 |`createAppendBlob` |`AppendBlob`|Creates a 0-length append blob. Call commitAppendBlo`b operation to append data to an append blob.
 |`commitAppendBlob` |`AppendBlob`|Commits a new block of data to the end of the existing append blob. In case of header `CamelAzureStorageBlobCreateAppendBlob` or config `createAppendBlob` is set to true, it will attempt to create the appendBlob through internal call to `createAppendBlob` operation first before committing.
@@ -548,7 +544,7 @@ To run the integration tests, on this component directory, run the following mav
 
 [source,bash]
 ----
-mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey
+mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey -DcredentialType=SHARED_ACCOUNT_KEY
 ----
 
 Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.

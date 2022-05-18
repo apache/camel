@@ -52,7 +52,11 @@
             <artifactId>azure-storage-blob-changefeed</artifactId>
             <version>${azure-storage-blob-changefeed-version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-identity</artifactId>
+            <version>${azure-identity-version}</version>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

@@ -30,6 +30,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.azure.storage.blob.CredentialType.SHARED_KEY_CREDENTIAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -43,6 +44,7 @@ class BlobComponentTest extends CamelTestSupport {
     void testCreateEndpointWithMinConfigForClientOnly() {
         final BlobConfiguration configuration = new BlobConfiguration();
         configuration.setCredentials(storageSharedKeyCredential());
+        configuration.setCredentialType(SHARED_KEY_CREDENTIAL);
         final BlobServiceClient serviceClient = BlobClientFactory.createBlobServiceClient(configuration);
 
         context.getRegistry().bind("azureBlobClient", serviceClient);
@@ -58,7 +60,8 @@ class BlobComponentTest extends CamelTestSupport {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
 
         final BlobEndpoint endpoint = (BlobEndpoint) context
-                .getEndpoint("azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds");
+                .getEndpoint(
+                        "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL");
 
         doTestCreateEndpointWithMinConfig(endpoint, false);
     }
@@ -89,7 +92,7 @@ class BlobComponentTest extends CamelTestSupport {
         context.getRegistry().bind("metadata", Collections.emptyMap());
 
         final String uri = "azure-storage-blob://camelazure/container"
-                           + "?blobName=blob&credentials=#creds&blobType=pageblob"
+                           + "?blobName=blob&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL&blobType=pageblob"
                            + "&fileDir=/tmp&blobOffset=512&operation=clearPageBlob&dataCount=1024"
                            + "&closeStreamAfterRead=false&closeStreamAfterWrite=false";
         final BlobEndpoint endpoint = (BlobEndpoint) context.getEndpoint(uri);
@@ -114,7 +117,7 @@ class BlobComponentTest extends CamelTestSupport {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
 
         BlobEndpoint endpointWithOp = (BlobEndpoint) context.getEndpoint(
-                "azure-storage-blob://camelazure/container?operation=deleteBlob&credentials=#creds");
+                "azure-storage-blob://camelazure/container?operation=deleteBlob&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL");
 
         Producer producer = endpointWithOp.createProducer();
         DefaultExchange exchange = new DefaultExchange(context);
@@ -127,7 +130,8 @@ class BlobComponentTest extends CamelTestSupport {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
 
         BlobEndpoint endpoint = (BlobEndpoint) context
-                .getEndpoint("azure-storage-blob://camelazure/container?blobName=blob/sub&credentials=#creds");
+                .getEndpoint(
+                        "azure-storage-blob://camelazure/container?blobName=blob/sub&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL");
         assertEquals("blob/sub", endpoint.getConfiguration().getBlobName());
     }
 
@@ -142,6 +146,7 @@ class BlobComponentTest extends CamelTestSupport {
 
         final String uri = "azure-storage-blob://camelazure"
                            + "?credentials=#creds"
+                           + "&credentialType=SHARED_KEY_CREDENTIAL"
                            + "&operation=getChangeFeed"
                            + "&changeFeedStartTime=#starttime"
                            + "&changeFeedEndTime=#endtime";

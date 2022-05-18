@@ -61,6 +61,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "createAppendBlob": getOrCreateConfiguration(target).setCreateAppendBlob(property(camelContext, boolean.class, value)); return true;
         case "createpageblob":
         case "createPageBlob": getOrCreateConfiguration(target).setCreatePageBlob(property(camelContext, boolean.class, value)); return true;
+        case "credentialtype":
+        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.storage.blob.CredentialType.class, value)); return true;
         case "credentials": getOrCreateConfiguration(target).setCredentials(property(camelContext, com.azure.storage.common.StorageSharedKeyCredential.class, value)); return true;
         case "datacount":
         case "dataCount": getOrCreateConfiguration(target).setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
@@ -129,6 +131,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "createAppendBlob": return boolean.class;
         case "createpageblob":
         case "createPageBlob": return boolean.class;
+        case "credentialtype":
+        case "credentialType": return org.apache.camel.component.azure.storage.blob.CredentialType.class;
         case "credentials": return com.azure.storage.common.StorageSharedKeyCredential.class;
         case "datacount":
         case "dataCount": return java.lang.Long.class;
@@ -193,6 +197,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "createAppendBlob": return getOrCreateConfiguration(target).isCreateAppendBlob();
         case "createpageblob":
         case "createPageBlob": return getOrCreateConfiguration(target).isCreatePageBlob();
+        case "credentialtype":
+        case "credentialType": return getOrCreateConfiguration(target).getCredentialType();
         case "credentials": return getOrCreateConfiguration(target).getCredentials();
         case "datacount":
         case "dataCount": return getOrCreateConfiguration(target).getDataCount();

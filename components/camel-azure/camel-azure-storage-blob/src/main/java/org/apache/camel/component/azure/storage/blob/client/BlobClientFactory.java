@@ -16,13 +16,19 @@
  */
 package org.apache.camel.component.azure.storage.blob.client;
 
-import java.util.Locale;
-
+import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
-import org.apache.camel.util.ObjectHelper;
+
+import static java.lang.String.format;
+import static java.util.Locale.ROOT;
+import static java.util.Optional.ofNullable;
+import static java.util.Set.of;
+import static org.apache.camel.component.azure.storage.blob.CredentialType.SHARED_ACCOUNT_KEY;
+import static org.apache.camel.component.azure.storage.blob.CredentialType.SHARED_KEY_CREDENTIAL;
+import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 public final class BlobClientFactory {
 
@@ -32,28 +38,28 @@ public final class BlobClientFactory {
     }
 
     public static BlobServiceClient createBlobServiceClient(final BlobConfiguration configuration) {
-        return new BlobServiceClientBuilder()
-                .endpoint(buildAzureEndpointUri(configuration))
-                .credential(getCredentialForClient(configuration))
-                .buildClient();
+        BlobServiceClientBuilder blobServiceClientBuilder
+                = new BlobServiceClientBuilder().endpoint(buildAzureEndpointUri(configuration));
+
+        if (of(SHARED_KEY_CREDENTIAL, SHARED_ACCOUNT_KEY).contains(configuration.getCredentialType())) {
+            blobServiceClientBuilder.credential(getSharedKeyCredential(configuration));
+        } else {
+            blobServiceClientBuilder.credential(new DefaultAzureCredentialBuilder().build());
+        }
+        return blobServiceClientBuilder.buildClient();
     }
 
     private static String buildAzureEndpointUri(final BlobConfiguration configuration) {
-        return String.format(Locale.ROOT, "https://%s" + SERVICE_URI_SEGMENT, getAccountName(configuration));
+        return format(ROOT, "https://%s" + SERVICE_URI_SEGMENT, getAccountName(configuration));
     }
 
-    private static StorageSharedKeyCredential getCredentialForClient(final BlobConfiguration configuration) {
-        final StorageSharedKeyCredential storageSharedKeyCredential = configuration.getCredentials();
-
-        if (storageSharedKeyCredential != null) {
-            return storageSharedKeyCredential;
-        }
-
-        return new StorageSharedKeyCredential(configuration.getAccountName(), configuration.getAccessKey());
+    private static StorageSharedKeyCredential getSharedKeyCredential(final BlobConfiguration configuration) {
+        return ofNullable(configuration.getCredentials())
+                .orElseGet(() -> new StorageSharedKeyCredential(configuration.getAccountName(), configuration.getAccessKey()));
     }
 
     private static String getAccountName(final BlobConfiguration configuration) {
-        return !ObjectHelper.isEmpty(configuration.getCredentials())
+        return !isEmpty(configuration.getCredentials())
                 ? configuration.getCredentials().getAccountName() : configuration.getAccountName();
     }
 
