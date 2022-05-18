@@ -19,6 +19,7 @@ package org.apache.camel.component.azure.storage.blob;
 public enum CredentialType {
     /**
      * Shared key credential
+     * 
      * @see com.azure.storage.common.StorageSharedKeyCredential
      */
     SHARED_KEY_CREDENTIAL,
@@ -29,10 +30,11 @@ public enum CredentialType {
     /**
      * Includes:
      * <uL>
-     *     <li>Service principal with secret</li>
-     *     <li>Service principal with certificate</li>
-     *     <li>username and password</li>
+     * <li>Service principal with secret</li>
+     * <li>Service principal with certificate</li>
+     * <li>username and password</li>
      * </uL>
+     * 
      * @see com.azure.identity.DefaultAzureCredentialBuilder
      */
     AZURE_IDENTITY

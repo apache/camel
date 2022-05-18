@@ -47,7 +47,7 @@ class BlobCopyProducerIt extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:copyBlob")
-                        .to("azure-storage-blob://testblob214/test215?operation=copyBlob&sourceBlobAccessKey=RAW(sourceAccessKey)&accessKey=(accessKey)");
+                        .to("azure-storage-blob://testblob214/test215?operation=copyBlob&sourceBlobAccessKey=RAW(sourceAccessKey)&credentialType=SHARED_ACCOUNT_KEY&accessKey=(accessKey)");
             }
         };
     }

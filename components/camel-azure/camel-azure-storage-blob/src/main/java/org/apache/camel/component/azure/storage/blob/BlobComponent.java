@@ -53,9 +53,7 @@ public class BlobComponent extends DefaultComponent {
             throw new IllegalArgumentException("At least the account name must be specified.");
         }
 
-        final BlobConfiguration config = this.configuration != null
-                ? this.configuration.copy()
-                : new BlobConfiguration();
+        final BlobConfiguration config = this.configuration != null ? this.configuration.copy() : new BlobConfiguration();
 
         final String[] parts = remaining.split("/");
 
@@ -95,7 +93,8 @@ public class BlobComponent extends DefaultComponent {
             if (configuration.getCredentialType() == null) {
                 configuration.setCredentialType(AZURE_IDENTITY);
             } else if (SHARED_KEY_CREDENTIAL.equals(configuration.getCredentialType())) {
-                Set<StorageSharedKeyCredential> storageSharedKeyCredentials = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
+                Set<StorageSharedKeyCredential> storageSharedKeyCredentials
+                        = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
                 storageSharedKeyCredentials.stream().findFirst().ifPresent(configuration::setCredentials);
             }
         }

@@ -48,10 +48,10 @@ public class BlobConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String accessKey;
     @UriParam(label = "producer",
-            enums = "listBlobContainers,createBlobContainer,deleteBlobContainer,listBlobs,getBlob,deleteBlob,downloadBlobToFile,downloadLink,"
-                    + "uploadBlockBlob,stageBlockBlobList,commitBlobBlockList,getBlobBlockList,createAppendBlob,commitAppendBlob,createPageBlob,uploadPageBlob,resizePageBlob,"
-                    + "clearPageBlob,getPageBlobRanges",
-            defaultValue = "listBlobContainers")
+              enums = "listBlobContainers,createBlobContainer,deleteBlobContainer,listBlobs,getBlob,deleteBlob,downloadBlobToFile,downloadLink,"
+                      + "uploadBlockBlob,stageBlockBlobList,commitBlobBlockList,getBlobBlockList,createAppendBlob,commitAppendBlob,createPageBlob,uploadPageBlob,resizePageBlob,"
+                      + "clearPageBlob,getPageBlobRanges",
+              defaultValue = "listBlobContainers")
     private BlobOperationsDefinition operation = BlobOperationsDefinition.listBlobContainers;
     @UriParam(label = "common")
     private String blobName;
@@ -99,7 +99,8 @@ public class BlobConfiguration implements Cloneable {
     private String regex;
     @UriParam(label = "security", secret = true)
     private String sourceBlobAccessKey;
-    @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY", defaultValue = "AZURE_IDENTITY")
+    @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY",
+              defaultValue = "AZURE_IDENTITY")
     private CredentialType credentialType = AZURE_IDENTITY;
 
     /**

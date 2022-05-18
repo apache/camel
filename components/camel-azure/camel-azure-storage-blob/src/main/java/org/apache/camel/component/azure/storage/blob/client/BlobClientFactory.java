@@ -38,7 +38,8 @@ public final class BlobClientFactory {
     }
 
     public static BlobServiceClient createBlobServiceClient(final BlobConfiguration configuration) {
-        BlobServiceClientBuilder blobServiceClientBuilder = new BlobServiceClientBuilder().endpoint(buildAzureEndpointUri(configuration));
+        BlobServiceClientBuilder blobServiceClientBuilder
+                = new BlobServiceClientBuilder().endpoint(buildAzureEndpointUri(configuration));
 
         if (of(SHARED_KEY_CREDENTIAL, SHARED_ACCOUNT_KEY).contains(configuration.getCredentialType())) {
             blobServiceClientBuilder.credential(getSharedKeyCredential(configuration));
@@ -54,7 +55,7 @@ public final class BlobClientFactory {
 
     private static StorageSharedKeyCredential getSharedKeyCredential(final BlobConfiguration configuration) {
         return ofNullable(configuration.getCredentials())
-                .orElse(new StorageSharedKeyCredential(configuration.getAccountName(), configuration.getAccessKey()));
+                .orElseGet(() -> new StorageSharedKeyCredential(configuration.getAccountName(), configuration.getAccessKey()));
     }
 
     private static String getAccountName(final BlobConfiguration configuration) {
