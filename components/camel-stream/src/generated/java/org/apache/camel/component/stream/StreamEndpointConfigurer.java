@@ -51,6 +51,8 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "promptDelay": target.setPromptDelay(property(camelContext, long.class, value)); return true;
         case "promptmessage":
         case "promptMessage": target.setPromptMessage(property(camelContext, java.lang.String.class, value)); return true;
+        case "readline":
+        case "readLine": target.setReadLine(property(camelContext, boolean.class, value)); return true;
         case "readtimeout":
         case "readTimeout": target.setReadTimeout(property(camelContext, int.class, value)); return true;
         case "retry": target.setRetry(property(camelContext, boolean.class, value)); return true;
@@ -95,6 +97,8 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "promptDelay": return long.class;
         case "promptmessage":
         case "promptMessage": return java.lang.String.class;
+        case "readline":
+        case "readLine": return boolean.class;
         case "readtimeout":
         case "readTimeout": return int.class;
         case "retry": return boolean.class;
@@ -140,6 +144,8 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "promptDelay": return target.getPromptDelay();
         case "promptmessage":
         case "promptMessage": return target.getPromptMessage();
+        case "readline":
+        case "readLine": return target.isReadLine();
         case "readtimeout":
         case "readTimeout": return target.getReadTimeout();
         case "retry": return target.isRetry();

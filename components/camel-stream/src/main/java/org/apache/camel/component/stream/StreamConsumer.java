@@ -89,7 +89,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
         // if we scan the stream we are lenient and can wait for the stream to be available later
         if (!endpoint.isScanStream()) {
-            initializeStream();
+            initializeStreamLineMode();
         }
 
         executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
@@ -119,7 +119,11 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     @Override
     public void run() {
         try {
-            readFromStream();
+            if (endpoint.isReadLine()) {
+                readFromStreamLineMode();
+            } else {
+                readFromStreamRawMode();
+            }
         } catch (InterruptedException e) {
             // we are closing down so ignore
         } catch (Exception e) {
@@ -127,7 +131,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         }
     }
 
-    private BufferedReader initializeStream() throws Exception {
+    private BufferedReader initializeStreamLineMode() throws Exception {
         // close old stream, before obtaining a new stream
         IOHelper.close(inputStreamToClose);
 
@@ -147,10 +151,90 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         }
     }
 
-    private void readFromStream() throws Exception {
+    private InputStream initializeStreamRawMode() throws Exception {
+        // close old stream, before obtaining a new stream
+        IOHelper.close(inputStreamToClose);
+
+        if ("in".equals(uri)) {
+            inputStream = System.in;
+            inputStreamToClose = null;
+        } else if ("file".equals(uri)) {
+            inputStream = resolveStreamFromFile();
+            inputStreamToClose = inputStream;
+        }
+
+        return inputStream;
+    }
+
+    private void readFromStreamRawMode() throws Exception {
+        long index = 0;
+        InputStream is = initializeStreamRawMode();
+
+        if (endpoint.isScanStream()) {
+            // repeat scanning from stream
+            while (isRunAllowed()) {
+
+                byte[] data = null;
+                try {
+                    data = is.readAllBytes();
+                } catch (IOException e) {
+                    // ignore
+                }
+                boolean eos = data == null || data.length == 0;
+
+                if (isRunAllowed() && endpoint.isRetry()) {
+                    boolean reOpen = true;
+                    if (endpoint.isFileWatcher()) {
+                        reOpen = watchFileChanged;
+                    }
+                    if (reOpen) {
+                        LOG.debug("File: {} changed/rollover, re-reading file from beginning", file);
+                        is = initializeStreamRawMode();
+                        // we have re-initialized the stream so lower changed flag
+                        if (endpoint.isFileWatcher()) {
+                            watchFileChanged = false;
+                        }
+                    } else {
+                        LOG.trace("File: {} not changed since last read", file);
+                    }
+                }
+
+                // sleep only if there is no input
+                if (eos) {
+                    try {
+                        Thread.sleep(endpoint.getScanStreamDelay());
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
+        } else {
+            // regular read stream once until end of stream
+            boolean eos = false;
+            byte[] data = null;
+            while (!eos && isRunAllowed()) {
+                if (endpoint.getPromptMessage() != null) {
+                    doPromptMessage();
+                }
+
+                try {
+                    data = is.readAllBytes();
+                } catch (IOException e) {
+                    // ignore
+                }
+                eos = data == null || data.length == 0;
+                if (!eos) {
+                    processRaw(data, index);
+                }
+            }
+        }
+    }
+
+    private void readFromStreamLineMode() throws Exception {
         long index = 0;
         String line;
-        BufferedReader br = initializeStream();
+        BufferedReader br = initializeStreamLineMode();
 
         if (endpoint.isScanStream()) {
             // repeat scanning from stream
@@ -171,7 +255,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                     }
                     if (reOpen) {
                         LOG.debug("File: {} changed/rollover, re-reading file from beginning", file);
-                        br = initializeStream();
+                        br = initializeStreamLineMode();
                         // we have re-initialized the stream so lower changed flag
                         if (endpoint.isFileWatcher()) {
                             watchFileChanged = false;
@@ -251,6 +335,15 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             getProcessor().process(exchange);
         }
 
+        return index;
+    }
+
+    /**
+     * Strategy method for processing the data
+     */
+    protected synchronized long processRaw(byte[] body, long index) throws Exception {
+        Exchange exchange = createExchange(body, index++, true);
+        getProcessor().process(exchange);
         return index;
     }
 

@@ -69,6 +69,8 @@ public class StreamEndpoint extends DefaultEndpoint {
     private long initialPromptDelay = 2000;
     @UriParam(label = "consumer")
     private int groupLines;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean readLine = true;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean appendNewLine = true;
     @UriParam(label = "producer")
@@ -260,6 +262,18 @@ public class StreamEndpoint extends DefaultEndpoint {
      */
     public void setGroupLines(int groupLines) {
         this.groupLines = groupLines;
+    }
+
+    public boolean isReadLine() {
+        return readLine;
+    }
+
+    /**
+     * Whether to read the input stream in line mode (terminate by line breaks). Setting this to false, will instead
+     * read the entire stream until EOL.
+     */
+    public void setReadLine(boolean readLine) {
+        this.readLine = readLine;
     }
 
     public int getAutoCloseCount() {
