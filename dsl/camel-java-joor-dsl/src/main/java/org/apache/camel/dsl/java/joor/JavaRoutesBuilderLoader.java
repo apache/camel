@@ -117,7 +117,8 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
             Class<?> clazz = result.getClass(className);
             if (clazz != null) {
-                boolean skip = clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers()) || Modifier.isPrivate(clazz.getModifiers());
+                boolean skip = clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())
+                        || Modifier.isPrivate(clazz.getModifiers());
                 // must have a default no-arg constructor to be able to create an instance
                 boolean ctr = ObjectHelper.hasDefaultNoArgConstructor(clazz);
                 if (ctr && !skip) {
