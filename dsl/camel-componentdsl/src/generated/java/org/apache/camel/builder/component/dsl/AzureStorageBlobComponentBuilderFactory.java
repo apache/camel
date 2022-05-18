@@ -51,8 +51,8 @@ public interface AzureStorageBlobComponentBuilderFactory {
             extends
                 ComponentBuilder<BlobComponent> {
         /**
-         * The blob name, to consume specific blob from a container. However on
-         * producer, is only required for the operations on the blob level.
+         * The blob name, to consume specific blob from a container. However, on
+         * producer it is only required for the operations on the blob level.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -147,6 +147,23 @@ public interface AzureStorageBlobComponentBuilderFactory {
         default AzureStorageBlobComponentBuilder credentials(
                 com.azure.storage.common.StorageSharedKeyCredential credentials) {
             doSetProperty("credentials", credentials);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: AZURE_IDENTITY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder credentialType(
+                org.apache.camel.component.azure.storage.blob.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
         /**
@@ -630,6 +647,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "closeStreamAfterRead": getOrCreateConfiguration((BlobComponent) component).setCloseStreamAfterRead((boolean) value); return true;
             case "configuration": ((BlobComponent) component).setConfiguration((org.apache.camel.component.azure.storage.blob.BlobConfiguration) value); return true;
             case "credentials": getOrCreateConfiguration((BlobComponent) component).setCredentials((com.azure.storage.common.StorageSharedKeyCredential) value); return true;
+            case "credentialType": getOrCreateConfiguration((BlobComponent) component).setCredentialType((org.apache.camel.component.azure.storage.blob.CredentialType) value); return true;
             case "dataCount": getOrCreateConfiguration((BlobComponent) component).setDataCount((java.lang.Long) value); return true;
             case "fileDir": getOrCreateConfiguration((BlobComponent) component).setFileDir((java.lang.String) value); return true;
             case "maxResultsPerPage": getOrCreateConfiguration((BlobComponent) component).setMaxResultsPerPage((java.lang.Integer) value); return true;
