@@ -24,6 +24,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -989,6 +990,21 @@ public final class ObjectHelper {
         // getConstructors() returns only public constructors
         for (Constructor<?> ctr : type.getConstructors()) {
             if (ctr.getParameterCount() == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Does the given class have a default no-arg constructor (public or inherited).
+     */
+    public static boolean hasDefaultNoArgConstructor(Class<?> type) {
+        if (hasDefaultPublicNoArgConstructor(type)) {
+            return true;
+        }
+        for (Constructor<?> ctr : type.getDeclaredConstructors()) {
+            if (!Modifier.isPrivate(ctr.getModifiers()) && ctr.getParameterCount() == 0) {
                 return true;
             }
         }

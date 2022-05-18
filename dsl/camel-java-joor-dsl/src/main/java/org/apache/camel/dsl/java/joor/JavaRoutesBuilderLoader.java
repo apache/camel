@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +33,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.support.ExtendedRouteBuilderLoaderSupport;
@@ -44,6 +46,7 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,18 +117,23 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
             Class<?> clazz = result.getClass(className);
             if (clazz != null) {
-                try {
-                    // requires a default no-arg constructor otherwise we skip the class
-                    obj = getCamelContext().getInjector().newInstance(clazz);
-                } catch (Exception e) {
-                    LOG.debug("Compiled class: " + className + " must have a default no-arg constructor. Skipping.");
-                }
-                if (obj != null) {
-                    LOG.debug("Compiled: {} -> {}", className, obj);
+                boolean skip = clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers()) || Modifier.isPrivate(clazz.getModifiers());
+                // must have a default no-arg constructor to be able to create an instance
+                boolean ctr = ObjectHelper.hasDefaultNoArgConstructor(clazz);
+                if (ctr && !skip) {
+                    // create a new instance of the class
+                    try {
+                        obj = getCamelContext().getInjector().newInstance(clazz);
+                        if (obj != null) {
+                            LOG.debug("Compiled: {} -> {}", className, obj);
 
-                    // inject context and resource
-                    CamelContextAware.trySetCamelContext(obj, getCamelContext());
-                    ResourceAware.trySetResource(obj, nameToResource.get(className));
+                            // inject context and resource
+                            CamelContextAware.trySetCamelContext(obj, getCamelContext());
+                            ResourceAware.trySetResource(obj, nameToResource.get(className));
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeCamelException("Cannot create instance of class: " + className, e);
+                    }
                 }
             }
 
