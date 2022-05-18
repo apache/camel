@@ -46,8 +46,8 @@ public interface BlobEndpointBuilderFactory {
             return (AdvancedBlobEndpointConsumerBuilder) this;
         }
         /**
-         * The blob name, to consume specific blob from a container. However on
-         * producer, is only required for the operations on the blob level.
+         * The blob name, to consume specific blob from a container. However, on
+         * producer it is only required for the operations on the blob level.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -241,6 +241,39 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointConsumerBuilder credentials(String credentials) {
             doSetProperty("credentials", credentials);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: AZURE_IDENTITY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder credentialType(
+                org.apache.camel.component.azure.storage.blob.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: AZURE_IDENTITY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder credentialType(String credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
         /**
@@ -1191,8 +1224,8 @@ public interface BlobEndpointBuilderFactory {
             return (AdvancedBlobEndpointProducerBuilder) this;
         }
         /**
-         * The blob name, to consume specific blob from a container. However on
-         * producer, is only required for the operations on the blob level.
+         * The blob name, to consume specific blob from a container. However, on
+         * producer it is only required for the operations on the blob level.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1386,6 +1419,39 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointProducerBuilder credentials(String credentials) {
             doSetProperty("credentials", credentials);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: AZURE_IDENTITY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder credentialType(
+                org.apache.camel.component.azure.storage.blob.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: AZURE_IDENTITY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder credentialType(String credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
         /**
@@ -2147,8 +2213,8 @@ public interface BlobEndpointBuilderFactory {
             return (AdvancedBlobEndpointBuilder) this;
         }
         /**
-         * The blob name, to consume specific blob from a container. However on
-         * producer, is only required for the operations on the blob level.
+         * The blob name, to consume specific blob from a container. However, on
+         * producer it is only required for the operations on the blob level.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2341,6 +2407,39 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointBuilder credentials(String credentials) {
             doSetProperty("credentials", credentials);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: AZURE_IDENTITY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointBuilder credentialType(
+                org.apache.camel.component.azure.storage.blob.CredentialType credentialType) {
+            doSetProperty("credentialType", credentialType);
+            return this;
+        }
+        /**
+         * Determines the credential strategy to adopt.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.CredentialType&lt;/code&gt; type.
+         * 
+         * Default: AZURE_IDENTITY
+         * Group: common
+         * 
+         * @param credentialType the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointBuilder credentialType(String credentialType) {
+            doSetProperty("credentialType", credentialType);
             return this;
         }
         /**
