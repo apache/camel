@@ -292,6 +292,10 @@ camel run clipboard.xml
 
 You can also execute a Camel JBang file as a script that can be used for terminal scripting with pipes and filters.
 
+NOTE: Every time the script is executed a JVM is started with Camel. This is not very fast or low on memory usage,
+so use Camel JBang terminal scripting where using Camel makes sense. For example to use the
+many Camel components or Kamelets to more easily send or receive data from disparate IT systems.
+
 This requires to add the following line in top of the file, for example as in the `upper.yaml` file below:
 
 [source,text]
@@ -337,9 +341,18 @@ The name of the logging file cannot be configured.
 echo "Hello\nWorld" | ./upper.yaml --logging=true
 ----
 
-NOTE: Every time the script is executed a JVM is started with Camel. This is not very fast or low on memory usage,
-so use Camel JBang terminal scripting where using Camel makes sense. For example to use the
-many Camel components or Kamelets to more easily send or receive data from disparate IT systems.
+==== Using stream:in with line vs raw mode
+
+When using `stream:in` to read data from _System in_ then the xref:components::stream-component.adoc[Stream component]
+works in two modes:
+
+- line mode (default) - reads input as single lines (separated by line breaks).
+  Message body is a `String`.
+- raw mode - reads the entire stream until _end of stream_.
+  Mmessage body is a `byte[]`.
+
+The default mode is due to historically how the stream component as created.
+Therefore, you may want to set `stream:in?readLine=false` to use raw mode.
 
 === Running local Kamelets
 
