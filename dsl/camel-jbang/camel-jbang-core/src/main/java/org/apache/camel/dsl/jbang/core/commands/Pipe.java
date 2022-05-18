@@ -49,6 +49,13 @@ class Pipe implements Callable<Integer> {
     @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
     String loggingLevel;
 
+    @CommandLine.Option(names = { "--properties" },
+            description = "Load properties file for route placeholders (ex. /path/to/file.properties")
+    String propertiesFiles;
+
+    @CommandLine.Option(names = { "-p", "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
+    String[] property;
+
     @Override
     public Integer call() throws Exception {
         // remove leading ./ when calling a script in pipe mode
@@ -63,6 +70,8 @@ class Pipe implements Callable<Integer> {
         run.maxSeconds = maxSeconds;
         run.maxMessages = maxMessages;
         run.maxIdleSeconds = maxIdleSeconds;
+        run.property = property;
+        run.propertiesFiles = propertiesFiles;
         return run.runPipe(file);
     }
 
