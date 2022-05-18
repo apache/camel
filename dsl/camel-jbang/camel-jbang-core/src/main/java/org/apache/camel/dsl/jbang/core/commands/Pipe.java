@@ -50,10 +50,11 @@ class Pipe implements Callable<Integer> {
     String loggingLevel;
 
     @CommandLine.Option(names = { "--properties" },
-            description = "Load properties file for route placeholders (ex. /path/to/file.properties")
+                        description = "Load properties file for route placeholders (ex. /path/to/file.properties")
     String propertiesFiles;
 
-    @CommandLine.Option(names = { "-p", "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
+    @CommandLine.Option(names = { "-p", "--prop", "--property" }, description = "Additional properties (override existing)",
+                        arity = "0")
     String[] property;
 
     @Override
