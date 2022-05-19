@@ -21,7 +21,7 @@ The On Fallback EIP supports 1 options which are listed below:
 |===
 // eip options: END
 
-Hystrix has many options as listed in xref:hystrixConfiguration-eip.adoc[Hystrix Configuration].
+Hystrix has many options as listed in Hystrix Configuration.
 For example to set a higher timeout to *5* seconds, and also let the circuit breaker wait *10* seconds before attempting a request again when the state was tripped to be open.
 
 [source,java]
