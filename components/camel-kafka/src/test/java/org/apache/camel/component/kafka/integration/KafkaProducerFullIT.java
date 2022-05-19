@@ -296,11 +296,11 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
         CountDownLatch messagesLatch = new CountDownLatch(messageInTopic + messageInOtherTopic);
 
         Map<String, Object> inTopicHeaders = new HashMap<>();
-        inTopicHeaders.put(KafkaConstants.PARTITION_KEY, "1".getBytes());
+        inTopicHeaders.put(KafkaConstants.PARTITION_KEY, "0".getBytes());
         sendMessagesInRoute(messageInTopic, bytesTemplate, "IT test message".getBytes(), inTopicHeaders);
 
         Map<String, Object> otherTopicHeaders = new HashMap<>();
-        otherTopicHeaders.put(KafkaConstants.PARTITION_KEY, "1".getBytes());
+        otherTopicHeaders.put(KafkaConstants.PARTITION_KEY, "0".getBytes());
         otherTopicHeaders.put(KafkaConstants.TOPIC, TOPIC_BYTES_IN_HEADER);
         sendMessagesInRoute(messageInOtherTopic, bytesTemplate, "IT test message in other topic".getBytes(), otherTopicHeaders);
 
