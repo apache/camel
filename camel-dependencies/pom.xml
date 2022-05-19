@@ -223,7 +223,6 @@
     <google-api-services-drive-version>v2-rev20220110-1.32.1</google-api-services-drive-version>
     <google-api-services-mail-version>v1-rev20211108-1.32.1</google-api-services-mail-version>
     <google-api-services-sheets-version>v4-rev20210629-1.32.1</google-api-services-sheets-version>
-    <google-oauth-client-version>1.33.3</google-oauth-client-version>
     <google-auth-library-oauth2-http-version>1.4.0</google-auth-library-oauth2-http-version>
     <google-cloud-bom-version>25.2.0</google-cloud-bom-version>
     <google-cloud-functions-bom-version>1.0.8</google-cloud-functions-bom-version>
@@ -232,6 +231,7 @@
     <google-cloud-secretmanager-bom-version>2.1.1</google-cloud-secretmanager-bom-version>
     <google-guava-version>20.0</google-guava-version>
     <google-maps-services-version>0.10.1</google-maps-services-version>
+    <google-oauth-client-version>1.33.3</google-oauth-client-version>
     <graaljs-version>21.3.0</graaljs-version>
     <graphql-java-version>14.0</graphql-java-version>
     <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
@@ -518,7 +518,7 @@
     <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
     <swagger-java-parser-version>1.0.56</swagger-java-parser-version>
     <swagger-java-version>1.6.4</swagger-java-version>
-    <swagger-openapi3-version>2.1.11</swagger-openapi3-version>
+    <swagger-openapi3-version>2.1.13</swagger-openapi3-version>
     <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
     <testcontainers-version>1.17.1</testcontainers-version>
     <tika-version>2.3.0</tika-version>
