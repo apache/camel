@@ -2,7 +2,7 @@
 :doctitle: Debezium DB2 Connector
 :shortname: debezium-db2
 :artifactid: camel-debezium-db2
-:description: Capture changes from a Oracle database.
+:description: Capture changes from a DB2 database.
 :since: 3.17
 :supportlevel: Preview
 :component-header: Only consumer is supported
