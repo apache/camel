@@ -2607,7 +2607,7 @@
     "firstVersion": "3.16.0",
     "label": "cloud",
     "javaType": "org.apache.camel.component.google.secret.manager.GoogleSecretManagerComponent",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-secret-manager",
     "version": "3.18.0-SNAPSHOT",

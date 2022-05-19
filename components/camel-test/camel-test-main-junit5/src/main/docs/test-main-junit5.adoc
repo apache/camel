@@ -4,7 +4,7 @@
 :artifactid: camel-test-main-junit5
 :description: Camel unit testing with Main and JUnit 5
 :since: 3.16
-:supportlevel: Preview
+:supportlevel: Stable
 
 *Since Camel {since}*
 
