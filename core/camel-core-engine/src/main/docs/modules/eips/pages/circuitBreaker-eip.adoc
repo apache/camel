@@ -73,6 +73,6 @@ And in XML DSL:
 
 Camel provides three implementations of this pattern:
 
-* xref:hystrix-eip.adoc[Hystrix] - *Deprecated:* Using the Netflix Hystrix implementation
+* Hystrix - *Deprecated:* Using the Netflix Hystrix implementation
 * xref:resilience4j-eip.adoc[Resilience4j] - Using the Resilience4j implementation
 * xref:fault-tolerance-eip.adoc[Fault Tolerance] - Using the MicroProfile Fault Tolerance implementation
