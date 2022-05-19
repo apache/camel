@@ -1645,7 +1645,7 @@
     "kind": "component",
     "name": "debezium-db2",
     "title": "Debezium DB2 Connector",
-    "description": "Capture changes from a Oracle database.",
+    "description": "Capture changes from a DB2 database.",
     "deprecated": false,
     "firstVersion": "3.17.0",
     "label": "database,sql",
