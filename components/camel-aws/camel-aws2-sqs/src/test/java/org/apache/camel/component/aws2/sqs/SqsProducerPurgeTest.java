@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SqsProducerPurgeTest extends CamelTestSupport {
 
     @BindToRegistry("client")
-    AmazonSQSClientMock mock = new AmazonSQSClientMock();
+    AmazonSQSClientMock mock = new AmazonSQSClientMock("camel-1");
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
