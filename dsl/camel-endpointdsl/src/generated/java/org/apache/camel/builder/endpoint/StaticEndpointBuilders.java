@@ -3344,7 +3344,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Debezium DB2 Connector (camel-debezium-db2)
-     * Capture changes from a Oracle database.
+     * Capture changes from a DB2 database.
      * 
      * Category: database,sql
      * Since: 3.17
@@ -3365,7 +3365,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Debezium DB2 Connector (camel-debezium-db2)
-     * Capture changes from a Oracle database.
+     * Capture changes from a DB2 database.
      * 
      * Category: database,sql
      * Since: 3.17
