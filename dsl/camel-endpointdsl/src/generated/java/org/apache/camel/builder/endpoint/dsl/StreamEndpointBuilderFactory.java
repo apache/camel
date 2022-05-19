@@ -297,6 +297,41 @@ public interface StreamEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to read the input stream in line mode (terminate by line
+         * breaks). Setting this to false, will instead read the entire stream
+         * until EOL.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param readLine the value to set
+         * @return the dsl builder
+         */
+        default StreamEndpointConsumerBuilder readLine(boolean readLine) {
+            doSetProperty("readLine", readLine);
+            return this;
+        }
+        /**
+         * Whether to read the input stream in line mode (terminate by line
+         * breaks). Setting this to false, will instead read the entire stream
+         * until EOL.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param readLine the value to set
+         * @return the dsl builder
+         */
+        default StreamEndpointConsumerBuilder readLine(String readLine) {
+            doSetProperty("readLine", readLine);
+            return this;
+        }
+        /**
          * Will retry opening the stream if it's overwritten, somewhat like tail
          * --retry If reading from files then you should also enable the
          * fileWatcher option, to make it work reliable.
