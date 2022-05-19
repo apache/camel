@@ -109,9 +109,9 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
                 FileEndpoint fe = null;
                 if (endpoint instanceof FileEndpoint) {
                     fe = (FileEndpoint) endpoint;
-                    file.bindToExchange(copy, fe.isProbeContentType());
+                    file.bindToExchange(copy, fe.isProbeContentType(), true);
                 } else {
-                    file.bindToExchange(copy);
+                    file.bindToExchangeForceInMessageUpdate(copy);
                 }
                 // must preserve message id
                 copy.getIn().setMessageId(exchange.getIn().getMessageId());

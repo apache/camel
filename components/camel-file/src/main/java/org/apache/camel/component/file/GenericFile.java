@@ -111,19 +111,41 @@ public class GenericFile<T> implements WrappedFile<T>, GenericFileResumable<T> {
      * Bind this GenericFile to an Exchange
      */
     public void bindToExchange(Exchange exchange) {
-        GenericFileMessage<T> msg = commonBindToExchange(exchange);
-        populateHeaders(msg, false);
+        bindToExchange(exchange, false);
+    }
+
+    /**
+     * Bind this GenericFile to an Exchange and overwrite the inMessage with the outMessage (if there is a outMessage)
+     */
+    public void bindToExchangeForceInMessageUpdate(Exchange exchange) {
+        bindToExchange(exchange, false, true);
     }
 
     /**
      * Bind this GenericFile to an Exchange
      */
     public void bindToExchange(Exchange exchange, boolean isProbeContentTypeFromEndpoint) {
-        GenericFileMessage<T> msg = commonBindToExchange(exchange);
+        bindToExchange(exchange, isProbeContentTypeFromEndpoint, false);
+    }
+
+    /**
+     * @param exchange
+     * @param isProbeContentTypeFromEndpoint
+     * @param forceInMessageUpdate           Set to true, to overwrite the inMessage with the outMessage (if there is a
+     *                                       outMessage)
+     */
+    public void bindToExchange(Exchange exchange, boolean isProbeContentTypeFromEndpoint, boolean forceInMessageUpdate) {
+        GenericFileMessage<T> msg = commonBindToExchange(exchange, forceInMessageUpdate);
         populateHeaders(msg, isProbeContentTypeFromEndpoint);
     }
 
-    private GenericFileMessage<T> commonBindToExchange(Exchange exchange) {
+    /**
+     * @param  exchange
+     * @param  forceInMessageUpdate: Set to true, to overwrite the inMessage with the outMessage (if there is a
+     *                               outMessage)
+     * @return
+     */
+    private GenericFileMessage<T> commonBindToExchange(Exchange exchange, boolean forceInMessageUpdate) {
         Map<String, Object> headers;
 
         exchange.setProperty(FileComponent.FILE_EXCHANGE_FILE, this);
@@ -131,6 +153,9 @@ public class GenericFile<T> implements WrappedFile<T>, GenericFileResumable<T> {
 
         headers = exchange.getMessage().hasHeaders() ? exchange.getMessage().getHeaders() : null;
         exchange.setMessage(msg);
+        if (forceInMessageUpdate) {
+            exchange.setIn(msg);
+        }
 
         // preserve any existing (non file) headers, before we re-populate
         // headers
