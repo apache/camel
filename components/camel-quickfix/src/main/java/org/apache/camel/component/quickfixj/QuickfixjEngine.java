@@ -248,6 +248,11 @@ public class QuickfixjEngine extends ServiceSupport {
     }
 
     @Override
+    protected void doInit() throws Exception {
+        initializeEngine();
+    }
+
+    @Override
     protected void doStart() throws Exception {
         LOG.debug("Starting QuickFIX/J Engine: {}", uri);
 
