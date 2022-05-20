@@ -75,7 +75,6 @@ public class GenericFile<T> implements WrappedFile<T>, GenericFileResumable<T> {
      * @param result the result
      */
     @SuppressWarnings("unchecked")
-    @Deprecated
     public void copyFrom(GenericFile source, GenericFile result) {
         result.setCopyFromAbsoluteFilePath(source.getAbsoluteFilePath());
         result.setEndpointPath(source.getEndpointPath());
