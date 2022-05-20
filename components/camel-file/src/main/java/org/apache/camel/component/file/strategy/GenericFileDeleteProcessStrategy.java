@@ -122,7 +122,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
                 Exchange copy = ExchangeHelper.createCopy(exchange, true);
                 file.bindToExchange(copy);
                 // must preserve message id
-                copy.getIn().setMessageId(exchange.getIn().getMessageId());
+                copy.getMessage().setMessageId(exchange.getMessage().getMessageId());
                 copy.setExchangeId(exchange.getExchangeId());
 
                 GenericFile<T> newName = failureRenamer.renameFile(operations, copy, file);
