@@ -129,7 +129,11 @@ public class GenericFile<T> implements WrappedFile<T>, GenericFileResumable<T> {
         GenericFileMessage<T> msg = new GenericFileMessage<>(exchange, this);
 
         headers = exchange.getMessage().hasHeaders() ? exchange.getMessage().getHeaders() : null;
-        exchange.setMessage(msg);
+        // force storing on IN as that is what Camel expects
+        exchange.setIn(msg);
+        if (exchange.hasOut()) {
+            exchange.setOut(null);
+        }
 
         // preserve any existing (non file) headers, before we re-populate
         // headers
