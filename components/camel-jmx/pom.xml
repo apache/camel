@@ -134,6 +134,7 @@
                                     <xsd>${basedir}/src/main/resources/notifications.xsd</xsd>
                                     <packagename>org.apache.camel.component.jmx.jaxb</packagename>
                                     <extensionArgs>
+                                        <extensionArg>-no-header</extensionArg>
                                         <extensionArg>-Xfluent-api</extensionArg>
                                     </extensionArgs>
                                 </xsdOption>

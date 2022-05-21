@@ -77,12 +77,6 @@
             <version>3.4</version>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>biz.aQute.bnd</groupId>
-            <artifactId>biz.aQute.bndlib</artifactId>
-            <version>5.1.1</version>
-        </dependency>
     </dependencies>
 
 </project>

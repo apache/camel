@@ -4474,6 +4474,7 @@
                         <strict>false</strict>
                         <extension>true</extension>
                         <args>
+                            <arg>-no-header</arg>
                             <arg>-Xfluent-api</arg>
                         </args>
                         <plugins>
