@@ -34,10 +34,14 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KafkaConsumerAsyncManualCommitIT extends BaseEmbeddedKafkaTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerAsyncManualCommitIT.class);
 
     public static final String TOPIC = "testManualCommitTest";
 
@@ -56,6 +60,8 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseEmbeddedKafkaTestSuppo
     private KafkaManualCommitFactory manualCommitFactory = new DefaultKafkaManualAsyncCommitFactory();
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+
+    private volatile int failCount;
 
     @BeforeEach
     public void before() {
@@ -92,7 +98,13 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseEmbeddedKafkaTestSuppo
                             KafkaManualCommit manual = e.getMessage().getBody(Exchange.class)
                                     .getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
                             assertNotNull(manual);
-                            manual.commit();
+
+                            try {
+                                manual.commit();
+                            } catch (Exception commitException) {
+                                LOG.error("Failed to commit: {}", commitException.getMessage(), commitException);
+                                failCount++;
+                            }
                         });
                 from(from).routeId("bar").autoStartup(false).to(toBar);
             }
@@ -139,6 +151,8 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseEmbeddedKafkaTestSuppo
         to.expectedBodiesReceivedInAnyOrder("message-5", "message-6", "message-7");
 
         to.assertIsSatisfied(3000);
+
+        assertEquals(0, failCount, "There should have been 0 commit failures");
     }
 
 }
