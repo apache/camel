@@ -29,6 +29,6 @@ public class DefaultKafkaManualAsyncCommit extends DefaultKafkaManualCommit impl
 
     @Override
     public void commit() {
-        commitManager.forceCommit(getPartition(), getRecordOffset());
+        commitManager.recordOffset(getPartition(), getRecordOffset());
     }
 }
