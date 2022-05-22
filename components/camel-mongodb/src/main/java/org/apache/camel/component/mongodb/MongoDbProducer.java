@@ -631,7 +631,11 @@ public class MongoDbProducer extends DefaultProducer {
                     result = dbCol.replaceOne(Filters.where("false"), saveObj, options);
                     exchange.getIn().setHeader(OID, result.getUpsertedId().asObjectId().getValue());
                 } else {
-                    result = dbCol.replaceOne(eq(MONGO_ID, saveObj.get(MONGO_ID)), saveObj, options);
+                    Bson mongoIdQuery = eq(MONGO_ID, saveObj.get(MONGO_ID));
+                    //You can pass sharded key query via CRITERIA header to allow update sharded collection
+                    Bson query = exchange.getIn().getHeader(CRITERIA, Bson.class);
+                    query = query != null ? Filters.and(query, mongoIdQuery) : mongoIdQuery;
+                    result = dbCol.replaceOne(query, saveObj, options);
                     exchange.getIn().setHeader(OID, saveObj.get(MONGO_ID));
                 }
                 return result;
