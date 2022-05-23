@@ -23,6 +23,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
@@ -73,7 +74,7 @@ class Run extends CamelCommand {
     public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
 
     private static final String[] ACCEPTED_FILE_EXT
-            = new String[] { "properties", "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
+            = new String[] { "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
 
     private static final String OPENAPI_GENERATED_FILE = ".camel-jbang/generated-openapi.yaml";
     private static final String CLIPBOARD_GENERATED_FILE = ".camel-jbang/generated-clipboard";
@@ -287,8 +288,8 @@ class Run extends CamelCommand {
                     System.out.println("Cannot run because " + getProfile() + ".properties file does not exist");
                     return 1;
                 } else {
-                    // silent-run then auto-detect all files
-                    files = new File(".").list();
+                    // silent-run then auto-detect all files (except properties as they are loaded explicit or via profile)
+                    files = new File(".").list((dir, name) -> !name.endsWith(".properties"));
                 }
             }
         }
@@ -296,7 +297,7 @@ class Run extends CamelCommand {
         // configure logging first
         configureLogging();
 
-        final KameletMain main = createMainInstnace();
+        final KameletMain main = createMainInstance();
 
         final Set<String> downloaded = new HashSet<>();
         main.setDownloadListener((groupId, artifactId, version) -> {
@@ -394,7 +395,7 @@ class Run extends CamelCommand {
                     file = loadFromClipboard(file);
                 } else if (skipFile(file)) {
                     continue;
-                } else if (!knownFile(file)) {
+                } else if (!knownFile(file) && !file.endsWith(".properties")) {
                     // non known files to be added on classpath
                     sjClasspathFiles.add(file);
                     continue;
@@ -602,7 +603,7 @@ class Run extends CamelCommand {
         return file;
     }
 
-    private KameletMain createMainInstnace() {
+    private KameletMain createMainInstance() {
         KameletMain main;
         if (localKameletDir == null) {
             main = new KameletMain();

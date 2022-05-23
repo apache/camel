@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
@@ -72,6 +73,8 @@ class UberJar extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
+        File profile = new File(getProfile() + ".properties");
+
         // the settings file has information what to package in uber-jar so we need to read it from the run command
         File settings = new File(Run.WORK_DIR + "/" + Run.RUN_SETTINGS_FILE);
         if (fresh || !settings.exists()) {
@@ -100,8 +103,8 @@ class UberJar extends CamelCommand {
         copySourceFiles(settings, buildDir);
         // work sources
         copyWorkFiles(Run.WORK_DIR, buildDir);
-        // settings
-        copySettings(settings);
+        // settings and profile
+        copySettingsAndProfile(settings, profile);
         // log4j configuration
         InputStream is = UberJar.class.getResourceAsStream("/log4j2.properties");
         safeCopy(is, new File(CLASSES_DIR, "log4j2.properties"));
@@ -177,16 +180,31 @@ class UberJar extends CamelCommand {
         return code;
     }
 
-    private void copySettings(File settings) throws Exception {
+    private void copySettingsAndProfile(File settings, File profile) throws Exception {
         // the settings file itself
-        File setting = new File(CLASSES_DIR, Run.RUN_SETTINGS_FILE);
+        doCopySettingsAndProfile(settings, new File(CLASSES_DIR, Run.RUN_SETTINGS_FILE), null);
+        // and profile if exists
+        if (profile.exists()) {
+            // skip these
+            Predicate<String> skip = line -> line.startsWith("camel.main.routesIncludePattern")
+                    || line.startsWith("camel.jbang.classpathFiles")
+                    || line.startsWith("camel.component.kamelet.location")
+                    || line.startsWith("camel.component.properties.location");
+            doCopySettingsAndProfile(profile, new File(CLASSES_DIR, profile.getName()), skip);
+        }
+    }
 
+    private void doCopySettingsAndProfile(File source, File target, Predicate<String> skipKeys) throws Exception {
         // need to adjust file: scheme to classpath as the files are now embedded in the uber-jar directly
-        List<String> lines = Files.readAllLines(settings.toPath());
-        FileOutputStream fos = new FileOutputStream(setting, false);
+        List<String> lines = Files.readAllLines(source.toPath());
+        FileOutputStream fos = new FileOutputStream(target, false);
         for (String line : lines) {
+            line = line.trim();
             if (line.startsWith("camel.main.routesCompileDirectory")) {
                 continue; // skip as uber-jar should not compile to disk
+            }
+            if (skipKeys != null && skipKeys.test(line)) {
+                continue;
             }
             for (String k : SETTINGS_PROP_SOURCE_KEYS) {
                 line = fileToClasspath(line, k);
@@ -328,11 +346,12 @@ class UberJar extends CamelCommand {
     }
 
     private void copyWorkFiles(String work, File target) throws Exception {
+        String profile = getProfile() + ".properties";
         File[] files = new File(work).listFiles();
         if (files != null) {
             for (File source : files) {
-                // only copy files and skip settings file as we do this later specially
-                if (source.isDirectory() || source.getName().equals(Run.RUN_SETTINGS_FILE)) {
+                // only copy files and skip settings/profile file as we do this later specially
+                if (source.isDirectory() || source.getName().equals(Run.RUN_SETTINGS_FILE) || source.getName().equals(profile)) {
                     continue;
                 }
                 File out = new File(target, source.getName());
