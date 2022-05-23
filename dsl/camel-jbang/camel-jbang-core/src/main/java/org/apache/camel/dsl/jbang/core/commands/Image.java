@@ -23,7 +23,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -43,7 +42,7 @@ import io.fabric8.openshift.client.OpenShiftClient;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "image", description = "Create Docker and OCI container images")
-public class Image implements Callable<Integer> {
+public class Image extends CamelCommand {
 
     private static final int LOG_TAIL_SIZE = 10;
 
@@ -80,6 +79,10 @@ public class Image implements Callable<Integer> {
     @CommandLine.Option(names = { "--source-image" }, description = "Source image name (for OpenShift BuildConfig)",
                         defaultValue = "java:openjdk-11-ubi8")
     private String sourceImage;
+
+    public Image(CamelJBangMain main) {
+        super(main);
+    }
 
     @Override
     public Integer call() throws Exception {

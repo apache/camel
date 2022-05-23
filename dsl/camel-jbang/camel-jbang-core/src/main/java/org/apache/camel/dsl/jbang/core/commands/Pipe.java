@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.util.concurrent.Callable;
-
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "pipe", description = "Run Camel in pipe and filters mode for terminal scripting")

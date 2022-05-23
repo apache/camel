@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.util.concurrent.Callable;
-
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.Status;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
@@ -30,7 +28,7 @@ import io.fabric8.openshift.client.OpenShiftClient;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "deploy", description = "Deploy resources to Kubernetes, OpenShift, Minikube")
-public class Deploy implements Callable<Integer> {
+public class Deploy extends CamelCommand {
 
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested;
@@ -62,6 +60,10 @@ public class Deploy implements Callable<Integer> {
     private String username;
     @CommandLine.Option(names = { "-p", "--password" }, description = "Password")
     private String password;
+
+    public Deploy(CamelJBangMain main) {
+        super(main);
+    }
 
     @Override
     public Integer call() throws Exception {

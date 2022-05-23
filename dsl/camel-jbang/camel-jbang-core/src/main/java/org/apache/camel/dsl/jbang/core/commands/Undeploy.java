@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -26,7 +25,7 @@ import io.fabric8.openshift.client.OpenShiftClient;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "undeploy", description = "Undeploy resources from Kubernetes, OpenShift, Minikube")
-public class Undeploy implements Callable<Integer> {
+public class Undeploy extends CamelCommand {
 
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
     private boolean helpRequested;
@@ -46,6 +45,10 @@ public class Undeploy implements Callable<Integer> {
     private String username;
     @CommandLine.Option(names = { "-p", "--password" }, description = "Password")
     private String password;
+
+    public Undeploy(CamelJBangMain main) {
+        super(main);
+    }
 
     @Override
     public Integer call() throws Exception {
