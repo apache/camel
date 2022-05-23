@@ -26,18 +26,20 @@ import picocli.CommandLine.Command;
 @Command(name = "camel", description = "Apache Camel CLI", mixinStandardHelpOptions = true)
 public class CamelJBangMain implements Callable<Integer> {
     private static CommandLine commandLine;
+
     @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
                         description = "Profile")
     private String profile;
 
     public static void run(String... args) {
-        commandLine = new CommandLine(new CamelJBangMain())
-                .addSubcommand("run", new CommandLine(new Run()))
+        CamelJBangMain main = new CamelJBangMain();
+        commandLine = new CommandLine(main)
+                .addSubcommand("run", new CommandLine(new Run(main)))
                 .addSubcommand("init", new CommandLine(new Init()))
                 .addSubcommand("bind", new CommandLine(new Bind()))
-                .addSubcommand("pipe", new CommandLine(new Pipe()))
+                .addSubcommand("pipe", new CommandLine(new Pipe(main)))
                 .addSubcommand("package", new CommandLine(new Package())
-                        .addSubcommand("uber-jar", new UberJar()))
+                        .addSubcommand("uber-jar", new UberJar(main)))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator())
                         .addSubcommand("rest", new CodeRestGenerator()))
                 .addSubcommand("build", new CommandLine(new Build())
@@ -61,7 +63,8 @@ public class CamelJBangMain implements Callable<Integer> {
             return new String[] { v };
         });
 
-        ProfileHelper.augmentWithProperties(commandLine, args);
+        String profile = ProfileHelper.getProfile(args);
+        ProfileHelper.augmentWithProperties(commandLine, profile, args);
         int exitCode = commandLine.execute(args);
         System.exit(exitCode);
     }
@@ -70,5 +73,9 @@ public class CamelJBangMain implements Callable<Integer> {
     public Integer call() throws Exception {
         commandLine.execute("--help");
         return 0;
+    }
+
+    public String getProfile() {
+        return profile;
     }
 }

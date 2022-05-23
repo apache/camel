@@ -47,8 +47,18 @@ public final class ProfileHelper {
     private ProfileHelper() {
     }
 
-    public static void augmentWithProperties(CommandLine commandLine, String... args) {
-        String profile = getProfile(args);
+    public static String getProfile(String... args) {
+        CommandLine.ParseResult results = new CommandLine(new Profile())
+                .setStopAtUnmatched(false)
+                .setStopAtPositional(false).parseArgs(args);
+        if (results.hasMatchedOption(PROFILE)) {
+            return results.matchedOption(PROFILE).getValue().toString();
+        } else {
+            return DEFAULT_PROFILE;
+        }
+    }
+
+    public static void augmentWithProperties(CommandLine commandLine, String profile, String... args) {
         propertiesFilename = profile + PROPERTIES_FILE_EXTENSION;
 
         Properties fileProperties = readProperties();
@@ -60,17 +70,6 @@ public final class ProfileHelper {
             Properties properties = replacePrefix(fileProperties);
             Properties augmentedProperties = augmentProperties(properties, commandLine);
             commandLine.setDefaultValueProvider(new CommandLine.PropertiesDefaultProvider(augmentedProperties));
-        }
-    }
-
-    private static String getProfile(String... args) {
-        CommandLine.ParseResult results = new CommandLine(new Profile())
-                .setStopAtUnmatched(false)
-                .setStopAtPositional(false).parseArgs(args);
-        if (results.hasMatchedOption(PROFILE)) {
-            return results.matchedOption(PROFILE).getValue().toString();
-        } else {
-            return DEFAULT_PROFILE;
         }
     }
 

@@ -47,7 +47,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(name = "uber-jar", description = "Package application as a single uber-jar")
-class UberJar implements Callable<Integer> {
+class UberJar extends CamelCommand {
 
     private static final String BUILD_DIR = ".camel-jbang/work";
     private static final String CLASSES_DIR = BUILD_DIR + "/classes";
@@ -71,6 +71,10 @@ class UberJar implements Callable<Integer> {
 
     @Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     private boolean fresh;
+
+    public UberJar(CamelJBangMain main) {
+        super(main);
+    }
 
     @Override
     public Integer call() throws Exception {
@@ -174,7 +178,7 @@ class UberJar implements Callable<Integer> {
     }
 
     private Integer runSilently() throws Exception {
-        Run run = new Run();
+        Run run = new Run(main);
         Integer code = run.runSilent();
         return code;
     }

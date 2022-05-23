@@ -21,7 +21,7 @@ import java.util.concurrent.Callable;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "pipe", description = "Run Camel in pipe and filters mode for terminal scripting")
-class Pipe implements Callable<Integer> {
+class Pipe extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name of file", arity = "1")
     String file;
@@ -57,6 +57,10 @@ class Pipe implements Callable<Integer> {
                         arity = "0")
     String[] property;
 
+    public Pipe(CamelJBangMain main) {
+        super(main);
+    }
+
     @Override
     public Integer call() throws Exception {
         // remove leading ./ when calling a script in pipe mode
@@ -64,7 +68,7 @@ class Pipe implements Callable<Integer> {
             file = file.substring(2);
         }
 
-        Run run = new Run();
+        Run run = new Run(main);
         run.logging = logging;
         run.loggingLevel = loggingLevel;
         run.loggingColor = false;

@@ -36,7 +36,6 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -68,7 +67,7 @@ import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.asGithubSing
 import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.fetchGithubUrls;
 
 @Command(name = "run", description = "Run as local Camel application")
-class Run implements Callable<Integer> {
+class Run extends CamelCommand {
 
     public static final String WORK_DIR = ".camel-jbang";
     public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
@@ -169,6 +168,11 @@ class Run implements Callable<Integer> {
 
     @Option(names = { "--open-api" }, description = "Add an OpenAPI spec from the given file")
     String openapi;
+
+    public Run(CamelJBangMain main) {
+        super(main);
+    }
+
     //CHECKSTYLE:ON
 
     @Override
@@ -228,11 +232,11 @@ class Run implements Callable<Integer> {
         return 0;
     }
 
-    private OrderedProperties loadApplicationProperties(File source) throws Exception {
+    private OrderedProperties loadProfileProperties(File source) throws Exception {
         OrderedProperties prop = new OrderedProperties();
         prop.load(new FileInputStream(source));
 
-        // special for routes include pattern that we need to "fix" after reading from application.properties
+        // special for routes include pattern that we need to "fix" after reading from properties
         // to make this work in run command
         String value = prop.getProperty("camel.main.routesIncludePattern");
         if (value != null) {
@@ -251,15 +255,6 @@ class Run implements Callable<Integer> {
         return prop;
     }
 
-    private static String prefixFile(String line, String key) {
-        String value = StringHelper.after(line, key + "=");
-        if (value != null) {
-            value = value.replaceAll("file:", "classpath:");
-            line = key + "=" + value;
-        }
-        return line;
-    }
-
     private int run() throws Exception {
         File work = new File(WORK_DIR);
         removeDir(work);
@@ -270,24 +265,34 @@ class Run implements Callable<Integer> {
             generateOpenApi();
         }
 
-        OrderedProperties applicationProperties = null;
+        OrderedProperties profileProperties = null;
+        File profilePropertiesFile = new File(getProfile() + ".properties");
+        if (profilePropertiesFile.exists()) {
+            profileProperties = loadProfileProperties(profilePropertiesFile);
+            // logging level/color may be configured in the properties file
+            loggingLevel = profileProperties.getProperty("loggingLevel", loggingLevel);
+            loggingColor
+                    = "true".equals(profileProperties.getProperty("loggingColor", loggingColor ? "true" : "false"));
+            loggingJson
+                    = "true".equals(profileProperties.getProperty("loggingJson", loggingJson ? "true" : "false"));
+            if (propertiesFiles == null) {
+                propertiesFiles = "file:" + profilePropertiesFile.getName();
+            } else {
+                propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getName();
+            }
+        }
+
+        // if no specific file to run then try to auto-detect
         if (files == null || files.length == 0) {
-            // special when no files have been specified then we use application.properties as source to know what to run
-            File source = new File("application.properties");
-            if (source.exists()) {
-                applicationProperties = loadApplicationProperties(source);
-                // logging level/color may be configured in the properties file
-                loggingLevel = applicationProperties.getProperty("loggingLevel", loggingLevel);
-                loggingColor
-                        = "true".equals(applicationProperties.getProperty("loggingColor", loggingColor ? "true" : "false"));
-                loggingJson
-                        = "true".equals(applicationProperties.getProperty("loggingJson", loggingJson ? "true" : "false"));
-            } else if (!silentRun && !source.exists()) {
-                System.out.println("Cannot run because application.properties file does not exist");
-                return 1;
-            } else if (silentRun) {
-                // silent-run then auto-detect all files
-                files = new File(".").list();
+            String routes = profileProperties != null ? profileProperties.getProperty("camel.main.routesIncludePattern") : null;
+            if (routes == null) {
+                if (!silentRun) {
+                    System.out.println("Cannot run because " + getProfile() + ".properties file does not exist");
+                    return 1;
+                } else {
+                    // silent-run then auto-detect all files
+                    files = new File(".").list();
+                }
             }
         }
 
@@ -306,20 +311,20 @@ class Run implements Callable<Integer> {
         });
         main.setAppName("Apache Camel (JBang)");
 
-        writeSetting(main, applicationProperties, "camel.main.name", name);
+        writeSetting(main, profileProperties, "camel.main.name", name);
         if (dev) {
             // allow quick shutdown during development
-            writeSetting(main, applicationProperties, "camel.main.shutdownTimeout", "5");
+            writeSetting(main, profileProperties, "camel.main.shutdownTimeout", "5");
         }
-        writeSetting(main, applicationProperties, "camel.main.routesReloadEnabled", dev ? "true" : "false");
-        writeSetting(main, applicationProperties, "camel.main.sourceLocationEnabled", "true");
-        writeSetting(main, applicationProperties, "camel.main.tracing", trace ? "true" : "false");
-        writeSetting(main, applicationProperties, "camel.main.modeline", modeline ? "true" : "false");
+        writeSetting(main, profileProperties, "camel.main.routesReloadEnabled", dev ? "true" : "false");
+        writeSetting(main, profileProperties, "camel.main.sourceLocationEnabled", "true");
+        writeSetting(main, profileProperties, "camel.main.tracing", trace ? "true" : "false");
+        writeSetting(main, profileProperties, "camel.main.modeline", modeline ? "true" : "false");
         // allow java-dsl to compile to .class which we need in uber-jar mode
-        writeSetting(main, applicationProperties, "camel.main.routesCompileDirectory", WORK_DIR);
-        writeSetting(main, applicationProperties, "camel.jbang.dependencies", dependencies);
-        writeSetting(main, applicationProperties, "camel.jbang.health", health ? "true" : "false");
-        writeSetting(main, applicationProperties, "camel.jbang.console", console ? "true" : "false");
+        writeSetting(main, profileProperties, "camel.main.routesCompileDirectory", WORK_DIR);
+        writeSetting(main, profileProperties, "camel.jbang.dependencies", dependencies);
+        writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
+        writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
 
         // command line arguments
         if (property != null) {
@@ -343,16 +348,16 @@ class Run implements Callable<Integer> {
             // auto terminate if being idle
             main.addInitialProperty("camel.main.durationMaxIdleSeconds", "1");
         }
-        writeSetting(main, applicationProperties, "camel.main.durationMaxMessages",
+        writeSetting(main, profileProperties, "camel.main.durationMaxMessages",
                 () -> maxMessages > 0 ? String.valueOf(maxMessages) : null);
-        writeSetting(main, applicationProperties, "camel.main.durationMaxSeconds",
+        writeSetting(main, profileProperties, "camel.main.durationMaxSeconds",
                 () -> maxSeconds > 0 ? String.valueOf(maxSeconds) : null);
-        writeSetting(main, applicationProperties, "camel.main.durationMaxIdleSeconds",
+        writeSetting(main, profileProperties, "camel.main.durationMaxIdleSeconds",
                 () -> maxIdleSeconds > 0 ? String.valueOf(maxIdleSeconds) : null);
-        writeSetting(main, applicationProperties, "camel.jbang.platform-http.port",
+        writeSetting(main, profileProperties, "camel.jbang.platform-http.port",
                 () -> port > 0 ? String.valueOf(port) : null);
-        writeSetting(main, applicationProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null);
-        writeSetting(main, applicationProperties, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
+        writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null);
+        writeSetting(main, profileProperties, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
 
         if (fileLock) {
             lockFile = createLockFile();
@@ -459,13 +464,13 @@ class Run implements Callable<Integer> {
             main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
             writeSettings("camel.main.routesIncludePattern", js.toString());
         } else {
-            writeSetting(main, applicationProperties, "camel.main.routesIncludePattern", () -> null);
+            writeSetting(main, profileProperties, "camel.main.routesIncludePattern", () -> null);
         }
         if (sjClasspathFiles.length() > 0) {
             main.addInitialProperty("camel.jbang.classpathFiles", sjClasspathFiles.toString());
             writeSettings("camel.jbang.classpathFiles", sjClasspathFiles.toString());
         } else {
-            writeSetting(main, applicationProperties, "camel.jbang.classpathFiles", () -> null);
+            writeSetting(main, profileProperties, "camel.jbang.classpathFiles", () -> null);
         }
 
         if (sjKamelets.length() > 0) {
@@ -478,7 +483,7 @@ class Run implements Callable<Integer> {
             main.addInitialProperty("camel.component.kamelet.location", loc);
             writeSettings("camel.component.kamelet.location", loc);
         } else {
-            writeSetting(main, applicationProperties, "camel.component.kamelet.location", () -> null);
+            writeSetting(main, profileProperties, "camel.component.kamelet.location", () -> null);
         }
 
         // we can only reload if file based
@@ -501,7 +506,10 @@ class Run implements Callable<Integer> {
                     }
                     file = "file://" + file;
                 }
-                locations.append(file).append(",");
+                if (locations.length() > 0) {
+                    locations.append(",");
+                }
+                locations.append(file);
             }
             // there may be existing properties
             String loc = main.getInitialProperties().getProperty("camel.component.properties.location");
