@@ -41,6 +41,7 @@ import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.myconverter.MyCustomDate;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.InetAddressUtil;
 import org.junit.jupiter.api.Test;
@@ -1985,6 +1986,22 @@ public class SimpleTest extends LanguageTestSupport {
     public void testParenthesisReplace() throws Exception {
         exchange.getIn().setBody("Hello (( World (((( Again");
         assertExpression("${body.replace(\"((\", \"--\").replace(\"((((\", \"----\")}", "Hello -- World ---- Again");
+    }
+
+    @Test
+    public void testPropertiesExist() throws Exception {
+        PropertiesComponent pc = context.getPropertiesComponent();
+
+        assertExpression("${propertiesExist:myKey}", "false");
+        assertExpression("${propertiesExist:!myKey}", "true");
+        assertPredicate("${propertiesExist:myKey}", false);
+        assertPredicate("${propertiesExist:!myKey}", true);
+
+        pc.addInitialProperty("myKey", "abc");
+        assertExpression("${propertiesExist:myKey}", "true");
+        assertExpression("${propertiesExist:!myKey}", "false");
+        assertPredicate("${propertiesExist:myKey}", true);
+        assertPredicate("${propertiesExist:!myKey}", false);
     }
 
     @Override

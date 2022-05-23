@@ -244,6 +244,21 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return bean.createExpression(null, properties);
         }
 
+        // properties-exist: prefix
+        remainder = ifStartsWithReturnRemainder("propertiesExist:", function);
+        if (remainder != null) {
+            String[] parts = remainder.split(":", 2);
+            if (parts.length > 2) {
+                throw new SimpleParserException("Valid syntax: ${propertiesExist:key was: " + function, token.getIndex());
+            }
+            String key = parts[0];
+            boolean negate = key != null && key.startsWith("!");
+            if (negate) {
+                key = key.substring(1);
+            }
+            return ExpressionBuilder.propertiesComponentExist(key, negate);
+        }
+
         // properties: prefix
         remainder = ifStartsWithReturnRemainder("properties:", function);
         if (remainder != null) {

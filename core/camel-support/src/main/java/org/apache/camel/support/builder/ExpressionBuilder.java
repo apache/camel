@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -1799,6 +1800,32 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "properties(" + key + ")";
+            }
+        };
+    }
+
+    public static Expression propertiesComponentExist(final String key, final boolean negate) {
+        return new ExpressionAdapter() {
+            private PropertiesComponent pc;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Optional<String> result = pc.resolveProperty(key);
+                boolean answer = result.isPresent();
+                if (negate) {
+                    answer = !answer;
+                }
+                return answer;
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                pc = context.getPropertiesComponent();
+            }
+
+            @Override
+            public String toString() {
+                return "propertiesExist(" + key + ")";
             }
         };
     }
