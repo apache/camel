@@ -30,8 +30,6 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "deploy", description = "Deploy resources to Kubernetes, OpenShift, Minikube")
 public class Deploy extends CamelCommand {
 
-    @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested;
     @CommandLine.Option(names = { "--namespace" }, required = true, description = "Namespace", defaultValue = "default")
     private String namespace;
     @CommandLine.Option(names = { "--name" }, description = "Application name", required = true)

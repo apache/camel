@@ -18,9 +18,16 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.util.concurrent.Callable;
 
+import picocli.CommandLine;
+
 abstract class CamelCommand implements Callable<Integer> {
 
-    CamelJBangMain main;
+    private final CamelJBangMain main;
+
+    //CHECKSTYLE:OFF
+    @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
+    private boolean helpRequested = false;
+    //CHECKSTYLE:ON
 
     public CamelCommand(CamelJBangMain main) {
         this.main = main;

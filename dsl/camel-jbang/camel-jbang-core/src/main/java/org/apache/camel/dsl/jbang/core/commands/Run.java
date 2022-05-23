@@ -89,9 +89,6 @@ class Run extends CamelCommand {
                 arity = "0..9")
     String[] files;
 
-    @Option(names = {"-h", "--help"}, usageHelp = true, description = "Display the help and sub-commands")
-    boolean helpRequested;
-
     @Option(names = {
             "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate them).")
     String dependencies;

@@ -60,11 +60,6 @@ class UberJar extends CamelCommand {
             "camel.jbang.classpathFiles"
     };
 
-    //CHECKSTYLE:OFF
-    @Option(names = {"-h", "--help"}, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested = false;
-    //CHECKSTYLE:ON
-
     @CommandLine.Option(names = { "-j", "--jar" }, defaultValue = "camel-runner.jar", description = "Jar filename")
     private String jar = "camel-runner.jar";
 
@@ -177,7 +172,7 @@ class UberJar extends CamelCommand {
     }
 
     private Integer runSilently() throws Exception {
-        Run run = new Run(main);
+        Run run = new Run(getMain());
         Integer code = run.runSilent();
         return code;
     }

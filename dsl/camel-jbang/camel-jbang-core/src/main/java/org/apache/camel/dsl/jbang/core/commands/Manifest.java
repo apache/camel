@@ -34,8 +34,6 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "manifests", description = "Create Kubernetes resources")
 public class Manifest extends CamelCommand {
 
-    @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested;
     @CommandLine.Option(names = { "--path" }, description = "Output folder path", defaultValue = "manifests")
     private String path;
     @CommandLine.Option(names = { "--namespace" }, description = "Namespace")

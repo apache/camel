@@ -46,8 +46,6 @@ public class Image extends CamelCommand {
 
     private static final int LOG_TAIL_SIZE = 10;
 
-    @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested;
     @CommandLine.Option(names = { "-f", "--from" }, description = "Base Image", defaultValue = "gcr.io/distroless/java:11")
     private String from;
     @CommandLine.Option(names = { "-j", "--jar" }, description = "Jar file", defaultValue = "camel-runner.jar")

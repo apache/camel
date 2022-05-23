@@ -18,14 +18,9 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
 @Command(name = "package", description = "Package Camel application (use --help to see sub commands)")
 class Package extends CamelCommand {
-    //CHECKSTYLE:OFF
-    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested = false;
-    //CHECKSTYLE:ON
 
     public Package(CamelJBangMain main) {
         super(main);

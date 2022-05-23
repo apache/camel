@@ -47,11 +47,6 @@ class Init extends CamelCommand {
             description = "When creating a yaml file should it be created as a Camel K Integration CRD")
     private boolean integration;
 
-    //CHECKSTYLE:OFF
-    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested = false;
-    //CHECKSTYLE:ON
-
     public Init(CamelJBangMain main) {
         super(main);
     }

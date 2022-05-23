@@ -24,11 +24,6 @@ class Pipe extends CamelCommand {
     @CommandLine.Parameters(description = "Name of file", arity = "1")
     String file;
 
-    //CHECKSTYLE:OFF
-    @CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "Display the help and sub-commands")
-    boolean helpRequested;
-    //CHECKSTYLE:ON
-
     @CommandLine.Option(names = { "--max-messages" }, defaultValue = "0",
                         description = "Max number of messages to process before stopping")
     int maxMessages;
@@ -66,7 +61,7 @@ class Pipe extends CamelCommand {
             file = file.substring(2);
         }
 
-        Run run = new Run(main);
+        Run run = new Run(getMain());
         run.logging = logging;
         run.loggingLevel = loggingLevel;
         run.loggingColor = false;

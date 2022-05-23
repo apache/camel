@@ -33,8 +33,6 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "rest", description = "Generate REST DSL source code from OpenApi specification")
 public class CodeRestGenerator extends CamelCommand {
 
-    @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested;
     @CommandLine.Option(names = { "-i", "--input" }, required = true, description = "OpenApi specification file name")
     private String input;
     @CommandLine.Option(names = { "-o", "--output" }, description = "Output REST DSL file name")

@@ -36,7 +36,6 @@ import org.snakeyaml.engine.v2.parser.ParserImpl;
 import org.snakeyaml.engine.v2.scanner.StreamReader;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asStringSet;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
@@ -53,11 +52,6 @@ class Bind extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name of binding file", arity = "1")
     private String file;
-
-    //CHECKSTYLE:OFF
-    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested = false;
-    //CHECKSTYLE:ON
 
     public Bind(CamelJBangMain main) {
         super(main);

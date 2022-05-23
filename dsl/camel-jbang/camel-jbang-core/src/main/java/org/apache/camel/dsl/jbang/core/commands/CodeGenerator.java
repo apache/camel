@@ -21,9 +21,6 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "generate", description = "Generate source code (use --help to see sub commands)")
 public class CodeGenerator extends CamelCommand {
 
-    @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested = true;
-
     public CodeGenerator(CamelJBangMain main) {
         super(main);
     }
