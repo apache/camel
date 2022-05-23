@@ -387,9 +387,9 @@ works in two modes:
 - line mode (default) - reads input as single lines (separated by line breaks).
   Message body is a `String`.
 - raw mode - reads the entire stream until _end of stream_.
-  Mmessage body is a `byte[]`.
+  Message body is a `byte[]`.
 
-The default mode is due to historically how the stream component as created.
+IMPORTANT: The default mode is due to historically how the stream component was created.
 Therefore, you may want to set `stream:in?readLine=false` to use raw mode.
 
 === Running local Kamelets
