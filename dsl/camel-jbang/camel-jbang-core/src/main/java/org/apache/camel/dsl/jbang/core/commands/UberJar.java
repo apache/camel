@@ -351,7 +351,8 @@ class UberJar extends CamelCommand {
         if (files != null) {
             for (File source : files) {
                 // only copy files and skip settings/profile file as we do this later specially
-                if (source.isDirectory() || source.getName().equals(Run.RUN_SETTINGS_FILE) || source.getName().equals(profile)) {
+                if (source.isDirectory() || source.getName().equals(Run.RUN_SETTINGS_FILE)
+                        || source.getName().equals(profile)) {
                     continue;
                 }
                 File out = new File(target, source.getName());
