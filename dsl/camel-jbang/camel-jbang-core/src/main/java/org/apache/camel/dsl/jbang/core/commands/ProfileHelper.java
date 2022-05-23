@@ -30,7 +30,11 @@ import java.util.stream.Collectors;
 
 import picocli.CommandLine;
 
-public final class PropertiesHelper {
+/**
+ * Helper for CLI arguments with profile
+ */
+public final class ProfileHelper {
+
     private static final String PROPERTIES_FILE_EXTENSION = ".properties";
     private static final String DEFAULT_PROFILE = "application";
     private static final String PROFILE = "profile";
@@ -40,22 +44,23 @@ public final class PropertiesHelper {
     private static final List<String> COMMON_ARGUMENTS = List.of("namespace", "name", "version");
     private static String propertiesFilename = "application.properties";
 
-    private PropertiesHelper() {
+    private ProfileHelper() {
     }
 
     public static void augmentWithProperties(CommandLine commandLine, String... args) {
-
         String profile = getProfile(args);
-        if (!Objects.equals(profile, DEFAULT_PROFILE)) {
-            propertiesFilename = profile + PROPERTIES_FILE_EXTENSION;
-            // only show if not default
-            System.out.println("Augmenting properties with profile " + profile);
-        }
+        propertiesFilename = profile + PROPERTIES_FILE_EXTENSION;
 
         Properties fileProperties = readProperties();
-        Properties properties = replacePrefix(fileProperties);
-        Properties augmentedProperties = augmentProperties(properties, commandLine);
-        commandLine.setDefaultValueProvider(new CommandLine.PropertiesDefaultProvider(augmentedProperties));
+        if (!fileProperties.isEmpty()) {
+            if (!Objects.equals(profile, DEFAULT_PROFILE)) {
+                // only show if not default
+                System.out.println("Augmenting properties with profile " + profile);
+            }
+            Properties properties = replacePrefix(fileProperties);
+            Properties augmentedProperties = augmentProperties(properties, commandLine);
+            commandLine.setDefaultValueProvider(new CommandLine.PropertiesDefaultProvider(augmentedProperties));
+        }
     }
 
     private static String getProfile(String... args) {
@@ -102,8 +107,8 @@ public final class PropertiesHelper {
     }
 
     private static String generateParameter(String... prefix) {
-        return Arrays.asList(prefix).stream()
-                .filter(s -> s != null)
+        return Arrays.stream(prefix)
+                .filter(Objects::nonNull)
                 .collect(Collectors.joining("."));
     }
 

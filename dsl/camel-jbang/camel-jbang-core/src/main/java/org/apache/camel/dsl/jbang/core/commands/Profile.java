@@ -25,8 +25,9 @@ import picocli.CommandLine;
 public class Profile implements Callable<Integer> {
 
     @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
-                        description = "Profile")
+                        description = "Profile to use (Loads properties file with the same profile name).")
     private String profile;
+
     @CommandLine.Unmatched
     private List<String> unmatched;
 
