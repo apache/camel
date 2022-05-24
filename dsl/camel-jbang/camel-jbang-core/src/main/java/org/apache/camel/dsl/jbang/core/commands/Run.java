@@ -40,6 +40,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,6 +79,12 @@ class Run extends CamelCommand {
 
     private static final String OPENAPI_GENERATED_FILE = ".camel-jbang/generated-openapi.yaml";
     private static final String CLIPBOARD_GENERATED_FILE = ".camel-jbang/generated-clipboard";
+
+    private static final Pattern PACKAGE_PATTERN = Pattern.compile(
+            "^\\s*package\\s+([a-zA-Z][\\.\\w]*)\\s*;.*$", Pattern.MULTILINE);
+
+    private static final Pattern CLASS_PATTERN = Pattern.compile(
+            "^\\s*public class\\s+([a-zA-Z0-9]*)[\\s+|;].*$", Pattern.MULTILINE);
 
     private CamelContext context;
     private File lockFile;
@@ -596,6 +604,14 @@ class Run extends CamelCommand {
         Object t = c.getData(DataFlavor.stringFlavor);
         if (t != null) {
             String fn = CLIPBOARD_GENERATED_FILE + "." + ext;
+            if ("java".equals(ext)) {
+                String fqn = determineClassName(t.toString());
+                if (fqn == null) {
+                    throw new IllegalArgumentException(
+                            "Cannot determine the Java class name from the source in the clipboard");
+                }
+                fn = fqn + ".java";
+            }
             Files.write(Paths.get(fn), t.toString().getBytes(StandardCharsets.UTF_8));
             file = "file:" + fn;
         }
@@ -759,6 +775,22 @@ class Run extends CamelCommand {
                 f.deleteOnExit();
             }
         }
+    }
+
+    private static String determineClassName(String content) {
+        Matcher matcher = PACKAGE_PATTERN.matcher(content);
+        String pn = matcher.find() ? matcher.group(1) : null;
+
+        matcher = CLASS_PATTERN.matcher(content);
+        String cn = matcher.find() ? matcher.group(1) : null;
+
+        String fqn;
+        if (pn != null) {
+            fqn = pn + "." + cn;
+        } else {
+            fqn = cn;
+        }
+        return fqn;
     }
 
 }
