@@ -493,10 +493,11 @@ class Run extends CamelCommand {
 
         // we can only reload if file based
         if (dev && sjReload.length() > 0) {
+            String reload = sjReload.toString();
             main.addInitialProperty("camel.main.routesReloadEnabled", "true");
             main.addInitialProperty("camel.main.routesReloadDirectory", ".");
-            // skip file: as prefix
-            main.addInitialProperty("camel.main.routesReloadPattern", sjReload.toString());
+            main.addInitialProperty("camel.main.routesReloadPattern", reload);
+            main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", isReloadRecursive(reload) ? "true" : "false");
             // do not shutdown the JVM but stop routes when max duration is triggered
             main.addInitialProperty("camel.main.durationMaxAction", "stop");
         }
@@ -791,6 +792,16 @@ class Run extends CamelCommand {
             fqn = cn;
         }
         return fqn;
+    }
+
+    private static boolean isReloadRecursive(String reload) {
+        for (String part : reload.split(",")) {
+            String dir = FileUtil.onlyPath(part);
+            if (dir != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

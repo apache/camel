@@ -125,7 +125,9 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                         path = FileUtil.stripPath(path);
                     }
 
-                    boolean result = matcher.match(part, path, false);
+                    String name = FileUtil.compactPath(f.getPath());
+                    boolean exact = name.equals(part);
+                    boolean result = exact || matcher.match(part, path, false);
                     LOG.trace("Accepting file pattern:{} path:{} -> {}", part, path, result);
 
                     if (result) {
