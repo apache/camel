@@ -146,7 +146,7 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport {
         record1.put("scientist", "Kepler");
 
         //Pass sharded collection key as CRITERIA to prevent "MongoWriteException: Failed to target upsert by query :: could not extract exact shard key"
-        result = template.requestBodyAndHeader("direct:save", record1, CRITERIA, eq("country","Germany"));
+        result = template.requestBodyAndHeader("direct:save", record1, CRITERIA, eq("country", "Germany"));
         assertTrue(result instanceof UpdateResult);
 
         record1 = testCollection.find(eq(MONGO_ID, "testSave1")).first();
