@@ -1495,6 +1495,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
          * @return          <tt>true</tt> to continue, or <tt>false</tt> to exhaust.
          */
         private boolean shouldContinue(Exchange exchange) {
+            Object shouldContinueProperty = exchange.removeProperty(Exchange.EXCEPTION_SHOULD_CONTINUE);
+            if (shouldContinueProperty instanceof Boolean) {
+                return (Boolean) shouldContinueProperty;
+            }
             if (continuedPredicate != null) {
                 return continuedPredicate.matches(exchange);
             }
@@ -1509,6 +1513,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
          * @return          <tt>true</tt> to handle, or <tt>false</tt> to exhaust.
          */
         private boolean shouldHandle(Exchange exchange) {
+            Object shouldHandleProperty = exchange.removeProperty(Exchange.EXCEPTION_SHOULD_HANDLE);
+            if (shouldHandleProperty instanceof Boolean) {
+                return (Boolean) shouldHandleProperty;
+            }
             if (handledPredicate != null) {
                 return handledPredicate.matches(exchange);
             }
