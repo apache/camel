@@ -323,6 +323,7 @@
         <module>camel-websocket-jsr356</module>
         <module>camel-websocket</module>
         <module>camel-weka</module>
+        <module>camel-whatsapp</module>
         <module>camel-wordpress</module>
         <module>camel-workday</module>
         <module>camel-xchange</module>

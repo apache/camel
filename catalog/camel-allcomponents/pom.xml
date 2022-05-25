@@ -1483,6 +1483,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-whatsapp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-wordpress</artifactId>
 		</dependency>
 		<dependency>
