@@ -39,7 +39,11 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.structured.BrowseResult;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReferenceDescription;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -102,6 +106,8 @@ public class BrowseServerTest extends AbstractMiloServerTest {
 
     private static final String MILO_BROWSE_NODE_VIA_ENDPOINT
             = MILO_BROWSE_ROOT + "&node=RAW(ns=0;i=86)";
+    
+    private static final Logger LOG = LoggerFactory.getLogger(BrowseServerTest.class);
 
     @EndpointInject(MOCK_TEST_1)
     protected MockEndpoint mock1;
@@ -156,7 +162,15 @@ public class BrowseServerTest extends AbstractMiloServerTest {
 
     @Produce(DIRECT_START_9)
     protected ProducerTemplate producer9;
-
+    
+    @BeforeEach
+    public void setup(TestInfo testInfo) {
+        final var displayName=testInfo.getDisplayName();
+        LOG.info("********************************************************************************");
+        LOG.info(displayName);
+        LOG.info("********************************************************************************");
+    }
+    
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {

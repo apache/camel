@@ -35,11 +35,13 @@ public class MiloClientConsumer extends DefaultConsumer {
     private MonitorHandle handle;
     private ExpandedNodeId node;
     private Double samplingInterval;
+    private boolean omitNullValues;
 
     public MiloClientConsumer(final MiloClientEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
         this.node = endpoint.getNodeId();
         this.samplingInterval = endpoint.getSamplingInterval();
+        this.omitNullValues = endpoint.isOmitNullValues();
     }
 
     @Override
@@ -68,7 +70,12 @@ public class MiloClientConsumer extends DefaultConsumer {
 
     private void handleValueUpdate(final DataValue value) {
         LOG.debug("Handle item update - {} = {}", node, value);
-
+        
+        if(omitNullValues && (value == null || value.getValue() == null || value.getValue().getValue() == null)){
+            LOG.debug("Handle item update omitted due to null values (see omitNullValues parameter)");
+            return;
+        }
+        
         final Exchange exchange = createExchange(true);
         try {
             mapToMessage(value, exchange.getMessage());

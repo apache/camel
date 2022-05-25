@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.milo.call;
 
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
@@ -32,16 +33,20 @@ import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig;
 import org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfigBuilder;
 import org.eclipse.milo.opcua.sdk.server.util.HostnameUtil;
+import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.security.DefaultCertificateManager;
-import org.eclipse.milo.opcua.stack.core.security.InsecureCertificateValidator;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.eclipse.milo.opcua.stack.core.transport.TransportProfile;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.MessageSecurityMode;
 import org.eclipse.milo.opcua.stack.core.types.structured.UserTokenPolicy;
 import org.eclipse.milo.opcua.stack.server.EndpointConfiguration;
+import org.eclipse.milo.opcua.stack.server.security.ServerCertificateValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.milo.NodeIds.nodeValue;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
@@ -61,12 +66,22 @@ public class CallClientTest extends AbstractMiloServerTest {
             = MILO_CLIENT_BASE_C1 + "?node=" + NodeIds.nodeValue(MockCamelNamespace.URI, MockCamelNamespace.FOLDER_ID)
               + "&method=" + nodeValue(MockCamelNamespace.URI, MockCamelNamespace.CALL_ID) + "&overrideHost=true";
 
+    private static final Logger LOG = LoggerFactory.getLogger(CallClientTest.class);
+    
     private OpcUaServer server;
     private MockCamelNamespace namespace;
     private MockCallMethod callMethod;
 
     @Produce(DIRECT_START_1)
     private ProducerTemplate producer1;
+    
+    @BeforeEach
+    public void setup(TestInfo testInfo) {
+        final var displayName=testInfo.getDisplayName();
+        LOG.info("********************************************************************************");
+        LOG.info(displayName);
+        LOG.info("********************************************************************************");
+    }
 
     @Override
     protected RoutesBuilder createRouteBuilder() {
@@ -172,5 +187,21 @@ public class CallClientTest extends AbstractMiloServerTest {
     private static void doCall(final ProducerTemplate producerTemplate, final Object input) {
         // we always write synchronously since we do need the message order
         producerTemplate.sendBodyAndHeader(input, "await", true);
+    }
+    
+    private static final class InsecureCertificateValidator implements ServerCertificateValidator{
+        
+        public static final ServerCertificateValidator INSTANCE = new CallClientTest.InsecureCertificateValidator();
+        
+        private InsecureCertificateValidator() {
+        }
+        
+        @Override
+        public void validateCertificateChain(List<X509Certificate> list,String s) throws UaException {
+        }
+        
+        @Override
+        public void validateCertificateChain(List<X509Certificate> list) throws UaException{
+        }
     }
 }

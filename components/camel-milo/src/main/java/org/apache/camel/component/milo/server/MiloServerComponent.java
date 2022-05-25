@@ -54,7 +54,6 @@ import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.security.CertificateManager;
 import org.eclipse.milo.opcua.stack.core.security.CertificateValidator;
 import org.eclipse.milo.opcua.stack.core.security.DefaultCertificateManager;
-import org.eclipse.milo.opcua.stack.core.security.DefaultCertificateValidator;
 import org.eclipse.milo.opcua.stack.core.security.DefaultTrustListManager;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.eclipse.milo.opcua.stack.core.transport.TransportProfile;
@@ -64,6 +63,8 @@ import org.eclipse.milo.opcua.stack.core.types.enumerated.UserTokenType;
 import org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo;
 import org.eclipse.milo.opcua.stack.core.types.structured.UserTokenPolicy;
 import org.eclipse.milo.opcua.stack.server.EndpointConfiguration;
+import org.eclipse.milo.opcua.stack.server.security.DefaultServerCertificateValidator;
+import org.eclipse.milo.opcua.stack.server.security.ServerCertificateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,7 +120,7 @@ public class MiloServerComponent extends DefaultComponent {
     @Metadata(label = "security")
     private String defaultCertificateValidator;
     @Metadata(label = "security")
-    private CertificateValidator certificateValidator;
+    private ServerCertificateValidator certificateValidator;
     @Metadata(label = "security")
     private X509Certificate certificate;
 
@@ -324,19 +325,19 @@ public class MiloServerComponent extends DefaultComponent {
                 .build();
     }
 
-    private static final class DenyAllCertificateValidator implements CertificateValidator {
-        public static final CertificateValidator INSTANCE = new DenyAllCertificateValidator();
+    private static final class DenyAllCertificateValidator implements ServerCertificateValidator {
+        public static final ServerCertificateValidator INSTANCE = new DenyAllCertificateValidator();
 
         private DenyAllCertificateValidator() {
         }
 
         @Override
-        public void validate(final X509Certificate certificate) throws UaException {
+        public void validateCertificateChain(List<X509Certificate> list, String s) throws UaException {
             throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
         }
 
         @Override
-        public void verifyTrustChain(List<X509Certificate> certificateChain) throws UaException {
+        public void validateCertificateChain(List<X509Certificate> list) throws UaException {
             throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
         }
     }
@@ -581,7 +582,7 @@ public class MiloServerComponent extends DefaultComponent {
     /**
      * Validator for client certificates
      */
-    public void setCertificateValidator(final CertificateValidator certificateValidator) {
+    public void setCertificateValidator(final ServerCertificateValidator certificateValidator) {
         this.certificateValidator = certificateValidator;
     }
 
@@ -592,7 +593,7 @@ public class MiloServerComponent extends DefaultComponent {
         this.defaultCertificateValidator = defaultCertificateValidator;
         try {
             DefaultTrustListManager trustListManager = new DefaultTrustListManager(new File(defaultCertificateValidator));
-            this.certificateValidator = new DefaultCertificateValidator(trustListManager);
+            this.certificateValidator = new DefaultServerCertificateValidator(trustListManager);
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }

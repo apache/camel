@@ -21,12 +21,16 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.apache.camel.RuntimeCamelException;
 import org.eclipse.milo.opcua.sdk.core.AccessLevel;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaNodeContext;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaObjectNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaVariableNode;
+import org.eclipse.milo.opcua.sdk.server.nodes.filters.AttributeFilter;
+import org.eclipse.milo.opcua.sdk.server.nodes.filters.AttributeFilterContext;
+import org.eclipse.milo.opcua.stack.core.AttributeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DateTime;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
@@ -37,8 +41,6 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ubyte;
 
 public class CamelServerItem {
     private static final Logger LOG = LoggerFactory.getLogger(CamelServerItem.class);
@@ -59,28 +61,37 @@ public class CamelServerItem {
         final NodeId nodeId = new NodeId(namespaceIndex, itemId);
         final QualifiedName qname = new QualifiedName(namespaceIndex, itemId);
         final LocalizedText displayName = LocalizedText.english(itemId);
-
+        
         // create variable node
-
-        this.item = new UaVariableNode(nodeContext, nodeId, qname, displayName) {
-
-            @Override
-            public synchronized DataValue getValue() {
-                return getDataValue();
-            }
-
-            @Override
-            public synchronized void setValue(final DataValue value) {
-                setDataValue(value);
-            }
-
-        };
-
-        this.item.setAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE)));
-        this.item.setUserAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE)));
-
+    
+        final Predicate<AttributeId> filter = AttributeId.Value::equals;
+        this.item = UaVariableNode.build(nodeContext, builder->
+            builder
+                .setNodeId(nodeId)
+                .setBrowseName(qname)
+                .setDisplayName(displayName)
+                .setAccessLevel(AccessLevel.toValue(AccessLevel.READ_WRITE))
+                .setUserAccessLevel(AccessLevel.toValue(AccessLevel.READ_WRITE))
+                .addAttributeFilter(new AttributeFilter(){
+    
+                    @Override
+                    public Object getAttribute(AttributeFilterContext.GetAttributeContext ctx, AttributeId attributeId){
+                        if(filter.test(attributeId) && ctx.getSession().isPresent()) {
+                            return getDataValue();
+                        }
+                        return ctx.getAttribute(attributeId);
+                    }
+    
+                    @Override
+                    public void setAttribute(AttributeFilterContext.SetAttributeContext ctx, AttributeId attributeId, Object value){
+                        if(filter.test(attributeId) && ctx.getSession().isPresent()) {
+                            setDataValue((DataValue)value);
+                        }
+                        ctx.setAttribute(attributeId, value);
+                    }})
+                .buildAndAdd());
+        
         baseNode.addComponent(this.item);
-        nodeContext.getNodeManager().addNode(this.item);
     }
 
     public void dispose() {

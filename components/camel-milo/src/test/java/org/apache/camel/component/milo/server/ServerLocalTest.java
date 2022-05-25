@@ -19,6 +19,7 @@ package org.apache.camel.component.milo.server;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.milo.converter.ConverterTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -27,6 +28,9 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unit tests for milo server component without using an actual connection
@@ -36,12 +40,18 @@ public class ServerLocalTest extends CamelTestSupport {
     private static final String MILO_ITEM_1 = "milo-server:myitem1";
 
     private static final String MOCK_TEST = "mock:test";
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
 
     @EndpointInject(MOCK_TEST)
     protected MockEndpoint testEndpoint;
-
+    
     @BeforeEach
-    public void pickFreePort() {
+    public void pickFreePort(TestInfo testInfo) {
+        final var displayName = testInfo.getDisplayName();
+        LOG.info("********************************************************************************");
+        LOG.info(displayName);
+        LOG.info("********************************************************************************");
         final MiloServerComponent component = context().getComponent("milo-server", MiloServerComponent.class);
         component.setPort(AvailablePortFinder.getNextAvailable());
     }

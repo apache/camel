@@ -162,7 +162,7 @@ public class SubscriptionManager {
                 return null;
             }
             final MonitoringFilter monitorFilter = this.monitorFilterConfiguration.createMonitoringFilter();
-            return ExtensionObject.encode(client.getSerializationContext(), monitorFilter);
+            return ExtensionObject.encode(client.getStaticSerializationContext(), monitorFilter);
         }
     }
 
@@ -203,7 +203,7 @@ public class SubscriptionManager {
                     Double samplingInterval = s.getSamplingInterval();
 
                     final MonitoringParameters parameters = new MonitoringParameters(
-                            entry.getKey(), samplingInterval, s.createMonitoringFilter(client), null, null);
+                            entry.getKey(), samplingInterval, s.createMonitoringFilter(client), null, true);
                     items.add(new MonitoredItemCreateRequest(itemId, MonitoringMode.Reporting, parameters));
                 }
             }

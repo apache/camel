@@ -24,9 +24,10 @@ import java.util.function.Function;
 import org.apache.camel.component.milo.client.MiloClientConsumer;
 import org.apache.camel.component.milo.server.internal.CamelServerItem;
 import org.eclipse.milo.opcua.sdk.core.Reference;
+import org.eclipse.milo.opcua.sdk.server.Lifecycle;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.api.DataItem;
-import org.eclipse.milo.opcua.sdk.server.api.ManagedNamespace;
+import org.eclipse.milo.opcua.sdk.server.api.ManagedNamespaceWithLifecycle;
 import org.eclipse.milo.opcua.sdk.server.api.MonitoredItem;
 import org.eclipse.milo.opcua.sdk.server.api.methods.AbstractMethodInvocationHandler;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaFolderNode;
@@ -39,7 +40,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MockCamelNamespace extends ManagedNamespace {
+public class MockCamelNamespace extends ManagedNamespaceWithLifecycle{
 
     public static final String URI = "urn:org:apache:camel:mock";
     public static final int FOLDER_ID = 1;
@@ -61,11 +62,24 @@ public class MockCamelNamespace extends ManagedNamespace {
 
         this.subscriptionModel = new SubscriptionModel(server, this);
         this.callMethodCreator = callMethodCreator;
+    
+        super.getLifecycleManager().addLifecycle(new Lifecycle() {
+        
+            @Override
+            public void startup() {
+                LOG.trace("CamelNamespace startup");
+                createNodes();
+            }
+        
+            @Override
+            public void shutdown() {
+                LOG.trace("CamelNamespace shutdown");
+            }
+        });
     }
-
-    @Override
-    protected void onStartup() {
-        super.onStartup();
+    
+    private void createNodes() {
+        
         // create structure
 
         final NodeId nodeId = newNodeId(FOLDER_ID);
@@ -96,8 +110,8 @@ public class MockCamelNamespace extends ManagedNamespace {
                 .build();
 
         AbstractMethodInvocationHandler callMethod = callMethodCreator.apply(methodNode);
-        methodNode.setProperty(UaMethodNode.InputArguments, callMethod.getInputArguments());
-        methodNode.setProperty(UaMethodNode.OutputArguments, callMethod.getOutputArguments());
+        methodNode.setInputArguments(callMethod.getInputArguments());
+        methodNode.setOutputArguments(callMethod.getOutputArguments());
         methodNode.setInvocationHandler(callMethod);
 
         getNodeManager().addNode(methodNode);

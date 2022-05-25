@@ -23,8 +23,9 @@ import java.util.Map;
 import org.eclipse.milo.opcua.sdk.core.Reference;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.api.DataItem;
-import org.eclipse.milo.opcua.sdk.server.api.ManagedNamespace;
+import org.eclipse.milo.opcua.sdk.server.api.ManagedNamespaceWithLifecycle;
 import org.eclipse.milo.opcua.sdk.server.api.MonitoredItem;
+import org.eclipse.milo.opcua.sdk.server.dtd.DataTypeDictionaryManager;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaFolderNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaObjectNode;
 import org.eclipse.milo.opcua.sdk.server.util.SubscriptionModel;
@@ -32,8 +33,10 @@ import org.eclipse.milo.opcua.stack.core.Identifiers;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class CamelNamespace extends ManagedNamespace {
+public class CamelNamespace extends ManagedNamespaceWithLifecycle {
 
     private final SubscriptionModel subscriptionModel;
 
@@ -41,16 +44,24 @@ public class CamelNamespace extends ManagedNamespace {
     private UaFolderNode folder;
 
     private final Map<String, CamelServerItem> itemMap = new HashMap<>();
-
+    
+    private final DataTypeDictionaryManager dictionaryManager;
+    
+    private final Logger log = LoggerFactory.getLogger(CamelNamespace.class);
+    
     public CamelNamespace(final String namespaceUri, final OpcUaServer server) {
         super(server, namespaceUri);
-
+    
         this.subscriptionModel = new SubscriptionModel(server, this);
+        this.dictionaryManager = new DataTypeDictionaryManager(getNodeContext(), namespaceUri);
+    
+        getLifecycleManager().addLifecycle(dictionaryManager);
+        getLifecycleManager().addLifecycle(subscriptionModel);
+    
+        getLifecycleManager().addStartupTask(this::createNodes);
     }
-
-    @Override
-    protected void onStartup() {
-        super.onStartup();
+    
+    protected void createNodes() {
         // create structure
 
         final NodeId nodeId = newNodeId("camel");
@@ -63,13 +74,13 @@ public class CamelNamespace extends ManagedNamespace {
         final NodeId nodeId2 = newNodeId("items");
         final QualifiedName name2 = newQualifiedName("items");
         final LocalizedText displayName2 = LocalizedText.english("Items");
-
-        this.itemsObject = UaObjectNode.builder(getNodeContext())
+        
+        this.itemsObject = UaObjectNode.build(getNodeContext(), builder -> builder
                 .setNodeId(nodeId2)
                 .setBrowseName(name2)
                 .setDisplayName(displayName2)
                 .setTypeDefinition(Identifiers.FolderType)
-                .build();
+                .buildAndAdd());
         this.folder.addComponent(this.itemsObject);
         this.getNodeManager().addNode(this.itemsObject);
 
@@ -90,21 +101,25 @@ public class CamelNamespace extends ManagedNamespace {
 
     @Override
     public void onDataItemsCreated(final List<DataItem> dataItems) {
+        log.trace("onDataItemsCreated");
         this.subscriptionModel.onDataItemsCreated(dataItems);
     }
 
     @Override
     public void onDataItemsModified(final List<DataItem> dataItems) {
+        log.trace("onDataItemsModified");
         this.subscriptionModel.onDataItemsModified(dataItems);
     }
 
     @Override
     public void onDataItemsDeleted(final List<DataItem> dataItems) {
+        log.trace("onDataItemsDeleted");
         this.subscriptionModel.onDataItemsDeleted(dataItems);
     }
 
     @Override
     public void onMonitoringModeChanged(final List<MonitoredItem> monitoredItems) {
+        log.trace("onMonitoringModeChanged");
         this.subscriptionModel.onMonitoringModeChanged(monitoredItems);
     }
 
@@ -114,5 +129,4 @@ public class CamelNamespace extends ManagedNamespace {
                     k -> new CamelServerItem(itemId, getNodeContext(), getNamespaceIndex(), this.itemsObject));
         }
     }
-
 }
