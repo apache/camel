@@ -72,10 +72,6 @@
         <name>PermissionSet</name>
     </types>
     <types>
-        <members>*</members>
-        <name>Profile</name>
-    </types>
-    <types>
         <members>Test_Reports</members>
         <members>Test_Reports/Test_Report</members>
         <name>Report</name>

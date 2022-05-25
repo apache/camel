@@ -825,8 +825,12 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
                 // testQuery
                 from("direct:query")
-                        .to("salesforce:query?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name from Line_Item__c&sObjectClass="
-                            + QueryRecordsLine_Item__c.class.getName());
+                        .to("salesforce:query?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name "
+                            +
+                            "from Line_Item__c " +
+                            "ORDER BY CreatedDate DESC " +
+                            "LIMIT 1" +
+                            "&sObjectClass=" + QueryRecordsLine_Item__c.class.getName());
 
                 // testQuery
                 from("direct:queryWithSObjectName")

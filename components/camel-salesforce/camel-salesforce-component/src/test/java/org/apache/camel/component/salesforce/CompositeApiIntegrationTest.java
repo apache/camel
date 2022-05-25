@@ -49,7 +49,7 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
     public static class Accounts extends AbstractQueryRecordsBase<Account> {
     }
 
-    private static final Set<String> VERSIONS = new HashSet<>(Arrays.asList("38.0", "50.0"));
+    private static final Set<String> VERSIONS = new HashSet<>(Arrays.asList("38.0", "53.0"));
 
     @Parameter
     private String format;
