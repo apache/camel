@@ -70,7 +70,7 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
         // create the component
         SalesforceComponent component = new SalesforceComponent();
         final SalesforceEndpointConfig config = new SalesforceEndpointConfig();
-        config.setApiVersion(System.getProperty("apiVersion", salesforceApiVersionToUse()));
+        config.setApiVersion(System.getProperty("apiVersion", SalesforceEndpointConfig.DEFAULT_VERSION));
         component.setConfig(config);
 
         SalesforceLoginConfig dummyLoginConfig = new SalesforceLoginConfig();

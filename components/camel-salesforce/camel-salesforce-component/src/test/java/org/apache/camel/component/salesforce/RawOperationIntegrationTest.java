@@ -32,7 +32,8 @@ public class RawOperationIntegrationTest extends AbstractSalesforceTestBase {
                       "}";
 
         Exchange exchange = fluentTemplate.withBody(body)
-                .to("salesforce:raw?rawMethod=POST&rawPath=/services/data/v51.0/sobjects/Contact")
+                .to("salesforce:raw?rawMethod=POST&rawPath=/services/data/v" + SalesforceEndpointConfig.DEFAULT_VERSION
+                    + "/sobjects/Contact")
                 .send();
 
         String response = exchange.getIn().getBody(String.class);
@@ -47,7 +48,8 @@ public class RawOperationIntegrationTest extends AbstractSalesforceTestBase {
                       "</Contact>";
 
         Exchange exchange = fluentTemplate.withBody(body)
-                .to("salesforce:raw?format=XML&rawMethod=POST&rawPath=/services/data/v51.0/sobjects/Contact")
+                .to("salesforce:raw?format=XML&rawMethod=POST&rawPath=/services/data/v"
+                    + SalesforceEndpointConfig.DEFAULT_VERSION + "/sobjects/Contact")
                 .send();
 
         String response = exchange.getIn().getBody(String.class);
@@ -60,7 +62,8 @@ public class RawOperationIntegrationTest extends AbstractSalesforceTestBase {
 
         Exchange exchange = fluentTemplate
                 .withHeader("q", "SELECT Id FROM Contact LIMIT 10")
-                .to("salesforce:raw?format=JSON&rawMethod=GET&rawQueryParameters=q&rawPath=/services/data/v51.0/query")
+                .to("salesforce:raw?format=JSON&rawMethod=GET&rawQueryParameters=q&rawPath=/services/data/v"
+                    + SalesforceEndpointConfig.DEFAULT_VERSION + "/query")
                 .send();
 
         String response = exchange.getIn().getBody(String.class);

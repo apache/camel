@@ -163,11 +163,6 @@ public class CompositeApiCollectionsIntegrationTest extends AbstractSalesforceTe
     }
 
     @Override
-    protected String salesforceApiVersionToUse() {
-        return version;
-    }
-
-    @Override
     protected RouteBuilder doCreateRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

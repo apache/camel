@@ -49,7 +49,7 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
     public static class Accounts extends AbstractQueryRecordsBase<Account> {
     }
 
-    private static final Set<String> VERSIONS = new HashSet<>(Arrays.asList("38.0", "53.0"));
+    private static final Set<String> VERSIONS = new HashSet<>(Arrays.asList("38.0", SalesforceEndpointConfig.DEFAULT_VERSION));
 
     @Parameter
     private String format;
@@ -250,11 +250,6 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
                         .to("salesforce:deleteSObject?sObjectName=Account").end();
             }
         };
-    }
-
-    @Override
-    protected String salesforceApiVersionToUse() {
-        return version;
     }
 
     @Parameters(name = "format = {0}, version = {1}")
