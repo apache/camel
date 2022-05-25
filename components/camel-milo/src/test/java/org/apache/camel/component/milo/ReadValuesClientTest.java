@@ -26,7 +26,11 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReadValuesClientTest extends AbstractMiloServerTest {
 
@@ -40,6 +44,8 @@ public class ReadValuesClientTest extends AbstractMiloServerTest {
 
     private static final String MOCK_TEST_1 = "mock:test1";
 
+    private static final Logger LOG = LoggerFactory.getLogger(ReadValuesClientTest.class);
+    
     @EndpointInject(MOCK_TEST_1)
     protected MockEndpoint test1Endpoint;
 
@@ -48,7 +54,15 @@ public class ReadValuesClientTest extends AbstractMiloServerTest {
 
     @Produce(DIRECT_START_2)
     protected ProducerTemplate producer2;
-
+    
+    @BeforeEach
+    public void setup(TestInfo testInfo) {
+        final var displayName=testInfo.getDisplayName();
+        LOG.info("********************************************************************************");
+        LOG.info(displayName);
+        LOG.info("********************************************************************************");
+    }
+    
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {

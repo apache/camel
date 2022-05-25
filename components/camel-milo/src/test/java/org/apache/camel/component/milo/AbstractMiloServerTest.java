@@ -83,7 +83,7 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
             final AssertionClause clause, final Class<T> bodyClass,
             final Consumer<T> valueConsumer) {
         clause.predicate(exchange -> {
-            final T body = exchange.getIn().getBody(bodyClass);
+            final T body = exchange.getMessage().getBody(bodyClass);
             valueConsumer.accept(body);
             return true;
         });

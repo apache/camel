@@ -21,7 +21,11 @@ import java.io.Serializable;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.milo.AbstractMiloServerTest;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.google.common.net.UrlEscapers.urlFormParameterEscaper;
 import static org.apache.camel.component.milo.server.MiloServerComponent.DEFAULT_NAMESPACE_URI;
@@ -35,7 +39,17 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * Testing different ways to specify node IDs
  */
 public class NodeIdTest extends AbstractMiloServerTest {
-
+    
+    private static final Logger LOG = LoggerFactory.getLogger(NodeIdTest.class);
+    
+    @BeforeEach
+    public void setup(TestInfo testInfo) {
+        final var displayName = testInfo.getDisplayName();
+        LOG.info("********************************************************************************");
+        LOG.info(displayName);
+        LOG.info("********************************************************************************");
+    }
+    
     @Test
     public void testFull1() {
         final String s = String.format("nsu=%s;s=%s", DEFAULT_NAMESPACE_URI, "item-1");
