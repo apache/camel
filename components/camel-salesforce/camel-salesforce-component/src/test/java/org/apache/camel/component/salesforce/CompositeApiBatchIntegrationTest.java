@@ -74,7 +74,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
         account.setExternal_Id__c(ACCOUNT_EXTERNAL_ID);
 
         final UpsertSObjectResult result = template.requestBody(
-                "salesforce:upsertSObject?sObjectIdName=External_Id__c&apiVersion=53.0", account, UpsertSObjectResult.class);
+                "salesforce:upsertSObject?sObjectIdName=External_Id__c", account, UpsertSObjectResult.class);
         accountId = result.getId();
 
         if (result.getCreated()) {
@@ -364,11 +364,6 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
                         .to("salesforce:deleteSObject?sObjectName=Account").end();
             }
         };
-    }
-
-    @Override
-    protected String salesforceApiVersionToUse() {
-        return version;
     }
 
     SObjectBatchResponse testBatch(final SObjectBatch batch) {

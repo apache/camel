@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import org.apache.camel.github.GitHubResourceResolver;
 import org.apache.camel.impl.engine.DefaultResourceResolvers;
@@ -37,14 +36,13 @@ import org.snakeyaml.engine.v2.parser.ParserImpl;
 import org.snakeyaml.engine.v2.scanner.StreamReader;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asStringSet;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 
 @Command(name = "bind", description = "Bind source and sink Kamelets as a new Camel integration")
-class Bind implements Callable<Integer> {
+class Bind extends CamelCommand {
 
     @CommandLine.Parameters(description = "Source such as a Kamelet or Camel endpoint uri", arity = "1")
     private String source;
@@ -55,10 +53,9 @@ class Bind implements Callable<Integer> {
     @CommandLine.Parameters(description = "Name of binding file", arity = "1")
     private String file;
 
-    //CHECKSTYLE:OFF
-    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested = false;
-    //CHECKSTYLE:ON
+    public Bind(CamelJBangMain main) {
+        super(main);
+    }
 
     @Override
     public Integer call() throws Exception {

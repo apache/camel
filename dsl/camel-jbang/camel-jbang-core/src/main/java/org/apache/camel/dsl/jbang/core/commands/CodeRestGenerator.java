@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.concurrent.Callable;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,10 +31,8 @@ import org.apache.logging.log4j.core.config.Configurator;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "rest", description = "Generate REST DSL source code from OpenApi specification")
-public class CodeRestGenerator implements Callable<Integer> {
+public class CodeRestGenerator extends CamelCommand {
 
-    @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested;
     @CommandLine.Option(names = { "-i", "--input" }, required = true, description = "OpenApi specification file name")
     private String input;
     @CommandLine.Option(names = { "-o", "--output" }, description = "Output REST DSL file name")
@@ -44,6 +41,10 @@ public class CodeRestGenerator implements Callable<Integer> {
     private String type;
     @CommandLine.Option(names = { "-r", "--routes" }, description = "Generate routes (YAML)")
     private boolean generateRoutes;
+
+    public CodeRestGenerator(CamelJBangMain main) {
+        super(main);
+    }
 
     @Override
     public Integer call() throws Exception {

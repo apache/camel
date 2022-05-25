@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.Callable;
 
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
@@ -33,10 +32,8 @@ import io.fabric8.openshift.api.model.Route;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "manifests", description = "Create Kubernetes resources")
-public class Manifest implements Callable<Integer> {
+public class Manifest extends CamelCommand {
 
-    @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested;
     @CommandLine.Option(names = { "--path" }, description = "Output folder path", defaultValue = "manifests")
     private String path;
     @CommandLine.Option(names = { "--namespace" }, description = "Namespace")
@@ -64,6 +61,10 @@ public class Manifest implements Callable<Integer> {
     private boolean openshift;
     @CommandLine.Option(names = { "-j", "--jar" }, description = "Jar file", defaultValue = "camel-runner.jar")
     private String jar;
+
+    public Manifest(CamelJBangMain main) {
+        super(main);
+    }
 
     @Override
     public Integer call() throws Exception {

@@ -26,25 +26,27 @@ import picocli.CommandLine.Command;
 @Command(name = "camel", description = "Apache Camel CLI", mixinStandardHelpOptions = true)
 public class CamelJBangMain implements Callable<Integer> {
     private static CommandLine commandLine;
+
     @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
                         description = "Profile")
     private String profile;
 
     public static void run(String... args) {
-        commandLine = new CommandLine(new CamelJBangMain())
-                .addSubcommand("run", new CommandLine(new Run()))
-                .addSubcommand("init", new CommandLine(new Init()))
-                .addSubcommand("bind", new CommandLine(new Bind()))
-                .addSubcommand("pipe", new CommandLine(new Pipe()))
-                .addSubcommand("package", new CommandLine(new Package())
-                        .addSubcommand("uber-jar", new UberJar()))
-                .addSubcommand("generate", new CommandLine(new CodeGenerator())
-                        .addSubcommand("rest", new CodeRestGenerator()))
-                .addSubcommand("build", new CommandLine(new Build())
-                        .addSubcommand("manifests", new Manifest())
-                        .addSubcommand("image", new Image()))
-                .addSubcommand("deploy", new CommandLine(new Deploy()))
-                .addSubcommand("undeploy", new CommandLine(new Undeploy()));
+        CamelJBangMain main = new CamelJBangMain();
+        commandLine = new CommandLine(main)
+                .addSubcommand("run", new CommandLine(new Run(main)))
+                .addSubcommand("init", new CommandLine(new Init(main)))
+                .addSubcommand("bind", new CommandLine(new Bind(main)))
+                .addSubcommand("pipe", new CommandLine(new Pipe(main)))
+                .addSubcommand("package", new CommandLine(new Package(main))
+                        .addSubcommand("uber-jar", new CommandLine(new UberJar(main))))
+                .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
+                        .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))
+                .addSubcommand("build", new CommandLine(new Build(main))
+                        .addSubcommand("manifests", new CommandLine(new Manifest(main)))
+                        .addSubcommand("image", new CommandLine(new Image(main))))
+                .addSubcommand("deploy", new CommandLine(new Deploy(main)))
+                .addSubcommand("undeploy", new CommandLine(new Undeploy(main)));
         /* // TODO: do not show commands that are deprecated and to be either removed or reworked
                 .addSubcommand("search", new CommandLine(new Search())
                         .addSubcommand("kamelets", new SearchKamelets())
@@ -61,7 +63,8 @@ public class CamelJBangMain implements Callable<Integer> {
             return new String[] { v };
         });
 
-        PropertiesHelper.augmentWithProperties(commandLine, args);
+        String profile = ProfileHelper.getProfile(args);
+        ProfileHelper.augmentWithProperties(commandLine, profile, args);
         int exitCode = commandLine.execute(args);
         System.exit(exitCode);
     }
@@ -70,5 +73,9 @@ public class CamelJBangMain implements Callable<Integer> {
     public Integer call() throws Exception {
         commandLine.execute("--help");
         return 0;
+    }
+
+    public String getProfile() {
+        return profile;
     }
 }

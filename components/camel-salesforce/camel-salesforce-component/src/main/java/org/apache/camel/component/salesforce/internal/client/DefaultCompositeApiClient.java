@@ -31,9 +31,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
-import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchResponse;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectComposite;
@@ -47,11 +45,9 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.client.api.ContentProvider;
 import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.util.InputStreamContentProvider;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
-import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.util.StringUtil;
 
 public class DefaultCompositeApiClient extends AbstractClientBase implements CompositeApiClient {
@@ -228,26 +224,6 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         ObjectHelper.notNull(version, "version");
 
         return servicesDataUrl() + "v" + version + "/";
-    }
-
-    @Override
-    protected SalesforceException createRestException(final Response response, final InputStream responseContent) {
-        final List<RestError> errors;
-        try {
-            errors = readErrorsFrom(responseContent, mapper);
-        } catch (final IOException e) {
-            return new SalesforceException("Unable to read error response", e);
-        }
-
-        final int status = response.getStatus();
-        if (status == HttpStatus.NOT_FOUND_404) {
-            return new NoSuchSObjectException(errors);
-        }
-
-        final String reason = response.getReason();
-
-        return new SalesforceException(
-                errors, status, "Unexpected error: " + reason + ". See exception `errors` property for detail.");
     }
 
     @Override

@@ -38,7 +38,7 @@ public class FileMoveWithOutMessageTest extends ContextTestSupport {
         template.sendBodyAndHeader(uri, "Hello World2", Exchange.FILE_NAME, "hello2.txt");
 
         // trigger
-        template.sendBody("vm:trigger", "");
+        template.sendBody("seda:triggerOut", "");
 
         File file1 = new File(testDirectory().toFile(), "archive/hello1.txt");
         await().atMost(10, TimeUnit.SECONDS)
@@ -54,7 +54,7 @@ public class FileMoveWithOutMessageTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("vm:trigger")
+                from("seda:triggerOut")
                         .pollEnrich(fileUri() + "?move=archive")
                         .pollEnrich(fileUri() + "?move=archive")
                         .process(new TestProcessor());

@@ -159,7 +159,7 @@ public class BulkApiV2QueryJobIntegrationTest extends AbstractSalesforceTestBase
         int i = 0;
         while (job.getState() != JobStateEnum.JOB_COMPLETE) {
             i++;
-            if (i == 10) {
+            if (i == 100) {
                 throw new IllegalStateException("Job failed to reach JOB_COMPLETE status.");
             }
             Thread.sleep(2000);

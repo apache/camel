@@ -40,8 +40,8 @@ public class SedaConcurrentTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
 
-        // should at least take 0.5 sec
-        mock.setResultMinimumWaitTime(500);
+        // should at least take about 0.5 sec
+        mock.setResultMinimumWaitTime(400);
 
         for (int i = 0; i < 20; i++) {
             template.sendBody("seda:foo", "Message " + i);
@@ -55,8 +55,8 @@ public class SedaConcurrentTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
 
-        // should at least take 0.5 sec
-        mock.setResultMinimumWaitTime(500);
+        // should at least take about 0.5 sec
+        mock.setResultMinimumWaitTime(400);
 
         for (int i = 0; i < 20; i++) {
             template.asyncSendBody("seda:foo", "Message " + i);
@@ -71,8 +71,8 @@ public class SedaConcurrentTest extends ContextTestSupport {
         mock.expectedMessageCount(20);
         mock.allMessages().body().startsWith("Bye");
 
-        // should at least take 0.5 sec
-        mock.setResultMinimumWaitTime(500);
+        // should at least take about 0.5 sec
+        mock.setResultMinimumWaitTime(400);
 
         ExecutorService executors = Executors.newFixedThreadPool(10);
         List<Object> replies = new ArrayList<>(20);
@@ -98,8 +98,8 @@ public class SedaConcurrentTest extends ContextTestSupport {
         mock.expectedMessageCount(20);
         mock.allMessages().body().startsWith("Bye");
 
-        // should at least take 0.5 sec
-        mock.setResultMinimumWaitTime(500);
+        // should at least take about 0.5 sec
+        mock.setResultMinimumWaitTime(400);
 
         // use our own template that has a higher thread pool than default camel
         // that uses 5

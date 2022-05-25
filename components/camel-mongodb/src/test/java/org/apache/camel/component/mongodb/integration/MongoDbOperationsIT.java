@@ -43,6 +43,7 @@ import static com.mongodb.client.model.Filters.or;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.currentTimestamp;
 import static com.mongodb.client.model.Updates.set;
+import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 import static org.apache.camel.test.junit5.TestSupport.assertListSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -125,6 +126,32 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport {
         record1 = testCollection.find(eq(MONGO_ID, "testSave1")).first();
         assertEquals("Darwin", record1.get("scientist"),
                 "Scientist field of 'testSave1' must equal 'Darwin' after save operation");
+
+    }
+
+    @Test
+    public void testSaveWithShardedKey() {
+        // Prepare test
+        assertEquals(0, testCollection.countDocuments());
+        Object[] req = new Object[] {
+                new Document(MONGO_ID, "testSave1").append("scientist", "Einstein").append("country", "Germany").toJson(),
+                new Document(MONGO_ID, "testSave2").append("scientist", "Copernicus").append("country", "Poland").toJson() };
+        Object result = template.requestBody("direct:insert", req);
+        assertTrue(result instanceof List);
+        assertEquals(2, testCollection.countDocuments(), "Number of records persisted must be 2");
+
+        // Testing the save logic
+        Document record1 = testCollection.find(eq(MONGO_ID, "testSave1")).first();
+        assertEquals("Einstein", record1.get("scientist"), "Scientist field of 'testSave1' must equal 'Einstein'");
+        record1.put("scientist", "Kepler");
+
+        //Pass sharded collection key as CRITERIA to prevent "MongoWriteException: Failed to target upsert by query :: could not extract exact shard key"
+        result = template.requestBodyAndHeader("direct:save", record1, CRITERIA, eq("country", "Germany"));
+        assertTrue(result instanceof UpdateResult);
+
+        record1 = testCollection.find(eq(MONGO_ID, "testSave1")).first();
+        assertEquals("Kepler", record1.get("scientist"),
+                "Scientist field of 'testSave1' must equal 'Kepler' after save operation");
 
     }
 

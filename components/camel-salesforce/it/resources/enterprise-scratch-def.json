@@ -1,0 +1,16 @@
+{
+  "orgName": "Camel Test Org",
+  "edition": "Enterprise",
+  "features": ["RecordTypes"],
+  "settings": {
+    "lightningExperienceSettings": {
+      "enableS1DesktopEnabled": true
+    }
+  },
+  "objectSettings": {
+    "account": {
+      "sharingModel": "readWrite",
+      "defaultRecordType": "Administrative"
+    }
+  }
+}

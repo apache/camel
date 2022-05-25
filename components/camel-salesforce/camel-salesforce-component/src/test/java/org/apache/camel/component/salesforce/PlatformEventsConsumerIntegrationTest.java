@@ -64,9 +64,4 @@ public class PlatformEventsConsumerIntegrationTest extends AbstractSalesforceTes
             }
         };
     }
-
-    @Override
-    protected String salesforceApiVersionToUse() {
-        return "41.0";
-    }
 }

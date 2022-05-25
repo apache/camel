@@ -117,6 +117,44 @@ Then while the Camel application is running, you can update the YAML route and u
 NOTE: The live reload is meant for development purposes, and if you encounter problems with reloading
 such as JVM class loading issues, then you may need to restart the application.
 
+=== Using profiles
+
+Camel JBang have the concept of profiles. A _profile_ is essentially a name (id) that refers
+to which configuration to automatic load with Camel JBang. The default profile is named `application`
+which is a (smart default) to let Camel JBang automatic load `application.properties` (if present).
+
+This means that creating profiles matching to a properties file with the same name.
+
+For example having a profile named `local`, means that Camel JBang will load `local.properties` instead
+of `application.properties`.
+
+To use a profile, you specify as command line option `--profile` such as:
+
+[source,bash]
+----
+camel run hello.java --profile=local
+----
+
+You can only specify one profile name, i.e. `--profile=local,two` is not valid.
+
+In the `properties` files you can configure all
+the configurations from xref:components:others:main.adoc[Camel Main].
+
+For example to turn off xref:stream-caching.adoc[Stream Caching] and enable log masking you can specify:
+
+[source,properties]
+----
+camel.main.streamCaching=false
+camel.main.logMask=true
+----
+
+And you can also configure Camel components such as camel-kafka to declare the URL to the brokers:
+
+[source,properties]
+----
+camel.component.kafka.brokers=broker1:9092,broker2:9092,broker3:9092
+----
+
 === Running routes hosted on GitHub
 
 You can run a route that is hosted on GitHub using Camels xref:components:others:resourceresolver-github.adoc[github] resource loader.
@@ -349,9 +387,9 @@ works in two modes:
 - line mode (default) - reads input as single lines (separated by line breaks).
   Message body is a `String`.
 - raw mode - reads the entire stream until _end of stream_.
-  Mmessage body is a `byte[]`.
+  Message body is a `byte[]`.
 
-The default mode is due to historically how the stream component as created.
+IMPORTANT: The default mode is due to historically how the stream component was created.
 Therefore, you may want to set `stream:in?readLine=false` to use raw mode.
 
 === Running local Kamelets

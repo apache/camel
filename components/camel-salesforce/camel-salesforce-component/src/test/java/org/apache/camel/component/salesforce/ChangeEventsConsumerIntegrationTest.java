@@ -105,9 +105,4 @@ public class ChangeEventsConsumerIntegrationTest extends AbstractSalesforceTestB
             }
         };
     }
-
-    @Override
-    protected String salesforceApiVersionToUse() {
-        return "45.0";
-    }
 }

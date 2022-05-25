@@ -36,7 +36,11 @@ If you need any custom fields, Apex classes or other configuration changes done,
 
 After the initial successful deployment, in salesforce go to Setup > App Manager, find the CamelSalesforceIntegrationTests app and click View. Copy the Consumer Key and Consumer Secret values into salesforce.client.id and salesforce.client.secret respectively.
 
-It's also recommended to set email deliverability to `System Email Only` so you don't receive loads of approval emails when the tests run. 
+The deployment includes a permission set called `Hard Delete Permission Set` which contains the Hard Delete
+permission as well as field-level permissions needed to run the integration tests. You can assign this 
+permissions set to the user you use to run tests.
+
+It's also recommended to set email deliverability to `System Email Only` so you don't receive loads of approval emails when the tests run. This can be found in Setup > Email > Deliverability. 
 
 If your org contains Duplicate Rules for Objects the integration tests use, they could cause the tests to fail. If this is the case, deactivating the rules is recommended. 
 
@@ -46,7 +50,7 @@ If your tests cannot be run alongside other tests you can use `@Standalone` to m
 
 This is included for those that wish to setup the Salesforce instance manually for integration tests. It could also help to double-check your setup.
 
-Besides that account you'll need a _test user_ account that has `Bulk API Hard Delete` permission. You can create one by going to _My Developer Account_ (link from [developer.salesforce.com](https://login.salesforce.com/?lt=de)). Under _Administer_ expand _Manage Users_  and select _Profiles_ find _System Administrator_ profile and select _Clone_. Use `System Administrator With Hard Delete` as the profile name, and after saving under _Administrative Permissions_ click edit and tick _Bulk API Hard Delete_ and save. Next, create a new user under _Administer_ expand _Manage Users_  and select _Users_ and then click on _New User_. Fill in the required fields, and select _Salesforce_ for _User License_ and newly created profile for _Profile_. You get two user _Salesforce_ licenses so the newly created user will put you at a maximum.
+Besides that account you'll need a _test user_ account that has `Bulk API Hard Delete` permission set. You can create one by going to _My Developer Account_ (link from [developer.salesforce.com](https://login.salesforce.com/?lt=de)). Under _Administer_ expand _Manage Users_  and select _Profiles_ find _System Administrator_ profile and select _Clone_. Use `System Administrator With Hard Delete` as the profile name, and after saving under _Administrative Permissions_ click edit and tick _Bulk API Hard Delete_ and save. Next, create a new user under _Administer_ expand _Manage Users_  and select _Users_ and then click on _New User_. Fill in the required fields, and select _Salesforce_ for _User License_ and newly created profile for _Profile_. You get two user _Salesforce_ licenses so the newly created user will put you at a maximum.
 
 Install the Warehouse package, tested with _Spring 2013_ (version 1.2) that can be installed from the [https://login.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000Pj8s](https://login.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000Pj8s), and make the following modifications manually:
  - add custom field `Description` of type `Text` with maximum length of `100` on the `Merchandise` object

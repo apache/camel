@@ -66,13 +66,6 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 @Mojo(name = "prepare-catalog", threadSafe = true)
 public class PrepareCatalogMojo extends AbstractMojo {
 
-    private static final String[] EXCLUDE_DOC_FILES
-            = {
-                    "camel-base", "camel-core-model", "camel-core-xml", "camel-http-common", "camel-http-base",
-                    "camel-jetty-common",
-                    "camel-debezium-common", "camel-infinispan-common", "camel-vertx-common",
-                    "camel-huaweicloud-common" };
-
     private static final int UNUSED_LABELS_WARN = 15;
 
     /**
@@ -314,12 +307,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<Path> missingJavaDoc = new TreeSet<>();
         Map<String, Set<String>> usedLabels = new TreeMap<>();
 
-        // find all json files in camel-core and camel-spring
+        // find all json files in camel-core
         Path coreDirTarget = modelDir.resolve("target/classes/org/apache/camel/model");
-        Path springTarget1 = springDir.resolve("target/classes/org/apache/camel/spring");
-        Path springTarget2 = springDir.resolve("target/classes/org/apache/camel/core/xml");
         jsonFiles = allJsonFiles.stream()
-                .filter(p -> p.startsWith(coreDirTarget) || p.startsWith(springTarget1) || p.startsWith(springTarget2))
+                .filter(p -> p.startsWith(coreDirTarget))
                 .collect(Collectors.toCollection(TreeSet::new));
         getLog().info("Found " + jsonFiles.size() + " model json files");
 

@@ -16,23 +16,19 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.util.concurrent.Callable;
-
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
-@Command(name = "build", description = "Build Camel container image and resources")
-class Build implements Callable<Integer> {
-    //CHECKSTYLE:OFF
-    @Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested = false;
-    //CHECKSTYLE:ON
+@Command(name = "build", description = "Build Camel container image and resources (use --help to see sub commands)")
+class Build extends CamelCommand {
+
+    public Build(CamelJBangMain main) {
+        super(main);
+    }
 
     @Override
     public Integer call() throws Exception {
         new CommandLine(this).execute("--help");
-
         return 0;
     }
 }

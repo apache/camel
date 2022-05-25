@@ -16,36 +16,25 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
-import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.SalesforceMultipleChoicesException;
-import org.apache.camel.component.salesforce.api.TypeReferences;
-import org.apache.camel.component.salesforce.api.dto.RestError;
-import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.util.InputStreamContentProvider;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
-import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.util.StringUtil;
 
 public class DefaultRestClient extends AbstractClientBase implements RestClient {
@@ -55,14 +44,10 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     private static final String TOKEN_PREFIX = "Bearer ";
     private static final String SERVICES_APEXREST = "/services/apexrest/";
 
-    private ObjectMapper objectMapper;
-
     public DefaultRestClient(final SalesforceHttpClient httpClient, final String version,
                              final SalesforceSession session,
                              final SalesforceLoginConfig loginConfig) throws SalesforceException {
         super(version, session, httpClient, loginConfig);
-
-        this.objectMapper = JsonUtils.createObjectMapper();
     }
 
     @Override
@@ -73,62 +58,6 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         // request content type and charset is set by the request entity
 
         super.doHttpRequest(request, callback);
-    }
-
-    @Override
-    protected SalesforceException createRestException(Response response, InputStream responseContent) {
-        // get status code and reason phrase
-        final int statusCode = response.getStatus();
-        String reason = response.getReason();
-        if (reason == null || reason.isEmpty()) {
-            reason = HttpStatus.getMessage(statusCode);
-        }
-        try {
-            if (responseContent != null && responseContent.available() > 0) {
-                final List<String> choices;
-                // return list of choices as error message for 300
-                if (statusCode == HttpStatus.MULTIPLE_CHOICES_300) {
-                    choices = objectMapper.readValue(responseContent, TypeReferences.STRING_LIST_TYPE);
-                    return new SalesforceMultipleChoicesException(reason, statusCode, choices);
-                } else {
-                    List<RestError> restErrors = null;
-                    String body = null;
-                    try {
-                        restErrors = readErrorsFrom(responseContent, objectMapper);
-                    } catch (IOException ignored) {
-                        // ok. could be a custom response
-                    }
-                    try {
-                        responseContent.reset();
-                        body = IOUtils.toString(responseContent, StandardCharsets.UTF_8);
-                        responseContent.reset();
-                    } catch (Throwable t) {
-                        log.warn("Unable to reset HTTP response content input stream.");
-                    }
-                    if (statusCode == HttpStatus.NOT_FOUND_404) {
-                        return new NoSuchSObjectException(restErrors);
-                    }
-
-                    return new SalesforceException(
-                            restErrors, statusCode,
-                            "Unexpected error: " + reason + ". See exception `errors` property for detail. " + body,
-                            responseContent);
-                }
-            }
-        } catch (IOException e) {
-            // log and ignore
-            String msg = "Unexpected Error parsing error response body + [" + responseContent + "] : "
-                         + e.getMessage();
-            log.warn(msg, e);
-        } catch (RuntimeException e) {
-            // log and ignore
-            String msg = "Unexpected Error parsing error response body + [" + responseContent + "] : "
-                         + e.getMessage();
-            log.warn(msg, e);
-        }
-
-        // just report HTTP status info
-        return new SalesforceException("Unexpected error: " + reason + ", with content: " + responseContent, statusCode);
     }
 
     @Override
