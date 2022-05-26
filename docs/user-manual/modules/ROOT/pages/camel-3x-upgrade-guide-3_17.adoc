@@ -238,10 +238,6 @@ Notice how we must use `depends-on="VerySimple-context"` in the `cxf:cxfEndpoint
 </osgi:blueprint>
 ----
 
-=== camel-karaf
-
-The `camel-milo` feature has been removed.
-
 === Deprecated Components
 
 The following components that had been marked as deprecated, were removed in this release:
