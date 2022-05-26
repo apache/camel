@@ -69,7 +69,7 @@
     <azure-cosmos-version>4.29.1</azure-cosmos-version>
     <azure-eventhubs-version>5.11.2</azure-eventhubs-version>
     <azure-identity-version>1.5.1</azure-identity-version>
-    <azure-jackson2-version>2.13.2</azure-jackson2-version>
+    <azure-jackson2-version>2.13.3</azure-jackson2-version>
     <azure-keyvault-secrets-version>4.4.2</azure-keyvault-secrets-version>
     <azure-messaging-eventhubs-checkpointstore-blob-version>1.12.1</azure-messaging-eventhubs-checkpointstore-blob-version>
     <azure-messaging-servicebus-version>7.8.0</azure-messaging-servicebus-version>
@@ -276,7 +276,7 @@
     <ivy-version>2.5.0</ivy-version>
     <jackrabbit-version>2.21.10</jackrabbit-version>
     <jackson-version>1.9.12</jackson-version>
-    <jackson2-version>2.13.2</jackson2-version>
+    <jackson2-version>2.13.3</jackson2-version>
     <jakarta-api-version>2.1.5</jakarta-api-version>
     <jakarta-cdi-api-version>2.0.2</jakarta-cdi-api-version>
     <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>

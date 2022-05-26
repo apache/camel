@@ -83,7 +83,7 @@
         <aws-java-sdk2-version>2.17.198</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
-        <azure-jackson2-version>2.13.2</azure-jackson2-version>
+        <azure-jackson2-version>2.13.3</azure-jackson2-version>
         <azure-cosmos-version>4.29.1</azure-cosmos-version>
         <azure-eventhubs-version>5.11.2</azure-eventhubs-version>
         <azure-identity-version>1.5.1</azure-identity-version>
@@ -256,7 +256,7 @@
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.0</ivy-version>
         <jackson-version>1.9.12</jackson-version>
-        <jackson2-version>2.13.2</jackson2-version>
+        <jackson2-version>2.13.3</jackson2-version>
         <jackrabbit-version>2.21.10</jackrabbit-version>
         <jasminb-jsonapi-version>0.11</jasminb-jsonapi-version>
         <jandex-version>2.4.2.Final</jandex-version>
