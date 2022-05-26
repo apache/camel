@@ -47,7 +47,7 @@ public class SecretsManagerRotateSecretProducerLocalstackIT extends AwsSecretsMa
             }
         });
 
-        CreateSecretResponse resultGet = (CreateSecretResponse) exchange.getIn().getBody();
+        CreateSecretResponse resultGet = (CreateSecretResponse) exchange.getMessage().getBody();
         assertNotNull(resultGet);
 
         exchange = template.request("direct:rotateSecret", new Processor() {
@@ -57,7 +57,8 @@ public class SecretsManagerRotateSecretProducerLocalstackIT extends AwsSecretsMa
             }
         });
 
-        RotateSecretResponse resultRotate = (RotateSecretResponse) exchange.getIn().getBody();
+        RotateSecretResponse resultRotate = (RotateSecretResponse) exchange.getMessage().getBody();
+        assertNotNull(resultRotate);
         assertTrue(resultRotate.sdkHttpResponse().isSuccessful());
         assertEquals("TestSecret4", resultRotate.name());
 
