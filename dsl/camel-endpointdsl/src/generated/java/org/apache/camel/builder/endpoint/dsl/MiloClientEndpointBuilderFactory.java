@@ -282,6 +282,39 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * Omit notifications in case of null values.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param omitNullValues the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder omitNullValues(
+                boolean omitNullValues) {
+            doSetProperty("omitNullValues", omitNullValues);
+            return this;
+        }
+        /**
+         * Omit notifications in case of null values.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param omitNullValues the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder omitNullValues(
+                String omitNullValues) {
+            doSetProperty("omitNullValues", omitNullValues);
+            return this;
+        }
+        /**
          * The sampling interval in milliseconds.
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
@@ -1061,6 +1094,39 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * Omit notifications in case of null values.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param omitNullValues the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder omitNullValues(
+                boolean omitNullValues) {
+            doSetProperty("omitNullValues", omitNullValues);
+            return this;
+        }
+        /**
+         * Omit notifications in case of null values.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param omitNullValues the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder omitNullValues(
+                String omitNullValues) {
+            doSetProperty("omitNullValues", omitNullValues);
+            return this;
+        }
+        /**
          * The sampling interval in milliseconds.
          * 
          * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
@@ -1772,6 +1838,37 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointBuilder node(String node) {
             doSetProperty("node", node);
+            return this;
+        }
+        /**
+         * Omit notifications in case of null values.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param omitNullValues the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder omitNullValues(boolean omitNullValues) {
+            doSetProperty("omitNullValues", omitNullValues);
+            return this;
+        }
+        /**
+         * Omit notifications in case of null values.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param omitNullValues the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder omitNullValues(String omitNullValues) {
+            doSetProperty("omitNullValues", omitNullValues);
             return this;
         }
         /**
