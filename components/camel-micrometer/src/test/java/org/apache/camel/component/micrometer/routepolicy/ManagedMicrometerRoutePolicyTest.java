@@ -17,7 +17,6 @@
 package org.apache.camel.component.micrometer.routepolicy;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -66,16 +65,6 @@ public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePol
         assertFalse(json.contains("\"name\" : \"test\""));  // the MicrometerRoutePolicy does NOT display producer metrics
         assertTrue(json.contains("\"routeId\" : \"bar\""));
         assertTrue(json.contains("\"routeId\" : \"foo\""));
-
-        // there should be 2 route policy meter mbeans
-        Set<ObjectName> set
-                = getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:name=CamelRoutePolicy.*"), null);
-        assertEquals(2, set.size());
-
-        String camelContextName = context().getName();
-        Long testCount = (Long) getMBeanServer().getAttribute(
-                new ObjectName("org.apache.camel.micrometer:name=test.camelContext." + camelContextName), "Count");
-        assertEquals(count / 2, testCount.longValue());
     }
 
     @Override
