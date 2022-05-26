@@ -274,7 +274,7 @@ public interface MiloServerComponentBuilderFactory {
          * Validator for client certificates.
          * 
          * The option is a:
-         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.security.CertificateValidator&lt;/code&gt; type.
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.server.security.ServerCertificateValidator&lt;/code&gt; type.
          * 
          * Group: security
          * 
@@ -282,7 +282,7 @@ public interface MiloServerComponentBuilderFactory {
          * @return the dsl builder
          */
         default MiloServerComponentBuilder certificateValidator(
-                org.eclipse.milo.opcua.stack.core.security.CertificateValidator certificateValidator) {
+                org.eclipse.milo.opcua.stack.server.security.ServerCertificateValidator certificateValidator) {
             doSetProperty("certificateValidator", certificateValidator);
             return this;
         }
@@ -411,7 +411,7 @@ public interface MiloServerComponentBuilderFactory {
             case "autowiredEnabled": ((MiloServerComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "certificate": ((MiloServerComponent) component).setCertificate((java.security.cert.X509Certificate) value); return true;
             case "certificateManager": ((MiloServerComponent) component).setCertificateManager((org.eclipse.milo.opcua.stack.core.security.CertificateManager) value); return true;
-            case "certificateValidator": ((MiloServerComponent) component).setCertificateValidator((org.eclipse.milo.opcua.stack.core.security.CertificateValidator) value); return true;
+            case "certificateValidator": ((MiloServerComponent) component).setCertificateValidator((org.eclipse.milo.opcua.stack.server.security.ServerCertificateValidator) value); return true;
             case "defaultCertificateValidator": ((MiloServerComponent) component).setDefaultCertificateValidator((java.lang.String) value); return true;
             case "enableAnonymousAuthentication": ((MiloServerComponent) component).setEnableAnonymousAuthentication((boolean) value); return true;
             case "securityPolicies": ((MiloServerComponent) component).setSecurityPolicies((java.util.Set) value); return true;
