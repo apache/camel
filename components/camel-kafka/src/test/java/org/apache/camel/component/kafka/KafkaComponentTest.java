@@ -234,6 +234,18 @@ public class KafkaComponentTest extends CamelTestSupport {
     }
 
     @Test
+    public void testEmptySslEndpointAlgorithmProducerKeysPlainTextSsl() throws Exception {
+        Map<String, Object> params = new HashMap<>();
+
+        String uri = "kafka:mytopic?brokers=dev1:12345,dev2:12566&securityProtocol=SSL&sslEndpointAlgorithm=";
+
+        KafkaEndpoint endpoint = (KafkaEndpoint) context.getComponent("kafka").createEndpoint(uri, params);
+        assertEquals(endpoint.getConfiguration().createProducerProperties().keySet(), getProducerKeysSSL().keySet());
+        assertEquals(endpoint.getConfiguration().createProducerProperties()
+                .get(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG), "");
+    }
+
+    @Test
     public void testAllProducerKeysPlainTextSasl() throws Exception {
         Map<String, Object> params = new HashMap<>();
 
