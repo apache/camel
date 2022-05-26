@@ -58,7 +58,7 @@ public class MonitorItemMultiConnectionsTest extends AbstractMiloServerTest {
     private static final String MOCK_TEST_3 = "mock:test3";
 
     private static final Logger LOG = LoggerFactory.getLogger(MonitorItemMultiConnectionsTest.class);
-    
+
     @EndpointInject(MOCK_TEST_1)
     protected MockEndpoint test1Endpoint;
 
@@ -70,15 +70,15 @@ public class MonitorItemMultiConnectionsTest extends AbstractMiloServerTest {
 
     @Produce(DIRECT_START_1)
     protected ProducerTemplate producer1;
-    
+
     @BeforeEach
     public void setup(TestInfo testInfo) {
-        final var displayName=testInfo.getDisplayName();
+        final var displayName = testInfo.getDisplayName();
         LOG.info("********************************************************************************");
         LOG.info(displayName);
         LOG.info("********************************************************************************");
     }
-    
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {

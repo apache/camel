@@ -31,8 +31,6 @@ import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.LoggingLevel.INFO;
-
 /**
  * Testing the monitor functionality for item
  */
@@ -50,7 +48,7 @@ public class MonitorItemTest extends AbstractMiloServerTest {
     private static final String MOCK_TEST_1 = "mock:test1";
 
     private static final Logger LOG = LoggerFactory.getLogger(MonitorItemTest.class);
-    
+
     @EndpointInject(MOCK_TEST_1)
     protected MockEndpoint test1Endpoint;
 
@@ -68,15 +66,15 @@ public class MonitorItemTest extends AbstractMiloServerTest {
             }
         };
     }
-    
+
     @BeforeEach
     public void setup(TestInfo testInfo) {
-        final var displayName=testInfo.getDisplayName();
+        final var displayName = testInfo.getDisplayName();
         LOG.info("********************************************************************************");
         LOG.info(displayName);
         LOG.info("********************************************************************************");
     }
-    
+
     /**
      * Monitor multiple events
      */
@@ -86,12 +84,12 @@ public class MonitorItemTest extends AbstractMiloServerTest {
          * we will wait 2 * 1_000 milliseconds between server updates since the
          * default server update rate is 1_000 milliseconds
          */
-        final var time=2 * 1_000;
-        
+        final var time = 2 * 1_000;
+
         // item 1 ... only this one receives
         test1Endpoint.reset();
         test1Endpoint.setExpectedCount(3);
-        
+
         // set server values
         this.producer1.sendBody("Foo");
         Thread.sleep(time);
@@ -106,6 +104,6 @@ public class MonitorItemTest extends AbstractMiloServerTest {
         testBody(this.test1Endpoint.message(2), assertGoodValue("Baz"));
 
         // assert
-        assertMockEndpointsSatisfied(time,TimeUnit.MILLISECONDS);
+        assertMockEndpointsSatisfied(time, TimeUnit.MILLISECONDS);
     }
 }

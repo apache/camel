@@ -67,17 +67,17 @@ public class CallClientTest extends AbstractMiloServerTest {
               + "&method=" + nodeValue(MockCamelNamespace.URI, MockCamelNamespace.CALL_ID) + "&overrideHost=true";
 
     private static final Logger LOG = LoggerFactory.getLogger(CallClientTest.class);
-    
+
     private OpcUaServer server;
     private MockCamelNamespace namespace;
     private MockCallMethod callMethod;
 
     @Produce(DIRECT_START_1)
     private ProducerTemplate producer1;
-    
+
     @BeforeEach
     public void setup(TestInfo testInfo) {
-        final var displayName=testInfo.getDisplayName();
+        final var displayName = testInfo.getDisplayName();
         LOG.info("********************************************************************************");
         LOG.info(displayName);
         LOG.info("********************************************************************************");
@@ -188,20 +188,20 @@ public class CallClientTest extends AbstractMiloServerTest {
         // we always write synchronously since we do need the message order
         producerTemplate.sendBodyAndHeader(input, "await", true);
     }
-    
-    private static final class InsecureCertificateValidator implements ServerCertificateValidator{
-        
+
+    private static final class InsecureCertificateValidator implements ServerCertificateValidator {
+
         public static final ServerCertificateValidator INSTANCE = new CallClientTest.InsecureCertificateValidator();
-        
+
         private InsecureCertificateValidator() {
         }
-        
+
         @Override
-        public void validateCertificateChain(List<X509Certificate> list,String s) throws UaException {
+        public void validateCertificateChain(List<X509Certificate> list, String s) throws UaException {
         }
-        
+
         @Override
-        public void validateCertificateChain(List<X509Certificate> list) throws UaException{
+        public void validateCertificateChain(List<X509Certificate> list) throws UaException {
         }
     }
 }

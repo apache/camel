@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
  * Test setting security policies
  */
 public class ServerSetSecurityPoliciesTest extends CamelTestSupport {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ServerSetSecurityPoliciesTest.class);
-    
+
     @BeforeEach
     public void setup(TestInfo testInfo) {
         final var displayName = testInfo.getDisplayName();
@@ -38,7 +38,7 @@ public class ServerSetSecurityPoliciesTest extends CamelTestSupport {
         LOG.info(displayName);
         LOG.info("********************************************************************************");
     }
-    
+
     @Test
     public void testSetSecurityPolicies1() {
         final MiloServerComponent component = new MiloServerComponent();

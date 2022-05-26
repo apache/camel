@@ -64,9 +64,9 @@ public class WriteClientTest extends AbstractMiloServerTest {
 
     private static final String MOCK_TEST_1 = "mock:test1";
     private static final String MOCK_TEST_2 = "mock:test2";
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(WriteClientTest.class);
-    
+
     @EndpointInject(MOCK_TEST_1)
     protected MockEndpoint test1Endpoint;
 
@@ -102,15 +102,15 @@ public class WriteClientTest extends AbstractMiloServerTest {
             }
         };
     }
-    
+
     @BeforeEach
     public void setup(TestInfo testInfo) {
-        final var displayName=testInfo.getDisplayName();
+        final var displayName = testInfo.getDisplayName();
         LOG.info("********************************************************************************");
         LOG.info(displayName);
         LOG.info("********************************************************************************");
     }
-    
+
     @Test
     public void testWrite1() throws Exception {
         // item 1

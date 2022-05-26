@@ -30,12 +30,12 @@ import org.slf4j.LoggerFactory;
 public class MiloClientCachingConnectionManagerTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(MiloClientCachingConnectionManagerTest.class);
-    
+
     private MiloClientCachingConnectionManager instance;
 
     @BeforeEach
     public void setup(TestInfo testInfo) {
-        final var displayName=testInfo.getDisplayName();
+        final var displayName = testInfo.getDisplayName();
         LOG.info("********************************************************************************");
         LOG.info(displayName);
         LOG.info("********************************************************************************");

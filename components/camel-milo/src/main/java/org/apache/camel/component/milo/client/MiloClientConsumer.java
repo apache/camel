@@ -70,12 +70,12 @@ public class MiloClientConsumer extends DefaultConsumer {
 
     private void handleValueUpdate(final DataValue value) {
         LOG.debug("Handle item update - {} = {}", node, value);
-        
-        if(omitNullValues && (value == null || value.getValue() == null || value.getValue().getValue() == null)){
+
+        if (omitNullValues && (value == null || value.getValue() == null || value.getValue().getValue() == null)) {
             LOG.debug("Handle item update omitted due to null values (see omitNullValues parameter)");
             return;
         }
-        
+
         final Exchange exchange = createExchange(true);
         try {
             mapToMessage(value, exchange.getMessage());

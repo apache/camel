@@ -40,7 +40,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MockCamelNamespace extends ManagedNamespaceWithLifecycle{
+public class MockCamelNamespace extends ManagedNamespaceWithLifecycle {
 
     public static final String URI = "urn:org:apache:camel:mock";
     public static final int FOLDER_ID = 1;
@@ -62,24 +62,24 @@ public class MockCamelNamespace extends ManagedNamespaceWithLifecycle{
 
         this.subscriptionModel = new SubscriptionModel(server, this);
         this.callMethodCreator = callMethodCreator;
-    
+
         super.getLifecycleManager().addLifecycle(new Lifecycle() {
-        
+
             @Override
             public void startup() {
                 LOG.trace("CamelNamespace startup");
                 createNodes();
             }
-        
+
             @Override
             public void shutdown() {
                 LOG.trace("CamelNamespace shutdown");
             }
         });
     }
-    
+
     private void createNodes() {
-        
+
         // create structure
 
         final NodeId nodeId = newNodeId(FOLDER_ID);

@@ -33,9 +33,9 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * Test setting the certificate manager
  */
 public class ServerSetCertificateManagerTest extends AbstractMiloServerTest {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ServerSetCertificateManagerTest.class);
-    
+
     @BeforeEach
     public void setup(TestInfo testInfo) {
         final var displayName = testInfo.getDisplayName();
@@ -43,7 +43,7 @@ public class ServerSetCertificateManagerTest extends AbstractMiloServerTest {
         LOG.info(displayName);
         LOG.info("********************************************************************************");
     }
-    
+
     @Override
     protected void configureMiloServer(final MiloServerComponent server) throws Exception {
         super.configureMiloServer(server);

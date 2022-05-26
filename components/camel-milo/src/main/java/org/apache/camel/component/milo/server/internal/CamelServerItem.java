@@ -61,36 +61,37 @@ public class CamelServerItem {
         final NodeId nodeId = new NodeId(namespaceIndex, itemId);
         final QualifiedName qname = new QualifiedName(namespaceIndex, itemId);
         final LocalizedText displayName = LocalizedText.english(itemId);
-        
+
         // create variable node
-    
+
         final Predicate<AttributeId> filter = AttributeId.Value::equals;
-        this.item = UaVariableNode.build(nodeContext, builder->
-            builder
+        this.item = UaVariableNode.build(nodeContext, builder -> builder
                 .setNodeId(nodeId)
                 .setBrowseName(qname)
                 .setDisplayName(displayName)
                 .setAccessLevel(AccessLevel.toValue(AccessLevel.READ_WRITE))
                 .setUserAccessLevel(AccessLevel.toValue(AccessLevel.READ_WRITE))
-                .addAttributeFilter(new AttributeFilter(){
-    
+                .addAttributeFilter(new AttributeFilter() {
+
                     @Override
-                    public Object getAttribute(AttributeFilterContext.GetAttributeContext ctx, AttributeId attributeId){
-                        if(filter.test(attributeId) && ctx.getSession().isPresent()) {
+                    public Object getAttribute(AttributeFilterContext.GetAttributeContext ctx, AttributeId attributeId) {
+                        if (filter.test(attributeId) && ctx.getSession().isPresent()) {
                             return getDataValue();
                         }
                         return ctx.getAttribute(attributeId);
                     }
-    
+
                     @Override
-                    public void setAttribute(AttributeFilterContext.SetAttributeContext ctx, AttributeId attributeId, Object value){
-                        if(filter.test(attributeId) && ctx.getSession().isPresent()) {
-                            setDataValue((DataValue)value);
+                    public void setAttribute(
+                            AttributeFilterContext.SetAttributeContext ctx, AttributeId attributeId, Object value) {
+                        if (filter.test(attributeId) && ctx.getSession().isPresent()) {
+                            setDataValue((DataValue) value);
                         }
                         ctx.setAttribute(attributeId, value);
-                    }})
+                    }
+                })
                 .buildAndAdd());
-        
+
         baseNode.addComponent(this.item);
     }
 

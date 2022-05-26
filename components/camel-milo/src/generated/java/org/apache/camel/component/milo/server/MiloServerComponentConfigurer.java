@@ -37,7 +37,7 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "certificatemanager":
         case "certificateManager": target.setCertificateManager(property(camelContext, org.eclipse.milo.opcua.stack.core.security.CertificateManager.class, value)); return true;
         case "certificatevalidator":
-        case "certificateValidator": target.setCertificateValidator(property(camelContext, org.eclipse.milo.opcua.stack.core.security.CertificateValidator.class, value)); return true;
+        case "certificateValidator": target.setCertificateValidator(property(camelContext, org.eclipse.milo.opcua.stack.server.security.ServerCertificateValidator.class, value)); return true;
         case "defaultcertificatevalidator":
         case "defaultCertificateValidator": target.setDefaultCertificateValidator(property(camelContext, java.lang.String.class, value)); return true;
         case "enableanonymousauthentication":
@@ -81,7 +81,7 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "certificatemanager":
         case "certificateManager": return org.eclipse.milo.opcua.stack.core.security.CertificateManager.class;
         case "certificatevalidator":
-        case "certificateValidator": return org.eclipse.milo.opcua.stack.core.security.CertificateValidator.class;
+        case "certificateValidator": return org.eclipse.milo.opcua.stack.server.security.ServerCertificateValidator.class;
         case "defaultcertificatevalidator":
         case "defaultCertificateValidator": return java.lang.String.class;
         case "enableanonymousauthentication":

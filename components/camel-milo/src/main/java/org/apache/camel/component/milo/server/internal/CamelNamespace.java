@@ -44,23 +44,23 @@ public class CamelNamespace extends ManagedNamespaceWithLifecycle {
     private UaFolderNode folder;
 
     private final Map<String, CamelServerItem> itemMap = new HashMap<>();
-    
+
     private final DataTypeDictionaryManager dictionaryManager;
-    
+
     private final Logger log = LoggerFactory.getLogger(CamelNamespace.class);
-    
+
     public CamelNamespace(final String namespaceUri, final OpcUaServer server) {
         super(server, namespaceUri);
-    
+
         this.subscriptionModel = new SubscriptionModel(server, this);
         this.dictionaryManager = new DataTypeDictionaryManager(getNodeContext(), namespaceUri);
-    
+
         getLifecycleManager().addLifecycle(dictionaryManager);
         getLifecycleManager().addLifecycle(subscriptionModel);
-    
+
         getLifecycleManager().addStartupTask(this::createNodes);
     }
-    
+
     protected void createNodes() {
         // create structure
 
@@ -74,7 +74,7 @@ public class CamelNamespace extends ManagedNamespaceWithLifecycle {
         final NodeId nodeId2 = newNodeId("items");
         final QualifiedName name2 = newQualifiedName("items");
         final LocalizedText displayName2 = LocalizedText.english("Items");
-        
+
         this.itemsObject = UaObjectNode.build(getNodeContext(), builder -> builder
                 .setNodeId(nodeId2)
                 .setBrowseName(name2)

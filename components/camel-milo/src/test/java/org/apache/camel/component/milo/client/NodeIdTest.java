@@ -39,9 +39,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * Testing different ways to specify node IDs
  */
 public class NodeIdTest extends AbstractMiloServerTest {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(NodeIdTest.class);
-    
+
     @BeforeEach
     public void setup(TestInfo testInfo) {
         final var displayName = testInfo.getDisplayName();
@@ -49,7 +49,7 @@ public class NodeIdTest extends AbstractMiloServerTest {
         LOG.info(displayName);
         LOG.info("********************************************************************************");
     }
-    
+
     @Test
     public void testFull1() {
         final String s = String.format("nsu=%s;s=%s", DEFAULT_NAMESPACE_URI, "item-1");

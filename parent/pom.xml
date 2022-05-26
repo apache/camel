@@ -390,7 +390,7 @@
         <microprofile-config-version>2.0.1</microprofile-config-version>
         <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
         <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
-        <milo-version>0.3.7</milo-version>
+        <milo-version>0.6.6</milo-version>
         <milo-guava-version>26.0-jre</milo-guava-version>
         <mina-version>2.1.5</mina-version>
         <minidns-version>0.3.4</minidns-version>

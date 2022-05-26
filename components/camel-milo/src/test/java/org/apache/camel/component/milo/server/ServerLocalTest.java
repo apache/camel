@@ -40,12 +40,12 @@ public class ServerLocalTest extends CamelTestSupport {
     private static final String MILO_ITEM_1 = "milo-server:myitem1";
 
     private static final String MOCK_TEST = "mock:test";
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
 
     @EndpointInject(MOCK_TEST)
     protected MockEndpoint testEndpoint;
-    
+
     @BeforeEach
     public void pickFreePort(TestInfo testInfo) {
         final var displayName = testInfo.getDisplayName();

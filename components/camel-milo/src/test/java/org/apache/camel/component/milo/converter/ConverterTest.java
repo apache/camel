@@ -30,9 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConverterTest extends CamelTestSupport {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
-    
+
     @BeforeEach
     public void setup(TestInfo testInfo) {
         final var displayName = testInfo.getDisplayName();
@@ -40,7 +40,7 @@ public class ConverterTest extends CamelTestSupport {
         LOG.info(displayName);
         LOG.info("********************************************************************************");
     }
-    
+
     @Test
     public void testDataValueToVariant() {
         final Variant value = testConvertDataValue("Foo", Variant.class);

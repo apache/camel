@@ -77,13 +77,13 @@ public class MiloClientEndpoint extends DefaultEndpoint {
      */
     @UriParam
     private boolean defaultAwaitWrites;
-    
+
     /**
      * Omit notifications in case of null values
      */
     @UriParam(defaultValue = "true")
     private boolean omitNullValues = true;
-    
+
     @UriParam
     private MonitorFilterConfiguration monitorFilterConfiguration;
 
@@ -195,11 +195,11 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     public void setMonitorFilterType(MonitorFilterType monitorFilterType) {
         this.monitorFilterType = monitorFilterType;
     }
-    
+
     public boolean isOmitNullValues() {
         return omitNullValues;
     }
-    
+
     public void setOmitNullValues(boolean omitNullValues) {
         this.omitNullValues = omitNullValues;
     }

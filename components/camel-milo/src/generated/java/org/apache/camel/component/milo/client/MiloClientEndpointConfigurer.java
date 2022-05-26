@@ -69,6 +69,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "monitorfiltertype":
         case "monitorFilterType": target.getMonitorFilterConfiguration().setMonitorFilterType(property(camelContext, org.apache.camel.component.milo.client.MonitorFilterType.class, value)); return true;
         case "node": target.setNode(property(camelContext, java.lang.String.class, value)); return true;
+        case "omitnullvalues":
+        case "omitNullValues": target.setOmitNullValues(property(camelContext, boolean.class, value)); return true;
         case "overridehost":
         case "overrideHost": target.getConfiguration().setOverrideHost(property(camelContext, boolean.class, value)); return true;
         case "producturi":
@@ -138,6 +140,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "monitorfiltertype":
         case "monitorFilterType": return org.apache.camel.component.milo.client.MonitorFilterType.class;
         case "node": return java.lang.String.class;
+        case "omitnullvalues":
+        case "omitNullValues": return boolean.class;
         case "overridehost":
         case "overrideHost": return boolean.class;
         case "producturi":
@@ -208,6 +212,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "monitorfiltertype":
         case "monitorFilterType": return target.getMonitorFilterConfiguration().getMonitorFilterType();
         case "node": return target.getNode();
+        case "omitnullvalues":
+        case "omitNullValues": return target.isOmitNullValues();
         case "overridehost":
         case "overrideHost": return target.getConfiguration().isOverrideHost();
         case "producturi":

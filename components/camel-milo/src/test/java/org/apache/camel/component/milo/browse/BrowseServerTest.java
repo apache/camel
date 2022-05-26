@@ -106,7 +106,7 @@ public class BrowseServerTest extends AbstractMiloServerTest {
 
     private static final String MILO_BROWSE_NODE_VIA_ENDPOINT
             = MILO_BROWSE_ROOT + "&node=RAW(ns=0;i=86)";
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(BrowseServerTest.class);
 
     @EndpointInject(MOCK_TEST_1)
@@ -162,15 +162,15 @@ public class BrowseServerTest extends AbstractMiloServerTest {
 
     @Produce(DIRECT_START_9)
     protected ProducerTemplate producer9;
-    
+
     @BeforeEach
     public void setup(TestInfo testInfo) {
-        final var displayName=testInfo.getDisplayName();
+        final var displayName = testInfo.getDisplayName();
         LOG.info("********************************************************************************");
         LOG.info(displayName);
         LOG.info("********************************************************************************");
     }
-    
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
