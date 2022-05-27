@@ -20,10 +20,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -175,6 +176,10 @@ public final class VertxHttpServer {
                 String id = ctx.pathParam("id");
 
                 ctx.response().putHeader("content-type", "text/plain");
+                ctx.request().params();
+
+                Map<String, Object> params = new HashMap<>();
+                ctx.queryParams().forEach(params::put);
 
                 DevConsoleRegistry dcr = context.getExtension(DevConsoleRegistry.class);
                 if (dcr != null && dcr.isEnabled()) {
@@ -190,7 +195,7 @@ public final class VertxHttpServer {
                     }).forEach(c -> {
                         boolean include = id == null || id.contains(c.getId());
                         if (include && c.supportMediaType(DevConsole.MediaType.TEXT)) {
-                            String text = (String) c.call(DevConsole.MediaType.TEXT);
+                            String text = (String) c.call(DevConsole.MediaType.TEXT, params);
                             if (text != null) {
                                 sb.append(c.getDisplayName()).append(":");
                                 sb.append("\n\n");
@@ -202,7 +207,11 @@ public final class VertxHttpServer {
                     if (sb.length() > 0) {
                         ctx.end(sb.toString());
                     } else {
-                        ctx.end("Developer Console is not enabled");
+                        if (id != null) {
+                            ctx.end("Developer Console with id not found: " + id);
+                        } else {
+                            ctx.end("Developer Console is not enabled");
+                        }
                     }
                 } else {
                     ctx.end("Developer Console is not enabled");

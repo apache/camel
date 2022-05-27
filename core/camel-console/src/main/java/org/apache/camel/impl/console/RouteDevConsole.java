@@ -16,17 +16,23 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.TimeUtils;
-
-import java.util.List;
-import java.util.Map;
 
 @DevConsole("route")
 public class RouteDevConsole extends AbstractDevConsole {
+
+    /**
+     * Filters the routes matching by route id, route uri, and source location
+     */
+    public static final String FILTER = "filter";
 
     public RouteDevConsole() {
         super("camel", "route", "Route", "Route information");
@@ -34,6 +40,8 @@ public class RouteDevConsole extends AbstractDevConsole {
 
     @Override
     protected Object doCall(MediaType mediaType, Map<String, Object> options) {
+        String filter = (String) options.get(FILTER);
+
         // only text is supported
         StringBuilder sb = new StringBuilder();
 
@@ -43,7 +51,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
             for (Route route : routes) {
                 ManagedRouteMBean mrb = mcc.getManagedRoute(route.getRouteId());
-                if (mrb != null) {
+                if (mrb != null && accept(mrb, filter)) {
                     if (sb.length() > 0) {
                         sb.append("\n");
                     }
@@ -66,6 +74,16 @@ public class RouteDevConsole extends AbstractDevConsole {
         }
 
         return sb.toString();
+    }
+
+    private static boolean accept(ManagedRouteMBean mrb, String filter) {
+        if (filter == null) {
+            return true;
+        }
+
+        return PatternHelper.matchPattern(mrb.getRouteId(), filter)
+                || PatternHelper.matchPattern(mrb.getEndpointUri(), filter)
+                || PatternHelper.matchPattern(mrb.getSourceLocation(), filter);
     }
 
 }
