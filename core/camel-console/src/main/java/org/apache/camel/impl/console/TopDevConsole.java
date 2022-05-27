@@ -56,7 +56,7 @@ public class TopDevConsole extends AbstractDevConsole {
     @Override
     protected Object doCall(MediaType mediaType, Map<String, Object> options) {
         String path = (String) options.get(Exchange.HTTP_PATH);
-        String subPath = StringHelper.after(path, "/");
+        String subPath = path != null ? StringHelper.after(path, "/") : null;
         String filter = (String) options.get(FILTER);
         String limit = (String) options.get(LIMIT);
         final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
