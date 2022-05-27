@@ -82,7 +82,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         this.context = context;
         this.description = route.getDescription();
         this.configurationId = route.getConfigurationId();
-        this.sourceLocation = route.getSourceResource() != null ? route.getSourceResource().getLocation() : null;
+        this.sourceLocation = route.getSourceLocation();
         this.jmxDomain = context.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
     }
 

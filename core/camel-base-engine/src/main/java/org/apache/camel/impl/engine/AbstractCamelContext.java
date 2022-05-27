@@ -3122,8 +3122,7 @@ public abstract class AbstractCamelContext extends BaseService
                 // use basic endpoint uri to not log verbose details or potential sensitive data
                 String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
-                String loc = order.getRoute().getSourceResource() != null
-                        ? order.getRoute().getSourceResource().getLocation() : null;
+                String loc = order.getRoute().getSourceLocation();
                 if (startupSummaryLevel == StartupSummaryLevel.Verbose && loc != null) {
                     lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
                 } else {
@@ -3146,7 +3145,7 @@ public abstract class AbstractCamelContext extends BaseService
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = route.getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
-                    String loc = route.getSourceResource() != null ? route.getSourceResource().getLocation() : null;
+                    String loc = route.getSourceLocation();
                     if (startupSummaryLevel == StartupSummaryLevel.Verbose && loc != null) {
                         lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
                     } else {

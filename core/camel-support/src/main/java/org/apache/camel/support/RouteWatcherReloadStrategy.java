@@ -241,7 +241,10 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = route.getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
-                    String loc = route.getSourceResource() != null ? route.getSourceResource().getLocation() : "";
+                    String loc = route.getSourceLocation();
+                    if (loc == null) {
+                        loc = "";
+                    }
                     lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
                 }
                 LOG.info(String.format("Routes reloaded summary (total:%s started:%s)", total, started));

@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -164,16 +165,31 @@ public final class VertxHttpServer {
         Route dev = router.route("/q/dev");
         dev.method(HttpMethod.GET);
         dev.produces("text/plain");
-        dev.handler(new Handler<RoutingContext>() {
+        Route devSub = router.route("/q/dev/:id");
+        devSub.method(HttpMethod.GET);
+        devSub.produces("text/plain");
+
+        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
             @Override
             public void handle(RoutingContext ctx) {
+                String id = ctx.pathParam("id");
+
                 ctx.response().putHeader("content-type", "text/plain");
 
                 DevConsoleRegistry dcr = context.getExtension(DevConsoleRegistry.class);
                 if (dcr != null && dcr.isEnabled()) {
                     StringBuilder sb = new StringBuilder();
-                    dcr.stream().forEach(c -> {
-                        if (c.supportMediaType(DevConsole.MediaType.TEXT)) {
+                    // sort according to index by given id
+                    dcr.stream().sorted((o1, o2) -> {
+                        if (id == null) {
+                            return 0;
+                        }
+                        int p1 = id.indexOf(o1.getId());
+                        int p2 = id.indexOf(o2.getId());
+                        return Integer.compare(p1, p2);
+                    }).forEach(c -> {
+                        boolean include = id == null || id.contains(c.getId());
+                        if (include && c.supportMediaType(DevConsole.MediaType.TEXT)) {
                             String text = (String) c.call(DevConsole.MediaType.TEXT);
                             if (text != null) {
                                 sb.append(c.getDisplayName()).append(":");
@@ -192,7 +208,10 @@ public final class VertxHttpServer {
                     ctx.end("Developer Console is not enabled");
                 }
             }
-        });
+        };
+        dev.handler(handler);
+        devSub.handler(handler);
+
         phc.addHttpEndpoint("/q/dev", null);
     }
 

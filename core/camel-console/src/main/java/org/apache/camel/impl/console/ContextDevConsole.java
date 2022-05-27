@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.util.TimeUtils;
 
 @DevConsole("context")
 public class ContextDevConsole extends AbstractDevConsole {
@@ -38,13 +39,15 @@ public class ContextDevConsole extends AbstractDevConsole {
                 getCamelContext().getUptime()));
         sb.append("\n");
 
-        // TODO: number of messages should maybe be in another console
         ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
         if (mcc != null) {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             sb.append(String.format("\n    Total: %s", mb.getExchangesTotal()));
             sb.append(String.format("\n    Failed: %s", mb.getExchangesFailed()));
             sb.append(String.format("\n    Inflight: %s", mb.getExchangesInflight()));
+            sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime())));
+            sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime())));
+            sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime())));
             sb.append("\n");
         }
 
