@@ -19,11 +19,13 @@ package org.apache.camel.impl.console;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 
 @DevConsole("route")
@@ -34,13 +36,22 @@ public class RouteDevConsole extends AbstractDevConsole {
      */
     public static final String FILTER = "filter";
 
+    /**
+     * Limits the number of entries displayed
+     */
+    public static final String LIMIT = "limit";
+
     public RouteDevConsole() {
         super("camel", "route", "Route", "Route information");
     }
 
     @Override
     protected Object doCall(MediaType mediaType, Map<String, Object> options) {
+        String path = (String) options.get(Exchange.HTTP_PATH);
+        String subPath = StringHelper.after(path, "/");
         String filter = (String) options.get(FILTER);
+        String limit = (String) options.get(LIMIT);
+        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
 
         // only text is supported
         StringBuilder sb = new StringBuilder();
@@ -49,41 +60,50 @@ public class RouteDevConsole extends AbstractDevConsole {
         if (mcc != null) {
             List<Route> routes = getCamelContext().getRoutes();
             routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
-            for (Route route : routes) {
-                ManagedRouteMBean mrb = mcc.getManagedRoute(route.getRouteId());
-                if (mrb != null && accept(mrb, filter)) {
-                    if (sb.length() > 0) {
+
+            routes.stream()
+                    .map(route -> mcc.getManagedRoute(route.getRouteId()))
+                    .filter(r -> accept(r, filter))
+                    .filter(r -> accept(r, subPath))
+                    .sorted(RouteDevConsole::sort)
+                    .limit(max)
+                    .forEach(mrb -> {
+                        if (sb.length() > 0) {
+                            sb.append("\n");
+                        }
+                        sb.append(String.format("    Id: %s", mrb.getRouteId()));
+                        sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
+                        if (mrb.getSourceLocation() != null) {
+                            sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
+                        }
+                        sb.append(String.format("\n    State: %s", mrb.getState()));
+                        sb.append(String.format("\n    Uptime: %s", mrb.getUptime()));
+                        sb.append(String.format("\n    Total: %s", mrb.getExchangesTotal()));
+                        sb.append(String.format("\n    Failed: %s", mrb.getExchangesFailed()));
+                        sb.append(String.format("\n    Inflight: %s", mrb.getExchangesInflight()));
+                        sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mrb.getMeanProcessingTime())));
+                        sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime())));
+                        sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime())));
                         sb.append("\n");
-                    }
-                    sb.append(String.format("    Id: %s", mrb.getRouteId()));
-                    sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
-                    if (mrb.getSourceLocation() != null) {
-                        sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
-                    }
-                    sb.append(String.format("\n    State: %s", mrb.getState()));
-                    sb.append(String.format("\n    Uptime: %s", mrb.getUptime()));
-                    sb.append(String.format("\n    Total: %s", mrb.getExchangesTotal()));
-                    sb.append(String.format("\n    Failed: %s", mrb.getExchangesFailed()));
-                    sb.append(String.format("\n    Inflight: %s", mrb.getExchangesInflight()));
-                    sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mrb.getMeanProcessingTime())));
-                    sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime())));
-                    sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime())));
-                    sb.append("\n");
-                }
-            }
+                    });
         }
 
         return sb.toString();
     }
 
     private static boolean accept(ManagedRouteMBean mrb, String filter) {
-        if (filter == null) {
+        if (filter == null || filter.isBlank()) {
             return true;
         }
 
         return PatternHelper.matchPattern(mrb.getRouteId(), filter)
                 || PatternHelper.matchPattern(mrb.getEndpointUri(), filter)
                 || PatternHelper.matchPattern(mrb.getSourceLocation(), filter);
+    }
+
+    private static int sort(ManagedRouteMBean o1, ManagedRouteMBean o2) {
+        // sort by id
+        return o1.getRouteId().compareTo(o2.getRouteId());
     }
 
 }

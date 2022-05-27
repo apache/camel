@@ -35,6 +35,7 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StartupListener;
 import org.apache.camel.component.platform.http.HttpEndpointModel;
@@ -50,6 +51,7 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -166,34 +168,39 @@ public final class VertxHttpServer {
         Route dev = router.route("/q/dev");
         dev.method(HttpMethod.GET);
         dev.produces("text/plain");
-        Route devSub = router.route("/q/dev/:id");
+        Route devSub = router.route("/q/dev/*");
         devSub.method(HttpMethod.GET);
         devSub.produces("text/plain");
 
         Handler<RoutingContext> handler = new Handler<RoutingContext>() {
             @Override
             public void handle(RoutingContext ctx) {
-                String id = ctx.pathParam("id");
-
                 ctx.response().putHeader("content-type", "text/plain");
-                ctx.request().params();
+
+                String path = StringHelper.after(ctx.request().path(), "/q/dev/");
+                String s = path;
+                if (s != null && s.contains("/")) {
+                    s = StringHelper.before(s, "/");
+                }
+                String id = s;
 
                 Map<String, Object> params = new HashMap<>();
                 ctx.queryParams().forEach(params::put);
+                params.put(Exchange.HTTP_PATH, path);
 
                 DevConsoleRegistry dcr = context.getExtension(DevConsoleRegistry.class);
                 if (dcr != null && dcr.isEnabled()) {
                     StringBuilder sb = new StringBuilder();
                     // sort according to index by given id
                     dcr.stream().sorted((o1, o2) -> {
-                        if (id == null) {
+                        if (id == null || id.isEmpty()) {
                             return 0;
                         }
                         int p1 = id.indexOf(o1.getId());
                         int p2 = id.indexOf(o2.getId());
                         return Integer.compare(p1, p2);
                     }).forEach(c -> {
-                        boolean include = id == null || id.contains(c.getId());
+                        boolean include = id == null || id.isEmpty() || id.contains(c.getId());
                         if (include && c.supportMediaType(DevConsole.MediaType.TEXT)) {
                             String text = (String) c.call(DevConsole.MediaType.TEXT, params);
                             if (text != null) {
