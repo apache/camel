@@ -135,7 +135,8 @@ public class TopDevConsole extends AbstractDevConsole {
                     if (loc != null && mpb.getSourceLineNumber() != null) {
                         int line = mpb.getSourceLineNumber();
                         try {
-                            Resource resource = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader().resolveResource(loc);
+                            Resource resource = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader()
+                                    .resolveResource(loc);
                             if (resource != null) {
                                 LineNumberReader reader = new LineNumberReader(resource.getReader());
                                 for (int i = 1; i < line + 2; i++) {
