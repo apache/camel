@@ -48,6 +48,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                         sb.append("\n");
                     }
                     sb.append(String.format("    Id: %s", mrb.getRouteId()));
+                    sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
                     if (mrb.getSourceLocation() != null) {
                         sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
                     }
