@@ -16,19 +16,23 @@
  */
 package org.apache.camel.impl.console;
 
+import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedPerformanceCounterMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 
@@ -127,11 +131,38 @@ public class TopDevConsole extends AbstractDevConsole {
                     sb.append(String.format("    Route Id: %s", mpb.getRouteId()));
                     sb.append(String.format("\n    Processor Id: %s", mpb.getProcessorId()));
                     String loc = mpb.getSourceLocation();
+                    StringBuilder code = new StringBuilder();
                     if (loc != null && mpb.getSourceLineNumber() != null) {
-                        loc += ":" + mpb.getSourceLineNumber();
+                        int line = mpb.getSourceLineNumber();
+                        try {
+                            Resource resource = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader().resolveResource(loc);
+                            if (resource != null) {
+                                LineNumberReader reader = new LineNumberReader(resource.getReader());
+                                for (int i = 1; i < line + 2; i++) {
+                                    String t = reader.readLine();
+                                    if (t != null) {
+                                        int low = line - 2;
+                                        int high = line + 3;
+                                        if (i >= low && i <= high) {
+                                            String arrow = i == line ? "-->" : "   ";
+                                            code.append(String.format("\n        %s #%s %s", arrow, i, t));
+                                        }
+                                    }
+                                }
+                                IOHelper.close(reader);
+                            }
+                            loc += ":" + mpb.getSourceLineNumber();
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                        // load source code line
+
                     }
                     if (loc != null) {
                         sb.append(String.format("\n    Source: %s", loc));
+                        if (code.length() > 0) {
+                            sb.append(code);
+                        }
                     }
                     sb.append(String.format("\n    Total: %s", mpb.getExchangesTotal()));
                     sb.append(String.format("\n    Failed: %s", mpb.getExchangesFailed()));
