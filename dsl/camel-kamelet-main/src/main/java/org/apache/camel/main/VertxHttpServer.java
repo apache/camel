@@ -175,7 +175,16 @@ public final class VertxHttpServer {
         Handler<RoutingContext> handler = new Handler<RoutingContext>() {
             @Override
             public void handle(RoutingContext ctx) {
+                String acp = ctx.request().getHeader("Accept");
+                final boolean html = acp != null && acp.contains("html");
+
                 ctx.response().putHeader("content-type", "text/plain");
+
+                DevConsoleRegistry dcr = context.getExtension(DevConsoleRegistry.class);
+                if (dcr == null || !dcr.isEnabled()) {
+                    ctx.end("Developer Console is not enabled");
+                    return;
+                }
 
                 String path = StringHelper.after(ctx.request().path(), "/q/dev/");
                 String s = path;
@@ -184,23 +193,40 @@ public final class VertxHttpServer {
                 }
                 String id = s;
 
-                Map<String, Object> params = new HashMap<>();
-                ctx.queryParams().forEach(params::put);
-                params.put(Exchange.HTTP_PATH, path);
+                StringBuilder sb = new StringBuilder();
 
-                DevConsoleRegistry dcr = context.getExtension(DevConsoleRegistry.class);
-                if (dcr != null && dcr.isEnabled()) {
-                    StringBuilder sb = new StringBuilder();
+                // index/home should list each console
+                if (id == null || id.isEmpty() || id.equals("index")) {
+                    dcr.stream().forEach(c -> {
+                        String link = c.getId();
+                        String eol = "\n";
+                        if (html) {
+                            link = "<a href=\"" + link + "\">" + c.getId() + "</a>";
+                            eol = "<br/>\n";
+                        }
+                        sb.append(link).append(": ").append(c.getDescription()).append(eol);
+                        // special for top in processor mode
+                        if ("top".equals(c.getId())) {
+                            link = link.replace("top", "top/*");
+                            sb.append(link).append(": ").append("Display the top processors").append(eol);
+                        }
+                    });
+                    if (html) {
+                        ctx.response().putHeader("content-type", "text/html");
+                    }
+                    ctx.end(sb.toString());
+                } else {
+                    Map<String, Object> params = new HashMap<>();
+                    ctx.queryParams().forEach(params::put);
+                    params.put(Exchange.HTTP_PATH, path);
+
                     // sort according to index by given id
                     dcr.stream().sorted((o1, o2) -> {
-                        if (id == null || id.isEmpty()) {
-                            return 0;
-                        }
                         int p1 = id.indexOf(o1.getId());
                         int p2 = id.indexOf(o2.getId());
                         return Integer.compare(p1, p2);
                     }).forEach(c -> {
-                        boolean include = id == null || id.isEmpty() || id.contains(c.getId());
+                        boolean include = "all".equals(id) || id.contains(c.getId());
                         if (include && c.supportMediaType(DevConsole.MediaType.TEXT)) {
                             String text = (String) c.call(DevConsole.MediaType.TEXT, params);
                             if (text != null) {
@@ -212,16 +238,11 @@ public final class VertxHttpServer {
                         }
                     });
                     if (sb.length() > 0) {
-                        ctx.end(sb.toString());
+                        String out = sb.toString();
+                        ctx.end(out);
                     } else {
-                        if (id != null) {
-                            ctx.end("Developer Console with id not found: " + id);
-                        } else {
-                            ctx.end("Developer Console is not enabled");
-                        }
+                        ctx.end("Developer Console not found: " + id);
                     }
-                } else {
-                    ctx.end("Developer Console is not enabled");
                 }
             }
         };
