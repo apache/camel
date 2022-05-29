@@ -19,6 +19,7 @@ package org.apache.camel.component.netty.http;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
@@ -166,7 +167,10 @@ public class NettyHttpProducer extends NettyProducer {
                             } else {
                                 ok = NettyHttpHelper.isStatusCodeOk(code, configuration.getOkStatusCodeRange());
                             }
-                            if (!ok && getConfiguration().isThrowExceptionOnFailure()) {
+
+                            if (ok) {
+                                removeCamelHeaders(exchange);
+                            } else if (getConfiguration().isThrowExceptionOnFailure()) {
                                 // operation failed so populate exception to throw
                                 Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, actualUrl,
                                         response, code, getConfiguration().isTransferException());
@@ -180,5 +184,21 @@ public class NettyHttpProducer extends NettyProducer {
                 callback.done(doneSync);
             }
         }
+    }
+
+    /**
+     * Remove Camel headers from Out message
+     *
+     * @param exchange the exchange
+     */
+    protected void removeCamelHeaders(Exchange exchange) {
+        List<String> headersToRemove = exchange.getMessage().getHeaders().keySet()
+                .stream()
+                .filter(key -> !key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_CODE)
+                        && !key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_TEXT)
+                        && key.startsWith("Camel"))
+                .collect(Collectors.toList());
+
+        headersToRemove.stream().forEach(header -> exchange.getMessage().removeHeaders(header));
     }
 }
