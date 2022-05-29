@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
@@ -35,6 +36,8 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 @DevConsole("top")
 public class TopDevConsole extends AbstractDevConsole {
@@ -54,36 +57,18 @@ public class TopDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected Object doCall(MediaType mediaType, Map<String, Object> options) {
+    protected String doCallText(Map<String, Object> options) {
         String path = (String) options.get(Exchange.HTTP_PATH);
         String subPath = path != null ? StringHelper.after(path, "/") : null;
         String filter = (String) options.get(FILTER);
         String limit = (String) options.get(LIMIT);
         final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
 
-        // only text is supported
-        StringBuilder sb = new StringBuilder();
-
+        final StringBuilder sb = new StringBuilder();
         ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
         if (mcc != null) {
             if (subPath == null || subPath.isBlank()) {
-                topRoutes(filter, max, sb, mcc);
-            } else {
-                topProcessors(filter, subPath, max, sb, mcc);
-            }
-        }
-
-        return sb.toString();
-    }
-
-    private void topRoutes(String filter, int max, StringBuilder sb, ManagedCamelContext mcc) {
-        List<Route> routes = getCamelContext().getRoutes();
-        routes.stream()
-                .map(route -> mcc.getManagedRoute(route.getRouteId()))
-                .filter(r -> acceptRoute(r, filter))
-                .sorted(TopDevConsole::top)
-                .limit(max)
-                .forEach(mrb -> {
+                Function<ManagedRouteMBean, Object> task = mrb -> {
                     if (sb.length() > 0) {
                         sb.append("\n");
                     }
@@ -101,10 +86,187 @@ public class TopDevConsole extends AbstractDevConsole {
                     sb.append(String.format("\n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime())));
                     sb.append(String.format("\n    Total Time: %s", TimeUtils.printDuration(mrb.getTotalProcessingTime())));
                     sb.append("\n");
-                });
+                    return null;
+                };
+                topRoutes(filter, max, mcc, task);
+            } else {
+                Function<ManagedProcessorMBean, Object> task = mpb -> {
+                    if (sb.length() > 0) {
+                        sb.append("\n");
+                    }
+                    sb.append(String.format("    Route Id: %s", mpb.getRouteId()));
+                    sb.append(String.format("\n    Processor Id: %s", mpb.getProcessorId()));
+                    String loc = mpb.getSourceLocation();
+                    StringBuilder code = new StringBuilder();
+                    if (loc != null && mpb.getSourceLineNumber() != null) {
+                        int line = mpb.getSourceLineNumber();
+                        try {
+                            Resource resource = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader()
+                                    .resolveResource(loc);
+                            if (resource != null) {
+                                LineNumberReader reader = new LineNumberReader(resource.getReader());
+                                for (int i = 1; i < line + 3; i++) {
+                                    String t = reader.readLine();
+                                    if (t != null) {
+                                        int low = line - 2;
+                                        int high = line + 4;
+                                        if (i >= low && i <= high) {
+                                            String arrow = i == line ? "-->" : "   ";
+                                            code.append(String.format("\n        %s #%s %s", arrow, i, t));
+                                        }
+                                    }
+                                }
+                                IOHelper.close(reader);
+                            }
+                            loc += ":" + mpb.getSourceLineNumber();
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                    }
+                    if (loc != null) {
+                        sb.append(String.format("\n    Source: %s", loc));
+                        if (code.length() > 0) {
+                            sb.append(code);
+                        }
+                    }
+                    sb.append(String.format("\n    Total: %s", mpb.getExchangesTotal()));
+                    sb.append(String.format("\n    Failed: %s", mpb.getExchangesFailed()));
+                    sb.append(String.format("\n    Inflight: %s", mpb.getExchangesInflight()));
+                    sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mpb.getMeanProcessingTime())));
+                    sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mpb.getMaxProcessingTime())));
+                    sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mpb.getMinProcessingTime())));
+                    sb.append(String.format("\n    Delta Time: %s", TimeUtils.printDuration(mpb.getDeltaProcessingTime())));
+                    sb.append(String.format("\n    Total Time: %s", TimeUtils.printDuration(mpb.getTotalProcessingTime())));
+                    sb.append("\n");
+                    return null;
+                };
+                topProcessors(filter, subPath, max, mcc, task);
+            }
+        }
+
+        return sb.toString();
     }
 
-    private void topProcessors(String filter, String subPath, int max, StringBuilder sb, ManagedCamelContext mcc) {
+    @Override
+    protected JsonObject doCallJson(Map<String, Object> options) {
+        String path = (String) options.get(Exchange.HTTP_PATH);
+        String subPath = path != null ? StringHelper.after(path, "/") : null;
+        String filter = (String) options.get(FILTER);
+        String limit = (String) options.get(LIMIT);
+        final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+
+        final JsonObject root = new JsonObject();
+        final List<JsonObject> list = new ArrayList<>();
+
+        ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
+        if (mcc != null) {
+            if (subPath == null || subPath.isBlank()) {
+                Function<ManagedRouteMBean, Object> task = mrb -> {
+                    JsonObject jo = new JsonObject();
+                    list.add(jo);
+
+                    jo.put("routeId", mrb.getRouteId());
+                    jo.put("from", mrb.getEndpointUri());
+                    if (mrb.getSourceLocation() != null) {
+                        jo.put("source", mrb.getSourceLocation());
+                    }
+                    jo.put("state", mrb.getState());
+                    jo.put("uptime", mrb.getUptime());
+                    JsonObject stats = new JsonObject();
+                    stats.put("exchangesTotal", mrb.getExchangesTotal());
+                    stats.put("exchangesFailed", mrb.getExchangesFailed());
+                    stats.put("exchangesInflight", mrb.getExchangesInflight());
+                    stats.put("meanProcessingTime", mrb.getMeanProcessingTime());
+                    stats.put("maxProcessingTime", mrb.getMaxProcessingTime());
+                    stats.put("minProcessingTime", mrb.getMinProcessingTime());
+                    stats.put("deltaProcessingTime", mrb.getDeltaProcessingTime());
+                    stats.put("totalProcessingTime", mrb.getTotalProcessingTime());
+                    jo.put("statistics", stats);
+                    return null;
+                };
+                topRoutes(filter, max, mcc, task);
+                root.put("routes", list);
+            } else {
+                Function<ManagedProcessorMBean, Object> task = mpb -> {
+                    JsonObject jo = new JsonObject();
+                    list.add(jo);
+
+                    jo.put("routeId", mpb.getRouteId());
+                    jo.put("processorId", mpb.getProcessorId());
+                    String loc = mpb.getSourceLocation();
+                    List<JsonObject> code = new ArrayList<>();
+                    if (loc != null && mpb.getSourceLineNumber() != null) {
+                        int line = mpb.getSourceLineNumber();
+                        try {
+                            Resource resource = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader()
+                                    .resolveResource(loc);
+                            if (resource != null) {
+                                LineNumberReader reader = new LineNumberReader(resource.getReader());
+                                for (int i = 1; i < line + 3; i++) {
+                                    String t = reader.readLine();
+                                    if (t != null) {
+                                        int low = line - 2;
+                                        int high = line + 4;
+                                        if (i >= low && i <= high) {
+                                            JsonObject c = new JsonObject();
+                                            c.put("line", i);
+                                            if (line == i) {
+                                                c.put("match", true);
+                                            }
+                                            c.put("code", Jsoner.escape(t));
+                                            code.add(c);
+                                        }
+                                    }
+                                }
+                                IOHelper.close(reader);
+                            }
+                            loc += ":" + mpb.getSourceLineNumber();
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                    }
+                    if (loc != null) {
+                        jo.put("location", loc);
+                        if (!code.isEmpty()) {
+                            jo.put("code", code);
+                        }
+                    }
+
+                    JsonObject stats = new JsonObject();
+                    stats.put("exchangesTotal", mpb.getExchangesTotal());
+                    stats.put("exchangesFailed", mpb.getExchangesFailed());
+                    stats.put("exchangesInflight", mpb.getExchangesInflight());
+                    stats.put("meanProcessingTime", mpb.getMeanProcessingTime());
+                    stats.put("maxProcessingTime", mpb.getMaxProcessingTime());
+                    stats.put("minProcessingTime", mpb.getMinProcessingTime());
+                    stats.put("deltaProcessingTime", mpb.getDeltaProcessingTime());
+                    stats.put("totalProcessingTime", mpb.getTotalProcessingTime());
+                    jo.put("statistics", stats);
+                    return null;
+                };
+                topProcessors(filter, subPath, max, mcc, task);
+                root.put("processors", list);
+            }
+        }
+
+        return root;
+    }
+
+    private void topRoutes(
+            String filter, int max, ManagedCamelContext mcc,
+            Function<ManagedRouteMBean, Object> task) {
+        List<Route> routes = getCamelContext().getRoutes();
+        routes.stream()
+                .map(route -> mcc.getManagedRoute(route.getRouteId()))
+                .filter(r -> acceptRoute(r, filter))
+                .sorted(TopDevConsole::top)
+                .limit(max)
+                .forEach(task::apply);
+    }
+
+    private void topProcessors(
+            String filter, String subPath, int max, ManagedCamelContext mcc,
+            Function<ManagedProcessorMBean, Object> task) {
         List<Route> routes = getCamelContext().getRoutes();
         Collection<String> ids = new ArrayList<>();
 
@@ -124,57 +286,7 @@ public class TopDevConsole extends AbstractDevConsole {
                 .filter(p -> acceptProcessor(p, filter))
                 .sorted(TopDevConsole::top)
                 .limit(max)
-                .forEach(mpb -> {
-                    if (sb.length() > 0) {
-                        sb.append("\n");
-                    }
-                    sb.append(String.format("    Route Id: %s", mpb.getRouteId()));
-                    sb.append(String.format("\n    Processor Id: %s", mpb.getProcessorId()));
-                    String loc = mpb.getSourceLocation();
-                    StringBuilder code = new StringBuilder();
-                    if (loc != null && mpb.getSourceLineNumber() != null) {
-                        int line = mpb.getSourceLineNumber();
-                        try {
-                            Resource resource = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader()
-                                    .resolveResource(loc);
-                            if (resource != null) {
-                                LineNumberReader reader = new LineNumberReader(resource.getReader());
-                                for (int i = 1; i < line + 2; i++) {
-                                    String t = reader.readLine();
-                                    if (t != null) {
-                                        int low = line - 2;
-                                        int high = line + 3;
-                                        if (i >= low && i <= high) {
-                                            String arrow = i == line ? "-->" : "   ";
-                                            code.append(String.format("\n        %s #%s %s", arrow, i, t));
-                                        }
-                                    }
-                                }
-                                IOHelper.close(reader);
-                            }
-                            loc += ":" + mpb.getSourceLineNumber();
-                        } catch (Exception e) {
-                            // ignore
-                        }
-                        // load source code line
-
-                    }
-                    if (loc != null) {
-                        sb.append(String.format("\n    Source: %s", loc));
-                        if (code.length() > 0) {
-                            sb.append(code);
-                        }
-                    }
-                    sb.append(String.format("\n    Total: %s", mpb.getExchangesTotal()));
-                    sb.append(String.format("\n    Failed: %s", mpb.getExchangesFailed()));
-                    sb.append(String.format("\n    Inflight: %s", mpb.getExchangesInflight()));
-                    sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mpb.getMeanProcessingTime())));
-                    sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mpb.getMaxProcessingTime())));
-                    sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mpb.getMinProcessingTime())));
-                    sb.append(String.format("\n    Delta Time: %s", TimeUtils.printDuration(mpb.getDeltaProcessingTime())));
-                    sb.append(String.format("\n    Total Time: %s", TimeUtils.printDuration(mpb.getTotalProcessingTime())));
-                    sb.append("\n");
-                });
+                .forEach(task::apply);
     }
 
     private static boolean acceptRoute(ManagedRouteMBean mrb, String filter) {

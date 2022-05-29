@@ -16,6 +16,8 @@
  */
 package org.apache.camel.catalog.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -24,6 +26,7 @@ import org.apache.camel.impl.console.AbstractDevConsole;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("catalog")
 public class CatalogConsole extends AbstractDevConsole {
@@ -36,8 +39,7 @@ public class CatalogConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected Object doCall(MediaType mediaType, Map<String, Object> options) {
-        // only text is supported
+    protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("\nComponents:\n");
@@ -64,6 +66,38 @@ public class CatalogConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
+    @Override
+    protected JsonObject doCallJson(Map<String, Object> options) {
+        JsonObject root = new JsonObject();
+        List<JsonObject> components = new ArrayList<>();
+        root.put("components", components);
+        List<JsonObject> dataformat = new ArrayList<>();
+        root.put("dataformat", dataformat);
+        List<JsonObject> languages = new ArrayList<>();
+        root.put("languages", languages);
+        List<JsonObject> others = new ArrayList<>();
+        root.put("others", others);
+
+        getCamelContext().getComponentNames().forEach(n -> appendModel(catalog.componentModel(n), components));
+        getCamelContext().getLanguageNames().forEach(n -> appendModel(catalog.languageModel(n), languages));
+        getCamelContext().getDataFormatNames().forEach(n -> appendModel(catalog.dataFormatModel(n), dataformat));
+
+        // misc is harder to find as we need to find them via classpath
+        String[] cp = CP.split("[:|;]");
+        String suffix = "-" + getCamelContext().getVersion() + ".jar";
+        for (String c : cp) {
+            if (c.endsWith(suffix)) {
+                int pos = Math.max(c.lastIndexOf("/"), c.lastIndexOf("\\"));
+                if (pos > 0) {
+                    c = c.substring(pos + 1, c.length() - suffix.length());
+                    appendModel(findOtherModel(c), others);
+                }
+            }
+        }
+
+        return root;
+    }
+
     private ArtifactModel findOtherModel(String artifactId) {
         // is it a mist component
         for (String name : catalog.findOtherNames()) {
@@ -81,8 +115,27 @@ public class CatalogConsole extends AbstractDevConsole {
             if (model.isDeprecated()) {
                 level += "-deprecated";
             }
-            sb.append(String.format("\n    %s %s %s %s %s", model.getTitle(), model.getArtifactId(), level,
-                    model.getFirstVersionShort(), model.getDescription()));
+            sb.append(String.format("\n    %s %s %s %s: %s", model.getArtifactId(), level,
+                    model.getFirstVersionShort(), model.getTitle(), model.getDescription()));
+        }
+    }
+
+    private static void appendModel(ArtifactModel<?> model, List<JsonObject> list) {
+        if (model != null) {
+            JsonObject jo = new JsonObject();
+            String level = model.getSupportLevel().toString();
+            if (model.isDeprecated()) {
+                level += "-deprecated";
+            }
+            jo.put("groupId", model.getGroupId());
+            jo.put("artifactId", model.getArtifactId());
+            jo.put("version", model.getVersion());
+            jo.put("level", level);
+            jo.put("firstVersion", model.getFirstVersionShort());
+            jo.put("title", model.getTitle());
+            jo.put("description", model.getDescription());
+
+            list.add(jo);
         }
     }
 }

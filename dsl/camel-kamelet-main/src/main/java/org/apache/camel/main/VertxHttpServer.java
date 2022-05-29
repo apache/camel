@@ -52,6 +52,7 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,15 +169,27 @@ public final class VertxHttpServer {
         Route dev = router.route("/q/dev");
         dev.method(HttpMethod.GET);
         dev.produces("text/plain");
+        dev.produces("application/json");
         Route devSub = router.route("/q/dev/*");
         devSub.method(HttpMethod.GET);
         devSub.produces("text/plain");
+        devSub.produces("application/json");
 
         Handler<RoutingContext> handler = new Handler<RoutingContext>() {
             @Override
             public void handle(RoutingContext ctx) {
                 String acp = ctx.request().getHeader("Accept");
-                final boolean html = acp != null && acp.contains("html");
+                int pos1 = acp != null ? acp.indexOf("html") : Integer.MAX_VALUE;
+                if (pos1 == -1) {
+                    pos1 = Integer.MAX_VALUE;
+                }
+                int pos2 = acp != null ? acp.indexOf("json") : Integer.MAX_VALUE;
+                if (pos2 == -1) {
+                    pos2 = Integer.MAX_VALUE;
+                }
+                final boolean html = pos1 < pos2;
+                final boolean json = pos2 < pos1;
+                final DevConsole.MediaType mediaType = json ? DevConsole.MediaType.JSON : DevConsole.MediaType.TEXT;
 
                 ctx.response().putHeader("content-type", "text/plain");
 
@@ -193,32 +206,50 @@ public final class VertxHttpServer {
                 }
                 String id = s;
 
-                StringBuilder sb = new StringBuilder();
-
                 // index/home should list each console
                 if (id == null || id.isEmpty() || id.equals("index")) {
+                    StringBuilder sb = new StringBuilder();
+                    JsonObject root = new JsonObject();
+
                     dcr.stream().forEach(c -> {
-                        String link = c.getId();
-                        String eol = "\n";
-                        if (html) {
-                            link = "<a href=\"" + link + "\">" + c.getId() + "</a>";
-                            eol = "<br/>\n";
-                        }
-                        sb.append(link).append(": ").append(c.getDescription()).append(eol);
-                        // special for top in processor mode
-                        if ("top".equals(c.getId())) {
-                            link = link.replace("top", "top/*");
-                            sb.append(link).append(": ").append("Display the top processors").append(eol);
+                        if (json) {
+                            JsonObject jo = new JsonObject();
+                            jo.put("id", c.getId());
+                            jo.put("displayName", c.getDisplayName());
+                            jo.put("description", c.getDescription());
+                            root.put(c.getId(), jo);
+                        } else {
+                            String link = c.getId();
+                            String eol = "\n";
+                            if (html) {
+                                link = "<a href=\"" + link + "\">" + c.getId() + "</a>";
+                                eol = "<br/>\n";
+                            }
+                            sb.append(link).append(": ").append(c.getDescription()).append(eol);
+                            // special for top in processor mode
+                            if ("top".equals(c.getId())) {
+                                link = link.replace("top", "top/*");
+                                sb.append(link).append(": ").append("Display the top processors").append(eol);
+                            }
                         }
                     });
-                    if (html) {
-                        ctx.response().putHeader("content-type", "text/html");
+                    if (sb.length() > 0) {
+                        String out = sb.toString();
+                        if (html) {
+                            ctx.response().putHeader("content-type", "text/html");
+                        }
+                        ctx.end(out);
+                    } else if (!root.isEmpty()) {
+                        ctx.response().putHeader("content-type", "application/json");
+                        String out = root.toJson();
+                        ctx.end(out);
                     }
-                    ctx.end(sb.toString());
                 } else {
                     Map<String, Object> params = new HashMap<>();
                     ctx.queryParams().forEach(params::put);
                     params.put(Exchange.HTTP_PATH, path);
+                    StringBuilder sb = new StringBuilder();
+                    JsonObject root = new JsonObject();
 
                     // sort according to index by given id
                     dcr.stream().sorted((o1, o2) -> {
@@ -227,18 +258,24 @@ public final class VertxHttpServer {
                         return Integer.compare(p1, p2);
                     }).forEach(c -> {
                         boolean include = "all".equals(id) || id.contains(c.getId());
-                        if (include && c.supportMediaType(DevConsole.MediaType.TEXT)) {
-                            String text = (String) c.call(DevConsole.MediaType.TEXT, params);
-                            if (text != null) {
+                        if (include && c.supportMediaType(mediaType)) {
+                            Object out = c.call(mediaType, params);
+                            if (out != null && mediaType == DevConsole.MediaType.TEXT) {
                                 sb.append(c.getDisplayName()).append(":");
                                 sb.append("\n\n");
-                                sb.append(text);
+                                sb.append(out);
                                 sb.append("\n\n");
+                            } else if (out != null && mediaType == DevConsole.MediaType.JSON) {
+                                root.put(c.getId(), out);
                             }
                         }
                     });
                     if (sb.length() > 0) {
                         String out = sb.toString();
+                        ctx.end(out);
+                    } else if (!root.isEmpty()) {
+                        ctx.response().putHeader("content-type", "application/json");
+                        String out = root.toJson();
                         ctx.end(out);
                     } else {
                         ctx.end("Developer Console not found: " + id);

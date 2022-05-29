@@ -22,6 +22,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("context")
 public class ContextDevConsole extends AbstractDevConsole {
@@ -30,9 +31,7 @@ public class ContextDevConsole extends AbstractDevConsole {
         super("camel", "context", "CamelContext", "Overall information about the CamelContext");
     }
 
-    @Override
-    protected Object doCall(MediaType mediaType, Map<String, Object> options) {
-        // only text is supported
+    protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(String.format("Apache Camel %s (%s) uptime %s", getCamelContext().getVersion(), getCamelContext().getName(),
@@ -53,4 +52,27 @@ public class ContextDevConsole extends AbstractDevConsole {
 
         return sb.toString();
     }
+
+    protected JsonObject doCallJson(Map<String, Object> options) {
+        JsonObject root = new JsonObject();
+        root.put("name", getCamelContext().getName());
+        root.put("version", getCamelContext().getVersion());
+        root.put("uptime", getCamelContext().getUptime());
+
+        ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
+        if (mcc != null) {
+            ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
+            JsonObject stats = new JsonObject();
+            stats.put("exchangesTotal", mb.getExchangesTotal());
+            stats.put("exchangesFailed", mb.getExchangesFailed());
+            stats.put("exchangesInflight", mb.getExchangesInflight());
+            stats.put("meanProcessingTime", mb.getMeanProcessingTime());
+            stats.put("maxProcessingTime", mb.getMaxProcessingTime());
+            stats.put("minProcessingTime", mb.getMinProcessingTime());
+            root.put("statistics", stats);
+        }
+
+        return root;
+    }
+
 }

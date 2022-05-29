@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.platform.http;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.impl.console.AbstractDevConsole;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("platform-http")
 public class PlatformHttpConsole extends AbstractDevConsole {
@@ -30,8 +33,7 @@ public class PlatformHttpConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected Object doCall(MediaType mediaType, Map<String, Object> options) {
-        // only text is supported
+    protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
         PlatformHttpComponent http = getCamelContext().getComponent("platform-http", PlatformHttpComponent.class);
@@ -54,4 +56,39 @@ public class PlatformHttpConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
+    @Override
+    protected JsonObject doCallJson(Map<String, Object> options) {
+        JsonObject root = new JsonObject();
+
+        PlatformHttpComponent http = getCamelContext().getComponent("platform-http", PlatformHttpComponent.class);
+        if (http != null) {
+            String server = "http://0.0.0.0";
+            int port = http.getEngine().getServerPort();
+            if (port > 0) {
+                server += ":" + port;
+            }
+            root.put("server", server);
+
+            Set<HttpEndpointModel> models = http.getHttpEndpoints();
+            List<JsonObject> list = new ArrayList<>();
+            for (HttpEndpointModel model : models) {
+                JsonObject jo = new JsonObject();
+                String uri = model.getUri();
+                if (!uri.startsWith("/")) {
+                    uri = "/" + uri;
+                }
+                jo.put("url", server + uri);
+                jo.put("path", model.getUri());
+                if (model.getVerbs() != null) {
+                    jo.put("verbs", model.getVerbs());
+                }
+                list.add(jo);
+            }
+            if (!list.isEmpty()) {
+                root.put("endpoints", list);
+            }
+        }
+
+        return root;
+    }
 }

@@ -6,6 +6,11 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.17 to 3.18
 
+=== camel-console
+
+The `AbstractDevConsole` has changed the method `doCall` into two separate methods `doCallText` and `doCallJson`
+to better separate output between text and json based.
+
 === camel-karaf
 
 The `camel-milo` feature has been removed.

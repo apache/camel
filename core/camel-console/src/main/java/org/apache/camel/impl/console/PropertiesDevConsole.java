@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("properties")
 public class PropertiesDevConsole extends AbstractDevConsole {
@@ -29,8 +30,7 @@ public class PropertiesDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected Object doCall(MediaType mediaType, Map<String, Object> options) {
-        // only text is supported
+    protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
         PropertiesComponent pc = getCamelContext().getPropertiesComponent();
@@ -45,5 +45,22 @@ public class PropertiesDevConsole extends AbstractDevConsole {
         sb.append("\n");
 
         return sb.toString();
+    }
+
+    @Override
+    protected JsonObject doCallJson(Map<String, Object> options) {
+        JsonObject root = new JsonObject();
+
+        PropertiesComponent pc = getCamelContext().getPropertiesComponent();
+        root.put("locations", pc.getLocations());
+        JsonObject props = new JsonObject();
+        root.put("properties", props);
+        for (Map.Entry<Object, Object> entry : pc.loadProperties().entrySet()) {
+            String k = entry.getKey().toString();
+            Object v = entry.getValue();
+            props.put(k, v);
+        }
+
+        return root;
     }
 }

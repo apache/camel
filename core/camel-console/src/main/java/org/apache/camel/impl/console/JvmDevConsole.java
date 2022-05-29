@@ -24,6 +24,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("jvm")
 @Configurer(bootstrap = true)
@@ -45,8 +46,7 @@ public class JvmDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected Object doCall(MediaType mediaType, Map<String, Object> options) {
-        // only text is supported
+    protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
         RuntimeMXBean mb = ManagementFactory.getRuntimeMXBean();
@@ -58,8 +58,8 @@ public class JvmDevConsole extends AbstractDevConsole {
             sb.append(String.format("PID: %s\n", mb.getPid()));
             if (!mb.getInputArguments().isEmpty()) {
                 sb.append("Input Arguments:");
-                String cp = String.join("\n    ", mb.getInputArguments());
-                sb.append("\n    ").append(cp).append("\n");
+                String arg = String.join("\n    ", mb.getInputArguments());
+                sb.append("\n    ").append(arg).append("\n");
             }
             if (mb.isBootClassPathSupported()) {
                 sb.append("Boot Classpath:");
@@ -72,5 +72,31 @@ public class JvmDevConsole extends AbstractDevConsole {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    protected JsonObject doCallJson(Map<String, Object> options) {
+        JsonObject root = new JsonObject();
+
+        RuntimeMXBean mb = ManagementFactory.getRuntimeMXBean();
+        if (mb != null) {
+            root.put("vmName", mb.getVmName());
+            root.put("vmVersion", mb.getVmVersion());
+            root.put("vmVendor", mb.getVmVendor());
+            root.put("vmUptime", TimeUtils.printDuration(mb.getUptime()));
+            root.put("pid", mb.getPid());
+            if (!mb.getInputArguments().isEmpty()) {
+                String arg = String.join(" ", mb.getInputArguments());
+                root.put("inputArguments", arg);
+            }
+            if (mb.isBootClassPathSupported()) {
+                String[] cp = mb.getBootClassPath().split("[:|;]");
+                root.put("bootClasspath", cp);
+            }
+            String[] cp = mb.getClassPath().split("[:|;]");
+            root.put("classpath", cp);
+        }
+
+        return root;
     }
 }

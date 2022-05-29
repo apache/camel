@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("health")
 public class HealthDevConsole extends AbstractDevConsole {
@@ -32,8 +33,7 @@ public class HealthDevConsole extends AbstractDevConsole {
         super("camel", "health", "Health Check", "Health Check Status");
     }
 
-    @Override
-    protected Object doCall(MediaType mediaType, Map<String, Object> options) {
+    protected String doCallText(Map<String, Object> options) {
         // only text is supported
         StringBuilder sb = new StringBuilder();
 
@@ -61,5 +61,48 @@ public class HealthDevConsole extends AbstractDevConsole {
         });
 
         return sb.toString();
+    }
+
+    @Override
+    protected JsonObject doCallJson(Map<String, Object> options) {
+        JsonObject root = new JsonObject();
+
+        Collection<HealthCheck.Result> results = HealthCheckHelper.invoke(getCamelContext());
+        boolean up = results.stream().allMatch(h -> HealthCheck.State.UP.equals(h.getState()));
+        root.put("up", up);
+
+        results.forEach(res -> {
+            JsonObject jo = new JsonObject();
+            jo.put("id", res.getCheck().getId());
+            jo.put("group", res.getCheck().getGroup());
+            jo.put("state", res.getState().toString());
+
+            boolean ok = res.getState().equals(HealthCheck.State.UP);
+            if (ok) {
+                jo.put("up", true);
+            } else {
+                jo.put("up", false);
+                String msg = res.getMessage().orElse("");
+                jo.put("message", msg);
+
+                Throwable cause = res.getError().orElse(null);
+                if (cause != null) {
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    cause.printStackTrace(pw);
+                    jo.put("stacktrace", pw.toString());
+                }
+            }
+
+            if (!res.getDetails().isEmpty()) {
+                JsonObject details = new JsonObject();
+                res.getDetails().forEach((k, v) -> {
+                    details.put(k, v.toString());
+                });
+                jo.put("details", details);
+            }
+        });
+
+        return root;
     }
 }

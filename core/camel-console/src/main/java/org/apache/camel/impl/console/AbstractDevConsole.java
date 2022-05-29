@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.json.JsonObject;
 
 /**
  * Base implementation for {@link DevConsole}.
@@ -55,7 +56,7 @@ public abstract class AbstractDevConsole extends ServiceSupport implements DevCo
 
     @Override
     public boolean supportMediaType(MediaType mediaType) {
-        return mediaType == MediaType.TEXT;
+        return true;
     }
 
     @Override
@@ -100,15 +101,26 @@ public abstract class AbstractDevConsole extends ServiceSupport implements DevCo
     @Override
     public Object call(MediaType mediaType, Map<String, Object> options) {
         synchronized (lock) {
-            return doCall(mediaType, options);
+            if (mediaType == MediaType.JSON) {
+                return doCallJson(options);
+            } else {
+                return doCallText(options);
+            }
         }
     }
 
     /**
-     * Invokes and gets the output from this console.
+     * Invokes and gets the output from this console in json format.
      *
      * @see DevConsole#call(MediaType, Map)
      */
-    protected abstract Object doCall(MediaType mediaType, Map<String, Object> options);
+    protected abstract JsonObject doCallJson(Map<String, Object> options);
+
+    /**
+     * Invokes and gets the output from this console in text format.
+     *
+     * @see DevConsole#call(MediaType, Map)
+     */
+    protected abstract String doCallText(Map<String, Object> options);
 
 }

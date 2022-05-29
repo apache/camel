@@ -17,6 +17,8 @@
 package org.apache.camel.impl.console;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
@@ -25,6 +27,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("event")
 @Configurer(bootstrap = true)
@@ -66,9 +69,7 @@ public class EventConsole extends AbstractDevConsole {
         events.clear();
     }
 
-    @Override
-    protected Object doCall(MediaType mediaType, Map<String, Object> options) {
-        // only text is supported
+    protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
         if (!events.isEmpty()) {
@@ -88,6 +89,34 @@ public class EventConsole extends AbstractDevConsole {
         }
 
         return sb.toString();
+    }
+
+    protected JsonObject doCallJson(Map<String, Object> options) {
+        JsonObject root = new JsonObject();
+
+        if (!events.isEmpty()) {
+            List<JsonObject> arr = new ArrayList<>();
+            for (CamelEvent event : events) {
+                JsonObject jo = new JsonObject();
+                jo.put("type", event.getType().toString());
+                jo.put("message", event.toString());
+                arr.add(jo);
+            }
+            root.put("events", arr);
+        }
+        if (!exchangeEvents.isEmpty()) {
+            List<JsonObject> arr = new ArrayList<>();
+            for (CamelEvent.ExchangeEvent event : exchangeEvents) {
+                JsonObject jo = new JsonObject();
+                jo.put("type", event.getType().toString());
+                jo.put("exchangeId", event.getExchange().getExchangeId());
+                jo.put("message", event.toString());
+                arr.add(jo);
+            }
+            root.put("exchangeEvents", arr);
+        }
+
+        return root;
     }
 
     private class ConsoleEventNotifier extends EventNotifierSupport {

@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.util.UnitUtils.printUnitFromBytesDot;
 
@@ -34,7 +35,7 @@ public class MemoryDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected Object doCall(MediaType mediaType, Map<String, Object> options) {
+    protected String doCallText(Map<String, Object> options) {
         // only text is supported
         StringBuilder sb = new StringBuilder();
 
@@ -55,4 +56,22 @@ public class MemoryDevConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
+    @Override
+    protected JsonObject doCallJson(Map<String, Object> options) {
+        JsonObject root = new JsonObject();
+
+        MemoryMXBean mb = ManagementFactory.getMemoryMXBean();
+        if (mb != null) {
+            root.put("heapMemoryInit", printUnitFromBytesDot(mb.getHeapMemoryUsage().getInit()));
+            root.put("heapMemoryMax", printUnitFromBytesDot(mb.getHeapMemoryUsage().getMax()));
+            root.put("heapMemoryUsed", printUnitFromBytesDot(mb.getHeapMemoryUsage().getUsed()));
+            root.put("heapMemoryCommitted", printUnitFromBytesDot(mb.getHeapMemoryUsage().getCommitted()));
+            root.put("nonHeapMemoryInit", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getInit()));
+            root.put("nonHeapMemoryMax", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getMax()));
+            root.put("nonHeapMemoryUsed", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getUsed()));
+            root.put("nonHeapMemoryCommitted", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getCommitted()));
+        }
+
+        return root;
+    }
 }
