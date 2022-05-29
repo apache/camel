@@ -55,12 +55,23 @@ public class FooConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected Object doCall(MediaType mediaType, Map<String, Object> options) {
-        if (mediaType.TEXT.equals(mediaType)) {
-            return "Some foolish text here";
-        } else {
-            // json structure
-        }
+    protected String doCallText(Map<String, Object> options) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Hello from my custom console");
+
+        // more stuff here
+
+        return sb.toString();
+    }
+
+    @Override
+    protected JsonObject doCallJson(Map<String, Object> options) {
+        JsonObject root = new JsonObject();
+        root.put("message", "Hello from my custom console");
+
+        // more stuff here
+
+        return root;
     }
 
 }
@@ -69,7 +80,10 @@ public class FooConsole extends AbstractDevConsole {
 The class must be annotated with `DevConsole` and the unique id of the console (must be unique across all consoles).
 In the constructor the console specifies which group, id, display title, and description to use.
 
-The `doCall` method is responsible for gathering the information the console should output.
+The `doCallText` and `doCallJson` methods is responsible for gathering the information the console should output.
+
+If the console does not support either text or json output, then the methods can return `null`,
+and override the `supportMediaType` method and return `true` for the media-type that are supported.
 
 === Supported Media Types
 
