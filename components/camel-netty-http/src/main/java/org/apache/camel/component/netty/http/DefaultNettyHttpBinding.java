@@ -285,6 +285,20 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     }
 
     /**
+     * Copy camel header from exchange to headers map.
+     *
+     * @param headers  the map headers
+     * @param exchange the exchange
+     */
+    protected void copyCamelHeaders(Map<String, Object> headers, Exchange exchange) {
+        exchange.getIn().getHeaders().keySet()
+                .stream()
+                .filter(key -> key.startsWith("Camel"))
+                .forEach(key -> headers.put(key, exchange.getIn().getHeaders().get(key)));
+
+    }
+
+    /**
      * Decodes the header if needed to, or returns the header value as is.
      *
      * @param  configuration                the configuration
@@ -352,6 +366,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     public void populateCamelHeaders(
             HttpResponse response, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) {
         LOG.trace("populateCamelHeaders: {}", response);
+
+        copyCamelHeaders(headers, exchange);
 
         headers.put(Exchange.HTTP_RESPONSE_CODE, response.status().code());
         headers.put(Exchange.HTTP_RESPONSE_TEXT, response.status().reasonPhrase());
