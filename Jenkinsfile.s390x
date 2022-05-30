@@ -56,8 +56,8 @@ pipeline {
              steps {
                  sh 'git clean -fdx'
                  // Remove camel-kudu and docs as these are not supported on s390x.
-                 sed -i '85d' pom.xml
-                 sed -i '212d' components/pom.xml
+                 sed -i '/camel-kudu/d' components/pom.xml
+                 sed -i '0,/docs/{//d;}' pom.xml                 
            }
         }
 
