@@ -170,7 +170,6 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                 while (!done) {
                     ListQueuesResponse listQueuesResult
                             = client.listQueues(ListQueuesRequest.builder().maxResults(1000).build());
-
                     for (String url : listQueuesResult.queueUrls()) {
                         if (url.endsWith("/" + configuration.getQueueName())) {
                             queueUrl = url;
@@ -178,11 +177,10 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                             break;
                         }
                     }
-
                     if (listQueuesResult.nextToken() == null) {
                         done = true;
+                        continue;
                     }
-
                     String token = listQueuesResult.nextToken();
                     listQueuesResult = client.listQueues(ListQueuesRequest.builder().nextToken(token).build());
                 }
