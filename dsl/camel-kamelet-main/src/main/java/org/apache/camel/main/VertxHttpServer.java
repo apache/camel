@@ -222,7 +222,7 @@ public final class VertxHttpServer {
                             String link = c.getId();
                             String eol = "\n";
                             if (html) {
-                                link = "<a href=\"" + link + "\">" + c.getId() + "</a>";
+                                link = "<a href=\"dev/" + link + "\">" + c.getId() + "</a>";
                                 eol = "<br/>\n";
                             }
                             sb.append(link).append(": ").append(c.getDescription()).append(eol);
