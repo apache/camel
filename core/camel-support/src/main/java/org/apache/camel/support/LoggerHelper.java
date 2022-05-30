@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Helper for logging purposes.
@@ -65,6 +66,36 @@ public final class LoggerHelper {
             }
         }
         return name;
+    }
+
+    public static String getSourceLocation(Object node) {
+        String name = null;
+        if (node instanceof LineNumberAware) {
+            if (node instanceof NamedRoute) {
+                // we want the input from a route as it has the source location / line number
+                node = ((NamedRoute) node).getInput();
+            }
+            String loc = ((LineNumberAware) node).getLocation();
+            int line = ((LineNumberAware) node).getLineNumber();
+            if (loc != null) {
+                // is it a class or file?
+                name = loc;
+                if (line != -1) {
+                    name += ":" + line;
+                }
+            }
+        }
+        return name;
+    }
+
+    public static String stripSourceLocationLineNumber(String location) {
+        int cnt = StringHelper.countChar(location, ':');
+        if (cnt > 1) {
+            int pos = location.lastIndexOf(':');
+            return location.substring(0, pos);
+        } else {
+            return location;
+        }
     }
 
 }

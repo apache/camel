@@ -32,6 +32,7 @@ import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -101,6 +102,7 @@ public class TopDevConsole extends AbstractDevConsole {
                     if (loc != null && mpb.getSourceLineNumber() != null) {
                         int line = mpb.getSourceLineNumber();
                         try {
+                            loc = LoggerHelper.stripSourceLocationLineNumber(loc);
                             Resource resource = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader()
                                     .resolveResource(loc);
                             if (resource != null) {
@@ -198,6 +200,7 @@ public class TopDevConsole extends AbstractDevConsole {
                     if (loc != null && mpb.getSourceLineNumber() != null) {
                         int line = mpb.getSourceLineNumber();
                         try {
+                            loc = LoggerHelper.stripSourceLocationLineNumber(loc);
                             Resource resource = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader()
                                     .resolveResource(loc);
                             if (resource != null) {
@@ -296,7 +299,7 @@ public class TopDevConsole extends AbstractDevConsole {
 
         return PatternHelper.matchPattern(mrb.getRouteId(), filter)
                 || PatternHelper.matchPattern(mrb.getEndpointUri(), filter)
-                || PatternHelper.matchPattern(mrb.getSourceLocation(), filter);
+                || PatternHelper.matchPattern(mrb.getSourceLocationShort(), filter);
     }
 
     private static boolean acceptProcessor(ManagedProcessorMBean mpb, String filter) {

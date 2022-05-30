@@ -74,6 +74,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private final String routeDescription;
     private final Resource sourceResource;
     private final String sourceLocation;
+    private final String sourceLocationShort;
     private final List<Processor> eventDrivenProcessors = new ArrayList<>();
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>(0);
     private ManagementInterceptStrategy managementInterceptStrategy;
@@ -118,7 +119,8 @@ public class DefaultRoute extends ServiceSupport implements Route {
         this.routeDescription = routeDescription;
         this.endpoint = endpoint;
         this.sourceResource = resource;
-        this.sourceLocation = LoggerHelper.getLineNumberLoggerName(route);
+        this.sourceLocation = LoggerHelper.getSourceLocation(route);
+        this.sourceLocationShort = LoggerHelper.getLineNumberLoggerName(route);
     }
 
     @Override
@@ -188,6 +190,11 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public String getSourceLocation() {
         return sourceLocation;
+    }
+
+    @Override
+    public String getSourceLocationShort() {
+        return sourceLocationShort;
     }
 
     @Override

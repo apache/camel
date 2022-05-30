@@ -74,6 +74,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     protected final String description;
     protected final String configurationId;
     protected final String sourceLocation;
+    protected final String sourceLocationShort;
     protected final CamelContext context;
     private final LoadTriplet load = new LoadTriplet();
     private final String jmxDomain;
@@ -84,6 +85,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         this.description = route.getDescription();
         this.configurationId = route.getConfigurationId();
         this.sourceLocation = route.getSourceLocation();
+        this.sourceLocationShort = route.getSourceLocationShort();
         this.jmxDomain = context.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
     }
 
@@ -150,6 +152,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     @Override
     public String getSourceLocation() {
         return sourceLocation;
+    }
+
+    @Override
+    public String getSourceLocationShort() {
+        return null;
     }
 
     @Override
@@ -699,7 +706,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
             String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-            List<ManagedProcessorMBean> processors = new ArrayList<>();
             // gather all the processors for this CamelContext, which requires JMX
             ObjectName query = ObjectName
                     .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");

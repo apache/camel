@@ -16,23 +16,28 @@
  */
 package org.apache.camel.impl.console;
 
+import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
-@DevConsole("route")
-public class RouteDevConsole extends AbstractDevConsole {
+@DevConsole("source")
+public class SourceDevConsole extends AbstractDevConsole {
 
     /**
      * Filters the routes matching by route id, route uri, and source location
@@ -44,30 +49,49 @@ public class RouteDevConsole extends AbstractDevConsole {
      */
     public static final String LIMIT = "limit";
 
-    public RouteDevConsole() {
-        super("camel", "route", "Route", "Route information");
+    public SourceDevConsole() {
+        super("camel", "source", "Source", "Display route source code");
     }
 
     @Override
     protected String doCallText(Map<String, Object> options) {
         final StringBuilder sb = new StringBuilder();
         Function<ManagedRouteMBean, Object> task = mrb -> {
-            if (sb.length() > 0) {
-                sb.append("\n");
+            String loc = mrb.getSourceLocation();
+            if (loc != null) {
+                loc = LoggerHelper.stripSourceLocationLineNumber(loc);
+                StringBuilder code = new StringBuilder();
+                try {
+                    Resource resource = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader()
+                            .resolveResource(loc);
+                    if (resource != null) {
+                        if (sb.length() > 0) {
+                            sb.append("\n");
+                        }
+
+                        LineNumberReader reader = new LineNumberReader(resource.getReader());
+                        int i = 0;
+                        String t;
+                        do {
+                            t = reader.readLine();
+                            if (t != null) {
+                                i++;
+                                code.append(String.format("\n    #%s %s", i, t));
+                            }
+                        } while (t != null);
+                        IOHelper.close(reader);
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
+                sb.append(String.format("    Id: %s", mrb.getRouteId()));
+                if (mrb.getSourceLocation() != null) {
+                    sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
+                }
+                if (code.length() > 0) {
+                    sb.append(code);
+                }
             }
-            sb.append(String.format("    Id: %s", mrb.getRouteId()));
-            sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
-            if (mrb.getSourceLocation() != null) {
-                sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
-            }
-            sb.append(String.format("\n    State: %s", mrb.getState()));
-            sb.append(String.format("\n    Uptime: %s", mrb.getUptime()));
-            sb.append(String.format("\n    Total: %s", mrb.getExchangesTotal()));
-            sb.append(String.format("\n    Failed: %s", mrb.getExchangesFailed()));
-            sb.append(String.format("\n    Inflight: %s", mrb.getExchangesInflight()));
-            sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mrb.getMeanProcessingTime())));
-            sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime())));
-            sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime())));
             sb.append("\n");
             return null;
         };
@@ -89,16 +113,37 @@ public class RouteDevConsole extends AbstractDevConsole {
             if (mrb.getSourceLocation() != null) {
                 jo.put("source", mrb.getSourceLocation());
             }
-            jo.put("state", mrb.getState());
-            jo.put("uptime", mrb.getUptime());
-            JsonObject stats = new JsonObject();
-            stats.put("exchangesTotal", mrb.getExchangesTotal());
-            stats.put("exchangesFailed", mrb.getExchangesFailed());
-            stats.put("exchangesInflight", mrb.getExchangesInflight());
-            stats.put("meanProcessingTime", mrb.getMeanProcessingTime());
-            stats.put("maxProcessingTime", mrb.getMaxProcessingTime());
-            stats.put("minProcessingTime", mrb.getMinProcessingTime());
-            jo.put("statistics", stats);
+
+            String loc = mrb.getSourceLocation();
+            if (loc != null) {
+                List<JsonObject> code = new ArrayList<>();
+                try {
+                    loc = LoggerHelper.stripSourceLocationLineNumber(loc);
+                    Resource resource = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader()
+                            .resolveResource(loc);
+                    if (resource != null) {
+                        LineNumberReader reader = new LineNumberReader(resource.getReader());
+                        int i = 0;
+                        String t;
+                        do {
+                            t = reader.readLine();
+                            if (t != null) {
+                                i++;
+                                JsonObject c = new JsonObject();
+                                c.put("line", i);
+                                c.put("code", Jsoner.escape(t));
+                                code.add(c);
+                            }
+                        } while (t != null);
+                        IOHelper.close(reader);
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
+                if (!code.isEmpty()) {
+                    jo.put("code", code);
+                }
+            }
             return null;
         };
         doCall(options, task);
@@ -121,7 +166,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                     .map(route -> mcc.getManagedRoute(route.getRouteId()))
                     .filter(r -> accept(r, filter))
                     .filter(r -> accept(r, subPath))
-                    .sorted(RouteDevConsole::sort)
+                    .sorted(SourceDevConsole::sort)
                     .limit(max)
                     .forEach(task::apply);
         }

@@ -582,7 +582,7 @@ public final class MessageHelper {
         // add incoming origin of message on the top
         String routeId = exchange.getFromRouteId();
         Route route = exchange.getContext().getRoute(routeId);
-        String loc = route != null ? route.getSourceLocation() : null;
+        String loc = route != null ? route.getSourceLocationShort() : null;
         if (loc == null) {
             loc = "";
         }

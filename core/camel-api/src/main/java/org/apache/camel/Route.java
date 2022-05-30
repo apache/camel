@@ -149,6 +149,11 @@ public interface Route extends RuntimeConfiguration {
     String getSourceLocation();
 
     /**
+     * The source:line-number in short format that can be used for logging or summary purposes.
+     */
+    String getSourceLocationShort();
+
+    /**
      * Gets the camel context
      *
      * @return the camel context

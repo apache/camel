@@ -387,7 +387,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
                 // add incoming origin of message on the top
                 String routeId = suspendedExchange.getFromRouteId();
                 Route route = suspendedExchange.getContext().getRoute(routeId);
-                String loc = route != null ? route.getSourceLocation() : "";
+                String loc = route != null ? route.getSourceLocationShort() : "";
                 String id = routeId;
                 String label = "";
                 if (suspendedExchange.getFromEndpoint() != null) {
