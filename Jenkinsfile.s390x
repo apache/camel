@@ -54,10 +54,7 @@ pipeline {
                  expression { params.CLEAN }
              }
              steps {
-                 sh 'git clean -fdx'
-                 // Remove camel-kudu and docs as these are not supported on s390x.
-                 sed -i '/camel-kudu/d' components/pom.xml
-                 sed -i '0,/docs/{//d;}' pom.xml                 
+                 sh 'git clean -fdx'                                
            }
         }
 
@@ -66,7 +63,8 @@ pipeline {
                 branch 'main'
             }
             steps {
-                sh "./mvnw -U $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean deploy"
+                // Remove camel-kudu and docs as these are not supported on s390x.
+                sh "./mvnw -U $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean deploy -pl \!docs,\!components/camel-kudu"
             }
         }
 
@@ -78,7 +76,8 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify"
+                // Remove camel-kudu and docs as these are not supported on s390x.
+                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -pl \!docs,\!components/camel-kudu"
             }
             post {
                 always {
