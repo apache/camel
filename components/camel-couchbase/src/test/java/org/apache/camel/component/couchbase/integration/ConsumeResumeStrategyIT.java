@@ -50,7 +50,7 @@ public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
         }
     }
 
-    TransientResumeStrategy resumeStrategy = new TransientResumeStrategy(new TestCouchbaseResumeAdapter());
+    private final TransientResumeStrategy resumeStrategy = new TransientResumeStrategy(new TestCouchbaseResumeAdapter());
 
     @Test
     public void testQueryForBeers() throws Exception {

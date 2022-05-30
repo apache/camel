@@ -15,15 +15,33 @@
  * limitations under the License.
  */
 
-package org.apache.camel.resume.cache;
+package org.apache.camel.resume;
+
+import org.apache.camel.resume.cache.ResumeCache;
 
 /**
- * A cache where an entry can point to one or more entries. For instance, a path as the key and the file entries as its
- * entries
- *
- * @param <K> the type of the key
- * @param <V> the type of the value
+ * Used to identify objects that can cache their resume state or data
  */
-public interface MultiEntryCache<K, V> extends ResumeCache<K, V> {
+public interface Cacheable {
 
+    /**
+     * Adds an offset key and value to the cache
+     * @param key the key to add
+     * @param offset the offset to add
+     * @return true if added successfully (i.e.: the cache is not full) or false otherwise
+     */
+    boolean add(OffsetKey<?> key, Offset<?> offset);
+
+    /**
+     * Sets the cache in resume adapters and objects that cache their data
+     * @param cache A resume cache instance
+     */
+    void setCache(ResumeCache<?> cache);
+
+
+    /**
+     * Gets the cache in resume adapters and objects that cache their data
+     * @return A resume cache instance
+     */
+    ResumeCache<?> getCache();
 }

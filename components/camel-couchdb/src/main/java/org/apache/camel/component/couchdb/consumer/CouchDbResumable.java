@@ -19,13 +19,15 @@ package org.apache.camel.component.couchdb.consumer;
 
 import org.apache.camel.component.couchdb.CouchDbClientWrapper;
 import org.apache.camel.resume.Offset;
+import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.Resumable;
+import org.apache.camel.support.resume.OffsetKeys;
 import org.apache.camel.support.resume.Offsets;
 
 /**
  * Wraps the resume data for CouchDb
  */
-public class CouchDbResumable implements Resumable<String, String> {
+public class CouchDbResumable implements Resumable {
     private final CouchDbClientWrapper clientWrapper;
     private String offset;
 
@@ -34,7 +36,6 @@ public class CouchDbResumable implements Resumable<String, String> {
         this.offset = offset;
     }
 
-    @Override
     public void updateLastOffset(String offset) {
         this.offset = offset;
     }
@@ -44,11 +45,6 @@ public class CouchDbResumable implements Resumable<String, String> {
         return Offsets.of(offset);
     }
 
-    @Override
-    public String getAddressable() {
-        return null;
-    }
-
     /**
      * Gets the client wrapper. Fine for local access, but should be restricted for global access on the API
      * 
@@ -56,5 +52,10 @@ public class CouchDbResumable implements Resumable<String, String> {
      */
     CouchDbClientWrapper getClientWrapper() {
         return clientWrapper;
+    }
+
+    @Override
+    public OffsetKey<?> getOffsetKey() {
+        return OffsetKeys.empty();
     }
 }

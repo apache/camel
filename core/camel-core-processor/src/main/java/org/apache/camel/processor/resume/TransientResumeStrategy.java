@@ -32,8 +32,18 @@ public class TransientResumeStrategy implements ResumeStrategy {
     }
 
     @Override
+    public void setAdapter(ResumeAdapter adapter) {
+
+    }
+
+    @Override
     public ResumeAdapter getAdapter() {
         return resumeAdapter;
+    }
+
+    @Override
+    public <T extends ResumeAdapter> T getAdapter(Class<T> clazz) {
+        return ResumeStrategy.super.getAdapter(clazz);
     }
 
     @Override

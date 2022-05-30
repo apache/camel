@@ -15,25 +15,32 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kafka.consumer.support;
+package org.apache.camel.component.file.consumer.adapters;
 
 import org.apache.camel.resume.Offset;
-import org.apache.camel.util.KeyValueHolder;
 
-/**
- * Offset class for Kafka
- */
-public class KafkaOffset implements Offset<KeyValueHolder<String, String>> {
-    private final String topicPartition;
-    private final String offset;
+public class FileOffset implements Offset<Long> {
+    private Long offset;
 
-    public KafkaOffset(String topicPartition, String offset) {
-        this.topicPartition = topicPartition;
+    public FileOffset() {
+    }
+
+    public FileOffset(Long offset) {
         this.offset = offset;
     }
 
     @Override
-    public KeyValueHolder<String, String> offset() {
-        return new KeyValueHolder<>(topicPartition, offset);
+    public void update(Long offset) {
+        this.offset = offset;
+    }
+
+    @Deprecated
+    public Object getLastOffset() {
+        return offset;
+    }
+
+    @Override
+    public Long offset() {
+        return offset;
     }
 }

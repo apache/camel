@@ -20,15 +20,16 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.consumer.GenericFileResumable;
-import org.apache.camel.component.file.consumer.GenericFileResumeAdapter;
+import org.apache.camel.component.file.consumer.DirectoryEntriesResumeAdapter;
+import org.apache.camel.component.file.consumer.FileOffsetResumeAdapter;
+import org.apache.camel.component.file.consumer.FileResumeAdapter;
+import org.apache.camel.component.file.consumer.adapters.DirectoryEntries;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.resume.Resumable;
@@ -37,37 +38,57 @@ import org.apache.camel.support.resume.Resumables;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(FileConsumerResumeFromOffsetStrategyTest.class);
 
-    private static class TestFileResumeAdapter implements GenericFileResumeAdapter {
+    private static class TestFileResumeAdapter implements FileResumeAdapter, FileOffsetResumeAdapter {
+        private GenericFile<File> resumable;
+        private DirectoryEntries fileSet;
+
         @Override
-        public void resume(GenericFileResumable<File> resumable) {
-            if (!resumable.getAddressable().getName().startsWith("resume-from-offset")) {
+        public void setResumePayload(GenericFile<File> resumable) {
+            if (!resumable.getFile().getName().startsWith("resume-from-offset")) {
                 throw new RuntimeCamelException("Invalid file - resume strategy should not have been called!");
             }
 
-            resumable.updateLastOffset(3L);
+            this.resumable = resumable;
         }
 
         @Override
         public void resume() {
-            throw new UnsupportedOperationException("Unsupported operation");
-            // NO-OP
-        }
+            if (resumable != null) {
+                resumable.updateLastOffset(3L);
+                resumable = null;
+            }
 
-        @Override
-        public Optional<Long> getLastOffset(File addressable) {
-            return Optional.empty();
+            if (fileSet != null) {
+                DirectoryEntries.doResume(fileSet, f -> !f.getName().equals("resume-from-offset"));
+                LOG.debug("Fileset: {}", fileSet);
+                LOG.debug("Fileset: {}", fileSet.resumed());
+
+                fileSet = null;
+            }
         }
     }
 
-    private static class FailResumeAdapter extends TestFileResumeAdapter
-            implements UpdatableConsumerResumeStrategy<File, Long, Resumable<File, Long>> {
+    private static class FailResumeAdapter implements FileResumeAdapter, DirectoryEntriesResumeAdapter,UpdatableConsumerResumeStrategy<Resumable> {
         private boolean called;
 
         @Override
-        public void updateLastOffset(Resumable<File, Long> offset) {
+        public void resume() {
+
+        }
+
+        @Override
+        public void setResumePayload(DirectoryEntries fileSet) {
+            DirectoryEntries.doResume(fileSet, f -> true);
+        }
+
+        @Override
+        public void updateLastOffset(Resumable offset) {
             called = true;
         }
     }

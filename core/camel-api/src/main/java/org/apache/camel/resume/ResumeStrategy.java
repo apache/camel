@@ -26,6 +26,12 @@ import org.apache.camel.Service;
 public interface ResumeStrategy extends Service {
 
     /**
+     * Sets an adapter for resuming operations with this strategy
+     * @param adapter    the component-specific resume adapter
+     */
+    void setAdapter(ResumeAdapter adapter);
+
+    /**
      * Gets an adapter for resuming operations
      */
     ResumeAdapter getAdapter();
@@ -39,5 +45,14 @@ public interface ResumeStrategy extends Service {
      */
     default <T extends ResumeAdapter> T getAdapter(Class<T> clazz) {
         return clazz.cast(getAdapter());
+    }
+
+
+    /**
+     * Loads the cache with the data currently available in this strategy
+     * @throws Exception
+     */
+    default void loadCache() throws Exception {
+
     }
 }

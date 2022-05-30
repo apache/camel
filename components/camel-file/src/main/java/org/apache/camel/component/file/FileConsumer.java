@@ -31,10 +31,9 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.file.consumer.FileResumeAdapter;
-import org.apache.camel.component.file.consumer.FileResumeSet;
-import org.apache.camel.component.file.consumer.FileSetResumeAdapter;
-import org.apache.camel.component.file.consumer.GenericFileResumeAdapter;
+import org.apache.camel.component.file.consumer.DirectoryEntriesResumeAdapter;
+import org.apache.camel.component.file.consumer.FileOffsetResumeAdapter;
+import org.apache.camel.component.file.consumer.adapters.DirectoryEntries;
 import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
@@ -107,8 +106,9 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
 
             if (resumeStrategy != null) {
                 ResumeAdapter adapter = resumeStrategy.getAdapter();
-                if (adapter instanceof GenericFileResumeAdapter) {
-                    ((FileResumeAdapter) adapter).resume(gf);
+                if (adapter instanceof FileOffsetResumeAdapter) {
+                    ((FileOffsetResumeAdapter) adapter).setResumePayload(gf);
+                    adapter.resume();
                 }
             }
 
@@ -178,10 +178,11 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
 
         if (resumeStrategy != null) {
             ResumeAdapter adapter = resumeStrategy.getAdapter();
-            if (adapter instanceof FileSetResumeAdapter) {
-                FileResumeSet resumeSet = new FileResumeSet(dirFiles);
+            if (adapter instanceof DirectoryEntriesResumeAdapter) {
+                DirectoryEntries resumeSet = new DirectoryEntries(directory, dirFiles);
 
-                ((FileResumeAdapter) adapter).resume(resumeSet);
+                ((DirectoryEntriesResumeAdapter) adapter).setResumePayload(resumeSet);
+                adapter.resume();
 
                 return resumeSet.resumed();
             }
@@ -313,6 +314,15 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         // GenericFile's absolute path is always up to date whereas the
         // underlying file is not
         return !file.getFile().getAbsolutePath().equals(file.getAbsoluteFilePath());
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (resumeStrategy != null) {
+            resumeStrategy.loadCache();
+        }
     }
 
     @Override

@@ -24,9 +24,8 @@ import org.apache.camel.resume.UpdatableConsumerResumeStrategy;
 /**
  * Base interface for resume strategies that publish the offsets to a Kafka topic
  * 
- * @param <K> the type of key
- * @param <V> the type of the value
+ * @param <T> the type of resumable
  */
-public interface KafkaResumeStrategy<K, V> extends UpdatableConsumerResumeStrategy<K, V, Resumable<K, V>>, ResumeStrategy {
+public interface KafkaResumeStrategy<T extends Resumable> extends UpdatableConsumerResumeStrategy<T>, ResumeStrategy {
 
 }

@@ -15,24 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.camel.resume.cache;
+package org.apache.camel.component.file.consumer;
 
-import java.util.Optional;
+import java.io.File;
+
+import org.apache.camel.component.file.GenericFile;
 
 /**
- * A resume cache where a single key can only be mapped to a single entry
- *
- * @param <K> the type the key
- * @param <V> the type of the entry
+ * Provides an interface for adapters handling file offsets
  */
-public interface SingleEntryCache<K, V> extends ResumeCache<K, V> {
+public interface FileOffsetResumeAdapter {
 
     /**
-     * Gets the offset value for the key
-     *
-     * @param  key the key
-     * @return     the key
+     * Sets the resume payload used for the adapter
+     * 
+     * @param genericFile a generic file instance
      */
-    Optional<V> get(K key);
+    default void setResumePayload(GenericFile<File> genericFile) {
 
+    }
 }
