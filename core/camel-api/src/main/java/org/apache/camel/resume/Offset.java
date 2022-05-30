@@ -17,12 +17,20 @@
 
 package org.apache.camel.resume;
 
+import java.nio.ByteBuffer;
+
 /**
  * Generic offset without a concrete type
  *
  * @param <T> the type of the offset
  */
-public interface Offset<T> {
+public interface Offset<T> extends Serializable {
+
+    /**
+     * Sets the current offset value
+     * @param offset the current offset value
+     */
+    void update(T offset);
 
     /**
      * Gets the offset value
@@ -31,4 +39,8 @@ public interface Offset<T> {
      */
     T offset();
 
+    @Override
+    default ByteBuffer serialize() {
+        return serialize(offset());
+    }
 }

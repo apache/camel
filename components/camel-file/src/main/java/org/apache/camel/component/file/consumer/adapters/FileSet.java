@@ -15,20 +15,41 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.file.consumer;
+package org.apache.camel.component.file.consumer.adapters;
 
 import java.io.File;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Allows the implementation of file adapters for handling resume operations for generic files
- */
-public interface GenericFileResumeAdapter extends FileResumeAdapter<GenericFileResumable<File>> {
-    /**
-     * Gets the last offset for the given file
-     *
-     * @param  addressable the file instance
-     * @return             An Optional with the offset value
-     */
-    Optional<Long> getLastOffset(File addressable);
+import org.apache.camel.resume.Offset;
+
+public class FileSet implements Offset<File> {
+    private final List<File> files = new ArrayList<>();
+
+    public FileSet() {
+
+    }
+
+    public FileSet(File offset) {
+        files.add(offset);
+    }
+
+    @Deprecated
+    public Object getLastOffset() {
+        return files;
+    }
+
+    public boolean contains(Object o) {
+        return files.contains(o);
+    }
+
+    @Override
+    public void update(File offset) {
+        files.add(offset);
+    }
+
+    @Override
+    public File offset() {
+        return null;
+    }
 }

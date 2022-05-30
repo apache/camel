@@ -15,30 +15,40 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kafka.consumer.support;
+package org.apache.camel.component.file.consumer.adapters;
 
+import java.io.File;
+
+import org.apache.camel.component.file.consumer.FileResumeAdapter;
+import org.apache.camel.resume.Cacheable;
 import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.OffsetKey;
-import org.apache.camel.resume.Resumable;
-import org.apache.camel.support.resume.OffsetKeys;
-import org.apache.camel.support.resume.Offsets;
+import org.apache.camel.resume.cache.ResumeCache;
 
-public class KafkaResumable implements Resumable {
-    private final String partition;
-    private final String offset;
+/**
+ * Base shared class for the file resume adapters
+ */
+abstract class AbstractFileResumeAdapter implements FileResumeAdapter, Cacheable {
+    protected ResumeCache<File> cache;
 
-    public KafkaResumable(String partition, String offset) {
-        this.partition = partition;
-        this.offset = offset;
+    protected AbstractFileResumeAdapter() {
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public final void setCache(ResumeCache<?> cache) {
+        this.cache = (ResumeCache<File>) cache;
     }
 
     @Override
-    public Offset<String> getLastOffset() {
-        return Offsets.of(offset);
+    public final ResumeCache<?> getCache() {
+        return cache;
     }
 
     @Override
-    public OffsetKey<?> getOffsetKey() {
-        return OffsetKeys.unmodifiableOf(partition);
+    public final boolean add(OffsetKey<?> key, Offset<?> offset) {
+        return add(key.getKey(), offset.offset());
     }
+
+    protected abstract boolean add(Object key, Object offset);
 }

@@ -22,12 +22,6 @@ import org.apache.camel.resume.ResumeAdapter;
 /**
  * Defines resume adapter for consumers of the file component.
  */
-public interface FileResumeAdapter<T> extends ResumeAdapter {
+public interface FileResumeAdapter extends ResumeAdapter {
 
-    /**
-     * Returns the last offset read for the given file.
-     *
-     * @param resumable the resumable file or resumable set to run the resume
-     */
-    void resume(T resumable);
 }

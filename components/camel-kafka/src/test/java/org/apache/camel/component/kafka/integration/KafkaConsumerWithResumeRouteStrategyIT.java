@@ -31,6 +31,7 @@ import org.apache.camel.component.kafka.consumer.support.KafkaResumable;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.resume.Offset;
+import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.Resumable;
 import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.UpdatableConsumerResumeStrategy;
@@ -60,10 +61,9 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
     @BindToRegistry("resumeStrategy")
     private TestUpdateStrategy resumeStrategy;
     private CountDownLatch messagesLatch;
-    private KafkaProducer<Object, Object> producer;
 
     private static class TestUpdateStrategy extends TransientResumeStrategy
-            implements UpdatableConsumerResumeStrategy<String, Integer, Resumable<String, Integer>> {
+            implements UpdatableConsumerResumeStrategy<Resumable> {
         private final CountDownLatch messagesLatch;
         private boolean startCalled;
         private boolean offsetNull = true;
@@ -91,25 +91,25 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
         }
 
         @Override
-        public void updateLastOffset(Resumable<String, Integer> offset) throws Exception {
+        public void updateLastOffset(Resumable offset) {
             try {
                 if (offset != null) {
                     offsetNull = false;
 
-                    String addressable = offset.getAddressable();
+                    OffsetKey<?> addressable = offset.getOffsetKey();
                     if (addressable != null) {
                         offsetAddressableNull = false;
-                        offsetAddressableEmpty = addressable.isEmpty() || addressable.isBlank();
+                        offsetAddressableEmpty = addressable.getKey() == null;
 
                     }
 
-                    Offset<Integer> offsetValue = offset.getLastOffset();
+                    Offset<?> offsetValue = offset.getLastOffset();
                     if (offsetValue != null) {
                         offsetValueNull = false;
 
                         if (offsetValue.offset() != null) {
                             offsetValueEmpty = false;
-                            lastOffset = offsetValue.offset();
+                            lastOffset = (int) offsetValue.offset();
                         }
                     }
                 }
@@ -176,9 +176,9 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
     @BeforeEach
     public void before() {
         Properties props = getDefaultProperties();
+        KafkaProducer<Object, Object> producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
 
         for (int i = 0; i < 10; i++) {
-            producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
             producer.send(new ProducerRecord<>(TOPIC, String.valueOf(i)));
         }
     }

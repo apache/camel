@@ -18,6 +18,7 @@
 package org.apache.camel.processor.resume.kafka;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,6 +29,11 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.resume.Cacheable;
+import org.apache.camel.resume.Deserializable;
+import org.apache.camel.resume.Offset;
+import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.Resumable;
 import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.cache.ResumeCache;
@@ -45,8 +51,8 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.kafka.common.serialization.ByteArrayDeserializer;
+import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,54 +60,45 @@ import org.slf4j.LoggerFactory;
  * A resume strategy that publishes offsets to a Kafka topic. This resume strategy is suitable for single node
  * integrations. For multi-node integrations (i.e: using clusters with the master component check
  * {@link MultiNodeKafkaResumeStrategy}.
- * 
- * @param <K> the type of key
- * @param <V> the type of the value
+ *
  */
-public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<K, V> {
+public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements KafkaResumeStrategy<T> {
     private static final Logger LOG = LoggerFactory.getLogger(SingleNodeKafkaResumeStrategy.class);
 
     private final String topic;
 
-    private Consumer<K, V> consumer;
-    private Producer<K, V> producer;
+    private Consumer<byte[], byte[]> consumer;
+    private Producer<byte[], byte[]> producer;
     private Duration pollDuration = Duration.ofSeconds(1);
 
     private final Queue<RecordError> producerErrors = new ConcurrentLinkedQueue<>();
-    private final ResumeCache<K, V> resumeCache;
+
     private boolean subscribed;
     private final Properties producerConfig;
     private final Properties consumerConfig;
-    private ResumeAdapter resumeAdapter;
+    private ResumeAdapter adapter;
 
     /**
      * Builds an instance of this class
      * 
      * @param bootstrapServers the address of the Kafka broker
      * @param topic            the topic where to publish the offsets
-     * @param resumeCache      a cache instance where to store the offsets locally for faster access
-     * @param resumeAdapter    the component-specific resume adapter
+     *
      */
-    public SingleNodeKafkaResumeStrategy(String bootstrapServers, String topic, ResumeCache<K, V> resumeCache,
-                                         ResumeAdapter resumeAdapter) {
-        this(topic, resumeCache, resumeAdapter, createProducer(bootstrapServers), createConsumer(bootstrapServers));
+    public SingleNodeKafkaResumeStrategy(String bootstrapServers, String topic) {
+        this(topic, createProducer(bootstrapServers), createConsumer(bootstrapServers));
     }
 
     /**
      * Builds an instance of this class
      *
      * @param topic          the topic where to publish the offsets
-     * @param resumeCache    a cache instance where to store the offsets locally for faster access
-     * @param resumeAdapter  the component-specific resume adapter
      * @param producerConfig the set of properties to be used by the Kafka producer within this class
      * @param consumerConfig the set of properties to be used by the Kafka consumer within this class
      */
-    public SingleNodeKafkaResumeStrategy(String topic, ResumeCache<K, V> resumeCache, ResumeAdapter resumeAdapter,
-                                         Properties producerConfig,
+    public SingleNodeKafkaResumeStrategy(String topic, Properties producerConfig,
                                          Properties consumerConfig) {
         this.topic = ObjectHelper.notNull(topic, "The topic must not be null");
-        this.resumeCache = resumeCache;
-        this.resumeAdapter = resumeAdapter;
         this.producerConfig = producerConfig;
         this.consumerConfig = consumerConfig;
 
@@ -117,8 +114,8 @@ public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<
     public static Properties createProducer(String bootstrapServers) {
         Properties config = new Properties();
 
-        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class.getName());
+        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class.getName());
 
         StringHelper.notEmpty(bootstrapServers, "bootstrapServers");
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -135,8 +132,8 @@ public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<
     public static Properties createConsumer(String bootstrapServers) {
         Properties config = new Properties();
 
-        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
 
         StringHelper.notEmpty(bootstrapServers, "bootstrapServers");
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -160,8 +157,8 @@ public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<
      * @throws InterruptedException
      *
      */
-    protected void produce(K key, V message) throws ExecutionException, InterruptedException {
-        ProducerRecord<K, V> record = new ProducerRecord<>(topic, key, message);
+    protected void produce(byte[] key, byte[] message) throws ExecutionException, InterruptedException {
+        ProducerRecord<byte[], byte[]> record = new ProducerRecord<>(topic, key, message);
 
         producer.send(record, (recordMetadata, e) -> {
             if (e != null) {
@@ -171,16 +168,27 @@ public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<
         });
     }
 
+    protected void doAdd(OffsetKey<?> key, Offset<?> offsetValue) {
+        if (adapter instanceof Cacheable) {
+            Cacheable cacheable = (Cacheable) adapter;
+
+            cacheable.add(key, offsetValue);
+        }
+    }
+
     @Override
-    public void updateLastOffset(Resumable<K, V> offset) throws Exception {
-        K key = offset.getAddressable();
-        V offsetValue = offset.getLastOffset().offset();
+    public void updateLastOffset(T offset) throws Exception {
+        OffsetKey<?> key = offset.getOffsetKey();
+        Offset<?> offsetValue = offset.getLastOffset();
 
-        LOG.debug("Updating offset on Kafka with key {} to {}", key, offsetValue);
+        LOG.debug("Updating offset on Kafka with key {} to {}", key.getKey(), offsetValue.offset());
 
-        produce(key, offsetValue);
+        ByteBuffer keyBuffer = key.serialize();
+        ByteBuffer valueBuffer = offsetValue.serialize();
 
-        resumeCache.add(key, offsetValue);
+        produce(keyBuffer.array(), valueBuffer.array());
+
+        doAdd(key, offsetValue);
     }
 
     /**
@@ -188,12 +196,23 @@ public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<
      * 
      * @throws Exception
      */
-    protected void loadCache() throws Exception {
+    public void loadCache() throws Exception {
         subscribe();
 
         LOG.debug("Loading records from topic {}", topic);
 
-        ConsumerRecords<K, V> records;
+        if (!(adapter instanceof Deserializable)) {
+            throw new RuntimeCamelException("Cannot load data for an adapter that is not deserializable");
+        }
+        poll();
+
+        unsubscribe();
+    }
+
+    protected void poll() {
+        Deserializable deserializable = (Deserializable) adapter;
+
+        ConsumerRecords<byte[], byte[]> records;
         do {
             records = consume();
 
@@ -201,19 +220,16 @@ public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<
                 break;
             }
 
-            for (ConsumerRecord<K, V> record : records) {
-                V value = record.value();
+            for (ConsumerRecord<byte[], byte[]> record : records) {
+                byte[] value = record.value();
 
                 LOG.trace("Read from Kafka: {}", value);
-                resumeCache.add(record.key(), record.value());
 
-                if (resumeCache.isFull()) {
+                if (!deserializable.deserialize(ByteBuffer.wrap(record.key()), ByteBuffer.wrap(record.value()))) {
                     break;
                 }
             }
         } while (true);
-
-        unsubscribe();
     }
 
     /**
@@ -247,7 +263,7 @@ public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<
      * Creates a new consumer rebalance listener. This can be useful for setting the exact Kafka offset when necessary
      * to read a limited amount of messages or customize the resume strategy behavior when a rebalance occurs.
      * 
-     * @param  remaining
+     * @param  remaining the number of remaining messages on the topic to try to collect
      * @return
      */
     protected ConsumerRebalanceListener getConsumerRebalanceListener(long remaining) {
@@ -292,7 +308,7 @@ public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<
      *
      * @return An instance of the consumer records
      */
-    protected ConsumerRecords<K, V> consume() {
+    protected ConsumerRecords<byte[], byte[]> consume() {
         int retries = 10;
 
         return consume(retries);
@@ -304,9 +320,28 @@ public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<
      * @param  retries how many times to retry consuming data from the topic
      * @return         An instance of the consumer records
      */
-    protected ConsumerRecords<K, V> consume(int retries) {
+    protected ConsumerRecords<byte[], byte[]> consume(int retries) {
         while (retries > 0) {
-            ConsumerRecords<K, V> records = consumer.poll(pollDuration);
+            ConsumerRecords<byte[], byte[]> records = consumer.poll(pollDuration);
+            if (!records.isEmpty()) {
+                return records;
+            }
+            retries--;
+        }
+
+        return ConsumerRecords.empty();
+    }
+
+    /**
+     * Consumes message from the topic previously setup
+     *
+     * @param  retries  how many times to retry consuming data from the topic
+     * @param  consumer the kafka consumer object instance to use
+     * @return          An instance of the consumer records
+     */
+    protected ConsumerRecords<byte[], byte[]> consume(int retries, Consumer<byte[], byte[]> consumer) {
+        while (retries > 0) {
+            ConsumerRecords<byte[], byte[]> records = consumer.poll(pollDuration);
             if (!records.isEmpty()) {
                 return records;
             }
@@ -317,8 +352,14 @@ public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<
     }
 
     public void subscribe() throws Exception {
-        if (resumeCache.capacity() >= 1) {
-            checkAndSubscribe(topic, resumeCache.capacity());
+        if (adapter instanceof Cacheable) {
+            ResumeCache<?> cache = ((Cacheable) adapter).getCache();
+
+            if (cache.capacity() >= 1) {
+                checkAndSubscribe(topic, cache.capacity());
+            } else {
+                checkAndSubscribe(topic);
+            }
         } else {
             checkAndSubscribe(topic);
         }
@@ -326,13 +367,18 @@ public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<
 
     @Override
     public ResumeAdapter getAdapter() {
-        return resumeAdapter;
+        return adapter;
+    }
+
+    @Override
+    public void setAdapter(ResumeAdapter adapter) {
+        this.adapter = adapter;
     }
 
     /**
      * Gets the set record of sent items
      *
-     * @return
+     * @return A collection with all the record errors
      */
     protected Collection<RecordError> getProducerErrors() {
         return Collections.unmodifiableCollection(producerErrors);
@@ -373,12 +419,6 @@ public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<
     @Override
     public void start() {
         LOG.info("Starting the kafka resume strategy");
-
-        try {
-            loadCache();
-        } catch (Exception e) {
-            LOG.error("Failed to load already processed items: {}", e.getMessage(), e);
-        }
     }
 
     public Duration getPollDuration() {
@@ -389,11 +429,11 @@ public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<
         this.pollDuration = Objects.requireNonNull(pollDuration, "The poll duration cannot be null");
     }
 
-    protected Consumer<K, V> getConsumer() {
+    protected Consumer<byte[], byte[]> getConsumer() {
         return consumer;
     }
 
-    protected Producer<K, V> getProducer() {
+    protected Producer<byte[], byte[]> getProducer() {
         return producer;
     }
 
@@ -409,14 +449,11 @@ public class SingleNodeKafkaResumeStrategy<K, V> implements KafkaResumeStrategy<
         return topic;
     }
 
-    protected ResumeCache<K, V> getResumeCache() {
-        return resumeCache;
-    }
-
     /**
      * Clear the producer errors
      */
     public void resetProducerErrors() {
         producerErrors.clear();
     }
+
 }
