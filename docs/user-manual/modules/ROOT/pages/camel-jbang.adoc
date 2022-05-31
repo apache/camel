@@ -508,7 +508,7 @@ a Camel route with the naming convention `direct:<operationId>`.
 
 This make it quick to implement a Camel route for a given operation.
 
-See the https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-api)[open-api example] for more details.
+See the https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-api[open-api example] for more details.
 
 == Packaging as uber-jar
 
