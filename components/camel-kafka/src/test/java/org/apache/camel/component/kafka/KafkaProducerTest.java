@@ -87,7 +87,7 @@ public class KafkaProducerTest {
         fromEndpoint.doBuild();
         assertTrue(fromEndpoint.getKafkaClientFactory() instanceof DefaultKafkaClientFactory);
 
-        RecordMetadata rm = new RecordMetadata(null, 0, 0, 0, 0L, 0, 0);
+        RecordMetadata rm = new RecordMetadata(null, 0, 0, 0, 0, 0);
         Future future = Mockito.mock(Future.class);
         Mockito.when(future.get()).thenReturn(rm);
         org.apache.kafka.clients.producer.KafkaProducer kp
@@ -154,7 +154,7 @@ public class KafkaProducerTest {
         ArgumentCaptor<Callback> callBackCaptor = ArgumentCaptor.forClass(Callback.class);
         Mockito.verify(producer.getKafkaProducer()).send(any(ProducerRecord.class), callBackCaptor.capture());
         Callback kafkaCallback = callBackCaptor.getValue();
-        kafkaCallback.onCompletion(new RecordMetadata(null, 0, 0, 0, 0L, 0, 0), null);
+        kafkaCallback.onCompletion(new RecordMetadata(null, 0, 0, 0, 0, 0), null);
         assertRecordMetadataExists();
     }
 
@@ -177,7 +177,7 @@ public class KafkaProducerTest {
         Mockito.verify(exchange).setException(isA(ApiException.class));
         Mockito.verify(callback).done(eq(true));
         Callback kafkaCallback = callBackCaptor.getValue();
-        kafkaCallback.onCompletion(new RecordMetadata(null, 0, 0, 0, 0L, 0, 0), null);
+        kafkaCallback.onCompletion(new RecordMetadata(null, 0, 0, 0, 0, 0), null);
         assertRecordMetadataExists();
     }
 
