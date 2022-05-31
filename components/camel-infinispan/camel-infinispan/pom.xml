@@ -49,11 +49,6 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-marshaller-protostuff</artifactId>
-            <version>${infinispan-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.infinispan</groupId>
             <artifactId>infinispan-jboss-marshalling</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
