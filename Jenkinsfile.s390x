@@ -64,7 +64,7 @@ pipeline {
             }
             steps {
                 // Remove camel-kudu and docs as these are not supported on s390x.
-                sh "./mvnw -U $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean deploy -pl '\!docs,\!components/camel-kudu'"
+                sh "./mvnw -U $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean deploy -pl '!docs,!components/camel-kudu'"
             }
         }
 
