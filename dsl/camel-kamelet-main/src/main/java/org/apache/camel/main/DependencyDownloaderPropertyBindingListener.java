@@ -36,7 +36,8 @@ class DependencyDownloaderPropertyBindingListener implements PropertyBindingList
             String s = (String) value;
             MavenGav gav = knownDependenciesResolver.mavenGavForClass(s);
             if (gav != null) {
-                if (!DownloaderHelper.alreadyOnClasspath(camelContext, gav.getArtifactId(), gav.getVersion())) {
+                if (!DownloaderHelper.alreadyOnClasspath(camelContext, gav.getGroupId(), gav.getArtifactId(),
+                        gav.getVersion())) {
                     DownloaderHelper.downloadDependency(camelContext, gav.getGroupId(), gav.getArtifactId(),
                             gav.getVersion());
                 }

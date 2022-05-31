@@ -76,7 +76,7 @@ public final class DownloaderHelper {
         }, gav);
     }
 
-    public static boolean alreadyOnClasspath(CamelContext camelContext, String artifactId, String version) {
+    public static boolean alreadyOnClasspath(CamelContext camelContext, String groupId, String artifactId, String version) {
         // if no artifact then regard this as okay
         if (artifactId == null) {
             return true;
@@ -94,6 +94,11 @@ public final class DownloaderHelper {
                 for (URL u : ucl.getURLs()) {
                     String s = u.toString();
                     if (s.contains(target)) {
+                        // trigger listener
+                        DownloadListener listener = camelContext.getExtension(DownloadListener.class);
+                        if (listener != null) {
+                            listener.onAlreadyDownloadedDependency(groupId, artifactId, version);
+                        }
                         // already on classpath
                         return true;
                     }

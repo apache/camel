@@ -45,6 +45,8 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("build", new CommandLine(new Build(main))
                         .addSubcommand("manifests", new CommandLine(new Manifest(main)))
                         .addSubcommand("image", new CommandLine(new Image(main))))
+                .addSubcommand("export", new CommandLine(new Export(main))
+                        .addSubcommand("spring-boot", new CommandLine(new ExportSpringBoot(main))))
                 .addSubcommand("deploy", new CommandLine(new Deploy(main)))
                 .addSubcommand("undeploy", new CommandLine(new Undeploy(main)));
         /* // TODO: do not show commands that are deprecated and to be either removed or reworked
@@ -53,8 +55,6 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("components", new SearchComponents())
                         .addSubcommand("languages", new SearchLanguages())
                         .addSubcommand("others", new SearchOthers()))
-                .addSubcommand("create", new CommandLine(new Create())
-                        .addSubcommand("project", new Project()));
         */
 
         commandLine.getCommandSpec().versionProvider(() -> {

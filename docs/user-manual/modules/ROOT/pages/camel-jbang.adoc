@@ -538,59 +538,30 @@ It is better practice specifying configurations in external files such as `appli
 
 You can _export_ your Camel JBang application to a traditional Java based project such as Spring Boot or Quarkus.
 
-=== Create Quarkus Project
+You may want to do this after you have built a prototype using Camel JBang, and are in need
+of a traditional Java based project with more need for Java coding, or wanting to use the powerful
+runtimes of Spring Boot or Quarkus.
 
-NOTE: New implementation on the way
+=== Exporting to Camel Spring Boot
 
-The `create project` command can be used to generate a Maven project. After running the integration with the `run` command `create project` will generate a Maven Quarkus project with some required dependencies that can be used as a starting point for complex integrations. 
+The command `export spring-boot` will export your current Camel JBang file(s) to a Maven based
+Spring Boot project with files organized in `src/main/` folder structure.
 
-To execute this feature run:
-
-[source,bash]
-----
-jbang camel@apache/camel create project integration.java integration.yaml integration.xml
-----
-
-This command generates a folder named CamelJBang that contains the Quarkus project, in order to execute it the following command can be run:
+For example to export to Spring Boot using the Maven groupId _com.foo_ and the artifactId _acme_
+and with version _1.0-SNAPSHOT_ you simply execute:
 
 [source,bash]
 ----
-cd CamelJBang
-mvn compile quarkus:dev
+camel export spring-boot --gav=com.foo:acme:1.0-SNAPSHOT
 ----
 
-The table below lists all the command line options configurable on the `create project` command:
+NOTE: This will export to the _current_ directory, meaning that files are moved into the needed folder structure.
 
-|===
-|Option |Description
-
-|name
-|The name of the Camel application (artifactId and folder)
-
-|group-id
-|The group ID of the maven project
-
-|directory
-|Directory where the project will be created
-
-|quarkus-dependency
-|Comma separated list of camel-quarkus dependencies
-
-|quarkus-bom-version
-|Override quarkus bom version in pom.xml
-
-|===
-
-==== Examples
+To export to another directly (copies the files) you execute:
 
 [source,bash]
 ----
-jbang camel@apache/camel create project TimerRoute.java --quarkusDependencies=camel-quarkus-timer,camel-quarkus-log,camel-quarkus-yaml-dsl,camel-quarkus-http --name=TimerRouteProject
-----
-
-[source,bash]
-----
-jbang camel@apache/camel create project KafkaRoute.java --quarkusDependencies=camel-quarkus-kafka,camel-quarkus-log --name=KafkaRouteProject
+camel export spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --dir=../myproject
 ----
 
 == Troubleshooting

@@ -181,7 +181,8 @@ final class DependencyDownloaderKamelet extends ServiceSupport implements CamelC
             }
 
             MavenGav mg = MavenGav.parseGav(camelContext, gav);
-            boolean exists = DownloaderHelper.alreadyOnClasspath(camelContext, mg.getArtifactId(), mg.getVersion());
+            boolean exists
+                    = DownloaderHelper.alreadyOnClasspath(camelContext, mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
             // valid if not already on classpath
             return !exists;
         }

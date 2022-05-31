@@ -14,30 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.generator;
+package org.apache.camel.dsl.jbang.core.commands;
 
-public class PomProperty {
-    private String key;
-    private String value;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
 
-    public PomProperty(String key, String value) {
-        this.key = key;
-        this.value = value;
+@Command(name = "export",
+         description = "Export to other runtimes such as Spring Boot or Quarkus (use --help to see sub commands)")
+class Export extends CamelCommand {
+
+    public Export(CamelJBangMain main) {
+        super(main);
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
+    @Override
+    public Integer call() throws Exception {
+        new CommandLine(this).execute("--help");
+        return 0;
     }
 }

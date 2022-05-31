@@ -51,6 +51,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.impl.lw.LightweightCamelContext;
+import org.apache.camel.main.DownloadListener;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
@@ -307,11 +308,20 @@ class Run extends CamelCommand {
         final KameletMain main = createMainInstance();
 
         final Set<String> downloaded = new HashSet<>();
-        main.setDownloadListener((groupId, artifactId, version) -> {
-            String line = "mvn:" + groupId + ":" + artifactId + ":" + version;
-            if (!downloaded.contains(line)) {
-                writeSettings("dependency", line);
-                downloaded.add(line);
+        main.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadDependency(String groupId, String artifactId, String version) {
+                String line = "mvn:" + groupId + ":" + artifactId + ":" + version;
+                if (!downloaded.contains(line)) {
+                    writeSettings("dependency", line);
+                    downloaded.add(line);
+                }
+            }
+
+            @Override
+            public void onAlreadyDownloadedDependency(String groupId, String artifactId, String version) {
+                // we want to register everything
+                onDownloadDependency(groupId, artifactId, version);
             }
         });
         main.setAppName("Apache Camel (JBang)");
@@ -524,6 +534,7 @@ class Run extends CamelCommand {
             } else {
                 loc = locations.toString();
             }
+            // TODO: remove duplicates in loc
             main.addInitialProperty("camel.component.properties.location", loc);
             writeSettings("camel.component.properties.location", loc);
         }

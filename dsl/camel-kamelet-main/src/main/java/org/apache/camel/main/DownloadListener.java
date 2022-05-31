@@ -21,6 +21,14 @@ package org.apache.camel.main;
  */
 public interface DownloadListener {
 
+    /**
+     * Downloads a new dependency
+     */
     void onDownloadDependency(String groupId, String artifactId, String version);
+
+    /**
+     * Uses an existing already downloaded dependency
+     */
+    void onAlreadyDownloadedDependency(String groupId, String artifactId, String version);
 
 }
