@@ -3307,6 +3307,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "HyperledgerAriesComponentBuilderFactory": {
+    "kind": "component",
+    "name": "hyperledger-aries",
+    "title": "Aries",
+    "description": "Access market data and trade on Bitcoin and Altcoin exchanges.",
+    "deprecated": false,
+    "firstVersion": "3.17.0",
+    "label": "blockchain",
+    "javaType": "org.apache.camel.component.aries.HyperledgerAriesComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-hyperledger-aries",
+    "version": "3.17.0-SNAPSHOT",
+    "scheme": "hyperledger-aries",
+    "extendsScheme": "",
+    "syntax": "hyperledger-aries:walletName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "Iec60870ClientComponentBuilderFactory": {
     "kind": "component",
     "name": "iec60870-client",

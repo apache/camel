@@ -1,0 +1,176 @@
+version: '3'
+
+networks:
+  von-network:
+  tails-server:
+
+services:
+
+  #
+  # Webserver
+  #
+  webserver:
+    image: nessusio/von-network:${VON_NETWORK_VERSION:-latest}
+    container_name: indy-webserver
+    command: bash -c 'sleep 10 && ./scripts/start_webserver.sh'
+    environment:
+      - IP=${IP}
+      - IPS=${IPS}
+      - DOCKERHOST=${DOCKERHOST:-host.docker.internal}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - RUST_LOG=${RUST_LOG:-warn}
+      - GENESIS_URL=${GENESIS_URL}
+      - ANONYMOUS=${ANONYMOUS}
+      - LEDGER_SEED=${LEDGER_SEED}
+      - LEDGER_CACHE_PATH=${LEDGER_CACHE_PATH}
+      - MAX_FETCH=${MAX_FETCH:-50000}
+      - RESYNC_TIME=${RESYNC_TIME:-120}
+      - REGISTER_NEW_DIDS=${REGISTER_NEW_DIDS:-True}
+      - LEDGER_INSTANCE_NAME=${LEDGER_INSTANCE_NAME:-localhost}
+      - WEB_ANALYTICS_SCRIPT=${WEB_ANALYTICS_SCRIPT}
+      - INFO_SITE_TEXT=${INFO_SITE_TEXT}
+      - INFO_SITE_URL=${INFO_SITE_URL}
+    networks:
+      - von-network
+    ports:
+      - ${WEB_SERVER_HOST_PORT:-9000}:8000
+    volumes:
+      - webserver-cli:/home/indy/.indy-cli
+      - webserver-ledger:/home/indy/ledger
+
+  #
+  # Nodes
+  #
+  node1:
+    image: nessusio/von-network:${VON_NETWORK_VERSION:-latest}
+    container_name: indy-node1
+    command: ./scripts/start_node.sh 1
+    networks:
+      - von-network
+    ports:
+      - 9701:9701
+      - 9702:9702
+    environment:
+      - IP=${IP}
+      - IPS=${IPS}
+      - DOCKERHOST=${DOCKERHOST:-host.docker.internal}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - RUST_LOG=${RUST_LOG:-warn}
+    volumes:
+      - node1-data:/home/indy/ledger
+
+  node2:
+    image: nessusio/von-network:${VON_NETWORK_VERSION:-latest}
+    container_name: indy-node2
+    command: ./scripts/start_node.sh 2
+    networks:
+      - von-network
+    ports:
+      - 9703:9703
+      - 9704:9704
+    environment:
+      - IP=${IP}
+      - IPS=${IPS}
+      - DOCKERHOST=${DOCKERHOST:-host.docker.internal}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - RUST_LOG=${RUST_LOG:-warn}
+    volumes:
+      - node2-data:/home/indy/ledger
+
+  node3:
+    image: nessusio/von-network:${VON_NETWORK_VERSION:-latest}
+    container_name: indy-node3
+    command: ./scripts/start_node.sh 3
+    networks:
+      - von-network
+    ports:
+      - 9705:9705
+      - 9706:9706
+    environment:
+      - IP=${IP}
+      - IPS=${IPS}
+      - DOCKERHOST=${DOCKERHOST:-host.docker.internal}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - RUST_LOG=${RUST_LOG:-warn}
+    volumes:
+      - node3-data:/home/indy/ledger
+
+  node4:
+    image: nessusio/von-network:${VON_NETWORK_VERSION:-latest}
+    container_name: indy-node4
+    command: ./scripts/start_node.sh 4
+    networks:
+      - von-network
+    ports:
+      - 9707:9707
+      - 9708:9708
+    environment:
+      - IP=${IP}
+      - IPS=${IPS}
+      - DOCKERHOST=${DOCKERHOST:-host.docker.internal}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - RUST_LOG=${RUST_LOG:-warn}
+    volumes:
+      - node4-data:/home/indy/ledger
+
+  tails-server:
+    image: nessusio/indy-tails-server:${TAILS_SERVER_VERSION:-latest}
+    container_name: tails-server
+    ports:
+      - 6543:6543
+    networks:
+      - tails-server
+    command: >
+      tails-server
+        --host 0.0.0.0
+        --port 6543
+        --storage-path ${STORAGE_PATH:-/tmp/tails-files}
+        --log-level ${LOG_LEVEL:-info}
+
+  acapy:
+    image: nessusio/aries-cloudagent-python:${ACAPY_VERSION:-latest}
+    container_name: acapy
+    ports:
+      - ${ACAPY_USER_PORT:-8030}:${ACAPY_USER_PORT:-8030}
+      - ${ACAPY_ADMIN_PORT:-8031}:${ACAPY_ADMIN_PORT:-8031}
+    networks:
+      - von-network
+    depends_on:
+      - node1
+      - node2
+      - node3
+      - node4
+      - webserver
+      - tails-server
+    command: >
+      start
+        --genesis-url http://${DOCKERHOST:-host.docker.internal}:9000/genesis
+        --endpoint http://${ACAPY_HOSTNAME:-localhost}:${ACAPY_USER_PORT:-8030}
+        --inbound-transport http 0.0.0.0 ${ACAPY_USER_PORT:-8030}
+        --outbound-transport http
+        --tails-server-base-url http://tails-server:6543
+        --admin 0.0.0.0 ${ACAPY_ADMIN_PORT:-8031}
+        --admin-api-key adminkey
+        --jwt-secret jwtsecret
+        --multitenant
+        --multitenant-admin
+        --seed 000000000000000000000000Trustee1
+        --wallet-storage-type default
+        --wallet-key trusteewkey
+        --wallet-name trustee
+        --wallet-type indy
+        --storage-type indy
+        --recreate-wallet
+        --auto-provision
+        --auto-ping-connection
+        --auto-accept-requests
+        --log-level info
+        
+volumes:
+  webserver-cli:
+  webserver-ledger:
+  node1-data:
+  node2-data:
+  node3-data:
+  node4-data:
+  nodes-data:

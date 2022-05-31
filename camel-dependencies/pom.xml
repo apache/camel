@@ -422,6 +422,7 @@
     <mybatis-version>3.5.10</mybatis-version>
     <narayana-version>5.12.7.Final</narayana-version>
     <neoscada-version>0.4.0</neoscada-version>
+    <nessus-hyperledger-aries-version>0.1.0</nessus-hyperledger-aries-version>
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
     <nessus-weka-version>1.0.1</nessus-weka-version>
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
