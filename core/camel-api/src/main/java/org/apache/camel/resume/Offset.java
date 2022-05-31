@@ -28,6 +28,7 @@ public interface Offset<T> extends Serializable {
 
     /**
      * Sets the current offset value
+     * 
      * @param offset the current offset value
      */
     void update(T offset);

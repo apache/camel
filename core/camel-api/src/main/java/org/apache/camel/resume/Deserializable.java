@@ -22,8 +22,8 @@ import java.nio.ByteBuffer;
 
 public interface Deserializable {
 
-     default Object deserializeObject(ByteBuffer buffer) {
-         buffer.clear();
+    default Object deserializeObject(ByteBuffer buffer) {
+        buffer.clear();
 
         int dataType = buffer.getInt();
         switch (dataType) {

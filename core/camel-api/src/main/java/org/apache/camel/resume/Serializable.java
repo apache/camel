@@ -17,7 +17,6 @@
 
 package org.apache.camel.resume;
 
-
 import java.io.File;
 import java.nio.ByteBuffer;
 
@@ -37,8 +36,9 @@ public interface Serializable {
 
     /**
      * Serializes this offset into a buffer of bytes
-     * @param obj the object to serialize
-     * @return a ByteBuffer instance with the serialized contents of this object
+     * 
+     * @param  obj the object to serialize
+     * @return     a ByteBuffer instance with the serialized contents of this object
      */
     default ByteBuffer serialize(Object obj) {
         ObjectHelper.notNull(obj, "Cannot perform serialization on a null object");
@@ -76,6 +76,7 @@ public interface Serializable {
 
     /**
      * Serializes this offset into a buffer of bytes
+     * 
      * @return a ByteBuffer instance with the serialized contents of this object
      */
     ByteBuffer serialize();

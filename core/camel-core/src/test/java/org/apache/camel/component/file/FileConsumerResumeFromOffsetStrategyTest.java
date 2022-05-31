@@ -74,7 +74,8 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
         }
     }
 
-    private static class FailResumeAdapter implements FileResumeAdapter, DirectoryEntriesResumeAdapter,UpdatableConsumerResumeStrategy<Resumable> {
+    private static class FailResumeAdapter
+            implements FileResumeAdapter, DirectoryEntriesResumeAdapter, UpdatableConsumerResumeStrategy<Resumable> {
         private boolean called;
 
         @Override
