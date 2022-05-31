@@ -343,7 +343,7 @@
         <jython-version>2.7.2</jython-version>
         <jython-standalone-version>2.7.2</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
-        <kafka-version>3.1.0</kafka-version>
+        <kafka-version>3.1.1</kafka-version>
         <kafka-vertx-version>2.8.1</kafka-vertx-version>
         <kotlin-version>1.6.21</kotlin-version>
         <kubernetes-client-version>5.12.2</kubernetes-client-version>
@@ -486,15 +486,15 @@
         <spark-version>3.2.1</spark-version>
         <splunk-version>1.6.5.0_1</splunk-version>
         <spock-version>2.1-groovy-3.0</spock-version>
-        <spring-batch-version>4.3.5</spring-batch-version>
+        <spring-batch-version>4.3.6</spring-batch-version>
         <spring-data-redis-version>2.6.2</spring-data-redis-version>
-        <spring-integration-version>5.5.11</spring-integration-version>
+        <spring-integration-version>5.5.12</spring-integration-version>
         <spring-ldap-version>2.3.7.RELEASE</spring-ldap-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
-        <spring5-version>5.3.19</spring5-version>
+        <spring5-version>5.3.20</spring5-version>
         <spring-rabbitmq-version>2.4.2</spring-rabbitmq-version>
-        <spring-security-version>5.6.4</spring-security-version>
+        <spring-security-version>5.7.1</spring-security-version>
         <spring-ws-version>3.1.3</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
