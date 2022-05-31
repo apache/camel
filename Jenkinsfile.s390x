@@ -77,7 +77,7 @@ pipeline {
         stage('Test') {
             steps {
                 // Remove camel-kudu and docs as these are not supported on s390x.
-                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -pl \!docs,\!components/camel-kudu"
+                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -pl '!docs,!components/camel-kudu'"
             }
             post {
                 always {
