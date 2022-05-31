@@ -68,6 +68,10 @@ class ExportSpringBoot extends CamelCommand {
                         defaultValue = "2.6.8")
     private String springBootVersion;
 
+    @CommandLine.Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version",
+                        defaultValue = "0.8.1")
+    private String kameletsVersion;
+
     @CommandLine.Option(names = { "-dir", "--directory" }, description = "Directory where the project will be exported",
                         defaultValue = ".")
     private String exportDir;
@@ -196,6 +200,10 @@ class ExportSpringBoot extends CamelCommand {
                         || v.contains("org.apache.camel:camel-java-joor-dsl");
                 if (!skip) {
                     answer.add(v);
+                }
+                if (v != null && v.contains("org.apache.camel:camel-kamelet")) {
+                    // include kamelet catalog if we use kamelets
+                    answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
                 }
             }
         }
