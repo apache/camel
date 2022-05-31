@@ -37,6 +37,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
+import org.apache.commons.io.FileUtils;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "spring-boot", description = "Export as Spring Boot project")
@@ -124,14 +125,20 @@ class ExportSpringBoot extends CamelCommand {
         // create pom
         createPom(new File(BUILD_DIR, "pom.xml"), deps);
 
-        // move work dir to the export dir
-        if (!exportDir.equals(".")) {
-            // create the dir and copy over all files from work dir
+        if (exportDir.equals(".")) {
+            // we export to current dir so prepare for this by cleaning up existing files
             File target = new File(exportDir);
-            target.mkdirs();
-            Files.move(new File(BUILD_DIR).toPath(), target.toPath(), StandardCopyOption.ATOMIC_MOVE);
+            for (File f : target.listFiles()) {
+                if (!f.isHidden() && f.isDirectory()) {
+                    FileUtil.removeDir(f);
+                } else if (!f.isHidden() && f.isFile()) {
+                    f.delete();
+                }
+            }
         }
-        // TODO: If output is same folder (eg dot) then files should be moved instead of copy (or we delete all and move from work dir)
+        // copy to export dir and remove work dir
+        FileUtils.copyDirectory(new File(BUILD_DIR), new File("."));
+        FileUtil.removeDir(new File(BUILD_DIR));
 
         return 0;
     }
