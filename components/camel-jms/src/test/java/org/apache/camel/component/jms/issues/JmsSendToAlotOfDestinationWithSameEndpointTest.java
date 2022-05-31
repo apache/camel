@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class JmsSendToAlotOfDestinationWithSameEndpointTest extends CamelSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsSendToAlotOfDestinationWithSameEndpointTest.class);
@@ -32,24 +34,28 @@ public class JmsSendToAlotOfDestinationWithSameEndpointTest extends CamelSpringT
 
     @Test
     public void testSendToAlotOfMessageToQueues() {
+        assertDoesNotThrow(() -> sendToAlotOfMessagesToQueue());
+
+        // now we should be able to poll a message from each queue
+        // Thread.sleep(99999999);
+    }
+
+    private void sendToAlotOfMessagesToQueue() {
         int size = 100;
 
-        LOG.info("About to send " + size + " messages");
+        LOG.info("About to send {} messages", size);
 
         for (int i = 0; i < size; i++) {
             // use the same endpoint but provide a header with the dynamic queue we send to
             // this allows us to reuse endpoints and not create a new endpoint for each and every jms queue
             // we send to
             if (i > 0 && i % 50 == 0) {
-                LOG.info("Send " + i + " messages so far");
+                LOG.info("Sent {} messages so far", i);
             }
             template.sendBodyAndHeader(URI, ExchangePattern.InOnly, "Hello " + i, JmsConstants.JMS_DESTINATION_NAME, "foo" + i);
         }
 
         LOG.info("Send complete use jconsole to view");
-
-        // now we should be able to poll a message from each queue
-        // Thread.sleep(99999999);
     }
 
     @Override
