@@ -1043,8 +1043,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * The endpoint identification algorithm to validate server hostname using server certificate.
-     * Use none or false to disable server hostname verification.
+     * The endpoint identification algorithm to validate server hostname using server certificate. Use none or false to
+     * disable server hostname verification.
      */
     public void setSslEndpointAlgorithm(String sslEndpointAlgorithm) {
         this.sslEndpointAlgorithm = sslEndpointAlgorithm;
