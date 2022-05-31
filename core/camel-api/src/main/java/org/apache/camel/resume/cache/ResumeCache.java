@@ -31,20 +31,23 @@ public interface ResumeCache<K> {
 
     /**
      * If the specified key is not present, compute its value from the mapping function (like Java's standard Map one)
-     * @param key the key to get or associate with the value
-     * @param mapping the mapping function used to compute the value
-     * @return the value associated with the key (either the present or the one computed from the mapping function)
+     * 
+     * @param  key     the key to get or associate with the value
+     * @param  mapping the mapping function used to compute the value
+     * @return         the value associated with the key (either the present or the one computed from the mapping
+     *                 function)
      */
     Object computeIfAbsent(K key, Function<? super K, ? super Object> mapping);
 
     /**
      * If the specified key is present, compute a new value from the mapping function (like Java's standard Map one)
-     * @param key the key to get or associate with the value
-     * @param remapping the remapping function used to compute the new value
-     * @return the value associated with the key (either the present or the one computed from the mapping function)
+     * 
+     * @param  key       the key to get or associate with the value
+     * @param  remapping the remapping function used to compute the new value
+     * @return           the value associated with the key (either the present or the one computed from the mapping
+     *                   function)
      */
     Object computeIfPresent(K key, BiFunction<? super K, ? super Object, ? super Object> remapping);
-
 
     /**
      * Whether the cache contains the key with the given entry value
@@ -75,16 +78,14 @@ public interface ResumeCache<K> {
      */
     long capacity();
 
-
     /**
      * Gets the offset entry for the key
      *
-     * @param  key the key
-     * @param clazz the class object representing the value to be obtained
-     * @return     the offset value wrapped in an optional
+     * @param  key   the key
+     * @param  clazz the class object representing the value to be obtained
+     * @return       the offset value wrapped in an optional
      */
     <T> T get(K key, Class<T> clazz);
-
 
     /**
      * Gets the offset entry for the key

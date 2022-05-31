@@ -27,7 +27,8 @@ public interface ResumeStrategy extends Service {
 
     /**
      * Sets an adapter for resuming operations with this strategy
-     * @param adapter    the component-specific resume adapter
+     * 
+     * @param adapter the component-specific resume adapter
      */
     void setAdapter(ResumeAdapter adapter);
 
@@ -47,9 +48,9 @@ public interface ResumeStrategy extends Service {
         return clazz.cast(getAdapter());
     }
 
-
     /**
      * Loads the cache with the data currently available in this strategy
+     * 
      * @throws Exception
      */
     default void loadCache() throws Exception {
