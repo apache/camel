@@ -16,14 +16,22 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
 
     @Override
@@ -33,8 +41,11 @@ public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
         return camelContext;
     }
 
+    @Order(1)
     @Test
     public void testOne() throws Exception {
+        Assumptions.assumeTrue(context.isStarted());
+
         getMockEndpoint("mock:input").expectedBodiesReceived("World");
 
         String out = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "World", String.class);
@@ -43,6 +54,7 @@ public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
         assertMockEndpointsSatisfied();
     }
 
+    @Order(2)
     @Test
     public void testThree() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("World", "Camel", "Earth");
@@ -53,8 +65,11 @@ public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
         out = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        out = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "Earth", String.class);
-        assertEquals("Bye Earth", out);
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(
+                () -> {
+                    String reqOut = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "Earth", String.class);
+                    assertEquals("Bye Earth", reqOut);
+                });
 
         assertMockEndpointsSatisfied();
     }
