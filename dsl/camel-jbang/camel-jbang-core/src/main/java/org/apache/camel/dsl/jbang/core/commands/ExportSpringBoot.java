@@ -137,7 +137,7 @@ class ExportSpringBoot extends CamelCommand {
             }
         }
         // copy to export dir and remove work dir
-        FileUtils.copyDirectory(new File(BUILD_DIR), new File("."));
+        FileUtils.copyDirectory(new File(BUILD_DIR), new File(exportDir));
         FileUtil.removeDir(new File(BUILD_DIR));
 
         return 0;

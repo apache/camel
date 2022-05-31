@@ -34,25 +34,27 @@ public class DependencyDownloaderRoutesLoader extends MainRoutesLoader {
 
     @Override
     protected RoutesBuilderLoader resolveService(String extension) {
-        RoutesBuilderLoader loader = super.resolveService(extension);
+        // we need to eager capture that we use this route loader extension so lets
+        // attempt to download it even if its already on classpath
+        if ("groovy".equals(extension)) {
+            downloadLoader("camel-groovy-dsl");
+        } else if ("java".equals(extension)) {
+            downloadLoader("camel-java-joor-dsl");
+            downloadLoader("camel-endpointdsl");
+        } else if ("js".equals(extension)) {
+            downloadLoader("camel-js-dsl");
+        } else if ("jsh".equals(extension)) {
+            downloadLoader("camel-jsh-dsl");
+        } else if ("kts".equals(extension)) {
+            downloadLoader("camel-kotlin-dsl");
+        } else if ("xml".equals(extension)) {
+            downloadLoader("camel-xml-io-dsl");
+        } else if ("yaml".equals(extension)) {
+            downloadLoader("camel-yaml-dsl");
+        }
 
+        RoutesBuilderLoader loader = super.resolveService(extension);
         if (loader == null) {
-            if ("groovy".equals(extension)) {
-                downloadLoader("camel-groovy-dsl");
-            } else if ("java".equals(extension)) {
-                downloadLoader("camel-java-joor-dsl");
-                downloadLoader("camel-endpointdsl");
-            } else if ("js".equals(extension)) {
-                downloadLoader("camel-js-dsl");
-            } else if ("jsh".equals(extension)) {
-                downloadLoader("camel-jsh-dsl");
-            } else if ("kts".equals(extension)) {
-                downloadLoader("camel-kotlin-dsl");
-            } else if ("xml".equals(extension)) {
-                downloadLoader("camel-xml-io-dsl");
-            } else if ("yaml".equals(extension)) {
-                downloadLoader("camel-yaml-dsl");
-            }
 
             // need to use regular factory finder as bootstrap has already marked the loader as a miss
             final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
