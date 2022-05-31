@@ -33,15 +33,15 @@ import org.slf4j.LoggerFactory;
  * Run this test from maven: mvn exec:java and see the output if there is a error.
  */
 @Disabled
-public class MinaProducerShutdownTest {
+public class MinaProducerShutdownManualIT {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MinaProducerShutdownTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MinaProducerShutdownManualIT.class);
     private static final String URI = "mina:tcp://localhost:6321?textline=true&sync=false";
     private long start;
     private CamelContext context;
 
     public static void main(String[] args) throws Exception {
-        MinaProducerShutdownTest me = new MinaProducerShutdownTest();
+        MinaProducerShutdownManualIT me = new MinaProducerShutdownManualIT();
         me.testProducer();
     }
 
