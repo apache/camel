@@ -27,9 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Disabled("This test should be executed manually with a proxy set up")
-public class GeoCoderProxyTest extends GeoCoderApiKeyTestBase {
+public class GeoCoderProxyManualIT extends GeoCoderApiKeyTestBase {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GeoCoderProxyTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GeoCoderProxyManualIT.class);
 
     @Test
     public void testGeoCoderProxyNoAuth() throws Exception {
