@@ -27,9 +27,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HttpProducerJMXBeansIssueTest extends BaseJettyTest {
+@Disabled("This is a manual test")
+public final class HttpProducerJMXBeansIssueManualIT extends BaseJettyTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpProducerJMXBeansIssueTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpProducerJMXBeansIssueManualIT.class);
 
     @Override
     @BeforeEach
@@ -57,13 +58,11 @@ public class HttpProducerJMXBeansIssueTest extends BaseJettyTest {
     }
 
     @Test
-    @Disabled("disabled as this is a manual test")
     public void testNothing() {
         // do nothing as this test is manual
     }
 
     @Test
-    @Disabled("disabled as this is a manual test")
     public void testSendAlot() throws Exception {
         Endpoint ep = context.getEndpoint("direct:leak");
         Producer p = ep.createProducer();
