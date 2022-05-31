@@ -1606,7 +1606,8 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The endpoint identification algorithm to validate server hostname
-         * using server certificate.
+         * using server certificate. Use none or false to disable server
+         * hostname verification.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -3731,7 +3732,8 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The endpoint identification algorithm to validate server hostname
-         * using server certificate.
+         * using server certificate. Use none or false to disable server
+         * hostname verification.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -4534,7 +4536,8 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The endpoint identification algorithm to validate server hostname
-         * using server certificate.
+         * using server certificate. Use none or false to disable server
+         * hostname verification.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
