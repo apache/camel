@@ -2026,6 +2026,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HwcloudSmnComponentBuilderFactory.hwcloudSmn();
     }
     /**
+     * Aries (camel-hyperledger-aries)
+     * Access market data and trade on Bitcoin and Altcoin exchanges.
+     * 
+     * Category: blockchain
+     * Since: 3.17
+     * Maven coordinates: org.apache.camel:camel-hyperledger-aries
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.HyperledgerAriesComponentBuilderFactory.HyperledgerAriesComponentBuilder hyperledgerAries() {
+        return org.apache.camel.builder.component.dsl.HyperledgerAriesComponentBuilderFactory.hyperledgerAries();
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.

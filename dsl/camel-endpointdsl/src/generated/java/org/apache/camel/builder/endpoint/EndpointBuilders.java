@@ -152,6 +152,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.HazelcastTopicEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.IOTAEndpointBuilderFactory,
