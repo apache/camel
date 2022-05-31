@@ -65,7 +65,7 @@ class ExportSpringBoot extends CamelCommand {
     private String javaVersion;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = "2.6.8")
+                        defaultValue = "2.7.0")
     private String springBootVersion;
 
     @CommandLine.Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version",

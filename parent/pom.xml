@@ -232,7 +232,7 @@
         <hapi-fhir-version>4.2.0</hapi-fhir-version>
         <hawtbuf-version>1.11</hawtbuf-version>
         <hawtdispatch-version>1.22</hawtdispatch-version>
-        <hazelcast-version>5.1</hazelcast-version>
+        <hazelcast-version>5.1.1</hazelcast-version>
         <hbase-version>2.4.10</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
         <hibernate-validator-version>6.2.3.Final</hibernate-validator-version>
@@ -489,7 +489,7 @@
         <spring-batch-version>4.3.6</spring-batch-version>
         <spring-data-redis-version>2.6.2</spring-data-redis-version>
         <spring-integration-version>5.5.12</spring-integration-version>
-        <spring-ldap-version>2.3.7.RELEASE</spring-ldap-version>
+        <spring-ldap-version>2.4.0</spring-ldap-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
         <spring5-version>5.3.20</spring5-version>
