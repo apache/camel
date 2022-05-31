@@ -16,17 +16,26 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
+import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest {
 
     @Override
@@ -53,28 +62,45 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
         return matcher;
     }
 
+    @DisplayName("Tests whether it can access the public page without auth")
     @Test
-    public void testBasicAuth() throws Exception {
+    @Order(1)
+    void testAccessToPublicPage() {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello Public", "Hello World");
 
-        // we dont need auth for the public page
+        // we do not need auth for the public page
         String out = template.requestBody("netty-http:http://localhost:{{port}}/foo/public/hello.txt", "Hello Public",
                 String.class);
+
         assertEquals("Bye World", out);
+    }
 
-        try {
-            template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
-            fail("Should send back 401");
-        } catch (CamelExecutionException e) {
-            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
-            assertEquals(401, cause.getStatusCode());
-        }
+    @DisplayName("Tests whether it returns unauthorized (HTTP 401) for unauthorized access")
+    @Test
+    @Order(2)
+    void testUnauthorized() {
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class),
+                "Should have thrown a CamelExecutionException");
 
-        // username:password is scott:secret
+        NettyHttpOperationFailedException cause
+                = assertIsInstanceOf(NettyHttpOperationFailedException.class, exception.getCause());
+        assertEquals(UNAUTHORIZED.code(), cause.getStatusCode(), "Should have sent back HTTP status 401");
+    }
+
+    @DisplayName("Tests whether it authorized access to non-public resource succeeds")
+    @Test
+    @Order(3)
+    public void testBasicAuth() throws Exception {
         String auth = "Basic c2NvdHQ6c2VjcmV0";
-        out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth,
-                String.class);
-        assertEquals("Bye World", out);
+
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(
+                () -> {
+                    String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World",
+                            "Authorization", auth,
+                            String.class);
+                    assertEquals("Bye World", out);
+                });
 
         assertMockEndpointsSatisfied();
     }
