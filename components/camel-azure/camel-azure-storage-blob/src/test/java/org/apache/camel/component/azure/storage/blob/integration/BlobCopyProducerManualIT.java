@@ -21,11 +21,11 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Ignore("Requires real credentials")
-class BlobCopyProducerIt extends CamelTestSupport {
+@Disabled("Manual test that requires real credentials")
+class BlobCopyProducerManualIT extends CamelTestSupport {
 
     @EndpointInject
     private ProducerTemplate template;
