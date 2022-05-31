@@ -37,10 +37,10 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
 
-@Disabled("Manual test")
-public class HttpProducerLoadTest extends BaseHttpTest {
+@Disabled("Manual integration test")
+public class HttpProducerLoadManualIT extends BaseHttpTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpProducerLoadTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpProducerLoadManualIT.class);
 
     private HttpServer localServer;
 
