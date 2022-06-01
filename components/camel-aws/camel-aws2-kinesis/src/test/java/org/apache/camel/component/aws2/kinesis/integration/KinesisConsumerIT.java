@@ -91,7 +91,7 @@ public class KinesisConsumerIT extends CamelTestSupport {
                 fromF(kinesisEndpointUri, streamName)
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 KinesisData data = new KinesisData();
 
                                 final Message message = exchange.getMessage();
