@@ -1,0 +1,22 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "jq",
+    "title": "JQ",
+    "description": "Evaluates a JQ expression against a JSON message body.",
+    "deprecated": false,
+    "firstVersion": "3.18.0",
+    "label": "language",
+    "javaType": "org.apache.camel.model.language.JqExpression",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax" },
+    "resultType": { "kind": "attribute", "displayName": "Result Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the class of the result type (type from output)" },
+    "headerName": { "kind": "attribute", "displayName": "Header Name", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Name of header to use as input, instead of the message body" },
+    "trim": { "kind": "attribute", "displayName": "Trim", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" }
+  }
+}

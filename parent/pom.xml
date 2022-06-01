@@ -255,6 +255,7 @@
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.0</ivy-version>
+        <jackson-jq-version>1.0.0-preview.20210928</jackson-jq-version>
         <jackson-version>1.9.12</jackson-version>
         <jackson2-version>2.13.3</jackson2-version>
         <jackrabbit-version>2.21.10</jackrabbit-version>
@@ -334,6 +335,7 @@
         <json-patch-version>1.13</json-patch-version>
         <jsonata4java-version>1.5.8</jsonata4java-version>
         <json-schema-validator-version>2.2.14</json-schema-validator-version>
+        <json-unit-version>2.32.0</json-unit-version>
         <jsoup-version>1.14.3</jsoup-version>
         <jt400-version>10.7</jt400-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
@@ -1783,6 +1785,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-jq</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-jsch</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -2868,6 +2875,11 @@
                 <groupId>com.datastax.oss</groupId>
                 <artifactId>java-driver-query-builder</artifactId>
                 <version>${cassandra-driver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.thisptr</groupId>
+                <artifactId>jackson-jq</artifactId>
+                <version>${jackson-jq-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>

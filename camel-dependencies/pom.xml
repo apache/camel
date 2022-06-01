@@ -275,6 +275,7 @@
     <ironmq-version>3.0.5</ironmq-version>
     <ivy-version>2.5.0</ivy-version>
     <jackrabbit-version>2.21.10</jackrabbit-version>
+    <jackson-jq-version>1.0.0-preview.20210928</jackson-jq-version>
     <jackson-version>1.9.12</jackson-version>
     <jackson2-version>2.13.3</jackson2-version>
     <jakarta-api-version>2.1.5</jakarta-api-version>
