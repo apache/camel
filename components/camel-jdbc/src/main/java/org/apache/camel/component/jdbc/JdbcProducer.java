@@ -159,7 +159,7 @@ public class JdbcProducer extends DefaultProducer {
                 ps = conn.prepareStatement(preparedQuery);
             }
 
-            bindParameters(exchange,ps);
+            bindParameters(exchange, ps);
 
             int expectedCount = ps.getParameterMetaData().getParameterCount();
 
