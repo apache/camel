@@ -2030,15 +2030,15 @@ public abstract class AbstractJavadocMojo
         // ----------------------------------------------------------------------
         List<String> standardDocletArguments = new ArrayList<>();
 
-        Set<OfflineLink> offlineLinks;
+        Set<OfflineLink> offlineLinkSet;
         if ( StringUtils.isEmpty( doclet ) || useStandardDocletOptions )
         {
-            offlineLinks = getLinkofflines();
-            addStandardDocletOptions( javadocOutputDirectory, standardDocletArguments, offlineLinks );
+            offlineLinkSet = getLinkofflines();
+            addStandardDocletOptions( javadocOutputDirectory, standardDocletArguments, offlineLinkSet );
         }
         else
         {
-            offlineLinks = Collections.emptySet();
+            offlineLinkSet = Collections.emptySet();
         }
 
         // ----------------------------------------------------------------------
@@ -2046,7 +2046,7 @@ public abstract class AbstractJavadocMojo
         // ----------------------------------------------------------------------
         List<String> javadocArguments = new ArrayList<>();
 
-        addJavadocOptions( javadocOutputDirectory, javadocArguments, sourcePaths, offlineLinks );
+        addJavadocOptions( javadocOutputDirectory, javadocArguments, sourcePaths, offlineLinkSet );
 
         // ----------------------------------------------------------------------
         // Write options file and include it in the command line
@@ -3008,10 +3008,10 @@ public abstract class AbstractJavadocMojo
     private String getBootclassPath()
             throws MavenReportException
     {
-        Set<BootclasspathArtifact> bootclasspathArtifacts = collectBootClasspathArtifacts();
+        Set<BootclasspathArtifact> bootClasspathArtifacts = collectBootClasspathArtifacts();
 
         List<String> bootclassPath = new ArrayList<>();
-        for ( BootclasspathArtifact aBootclasspathArtifact : bootclasspathArtifacts )
+        for ( BootclasspathArtifact aBootclasspathArtifact : bootClasspathArtifacts )
         {
             if ( ( StringUtils.isNotEmpty( aBootclasspathArtifact.getGroupId() ) ) && ( StringUtils.isNotEmpty(
                     aBootclasspathArtifact.getArtifactId() ) ) && ( StringUtils.isNotEmpty(
@@ -3049,14 +3049,14 @@ public abstract class AbstractJavadocMojo
     private String getDocletPath()
             throws MavenReportException
     {
-        Set<DocletArtifact> docletArtifacts = collectDocletArtifacts();
+        Set<DocletArtifact> artifacts = collectDocletArtifacts();
         List<String> pathParts = new ArrayList<>();
 
-        for ( DocletArtifact docletArtifact : docletArtifacts )
+        for ( DocletArtifact artifact : artifacts )
         {
-            if ( !isDocletArtifactEmpty( docletArtifact ) )
+            if ( !isDocletArtifactEmpty( artifact ) )
             {
-                pathParts.addAll( getArtifactsAbsolutePath( docletArtifact ) );
+                pathParts.addAll( getArtifactsAbsolutePath( artifact ) );
             }
         }
 
@@ -3108,34 +3108,34 @@ public abstract class AbstractJavadocMojo
         Set<TagletArtifact> tArtifacts = collectTagletArtifacts();
         Collection<String> pathParts = new ArrayList<>();
 
-        for ( TagletArtifact tagletArtifact : tArtifacts )
+        for ( TagletArtifact artifact : tArtifacts )
         {
-            if ( ( tagletArtifact != null ) && ( StringUtils.isNotEmpty( tagletArtifact.getGroupId() ) )
-                    && ( StringUtils.isNotEmpty( tagletArtifact.getArtifactId() ) ) && ( StringUtils.isNotEmpty(
-                    tagletArtifact.getVersion() ) ) )
+            if ( ( artifact != null ) && ( StringUtils.isNotEmpty( artifact.getGroupId() ) )
+                    && ( StringUtils.isNotEmpty( artifact.getArtifactId() ) ) && ( StringUtils.isNotEmpty(
+                    artifact.getVersion() ) ) )
             {
-                pathParts.addAll( getArtifactsAbsolutePath( tagletArtifact ) );
+                pathParts.addAll( getArtifactsAbsolutePath( artifact ) );
             }
         }
 
-        Set<Taglet> taglets = collectTaglets();
-        for ( Taglet taglet : taglets )
+        Set<Taglet> collectedTaglets = collectTaglets();
+        for ( Taglet collectedTaglet : collectedTaglets )
         {
-            if ( taglet == null )
+            if ( collectedTaglet == null )
             {
                 continue;
             }
 
-            if ( ( taglet.getTagletArtifact() != null ) && ( StringUtils.isNotEmpty(
-                    taglet.getTagletArtifact().getGroupId() ) ) && ( StringUtils.isNotEmpty(
-                    taglet.getTagletArtifact().getArtifactId() ) ) && ( StringUtils.isNotEmpty(
-                    taglet.getTagletArtifact().getVersion() ) ) )
+            if ( ( collectedTaglet.getTagletArtifact() != null ) && ( StringUtils.isNotEmpty(
+                    collectedTaglet.getTagletArtifact().getGroupId() ) ) && ( StringUtils.isNotEmpty(
+                    collectedTaglet.getTagletArtifact().getArtifactId() ) ) && ( StringUtils.isNotEmpty(
+                    collectedTaglet.getTagletArtifact().getVersion() ) ) )
             {
-                pathParts.addAll( JavadocUtil.pruneFiles( getArtifactsAbsolutePath( taglet.getTagletArtifact() ) ) );
+                pathParts.addAll( JavadocUtil.pruneFiles( getArtifactsAbsolutePath( collectedTaglet.getTagletArtifact() ) ) );
             }
-            else if ( StringUtils.isNotEmpty( taglet.getTagletpath() ) )
+            else if ( StringUtils.isNotEmpty( collectedTaglet.getTagletpath() ) )
             {
-                for ( Path dir : JavadocUtil.pruneDirs( project, Collections.singletonList( taglet.getTagletpath() ) ) )
+                for ( Path dir : JavadocUtil.pruneDirs( project, Collections.singletonList( collectedTaglet.getTagletpath() ) ) )
                 {
                     pathParts.add( dir.toString()  );
                 }
@@ -3156,7 +3156,7 @@ public abstract class AbstractJavadocMojo
     private Set<String> collectLinks()
             throws MavenReportException
     {
-        Set<String> links = new LinkedHashSet<>();
+        Set<String> linksSet = new LinkedHashSet<>();
 
         if ( includeDependencySources )
         {
@@ -3177,7 +3177,7 @@ public abstract class AbstractJavadocMojo
                     JavadocOptions options = bundle.getOptions();
                     if ( options != null && isNotEmpty( options.getLinks() ) )
                     {
-                        links.addAll( options.getLinks() );
+                        linksSet.addAll( options.getLinks() );
                     }
                 }
             }
@@ -3185,18 +3185,18 @@ public abstract class AbstractJavadocMojo
 
         if ( isNotEmpty( this.links ) )
         {
-            links.addAll( this.links );
+            linksSet.addAll( this.links );
         }
 
-        links.addAll( getDependenciesLinks() );
+        linksSet.addAll( getDependenciesLinks() );
 
-        return followLinks( links );
+        return followLinks( linksSet );
     }
 
     private Set<Group> collectGroups()
             throws MavenReportException
     {
-        Set<Group> groups = new LinkedHashSet<>();
+        Set<Group> groupSet = new LinkedHashSet<>();
 
         if ( includeDependencySources )
         {
@@ -3217,7 +3217,7 @@ public abstract class AbstractJavadocMojo
                     JavadocOptions options = bundle.getOptions();
                     if ( options != null && isNotEmpty( options.getGroups() ) )
                     {
-                        groups.addAll( options.getGroups() );
+                        groupSet.addAll( options.getGroups() );
                     }
                 }
             }
@@ -3225,10 +3225,10 @@ public abstract class AbstractJavadocMojo
 
         if ( this.groups != null && this.groups.length > 0 )
         {
-            groups.addAll( Arrays.asList( this.groups ) );
+            groupSet.addAll( Arrays.asList( this.groups ) );
         }
 
-        return groups;
+        return groupSet;
     }
 
     private Set<ResourcesArtifact> collectResourcesArtifacts()
@@ -3354,7 +3354,7 @@ public abstract class AbstractJavadocMojo
     private Set<Tag> collectTags()
             throws MavenReportException
     {
-        Set<Tag> tags = new LinkedHashSet<>();
+        Set<Tag> tagSet = new LinkedHashSet<>();
 
         if ( includeDependencySources )
         {
@@ -3375,7 +3375,7 @@ public abstract class AbstractJavadocMojo
                     JavadocOptions options = bundle.getOptions();
                     if ( options != null && isNotEmpty( options.getTags() ) )
                     {
-                        tags.addAll( options.getTags() );
+                        tagSet.addAll( options.getTags() );
                     }
                 }
             }
@@ -3383,10 +3383,10 @@ public abstract class AbstractJavadocMojo
 
         if ( this.tags != null && this.tags.length > 0 )
         {
-            tags.addAll( Arrays.asList( this.tags ) );
+            tagSet.addAll( Arrays.asList( this.tags ) );
         }
 
-        return tags;
+        return tagSet;
     }
 
     private Set<TagletArtifact> collectTagletArtifacts()
@@ -4117,9 +4117,9 @@ public abstract class AbstractJavadocMojo
     private void addLinkArguments( List<String> arguments )
             throws MavenReportException
     {
-        Set<String> links = collectLinks();
+        Set<String> collectedLinks = collectLinks();
 
-        for ( String link : links )
+        for ( String link : collectedLinks )
         {
             if ( StringUtils.isEmpty( link ) )
             {
@@ -4301,8 +4301,8 @@ public abstract class AbstractJavadocMojo
     private void copyAdditionalJavadocResources( File anOutputDirectory )
             throws MavenReportException
     {
-        Set<ResourcesArtifact> resourcesArtifacts = collectResourcesArtifacts();
-        if ( isEmpty( resourcesArtifacts ) )
+        Set<ResourcesArtifact> artifacts = collectResourcesArtifacts();
+        if ( isEmpty( artifacts ) )
         {
             return;
         }
@@ -4318,7 +4318,7 @@ public abstract class AbstractJavadocMojo
                     "Unable to extract resources artifact. " + "No archiver for 'jar' available.", e );
         }
 
-        for ( ResourcesArtifact item : resourcesArtifacts )
+        for ( ResourcesArtifact item : artifacts )
         {
             Artifact artifact;
             try
@@ -5051,9 +5051,9 @@ public abstract class AbstractJavadocMojo
 
         // MJAVADOC-506
         boolean moduleDescriptorSource = false;
-        for ( Path sourcepath : sourcePaths )
+        for ( Path sourcePath : sourcePaths )
         {
-            if ( Files.isRegularFile( sourcepath.resolve( "module-info.java" ) ) )
+            if ( Files.isRegularFile( sourcePath.resolve( "module-info.java" ) ) )
             {
                 moduleDescriptorSource = true;
                 break;
@@ -5436,13 +5436,13 @@ public abstract class AbstractJavadocMojo
     private void addGroups( List<String> arguments )
             throws MavenReportException
     {
-        Set<Group> groups = collectGroups();
-        if ( isEmpty( groups ) )
+        Set<Group> groupSet = collectGroups();
+        if ( isEmpty( groupSet ) )
         {
             return;
         }
 
-        for ( Group group : groups )
+        for ( Group group : groupSet )
         {
             if ( group == null || StringUtils.isEmpty( group.getTitle() ) || StringUtils.isEmpty(
                     group.getPackages() ) )
@@ -5471,14 +5471,14 @@ public abstract class AbstractJavadocMojo
     private void addTags( List<String> arguments )
             throws MavenReportException
     {
-        Set<Tag> tags = collectTags();
+        Set<Tag> collectTags = collectTags();
 
-        if ( isEmpty( tags ) )
+        if ( isEmpty( collectTags ) )
         {
             return;
         }
 
-        for ( Tag tag : tags )
+        for ( Tag tag : collectTags )
         {
             if ( StringUtils.isEmpty( tag.getName() ) )
             {
@@ -6812,17 +6812,17 @@ public abstract class AbstractJavadocMojo
         String property = mavenProject.getProperties().getProperty( "maven.javadoc.skip" );
         if ( property != null )
         {
-            boolean skip = BooleanUtils.toBoolean( property );
-            getLog().debug( "isSkippedJavadoc " + mavenProject + " " + skip );
-            return skip;
+            boolean skipJavaDoc = BooleanUtils.toBoolean( property );
+            getLog().debug( "isSkippedJavadoc " + mavenProject + " " + skipJavaDoc );
+            return skipJavaDoc;
         }
         final String pluginId = "org.apache.maven.plugins:maven-javadoc-plugin";
         property = getPluginParameter( mavenProject, pluginId, "skip" );
         if ( property != null )
         {
-            boolean skip = BooleanUtils.toBoolean( property );
-            getLog().debug( "isSkippedJavadoc " + mavenProject + " " + skip );
-            return skip;
+            boolean skipJavaDoc = BooleanUtils.toBoolean( property );
+            getLog().debug( "isSkippedJavadoc " + mavenProject + " " + skipJavaDoc );
+            return skipJavaDoc;
         }
         if ( mavenProject.getParent() != null )
         {
