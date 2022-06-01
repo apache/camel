@@ -41,7 +41,7 @@ class MinioConsumerIT extends MinioIntegrationTestSupport {
 
     @Test
     void sendIn() throws Exception {
-        result.expectedMessageCount(3);
+        result.expectedMessageCount(6);
 
         template.send("direct:putObject", exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test1.txt");
@@ -69,7 +69,7 @@ class MinioConsumerIT extends MinioIntegrationTestSupport {
                 String minioEndpoint = "minio://mycamel?autoCreateBucket=true";
 
                 from("direct:putObject").startupOrder(1).to(minioEndpoint);
-                from("minio://mycamel?moveAfterRead=true&destinationBucketName=camel-kafka-connector&autoCreateBucket=true")
+                from(minioEndpoint + "&deleteAfterRead=false&destinationBucketName=camel-kafka-connector&repeatCount=2")
                         .startupOrder(2).to("mock:result");
 
             }
