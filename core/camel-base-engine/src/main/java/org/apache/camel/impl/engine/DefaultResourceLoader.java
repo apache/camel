@@ -122,6 +122,23 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
     }
 
     /**
+     * Is there an existing resource resolver that can load from the given scheme
+     *
+     * @param scheme the scheme
+     */
+    protected boolean hasResourceResolver(String scheme) {
+        ResourceResolver answer = getCamelContext().getRegistry().lookupByNameAndType(
+                RESOURCE_LOADER_KEY_PREFIX + scheme,
+                ResourceResolver.class);
+
+        if (answer == null) {
+            answer = resolvers.get(scheme);
+        }
+
+        return answer != null;
+    }
+
+    /**
      * Looks up a {@link ResourceResolver} for the given scheme in the registry or fallback to a factory finder
      * mechanism if none found.
      *
