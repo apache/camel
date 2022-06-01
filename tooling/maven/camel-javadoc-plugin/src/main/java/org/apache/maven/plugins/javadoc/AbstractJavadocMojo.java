@@ -1777,7 +1777,7 @@ public abstract class AbstractJavadocMojo
      */
     protected List<String> getProjectSourceRoots( MavenProject p )
     {
-        if ( "pom".equals( p.getPackaging().toLowerCase() ) )
+        if ( "pom".equalsIgnoreCase(p.getPackaging()) )
         {
             return Collections.emptyList();
         }
@@ -1793,7 +1793,7 @@ public abstract class AbstractJavadocMojo
      */
     protected List<String> getExecutionProjectSourceRoots( MavenProject p )
     {
-        if ( "pom".equals( p.getExecutionProject().getPackaging().toLowerCase() ) )
+        if ( "pom".equalsIgnoreCase(p.getExecutionProject().getPackaging()) )
         {
             return Collections.emptyList();
         }
