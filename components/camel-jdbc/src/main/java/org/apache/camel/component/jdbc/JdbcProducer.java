@@ -159,6 +159,8 @@ public class JdbcProducer extends DefaultProducer {
                 ps = conn.prepareStatement(preparedQuery);
             }
 
+            bindParameters(exchange,ps);
+
             int expectedCount = ps.getParameterMetaData().getParameterCount();
 
             if (expectedCount > 0) {
@@ -208,10 +210,7 @@ public class JdbcProducer extends DefaultProducer {
                 }
             });
 
-            if (parameters != null && !parameters.isEmpty()) {
-                Map<String, Object> copy = new HashMap<>(parameters);
-                PropertyBindingSupport.bindProperties(exchange.getContext(), stmt, copy);
-            }
+            bindParameters(exchange, stmt);
 
             LOG.debug("Executing JDBC Statement: {}", sql);
 
@@ -254,6 +253,13 @@ public class JdbcProducer extends DefaultProducer {
             }
         }
         return shouldCloseResources;
+    }
+
+    private void bindParameters(Exchange exchange, Statement stmt) {
+        if (parameters != null && !parameters.isEmpty()) {
+            Map<String, Object> copy = new HashMap<>(parameters);
+            PropertyBindingSupport.bindProperties(exchange.getContext(), stmt, copy);
+        }
     }
 
     private void closeQuietly(ResultSet rs) {
