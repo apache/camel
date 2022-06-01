@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,13 @@ public class JmsToDSendDynamicTest extends CamelTestSupport {
         out = consumer.receiveBody("activemq:queue:beer", 2000, String.class);
         assertEquals("Hello beer", out);
     }
+    @Test
+    public void testToDSlashed() {
+        template.sendBodyAndHeader("direct:startSlashed", "Hello bar", "where", "bar");
+
+        Exchange exchange = consumer.receive("activemq://bar", 2000);
+        exchange.getMessage().getHeader(JmsConstants.JMS_DESTINATION_NAME);
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -61,6 +69,7 @@ public class JmsToDSendDynamicTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // route message dynamic using toD
                 from("direct:start").toD("activemq:queue:${header.where}");
+                from("direct:startSlashed").toD("activemq://${header.where}");
             }
         };
     }
