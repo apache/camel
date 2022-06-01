@@ -71,9 +71,9 @@ public class FaceVerificationWithImageUrlAndMockClientTest extends CamelTestSupp
 
         assertTrue(responseExchange.getIn().getBody() instanceof CompareFaceByUrlResponse);
         CompareFaceByUrlResponse response = (CompareFaceByUrlResponse) responseExchange.getIn().getBody();
-        assertEquals(response.getImage1Face(), MockResult.getCompareFaceResult());
-        assertEquals(response.getImage2Face(), MockResult.getCompareFaceResult());
-        assertEquals(response.getSimilarity(), 1.0);
+        assertEquals(MockResult.getCompareFaceResult(), response.getImage1Face());
+        assertEquals(MockResult.getCompareFaceResult(), response.getImage2Face());
+        assertEquals(1.0, response.getSimilarity());
     }
 
 }

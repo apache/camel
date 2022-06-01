@@ -87,7 +87,7 @@ public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSu
         CompareFaceByBase64Response response = (CompareFaceByBase64Response) responseExchange.getIn().getBody();
         assertEquals(response.getImage1Face(), MockResult.getCompareFaceResult());
         assertEquals(response.getImage2Face(), MockResult.getCompareFaceResult());
-        assertEquals(response.getSimilarity(), 1.0);
+        assertEquals(1.0, response.getSimilarity());
     }
 
     /**
@@ -105,9 +105,9 @@ public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSu
 
         assertTrue(responseExchange.getIn().getBody() instanceof CompareFaceByBase64Response);
         CompareFaceByBase64Response response = (CompareFaceByBase64Response) responseExchange.getIn().getBody();
-        assertEquals(response.getImage1Face(), MockResult.getCompareFaceResult());
-        assertEquals(response.getImage2Face(), MockResult.getCompareFaceResult());
-        assertEquals(response.getSimilarity(), 1.0);
+        assertEquals(MockResult.getCompareFaceResult(), response.getImage1Face());
+        assertEquals(MockResult.getCompareFaceResult(), response.getImage2Face());
+        assertEquals(1.0, response.getSimilarity());
     }
 
 }

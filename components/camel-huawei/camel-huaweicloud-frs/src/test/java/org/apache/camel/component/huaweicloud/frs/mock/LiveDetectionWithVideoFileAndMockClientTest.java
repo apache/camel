@@ -71,7 +71,7 @@ public class LiveDetectionWithVideoFileAndMockClientTest extends CamelTestSuppor
 
         assertTrue(responseExchange.getIn().getBody() instanceof DetectLiveByFileResponse);
         DetectLiveByFileResponse response = (DetectLiveByFileResponse) responseExchange.getIn().getBody();
-        assertEquals(response.getVideoResult(), MockResult.getLiveDetectResult());
-        assertEquals(response.getWarningList().size(), 0);
+        assertEquals(MockResult.getLiveDetectResult(), response.getVideoResult());
+        assertEquals(0, response.getWarningList().size());
     }
 }
