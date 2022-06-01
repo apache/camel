@@ -20,12 +20,14 @@ package org.apache.camel.test.infra.aws2.clients;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import org.apache.camel.test.infra.common.TestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.CreateStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.CreateStreamResponse;
@@ -82,7 +84,7 @@ public final class KinesisUtils {
             LOG.info("Kinesis stream check result: {}", status);
         } catch (KinesisException e) {
             if (LOG.isTraceEnabled()) {
-                LOG.info("The stream does not exist, auto creating it: {}", e.getMessage(), e);
+                LOG.trace("The stream does not exist, auto creating it: {}", e.getMessage(), e);
             } else {
                 LOG.info("The stream does not exist, auto creating it: {}", e.getMessage());
             }
@@ -100,6 +102,8 @@ public final class KinesisUtils {
                     return false;
                 }
             });
+        } catch (SdkClientException e) {
+            LOG.info("SDK Error when getting the stream: {}", e.getMessage());
         }
     }
 
@@ -149,7 +153,13 @@ public final class KinesisUtils {
         }
     }
 
-    public static void putRecords(KinesisClient kinesisClient, String streamName, int count) {
+    public static List<PutRecordsResponse> putRecords(KinesisClient kinesisClient, String streamName, int count) {
+        return putRecords(kinesisClient, streamName, count, null);
+    }
+
+    public static List<PutRecordsResponse> putRecords(
+            KinesisClient kinesisClient, String streamName, int count,
+            Consumer<PutRecordsRequest.Builder> customizer) {
         List<PutRecordsRequestEntry> putRecordsRequestEntryList = new ArrayList<>();
 
         LOG.debug("Adding data to the Kinesis stream");
@@ -167,23 +177,24 @@ public final class KinesisUtils {
 
         LOG.debug("Done creating the data records");
 
-        PutRecordsRequest putRecordsRequest = PutRecordsRequest
-                .builder()
+        final PutRecordsRequest.Builder requestBuilder = PutRecordsRequest
+                .builder();
+
+        requestBuilder
                 .streamName(streamName)
-                .records(putRecordsRequestEntryList)
-                .build();
+                .records(putRecordsRequestEntryList);
+
+        if (customizer != null) {
+            customizer.accept(requestBuilder);
+        }
+
+        PutRecordsRequest putRecordsRequest = requestBuilder.build();
+        List<PutRecordsResponse> replies = new ArrayList<>(count);
 
         int retries = 5;
         do {
             try {
-                PutRecordsResponse response = kinesisClient.putRecords(putRecordsRequest);
-
-                if (response.sdkHttpResponse().isSuccessful()) {
-                    LOG.debug("Done putting the data records into the stream");
-                } else {
-                    fail("Unable to put all the records into the stream");
-                }
-
+                replies.add(kinesisClient.putRecords(putRecordsRequest));
                 break;
             } catch (AwsServiceException e) {
                 retries--;
@@ -207,6 +218,8 @@ public final class KinesisUtils {
                 }
             }
         } while (retries > 0);
+
+        return replies;
     }
 
     private static boolean hasShards(KinesisClient kinesisClient, DescribeStreamRequest describeStreamRequest) {
