@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.jdbc;
 
+import java.util.List;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,7 +32,6 @@ public class JdbcFix18157Test extends AbstractJdbcTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-
 
     @Test
 
@@ -51,7 +50,8 @@ public class JdbcFix18157Test extends AbstractJdbcTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 //statement.maxRows=1 is provided as additional parameter in combination with useHeadersAsParameters=true
-                from("direct:useHeadersAsParameters").to("jdbc:testdb?statement.maxRows=1&useHeadersAsParameters=true").to("mock:result");
+                from("direct:useHeadersAsParameters").to("jdbc:testdb?statement.maxRows=1&useHeadersAsParameters=true")
+                        .to("mock:result");
             }
         };
     }
