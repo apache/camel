@@ -18,8 +18,10 @@ class DependencyDownloaderResourceLoader extends DefaultResourceLoader {
             if (!hasResourceResolver(scheme)) {
                 // need to download github resolver
                 if (!DownloaderHelper.alreadyOnClasspath(
-                        getCamelContext(), "org.apache.camel", "camel-resourceresolver-github", getCamelContext().getVersion())) {
-                    DownloaderHelper.downloadDependency(getCamelContext(), "org.apache.camel", "camel-resourceresolver-github", getCamelContext().getVersion());
+                        getCamelContext(), "org.apache.camel", "camel-resourceresolver-github",
+                        getCamelContext().getVersion())) {
+                    DownloaderHelper.downloadDependency(getCamelContext(), "org.apache.camel", "camel-resourceresolver-github",
+                            getCamelContext().getVersion());
                 }
             }
         }
