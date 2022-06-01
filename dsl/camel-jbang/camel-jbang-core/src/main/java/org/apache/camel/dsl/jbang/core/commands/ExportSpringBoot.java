@@ -119,7 +119,9 @@ class ExportSpringBoot extends CamelCommand {
         srcJavaDir.mkdirs();
         File srcResourcesDir = new File(BUILD_DIR, "src/main/resources");
         srcResourcesDir.mkdirs();
-        copySourceFiles(settings, srcJavaDir, srcResourcesDir, packageName);
+        File srcCamelResourcesDir = new File(BUILD_DIR, "src/main/resources/camel");
+        srcCamelResourcesDir.mkdirs();
+        copySourceFiles(settings, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir);
         // create main class
@@ -226,7 +228,9 @@ class ExportSpringBoot extends CamelCommand {
         return code;
     }
 
-    private void copySourceFiles(File settings, File srcJavaDir, File srcResourcesDir, String packageName) throws Exception {
+    private void copySourceFiles(
+            File settings, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir, String packageName)
+            throws Exception {
         // read the settings file and find the files to copy
         OrderedProperties prop = new OrderedProperties();
         prop.load(new FileInputStream(settings));
@@ -241,7 +245,8 @@ class ExportSpringBoot extends CamelCommand {
                     }
                     String ext = FileUtil.onlyExt(f, true);
                     boolean java = "java".equals(ext);
-                    File target = java ? srcJavaDir : srcResourcesDir;
+                    boolean camel = "camel.main.routesIncludePattern".equals(k) || "camel.component.kamelet.location".equals(k);
+                    File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : srcResourcesDir;
                     File source = new File(f);
                     File out = new File(target, source.getName());
                     safeCopy(source, out, true);
@@ -302,13 +307,16 @@ class ExportSpringBoot extends CamelCommand {
             v = v.replaceAll("file:", "classpath:");
             if ("camel.springboot.routesIncludePattern".equals(k)) {
                 // camel.main.routesIncludePattern should remove all .java as we use spring boot to load them
+                // camel.main.routesIncludePattern should remove all file: classpath: as we copy them to src/main/resources/camel where camel auto-load from
                 v = Arrays.stream(v.split(","))
-                        .filter(n -> !n.endsWith(".java"))
+                        .filter(n -> !n.endsWith(".java") && !n.startsWith("file:") && !n.startsWith("classpath:"))
                         .collect(Collectors.joining(","));
             }
-            String line = k + "=" + v;
-            fos.write(line.getBytes(StandardCharsets.UTF_8));
-            fos.write("\n".getBytes(StandardCharsets.UTF_8));
+            if (!v.isBlank()) {
+                String line = k + "=" + v;
+                fos.write(line.getBytes(StandardCharsets.UTF_8));
+                fos.write("\n".getBytes(StandardCharsets.UTF_8));
+            }
         }
         IOHelper.close(fos);
     }
