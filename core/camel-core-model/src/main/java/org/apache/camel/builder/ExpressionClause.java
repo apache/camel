@@ -379,6 +379,50 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
+     * Evaluates a <a href="http://camel.apache.org/jq.html">JQ expression</a>
+     *
+     * @param  value the expression to be evaluated
+     * @return       the builder to continue processing the DSL
+     */
+    public T jq(String value) {
+        return delegate.jq(value);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jq.html">JQ expression</a>
+     *
+     * @param  value      the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @return            the builder to continue processing the DSL
+     */
+    public T jq(String value, Class<?> resultType) {
+        return delegate.jq(value, resultType);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jq.html">JQ expression</a>
+     *
+     * @param  value      the expression to be evaluated
+     * @param  headerName the name of the header to apply the expression to
+     * @return            the builder to continue processing the DSL
+     */
+    public T jq(String value, String headerName) {
+        return delegate.jq(value, headerName);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jq.html">JQ expression</a>
+     *
+     * @param  value      the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @param  headerName the name of the header to apply the expression to
+     * @return            the builder to continue processing the DSL
+     */
+    public T jq(String value, Class<?> resultType, String headerName) {
+        return delegate.jq(value, resultType, headerName);
+    }
+
+    /**
      * Evaluates a <a href="http://camel.apache.org/datasonnet.html">Datasonnet expression</a>
      *
      * @param  text the expression to be evaluated

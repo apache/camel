@@ -2644,6 +2644,16 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), expressionDefinitionValueHandler());
     }
+    protected JqExpression doParseJqExpression() throws IOException, XmlPullParserException {
+        return doParse(new JqExpression(), (def, key, val) -> {
+            switch (key) {
+                case "headerName": def.setHeaderName(val); break;
+                case "resultType": def.setResultTypeName(val); break;
+                default: return expressionDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, noElementHandler(), expressionDefinitionValueHandler());
+    }
     protected JsonPathExpression doParseJsonPathExpression() throws IOException, XmlPullParserException {
         return doParse(new JsonPathExpression(), (def, key, val) -> {
             switch (key) {
@@ -3300,6 +3310,7 @@ public class ModelParser extends BaseParser {
             case "header": return doParseHeaderExpression();
             case "hl7terser": return doParseHl7TerserExpression();
             case "joor": return doParseJoorExpression();
+            case "jq": return doParseJqExpression();
             case "jsonpath": return doParseJsonPathExpression();
             case "language": return doParseLanguageExpression();
             case "method": return doParseMethodCallExpression();

@@ -38,6 +38,7 @@ import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
 import org.apache.camel.model.language.JoorExpression;
+import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
@@ -129,6 +130,8 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             return new ExpressionReifier<>(camelContext, definition);
         } else if (definition instanceof JoorExpression) {
             return new JoorExpressionReifier(camelContext, definition);
+        } else if (definition instanceof JqExpression) {
+            return new JqExpressionReifier(camelContext, definition);
         } else if (definition instanceof JsonPathExpression) {
             return new JsonPathExpressionReifier(camelContext, definition);
         } else if (definition instanceof LanguageExpression) {

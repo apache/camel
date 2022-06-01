@@ -8,6 +8,7 @@ GroovyExpression
 HeaderExpression
 Hl7TerserExpression
 JoorExpression
+JqExpression
 JsonPathExpression
 LanguageExpression
 MethodCallExpression

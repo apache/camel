@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "jq",
+    "title": "Jq",
+    "description": "Java expression language using JQ",
+    "deprecated": false,
+    "firstVersion": "3.18.0",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jq",
+    "version": "3.18.0-SNAPSHOT"
+  }
+}
