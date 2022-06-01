@@ -2046,7 +2046,7 @@ public abstract class AbstractJavadocMojo
         // ----------------------------------------------------------------------
         List<String> javadocArguments = new ArrayList<>();
 
-        addJavadocOptions( javadocOutputDirectory, javadocArguments, sourcePaths, offlineLinkSet );
+        addJavadocOptions( javadocOutputDirectory, javadocArguments, sourcePaths);
 
         // ----------------------------------------------------------------------
         // Write options file and include it in the command line
@@ -4846,8 +4846,7 @@ public abstract class AbstractJavadocMojo
      */
     private void addJavadocOptions( File javadocOutputDirectory,
                                     List<String> arguments,
-                                    Map<String, Collection<Path>> allSourcePaths,
-                                    Set<OfflineLink> offlineLinks )
+                                    Map<String, Collection<Path>> allSourcePaths )
             throws MavenReportException
     {
         Collection<Path> sourcePaths = collect( allSourcePaths.values() );
