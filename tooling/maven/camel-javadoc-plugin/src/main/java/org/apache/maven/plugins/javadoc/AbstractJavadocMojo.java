@@ -4058,14 +4058,11 @@ public abstract class AbstractJavadocMojo
      * in the project.
      *
      * @param arguments a list of arguments, not null
-     * @throws MavenReportException if any
      * @see #offlineLinks
      * @see #getModulesLinks()
      * @see <a href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#package-list">package-list spec</a>
      */
-    private void addLinkofflineArguments( List<String> arguments, Set<OfflineLink> offlineLinksList )
-            throws MavenReportException
-    {
+    private void addLinkofflineArguments( List<String> arguments, Set<OfflineLink> offlineLinksList ) {
         for ( OfflineLink offlineLink : offlineLinksList )
         {
             String url = offlineLink.getUrl();
