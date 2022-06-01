@@ -104,10 +104,12 @@ public class JmsSendDynamicAware extends ServiceSupport implements SendDynamicAw
 
     private String parseDestinationName(String uri) {
         // strip query
+        uri = uri.replaceFirst(scheme + "://", ":");
         int pos = uri.indexOf('?');
         if (pos != -1) {
             uri = uri.substring(0, pos);
         }
+
         // destination name is after last colon
         pos = uri.lastIndexOf(':');
         if (pos != -1) {
