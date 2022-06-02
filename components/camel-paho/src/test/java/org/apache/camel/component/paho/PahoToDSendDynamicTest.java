@@ -57,6 +57,12 @@ public class PahoToDSendDynamicTest extends CamelTestSupport {
         out = consumer.receiveBody("paho:beer", 2000, String.class);
         assertEquals("Hello beer", out);
     }
+    @Test
+    public void testToDSlashed() {
+        template.sendBodyAndHeader("direct:startSlashed", "Hello bar", "where", "bar");
+        String out = consumer.receiveBody("paho://bar", 2000, String.class);
+        assertEquals("Hello bar", out);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -68,6 +74,7 @@ public class PahoToDSendDynamicTest extends CamelTestSupport {
 
                 // route message dynamic using toD
                 from("direct:start").toD("paho:${header.where}?retained=true");
+                from("direct:startSlashed").toD("paho://${header.where}?retained=true");
             }
         };
     }
