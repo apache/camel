@@ -52,6 +52,14 @@ public class JmsToDSendDynamicTest extends CamelTestSupport {
         exchange.getMessage().getHeader(JmsConstants.JMS_DESTINATION_NAME);
     }
 
+    @Test
+    public void testToDSlashed() {
+        template.sendBodyAndHeader("direct:startSlashed", "Hello bar", "where", "bar");
+
+        Exchange exchange = consumer.receive("activemq://bar", 2000);
+        exchange.getMessage().getHeader(JmsConstants.JMS_DESTINATION_NAME);
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();

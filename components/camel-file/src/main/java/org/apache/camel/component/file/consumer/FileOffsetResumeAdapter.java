@@ -15,25 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kafka.consumer.support;
+package org.apache.camel.component.file.consumer;
 
-import org.apache.camel.resume.Offset;
-import org.apache.camel.util.KeyValueHolder;
+import java.io.File;
+
+import org.apache.camel.component.file.GenericFile;
 
 /**
- * Offset class for Kafka
+ * Provides an interface for adapters handling file offsets
  */
-public class KafkaOffset implements Offset<KeyValueHolder<String, String>> {
-    private final String topicPartition;
-    private final String offset;
+public interface FileOffsetResumeAdapter {
 
-    public KafkaOffset(String topicPartition, String offset) {
-        this.topicPartition = topicPartition;
-        this.offset = offset;
-    }
+    /**
+     * Sets the resume payload used for the adapter
+     * 
+     * @param genericFile a generic file instance
+     */
+    default void setResumePayload(GenericFile<File> genericFile) {
 
-    @Override
-    public KeyValueHolder<String, String> offset() {
-        return new KeyValueHolder<>(topicPartition, offset);
     }
 }

@@ -23,11 +23,23 @@ import org.apache.camel.resume.Offset;
  * Offset handling support
  */
 public final class Offsets {
+    private static class AnonymousOffset<T> implements Offset<T> {
+        private T offset;
 
-    /**
-     * Default initial offset when using long offsets
-     */
-    public static final Offset<Long> INITIAL_LONG = Offsets.of(0L);
+        public AnonymousOffset(T offset) {
+            this.offset = offset;
+        }
+
+        @Override
+        public void update(T offset) {
+            this.offset = offset;
+        }
+
+        @Override
+        public T offset() {
+            return offset;
+        }
+    }
 
     private Offsets() {
     }
@@ -40,7 +52,7 @@ public final class Offsets {
      * @return             A new Offset holder with the given offset value
      */
     public static <T> Offset<T> of(T offsetValue) {
-        return () -> offsetValue;
+        return new AnonymousOffset<>(offsetValue);
     }
 
     /**
@@ -54,7 +66,7 @@ public final class Offsets {
      */
     public static <T> Offset<T> ofNullable(T offsetValue, T defaultValue) {
         if (offsetValue != null) {
-            return () -> offsetValue;
+            return new AnonymousOffset<>(offsetValue);
         }
 
         return Offsets.of(defaultValue);

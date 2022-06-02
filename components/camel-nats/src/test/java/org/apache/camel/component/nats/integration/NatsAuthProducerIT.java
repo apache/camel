@@ -19,11 +19,13 @@ package org.apache.camel.component.nats.integration;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class NatsAuthProducerIT extends NatsAuthITSupport {
 
     @Test
     public void sendTest() {
-        template.sendBody("direct:send", "pippo");
+        assertDoesNotThrow(() -> template.sendBody("direct:send", "pippo"));
     }
 
     @Override

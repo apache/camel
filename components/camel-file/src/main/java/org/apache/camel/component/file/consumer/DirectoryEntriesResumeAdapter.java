@@ -17,8 +17,10 @@
 
 package org.apache.camel.component.file.consumer;
 
-import org.apache.camel.resume.Resumable;
+import org.apache.camel.component.file.consumer.adapters.DirectoryEntries;
 
-public interface GenericFileResumable<T> extends Resumable<T, Long> {
+public interface DirectoryEntriesResumeAdapter {
+    default void setResumePayload(DirectoryEntries fileSet) {
 
+    }
 }

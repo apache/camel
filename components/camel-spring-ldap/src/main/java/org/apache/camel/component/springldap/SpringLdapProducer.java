@@ -25,7 +25,7 @@ import javax.naming.directory.ModificationItem;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.commons.lang.StringUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.LdapOperations;
@@ -93,13 +93,13 @@ public class SpringLdapProducer extends DefaultProducer {
         LdapTemplate ldapTemplate = endpoint.getLdapTemplate();
 
         String dn = (String) body.get(DN);
-        if (StringUtils.isBlank(dn)) {
+        if (ObjectHelper.isEmpty(dn)) {
             ContextSource contextSource = ldapTemplate.getContextSource();
             if (contextSource instanceof BaseLdapPathContextSource) {
                 dn = ((BaseLdapPathContextSource) contextSource).getBaseLdapPathAsString();
             }
         }
-        if (operation != LdapOperation.FUNCTION_DRIVEN && (StringUtils.isBlank(dn))) {
+        if (operation != LdapOperation.FUNCTION_DRIVEN && (ObjectHelper.isEmpty(dn))) {
             throw new UnsupportedOperationException("DN must not be empty, but you provided an empty DN");
         }
 

@@ -15,15 +15,32 @@
  * limitations under the License.
  */
 
-package org.apache.camel.resume.cache;
+package org.apache.camel.component.file.consumer.adapters;
 
-/**
- * A cache where an entry can point to one or more entries. For instance, a path as the key and the file entries as its
- * entries
- *
- * @param <K> the type of the key
- * @param <V> the type of the value
- */
-public interface MultiEntryCache<K, V> extends ResumeCache<K, V> {
+import org.apache.camel.resume.Offset;
 
+public class FileOffset implements Offset<Long> {
+    private Long offset;
+
+    public FileOffset() {
+    }
+
+    public FileOffset(Long offset) {
+        this.offset = offset;
+    }
+
+    @Override
+    public void update(Long offset) {
+        this.offset = offset;
+    }
+
+    @Deprecated
+    public Object getLastOffset() {
+        return offset;
+    }
+
+    @Override
+    public Long offset() {
+        return offset;
+    }
 }

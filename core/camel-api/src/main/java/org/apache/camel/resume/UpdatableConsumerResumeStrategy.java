@@ -20,11 +20,9 @@ package org.apache.camel.resume;
 /**
  * An updatable resume strategy
  *
- * @param <K> the type of the key, name or object that can be addressed by the given offset
  * @param <T> the type of the addressable value for the resumable object (for example, a file would use a Long value)
- * @param <T> a resumable type capable of handling/storing/holding resumable information for the addressable and offset
  */
-public interface UpdatableConsumerResumeStrategy<K, V, T extends Resumable<K, V>> {
+public interface UpdatableConsumerResumeStrategy<T extends Resumable> {
 
     /**
      * Updates the last processed offset

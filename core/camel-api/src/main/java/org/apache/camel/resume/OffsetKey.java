@@ -15,11 +15,32 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.file.consumer;
+package org.apache.camel.resume;
+
+import java.nio.ByteBuffer;
 
 /**
- * Allows the implementation of file adapters for handling resume operations for file sets (i.e.: file entries in a
- * directory)
+ * An interface to represent offset keys (addressable for an offset)
+ * 
+ * @param <K> the type of the offset key
  */
-public interface FileSetResumeAdapter extends FileResumeAdapter<FileResumeSet> {
+public interface OffsetKey<K> extends Serializable {
+    /**
+     * Sets the key
+     * 
+     * @param key the key valeu
+     */
+    void setKey(K key);
+
+    /**
+     * Gets the key
+     * 
+     * @return the key instance
+     */
+    K getKey();
+
+    @Override
+    default ByteBuffer serialize() {
+        return serialize(getKey());
+    }
 }

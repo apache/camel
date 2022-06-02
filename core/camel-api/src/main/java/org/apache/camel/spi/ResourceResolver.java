@@ -23,6 +23,7 @@ import org.apache.camel.StaticService;
  * SPI for loading resources.
  */
 public interface ResourceResolver extends StaticService, CamelContextAware {
+
     /**
      * Service factory base path for scheme specific resolver.
      */

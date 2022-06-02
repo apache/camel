@@ -15,22 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.caffeine.resume.single;
+package org.apache.camel.component.caffeine.resume;
 
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import org.apache.camel.resume.cache.SingleEntryCache;
+import org.apache.camel.resume.cache.ResumeCache;
 
 /**
  * This is a simple cache implementation that uses Caffeine to store the resume offsets
  *
  * @param <K> The type of the key to cache
- * @param <V> The type of the value/entry to cache
  */
-public class CaffeineCache<K, V> implements SingleEntryCache<K, V> {
-    private final Cache<K, V> cache;
+public class CaffeineCache<K> implements ResumeCache<K> {
+    private final Cache<K, Object> cache;
     private final long cacheSize;
 
     /**
@@ -48,27 +49,27 @@ public class CaffeineCache<K, V> implements SingleEntryCache<K, V> {
      * @param cache     an instance of a pre-constructed cache object
      * @param cacheSize the size of the pre-constructed cache object
      */
-    public CaffeineCache(Cache<K, V> cache, long cacheSize) {
+    public CaffeineCache(Cache<K, Object> cache, long cacheSize) {
         this.cache = cache;
         this.cacheSize = cacheSize;
     }
 
     @Override
-    public boolean contains(K key, V entry) {
+    public boolean contains(K key, Object entry) {
         assert key != null;
-        V cachedEntry = cache.getIfPresent(key);
+        Object cachedEntry = cache.getIfPresent(key);
 
         return entry.equals(cachedEntry);
     }
 
     @Override
-    public void add(K key, V offsetValue) {
+    public void add(K key, Object offsetValue) {
         cache.put(key, offsetValue);
     }
 
     @Override
-    public Optional<V> get(K key) {
-        V entry = cache.getIfPresent(key);
+    public Object get(K key) {
+        Object entry = cache.getIfPresent(key);
 
         if (entry == null) {
             return Optional.empty();
@@ -78,12 +79,42 @@ public class CaffeineCache<K, V> implements SingleEntryCache<K, V> {
     }
 
     @Override
-    public boolean isFull() {
-        if (cache.estimatedSize() >= cacheSize) {
-            return true;
+    public <T> T get(K key, Class<T> clazz) {
+        Object entry = cache.getIfPresent(key);
+        if (entry != null) {
+            return clazz.cast(entry);
         }
 
-        return false;
+        return null;
+    }
+
+    @Override
+    public Object computeIfAbsent(K key, Function<? super K, ? super Object> mapping) {
+        Object entry = cache.getIfPresent(key);
+
+        if (entry == null) {
+            entry = mapping.apply(key);
+            cache.put(key, entry);
+        }
+
+        return entry;
+    }
+
+    @Override
+    public Object computeIfPresent(K key, BiFunction<? super K, ? super Object, ? super Object> remapping) {
+        Object entry = cache.getIfPresent(key);
+
+        if (entry != null) {
+            entry = remapping.apply(key, entry);
+            cache.put(key, entry);
+        }
+
+        return entry;
+    }
+
+    @Override
+    public boolean isFull() {
+        return cache.estimatedSize() >= cacheSize;
     }
 
     @Override

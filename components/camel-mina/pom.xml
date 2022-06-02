@@ -94,7 +94,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>org.apache.camel.component.mina.MinaProducerShutdownTest</mainClass>
+                    <mainClass>org.apache.camel.component.mina.MinaProducerShutdownManualIT</mainClass>
                     <includePluginDependencies>false</includePluginDependencies>
                 </configuration>
             </plugin>

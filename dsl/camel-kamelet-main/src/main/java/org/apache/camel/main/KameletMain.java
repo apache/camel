@@ -295,6 +295,7 @@ public class KameletMain extends MainCommandLineSupport {
                 answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer, stub));
                 answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer));
                 answer.setLanguageResolver(new DependencyDownloaderLanguageResolver(answer));
+                answer.setResourceLoader(new DependencyDownloaderResourceLoader(answer));
                 answer.addService(new DependencyDownloaderKamelet());
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);

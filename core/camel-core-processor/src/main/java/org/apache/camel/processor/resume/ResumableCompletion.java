@@ -48,10 +48,10 @@ public class ResumableCompletion implements Synchronization {
         Object offset = ExchangeHelper.getResultMessage(exchange).getHeader(Exchange.OFFSET);
 
         if (offset instanceof Resumable) {
-            Resumable<?, ?> resumable = (Resumable<?, ?>) offset;
+            Resumable resumable = (Resumable) offset;
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing the resumable: {}", resumable.getAddressable());
+                LOG.trace("Processing the resumable: {}", resumable.getOffsetKey());
                 LOG.trace("Processing the resumable of type: {}", resumable.getLastOffset().offset());
             }
 
@@ -75,14 +75,14 @@ public class ResumableCompletion implements Synchronization {
     @Override
     public void onFailure(Exchange exchange) {
         Exception e = exchange.getException();
-        Object offset = exchange.getMessage().getHeader(Exchange.OFFSET);
+        Object resObj = exchange.getMessage().getHeader(Exchange.OFFSET);
 
-        if (offset instanceof Resumable) {
-            Resumable<?, ?> resumable = (Resumable<?, ?>) offset;
+        if (resObj instanceof Resumable) {
+            Resumable resumable = (Resumable) resObj;
 
             String logMessage = String.format(
                     "Skipping offset update with address '%s' and offset value '%s' due to failure in processing: %s",
-                    resumable.getAddressable(), resumable.getLastOffset().offset(), e.getMessage());
+                    resumable.getOffsetKey(), resumable.getLastOffset().offset(), e.getMessage());
 
             if (LOG.isDebugEnabled() || CamelLogger.shouldLog(LOG, loggingLevel)) {
                 CamelLogger.log(LOG, LoggingLevel.DEBUG, logMessage, e);
@@ -93,7 +93,7 @@ public class ResumableCompletion implements Synchronization {
             }
         } else {
             String logMessage = String.format("Skipping offset update of '%s' due to failure in processing: %s",
-                    offset == null ? "type null" : "unspecified type", e.getMessage());
+                    resObj == null ? "type null" : "unspecified type", e.getMessage());
 
             if (LOG.isDebugEnabled() || CamelLogger.shouldLog(LOG, loggingLevel)) {
                 CamelLogger.log(LOG, LoggingLevel.DEBUG, logMessage, e);

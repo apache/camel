@@ -185,15 +185,45 @@ public final class ObjectHelper {
      * @param  value the value, if its a String it will be tested for text length as well
      * @return       true if empty
      */
-    public static boolean isEmpty(Object value) {
+    public static boolean isEmpty(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
+    /**
+     * Tests whether the value is <tt>null</tt> or an an empty collection
+     *
+     * @param  value the value to test
+     * @return       true if empty
+     */
+    public static boolean isEmpty(Collection<?> value) {
+        return value == null || value.isEmpty();
+    }
+
+    /**
+     * Tests whether the value is <tt>null</tt> or an an empty map
+     *
+     * @param  value the value to test
+     * @return       true if empty
+     */
+    public static boolean isEmpty(Map<?, ?> value) {
+        return value == null || value.isEmpty();
+    }
+
+    /**
+     * Tests whether the value is <tt>null</tt>, an empty string or an empty collection/map.
+     *
+     * @param  value the value, if its a String it will be tested for text length as well
+     * @return       true if empty
+     */
+    public static <T> boolean isEmpty(T value) {
         if (value == null) {
             return true;
         } else if (value instanceof String) {
-            return ((String) value).trim().isEmpty();
+            return isEmpty((String) value);
         } else if (value instanceof Collection) {
-            return ((Collection<?>) value).isEmpty();
+            return isEmpty((Collection<?>) value);
         } else if (value instanceof Map) {
-            return ((Map<?, ?>) value).isEmpty();
+            return isEmpty((Map<?, ?>) value);
         } else {
             return false;
         }
@@ -205,7 +235,37 @@ public final class ObjectHelper {
      * @param  value the value, if its a String it will be tested for text length as well
      * @return       true if <b>not</b> empty
      */
-    public static boolean isNotEmpty(Object value) {
+    public static <T> boolean isNotEmpty(T value) {
+        return !isEmpty(value);
+    }
+
+    /**
+     * Tests whether the value is <b>not</b> <tt>null</tt> or an empty string
+     *
+     * @param  value the value, if its a String it will be tested for text length as well
+     * @return       true if <b>not</b> empty
+     */
+    public static boolean isNotEmpty(String value) {
+        return !isEmpty(value);
+    }
+
+    /**
+     * Tests whether the value is <tt>null</tt> or an an empty collection
+     *
+     * @param  value the value to test
+     * @return       true if empty
+     */
+    public static boolean isNotEmpty(Collection<?> value) {
+        return !isEmpty(value);
+    }
+
+    /**
+     * Tests whether the value is <tt>null</tt> or an an empty map
+     *
+     * @param  value the value to test
+     * @return       true if empty
+     */
+    public static boolean isNotEmpty(Map<?, ?> value) {
         return !isEmpty(value);
     }
 

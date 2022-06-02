@@ -14,21 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.spring.impl.converter;
 
-package org.apache.camel.component.file.consumer;
+import org.apache.camel.Converter;
+import org.apache.camel.TypeConverters;
+import org.apache.camel.impl.converter.Country;
 
-import java.io.File;
-import java.util.Optional;
+public class MyConverters implements TypeConverters {
 
-/**
- * Allows the implementation of file adapters for handling resume operations for generic files
- */
-public interface GenericFileResumeAdapter extends FileResumeAdapter<GenericFileResumable<File>> {
-    /**
-     * Gets the last offset for the given file
-     *
-     * @param  addressable the file instance
-     * @return             An Optional with the offset value
-     */
-    Optional<Long> getLastOffset(File addressable);
+    @Converter
+    public Country toCountry(String iso) {
+        Country answer = new Country();
+        answer.setIso(iso);
+        answer.setName("Country:" + iso);
+        return answer;
+    }
+
+    @Converter
+    public String toIso(Country country) {
+        return country.getIso();
+    }
 }

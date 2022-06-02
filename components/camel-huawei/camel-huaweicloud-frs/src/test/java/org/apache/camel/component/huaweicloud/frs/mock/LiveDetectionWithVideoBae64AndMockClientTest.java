@@ -71,8 +71,8 @@ public class LiveDetectionWithVideoBae64AndMockClientTest extends CamelTestSuppo
 
         assertTrue(responseExchange.getIn().getBody() instanceof DetectLiveByBase64Response);
         DetectLiveByBase64Response response = (DetectLiveByBase64Response) responseExchange.getIn().getBody();
-        assertEquals(response.getVideoResult(), MockResult.getLiveDetectResult());
-        assertEquals(response.getWarningList().size(), 0);
+        assertEquals(MockResult.getLiveDetectResult(), response.getVideoResult());
+        assertEquals(0, response.getWarningList().size());
     }
 
 }

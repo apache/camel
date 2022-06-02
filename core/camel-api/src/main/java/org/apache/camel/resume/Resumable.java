@@ -22,30 +22,21 @@ package org.apache.camel.resume;
  * For example, when reading large files, it may be possible to inform the last offset that was read, thus allowing
  * users of this interface to skip to that offset. This can potentially improve resumable operations by allowing
  * reprocessing of data.
- *
- * @param <Y> the type of the key, name or object that can be addressed by the given offset
- * @param <T> the type of the addressable value for the resumable object (for example, a file would use a Long value)
  */
-public interface Resumable<Y, T> {
+public interface Resumable {
 
     /**
-     * Updates the last offset as appropriate for the user of the interface
+     * Gets the offset key (i.e.: the addressable part of the resumable object)
      *
-     * @param offset the offset value
+     * @return An OffsetKey instance with the addressable part of the object. May return null or an EmptyOffset
+     *         depending on the type of the resumable
      */
-    void updateLastOffset(T offset);
+    OffsetKey<?> getOffsetKey();
 
     /**
      * Gets the last offset value
      * 
      * @return the last offset value according to the interface and type implemented
      */
-    Offset<T> getLastOffset();
-
-    /**
-     * Gets the addressable part (key) of the resumable
-     * 
-     * @return the addressable part of the resumable
-     */
-    Y getAddressable();
+    Offset<?> getLastOffset();
 }

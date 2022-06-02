@@ -46,7 +46,8 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("manifests", new CommandLine(new Manifest(main)))
                         .addSubcommand("image", new CommandLine(new Image(main))))
                 .addSubcommand("export", new CommandLine(new Export(main))
-                        .addSubcommand("spring-boot", new CommandLine(new ExportSpringBoot(main))))
+                        .addSubcommand("spring-boot", new CommandLine(new ExportSpringBoot(main)))
+                        .addSubcommand("quarkus", new CommandLine(new ExportQuarkus(main))))
                 .addSubcommand("deploy", new CommandLine(new Deploy(main)))
                 .addSubcommand("undeploy", new CommandLine(new Undeploy(main)));
         /* // TODO: do not show commands that are deprecated and to be either removed or reworked

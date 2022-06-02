@@ -564,7 +564,7 @@ public class ObjectHelperTest {
 
     @Test
     public void testIsEmpty() {
-        assertTrue(org.apache.camel.util.ObjectHelper.isEmpty(null));
+        assertTrue(org.apache.camel.util.ObjectHelper.isEmpty((Object) null));
         assertTrue(org.apache.camel.util.ObjectHelper.isEmpty(""));
         assertTrue(org.apache.camel.util.ObjectHelper.isEmpty(" "));
         assertFalse(org.apache.camel.util.ObjectHelper.isEmpty("A"));
@@ -575,7 +575,7 @@ public class ObjectHelperTest {
 
     @Test
     public void testIsNotEmpty() {
-        assertFalse(org.apache.camel.util.ObjectHelper.isNotEmpty(null));
+        assertFalse(org.apache.camel.util.ObjectHelper.isNotEmpty((Object) null));
         assertFalse(org.apache.camel.util.ObjectHelper.isNotEmpty(""));
         assertFalse(org.apache.camel.util.ObjectHelper.isNotEmpty(" "));
         assertTrue(org.apache.camel.util.ObjectHelper.isNotEmpty("A"));

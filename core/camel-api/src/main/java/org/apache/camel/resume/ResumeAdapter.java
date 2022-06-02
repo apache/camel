@@ -21,6 +21,9 @@ package org.apache.camel.resume;
  * A resume adapter provides the component-specific logic that plugs the more generic strategic with the lower level
  * requirements of the component being used.
  *
+ * The adapter class responsibility is to bind the component-specific part of the logic to the more generic handling of
+ * the resume strategy. The adapter is always component specific and some components may have more than one.
+ *
  * It is the responsibility of the supported components to implement the custom implementation for this part of the
  * resume API, as well as to offer component-specific interfaces that can be specialized by other integrations.
  */

@@ -211,7 +211,16 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             LOG.info("Using custom TypeConverterRegistry: {}", tcr);
             getContext().setTypeConverterRegistry(tcr);
         }
-
+        if (getTypeConverterStatisticsEnabled() != null) {
+            getContext().setTypeConverterStatisticsEnabled(
+                    CamelContextHelper.parseBoolean(getContext(), getTypeConverterStatisticsEnabled()));
+        }
+        if (getTypeConverterExists() != null) {
+            getContext().getTypeConverterRegistry().setTypeConverterExists(getTypeConverterExists());
+        }
+        if (getTypeConverterExistsLoggingLevel() != null) {
+            getContext().getTypeConverterRegistry().setTypeConverterExistsLoggingLevel(getTypeConverterExistsLoggingLevel());
+        }
         // setup whether to load type converters as early as possible
         if (getLoadTypeConverters() != null) {
             String s = getContext().resolvePropertyPlaceholders(getLoadTypeConverters());
@@ -1246,19 +1255,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getValidators() != null) {
             context.setValidators(getValidators().getValidators());
         }
-        if (getTypeConverterStatisticsEnabled() != null) {
-            context.setTypeConverterStatisticsEnabled(
-                    CamelContextHelper.parseBoolean(context, getTypeConverterStatisticsEnabled()));
-        }
         if (getInflightRepositoryBrowseEnabled() != null) {
             context.getInflightRepository()
                     .setInflightBrowseEnabled(CamelContextHelper.parseBoolean(context, getInflightRepositoryBrowseEnabled()));
-        }
-        if (getTypeConverterExists() != null) {
-            context.getTypeConverterRegistry().setTypeConverterExists(getTypeConverterExists());
-        }
-        if (getTypeConverterExistsLoggingLevel() != null) {
-            context.getTypeConverterRegistry().setTypeConverterExistsLoggingLevel(getTypeConverterExistsLoggingLevel());
         }
         if (getRestConfiguration() != null) {
             getRestConfiguration().asRestConfiguration(context, context.getRestConfiguration());

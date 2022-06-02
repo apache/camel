@@ -14,40 +14,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.azure.storage.blob.integration;
+package org.apache.camel.component.jdbc;
+
+import java.util.List;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.azure.storage.blob.BlobConstants;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.Ignore;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-@Ignore("Requires real credentials")
-class BlobCopyProducerIt extends CamelTestSupport {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    @EndpointInject
-    private ProducerTemplate template;
+/**
+ * Unit test based on user forum request about this component
+ */
+public class JdbcFix18157Test extends AbstractJdbcTestSupport {
+
+    @EndpointInject("mock:result")
+    private MockEndpoint mock;
 
     @Test
-    void testCopyBlob() {
 
-        template.send("direct:uploadBlockBlob", exchange -> {
-            exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "pmi.txt");
-            exchange.getMessage().setHeader(BlobConstants.SOURCE_BLOB_CONTAINER_NAME, "test214");
-            exchange.getMessage().setHeader(BlobConstants.SOURCE_BLOB_ACCOUNT_NAME, "testblob214");
-        });
+    public void whenUseHeadersAsParametersOthersParametersShouldNotBeIgnored() throws Exception {
+        mock.expectedMessageCount(1);
+
+        template.sendBody("direct:useHeadersAsParameters", "select * from customer");
+
+        assertMockEndpointsSatisfied();
+        assertEquals(1, mock.getReceivedExchanges().get(0).getIn().getBody(List.class).size());
 
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            @Override
             public void configure() {
-                from("direct:copyBlob")
-                        .to("azure-storage-blob://testblob214/test215?operation=copyBlob&sourceBlobAccessKey=RAW(sourceAccessKey)&credentialType=SHARED_ACCOUNT_KEY&accessKey=(accessKey)");
+                //statement.maxRows=1 is provided as additional parameter in combination with useHeadersAsParameters=true
+                from("direct:useHeadersAsParameters").to("jdbc:testdb?statement.maxRows=1&useHeadersAsParameters=true")
+                        .to("mock:result");
             }
         };
     }

@@ -34,7 +34,8 @@ This instance can be bound in the Context registry as follows:
 
 [source,java]
 ----
-getCamelContext().getRegistry().bind("testResumeStrategy", new MyTestResumeStrategy(new MyAdapter()));
+getCamelContext().getRegistry().bind("testResumeStrategy", new MyTestResumeStrategy());
+getCamelContext().getRegistry().bind("resumeCache", new MyChoiceOfResumeCache<>(100));
 
 from("some:component")
     .resumable("testResumeStrategy")
@@ -45,52 +46,19 @@ Or the instance can be constructed as follows:
 
 [source,java]
 ----
+getCamelContext().getRegistry().bind("resumeCache", new MyChoiceOfResumeCache<>(100));
+
 from("some:component")
-    .resumable(new MyTestResumeStrategy(new MyAdapter()))
+    .resumable(new MyTestResumeStrategy())
     .process(this::process)
 ----
 
-=== The Resume Adapter
-
-The adapter class responsibility is to bind the component-specific part of the logic to the more generic handling of the
-resume strategy. The adapter is always component specific and some components may have more than one. Integrations with
-more complex resume processes, may implement their own adapters, although the builtin ones should be useful in most of the
-cases. Currently, the following adapters are available:
-
-* camel-atom: `org.apache.camel.component.feed.EntryFilter`
-* camel-aws2-kinesis: `org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeAdapter`
-* camel-cassandracql: `org.apache.camel.component.cassandra.consumer.support.CassandraResumeAdapter`
-* camel-couchbase: `org.apache.camel.component.couchbase.CouchbaseResumeAdapter`
-* camel-couchdb: `org.apache.camel.component.couchdb.consumer.CouchDbResumeAdapter`
-* camel-file: `org.apache.camel.component.file.consumer.adapters.FileSetResumeAdapter` for directories
-* camel-file: `org.apache.camel.component.file.consumer.adapters.GenericFileResumeAdapter` for files
-* camel-kafka: `org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeAdapter`
-* camel-rss: `org.apache.camel.component.feed.EntryFilter`
-* generic: `org.apache.camel.processor.resume.DelegatingResumeAdapter`
-
-Note: in the future, these adapters will be resolved automatically by Camel.
-
-== The Resume API Interfaces
-
-These are the *core interfaces*:
-
-* `org.apache.camel.resume.ResumeStrategy` - the resume strategy service
-* `org.apache.camel.resume.ResumeAdapter` - an adapter that binds the generic parts of the resume strategy with the component
-* `org.apache.camel.resume.UpdatableConsumerResumeStrategy` - an extension to the resume strategy to allow updatable strategies
-* `org.apache.camel.resume.cache.ResumeCache` - the base interface for local cache for resumable information
-* `org.apache.camel.resume.cache.SingleEntryCache` - an interface for local cache for resumable information where there is a one-to-one relationship between cache a key and its entry (i.e: a file and its offset)
-* `org.apache.camel.resume.cache.MultiEntryCache` - an interface for local cache for resumable information where there is a one-to-many relationship between the cache a keys and its entries (i.e.: a path and its file entries)
-
-These are the *core classes* supporting the strategies:
-
-* `org.apache.camel.resume.Resumable` - an interface to allow users to work with abstract resumable entities (files, offsets, etc)
-* `org.apache.camel.resume.ResumableSet` - an interface for resumables with a 1-to-many relationship
-* `org.apache.camel.resume.Offset` - a generic offset without a concrete type (it may represent a long, a file name, etc)
-
-These are the *supporting classes*:
+In some circumstances, such as when dealing with File I/O, it may be necessary to set the offset manually. There are
+*supporting classes* that can help work with resumables:
 
 * `org.apache.camel.support.Resumables` - resumables handling support
 * `org.apache.camel.support.Offsets` - offset handling support
+
 
 == Builtin Resume Strategies
 
@@ -108,8 +76,7 @@ New builtin resume strategies can be created by implementing the `UpdatableConsu
 
 A sample local cache implemented using https://github.com/ben-manes/caffeine[Caffeine].
 
-* `org.apache.camel.component.caffeine.resume.single.CaffeineCache`: for data with where 1 key can only point to 1 entry (1-to-1 relationship)
-* `org.apache.camel.component.caffeine.resume.multi.CaffeineCache`: for data with where 1 key can point to 1 or more entries (1-to-many relationship)
+* `org.apache.camel.component.caffeine.resume.CaffeineCache`
 
 == Known Limitations
 

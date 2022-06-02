@@ -20,13 +20,12 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import org.hl7.fhir.r4.model.Patient;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
-@Disabled("Helper class to generate search URLs based on HAPI-FHIR's search API")
+/**
+ * Helper class to generate search URLs based on HAPI-FHIR's search API
+ */
 public class UrlFetcherTest {
 
-    @Test
     public void getUrlTest() {
         // Create a client to talk to your favorite test server
         FhirContext ctx = FhirContext.forR4();
