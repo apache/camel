@@ -209,6 +209,10 @@ class ExportSpringBoot extends CamelCommand {
                 }
             }
         }
+
+        // remove out of the box dependencies
+        answer.removeIf(s -> s.contains("camel-dsl-modeline"));
+
         return answer;
     }
 

@@ -197,6 +197,12 @@ class ExportQuarkus extends CamelCommand {
                 }
             }
         }
+
+        // remove out of the box dependencies
+        answer.removeIf(s -> s.contains("camel-core"));
+        answer.removeIf(s -> s.contains("camel-platform-http"));
+        answer.removeIf(s -> s.contains("camel-microprofile-health"));
+
         return answer;
     }
 
