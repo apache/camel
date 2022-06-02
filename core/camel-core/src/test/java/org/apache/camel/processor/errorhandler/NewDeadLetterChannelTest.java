@@ -21,7 +21,6 @@ import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-@Deprecated
 public class NewDeadLetterChannelTest extends ContextTestSupport {
 
     @Test
