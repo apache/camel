@@ -17,24 +17,25 @@
 
 package org.apache.camel.component.aws2.kinesis.consumer;
 
-import org.apache.camel.resume.ResumeAdapter;
-import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
+import org.apache.camel.resume.Offset;
 
-/**
- * The resume adapter for Kinesis
- */
-public interface KinesisResumeAdapter extends ResumeAdapter {
-    /**
-     * Sets the shard iterator request builder that can be used to customize the call and set the exact resume point
-     * 
-     * @param builder the builder instance
-     */
-    void setRequestBuilder(GetShardIteratorRequest.Builder builder);
+public class KinesisOffset implements Offset<String> {
+    private String offset;
 
-    /**
-     * Sets the stream name being worked on
-     * 
-     * @param streamName the stream name
-     */
-    void setStreamName(String streamName);
+    public KinesisOffset() {
+    }
+
+    public KinesisOffset(String offset) {
+        this.offset = offset;
+    }
+
+    @Override
+    public void update(String offset) {
+        this.offset = offset;
+    }
+
+    @Override
+    public String offset() {
+        return offset;
+    }
 }

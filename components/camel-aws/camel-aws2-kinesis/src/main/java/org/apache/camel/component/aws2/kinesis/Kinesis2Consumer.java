@@ -24,7 +24,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeAdapter;
-import org.apache.camel.component.aws2.kinesis.consumer.KinesisUserConfigurationResumeAdapter;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
@@ -41,6 +40,7 @@ import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorResponse;
 import software.amazon.awssdk.services.kinesis.model.Record;
 import software.amazon.awssdk.services.kinesis.model.Shard;
+import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
 public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements ResumeAware<ResumeStrategy> {
 
@@ -164,24 +164,34 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
                     .streamName(getEndpoint().getConfiguration().getStreamName()).shardId(shardId)
                     .shardIteratorType(getEndpoint().getConfiguration().getIteratorType());
 
+            if (hasSequenceNumber()) {
+                req.startingSequenceNumber(getEndpoint().getConfiguration().getSequenceNumber());
+            }
+
             resume(req);
 
             GetShardIteratorResponse result = getClient().getShardIterator(req.build());
             currentShardIterator = result.shardIterator();
         }
+
         LOG.debug("Shard Iterator is: {}", currentShardIterator);
         return currentShardIterator;
     }
 
     private void resume(GetShardIteratorRequest.Builder req) {
-        KinesisResumeAdapter adapter;
-        if (resumeStrategy != null) {
-            adapter = resumeStrategy.getAdapter(KinesisResumeAdapter.class);
-        } else {
-            adapter = new KinesisUserConfigurationResumeAdapter(getEndpoint().getConfiguration());
+        if (resumeStrategy == null) {
+            return;
+        }
+
+        KinesisResumeAdapter adapter = resumeStrategy.getAdapter(KinesisResumeAdapter.class);
+        if (adapter == null) {
+            LOG.warn("There is a resume strategy setup, but no adapter configured or the type is incorrect");
+
+            return;
         }
 
         adapter.setRequestBuilder(req);
+        adapter.setStreamName(getEndpoint().getConfiguration().getStreamName());
         adapter.resume();
     }
 
@@ -214,5 +224,20 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     @Override
     public ResumeStrategy getResumeStrategy() {
         return resumeStrategy;
+    }
+
+    private boolean hasSequenceNumber() {
+        return !getEndpoint().getConfiguration().getSequenceNumber().isEmpty()
+                && (getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
+                        || getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (resumeStrategy != null) {
+            resumeStrategy.loadCache();
+        }
     }
 }
