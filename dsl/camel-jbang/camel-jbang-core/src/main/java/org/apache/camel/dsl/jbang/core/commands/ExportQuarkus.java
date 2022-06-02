@@ -53,11 +53,6 @@ class ExportQuarkus extends CamelCommand {
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version", required = true)
     private String gav;
 
-    @CommandLine.Option(names = { "--main-classname" },
-                        description = "The class name of the Quarkus application class",
-                        defaultValue = "CamelApplication")
-    private String mainClassname;
-
     @CommandLine.Option(names = { "--java-version" }, description = "Java version (11 or 17)",
                         defaultValue = "11")
     private String javaVersion;
@@ -122,8 +117,6 @@ class ExportQuarkus extends CamelCommand {
         copySourceFiles(settings, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir);
-        // create main class
-        createMainClassSource(srcJavaDir, packageName, mainClassname);
         // gather dependencies
         Set<String> deps = resolveDependencies(settings);
         // create pom
@@ -207,16 +200,6 @@ class ExportQuarkus extends CamelCommand {
         return answer;
     }
 
-    private void createMainClassSource(File srcJavaDir, String packageName, String mainClassname) throws Exception {
-        InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("templates/quarkus-main.tmpl");
-        String context = IOHelper.loadText(is);
-        IOHelper.close(is);
-
-        context = context.replaceFirst("\\{\\{ \\.PackageName }}", packageName);
-        context = context.replaceAll("\\{\\{ \\.MainClassname }}", mainClassname);
-        IOHelper.writeText(context, new FileOutputStream(srcJavaDir + "/" + mainClassname + ".java", false));
-    }
-
     private Integer runSilently() throws Exception {
         Run run = new Run(getMain());
         Integer code = run.runSilent();
@@ -272,7 +255,9 @@ class ExportQuarkus extends CamelCommand {
 
         for (Map.Entry<Object, Object> entry : prop.entrySet()) {
             String key = entry.getKey().toString();
-            boolean skip = "camel.main.routesCompileDirectory".equals(key) || "camel.main.routesReloadEnabled".equals(key);
+            // modeline not supported in camel-quarkus
+            boolean skip = "camel.main.modeline".equals(key) || "camel.main.routesCompileDirectory".equals(key)
+                    || "camel.main.routesReloadEnabled".equals(key);
             if (!skip && key.startsWith("camel.main")) {
                 prop2.put(entry.getKey(), entry.getValue());
             }
