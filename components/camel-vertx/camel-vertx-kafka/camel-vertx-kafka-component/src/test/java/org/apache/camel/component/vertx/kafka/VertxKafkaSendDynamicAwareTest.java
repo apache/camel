@@ -1,4 +1,4 @@
-package org.apache.camel.component.sjms;
+package org.apache.camel.component.vertx.kafka;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -9,33 +9,33 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SjmsSendDynamicAwareTest extends CamelTestSupport {
+public class VertxKafkaSendDynamicAwareTest extends CamelTestSupport {
 
-    SjmsSendDynamicAware sjmsSendDynamicAware;
+    VertxKafkaSendDynamicAware vertxKafkaSendDynamicAware;
 
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        this.sjmsSendDynamicAware = new SjmsSendDynamicAware();
+        this.vertxKafkaSendDynamicAware = new VertxKafkaSendDynamicAware();
     }
 
     @Test
     public void testUriParsing() throws Exception {
-        this.sjmsSendDynamicAware.setScheme("sjms");
+        this.vertxKafkaSendDynamicAware.setScheme("vertx-kafka");
         Exchange exchange = createExchangeWithBody("The Body");
-        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry("sjms:destination", "sjms:${header.test}", null, null);
-        Processor processor = this.sjmsSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
+        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry("vertx-kafka:destination", "vertx-kafka:${header.test}", null, null);
+        Processor processor = this.vertxKafkaSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
-        assertEquals("destination", exchange.getMessage().getHeader(SjmsConstants.JMS_DESTINATION_NAME));
+        assertEquals("destination", exchange.getMessage().getHeader(VertxKafkaConstants.OVERRIDE_TOPIC));
     }
 
     @Test
     public void testSlashedUriParsing() throws Exception {
-        this.sjmsSendDynamicAware.setScheme("sjms");
+        this.vertxKafkaSendDynamicAware.setScheme("vertx-kafka");
         Exchange exchange = createExchangeWithBody("The Body");
-        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry("sjms://destination", "sjms://${header.test}", null, null);
-        Processor processor = this.sjmsSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
+        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry("vertx-kafka://destination", "vertx-kafka://${header.test}", null, null);
+        Processor processor = this.vertxKafkaSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
-        assertEquals("destination", exchange.getMessage().getHeader(SjmsConstants.JMS_DESTINATION_NAME));
+        assertEquals("destination", exchange.getMessage().getHeader(VertxKafkaConstants.OVERRIDE_TOPIC));
     }
 }
