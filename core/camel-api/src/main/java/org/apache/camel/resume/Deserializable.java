@@ -34,8 +34,9 @@ public interface Deserializable {
                 return buffer.getLong();
             }
             case Serializable.TYPE_STRING: {
-                byte[] tmp = new byte[1024];
-                buffer.get(tmp, 0, 1024);
+                int remaining = buffer.remaining();
+                byte[] tmp = new byte[remaining];
+                buffer.get(tmp);
 
                 return new String(tmp);
             }
