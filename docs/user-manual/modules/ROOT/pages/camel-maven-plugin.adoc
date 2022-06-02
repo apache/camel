@@ -82,7 +82,7 @@ If you want quickly to have logging to console, you can use the built-in logging
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-maven-plugin</artifactId>
   <configuration>
-    <logLevel>INFO</logLevel>
+    <loggingLevel>INFO</loggingLevel>
   </configuration>
 </plugin>
 ----
