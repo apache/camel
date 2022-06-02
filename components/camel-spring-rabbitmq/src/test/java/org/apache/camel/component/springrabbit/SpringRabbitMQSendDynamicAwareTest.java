@@ -21,9 +21,9 @@ public class SpringRabbitMQSendDynamicAwareTest extends CamelTestSupport {
 
     @Test
     public void testUriParsing() throws Exception {
-        this.springRabbitMQSendDynamicAware.setScheme("rabbitmq");
+        this.springRabbitMQSendDynamicAware.setScheme("spring-rabbitmq");
         Exchange exchange = createExchangeWithBody("The Body");
-        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry("rabbitmq:destination", "rabbitmq:${header.test}", null, null);
+        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry("spring-rabbitmq:destination", "spring-rabbitmq:${header.test}", null, null);
         Processor processor = this.springRabbitMQSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
         assertEquals("destination", exchange.getMessage().getHeader(SpringRabbitMQConstants.EXCHANGE_OVERRIDE_NAME));
@@ -31,9 +31,9 @@ public class SpringRabbitMQSendDynamicAwareTest extends CamelTestSupport {
 
     @Test
     public void testSlashedUriParsing() throws Exception {
-        this.springRabbitMQSendDynamicAware.setScheme("rabbitmq");
+        this.springRabbitMQSendDynamicAware.setScheme("spring-rabbitmq");
         Exchange exchange = createExchangeWithBody("The Body");
-        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry("rabbitmq://destination", "rabbitmq://${header.test}", null, null);
+        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry("spring-rabbitmq://destination", "spring-rabbitmq://${header.test}", null, null);
         Processor processor = this.springRabbitMQSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
         assertEquals("destination", exchange.getMessage().getHeader(SpringRabbitMQConstants.EXCHANGE_OVERRIDE_NAME));
