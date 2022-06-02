@@ -160,7 +160,7 @@ class ExportCamelMain extends CamelCommand {
         context = context.replaceFirst("\\{\\{ \\.Version }}", ids[2]);
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
-        context = context.replaceFirst("\\{\\{ \\.MainClassname }}", packageName + "." + mainClassname);
+        context = context.replaceAll("\\{\\{ \\.MainClassname }}", packageName + "." + mainClassname);
 
         StringBuilder sb = new StringBuilder();
         for (String dep : deps) {
@@ -263,6 +263,9 @@ class ExportCamelMain extends CamelCommand {
         safeCopy(is, new File(srcResourcesDir, "log4j2.properties"));
         is = ExportCamelMain.class.getResourceAsStream("/log4j2.component.properties");
         safeCopy(is, new File(srcResourcesDir, "log4j2.component.properties"));
+        // assembly for runner jar
+        is = ExportCamelMain.class.getResourceAsStream("/assembly/runner.xml");
+        safeCopy(is, new File(srcResourcesDir, "assembly/runner.xml"));
     }
 
     private void copySettingsAndProfile(File settings, File profile, File targetDir, String packageName) throws Exception {
@@ -310,6 +313,11 @@ class ExportCamelMain extends CamelCommand {
     private void safeCopy(InputStream source, File target) throws Exception {
         if (source == null) {
             return;
+        }
+
+        File dir = target.getParentFile();
+        if (!dir.exists()) {
+            dir.mkdirs();
         }
 
         if (!target.exists()) {
