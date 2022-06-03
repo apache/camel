@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component;
 
+import java.time.Duration;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 public class ChatScriptComponentIT extends CamelTestSupport {
     @RegisterExtension
@@ -40,8 +43,7 @@ public class ChatScriptComponentIT extends CamelTestSupport {
     public void testChatScript() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        Thread.sleep(100);
-        assertMockEndpointsSatisfied();
+        Awaitility.await().atMost(Duration.ofMillis(100)).untilAsserted(() -> assertMockEndpointsSatisfied());
     }
 
     @Override
