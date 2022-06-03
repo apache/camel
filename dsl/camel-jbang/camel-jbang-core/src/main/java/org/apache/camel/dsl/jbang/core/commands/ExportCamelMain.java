@@ -234,6 +234,12 @@ class ExportCamelMain extends CamelCommand {
         }
         answer.removeAll(toBeRemoved);
 
+        // if platform-http is included then we need vertx as implementation
+        if (answer.stream().anyMatch(s -> s.contains("camel-platform-http") && !s.contains("camel-platform-http-vertx"))) {
+            // version does not matter
+            answer.add("mvn:org.apache.camel:camel-platform-http-vertx:1.0-SNAPSHOT");
+        }
+
         return answer;
     }
 
