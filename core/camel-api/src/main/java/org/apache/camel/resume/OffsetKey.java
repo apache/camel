@@ -26,21 +26,21 @@ import java.nio.ByteBuffer;
  */
 public interface OffsetKey<K> extends Serializable {
     /**
-     * Sets the key
+     * Sets the key value
      * 
-     * @param key the key valeu
+     * @param key the key value
      */
-    void setKey(K key);
+    void setValue(K key);
 
     /**
-     * Gets the key
+     * Gets the key value
      * 
      * @return the key instance
      */
-    K getKey();
+    K getValue();
 
     @Override
     default ByteBuffer serialize() {
-        return serialize(getKey());
+        return serialize(getValue());
     }
 }

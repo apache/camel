@@ -39,12 +39,12 @@ public final class OffsetKeys {
         }
 
         @Override
-        public void setKey(T key) {
+        public void setValue(T key) {
             this.key = key;
         }
 
         @Override
-        public T getKey() {
+        public T getValue() {
             return key;
         }
     }
@@ -62,12 +62,12 @@ public final class OffsetKeys {
         }
 
         @Override
-        public void setKey(T key) {
+        public void setValue(T key) {
             throw new UnsupportedOperationException("This object is unmodifiable");
         }
 
         @Override
-        public T getKey() {
+        public T getValue() {
             return key;
         }
     }

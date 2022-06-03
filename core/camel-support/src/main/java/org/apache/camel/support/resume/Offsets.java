@@ -36,7 +36,7 @@ public final class Offsets {
         }
 
         @Override
-        public T offset() {
+        public T getValue() {
             return offset;
         }
     }

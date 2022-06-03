@@ -181,7 +181,7 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
         OffsetKey<?> key = offset.getOffsetKey();
         Offset<?> offsetValue = offset.getLastOffset();
 
-        LOG.debug("Updating offset on Kafka with key {} to {}", key.getKey(), offsetValue.offset());
+        LOG.debug("Updating offset on Kafka with key {} to {}", key.getValue(), offsetValue.getValue());
 
         ByteBuffer keyBuffer = key.serialize();
         ByteBuffer valueBuffer = offsetValue.serialize();

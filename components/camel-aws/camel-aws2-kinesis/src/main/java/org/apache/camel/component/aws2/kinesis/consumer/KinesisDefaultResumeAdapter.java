@@ -53,7 +53,7 @@ public class KinesisDefaultResumeAdapter implements KinesisResumeAdapter, Cachea
             return;
         }
 
-        final String sequenceNumber = offset.offset();
+        final String sequenceNumber = offset.getValue();
         LOG.info("Resuming from offset {} for key", sequenceNumber, streamName);
 
         resumable.shardIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
@@ -68,7 +68,7 @@ public class KinesisDefaultResumeAdapter implements KinesisResumeAdapter, Cachea
 
     @Override
     public boolean add(OffsetKey<?> key, Offset<?> offset) {
-        add(key.getKey(), offset.offset());
+        add(key.getValue(), offset.getValue());
 
         return true;
     }

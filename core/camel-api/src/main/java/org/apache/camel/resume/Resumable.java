@@ -34,7 +34,7 @@ public interface Resumable {
     OffsetKey<?> getOffsetKey();
 
     /**
-     * Gets the last offset value
+     * Gets the last offset
      * 
      * @return the last offset value according to the interface and type implemented
      */
