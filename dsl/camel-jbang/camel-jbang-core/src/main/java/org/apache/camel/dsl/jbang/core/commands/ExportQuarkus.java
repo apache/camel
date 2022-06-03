@@ -24,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -179,7 +181,17 @@ class ExportQuarkus extends CamelCommand {
     }
 
     private Set<String> resolveDependencies(File settings) throws Exception {
-        Set<String> answer = new TreeSet<>();
+        Set<String> answer = new TreeSet<>((o1, o2) -> {
+            // favour org.apache.camel.quarkus first
+            boolean c1 = o1.contains("org.apache.camel:");
+            boolean c2 = o2.contains("org.apache.camel:");
+            if (c1 && !c2) {
+                return -1;
+            } else if (!c1 && c2) {
+                return 1;
+            }
+            return o1.compareTo(o2);
+        });
         List<String> lines = Files.readAllLines(settings.toPath());
         for (String line : lines) {
             if (line.startsWith("dependency=")) {
@@ -202,6 +214,20 @@ class ExportQuarkus extends CamelCommand {
         answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-platform-http"));
         answer.removeIf(s -> s.contains("camel-microprofile-health"));
+
+        // remove duplicate versions (keep first)
+        Map<String, String> versions = new HashMap<>();
+        Set<String> toBeRemoved = new HashSet<>();
+        for (String line : answer) {
+            MavenGav gav = MavenGav.parseGav(null, line);
+            String ga = gav.getGroupId() + ":" + gav.getArtifactId();
+            if (!versions.containsKey(ga)) {
+                versions.put(ga, gav.getVersion());
+            } else {
+                toBeRemoved.add(line);
+            }
+        }
+        answer.removeAll(toBeRemoved);
 
         return answer;
     }
