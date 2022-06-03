@@ -182,7 +182,7 @@ class ExportQuarkus extends CamelCommand {
 
     private Set<String> resolveDependencies(File settings) throws Exception {
         Set<String> answer = new TreeSet<>((o1, o2) -> {
-            // favour org.apache.camel.quarkus first
+            // favour org.apache.camel first
             boolean c1 = o1.contains("org.apache.camel:");
             boolean c2 = o2.contains("org.apache.camel:");
             if (c1 && !c2) {

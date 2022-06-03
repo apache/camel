@@ -24,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -117,7 +119,7 @@ class ExportCamelMain extends CamelCommand {
         srcResourcesDir.mkdirs();
         File srcCamelResourcesDir = new File(BUILD_DIR, "src/main/resources/camel");
         srcCamelResourcesDir.mkdirs();
-        copySourceFiles(settings, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
+        copySourceFiles(settings, profile, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir, packageName);
         // create main class
@@ -185,7 +187,17 @@ class ExportCamelMain extends CamelCommand {
     }
 
     private Set<String> resolveDependencies(File settings) throws Exception {
-        Set<String> answer = new TreeSet<>();
+        Set<String> answer = new TreeSet<>((o1, o2) -> {
+            // favour org.apache.camel first
+            boolean c1 = o1.contains("org.apache.camel:");
+            boolean c2 = o2.contains("org.apache.camel:");
+            if (c1 && !c2) {
+                return -1;
+            } else if (!c1 && c2) {
+                return 1;
+            }
+            return o1.compareTo(o2);
+        });
         List<String> lines = Files.readAllLines(settings.toPath());
         for (String line : lines) {
             if (line.startsWith("dependency=")) {
@@ -208,6 +220,20 @@ class ExportCamelMain extends CamelCommand {
         answer.removeIf(s -> s.contains("camel-health"));
         answer.removeIf(s -> s.contains("camel-dsl-modeline"));
 
+        // remove duplicate versions (keep first)
+        Map<String, String> versions = new HashMap<>();
+        Set<String> toBeRemoved = new HashSet<>();
+        for (String line : answer) {
+            MavenGav gav = MavenGav.parseGav(null, line);
+            String ga = gav.getGroupId() + ":" + gav.getArtifactId();
+            if (!versions.containsKey(ga)) {
+                versions.put(ga, gav.getVersion());
+            } else {
+                toBeRemoved.add(line);
+            }
+        }
+        answer.removeAll(toBeRemoved);
+
         return answer;
     }
 
@@ -228,7 +254,7 @@ class ExportCamelMain extends CamelCommand {
     }
 
     private void copySourceFiles(
-            File settings, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir, String packageName)
+            File settings, File profile, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir, String packageName)
             throws Exception {
         // read the settings file and find the files to copy
         OrderedProperties prop = new OrderedProperties();
@@ -241,6 +267,10 @@ class ExportCamelMain extends CamelCommand {
                     String scheme = getScheme(f);
                     if (scheme != null) {
                         f = f.substring(scheme.length() + 1);
+                    }
+                    boolean skip = profile.getName().equals(f); // skip copying profile
+                    if (skip) {
+                        continue;
                     }
                     String ext = FileUtil.onlyExt(f, true);
                     boolean java = "java".equals(ext);
@@ -294,10 +324,16 @@ class ExportCamelMain extends CamelCommand {
             prop2.put("camel.main.basePackageScan", packageName);
         }
 
-        FileOutputStream fos = new FileOutputStream(new File(targetDir, profile.getName()), false);
+        FileOutputStream fos = new FileOutputStream(new File(targetDir, "application.properties"), false);
         for (Map.Entry<Object, Object> entry : prop2.entrySet()) {
             String k = entry.getKey().toString();
             String v = entry.getValue().toString();
+
+            boolean skip = k.startsWith("camel.jbang.");
+            if (skip) {
+                continue;
+            }
+
             // files are now loaded in classpath
             v = v.replaceAll("file:", "classpath:");
             if ("camel.main.routesIncludePattern".equals(k)) {
