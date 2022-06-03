@@ -69,7 +69,7 @@ class DefaultFileOffsetResumeAdapter extends AbstractFileResumeAdapter implement
             return;
         }
 
-        Object offsetObj = lastOffset.offset();
+        Object offsetObj = lastOffset.getValue();
         if (offsetObj == null) {
             return;
         }

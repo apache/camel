@@ -48,7 +48,7 @@ public class FileResumeAdapterDelegate
 
     @Override
     public boolean add(OffsetKey<?> key, Offset<?> offset) {
-        Object offsetObj = offset.offset();
+        Object offsetObj = offset.getValue();
 
         if (offsetObj instanceof Long) {
             return fileOffsetResumeAdapter.add(key, offset);

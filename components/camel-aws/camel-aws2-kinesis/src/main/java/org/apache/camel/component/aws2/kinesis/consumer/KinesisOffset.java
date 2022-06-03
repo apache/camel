@@ -35,7 +35,7 @@ public class KinesisOffset implements Offset<String> {
     }
 
     @Override
-    public String offset() {
+    public String getValue() {
         return offset;
     }
 }

@@ -47,7 +47,7 @@ abstract class AbstractFileResumeAdapter implements FileResumeAdapter, Cacheable
 
     @Override
     public final boolean add(OffsetKey<?> key, Offset<?> offset) {
-        return add(key.getKey(), offset.offset());
+        return add(key.getValue(), offset.getValue());
     }
 
     protected abstract boolean add(Object key, Object offset);

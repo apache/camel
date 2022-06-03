@@ -38,10 +38,10 @@ public interface Offset<T> extends Serializable {
      *
      * @return the offset value
      */
-    T offset();
+    T getValue();
 
     @Override
     default ByteBuffer serialize() {
-        return serialize(offset());
+        return serialize(getValue());
     }
 }

@@ -49,7 +49,7 @@ public class FileSet implements Offset<File> {
     }
 
     @Override
-    public File offset() {
+    public File getValue() {
         return null;
     }
 }

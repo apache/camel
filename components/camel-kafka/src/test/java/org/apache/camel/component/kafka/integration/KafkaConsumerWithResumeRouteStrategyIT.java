@@ -99,7 +99,7 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
                     OffsetKey<?> addressable = offset.getOffsetKey();
                     if (addressable != null) {
                         offsetAddressableNull = false;
-                        offsetAddressableEmpty = addressable.getKey() == null;
+                        offsetAddressableEmpty = addressable.getValue() == null;
 
                     }
 
@@ -107,9 +107,9 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
                     if (offsetValue != null) {
                         offsetValueNull = false;
 
-                        if (offsetValue.offset() != null) {
+                        if (offsetValue.getValue() != null) {
                             offsetValueEmpty = false;
-                            lastOffset = (int) offsetValue.offset();
+                            lastOffset = (int) offsetValue.getValue();
                         }
                     }
                 }

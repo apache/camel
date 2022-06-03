@@ -40,7 +40,7 @@ public class FileOffset implements Offset<Long> {
     }
 
     @Override
-    public Long offset() {
+    public Long getValue() {
         return offset;
     }
 }

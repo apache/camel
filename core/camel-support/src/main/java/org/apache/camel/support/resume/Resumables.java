@@ -71,12 +71,12 @@ public final class Resumables {
                 private final K key = addressable;
 
                 @Override
-                public void setKey(K key) {
+                public void setValue(K key) {
                     throw new UnsupportedOperationException("Setting offset keys for anonymous resumables is unsupported");
                 }
 
                 @Override
-                public K getKey() {
+                public K getValue() {
                     return key;
                 }
             };

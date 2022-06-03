@@ -52,7 +52,7 @@ public class ResumableCompletion implements Synchronization {
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Processing the resumable: {}", resumable.getOffsetKey());
-                LOG.trace("Processing the resumable of type: {}", resumable.getLastOffset().offset());
+                LOG.trace("Processing the resumable of type: {}", resumable.getLastOffset().getValue());
             }
 
             if (resumeStrategy instanceof UpdatableConsumerResumeStrategy) {
@@ -82,7 +82,7 @@ public class ResumableCompletion implements Synchronization {
 
             String logMessage = String.format(
                     "Skipping offset update with address '%s' and offset value '%s' due to failure in processing: %s",
-                    resumable.getOffsetKey(), resumable.getLastOffset().offset(), e.getMessage());
+                    resumable.getOffsetKey(), resumable.getLastOffset().getValue(), e.getMessage());
 
             if (LOG.isDebugEnabled() || CamelLogger.shouldLog(LOG, loggingLevel)) {
                 CamelLogger.log(LOG, LoggingLevel.DEBUG, logMessage, e);

@@ -68,7 +68,7 @@ public class CouchDbChangesetTracker implements Runnable {
 
         LOG.debug("Last sequence [{}]", resumable.getLastOffset());
         changes = couchClient.changes().style(endpoint.getStyle()).includeDocs(true)
-                .since(resumable.getLastOffset().offset()).heartBeat(endpoint.getHeartbeat()).continuousChanges();
+                .since(resumable.getLastOffset().getValue()).heartBeat(endpoint.getHeartbeat()).continuousChanges();
     }
 
     @Override
