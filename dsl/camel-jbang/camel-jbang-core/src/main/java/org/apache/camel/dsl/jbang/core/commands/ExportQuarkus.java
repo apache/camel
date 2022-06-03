@@ -116,7 +116,7 @@ class ExportQuarkus extends CamelCommand {
         srcResourcesDir.mkdirs();
         File srcCamelResourcesDir = new File(BUILD_DIR, "src/main/resources/camel");
         srcCamelResourcesDir.mkdirs();
-        copySourceFiles(settings, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
+        copySourceFiles(settings, profile, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir);
         // gather dependencies
@@ -239,7 +239,7 @@ class ExportQuarkus extends CamelCommand {
     }
 
     private void copySourceFiles(
-            File settings, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir, String packageName)
+            File settings, File profile, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir, String packageName)
             throws Exception {
         // read the settings file and find the files to copy
         OrderedProperties prop = new OrderedProperties();
@@ -252,6 +252,10 @@ class ExportQuarkus extends CamelCommand {
                     String scheme = getScheme(f);
                     if (scheme != null) {
                         f = f.substring(scheme.length() + 1);
+                    }
+                    boolean skip = profile.getName().equals(f); // skip copying profile
+                    if (skip) {
+                        continue;
                     }
                     String ext = FileUtil.onlyExt(f, true);
                     boolean java = "java".equals(ext);
@@ -295,10 +299,16 @@ class ExportQuarkus extends CamelCommand {
             }
         }
 
-        FileOutputStream fos = new FileOutputStream(new File(targetDir, profile.getName()), false);
+        FileOutputStream fos = new FileOutputStream(new File(targetDir, "application.properties"), false);
         for (Map.Entry<Object, Object> entry : prop2.entrySet()) {
             String k = entry.getKey().toString();
             String v = entry.getValue().toString();
+
+            boolean skip = k.startsWith("camel.jbang.");
+            if (skip) {
+                continue;
+            }
+
             // files are now loaded in classpath
             v = v.replaceAll("file:", "classpath:");
             if ("camel.main.routesIncludePattern".equals(k)) {
