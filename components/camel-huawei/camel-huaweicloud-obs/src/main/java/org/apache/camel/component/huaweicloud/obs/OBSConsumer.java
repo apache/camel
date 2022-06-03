@@ -25,8 +25,6 @@ import com.obs.services.ObsClient;
 import com.obs.services.exception.ObsException;
 import com.obs.services.model.BucketMetadataInfoRequest;
 import com.obs.services.model.BucketMetadataInfoResult;
-import com.obs.services.model.CopyObjectResult;
-import com.obs.services.model.DeleteObjectResult;
 import com.obs.services.model.ListObjectsRequest;
 import com.obs.services.model.ObjectListing;
 import com.obs.services.model.ObsObject;
@@ -249,12 +247,12 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
 
         // copy object to destination bucket
         if (endpoint.isMoveAfterRead()) {
-            CopyObjectResult result = obsClient.copyObject(bucketName, objectKey, endpoint.getDestinationBucket(), objectKey);
+            obsClient.copyObject(bucketName, objectKey, endpoint.getDestinationBucket(), objectKey);
         }
 
         // delete object from source bucket
         if (endpoint.isDeleteAfterRead()) {
-            DeleteObjectResult result = obsClient.deleteObject(bucketName, objectKey);
+            obsClient.deleteObject(bucketName, objectKey);
         }
     }
 
