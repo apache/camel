@@ -230,7 +230,6 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
     @Override
     public Throwable handleResponseFailure(VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result)
             throws Exception {
-        VertxHttpConfiguration configuration = endpoint.getConfiguration();
         Throwable exception;
 
         Object responseBody = processResponseBody(endpoint, exchange, result, true);
