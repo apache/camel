@@ -294,7 +294,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     protected void executeModel() throws Exception {
         Path modelDir = this.modelDir.toPath();
-        Path springDir = this.springDir.toPath();
+        this.springDir.toPath();
         Path modelsOutDir = this.modelsOutDir.toPath();
 
         getLog().info("================================================================================");
