@@ -21,7 +21,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
@@ -53,7 +52,13 @@ public class DefaultRoutesCollector implements RoutesCollector {
         final List<RoutesBuilder> routes = new ArrayList<>();
         final AntPathMatcher matcher = new AntPathMatcher();
 
-        Set<LambdaRouteBuilder> lrbs = camelContext.getRegistry().findByType(LambdaRouteBuilder.class);
+        Collection<RoutesBuilder> additional
+                = collectAdditionalRoutesFromRegistry(camelContext, excludePattern, includePattern);
+        if (additional != null) {
+            routes.addAll(additional);
+        }
+
+        Collection<LambdaRouteBuilder> lrbs = findByType(camelContext, LambdaRouteBuilder.class);
         for (LambdaRouteBuilder lrb : lrbs) {
             RouteBuilder rb = new RouteBuilder() {
                 @Override
@@ -64,7 +69,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
             routes.add(rb);
         }
 
-        Set<RoutesBuilder> builders = camelContext.getRegistry().findByType(RoutesBuilder.class);
+        Collection<RoutesBuilder> builders = findByType(camelContext, RoutesBuilder.class);
         for (RoutesBuilder routesBuilder : builders) {
             // filter out abstract classes
             boolean abs = Modifier.isAbstract(routesBuilder.getClass().getModifiers());
@@ -195,4 +200,23 @@ public class DefaultRoutesCollector implements RoutesCollector {
 
         return accepted;
     }
+
+    /**
+     * Strategy to allow collecting additional routes from registry.
+     */
+    protected Collection<RoutesBuilder> collectAdditionalRoutesFromRegistry(
+            CamelContext camelContext,
+            String excludePattern,
+            String includePattern) {
+        return null;
+    }
+
+    /**
+     * Strategy to discover a specific route builder type from the registry. This allows Spring Boot or other runtimes
+     * to do custom lookup.
+     */
+    protected <T> Collection<T> findByType(CamelContext camelContext, Class<T> type) {
+        return camelContext.getRegistry().findByType(type);
+    }
+
 }
