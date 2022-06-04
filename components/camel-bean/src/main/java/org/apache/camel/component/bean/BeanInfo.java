@@ -66,7 +66,7 @@ public class BeanInfo {
     private static final String BYTE_BUDDY_METHOD_MARKER = "$accessor$";
     private static final String CLIENT_PROXY_SUFFIX = "_ClientProxy";
     private static final String[] EXCLUDED_METHOD_NAMES = new String[] {
-            "clone", "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "wait", // java.lang.Object
+            "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "wait", // java.lang.Object
             "getInvocationHandler", "getProxyClass", "isProxyClass", "newProxyInstance" // java.lang.Proxy
     };
     private final CamelContext camelContext;
@@ -891,6 +891,11 @@ public class BeanInfo {
             if (name.equals(s)) {
                 return false;
             }
+        }
+
+        // special for Object where clone is not allowed to be called directly
+        if (Object.class == clazz && "clone".equals(name)) {
+            return false;
         }
 
         // must not be a private method
