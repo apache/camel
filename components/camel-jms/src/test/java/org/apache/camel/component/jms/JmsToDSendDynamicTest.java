@@ -19,7 +19,6 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -47,9 +46,8 @@ public class JmsToDSendDynamicTest extends CamelTestSupport {
     @Test
     public void testToDSlashed() {
         template.sendBodyAndHeader("direct:startSlashed", "Hello bar", "where", "bar");
-
-        Exchange exchange = consumer.receive("activemq://bar", 2000);
-        exchange.getMessage().getHeader(JmsConstants.JMS_DESTINATION_NAME);
+        String out = consumer.receiveBody("activemq://bar", 2000, String.class);
+        assertEquals("Hello bar", out);
     }
 
     @Override
