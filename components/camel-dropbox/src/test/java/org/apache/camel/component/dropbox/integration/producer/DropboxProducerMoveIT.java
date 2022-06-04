@@ -67,7 +67,7 @@ public class DropboxProducerMoveIT extends DropboxTestSupport {
                         .to(String.format("dropbox://move?accessToken={{accessToken}}" +
                                           "&expireIn={{expireIn}}" +
                                           "&refreshToken={{refreshToken}}" +
-                                          "&apiKey={{apiKey}}&apiSecret={{apiSecret}}"+
+                                          "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
                                           "&remotePath=%s&newRemotePath=%s",
                                 workdir + "/" + FILE, COPY_WORKDIR + "/" + FILE))
                         .to("mock:result");
