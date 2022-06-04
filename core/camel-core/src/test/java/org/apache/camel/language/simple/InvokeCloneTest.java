@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class InvokeCloneTest extends ContextTestSupport  {
+public class InvokeCloneTest extends ContextTestSupport {
 
     @Test
     public void invokeClone() throws Exception {
