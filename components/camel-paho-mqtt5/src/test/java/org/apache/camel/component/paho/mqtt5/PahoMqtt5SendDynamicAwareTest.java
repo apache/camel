@@ -38,7 +38,8 @@ public class PahoMqtt5SendDynamicAwareTest extends CamelTestSupport {
     public void testUriParsing() throws Exception {
         this.pahoMqtt5SendDynamicAware.setScheme("paho-mqtt5");
         Exchange exchange = createExchangeWithBody("The Body");
-        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry("paho-mqtt5:destination", "paho-mqtt5:${header.test}", null, null);
+        SendDynamicAware.DynamicAwareEntry entry
+                = new SendDynamicAware.DynamicAwareEntry("paho-mqtt5:destination", "paho-mqtt5:${header.test}", null, null);
         Processor processor = this.pahoMqtt5SendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
         assertEquals("destination", exchange.getMessage().getHeader(PahoMqtt5Constants.CAMEL_PAHO_OVERRIDE_TOPIC));
@@ -48,7 +49,8 @@ public class PahoMqtt5SendDynamicAwareTest extends CamelTestSupport {
     public void testSlashedUriParsing() throws Exception {
         this.pahoMqtt5SendDynamicAware.setScheme("paho-mqtt5");
         Exchange exchange = createExchangeWithBody("The Body");
-        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry("paho-mqtt5://destination", "paho-mqtt5://${header.test}", null, null);
+        SendDynamicAware.DynamicAwareEntry entry
+                = new SendDynamicAware.DynamicAwareEntry("paho-mqtt5://destination", "paho-mqtt5://${header.test}", null, null);
         Processor processor = this.pahoMqtt5SendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
         assertEquals("destination", exchange.getMessage().getHeader(PahoMqtt5Constants.CAMEL_PAHO_OVERRIDE_TOPIC));
