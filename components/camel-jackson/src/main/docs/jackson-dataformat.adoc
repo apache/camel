@@ -40,14 +40,18 @@ and then use it. When this happens you should set a `INFO` logging from Camel.
 == Using Jackson for automatic type conversion
 
 The `camel-jackson` module allows integrating Jackson as a xref:manual::type-converter.adoc[Type Converter].
-This works in similar ways that xref:dataformats:jaxb-dataformat.adoc[JAXB] integrates with Camels type converter.
 
-To use this `camel-jackson` must be enabled, which is done by setting the following options
-on the `CamelContext` global options, as shown:
+This gives a set of out of the box converters to/from the Jackson type `JSonNode`, such as converting
+from `JSonNode` to `String` or vice-versa.
+
+=== Enabling more type converters and support for POJOs
+
+To enable POJO conversion support for `camel-jackson` then this must be enabled,
+which is done by setting the following options on the `CamelContext` global options, as shown:
 
 [source,java]
 ----
-// Enable Jackson JSON type converter.
+// Enable Jackson JSON type converter for more types.
 camelContext.getGlobalOptions().put("CamelJacksonEnableTypeConverter", "true");
 // Allow Jackson JSON to convert to pojo types also
 // (by default Jackson only converts to String and other simple types)

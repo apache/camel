@@ -37,7 +37,37 @@ public final class JacksonTypeConvertersLoader implements TypeConverterLoader, C
 
     @Override
     public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
+        registerConverters(registry);
         registerFallbackConverters(registry);
+    }
+
+    private void registerConverters(TypeConverterRegistry registry) {
+        addTypeConverter(registry, byte[].class, com.fasterxml.jackson.databind.JsonNode.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toByteArray((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+        addTypeConverter(registry, com.fasterxml.jackson.databind.JsonNode.class, byte[].class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toJsonNode((byte[]) value, exchange));
+        addTypeConverter(registry, com.fasterxml.jackson.databind.JsonNode.class, java.io.File.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toJsonNode((java.io.File) value, exchange));
+        addTypeConverter(registry, com.fasterxml.jackson.databind.JsonNode.class, java.io.InputStream.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toJsonNode((java.io.InputStream) value, exchange));
+        addTypeConverter(registry, com.fasterxml.jackson.databind.JsonNode.class, java.io.Reader.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toJsonNode((java.io.Reader) value, exchange));
+        addTypeConverter(registry, com.fasterxml.jackson.databind.JsonNode.class, java.lang.String.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toJsonNode((java.lang.String) value, exchange));
+        addTypeConverter(registry, com.fasterxml.jackson.databind.JsonNode.class, java.util.Map.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toJsonNode((java.util.Map) value, exchange));
+        addTypeConverter(registry, java.io.InputStream.class, com.fasterxml.jackson.databind.JsonNode.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toInputStream((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+        addTypeConverter(registry, java.io.Reader.class, com.fasterxml.jackson.databind.JsonNode.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toReader((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+        addTypeConverter(registry, java.lang.String.class, com.fasterxml.jackson.databind.JsonNode.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toString((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+        addTypeConverter(registry, java.util.Map.class, com.fasterxml.jackson.databind.JsonNode.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toMap((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+    }
+
+    private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) { 
+        registry.addTypeConverter(toType, fromType, new SimpleTypeConverter(allowNull, method));
     }
 
     private void registerFallbackConverters(TypeConverterRegistry registry) {
