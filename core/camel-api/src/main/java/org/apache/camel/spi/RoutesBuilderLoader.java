@@ -31,11 +31,6 @@ public interface RoutesBuilderLoader extends StaticService, CamelContextAware {
     String FACTORY_PATH = "META-INF/services/org/apache/camel/routes-loader/";
 
     /**
-     * Service factory group.
-     */
-    String FACTORY_GROUP = "routes-loader";
-
-    /**
      * The supported file extension.
      * <p/>
      * Implementations should support a single extension only.
