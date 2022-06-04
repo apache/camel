@@ -46,9 +46,14 @@ public class DropboxConsumerGetSingleIT extends DropboxTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(String.format("dropbox://get?accessToken={{accessToken}}&remotePath=%s/%s", workdir, FILE_NAME))
-                        .autoStartup(false).id("consumer")
-                        .to("mock:result");
+                from(String.format("dropbox://get?accessToken={{accessToken}}" +
+                                   "&expireIn={{expireIn}}" +
+                                   "&refreshToken={{refreshToken}}" +
+                                   "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
+                                   "&remotePath=%s/%s",
+                        workdir, FILE_NAME))
+                                .autoStartup(false).id("consumer")
+                                .to("mock:result");
             }
         };
     }

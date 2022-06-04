@@ -33,6 +33,18 @@ public final class DropboxConfigurationValidator {
         if (configuration.getAccessToken() == null || configuration.getAccessToken().equals("")) {
             throw new DropboxException("option <accessToken> is not present or not valid!");
         }
+        if (configuration.getExpireIn() == null || configuration.getExpireIn() <= 0) {
+            throw new DropboxException("option <expireIn> is not present or not valid!");
+        }
+        if (configuration.getRefreshToken() == null || configuration.getRefreshToken().equals("")) {
+            throw new DropboxException("option <refreshToken> is not present or not valid!");
+        }
+        if (configuration.getApiKey() == null || configuration.getApiKey().equals("")) {
+            throw new DropboxException("option <apiKey> is not present or not valid!");
+        }
+        if (configuration.getApiSecret() == null || configuration.getApiSecret().equals("")) {
+            throw new DropboxException("option <apiSecret> is not present or not valid!");
+        }
         if (configuration.getClientIdentifier() == null || configuration.getClientIdentifier().equals("")) {
             throw new DropboxException("option <clientIdentifier> is not present or not valid!");
         }

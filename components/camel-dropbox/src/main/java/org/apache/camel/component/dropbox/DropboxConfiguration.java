@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.dropbox;
 
-import java.util.Locale;
-
 import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.v2.DbxClientV2;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
@@ -38,6 +37,27 @@ public class DropboxConfiguration {
     @UriParam
     @Metadata(required = true)
     private String accessToken;
+
+    //dropbox auth options
+    @UriParam
+    @Metadata(required = true)
+    private Long expireIn;
+
+    //dropbox auth options
+    @UriParam
+    @Metadata(required = true)
+    private String refreshToken;
+
+    //dropbox auth options
+    @UriParam
+    @Metadata(required = true)
+    private String apiKey;
+
+    //dropbox auth options
+    @UriParam
+    @Metadata(required = true)
+    private String apiSecret;
+
     //local path to put files
     @UriParam
     private String localPath;
@@ -75,8 +95,9 @@ public class DropboxConfiguration {
      * Obtain a new instance of DbxClient and store it in configuration.
      */
     public void createClient() {
-        DbxRequestConfig config = new DbxRequestConfig(clientIdentifier, Locale.getDefault().toString());
-        this.client = new DbxClientV2(config, accessToken);
+        DbxRequestConfig config = DbxRequestConfig.newBuilder(clientIdentifier).build();
+        DbxCredential credential = new DbxCredential(accessToken, expireIn, refreshToken, apiKey, apiSecret);
+        this.client = new DbxClientV2(config, credential);
     }
 
     public String getAccessToken() {
@@ -92,6 +113,50 @@ public class DropboxConfiguration {
 
     public String getLocalPath() {
         return localPath;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    /**
+     * The refresh token to refresh the access token for a specific Dropbox user
+     */
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    /**
+     * The apiKey to make API requests for a specific Dropbox user
+     */
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    /**
+     * The apiSecret to make API requests for a specific Dropbox user
+     */
+    public String getApiSecret() {
+        return apiSecret;
+    }
+
+    public void setApiSecret(String apiSecret) {
+        this.apiSecret = apiSecret;
+    }
+
+    /**
+     * The expire time to access token for a specific Dropbox user
+     */
+    public Long getExpireIn() {
+        return expireIn;
+    }
+
+    public void setExpireIn(Long expireIn) {
+        this.expireIn = expireIn;
     }
 
     /**
