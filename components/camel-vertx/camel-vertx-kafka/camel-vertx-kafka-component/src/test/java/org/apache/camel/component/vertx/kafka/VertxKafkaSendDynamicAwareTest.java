@@ -39,7 +39,8 @@ public class VertxKafkaSendDynamicAwareTest extends CamelTestSupport {
     public void testUriParsing() throws Exception {
         this.vertxKafkaSendDynamicAware.setScheme("vertx-kafka");
         Exchange exchange = createExchangeWithBody("The Body");
-        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry("vertx-kafka:destination", "vertx-kafka:${header.test}", null, null);
+        SendDynamicAware.DynamicAwareEntry entry
+                = new SendDynamicAware.DynamicAwareEntry("vertx-kafka:destination", "vertx-kafka:${header.test}", null, null);
         Processor processor = this.vertxKafkaSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
         assertEquals("destination", exchange.getMessage().getHeader(VertxKafkaConstants.OVERRIDE_TOPIC));
@@ -49,7 +50,8 @@ public class VertxKafkaSendDynamicAwareTest extends CamelTestSupport {
     public void testSlashedUriParsing() throws Exception {
         this.vertxKafkaSendDynamicAware.setScheme("vertx-kafka");
         Exchange exchange = createExchangeWithBody("The Body");
-        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry("vertx-kafka://destination", "vertx-kafka://${header.test}", null, null);
+        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry(
+                "vertx-kafka://destination", "vertx-kafka://${header.test}", null, null);
         Processor processor = this.vertxKafkaSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
         assertEquals("destination", exchange.getMessage().getHeader(VertxKafkaConstants.OVERRIDE_TOPIC));
