@@ -45,9 +45,14 @@ public class DropboxConsumerSearchQueryIT extends DropboxTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(String.format("dropbox://search?accessToken={{accessToken}}&remotePath=%s&query=%s", workdir, FILE_NAME))
-                        .id("consumer").autoStartup(false)
-                        .to("mock:result");
+                from(String.format("dropbox://search?accessToken={{accessToken}}" +
+                                   "&expireIn={{expireIn}}" +
+                                   "&refreshToken={{refreshToken}}" +
+                                   "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
+                                   "&remotePath=%s&query=%s",
+                        workdir, FILE_NAME))
+                                .id("consumer").autoStartup(false)
+                                .to("mock:result");
             }
         };
     }

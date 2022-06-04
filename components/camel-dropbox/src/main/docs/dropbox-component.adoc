@@ -24,10 +24,10 @@ component has the following features:
 * As a producer, download files, move files between remote directories,
 delete files/dir, upload files and search files by queries
 
-In order to work with Dropbox API you need to obtain an *accessToken*
-and a *clientIdentifier.* +
+In order to work with Dropbox API you need to obtain an *accessToken*,
+ *expireIn*, *refreshToken*, *apiKey*, *apiSecret* and a *clientIdentifier.* +
 You can refer to the
-https://www.dropbox.com/developers/core/start/java[Dropbox
+https://dropbox.tech/developers/migrating-app-permissions-and-access-tokens[Dropbox
 documentation] that explains how to get them.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -110,11 +110,13 @@ Below are listed the options for this operation:
 [source,java]
 ----
 from("direct:start")
-  .to("dropbox://del?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1")
+  .to("dropbox://del?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX"
+      +"&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/root/folder1")
   .to("mock:result");
 
 from("direct:start")
-  .to("dropbox://del?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1/file1.tar.gz")
+  .to("dropbox://del?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX"
+      +"&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/root/folder1/file1.tar.gz")
   .to("mock:result");
 ----
 
@@ -149,14 +151,17 @@ Below are listed the options for this operation:
 [source,java]
 ----
 from("direct:start")
-  .to("dropbox://get?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1/file1.tar.gz")
+  .to("dropbox://get?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX"
+      +"&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/root/folder1/file1.tar.gz")
   .to("file:///home/kermit/?fileName=file1.tar.gz");
 
 from("direct:start")
-  .to("dropbox://get?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1")
+  .to("dropbox://get?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX"
+      +"&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/root/folder1")
   .to("mock:result");
 
-from("dropbox://get?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1")
+from("dropbox://get?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX"
+      +"&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/root/folder1")
   .to("file:///home/kermit/");
 ----
 
@@ -197,7 +202,8 @@ Below are listed the options for this operation:
 [source,java]
 ----
 from("direct:start")
-  .to("dropbox://move?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1&newRemotePath=/root/folder2")
+  .to("dropbox://move?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX"
+      +"&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/root/folder1&newRemotePath=/root/folder2")
   .to("mock:result");
 ----
 
@@ -247,10 +253,12 @@ Caused by: java.lang.IllegalArgumentException: 'path': bad path: must start with
 
 [source,java]
 ----
-from("direct:start").to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&uploadMode=add&localPath=/root/folder1")
+from("direct:start").to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX"
+      +"&apiKey=XXXXX&apiSecret=XXXXXX&uploadMode=add&localPath=/root/folder1")
   .to("mock:result");
 
-from("direct:start").to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&uploadMode=add&localPath=/root/folder1&remotePath=/root/folder2")
+from("direct:start").to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX"
+      +"&apiKey=XXXXX&apiSecret=XXXXXX&uploadMode=add&localPath=/root/folder1&remotePath=/root/folder2")
   .to("mock:result");
 ----
 
@@ -260,7 +268,8 @@ And to upload a single file with content from the message body
 ----
 from("direct:start")
    .setHeader(DropboxConstants.HEADER_PUT_FILE_NAME, constant("myfile.txt"))
-   .to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&uploadMode=add&remotePath=/root/folder2")
+   .to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX"
+      +"&apiKey=XXXXX&apiSecret=XXXXXX&uploadMode=add&remotePath=/root/folder2")
    .to("mock:result");
 ----
 
@@ -307,12 +316,14 @@ or as a header `CamelDropboxQuery` on the Camel message.
 
 [source,java]
 ----
-from("dropbox://search?accessToken=XXX&clientIdentifier=XXX&remotePath=/XXX&query=XXX")
+from("dropbox://search?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX"
+      +"&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/XXX&query=XXX")
   .to("mock:result");
 
 from("direct:start")
   .setHeader("CamelDropboxQuery", constant("XXX"))
-  .to("dropbox://search?accessToken=XXX&clientIdentifier=XXX&remotePath=/XXX")
+  .to("dropbox://search?accessToken=XXX&clientIdentifier=XXX&expireIn=1000&refreshToken=XXXX"
+      +"&apiKey=XXXXX&apiSecret=XXXXXX&remotePath=/XXX")
   .to("mock:result");
 ----
 
