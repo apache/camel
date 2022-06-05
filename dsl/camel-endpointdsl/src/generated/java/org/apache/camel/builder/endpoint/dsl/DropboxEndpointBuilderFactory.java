@@ -60,6 +60,36 @@ public interface DropboxEndpointBuilderFactory {
             return this;
         }
         /**
+         * The apiKey to make API requests for a specific Dropbox user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param apiKey the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointConsumerBuilder apiKey(String apiKey) {
+            doSetProperty("apiKey", apiKey);
+            return this;
+        }
+        /**
+         * The apiSecret to make API requests for a specific Dropbox user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param apiSecret the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointConsumerBuilder apiSecret(String apiSecret) {
+            doSetProperty("apiSecret", apiSecret);
+            return this;
+        }
+        /**
          * To use an existing DbxClient instance as DropBox client.
          * 
          * The option is a:
@@ -103,6 +133,37 @@ public interface DropboxEndpointBuilderFactory {
         default DropboxEndpointConsumerBuilder clientIdentifier(
                 String clientIdentifier) {
             doSetProperty("clientIdentifier", clientIdentifier);
+            return this;
+        }
+        /**
+         * The expire time to access token for a specific Dropbox user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param expireIn the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointConsumerBuilder expireIn(Long expireIn) {
+            doSetProperty("expireIn", expireIn);
+            return this;
+        }
+        /**
+         * The expire time to access token for a specific Dropbox user.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param expireIn the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointConsumerBuilder expireIn(String expireIn) {
+            doSetProperty("expireIn", expireIn);
             return this;
         }
         /**
@@ -150,6 +211,22 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointConsumerBuilder query(String query) {
             doSetProperty("query", query);
+            return this;
+        }
+        /**
+         * The refresh token to refresh the access token for a specific Dropbox
+         * user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointConsumerBuilder refreshToken(String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -356,6 +433,36 @@ public interface DropboxEndpointBuilderFactory {
             return this;
         }
         /**
+         * The apiKey to make API requests for a specific Dropbox user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param apiKey the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointProducerBuilder apiKey(String apiKey) {
+            doSetProperty("apiKey", apiKey);
+            return this;
+        }
+        /**
+         * The apiSecret to make API requests for a specific Dropbox user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param apiSecret the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointProducerBuilder apiSecret(String apiSecret) {
+            doSetProperty("apiSecret", apiSecret);
+            return this;
+        }
+        /**
          * To use an existing DbxClient instance as DropBox client.
          * 
          * The option is a:
@@ -399,6 +506,37 @@ public interface DropboxEndpointBuilderFactory {
         default DropboxEndpointProducerBuilder clientIdentifier(
                 String clientIdentifier) {
             doSetProperty("clientIdentifier", clientIdentifier);
+            return this;
+        }
+        /**
+         * The expire time to access token for a specific Dropbox user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param expireIn the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointProducerBuilder expireIn(Long expireIn) {
+            doSetProperty("expireIn", expireIn);
+            return this;
+        }
+        /**
+         * The expire time to access token for a specific Dropbox user.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param expireIn the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointProducerBuilder expireIn(String expireIn) {
+            doSetProperty("expireIn", expireIn);
             return this;
         }
         /**
@@ -446,6 +584,22 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointProducerBuilder query(String query) {
             doSetProperty("query", query);
+            return this;
+        }
+        /**
+         * The refresh token to refresh the access token for a specific Dropbox
+         * user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointProducerBuilder refreshToken(String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -587,6 +741,36 @@ public interface DropboxEndpointBuilderFactory {
             return this;
         }
         /**
+         * The apiKey to make API requests for a specific Dropbox user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param apiKey the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointBuilder apiKey(String apiKey) {
+            doSetProperty("apiKey", apiKey);
+            return this;
+        }
+        /**
+         * The apiSecret to make API requests for a specific Dropbox user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param apiSecret the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointBuilder apiSecret(String apiSecret) {
+            doSetProperty("apiSecret", apiSecret);
+            return this;
+        }
+        /**
          * To use an existing DbxClient instance as DropBox client.
          * 
          * The option is a:
@@ -629,6 +813,37 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointBuilder clientIdentifier(String clientIdentifier) {
             doSetProperty("clientIdentifier", clientIdentifier);
+            return this;
+        }
+        /**
+         * The expire time to access token for a specific Dropbox user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param expireIn the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointBuilder expireIn(Long expireIn) {
+            doSetProperty("expireIn", expireIn);
+            return this;
+        }
+        /**
+         * The expire time to access token for a specific Dropbox user.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param expireIn the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointBuilder expireIn(String expireIn) {
+            doSetProperty("expireIn", expireIn);
             return this;
         }
         /**
@@ -675,6 +890,22 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointBuilder query(String query) {
             doSetProperty("query", query);
+            return this;
+        }
+        /**
+         * The refresh token to refresh the access token for a specific Dropbox
+         * user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
+         */
+        default DropboxEndpointBuilder refreshToken(String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
