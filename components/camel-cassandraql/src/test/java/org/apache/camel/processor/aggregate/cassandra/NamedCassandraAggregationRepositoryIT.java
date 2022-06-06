@@ -23,6 +23,8 @@ import org.apache.camel.component.cassandra.integration.BaseCassandra;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -134,6 +136,7 @@ public class NamedCassandraAggregationRepositoryIT extends BaseCassandra {
         }
     }
 
+    @DisabledOnOs(OS.MAC)
     @Test
     public void testConfirmExist() {
         // Given
