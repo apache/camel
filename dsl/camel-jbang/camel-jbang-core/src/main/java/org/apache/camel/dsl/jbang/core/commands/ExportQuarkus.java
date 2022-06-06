@@ -22,7 +22,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,38 +40,11 @@ import org.apache.commons.io.FileUtils;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "quarkus", description = "Export as Quarkus project")
-class ExportQuarkus extends CamelCommand {
-
-    private static final String BUILD_DIR = ".camel-jbang/work";
-
-    private static final String[] SETTINGS_PROP_SOURCE_KEYS = new String[] {
-            "camel.main.routesIncludePattern",
-            "camel.component.properties.location",
-            "camel.component.kamelet.location",
-            "camel.jbang.classpathFiles"
-    };
-
-    @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version", required = true)
-    private String gav;
-
-    @CommandLine.Option(names = { "--java-version" }, description = "Java version (11 or 17)",
-                        defaultValue = "11")
-    private String javaVersion;
+class ExportQuarkus extends BaseExport {
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus version",
                         defaultValue = "2.9.2.Final")
     private String quarkusVersion;
-
-    @CommandLine.Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version",
-                        defaultValue = "0.8.1")
-    private String kameletsVersion;
-
-    @CommandLine.Option(names = { "-dir", "--directory" }, description = "Directory where the project will be exported",
-                        defaultValue = ".")
-    private String exportDir;
-
-    @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
-    private boolean fresh;
 
     public ExportQuarkus(CamelJBangMain main) {
         super(main);
@@ -232,12 +204,6 @@ class ExportQuarkus extends CamelCommand {
         return answer;
     }
 
-    private Integer runSilently() throws Exception {
-        Run run = new Run(getMain());
-        Integer code = run.runSilent();
-        return code;
-    }
-
     private void copySourceFiles(
             File settings, File profile, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir, String packageName)
             throws Exception {
@@ -325,27 +291,6 @@ class ExportQuarkus extends CamelCommand {
             }
         }
         IOHelper.close(fos);
-    }
-
-    private static void safeCopy(File source, File target, boolean override) throws Exception {
-        if (!source.exists()) {
-            return;
-        }
-
-        if (!target.exists()) {
-            Files.copy(source.toPath(), target.toPath());
-        } else if (override) {
-            Files.copy(source.toPath(), target.toPath(),
-                    StandardCopyOption.REPLACE_EXISTING);
-        }
-    }
-
-    private static String getScheme(String name) {
-        int pos = name.indexOf(":");
-        if (pos != -1) {
-            return name.substring(0, pos);
-        }
-        return null;
     }
 
 }

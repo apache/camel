@@ -22,7 +22,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,39 +42,12 @@ import org.apache.commons.io.FileUtils;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "standalone", description = "Export as standalone Camel Main project")
-class ExportCamelMain extends CamelCommand {
-
-    private static final String BUILD_DIR = ".camel-jbang/work";
-
-    private static final String[] SETTINGS_PROP_SOURCE_KEYS = new String[] {
-            "camel.main.routesIncludePattern",
-            "camel.component.properties.location",
-            "camel.component.kamelet.location",
-            "camel.jbang.classpathFiles"
-    };
-
-    @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version", required = true)
-    private String gav;
+class ExportCamelMain extends BaseExport {
 
     @CommandLine.Option(names = { "--main-classname" },
                         description = "The class name of the Camel Main application class",
                         defaultValue = "CamelApplication")
     private String mainClassname;
-
-    @CommandLine.Option(names = { "--java-version" }, description = "Java version (11 or 17)",
-                        defaultValue = "11")
-    private String javaVersion;
-
-    @CommandLine.Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version",
-                        defaultValue = "0.8.1")
-    private String kameletsVersion;
-
-    @CommandLine.Option(names = { "-dir", "--directory" }, description = "Directory where the project will be exported",
-                        defaultValue = ".")
-    private String exportDir;
-
-    @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
-    private boolean fresh;
 
     public ExportCamelMain(CamelJBangMain main) {
         super(main);
@@ -253,12 +225,6 @@ class ExportCamelMain extends CamelCommand {
         IOHelper.writeText(context, new FileOutputStream(srcJavaDir + "/" + mainClassname + ".java", false));
     }
 
-    private Integer runSilently() throws Exception {
-        Run run = new Run(getMain());
-        Integer code = run.runSilent();
-        return code;
-    }
-
     private void copySourceFiles(
             File settings, File profile, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir, String packageName)
             throws Exception {
@@ -356,42 +322,6 @@ class ExportCamelMain extends CamelCommand {
             }
         }
         IOHelper.close(fos);
-    }
-
-    private void safeCopy(InputStream source, File target) throws Exception {
-        if (source == null) {
-            return;
-        }
-
-        File dir = target.getParentFile();
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        if (!target.exists()) {
-            Files.copy(source, target.toPath());
-        }
-    }
-
-    private static void safeCopy(File source, File target, boolean override) throws Exception {
-        if (!source.exists()) {
-            return;
-        }
-
-        if (!target.exists()) {
-            Files.copy(source.toPath(), target.toPath());
-        } else if (override) {
-            Files.copy(source.toPath(), target.toPath(),
-                    StandardCopyOption.REPLACE_EXISTING);
-        }
-    }
-
-    private static String getScheme(String name) {
-        int pos = name.indexOf(":");
-        if (pos != -1) {
-            return name.substring(0, pos);
-        }
-        return null;
     }
 
 }
