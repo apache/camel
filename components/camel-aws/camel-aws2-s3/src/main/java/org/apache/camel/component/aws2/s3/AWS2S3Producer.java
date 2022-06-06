@@ -580,7 +580,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         PresignedGetObjectRequest presignedGetObjectRequest = presigner.presignGetObject(getObjectPresignRequest);
         if (!presignedGetObjectRequest.isBrowserExecutable()) {
-            LOG.info("The download link url is not browser compatible and please check the option of checksum validations in Amazon S3 client");
+            LOG.info(
+                    "The download link url is not browser compatible and please check the option of checksum validations in Amazon S3 client");
         }
 
         Message message = getMessageForResponse(exchange);
