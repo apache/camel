@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
@@ -39,16 +56,15 @@ abstract class BaseExport extends CamelCommand {
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version", required = true)
     protected String gav;
 
-    @CommandLine.Option(names = { "--java-version" }, description = "Java version (11 or 17)",
-                        defaultValue = "11")
+    @CommandLine.Option(names = { "--java-version" }, description = "Java version (11 or 17)", defaultValue = "11")
     protected String javaVersion;
 
-    @CommandLine.Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version",
-                        defaultValue = "0.8.1")
+    @CommandLine.Option(names = {
+            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "0.8.1")
     protected String kameletsVersion;
 
-    @CommandLine.Option(names = { "-dir", "--directory" }, description = "Directory where the project will be exported",
-                        defaultValue = ".")
+    @CommandLine.Option(names = { "-dir",
+            "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
     protected String exportDir;
 
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
@@ -88,7 +104,8 @@ abstract class BaseExport extends CamelCommand {
         for (String line : lines) {
             if (line.startsWith("dependency=")) {
                 String v = StringHelper.after(line, "dependency=");
-                // skip endpointdsl as its already included, and  core-languages and java-joor as we let quarkus compile
+                // skip endpointdsl as its already included, and core-languages and java-joor as
+                // we let quarkus compile
                 boolean skip = v == null || v.contains("org.apache.camel:camel-core-languages")
                         || v.contains("org.apache.camel:camel-java-joor-dsl")
                         || v.contains("camel-endpointdsl");
@@ -120,7 +137,8 @@ abstract class BaseExport extends CamelCommand {
     }
 
     protected void copySourceFiles(
-            File settings, File profile, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir, String packageName)
+            File settings, File profile, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir,
+            String packageName)
             throws Exception {
         // read the settings file and find the files to copy
         OrderedProperties prop = new OrderedProperties();
@@ -140,7 +158,8 @@ abstract class BaseExport extends CamelCommand {
                     }
                     String ext = FileUtil.onlyExt(f, true);
                     boolean java = "java".equals(ext);
-                    boolean camel = "camel.main.routesIncludePattern".equals(k) || "camel.component.kamelet.location".equals(k);
+                    boolean camel = "camel.main.routesIncludePattern".equals(k)
+                            || "camel.component.kamelet.location".equals(k);
                     File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : srcResourcesDir;
                     File source = new File(f);
                     File out = new File(target, source.getName());
@@ -167,7 +186,8 @@ abstract class BaseExport extends CamelCommand {
         // noop
     }
 
-    protected void copySettingsAndProfile(File settings, File profile, File targetDir, Function<Properties, Object> customize)
+    protected void copySettingsAndProfile(File settings, File profile, File targetDir,
+            Function<Properties, Object> customize)
             throws Exception {
         OrderedProperties prop = new OrderedProperties();
         prop.load(new FileInputStream(settings));
@@ -178,7 +198,8 @@ abstract class BaseExport extends CamelCommand {
 
         for (Map.Entry<Object, Object> entry : prop.entrySet()) {
             String key = entry.getKey().toString();
-            boolean skip = "camel.main.routesCompileDirectory".equals(key) || "camel.main.routesReloadEnabled".equals(key);
+            boolean skip = "camel.main.routesCompileDirectory".equals(key)
+                    || "camel.main.routesReloadEnabled".equals(key);
             if (!skip && key.startsWith("camel.main")) {
                 prop2.put(entry.getKey(), entry.getValue());
             }
@@ -201,8 +222,10 @@ abstract class BaseExport extends CamelCommand {
             // files are now loaded in classpath
             v = v.replaceAll("file:", "classpath:");
             if ("camel.main.routesIncludePattern".equals(k)) {
-                // camel.main.routesIncludePattern should remove all .java as we use spring boot to load them
-                // camel.main.routesIncludePattern should remove all file: classpath: as we copy them to src/main/resources/camel where camel auto-load from
+                // camel.main.routesIncludePattern should remove all .java as we use spring boot
+                // to load them
+                // camel.main.routesIncludePattern should remove all file: classpath: as we copy
+                // them to src/main/resources/camel where camel auto-load from
                 v = Arrays.stream(v.split(","))
                         .filter(n -> !n.endsWith(".java") && !n.startsWith("file:") && !n.startsWith("classpath:"))
                         .collect(Collectors.joining(","));
