@@ -93,7 +93,7 @@ public class RollbackDoTryCatchTest extends ContextTestSupport {
                     .to("mock:result");
 
                 from("direct:rollback")
-                    .choice().when(body().isNotEqualTo("ok")).to("mock:rollback")
+                        .choice().when(body().isNotEqualTo("ok")).to("mock:rollback")
                         .rollback("That do not work");
 
             }
