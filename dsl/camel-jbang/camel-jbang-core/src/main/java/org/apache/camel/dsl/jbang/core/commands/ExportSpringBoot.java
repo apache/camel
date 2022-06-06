@@ -21,14 +21,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -37,7 +32,6 @@ import org.apache.camel.main.MavenGav;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
-import org.apache.camel.util.StringHelper;
 import org.apache.commons.io.FileUtils;
 import picocli.CommandLine;
 
@@ -165,51 +159,18 @@ class ExportSpringBoot extends BaseExport {
         IOHelper.writeText(context, new FileOutputStream(pom, false));
     }
 
-    private Set<String> resolveDependencies(File settings) throws Exception {
-        Set<String> answer = new TreeSet<>((o1, o2) -> {
-            // favour org.apache.camel first
-            boolean c1 = o1.contains("org.apache.camel:");
-            boolean c2 = o2.contains("org.apache.camel:");
-            if (c1 && !c2) {
-                return -1;
-            } else if (!c1 && c2) {
-                return 1;
-            }
-            return o1.compareTo(o2);
-        });
-        List<String> lines = Files.readAllLines(settings.toPath());
-        for (String line : lines) {
-            if (line.startsWith("dependency=")) {
-                String v = StringHelper.after(line, "dependency=");
-                // skip core-languages and java-joor as we let spring boot compile
-                boolean skip = v == null || v.contains("org.apache.camel:camel-core-languages")
-                        || v.contains("org.apache.camel:camel-java-joor-dsl");
-                if (!skip) {
-                    answer.add(v);
-                }
-                if (v != null && v.contains("org.apache.camel:camel-kamelet")) {
-                    // include kamelet catalog if we use kamelets
-                    answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
-                }
-            }
-        }
+    @Override
+    protected Set<String> resolveDependencies(File settings) throws Exception {
+        Set<String> answer = super.resolveDependencies(settings);
 
-        // remove out of the box dependencies
+        answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-dsl-modeline"));
 
-        // remove duplicate versions (keep first)
-        Map<String, String> versions = new HashMap<>();
-        Set<String> toBeRemoved = new HashSet<>();
-        for (String line : answer) {
-            MavenGav gav = MavenGav.parseGav(null, line);
-            String ga = gav.getGroupId() + ":" + gav.getArtifactId();
-            if (!versions.containsKey(ga)) {
-                versions.put(ga, gav.getVersion());
-            } else {
-                toBeRemoved.add(line);
-            }
+        // if platform-http is included then we need servlet as implementation
+        if (answer.stream().anyMatch(s -> s.contains("camel-platform-http") && !s.contains("camel-servlet"))) {
+            // version does not matter
+            answer.add("mvn:org.apache.camel:camel-servlet:1.0-SNAPSHOT");
         }
-        answer.removeAll(toBeRemoved);
 
         return answer;
     }
@@ -224,52 +185,13 @@ class ExportSpringBoot extends BaseExport {
         IOHelper.writeText(context, new FileOutputStream(srcJavaDir + "/" + mainClassname + ".java", false));
     }
 
-    private void copySourceFiles(
-            File settings, File profile, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir, String packageName)
-            throws Exception {
-        // read the settings file and find the files to copy
-        OrderedProperties prop = new OrderedProperties();
-        prop.load(new FileInputStream(settings));
-
-        for (String k : SETTINGS_PROP_SOURCE_KEYS) {
-            String files = prop.getProperty(k);
-            if (files != null) {
-                for (String f : files.split(",")) {
-                    String scheme = getScheme(f);
-                    if (scheme != null) {
-                        f = f.substring(scheme.length() + 1);
-                    }
-                    boolean skip = profile.getName().equals(f); // skip copying profile
-                    if (skip) {
-                        continue;
-                    }
-                    String ext = FileUtil.onlyExt(f, true);
-                    boolean java = "java".equals(ext);
-                    boolean camel = "camel.main.routesIncludePattern".equals(k) || "camel.component.kamelet.location".equals(k);
-                    File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : srcResourcesDir;
-                    File source = new File(f);
-                    File out = new File(target, source.getName());
-                    safeCopy(source, out, true);
-                    if (java) {
-                        // need to append package name in java source file
-                        List<String> lines = Files.readAllLines(out.toPath());
-                        lines.add(0, "");
-                        lines.add(0, "package " + packageName + ";");
-                        FileOutputStream fos = new FileOutputStream(out);
-                        for (String line : lines) {
-                            if (line.startsWith("public class")
-                                    && (line.contains("RouteBuilder") || line.contains("EndpointRouteBuilder"))) {
-                                fos.write("import org.springframework.stereotype.Component;\n\n"
-                                        .getBytes(StandardCharsets.UTF_8));
-                                fos.write("@Component\n".getBytes(StandardCharsets.UTF_8));
-                            }
-                            fos.write(line.getBytes(StandardCharsets.UTF_8));
-                            fos.write("\n".getBytes(StandardCharsets.UTF_8));
-                        }
-                        IOHelper.close(fos);
-                    }
-                }
-            }
+    @Override
+    protected void adjustJavaSourceFileLine(String line, FileOutputStream fos) throws Exception {
+        if (line.startsWith("public class")
+                && (line.contains("RouteBuilder") || line.contains("EndpointRouteBuilder"))) {
+            fos.write("import org.springframework.stereotype.Component;\n\n"
+                    .getBytes(StandardCharsets.UTF_8));
+            fos.write("@Component\n".getBytes(StandardCharsets.UTF_8));
         }
     }
 
