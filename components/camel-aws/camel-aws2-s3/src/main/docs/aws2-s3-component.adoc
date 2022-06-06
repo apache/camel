@@ -292,6 +292,8 @@ This operation will return an S3Object instance related to the camelKey object i
 This operation will return a download link url for the file camel-key in the bucket mycamelbucket and region region.
 Parameters (`accessKey`, `secretKey` and `region`) are mandatory for this operation, if S3 client is autowired from the registry.
 
+NOTE: If checksum validations are enabled, the url will no longer be browser compatible because it adds a signed header that must be included in the HTTP request.
+
 == Streaming Upload mode
 
 With the stream mode enabled users will be able to upload data to S3 without knowing ahead of time the dimension of the data, by leveraging multipart upload.
