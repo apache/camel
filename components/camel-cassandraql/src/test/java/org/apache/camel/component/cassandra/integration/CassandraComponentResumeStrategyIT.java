@@ -20,45 +20,32 @@ package org.apache.camel.component.cassandra.integration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.datastax.oss.driver.api.core.CqlSession;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cassandra.consumer.support.CassandraResumeAction;
 import org.apache.camel.component.cassandra.consumer.support.CassandraResumeAdapter;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.cassandra.CassandraConstants.CASSANDRA_RESUME_ACTION;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CassandraComponentResumeStrategyIT extends BaseCassandra {
 
     private static class TestCassandraResumeAdapter implements CassandraResumeAdapter {
-        private boolean sessionCalled;
-        private boolean sessionNotNull;
         private boolean resumeCalled;
+        private boolean resumeActionNotNull;
 
         @Override
-        public void setSession(CqlSession session) {
-            sessionCalled = true;
-            sessionNotNull = session != null;
+        public void setResumeAction(CassandraResumeAction action) {
+            resumeActionNotNull = action != null;
         }
 
         @Override
         public void resume() {
             resumeCalled = true;
-        }
-
-        public boolean isSessionCalled() {
-            return sessionCalled;
-        }
-
-        public boolean isSessionNotNull() {
-            return sessionNotNull;
-        }
-
-        public boolean isResumeCalled() {
-            return resumeCalled;
         }
     }
 
@@ -79,15 +66,16 @@ public class CassandraComponentResumeStrategyIT extends BaseCassandra {
         mock.await(1, TimeUnit.SECONDS);
         assertMockEndpointsSatisfied();
 
-        assertTrue(resumeStrategy.isSessionCalled());
-        assertTrue(resumeStrategy.isSessionNotNull());
-        assertTrue(resumeStrategy.isResumeCalled());
+        assertTrue(resumeStrategy.resumeActionNotNull);
+        assertTrue(resumeStrategy.resumeCalled);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                bindToRegistry(CASSANDRA_RESUME_ACTION, (CassandraResumeAction) (key, value) -> true);
+
                 fromF("cql://%s/%s?cql=%s", getUrl(), KEYSPACE_NAME, CQL)
                         .resumable(new TransientResumeStrategy(resumeStrategy))
                         .to("mock:resultAll");
