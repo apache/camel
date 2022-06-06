@@ -113,6 +113,8 @@ public interface AWS2S3Constants {
     String RANGE_END = "CamelAwsS3RangeEnd";
     @Metadata(label = "producer", description = "The expiration time of the download link in milliseconds", javaType = "Long")
     String DOWNLOAD_LINK_EXPIRATION_TIME = "CamelAwsS3DowloadLinkExpirationTime";
+    @Metadata(label = "producer", description = "Whether the download link is browser compatible", javaType = "boolean")
+    String DOWNLOAD_LINK_BROWSER_COMPATIBLE = "CamelAwsS3DownloadLinkBrowserCompatible";
     @Metadata(description = "A map of metadata to be stored or stored with the object in S3. More details about\n" +
                             "metadata https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingMetadata.html[here].",
               javaType = "Map<String, String>")
