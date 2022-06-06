@@ -17,21 +17,16 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.main.MavenGav;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.OrderedProperties;
 import org.apache.commons.io.FileUtils;
 import picocli.CommandLine;
 
@@ -91,7 +86,7 @@ class ExportSpringBoot extends BaseExport {
         srcCamelResourcesDir.mkdirs();
         copySourceFiles(settings, profile, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
         // copy from settings to profile
-        copySettingsAndProfile(settings, profile, srcResourcesDir);
+        copySettingsAndProfile(settings, profile, srcResourcesDir, null);
         // create main class
         createMainClassSource(srcJavaDir, packageName, mainClassname);
         // gather dependencies
@@ -195,58 +190,13 @@ class ExportSpringBoot extends BaseExport {
         }
     }
 
-    private void copySettingsAndProfile(File settings, File profile, File targetDir) throws Exception {
-        OrderedProperties prop = new OrderedProperties();
-        prop.load(new FileInputStream(settings));
-        OrderedProperties prop2 = new OrderedProperties();
-        if (profile.exists()) {
-            prop2.load(new FileInputStream(profile));
-        }
-
-        for (Map.Entry<Object, Object> entry : prop.entrySet()) {
-            String key = entry.getKey().toString();
-            boolean skip = "camel.main.routesCompileDirectory".equals(key) || "camel.main.routesReloadEnabled".equals(key);
-            if (!skip && key.startsWith("camel.main")) {
-                prop2.put(entry.getKey(), entry.getValue());
-            }
-        }
-
+    @Override
+    protected String adjustApplicationProperties(String key, String value) {
         // camel.main.x should be renamed to camel.springboot.x
-        OrderedProperties prop3 = new OrderedProperties();
-        for (Map.Entry<Object, Object> entry : prop2.entrySet()) {
-            String key = entry.getKey().toString();
-            if (key.startsWith("camel.main.")) {
-                key = "camel.springboot." + key.substring(11);
-            }
-            prop3.put(key, entry.getValue());
+        if (key.startsWith("camel.main.")) {
+            key = "camel.springboot." + key.substring(11);
         }
-
-        FileOutputStream fos = new FileOutputStream(new File(targetDir, "application.properties"), false);
-        for (Map.Entry<Object, Object> entry : prop3.entrySet()) {
-            String k = entry.getKey().toString();
-            String v = entry.getValue().toString();
-
-            boolean skip = k.startsWith("camel.jbang.");
-            if (skip) {
-                continue;
-            }
-
-            // files are now loaded in classpath
-            v = v.replaceAll("file:", "classpath:");
-            if ("camel.springboot.routesIncludePattern".equals(k)) {
-                // camel.main.routesIncludePattern should remove all .java as we use spring boot to load them
-                // camel.main.routesIncludePattern should remove all file: classpath: as we copy them to src/main/resources/camel where camel auto-load from
-                v = Arrays.stream(v.split(","))
-                        .filter(n -> !n.endsWith(".java") && !n.startsWith("file:") && !n.startsWith("classpath:"))
-                        .collect(Collectors.joining(","));
-            }
-            if (!v.isBlank()) {
-                String line = k + "=" + v;
-                fos.write(line.getBytes(StandardCharsets.UTF_8));
-                fos.write("\n".getBytes(StandardCharsets.UTF_8));
-            }
-        }
-        IOHelper.close(fos);
+        return super.adjustApplicationProperties(key, value);
     }
 
 }
