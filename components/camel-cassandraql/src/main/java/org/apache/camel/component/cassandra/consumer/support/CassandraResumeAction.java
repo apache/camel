@@ -17,17 +17,18 @@
 
 package org.apache.camel.component.cassandra.consumer.support;
 
-import org.apache.camel.resume.ResumeAdapter;
-
 /**
- * Provides a resume adapter for Cassandra consumers
+ * Provides and interface for integrations to run actions during resume
  */
-public interface CassandraResumeAdapter extends ResumeAdapter {
+public interface CassandraResumeAction {
 
     /**
-     * Sets an action that will be executed during resume
+     * Runs an action on an resumable (entry)
+     * 
+     * @param  key   the resumable key
+     * @param  value the resumable value
      *
-     * @param resumeAction the action to execute during resume
+     * @return       true if the entry addressed should be invalidated or false otherwise
      */
-    void setResumeAction(CassandraResumeAction resumeAction);
+    boolean evalEntry(Object key, Object value);
 }

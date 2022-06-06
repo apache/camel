@@ -18,6 +18,7 @@
 package org.apache.camel.component.caffeine.resume;
 
 import java.util.Optional;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -120,5 +121,17 @@ public class CaffeineCache<K> implements ResumeCache<K> {
     @Override
     public long capacity() {
         return cacheSize;
+    }
+
+    @Override
+    public void forEach(BiFunction<? super K, ? super Object, Boolean> action) {
+
+        final ConcurrentMap<K, Object> kObjectConcurrentMap = cache.asMap();
+        for (var entry : kObjectConcurrentMap.entrySet()) {
+            final boolean invalidate = action.apply(entry.getKey(), entry.getValue());
+            if (invalidate) {
+                cache.invalidate(entry.getKey());
+            }
+        }
     }
 }
