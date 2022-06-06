@@ -24,6 +24,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
@@ -85,7 +86,7 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        Exception e = exchange.getException();
+        final Exception e = exchange.getException();
         Throwable caught = catches(exchange, e);
         // If a previous catch clause handled the exception or if this clause does not match, exit
         if (exchange.getProperty(ExchangePropertyKey.EXCEPTION_HANDLED) != null || caught == null) {
@@ -96,6 +97,15 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
             LOG.trace("This CatchProcessor catches the exception: {} caused by: {}", caught.getClass().getName(),
                     e.getMessage());
         }
+
+        // must remember some properties which we cannot use during doCatch processing
+        ExtendedExchange ee = (ExtendedExchange) exchange;
+        final boolean stop = ee.isRouteStop();
+        ee.setRouteStop(false);
+        final boolean rollbackOnly = ee.isRollbackOnly();
+        ee.setRollbackOnly(false);
+        final boolean rollbackOnlyLast = ee.isRollbackOnlyLast();
+        ee.setRollbackOnlyLast(false);
 
         // store the last to endpoint as the failure endpoint
         if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
@@ -123,6 +133,16 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
 
                 // always clear redelivery exhausted in a catch clause
                 exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
+
+                if (rollbackOnly || rollbackOnlyLast || stop) {
+                    exchange.setRouteStop(stop);
+                    exchange.setRollbackOnly(rollbackOnly);
+                    exchange.setRollbackOnlyLast(rollbackOnlyLast);
+                    // special for rollback as we need to restore that a rollback was triggered
+                    if (e instanceof RollbackExchangeException) {
+                        exchange.setException(e);
+                    }
+                }
 
                 if (!doneSync) {
                     // signal callback to continue routing async
