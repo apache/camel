@@ -78,7 +78,11 @@ class ExportQuarkus extends BaseExport {
         srcCamelResourcesDir.mkdirs();
         copySourceFiles(settings, profile, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
         // copy from settings to profile
-        copySettingsAndProfile(settings, profile, srcResourcesDir, null);
+        copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
+            // turn off modeline as it is not supported in quarkus
+            prop.remove("camel.main.modeline");
+            return prop;
+        });
         // gather dependencies
         Set<String> deps = resolveDependencies(settings);
         // create pom

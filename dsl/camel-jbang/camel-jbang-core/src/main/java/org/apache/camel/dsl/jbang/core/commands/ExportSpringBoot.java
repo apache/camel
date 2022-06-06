@@ -191,12 +191,12 @@ class ExportSpringBoot extends BaseExport {
     }
 
     @Override
-    protected String adjustApplicationProperties(String key, String value) {
+    protected String applicationPropertyLine(String key, String value) {
         // camel.main.x should be renamed to camel.springboot.x
         if (key.startsWith("camel.main.")) {
             key = "camel.springboot." + key.substring(11);
         }
-        return super.adjustApplicationProperties(key, value);
+        return super.applicationPropertyLine(key, value);
     }
 
 }

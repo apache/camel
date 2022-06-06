@@ -81,7 +81,12 @@ class ExportCamelMain extends BaseExport {
         srcCamelResourcesDir.mkdirs();
         copySourceFiles(settings, profile, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
         // copy from settings to profile
-        copySettingsAndProfile(settings, profile, srcResourcesDir, packageName);
+        copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
+            if (!prop.containsKey("camel.main.basePackageScan") && !prop.containsKey("camel.main.base-package-scan")) {
+                prop.put("camel.main.basePackageScan", packageName);
+            }
+            return prop;
+        });
         // create main class
         createMainClassSource(srcJavaDir, packageName, mainClassname);
         // gather dependencies

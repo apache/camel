@@ -12,8 +12,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.camel.main.MavenGav;
@@ -165,7 +167,8 @@ abstract class BaseExport extends CamelCommand {
         // noop
     }
 
-    protected void copySettingsAndProfile(File settings, File profile, File targetDir, String packageName) throws Exception {
+    protected void copySettingsAndProfile(File settings, File profile, File targetDir, Function<Properties, Object> customize)
+            throws Exception {
         OrderedProperties prop = new OrderedProperties();
         prop.load(new FileInputStream(settings));
         OrderedProperties prop2 = new OrderedProperties();
@@ -181,10 +184,8 @@ abstract class BaseExport extends CamelCommand {
             }
         }
 
-        // should have package name set for package scan
-        if (packageName != null && !prop2.containsKey("camel.main.basePackageScan")
-                && !prop2.containsKey("camel.main.base-package-scan")) {
-            prop2.put("camel.main.basePackageScan", packageName);
+        if (customize != null) {
+            customize.apply(prop2);
         }
 
         FileOutputStream fos = new FileOutputStream(new File(targetDir, "application.properties"), false);
@@ -207,7 +208,7 @@ abstract class BaseExport extends CamelCommand {
                         .collect(Collectors.joining(","));
             }
             if (!v.isBlank()) {
-                String line = adjustApplicationProperties(k, v);
+                String line = applicationPropertyLine(k, v);
                 fos.write(line.getBytes(StandardCharsets.UTF_8));
                 fos.write("\n".getBytes(StandardCharsets.UTF_8));
             }
@@ -215,7 +216,7 @@ abstract class BaseExport extends CamelCommand {
         IOHelper.close(fos);
     }
 
-    protected String adjustApplicationProperties(String key, String value) {
+    protected String applicationPropertyLine(String key, String value) {
         return key + "=" + value;
     }
 
