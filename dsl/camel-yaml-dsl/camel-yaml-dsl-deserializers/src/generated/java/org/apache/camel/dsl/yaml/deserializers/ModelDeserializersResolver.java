@@ -208,6 +208,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.JaxbDataFormat": return new ModelDeserializers.JaxbDataFormatDeserializer();
             case "joor": return new ModelDeserializers.JoorExpressionDeserializer();
             case "org.apache.camel.model.language.JoorExpression": return new ModelDeserializers.JoorExpressionDeserializer();
+            case "jq": return new ModelDeserializers.JqExpressionDeserializer();
+            case "org.apache.camel.model.language.JqExpression": return new ModelDeserializers.JqExpressionDeserializer();
             case "json-api": return new ModelDeserializers.JsonApiDataFormatDeserializer();
             case "jsonApi": return new ModelDeserializers.JsonApiDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.JsonApiDataFormat": return new ModelDeserializers.JsonApiDataFormatDeserializer();

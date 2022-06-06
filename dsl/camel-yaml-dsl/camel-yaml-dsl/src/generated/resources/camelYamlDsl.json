@@ -765,6 +765,9 @@
           "joor" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JoorExpression"
           },
+          "jq" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.JqExpression"
+          },
           "jsonpath" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JsonPathExpression"
           },
@@ -5899,6 +5902,9 @@
           "joor" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JoorExpression"
           },
+          "jq" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.JqExpression"
+          },
           "jsonpath" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JsonPathExpression"
           },
@@ -6014,6 +6020,31 @@
             },
             "singleQuotes" : {
               "type" : "boolean"
+            },
+            "trim" : {
+              "type" : "boolean"
+            }
+          }
+        } ],
+        "required" : [ "expression" ]
+      },
+      "org.apache.camel.model.language.JqExpression" : {
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "expression" : {
+              "type" : "string"
+            },
+            "headerName" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
+            "resultType" : {
+              "type" : "string"
             },
             "trim" : {
               "type" : "boolean"

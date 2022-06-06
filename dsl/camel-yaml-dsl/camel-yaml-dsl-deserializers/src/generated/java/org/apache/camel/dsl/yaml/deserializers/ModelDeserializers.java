@@ -178,6 +178,7 @@ import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
 import org.apache.camel.model.language.JoorExpression;
+import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
@@ -6981,6 +6982,80 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "single-quotes": {
                     String val = asText(node);
                     target.setSingleQuotes(val);
+                    break;
+                }
+                case "trim": {
+                    String val = asText(node);
+                    target.setTrim(val);
+                    break;
+                }
+                default: {
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "jq",
+            inline = true,
+            types = org.apache.camel.model.language.JqExpression.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "expression", type = "string", required = true),
+                    @YamlProperty(name = "header-name", type = "string"),
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "result-type", type = "string"),
+                    @YamlProperty(name = "trim", type = "boolean")
+            }
+    )
+    public static class JqExpressionDeserializer extends YamlDeserializerBase<JqExpression> {
+        public JqExpressionDeserializer() {
+            super(JqExpression.class);
+        }
+
+        @Override
+        protected JqExpression newInstance() {
+            return new JqExpression();
+        }
+
+        @Override
+        protected JqExpression newInstance(String value) {
+            return new JqExpression(value);
+        }
+
+        @Override
+        protected boolean setProperty(JqExpression target, String propertyKey, String propertyName,
+                Node node) {
+            switch(propertyKey) {
+                case "expression": {
+                    String val = asText(node);
+                    target.setExpression(val);
+                    break;
+                }
+                case "header-name": {
+                    String val = asText(node);
+                    target.setHeaderName(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "result-type": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
                     break;
                 }
                 case "trim": {
