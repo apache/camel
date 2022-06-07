@@ -63,7 +63,8 @@ abstract class BaseExport extends CamelCommand {
             "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "0.8.1")
     protected String kameletsVersion;
 
-    @CommandLine.Option(names = { "-dir",
+    @CommandLine.Option(names = {
+            "-dir",
             "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
     protected String exportDir;
 
@@ -186,7 +187,8 @@ abstract class BaseExport extends CamelCommand {
         // noop
     }
 
-    protected void copySettingsAndProfile(File settings, File profile, File targetDir,
+    protected void copySettingsAndProfile(
+            File settings, File profile, File targetDir,
             Function<Properties, Object> customize)
             throws Exception {
         OrderedProperties prop = new OrderedProperties();
