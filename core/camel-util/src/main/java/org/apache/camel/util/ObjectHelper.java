@@ -980,6 +980,31 @@ public final class ObjectHelper {
     }
 
     /**
+     * Converts wrapper type like {@link Integer} to its primitive type, i.e. int.
+     */
+    public static Class<?> convertWrapperTypeToPrimitiveType(Class<?> type) {
+        Class<?> rc = type;
+        if (type == Integer.class) {
+            rc = int.class;
+        } else if (type == Long.class) {
+            rc = long.class;
+        } else if (type == Double.class) {
+            rc = double.class;
+        } else if (type == Float.class) {
+            rc = float.class;
+        } else if (type == Short.class) {
+            rc = short.class;
+        } else if (type == Byte.class) {
+            rc = byte.class;
+        } else if (type == Boolean.class) {
+            rc = boolean.class;
+        } else if (type == Character.class) {
+            rc = char.class;
+        }
+        return rc;
+    }
+
+    /**
      * Helper method to return the default character set name
      */
     public static String getDefaultCharacterSet() {
