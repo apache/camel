@@ -155,6 +155,52 @@ And you can also configure Camel components such as camel-kafka to declare the U
 camel.component.kafka.brokers=broker1:9092,broker2:9092,broker3:9092
 ----
 
+
+=== Using 3rd-party Maven repositories
+
+Camel JBang will download from local repository first, and then online from Maven Central.
+To be able to download from 3rd-party Maven repositories then you need to specify this as CLI argument,
+]or in `application.properties`
+
+[source,bash]
+----
+camel run foo.java --repos=https://packages.atlassian.com/maven-external
+----
+
+TIP: Multiple repositories can be separated by comma
+
+The configuration for the 3rd-party Maven repositories can also be configured in `application.properties`
+with the key `camel.jbang.repos` as shown:
+
+[source,properties]
+----
+camel.jbang.repos=https://packages.atlassian.com/maven-external
+----
+
+And when running Camel then `application.properties` is automatically loaded:
+
+[source,bash]
+----
+camel run foo.java
+----
+
+However, you can also explicit specify the properties file to use:
+
+[source,bash]
+----
+camel run foo.java application.properties
+----
+
+And even better if you specify this as a profile:
+
+[source,bash]
+----
+camel run foo.java --profile=application
+----
+
+Where the profile id is the name of the properties file.
+
+
 === Running routes hosted on GitHub
 
 You can run a route that is hosted on GitHub using Camels xref:components:others:resourceresolver-github.adoc[github] resource loader.
