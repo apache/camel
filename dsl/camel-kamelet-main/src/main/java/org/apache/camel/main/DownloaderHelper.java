@@ -121,7 +121,7 @@ public final class DownloaderHelper {
                 int i = 0;
                 for (String repo : repos.split(",")) {
                     i++;
-                    sb.append(String.format("\n            <url name=\"repo%s\" m2compatible=\"true\">", i));
+                    sb.append(String.format("\n            <url name=\"custom%s\" m2compatible=\"true\">", i));
                     sb.append(String.format(
                             "\n                <artifact pattern=\"%s/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]\"/>",
                             repo));
