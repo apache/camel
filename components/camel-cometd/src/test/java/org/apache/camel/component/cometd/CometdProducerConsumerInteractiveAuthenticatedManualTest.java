@@ -46,7 +46,8 @@ public class CometdProducerConsumerInteractiveAuthenticatedManualTest {
     private String pwd = "changeit";
 
     public static void main(String[] args) throws Exception {
-        CometdProducerConsumerInteractiveAuthenticatedManualTest me = new CometdProducerConsumerInteractiveAuthenticatedManualTest();
+        CometdProducerConsumerInteractiveAuthenticatedManualTest me
+                = new CometdProducerConsumerInteractiveAuthenticatedManualTest();
         me.testCometdProducerConsumerInteractive();
     }
 
@@ -69,7 +70,8 @@ public class CometdProducerConsumerInteractiveAuthenticatedManualTest {
                 component2.addExtension(bayeuxAuthenticator);
 
                 URI keyStoreUrl
-                        = CometdProducerConsumerInteractiveAuthenticatedManualTest.class.getResource("/jsse/localhost.p12").toURI();
+                        = CometdProducerConsumerInteractiveAuthenticatedManualTest.class.getResource("/jsse/localhost.p12")
+                                .toURI();
                 component.setSslKeystore(keyStoreUrl.getPath());
 
                 from("stream:in").to(URI).to(URIS);

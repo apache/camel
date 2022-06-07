@@ -59,7 +59,8 @@ public class CometdProducerConsumerInOutInteractiveManualTest {
                 CometdComponent component = (CometdComponent) context.getComponent("cometds");
                 component.setSslPassword(pwd);
                 component.setSslKeyPassword(pwd);
-                URI keyStoreUrl = CometdProducerConsumerInOutInteractiveManualTest.class.getResource("/jsse/localhost.p12").toURI();
+                URI keyStoreUrl
+                        = CometdProducerConsumerInOutInteractiveManualTest.class.getResource("/jsse/localhost.p12").toURI();
                 component.setSslKeystore(keyStoreUrl.getPath());
 
                 from(URI).setExchangePattern(ExchangePattern.InOut).process(new Processor() {
