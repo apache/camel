@@ -69,7 +69,7 @@
         <arquillian-version>1.6.0.Final</arquillian-version>
         <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
         <asm-version>8.0.1</asm-version>
-        <assertj-version>3.22.0</assertj-version>
+        <assertj-version>3.23.1</assertj-version>
         <asterisk-java-version>3.12.0</asterisk-java-version>
         <atlasmap-version>2.3.13</atlasmap-version>
         <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
