@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main;
 
+import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
@@ -23,6 +25,7 @@ import java.util.Map;
 
 import groovy.grape.Grape;
 import org.apache.camel.CamelContext;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,6 +109,36 @@ public final class DownloaderHelper {
             }
         }
         return false;
+    }
+
+    public static void prepareDownloader(CamelContext camelContext, String repos) throws Exception {
+        InputStream is = DownloaderHelper.class.getResourceAsStream("/camelGrapeConfig.xml");
+        if (is != null) {
+            String xml = IOHelper.loadText(is);
+            if (repos != null) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("            <!-- custom repositories -->");
+                int i = 0;
+                for (String repo : repos.split(",")) {
+                    i++;
+                    sb.append(String.format("\n            <url name=\"repo%s\" m2compatible=\"true\">", i));
+                    sb.append(String.format(
+                            "\n                <artifact pattern=\"%s/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]\"/>",
+                            repo));
+                    sb.append(String.format("\n            </url>"));
+                }
+                xml = xml.replace("            <!-- @repos@ -->", sb.toString());
+            }
+
+            // save file to local disk and point grape to use this
+            File out = new File(".camel-jbang/camelGrapeConfig.xml");
+            IOHelper.writeText(xml, out);
+
+            // Grape should use our custom configuration file
+            System.setProperty("grape.config", out.getAbsolutePath());
+
+            IOHelper.close(is);
+        }
     }
 
 }

@@ -141,6 +141,12 @@ class UberJar extends CamelCommand {
         buildDir = new File(LIB_DIR);
         buildDir.mkdirs();
         for (String l : lines) {
+            // support 3rd party maven repositories
+            File grapeConfig = new File(".camel-jbang/camelGrapeConfig.xml");
+            if (grapeConfig.exists()) {
+                System.setProperty("grape.config", grapeConfig.getAbsolutePath());
+            }
+
             if (l.startsWith("dependency=")) {
                 l = StringHelper.after(l, "dependency=");
                 MavenGav gav = MavenGav.parseGav(null, l);

@@ -39,6 +39,7 @@ public class KameletMain extends MainCommandLineSupport {
 
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
+    private String repos;
     private boolean stub;
     private DownloadListener downloadListener;
     private GroovyClassLoader groovyClassLoader;
@@ -117,6 +118,17 @@ public class KameletMain extends MainCommandLineSupport {
         this.download = download;
     }
 
+    public String getRepos() {
+        return repos;
+    }
+
+    /**
+     * Additional maven repositories for download on-demand (Use commas to separate multiple repositories).
+     */
+    public void setRepos(String repos) {
+        this.repos = repos;
+    }
+
     public boolean isStub() {
         return stub;
     }
@@ -164,6 +176,16 @@ public class KameletMain extends MainCommandLineSupport {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 if (arg.equals("-download")) {
                     setDownload("true".equalsIgnoreCase(parameter));
+                }
+            }
+        });
+        addOption(new ParameterOption(
+                "repos", "repositories", "Additional maven repositories for download on-demand.",
+                "repos") {
+            @Override
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                if (arg.equals("-repos")) {
+                    setRepos(parameter);
                 }
             }
         });
@@ -278,6 +300,9 @@ public class KameletMain extends MainCommandLineSupport {
         if (download) {
             // use resolvers that can auto downloaded
             try {
+                // prepare grape config with custom repositories
+                DownloaderHelper.prepareDownloader(camelContext, repos);
+
                 // dependencies from CLI
                 Object dependencies = getInitialProperties().get("camel.jbang.dependencies");
                 if (dependencies != null) {

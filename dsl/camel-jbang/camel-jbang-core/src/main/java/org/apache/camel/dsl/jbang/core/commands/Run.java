@@ -99,8 +99,11 @@ class Run extends CamelCommand {
     String[] files;
 
     @Option(names = {
-            "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate them).")
+            "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies).")
     String dependencies;
+
+    @Option(names = {"--repos"}, description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories).")
+    String repos;
 
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     String name;
@@ -286,6 +289,7 @@ class Run extends CamelCommand {
             } else {
                 propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getName();
             }
+            repos = profileProperties.getProperty("camel.jbang.repos", repos);
         }
 
         // if no specific file to run then try to auto-detect
@@ -308,6 +312,7 @@ class Run extends CamelCommand {
         final KameletMain main = createMainInstance();
 
         final Set<String> downloaded = new HashSet<>();
+        main.setRepos(repos);
         main.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadDependency(String groupId, String artifactId, String version) {
@@ -338,6 +343,7 @@ class Run extends CamelCommand {
         // allow java-dsl to compile to .class which we need in uber-jar mode
         writeSetting(main, profileProperties, "camel.main.routesCompileDirectory", WORK_DIR);
         writeSetting(main, profileProperties, "camel.jbang.dependencies", dependencies);
+        writeSetting(main, profileProperties, "camel.jbang.repos", repos);
         writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
 
