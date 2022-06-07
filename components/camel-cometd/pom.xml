@@ -108,7 +108,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>org.apache.camel.component.cometd.CometdProducerConsumerInteractiveMain</mainClass>
+                    <mainClass>org.apache.camel.component.cometd.CometdProducerConsumerInteractiveManualTest</mainClass>
                     <includePluginDependencies>false</includePluginDependencies>
                     <classpathScope>test</classpathScope>
                 </configuration>
