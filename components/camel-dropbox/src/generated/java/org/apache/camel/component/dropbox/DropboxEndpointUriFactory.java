@@ -20,20 +20,24 @@ public class DropboxEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(13);
+        Set<String> props = new HashSet<>(17);
+        props.add("apiKey");
         props.add("remotePath");
         props.add("clientIdentifier");
         props.add("query");
         props.add("exchangePattern");
+        props.add("apiSecret");
         props.add("accessToken");
         props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
         props.add("localPath");
         props.add("newRemotePath");
         props.add("client");
+        props.add("expireIn");
         props.add("uploadMode");
         props.add("operation");
         props.add("exceptionHandler");
+        props.add("refreshToken");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
     }

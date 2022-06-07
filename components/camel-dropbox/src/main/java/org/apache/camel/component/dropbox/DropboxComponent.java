@@ -58,6 +58,13 @@ public class DropboxComponent extends DefaultComponent {
 
         // set options from component
         configuration.setAccessToken((String) parameters.get("accessToken"));
+        if (parameters.get("expireIn") != null) {
+            configuration.setExpireIn(Long.valueOf((String) parameters.get("expireIn")));
+        }
+        configuration.setRefreshToken((String) parameters.get("refreshToken"));
+        configuration.setApiKey((String) parameters.get("apiKey"));
+        configuration.setApiSecret((String) parameters.get("apiSecret"));
+
         configuration.setLocalPath((String) parameters.get("localPath"));
         configuration.setRemotePath(
                 parameters.get("remotePath") != null

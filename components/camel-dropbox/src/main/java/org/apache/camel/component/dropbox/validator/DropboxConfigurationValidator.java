@@ -30,10 +30,22 @@ public final class DropboxConfigurationValidator {
     }
 
     public static void validateCommonProperties(DropboxConfiguration configuration) throws DropboxException {
-        if (configuration.getAccessToken() == null || configuration.getAccessToken().equals("")) {
+        if (ObjectHelper.isEmpty(configuration.getAccessToken())) {
             throw new DropboxException("option <accessToken> is not present or not valid!");
         }
-        if (configuration.getClientIdentifier() == null || configuration.getClientIdentifier().equals("")) {
+        if (configuration.getExpireIn() == null || configuration.getExpireIn() <= 0) {
+            throw new DropboxException("option <expireIn> is not present or not valid!");
+        }
+        if (ObjectHelper.isEmpty(configuration.getRefreshToken())) {
+            throw new DropboxException("option <refreshToken> is not present or not valid!");
+        }
+        if (ObjectHelper.isEmpty(configuration.getApiKey())) {
+            throw new DropboxException("option <apiKey> is not present or not valid!");
+        }
+        if (ObjectHelper.isEmpty(configuration.getApiSecret())) {
+            throw new DropboxException("option <apiSecret> is not present or not valid!");
+        }
+        if (ObjectHelper.isEmpty(configuration.getClientIdentifier())) {
             throw new DropboxException("option <clientIdentifier> is not present or not valid!");
         }
     }

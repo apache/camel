@@ -23,6 +23,10 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": target.getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "apikey":
+        case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "apisecret":
+        case "apiSecret": target.getConfiguration().setApiSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "client": target.getConfiguration().setClient(property(camelContext, com.dropbox.core.v2.DbxClientV2.class, value)); return true;
@@ -32,6 +36,8 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "expirein":
+        case "expireIn": target.getConfiguration().setExpireIn(property(camelContext, java.lang.Long.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "localpath":
@@ -39,6 +45,8 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "newremotepath":
         case "newRemotePath": target.getConfiguration().setNewRemotePath(property(camelContext, java.lang.String.class, value)); return true;
         case "query": target.getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "refreshtoken":
+        case "refreshToken": target.getConfiguration().setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "remotepath":
         case "remotePath": target.getConfiguration().setRemotePath(property(camelContext, java.lang.String.class, value)); return true;
         case "uploadmode":
@@ -52,6 +60,10 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
+        case "apikey":
+        case "apiKey": return java.lang.String.class;
+        case "apisecret":
+        case "apiSecret": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "client": return com.dropbox.core.v2.DbxClientV2.class;
@@ -61,6 +73,8 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "expirein":
+        case "expireIn": return java.lang.Long.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "localpath":
@@ -68,6 +82,8 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "newremotepath":
         case "newRemotePath": return java.lang.String.class;
         case "query": return java.lang.String.class;
+        case "refreshtoken":
+        case "refreshToken": return java.lang.String.class;
         case "remotepath":
         case "remotePath": return java.lang.String.class;
         case "uploadmode":
@@ -82,6 +98,10 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return target.getConfiguration().getAccessToken();
+        case "apikey":
+        case "apiKey": return target.getConfiguration().getApiKey();
+        case "apisecret":
+        case "apiSecret": return target.getConfiguration().getApiSecret();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "client": return target.getConfiguration().getClient();
@@ -91,6 +111,8 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "expirein":
+        case "expireIn": return target.getConfiguration().getExpireIn();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "localpath":
@@ -98,6 +120,8 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "newremotepath":
         case "newRemotePath": return target.getConfiguration().getNewRemotePath();
         case "query": return target.getConfiguration().getQuery();
+        case "refreshtoken":
+        case "refreshToken": return target.getConfiguration().getRefreshToken();
         case "remotepath":
         case "remotePath": return target.getConfiguration().getRemotePath();
         case "uploadmode":
