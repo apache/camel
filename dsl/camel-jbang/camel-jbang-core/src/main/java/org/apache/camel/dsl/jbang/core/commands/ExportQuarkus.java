@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Set;
@@ -24,6 +25,7 @@ import java.util.Set;
 import org.apache.camel.main.MavenGav;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.OrderedProperties;
 import org.apache.commons.io.FileUtils;
 import picocli.CommandLine;
 
@@ -86,7 +88,7 @@ class ExportQuarkus extends BaseExport {
         // gather dependencies
         Set<String> deps = resolveDependencies(settings);
         // create pom
-        createPom(new File(BUILD_DIR, "pom.xml"), deps);
+        createPom(settings, new File(BUILD_DIR, "pom.xml"), deps);
 
         if (exportDir.equals(".")) {
             // we export to current dir so prepare for this by cleaning up existing files
@@ -106,7 +108,7 @@ class ExportQuarkus extends BaseExport {
         return 0;
     }
 
-    private void createPom(File pom, Set<String> deps) throws Exception {
+    private void createPom(File settings, File pom, Set<String> deps) throws Exception {
         String[] ids = gav.split(":");
 
         InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("templates/quarkus-pom.tmpl");
@@ -118,6 +120,25 @@ class ExportQuarkus extends BaseExport {
         context = context.replaceFirst("\\{\\{ \\.Version }}", ids[2]);
         context = context.replaceAll("\\{\\{ \\.QuarkusVersion }}", quarkusVersion);
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
+
+        OrderedProperties prop = new OrderedProperties();
+        prop.load(new FileInputStream(settings));
+        String repos = prop.getProperty("camel.jbang.repos");
+        if (repos == null) {
+            context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
+        } else {
+            int i = 1;
+            StringBuilder sb = new StringBuilder();
+            sb.append("    <repositories>\n");
+            for (String repo : repos.split(",")) {
+                sb.append("        <repository>\n");
+                sb.append("            <id>custom").append(i++).append("</id>\n");
+                sb.append("            <url>").append(repo).append("</url>\n");
+                sb.append("        </repository>\n");
+            }
+            sb.append("    </repositories>\n");
+            context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", sb.toString());
+        }
 
         StringBuilder sb = new StringBuilder();
         for (String dep : deps) {
