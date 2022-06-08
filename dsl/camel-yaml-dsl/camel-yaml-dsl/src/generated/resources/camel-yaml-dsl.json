@@ -2259,6 +2259,9 @@
           "inherit-error-handler" : {
             "type" : "boolean"
           },
+          "intermittent" : {
+            "type" : "boolean"
+          },
           "resume-strategy" : {
             "type" : "string"
           }

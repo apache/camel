@@ -50,13 +50,16 @@ public class ResumableProcessor extends AsyncProcessorSupport
     private final ResumeStrategy resumeStrategy;
     private final AsyncProcessor processor;
     private final LoggingLevel loggingLevel;
+    private final boolean intermittent;
     private String id;
     private String routeId;
 
-    public ResumableProcessor(ResumeStrategy resumeStrategy, Processor processor, LoggingLevel loggingLevel) {
+    public ResumableProcessor(ResumeStrategy resumeStrategy, Processor processor, LoggingLevel loggingLevel,
+                              boolean intermittent) {
         this.resumeStrategy = Objects.requireNonNull(resumeStrategy);
         this.processor = AsyncProcessorConverterHelper.convert(processor);
         this.loggingLevel = loggingLevel;
+        this.intermittent = intermittent;
     }
 
     @Override
@@ -76,7 +79,7 @@ public class ResumableProcessor extends AsyncProcessorSupport
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        final Synchronization onCompletion = new ResumableCompletion(resumeStrategy, loggingLevel);
+        final Synchronization onCompletion = new ResumableCompletion(resumeStrategy, loggingLevel, intermittent);
 
         exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
 

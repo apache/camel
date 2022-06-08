@@ -44,6 +44,10 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
               enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String loggingLevel;
 
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String intermittent;
+
     @Override
     public String getShortName() {
         return "resumable";
@@ -76,6 +80,14 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
 
     public void setLoggingLevel(String loggingLevelRef) {
         this.loggingLevel = loggingLevelRef;
+    }
+
+    public String getIntermittent() {
+        return intermittent;
+    }
+
+    public void setIntermittent(String intermitent) {
+        this.intermittent = intermitent;
     }
 
     // Fluent API
@@ -112,6 +124,15 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
     public ResumableDefinition resumeStrategy(ResumeStrategy resumeStrategy, String loggingLevelRef) {
         setResumeStrategy(resumeStrategy);
         setLoggingLevel(loggingLevelRef);
+        return this;
+    }
+
+    /**
+     * Sets whether the offsets will be intermittently present or whether they must be present in every exchange
+     */
+    public ResumableDefinition intermittent(boolean intermittent) {
+        setIntermittent(Boolean.toString(intermittent));
+
         return this;
     }
 }

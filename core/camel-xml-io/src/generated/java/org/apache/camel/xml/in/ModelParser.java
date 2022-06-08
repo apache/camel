@@ -927,11 +927,12 @@ public class ModelParser extends BaseParser {
     }
     protected ResumableDefinition doParseResumableDefinition() throws IOException, XmlPullParserException {
         return doParse(new ResumableDefinition(), (def, key, val) -> {
-            if ("resumeStrategy".equals(key)) {
-                def.setResumeStrategy(val);
-                return true;
+            switch (key) {
+                case "intermittent": def.setIntermittent(val); break;
+                case "resumeStrategy": def.setResumeStrategy(val); break;
+                default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
-            return processorDefinitionAttributeHandler().accept(def, key, val);
+            return true;
         }, (def, key) -> {
             if ("loggingLevel".equals(key)) {
                 def.setLoggingLevel(doParseText());

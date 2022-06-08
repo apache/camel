@@ -33,10 +33,12 @@ public class ResumableCompletion implements Synchronization {
 
     private final ResumeStrategy resumeStrategy;
     private final LoggingLevel loggingLevel;
+    private final boolean intermittent;
 
-    public ResumableCompletion(ResumeStrategy resumeStrategy, LoggingLevel loggingLevel) {
+    public ResumableCompletion(ResumeStrategy resumeStrategy, LoggingLevel loggingLevel, boolean intermittent) {
         this.resumeStrategy = resumeStrategy;
         this.loggingLevel = loggingLevel;
+        this.intermittent = intermittent;
     }
 
     @Override
@@ -67,8 +69,10 @@ public class ResumableCompletion implements Synchronization {
                 LOG.debug("Cannot perform an offset update because the strategy is not updatable");
             }
         } else {
-            exchange.setException(new NoOffsetException(exchange));
-            LOG.warn("Cannot update the last offset because it's not available");
+            if (!intermittent) {
+                exchange.setException(new NoOffsetException(exchange));
+                LOG.warn("Cannot update the last offset because it's not available");
+            }
         }
     }
 

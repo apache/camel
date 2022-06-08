@@ -59,6 +59,16 @@ In some circumstances, such as when dealing with File I/O, it may be necessary t
 * `org.apache.camel.support.Resumables` - resumables handling support
 * `org.apache.camel.support.Offsets` - offset handling support
 
+=== Intermittent Mode
+
+In some cases it may be necessary to avoid updating the offset for every exchange. You can enable the intermittent mode to modify the route behavior so that missing offsets will not cause an exception:
+
+[source,java]
+----
+from("some:component")
+.resumable(new MyTestResumeStrategy()).intermittent(true)
+.process(this::process)
+----
 
 == Builtin Resume Strategies
 

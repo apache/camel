@@ -12476,6 +12476,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
+                    @YamlProperty(name = "intermittent", type = "boolean"),
                     @YamlProperty(name = "resume-strategy", type = "string", required = true)
             }
     )
@@ -12496,6 +12497,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "intermittent": {
+                    String val = asText(node);
+                    target.setIntermittent(val);
                     break;
                 }
                 case "resume-strategy": {
