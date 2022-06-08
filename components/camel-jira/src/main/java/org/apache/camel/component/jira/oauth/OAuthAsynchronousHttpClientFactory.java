@@ -19,7 +19,9 @@ package org.apache.camel.component.jira.oauth;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Properties;
 
 import com.atlassian.event.api.EventPublisher;
@@ -149,8 +151,23 @@ public class OAuthAsynchronousHttpClientFactory {
         }
 
         @Override
+        public Optional<Path> getLocalHomeDirectory() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<Path> getSharedHomeDirectory() {
+            return Optional.empty();
+        }
+
+        @Override
         public String getPropertyValue(final String s) {
             throw new UnsupportedOperationException("Not implemented");
+        }
+
+        @Override
+        public String getApplicationFileEncoding() {
+            return "UTF-8";
         }
     }
 
