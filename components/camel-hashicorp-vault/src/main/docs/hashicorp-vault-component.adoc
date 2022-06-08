@@ -2,7 +2,7 @@
 :doctitle: Hashicorp Vault
 :shortname: hashicorp-vault
 :artifactid: camel-hashicorp-vault
-:description: Manage secrets and keys in Azure Key Vault Service
+:description: Manage secrets in Hashicorp Vault Service
 :since: 3.18
 :supportlevel: Preview
 :component-header: Only producer is supported
