@@ -71,6 +71,7 @@ public final class DownloaderHelper {
         map.put("module", artifactId);
         map.put("version", version);
         map.put("classifier", "");
+        //        map.put("excludes", Collections.singletonList(Map.of("group", "com.atlassian.sal", "module", "sal-api")));
 
         String gav = groupId + ":" + artifactId + ":" + version;
         DOWNLOAD_THREAD_POOL.download(LOG, () -> {
@@ -111,11 +112,14 @@ public final class DownloaderHelper {
         return false;
     }
 
-    public static void prepareDownloader(CamelContext camelContext, String repos) throws Exception {
-        InputStream is = DownloaderHelper.class.getResourceAsStream("/camelGrapeConfig.xml");
+    public static void prepareDownloader(CamelContext camelContext, String repos, boolean download, boolean verbose)
+            throws Exception {
+        InputStream is = download
+                ? DownloaderHelper.class.getResourceAsStream("/camelGrapeConfig.xml")
+                : DownloaderHelper.class.getResourceAsStream("/localGrapeConfig.xml");
         if (is != null) {
             String xml = IOHelper.loadText(is);
-            if (repos != null) {
+            if (download && repos != null) {
                 StringBuilder sb = new StringBuilder();
                 sb.append("            <!-- custom repositories -->");
                 int i = 0;
@@ -136,6 +140,9 @@ public final class DownloaderHelper {
 
             // Grape should use our custom configuration file
             System.setProperty("grape.config", out.getAbsolutePath());
+            if (verbose) {
+                System.setProperty("groovy.grape.report.downloads", "true");
+            }
 
             IOHelper.close(is);
         }

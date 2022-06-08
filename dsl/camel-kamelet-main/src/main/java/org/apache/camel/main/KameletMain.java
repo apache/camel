@@ -39,6 +39,7 @@ public class KameletMain extends MainCommandLineSupport {
 
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
+    private boolean downloadVerbose;
     private String repos;
     private boolean stub;
     private DownloadListener downloadListener;
@@ -118,6 +119,17 @@ public class KameletMain extends MainCommandLineSupport {
         this.download = download;
     }
 
+    public boolean isDownloadVerbose() {
+        return downloadVerbose;
+    }
+
+    /**
+     * Whether to include verbose details when downloading
+     */
+    public void setDownloadVerbose(boolean downloadVerbose) {
+        this.downloadVerbose = downloadVerbose;
+    }
+
     public String getRepos() {
         return repos;
     }
@@ -176,6 +188,16 @@ public class KameletMain extends MainCommandLineSupport {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 if (arg.equals("-download")) {
                     setDownload("true".equalsIgnoreCase(parameter));
+                }
+            }
+        });
+        addOption(new ParameterOption(
+                "downloadVerbose", "downloadVerbose", "Whether to include verbose details when downloading",
+                "downloadVerbose") {
+            @Override
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                if (arg.equals("-downloadVerbose")) {
+                    setDownloadVerbose("true".equalsIgnoreCase(parameter));
                 }
             }
         });
@@ -297,34 +319,32 @@ public class KameletMain extends MainCommandLineSupport {
             answer.setStartupStepRecorder(recorder);
         }
 
-        if (download) {
-            // use resolvers that can auto downloaded
-            try {
-                // prepare grape config with custom repositories
-                DownloaderHelper.prepareDownloader(camelContext, repos);
+        try {
+            // prepare grape config with custom repositories
+            // use resolvers that can auto downloaded (either local or over the internet)
+            DownloaderHelper.prepareDownloader(camelContext, repos, download, downloadVerbose);
 
-                // dependencies from CLI
-                Object dependencies = getInitialProperties().get("camel.jbang.dependencies");
-                if (dependencies != null) {
-                    answer.addService(new CommandLineDependencyDownloader(dependencies.toString()));
-                }
-
-                KnownDependenciesResolver known = new KnownDependenciesResolver(answer);
-                known.loadKnownDependencies();
-                DependencyDownloaderPropertyBindingListener listener
-                        = new DependencyDownloaderPropertyBindingListener(answer, known);
-                answer.getRegistry().bind(DependencyDownloaderPropertyBindingListener.class.getName(), listener);
-                answer.getRegistry().bind(DependencyDownloaderStrategy.class.getName(),
-                        new DependencyDownloaderStrategy(answer));
-                answer.setClassResolver(new DependencyDownloaderClassResolver(answer, known));
-                answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer, stub));
-                answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer));
-                answer.setLanguageResolver(new DependencyDownloaderLanguageResolver(answer));
-                answer.setResourceLoader(new DependencyDownloaderResourceLoader(answer));
-                answer.addService(new DependencyDownloaderKamelet());
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
+            // dependencies from CLI
+            Object dependencies = getInitialProperties().get("camel.jbang.dependencies");
+            if (dependencies != null) {
+                answer.addService(new CommandLineDependencyDownloader(dependencies.toString()));
             }
+
+            KnownDependenciesResolver known = new KnownDependenciesResolver(answer);
+            known.loadKnownDependencies();
+            DependencyDownloaderPropertyBindingListener listener
+                    = new DependencyDownloaderPropertyBindingListener(answer, known);
+            answer.getRegistry().bind(DependencyDownloaderPropertyBindingListener.class.getName(), listener);
+            answer.getRegistry().bind(DependencyDownloaderStrategy.class.getName(),
+                    new DependencyDownloaderStrategy(answer));
+            answer.setClassResolver(new DependencyDownloaderClassResolver(answer, known));
+            answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer, stub));
+            answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer));
+            answer.setLanguageResolver(new DependencyDownloaderLanguageResolver(answer));
+            answer.setResourceLoader(new DependencyDownloaderResourceLoader(answer));
+            answer.addService(new DependencyDownloaderKamelet());
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
         }
 
         return answer;
