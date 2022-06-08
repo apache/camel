@@ -33,51 +33,44 @@ public class DropboxConfiguration {
     @UriPath
     @Metadata(required = true)
     private DropboxOperation operation;
+
     //dropbox auth options
     @UriParam
-    @Metadata(required = true)
+    @Metadata(label = "security", required = true, secret = true)
     private String accessToken;
-
-    //dropbox auth options
     @UriParam
-    @Metadata(required = true)
+    @Metadata(label = "security", required = true, secret = true)
     private Long expireIn;
-
-    //dropbox auth options
     @UriParam
-    @Metadata(required = true)
+    @Metadata(label = "security", required = true, secret = true)
     private String refreshToken;
-
-    //dropbox auth options
     @UriParam
-    @Metadata(required = true)
+    @Metadata(label = "security", required = true, secret = true)
     private String apiKey;
-
-    //dropbox auth options
     @UriParam
-    @Metadata(required = true)
+    @Metadata(label = "security", required = true, secret = true)
     private String apiSecret;
 
     //local path to put files
-    @UriParam
+    @UriParam(label = "producer")
     private String localPath;
     //where to put files on dropbox
-    @UriParam
+    @UriParam(label = "common")
     private String remotePath;
     //new path on dropbox when moving files
-    @UriParam
+    @UriParam(label = "producer")
     private String newRemotePath;
     //search query on dropbox
-    @UriParam
+    @UriParam(label = "common")
     private String query;
     //in case of uploading if force or add existing file
-    @UriParam
+    @UriParam(label = "producer")
     private DropboxUploadMode uploadMode;
     //id of the app
-    @UriParam
+    @UriParam(label = "common")
     private String clientIdentifier;
     //reference to dropbox client
-    @UriParam
+    @UriParam(label = "advanced")
     private DbxClientV2 client;
 
     /**
