@@ -37,17 +37,4 @@ public final class MinioTestUtils {
 
         return properties;
     }
-
-    static Properties loadMinioAccessFromJvmEnv() throws Exception {
-        final Properties properties = new Properties();
-        if (System.getProperty("endpoint") == null || System.getProperty("accessKey") == null
-                || System.getProperty("secretKey") == null) {
-            throw new Exception("Make sure to supply minio endpoint and credentials");
-        }
-        properties.setProperty("endpoint", System.getProperty("endpoint"));
-        properties.setProperty("access_key", System.getProperty("accessKey"));
-        properties.setProperty("secret_key", System.getProperty("secretKey"));
-        properties.setProperty("region", System.getProperty("region"));
-        return properties;
-    }
 }

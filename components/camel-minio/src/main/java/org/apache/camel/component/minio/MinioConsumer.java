@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -121,7 +122,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
         String bucketName = getConfiguration().getBucketName();
         String objectName = getConfiguration().getObjectName();
-        Queue<Exchange> exchanges;
+        Deque<Exchange> exchanges;
 
         if (isNotEmpty(objectName)) {
             LOG.trace("Getting object in bucket {} with object name {}...", bucketName, objectName);
@@ -168,6 +169,11 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
             if (listObjects.hasNext()) {
                 exchanges = createExchanges(listObjects);
+                if (maxMessagesPerPoll <= 0 || exchanges.size() < maxMessagesPerPoll) {
+                    continuationToken = null;
+                } else {
+                    continuationToken = exchanges.getLast().getIn().getHeader(MinioConstants.OBJECT_NAME, String.class);
+                }
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Found {} objects in bucket {}...", totalCounter, bucketName);
                 }
@@ -181,16 +187,16 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
-    protected Queue<Exchange> createExchanges(String objectName) throws Exception {
-        Queue<Exchange> answer = new LinkedList<>();
+    protected Deque<Exchange> createExchanges(String objectName) throws Exception {
+        Deque<Exchange> answer = new LinkedList<>();
         Exchange exchange = createExchange(objectName);
         answer.add(exchange);
         return answer;
     }
 
-    protected Queue<Exchange> createExchanges(Iterator<Result<Item>> minioObjectSummaries) throws Exception {
+    protected Deque<Exchange> createExchanges(Iterator<Result<Item>> minioObjectSummaries) throws Exception {
         int messageCounter = 0;
-        Queue<Exchange> answer = new LinkedList<>();
+        Deque<Exchange> answer = new LinkedList<>();
         try {
             if (getConfiguration().isIncludeFolders()) {
                 do {
@@ -198,7 +204,6 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     Item minioObjectSummary = minioObjectSummaries.next().get();
                     Exchange exchange = createExchange(minioObjectSummary.objectName());
                     answer.add(exchange);
-                    continuationToken = minioObjectSummary.objectName();
                 } while (minioObjectSummaries.hasNext());
             } else {
                 do {
@@ -208,7 +213,6 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     if (!minioObjectSummary.isDir()) {
                         Exchange exchange = createExchange(minioObjectSummary.objectName());
                         answer.add(exchange);
-                        continuationToken = minioObjectSummary.objectName();
                     }
                 } while (minioObjectSummaries.hasNext());
             }
