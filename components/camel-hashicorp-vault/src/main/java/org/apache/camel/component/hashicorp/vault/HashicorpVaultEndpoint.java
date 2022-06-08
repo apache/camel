@@ -43,7 +43,8 @@ public class HashicorpVaultEndpoint extends DefaultEndpoint {
     @UriParam
     private HashicorpVaultConfiguration configuration;
 
-    public HashicorpVaultEndpoint(final String uri, final Component component, final HashicorpVaultConfiguration configuration) {
+    public HashicorpVaultEndpoint(final String uri, final Component component,
+                                  final HashicorpVaultConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -63,7 +64,8 @@ public class HashicorpVaultEndpoint extends DefaultEndpoint {
         vaultEndpoint.setPort(Integer.parseInt(configuration.getPort()));
         vaultEndpoint.setScheme(configuration.getScheme());
 
-        vaultTemplate = new VaultTemplate(vaultEndpoint,
+        vaultTemplate = new VaultTemplate(
+                vaultEndpoint,
                 new TokenAuthentication(configuration.getToken()));
 
         return vaultTemplate;

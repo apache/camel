@@ -57,7 +57,9 @@ public class HashicorpVaultProducer extends DefaultProducer {
     }
 
     private void createSecret(Exchange exchange) throws InvalidPayloadException {
-        VaultKeyValueOperations keyValue = getEndpoint().getVaultTemplate().opsForKeyValue(getEndpoint().getConfiguration().getSecretsEngine(), VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
+        VaultKeyValueOperations keyValue
+                = getEndpoint().getVaultTemplate().opsForKeyValue(getEndpoint().getConfiguration().getSecretsEngine(),
+                        VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
         keyValue.put(getEndpoint().getConfiguration().getSecretPath(), exchange.getMessage().getBody());
     }
 
@@ -75,7 +77,8 @@ public class HashicorpVaultProducer extends DefaultProducer {
     }
 
     private HashicorpVaultOperation determineOperation(Exchange exchange) {
-        HashicorpVaultOperation operation = exchange.getIn().getHeader(HashicorpVaultConstants.OPERATION, HashicorpVaultOperation.class);
+        HashicorpVaultOperation operation
+                = exchange.getIn().getHeader(HashicorpVaultConstants.OPERATION, HashicorpVaultOperation.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
