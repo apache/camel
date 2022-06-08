@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The azure-key-vault component that integrates https://azure.microsoft.com/en-us/services/key-vault/[Azure ServiceBus]. 
+The azure-key-vault component that integrates https://azure.microsoft.com/en-us/services/key-vault/[Azure Key Vault]. 
 
 Prerequisites
 
