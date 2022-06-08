@@ -347,7 +347,11 @@ public class ExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 String text = ref.evaluate(exchange, String.class);
-                return registry.lookupByName(text);
+                if (text != null) {
+                    return registry.lookupByName(text);
+                } else {
+                    return null;
+                }
             }
 
             @Override

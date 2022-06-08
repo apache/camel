@@ -50,6 +50,23 @@ public class RefTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testRefDynamicExpressions() throws Exception {
+        exchange.getMessage().setHeader("foo", "myExp");
+        assertExpression("${header.foo}", "Hello World");
+    }
+
+    @Test
+    public void testRefDynamicExpressionsNotFound() throws Exception {
+        exchange.getMessage().setHeader("foo", "myExp2");
+        try {
+            assertExpression("${header.foo}", "Hello World");
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Cannot find expression or predicate in registry with ref: myExp2", e.getMessage());
+        }
+    }
+
+    @Test
     public void testPredicates() throws Exception {
         assertPredicate("myExp");
     }
