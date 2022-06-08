@@ -1720,6 +1720,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.GuavaEventbusComponentBuilderFactory.guavaEventbus();
     }
     /**
+     * Hashicorp Vault (camel-hashicorp-vault)
+     * Manage secrets in Hashicorp Vault Service
+     * 
+     * Category: cloud,cloud
+     * Since: 3.18
+     * Maven coordinates: org.apache.camel:camel-hashicorp-vault
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.HashicorpVaultComponentBuilderFactory.HashicorpVaultComponentBuilder hashicorpVault() {
+        return org.apache.camel.builder.component.dsl.HashicorpVaultComponentBuilderFactory.hashicorpVault();
+    }
+    /**
      * Hazelcast Atomic Number (camel-hazelcast)
      * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
      * number).

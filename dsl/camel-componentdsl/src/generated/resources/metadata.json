@@ -2797,6 +2797,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "HashicorpVaultComponentBuilderFactory": {
+    "kind": "component",
+    "name": "hashicorp-vault",
+    "title": "Hashicorp Vault",
+    "description": "Manage secrets in Hashicorp Vault Service",
+    "deprecated": false,
+    "firstVersion": "3.18.0",
+    "label": "cloud,cloud",
+    "javaType": "org.apache.camel.component.hashicorp.vault.HashicorpVaultComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-hashicorp-vault",
+    "version": "3.18.0-SNAPSHOT",
+    "scheme": "hashicorp-vault",
+    "extendsScheme": "",
+    "syntax": "hashicorp-vault:vaultName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "HazelcastAtomicvalueComponentBuilderFactory": {
     "kind": "component",
     "name": "hazelcast-atomicvalue",

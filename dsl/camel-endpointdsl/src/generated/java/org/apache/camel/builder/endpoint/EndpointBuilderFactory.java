@@ -141,6 +141,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.GrpcEndpointBuilderFactory.GrpcBuilders,
             org.apache.camel.builder.endpoint.dsl.GuavaEventBusEndpointBuilderFactory.GuavaEventBusBuilders,
             org.apache.camel.builder.endpoint.dsl.HBaseEndpointBuilderFactory.HBaseBuilders,
+            org.apache.camel.builder.endpoint.dsl.HashicorpVaultEndpointBuilderFactory.HashicorpVaultBuilders,
             org.apache.camel.builder.endpoint.dsl.HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberBuilders,
             org.apache.camel.builder.endpoint.dsl.HazelcastInstanceEndpointBuilderFactory.HazelcastInstanceBuilders,
             org.apache.camel.builder.endpoint.dsl.HazelcastListEndpointBuilderFactory.HazelcastListBuilders,

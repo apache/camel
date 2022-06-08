@@ -5857,6 +5857,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GuavaEventBusEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Hashicorp Vault (camel-hashicorp-vault)
+     * Manage secrets in Hashicorp Vault Service
+     * 
+     * Category: cloud,cloud
+     * Since: 3.18
+     * Maven coordinates: org.apache.camel:camel-hashicorp-vault
+     * 
+     * Syntax: <code>hashicorp-vault:vaultName</code>
+     * 
+     * Path parameter: secretsEngine
+     * Vault Name to be used
+     * 
+     * @param path vaultName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.HashicorpVaultEndpointBuilderFactory.HashicorpVaultEndpointBuilder hashicorpVault(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.HashicorpVaultEndpointBuilderFactory.endpointBuilder("hashicorp-vault", path);
+    }
+    /**
+     * Hashicorp Vault (camel-hashicorp-vault)
+     * Manage secrets in Hashicorp Vault Service
+     * 
+     * Category: cloud,cloud
+     * Since: 3.18
+     * Maven coordinates: org.apache.camel:camel-hashicorp-vault
+     * 
+     * Syntax: <code>hashicorp-vault:vaultName</code>
+     * 
+     * Path parameter: secretsEngine
+     * Vault Name to be used
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path vaultName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.HashicorpVaultEndpointBuilderFactory.HashicorpVaultEndpointBuilder hashicorpVault(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.HashicorpVaultEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Hazelcast Atomic Number (camel-hazelcast)
      * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
      * number).
