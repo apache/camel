@@ -2163,6 +2163,9 @@
           "inheritErrorHandler" : {
             "type" : "boolean"
           },
+          "intermittent" : {
+            "type" : "boolean"
+          },
           "resumeStrategy" : {
             "type" : "string"
           }

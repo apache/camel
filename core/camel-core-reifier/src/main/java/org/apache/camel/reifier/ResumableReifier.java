@@ -40,7 +40,9 @@ public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
 
         route.setResumeStrategy(resumeStrategy);
         LoggingLevel loggingLevel = resolveLoggingLevel();
-        return new ResumableProcessor(resumeStrategy, childProcessor, loggingLevel);
+
+        boolean intermittent = parseBoolean(definition.getIntermittent(), false);
+        return new ResumableProcessor(resumeStrategy, childProcessor, loggingLevel, intermittent);
     }
 
     protected ResumeStrategy resolveResumeStrategy() {

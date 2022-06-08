@@ -128,6 +128,22 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
         Assertions.assertFalse(((FailResumeAdapter) FAIL_RESUME_STRATEGY.getAdapter()).called);
     }
 
+    @DisplayName("Tests whether it a missing offset does not cause a failure when using intermittent mode")
+    @Test
+    public void testMissingOffsetWithIntermittentMode() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceivedInAnyOrder("01234567890");
+
+        template.sendBodyAndHeader(fileUri("resumeMissingOffsetIntermittent"), "01234567890", Exchange.FILE_NAME,
+                "resume-from-offset.txt");
+
+        assertMockEndpointsSatisfied();
+
+        List<Exchange> exchangeList = mock.getExchanges();
+        Assertions.assertFalse(exchangeList.isEmpty(), "It should have received a few messages");
+        Assertions.assertFalse(((FailResumeAdapter) FAIL_RESUME_STRATEGY.getAdapter()).called);
+    }
+
     @DisplayName("Tests whether we can start from the beginning (i.e.: no resume strategy)")
     @Test
     public void testNoResume() throws Exception {
@@ -158,6 +174,11 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
 
                 from(fileUri("resumeMissingOffset?noop=true&recursive=true"))
                         .resumable().resumeStrategy("resumeNotToBeCalledStrategy")
+                        .log("${body}")
+                        .convertBodyTo(String.class).to("mock:result");
+
+                from(fileUri("resumeMissingOffsetIntermittent?noop=true&recursive=true"))
+                        .resumable().resumeStrategy("resumeNotToBeCalledStrategy").intermittent(true)
                         .log("${body}")
                         .convertBodyTo(String.class).to("mock:result");
 
