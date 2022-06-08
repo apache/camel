@@ -155,6 +155,34 @@ And you can also configure Camel components such as camel-kafka to declare the U
 camel.component.kafka.brokers=broker1:9092,broker2:9092,broker3:9092
 ----
 
+=== Downloading JARs over the internet
+
+By default, Camel JBang will automatically resolve dependencies needed to run Camel, which is done
+by JBang and Camel respectively. Camel itself detects at runtime if a component has a need for JARs that
+are not currently available on the classpath, and can then automatic download the JARs (incl transitive).
+
+Camel will download these JARs in the following order:
+
+1. from local disk in `~/.groovy/grapes`
+2. from local disk in `~/.m2/repository`
+3. from internet in Maven Central
+4. from internet in custom 3rd-party Maven repositories
+
+If you do not want Camel JBang to download over the internet, you can turn this off with `--download`, as shown below:
+
+[source,bash]
+----
+camel run foo.java --download=false
+----
+
+When Camel JBang download dependencies it will only report the top level dependency being downloaded.
+You can enable verbose logging that will also log activity for each transitive dependency,
+using the `--downloadVerbose` option as shown:
+
+[source,bash]
+----
+camel run foo.java --downloadVerbose=true
+----
 
 === Using 3rd-party Maven repositories
 
