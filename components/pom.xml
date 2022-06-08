@@ -160,6 +160,7 @@
         <module>camel-grpc</module>
         <module>camel-gson</module>
         <module>camel-guava-eventbus</module>
+        <module>camel-hashicorp-vault</module>
         <module>camel-hazelcast</module>
         <module>camel-hbase</module>
         <module>camel-hdfs</module>
