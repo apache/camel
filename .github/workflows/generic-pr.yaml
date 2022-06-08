@@ -24,8 +24,14 @@ on:
       - reopened
       - synchronize
 
+permissions:
+  contents: read
+
 jobs:
   process:
+    permissions:
+      contents: read  # for actions/labeler to determine modified files
+      pull-requests: write  # for actions/labeler to add labels to PRs
     name: Process
     runs-on: ubuntu-latest
     steps:

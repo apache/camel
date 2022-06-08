@@ -22,6 +22,9 @@ on:
 # Every 5th minute every 3 hours during working days
     - cron: '20 * * * 1'
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
