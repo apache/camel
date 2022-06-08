@@ -595,6 +595,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-hashicorp-vault</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-hazelcast</artifactId>
 		</dependency>
 		<dependency>

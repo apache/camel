@@ -1,0 +1,203 @@
+= Azure Key Vault Component
+:doctitle: Azure Key Vault
+:shortname: azure-key-vault
+:artifactid: camel-azure-key-vault
+:description: Manage secrets and keys in Azure Key Vault Service
+:since: 3.17
+:supportlevel: Preview
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Azure
+:camel-spring-boot-name: azure-key-vault
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The azure-key-vault component that integrates https://azure.microsoft.com/en-us/services/key-vault/[Azure ServiceBus]. 
+
+Prerequisites
+
+You must have a valid Windows Azure Key Vault account. More information is available at
+https://docs.microsoft.com/azure/[Azure Documentation Portal].
+
+== URI Format
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-azure-key-vault</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+
+== Usage
+
+=== Using Azure Key Vault Property Function
+
+To use this function you'll need to provide credentials to Azure Key Vault Service as environment variables:
+
+[source,bash]
+----
+export $CAMEL_VAULT_AZURE_TENANT_ID=tenantId
+export $CAMEL_VAULT_AZURE_CLIENT_ID=clientId
+export $CAMEL_VAULT_AZURE_CLIENT_SECRET=clientSecret
+export $CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.azure.tenantId = accessKey
+camel.vault.azure.clientId = clientId
+camel.vault.azure.clientSecret = clientSecret
+camel.vault.azure.vaultName = vaultName
+----
+
+At this point you'll be able to reference a property in the following way:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{azure:route}}"/>
+    </route>
+</camelContext>
+----
+
+Where route will be the name of the secret stored in the Azure Key Vault Service.
+
+You could specify a default value in case the secret is not present on Azure Key Vault Service:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{azure:route:default}}"/>
+    </route>
+</camelContext>
+----
+
+In this case if the secret doesn't exist, the property will fallback to "default" as value.
+
+Also you are able to get particular field of the secret, if you have for example a secret named database of this form:
+
+[source,bash]
+----
+{
+  "username": "admin",
+  "password": "password123",
+  "engine": "postgres",
+  "host": "127.0.0.1",
+  "port": "3128",
+  "dbname": "db"
+}
+----
+
+You're able to do get single secret value in your route, like for example:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Username is {{azure:database/username}}"/>
+    </route>
+</camelContext>
+----
+
+Or re-use the property as part of an endpoint.
+
+You could specify a default value in case the particular field of secret is not present on Azure Key Vault:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Username is {{azure:database/username:admin}}"/>
+    </route>
+</camelContext>
+----
+
+In this case if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
+
+For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
+
+The only requirement is adding the camel-azure-key-vault jar to your Camel application.
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+=== Azure Key Vault Producer operations
+
+Azure Key Vault component provides the following operation on the producer side:
+
+- createSecret
+- getSecret
+- deleteSecret
+- purgeDeletedSecret
+
+== Examples
+
+=== Producer Examples
+
+- createSecret: this operation will create a secret in Azure Key Vault
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:createSecret")
+    .setHeader(KeyVaultConstants.SECRET_NAME, "Test")
+    .setBody(constant("Test"))
+    .to("azure-key-vault://test123?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})")
+--------------------------------------------------------------------------------
+
+- getSecret: this operation will get a secret from Azure Key Vault
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getSecret")
+    .setHeader(KeyVaultConstants.SECRET_NAME, "Test")
+    .to("azure-key-vault://test123?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=getSecret")
+--------------------------------------------------------------------------------
+
+- deleteSecret: this operation will delete a Secret from Azure Key Vault
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:deleteSecret")
+    .setHeader(KeyVaultConstants.SECRET_NAME, "Test")
+    .to("azure-key-vault://test123?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=deleteSecret")
+--------------------------------------------------------------------------------
+
+- purgeDeletedSecret: this operation will purge a deleted Secret from Azure Key Vault
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:purgeDeletedSecret")
+    .setHeader(KeyVaultConstants.SECRET_NAME, "Test")
+    .to("azure-key-vault://test123?clientId=RAW({{clientId}})&clientSecret=RAW({{clientSecret}})&tenantId=RAW({{tenantId}})&operation=purgeDeletedSecret")
+--------------------------------------------------------------------------------
+
+include::spring-boot:partial$starter.adoc[]
