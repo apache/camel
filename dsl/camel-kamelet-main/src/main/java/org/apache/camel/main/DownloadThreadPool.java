@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
@@ -44,8 +45,11 @@ class DownloadThreadPool {
             try {
                 future.get(5000, TimeUnit.MILLISECONDS);
                 done = true;
+            } catch (TimeoutException e) {
+                // not done
             } catch (Exception e) {
-                // not complete
+                log.error("Error downloading: " + gav + " due: " + e.getMessage());
+                return;
             }
             if (!done) {
                 log.info("Downloading: {} (elapsed: {})", gav, TimeUtils.printDuration(watch.taken()));
