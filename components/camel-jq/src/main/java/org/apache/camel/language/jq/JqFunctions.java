@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class JqFunctions {
+
     public static final ThreadLocal<Exchange> EXCHANGE_LOCAL = new ThreadLocal<>();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JqFunctions.class);
@@ -81,7 +82,6 @@ public final class JqFunctions {
     public static void loadLocal(Scope scope) {
         scope.addFunction(Header.NAME, 1, new Header());
         scope.addFunction(Header.NAME, 2, new Header());
-
     }
 
     /**

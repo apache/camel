@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -103,6 +105,10 @@ public final class JacksonTypeConverters {
 
     @Converter
     public String toString(JsonNode node, Exchange exchange) throws Exception {
+        if (node instanceof TextNode) {
+            TextNode tn = (TextNode) node;
+            return tn.textValue();
+        }
         ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
         // output as string in pretty mode
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
@@ -110,6 +116,11 @@ public final class JacksonTypeConverters {
 
     @Converter
     public byte[] toByteArray(JsonNode node, Exchange exchange) throws Exception {
+        if (node instanceof TextNode) {
+            TextNode tn = (TextNode) node;
+            return tn.textValue().getBytes(StandardCharsets.UTF_8);
+        }
+
         ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
         return mapper.writeValueAsBytes(node);
     }

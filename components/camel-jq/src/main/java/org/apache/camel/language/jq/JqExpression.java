@@ -36,13 +36,13 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExpressionAdapter;
 
 public class JqExpression extends ExpressionAdapter implements ExpressionResultTypeAware {
+
     private final String expression;
 
     private Scope scope;
     private String resultTypeName;
     private Class<?> resultType;
     private String headerName;
-
     private JsonQuery query;
     private TypeConverter typeConverter;
 

@@ -47,10 +47,12 @@ public class JqLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public void start() {
+        // noop
     }
 
     @Override
     public void stop() {
+        // noop
     }
 
     @Override
@@ -65,12 +67,11 @@ public class JqLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public Expression createExpression(String expression) {
-        JqExpression exp = new JqExpression(expression);
-        exp.setResultType(resultType);
-        exp.setHeaderName(headerName);
-        exp.init(getCamelContext());
-
-        return exp;
+        JqExpression answer = new JqExpression(expression);
+        answer.setResultType(resultType);
+        answer.setHeaderName(headerName);
+        answer.init(getCamelContext());
+        return answer;
     }
 
     @Override
@@ -79,7 +80,6 @@ public class JqLanguage extends LanguageSupport implements StaticService {
         answer.setResultType(property(Class.class, properties, 0, resultType));
         answer.setHeaderName(property(String.class, properties, 1, headerName));
         answer.init(getCamelContext());
-
         return answer;
     }
 }

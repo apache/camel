@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -78,6 +79,17 @@ public class JacksonJSonNodeConverterTest extends CamelTestSupport {
         assertNotNull(node);
 
         Assertions.assertEquals("\"Hello Camel\"", node.get("message").toString());
+    }
+
+    @Test
+    public void jsonTextNodeToString() {
+        Exchange exchange = new DefaultExchange(context);
+
+        TextNode node = new TextNode("Hello World");
+        String text = context.getTypeConverter().convertTo(String.class, exchange, node);
+        assertNotNull(text);
+
+        Assertions.assertEquals("Hello World", text);
     }
 
     @Test
