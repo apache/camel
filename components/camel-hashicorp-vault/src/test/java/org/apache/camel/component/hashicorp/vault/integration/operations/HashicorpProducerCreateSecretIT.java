@@ -1,5 +1,7 @@
 package org.apache.camel.component.hashicorp.vault.integration.operations;
 
+import java.util.HashMap;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -8,8 +10,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
 
 @Disabled("Disabled until we'll have a Camel-Hashicorp-vault test-infra module")
 public class HashicorpProducerCreateSecretIT extends CamelTestSupport {
@@ -29,7 +29,6 @@ public class HashicorpProducerCreateSecretIT extends CamelTestSupport {
                 exchange.getIn().setBody(map);
             }
         });
-
 
     }
 

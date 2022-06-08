@@ -8,11 +8,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.vault.support.VaultResponse;
-
-import java.util.HashMap;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("Disabled until we'll have a Camel-Hashicorp-vault test-infra module")
 public class HashicorpProducerCreateSecretPOJOIT extends CamelTestSupport {
