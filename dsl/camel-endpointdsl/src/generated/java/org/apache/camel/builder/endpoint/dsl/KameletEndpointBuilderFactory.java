@@ -44,23 +44,6 @@ public interface KameletEndpointBuilderFactory {
             return (AdvancedKameletEndpointConsumerBuilder) this;
         }
         /**
-         * Location of the Kamelet to use which can be specified as a resource
-         * from file system, classpath etc. The location cannot use wildcards,
-         * and must refer to a file including extension, for example
-         * file:/etc/foo-kamelet.xml.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param location the value to set
-         * @return the dsl builder
-         */
-        default KameletEndpointConsumerBuilder location(String location) {
-            doSetProperty("location", location);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -186,6 +169,23 @@ public interface KameletEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
+        /**
+         * Location of the Kamelet to use which can be specified as a resource
+         * from file system, classpath etc. The location cannot use wildcards,
+         * and must refer to a file including extension, for example
+         * file:/etc/foo-kamelet.xml.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param location the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointConsumerBuilder location(String location) {
+            doSetProperty("location", location);
+            return this;
+        }
     }
 
     /**
@@ -196,93 +196,6 @@ public interface KameletEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedKameletEndpointProducerBuilder advanced() {
             return (AdvancedKameletEndpointProducerBuilder) this;
-        }
-        /**
-         * Location of the Kamelet to use which can be specified as a resource
-         * from file system, classpath etc. The location cannot use wildcards,
-         * and must refer to a file including extension, for example
-         * file:/etc/foo-kamelet.xml.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param location the value to set
-         * @return the dsl builder
-         */
-        default KameletEndpointProducerBuilder location(String location) {
-            doSetProperty("location", location);
-            return this;
-        }
-        /**
-         * If sending a message to a direct endpoint which has no active
-         * consumer, then we can tell the producer to block and wait for the
-         * consumer to become active.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param block the value to set
-         * @return the dsl builder
-         */
-        default KameletEndpointProducerBuilder block(boolean block) {
-            doSetProperty("block", block);
-            return this;
-        }
-        /**
-         * If sending a message to a direct endpoint which has no active
-         * consumer, then we can tell the producer to block and wait for the
-         * consumer to become active.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param block the value to set
-         * @return the dsl builder
-         */
-        default KameletEndpointProducerBuilder block(String block) {
-            doSetProperty("block", block);
-            return this;
-        }
-        /**
-         * Whether the producer should fail by throwing an exception, when
-         * sending to a kamelet endpoint with no active consumers.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param failIfNoConsumers the value to set
-         * @return the dsl builder
-         */
-        default KameletEndpointProducerBuilder failIfNoConsumers(
-                boolean failIfNoConsumers) {
-            doSetProperty("failIfNoConsumers", failIfNoConsumers);
-            return this;
-        }
-        /**
-         * Whether the producer should fail by throwing an exception, when
-         * sending to a kamelet endpoint with no active consumers.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param failIfNoConsumers the value to set
-         * @return the dsl builder
-         */
-        default KameletEndpointProducerBuilder failIfNoConsumers(
-                String failIfNoConsumers) {
-            doSetProperty("failIfNoConsumers", failIfNoConsumers);
-            return this;
         }
         /**
          * Whether the producer should be started lazy (on the first message).
@@ -333,36 +246,6 @@ public interface KameletEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
-        /**
-         * The timeout value to use if block is enabled.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 30000
-         * Group: producer
-         * 
-         * @param timeout the value to set
-         * @return the dsl builder
-         */
-        default KameletEndpointProducerBuilder timeout(long timeout) {
-            doSetProperty("timeout", timeout);
-            return this;
-        }
-        /**
-         * The timeout value to use if block is enabled.
-         * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 30000
-         * Group: producer
-         * 
-         * @param timeout the value to set
-         * @return the dsl builder
-         */
-        default KameletEndpointProducerBuilder timeout(String timeout) {
-            doSetProperty("timeout", timeout);
-            return this;
-        }
     }
 
     /**
@@ -373,6 +256,123 @@ public interface KameletEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default KameletEndpointProducerBuilder basic() {
             return (KameletEndpointProducerBuilder) this;
+        }
+        /**
+         * If sending a message to a direct endpoint which has no active
+         * consumer, then we can tell the producer to block and wait for the
+         * consumer to become active.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param block the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointProducerBuilder block(boolean block) {
+            doSetProperty("block", block);
+            return this;
+        }
+        /**
+         * If sending a message to a direct endpoint which has no active
+         * consumer, then we can tell the producer to block and wait for the
+         * consumer to become active.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param block the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointProducerBuilder block(String block) {
+            doSetProperty("block", block);
+            return this;
+        }
+        /**
+         * Whether the producer should fail by throwing an exception, when
+         * sending to a kamelet endpoint with no active consumers.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param failIfNoConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointProducerBuilder failIfNoConsumers(
+                boolean failIfNoConsumers) {
+            doSetProperty("failIfNoConsumers", failIfNoConsumers);
+            return this;
+        }
+        /**
+         * Whether the producer should fail by throwing an exception, when
+         * sending to a kamelet endpoint with no active consumers.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param failIfNoConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointProducerBuilder failIfNoConsumers(
+                String failIfNoConsumers) {
+            doSetProperty("failIfNoConsumers", failIfNoConsumers);
+            return this;
+        }
+        /**
+         * The timeout value to use if block is enabled.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: producer (advanced)
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointProducerBuilder timeout(long timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * The timeout value to use if block is enabled.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: producer (advanced)
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointProducerBuilder timeout(String timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * Location of the Kamelet to use which can be specified as a resource
+         * from file system, classpath etc. The location cannot use wildcards,
+         * and must refer to a file including extension, for example
+         * file:/etc/foo-kamelet.xml.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param location the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointProducerBuilder location(String location) {
+            doSetProperty("location", location);
+            return this;
         }
     }
 
@@ -386,23 +386,6 @@ public interface KameletEndpointBuilderFactory {
         default AdvancedKameletEndpointBuilder advanced() {
             return (AdvancedKameletEndpointBuilder) this;
         }
-        /**
-         * Location of the Kamelet to use which can be specified as a resource
-         * from file system, classpath etc. The location cannot use wildcards,
-         * and must refer to a file including extension, for example
-         * file:/etc/foo-kamelet.xml.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param location the value to set
-         * @return the dsl builder
-         */
-        default KameletEndpointBuilder location(String location) {
-            doSetProperty("location", location);
-            return this;
-        }
     }
 
     /**
@@ -414,6 +397,23 @@ public interface KameletEndpointBuilderFactory {
                 AdvancedKameletEndpointProducerBuilder {
         default KameletEndpointBuilder basic() {
             return (KameletEndpointBuilder) this;
+        }
+        /**
+         * Location of the Kamelet to use which can be specified as a resource
+         * from file system, classpath etc. The location cannot use wildcards,
+         * and must refer to a file including extension, for example
+         * file:/etc/foo-kamelet.xml.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param location the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKameletEndpointBuilder location(String location) {
+            doSetProperty("location", location);
+            return this;
         }
     }
 

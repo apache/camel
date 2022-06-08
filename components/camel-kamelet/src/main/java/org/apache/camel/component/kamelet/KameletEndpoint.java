@@ -40,18 +40,19 @@ public class KameletEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The Route Template ID")
     private final String templateId;
-    @Metadata
+    @Metadata(label = "advanced")
     @UriPath(description = "The Route ID", defaultValueNote = "The ID will be auto-generated if not provided")
     private final String routeId;
+    @Metadata(label = "advanced")
     @UriParam(description = "Location of the Kamelet to use which can be specified as a resource from file system, classpath etc."
                             + " The location cannot use wildcards, and must refer to a file including extension, for example file:/etc/foo-kamelet.xml")
     private String location;
 
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean block = true;
-    @UriParam(label = "producer", defaultValue = "30000")
+    @UriParam(label = "producer,advanced", defaultValue = "30000")
     private long timeout = 30000L;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean failIfNoConsumers = true;
 
     public KameletEndpoint(String uri,
