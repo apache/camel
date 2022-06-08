@@ -14,7 +14,7 @@
     "version": "3.18.0-SNAPSHOT",
     "scheme": "hashicorp-vault",
     "extendsScheme": "",
-    "syntax": "hashicorp-vault:vaultName",
+    "syntax": "hashicorp-vault:secretsEngine",
     "async": false,
     "api": false,
     "consumerOnly": false,
