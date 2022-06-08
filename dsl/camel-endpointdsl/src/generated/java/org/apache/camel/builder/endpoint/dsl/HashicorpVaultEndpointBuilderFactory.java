@@ -236,12 +236,12 @@ public interface HashicorpVaultEndpointBuilderFactory {
          * Since: 3.18
          * Maven coordinates: org.apache.camel:camel-hashicorp-vault
          * 
-         * Syntax: <code>hashicorp-vault:vaultName</code>
+         * Syntax: <code>hashicorp-vault:secretsEngine</code>
          * 
          * Path parameter: secretsEngine
          * Vault Name to be used
          * 
-         * @param path vaultName
+         * @param path secretsEngine
          * @return the dsl builder
          */
         default HashicorpVaultEndpointBuilder hashicorpVault(String path) {
@@ -255,14 +255,14 @@ public interface HashicorpVaultEndpointBuilderFactory {
          * Since: 3.18
          * Maven coordinates: org.apache.camel:camel-hashicorp-vault
          * 
-         * Syntax: <code>hashicorp-vault:vaultName</code>
+         * Syntax: <code>hashicorp-vault:secretsEngine</code>
          * 
          * Path parameter: secretsEngine
          * Vault Name to be used
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path vaultName
+         * @param path secretsEngine
          * @return the dsl builder
          */
         default HashicorpVaultEndpointBuilder hashicorpVault(
