@@ -150,9 +150,9 @@ public class GoogleDriveConfiguration {
     }
 
     /**
-     * Sets "*.json" file with credentials for Service account
+     * Sets "*.json" file with credentials for Service account. Accept base64 adding the prefix "base64:"
      * 
-     * @param keyResource String file, classpath, or http url
+     * @param keyResource String file, classpath, base64, or http url
      */
     public void setKeyResource(String keyResource) {
         this.keyResource = keyResource;

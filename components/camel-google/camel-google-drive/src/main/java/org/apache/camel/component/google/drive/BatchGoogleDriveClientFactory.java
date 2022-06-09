@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.google.drive;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.UnknownHostException;
+import java.util.Base64;
 import java.util.Collection;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -106,16 +109,32 @@ public class BatchGoogleDriveClientFactory implements GoogleDriveClientFactory {
     private Credential authorizeServiceAccount(
             CamelContext camelContext, String keyResource, String delegate, Collection<String> scopes) {
         // authorize
+
         try {
-            GoogleCredential cred = GoogleCredential
-                    .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, keyResource), transport,
-                            jsonFactory)
-                    .createScoped(scopes != null && scopes.size() != 0 ? scopes : null)
-                    .createDelegated(delegate);
+            GoogleCredential cred;
+            if (keyResource.startsWith("base64:")) {
+                cred = GoogleCredential
+                        .fromStream(readBase64AsInputStream(keyResource), transport,
+                                jsonFactory)
+                        .createScoped(scopes != null && scopes.size() != 0 ? scopes : null)
+                        .createDelegated(delegate);
+            } else {
+                cred = GoogleCredential
+                        .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, keyResource), transport,
+                                jsonFactory)
+                        .createScoped(scopes != null && scopes.size() != 0 ? scopes : null)
+                        .createDelegated(delegate);
+            }
+
             cred.refreshToken();
             return cred;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected InputStream readBase64AsInputStream(String base64Resource) {
+        byte[] decode = Base64.getDecoder().decode(base64Resource.substring(7));
+        return new ByteArrayInputStream(decode);
     }
 }
