@@ -17,7 +17,7 @@
 
 package org.apache.camel.component.couchbase;
 
-import com.couchbase.client.java.Bucket;
+import org.apache.camel.resume.ResumeAction;
 import org.apache.camel.resume.ResumeAdapter;
 
 /**
@@ -26,9 +26,9 @@ import org.apache.camel.resume.ResumeAdapter;
 public interface CouchbaseResumeAdapter extends ResumeAdapter {
 
     /**
-     * Sets the bucket in use
+     * Sets an action to be executed whenever the resume happens
      * 
-     * @param bucket the bucket in use
+     * @param resumeAction
      */
-    void setBucket(Bucket bucket);
+    void setResumeAction(ResumeAction resumeAction);
 }
