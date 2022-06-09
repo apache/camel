@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: Hashicorp :: Key Vault</name>
-    <description>Camel Azure Hashicorp Component</description>
+    <description>Camel Hashicorp Vault Component</description>
 
     <properties>
     </properties>
