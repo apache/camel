@@ -17,7 +17,6 @@
 
 package org.apache.camel.resume.cache;
 
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -98,6 +97,7 @@ public interface ResumeCache<K> {
 
     /**
      * Performs the given action for each member of the cache
+     * 
      * @param action the action to execute
      */
     void forEach(BiFunction<? super K, ? super Object, Boolean> action);
