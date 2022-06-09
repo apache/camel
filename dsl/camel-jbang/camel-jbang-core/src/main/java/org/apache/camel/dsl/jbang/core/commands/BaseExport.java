@@ -69,15 +69,15 @@ abstract class BaseExport extends CamelCommand {
             "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
     protected String exportDir;
 
-    @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
-                        description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
-    boolean logging;
-
     @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
     protected String loggingLevel;
 
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     protected boolean fresh;
+
+    @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
+                        description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
+    boolean logging;
 
     public BaseExport(CamelJBangMain main) {
         super(main);
