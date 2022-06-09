@@ -34,7 +34,7 @@
             <!-- maven central -->
             <ibiblio name="maven2" m2compatible="true"/>
             <!-- apache snapshot -->
-            <ibiblio name="apacheSnapshots" root="https://repository.apache.org/snapshots" m2compatible="true"/>
+            <ibiblio name="apacheSnapshots" root="https://repository.apache.org/snapshots" m2compatible="true" changingMatcher="regexp" changingPattern=".*SNAPSHOT.*" checkmodified="true" />
             <!-- @repos@ -->
         </chain>
     </resolvers>
