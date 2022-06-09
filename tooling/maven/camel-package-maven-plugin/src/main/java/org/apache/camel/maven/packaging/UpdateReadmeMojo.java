@@ -560,7 +560,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             boolean copy = false;
             if (updated || RELOCATE_MANUAL_ATTRIBUTES) {
                 outer: for (String line : lines) {
-                    if (!copy && line.isEmpty()) {
+                    if (!copy && line.trim().isEmpty()) {
                         copy = true;
                     } else if (copy) {
 
