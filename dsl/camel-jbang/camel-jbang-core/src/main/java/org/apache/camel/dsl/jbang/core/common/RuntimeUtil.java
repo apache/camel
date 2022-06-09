@@ -28,9 +28,11 @@ public final class RuntimeUtil {
     private RuntimeUtil() {
     }
 
-    public static void configureLog(String level, boolean color, boolean json, boolean pipe) {
+    public static void configureLog(String level, boolean color, boolean json, boolean pipe, boolean export) {
         if (INIT_DONE.compareAndSet(false, true)) {
-            if (pipe) {
+            if (export) {
+                Configurator.initialize("CamelJBang", "log4j2-export.properties");
+            } else if (pipe) {
                 Configurator.initialize("CamelJBang", "log4j2-pipe.properties");
             } else if (json) {
                 Configurator.initialize("CamelJBang", "log4j2-json.properties");

@@ -660,14 +660,14 @@ class Run extends CamelCommand {
 
     private void configureLogging() throws Exception {
         if (silentRun) {
-            RuntimeUtil.configureLog("off", false, false, false);
+            // do not configure logging
         } else if (logging) {
-            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson, pipeRun);
+            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson, pipeRun, false);
             writeSettings("loggingLevel", loggingLevel);
             writeSettings("loggingColor", loggingColor ? "true" : "false");
             writeSettings("loggingJson", loggingJson ? "true" : "false");
         } else {
-            RuntimeUtil.configureLog("off", false, false, false);
+            RuntimeUtil.configureLog("off", false, false, false, false);
             writeSettings("loggingLevel", "off");
         }
     }

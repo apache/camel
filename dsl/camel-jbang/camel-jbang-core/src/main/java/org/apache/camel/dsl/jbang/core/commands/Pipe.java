@@ -36,7 +36,7 @@ class Pipe extends CamelCommand {
     int maxIdleSeconds;
 
     @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
-                        description = "Can be used to turn on logging (logs to file in .camel-jbang directory)")
+                        description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
     boolean logging;
 
     @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")

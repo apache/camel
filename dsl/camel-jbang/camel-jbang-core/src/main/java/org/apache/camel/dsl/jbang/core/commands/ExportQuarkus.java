@@ -41,7 +41,7 @@ class ExportQuarkus extends BaseExport {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer export() throws Exception {
         String[] ids = gav.split(":");
         if (ids.length != 3) {
             System.out.println("--gav must be in syntax: groupId:artifactId:version");

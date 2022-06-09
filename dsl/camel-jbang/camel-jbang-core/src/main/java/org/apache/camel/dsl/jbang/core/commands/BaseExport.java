@@ -35,6 +35,7 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.MavenGav;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -68,12 +69,32 @@ abstract class BaseExport extends CamelCommand {
             "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
     protected String exportDir;
 
+    @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
+                        description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
+    boolean logging;
+
+    @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
+    protected String loggingLevel;
+
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     protected boolean fresh;
 
     public BaseExport(CamelJBangMain main) {
         super(main);
     }
+
+    public Integer call() throws Exception {
+        // configure logging first
+        if (logging) {
+            RuntimeUtil.configureLog(loggingLevel, false, false, false, true);
+        } else {
+            RuntimeUtil.configureLog("off", false, false, false, true);
+        }
+        // export
+        return export();
+    }
+
+    protected abstract Integer export() throws Exception;
 
     protected static String getScheme(String name) {
         int pos = name.indexOf(":");
