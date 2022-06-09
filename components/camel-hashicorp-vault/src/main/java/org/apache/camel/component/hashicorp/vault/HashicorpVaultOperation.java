@@ -17,5 +17,6 @@
 package org.apache.camel.component.hashicorp.vault;
 
 public enum HashicorpVaultOperation {
-    createSecret
+    createSecret,
+    getSecret
 }

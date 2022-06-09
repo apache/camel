@@ -23,9 +23,13 @@ public final class HashicorpVaultConstants {
 
     // headers set by the producer only
     @Metadata(label = "producer", description = "Overrides the desired operation to be used in the producer.",
-              javaType = "org.apache.camel.component.azure.key.vault.KeyVaultOperationDefinition")
+              javaType = "String")
     public static final String OPERATION = HEADER_PREFIX + "ProducerOperation";
 
+    // headers set by the producer only
+    @Metadata(label = "producer", description = "Set the desired secret path as header.",
+            javaType = "String")
+    public static final String SECRET_PATH = HEADER_PREFIX + "SecretPath";
     private HashicorpVaultConstants() {
     }
 }

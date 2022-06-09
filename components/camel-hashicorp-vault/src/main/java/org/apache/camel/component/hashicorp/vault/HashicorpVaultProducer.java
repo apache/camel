@@ -21,10 +21,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.vault.core.VaultKeyValueOperations;
 import org.springframework.vault.core.VaultKeyValueOperationsSupport;
+import org.springframework.vault.support.VaultResponse;
 
 public class HashicorpVaultProducer extends DefaultProducer {
 
@@ -51,6 +53,9 @@ public class HashicorpVaultProducer extends DefaultProducer {
             case createSecret:
                 createSecret(exchange);
                 break;
+            case getSecret:
+                getSecret(exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -61,6 +66,18 @@ public class HashicorpVaultProducer extends DefaultProducer {
                 = getEndpoint().getVaultTemplate().opsForKeyValue(getEndpoint().getConfiguration().getSecretsEngine(),
                         VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
         keyValue.put(getEndpoint().getConfiguration().getSecretPath(), exchange.getMessage().getBody());
+    }
+
+    private void getSecret(Exchange exchange) throws InvalidPayloadException {
+        String secretPath;
+        if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(HashicorpVaultConstants.SECRET_PATH))) {
+            secretPath = exchange.getMessage().getHeader(HashicorpVaultConstants.SECRET_PATH, String.class);
+        } else {
+        throw new IllegalArgumentException("Secret Path must be specified");
+        }
+        String completePath = getEndpoint().getConfiguration().getSecretsEngine() + "/" + "data" + "/" + secretPath;
+        VaultResponse rawSecret = getEndpoint().getVaultTemplate().read(completePath);
+        exchange.getMessage().setBody(rawSecret.getData());
     }
 
     @Override
