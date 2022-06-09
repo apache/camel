@@ -22,8 +22,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import groovy.grape.Grape;
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -38,6 +39,7 @@ public final class DownloaderHelper {
     private static final String CP = System.getProperty("java.class.path");
 
     private static final DownloadThreadPool DOWNLOAD_THREAD_POOL = new DownloadThreadPool();
+    private static final AtomicBoolean VERBOSE_DOWNLOAD = new AtomicBoolean();
 
     private DownloaderHelper() {
     }
@@ -71,12 +73,20 @@ public final class DownloaderHelper {
         map.put("module", artifactId);
         map.put("version", version);
         map.put("classifier", "");
-        //        map.put("excludes", Collections.singletonList(Map.of("group", "com.atlassian.sal", "module", "sal-api")));
 
         String gav = groupId + ":" + artifactId + ":" + version;
         DOWNLOAD_THREAD_POOL.download(LOG, () -> {
             LOG.debug("Downloading: {}", gav);
-            Grape.grab(map);
+            Set<MavenGav> extra = CamelGrapeIvy.download(map, VERBOSE_DOWNLOAD.get());
+            for (MavenGav egav : extra) {
+                Map<String, Object> emap = new HashMap<>();
+                emap.put("classLoader", camelContext.getApplicationContextClassLoader());
+                emap.put("group", egav.getGroupId());
+                emap.put("module", egav.getArtifactId());
+                emap.put("version", egav.getVersion());
+                LOG.debug("Downloading Additional: {}", egav);
+                CamelGrapeIvy.download(emap, VERBOSE_DOWNLOAD.get());
+            }
         }, gav);
     }
 
@@ -141,7 +151,7 @@ public final class DownloaderHelper {
             // Grape should use our custom configuration file
             System.setProperty("grape.config", out.getAbsolutePath());
             if (verbose) {
-                System.setProperty("groovy.grape.report.downloads", "true");
+                VERBOSE_DOWNLOAD.set(true);
             }
 
             IOHelper.close(is);
