@@ -492,6 +492,7 @@
         <spring-data-redis-version>2.6.2</spring-data-redis-version>
         <spring-integration-version>5.5.12</spring-integration-version>
         <spring-ldap-version>2.4.0</spring-ldap-version>
+        <spring-vault-core-version>2.3.2</spring-vault-core-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
         <spring5-version>5.3.20</spring5-version>
