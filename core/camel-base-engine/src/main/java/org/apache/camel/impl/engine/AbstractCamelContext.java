@@ -2637,7 +2637,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // was the initialization vetoed?
         if (vetoed != null) {
-            LOG.info("CamelContext ({}) vetoed to not initialize due to {}", getName(), vetoed.getMessage());
+            LOG.info("CamelContext ({}) vetoed to not initialize due to: {}", getName(), vetoed.getMessage());
             failOnStartup(vetoed);
             return;
         }
@@ -2654,7 +2654,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // did the start veto?
         if (vetoed != null) {
-            LOG.info("CamelContext ({}) vetoed to not start due to {}", getName(), vetoed.getMessage());
+            LOG.info("CamelContext ({}) vetoed to not start due to: {}", getName(), vetoed.getMessage());
             failOnStartup(vetoed);
             stop();
             return;
