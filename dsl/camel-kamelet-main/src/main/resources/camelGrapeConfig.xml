@@ -33,6 +33,8 @@
             <ibiblio name="localm2" root="${user.home.url}/.m2/repository/" checkmodified="true" changingPattern=".*" changingMatcher="regexp" m2compatible="true"/>
             <!-- maven central -->
             <ibiblio name="maven2" m2compatible="true"/>
+            <!-- apache snapshot -->
+            <ibiblio name="apacheSnapshots" root="https://repository.apache.org/snapshots" m2compatible="true"/>
             <!-- @repos@ -->
         </chain>
     </resolvers>
