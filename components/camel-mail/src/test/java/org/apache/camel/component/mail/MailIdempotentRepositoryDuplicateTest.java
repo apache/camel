@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mail;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
@@ -63,9 +66,8 @@ public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // windows need a little slack
-        Thread.sleep(500);
-
-        assertEquals(0, Mailbox.get("jones@localhost").getNewMessageCount());
+        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(0, Mailbox.get("jones@localhost").getNewMessageCount()));
 
         // they are removed on confirm
         assertEquals(1, myRepo.getCacheSize());

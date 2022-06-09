@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mail;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
@@ -24,6 +26,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
@@ -54,8 +57,8 @@ public class MailFetchSizeTest extends CamelTestSupport {
         mock.setResultWaitTime(2000L);
         mock.assertIsSatisfied();
 
-        Thread.sleep(500);
-        assertEquals(3, mailbox.size());
+        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(3, mailbox.size()));
 
         // reset mock to assert the next batch of 2 messages polled
         mock.reset();
@@ -65,8 +68,8 @@ public class MailFetchSizeTest extends CamelTestSupport {
         mock.setResultWaitTime(3000L);
         mock.assertIsSatisfied();
 
-        Thread.sleep(500);
-        assertEquals(1, mailbox.size());
+        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(1, mailbox.size()));
 
         // reset mock to assert the last message polled
         mock.reset();
