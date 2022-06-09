@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-name: checkstyle build
+name: alternative os build
 
 on:
   schedule:
