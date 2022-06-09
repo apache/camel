@@ -73,7 +73,7 @@ public class HashicorpVaultProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(HashicorpVaultConstants.SECRET_PATH))) {
             secretPath = exchange.getMessage().getHeader(HashicorpVaultConstants.SECRET_PATH, String.class);
         } else {
-        throw new IllegalArgumentException("Secret Path must be specified");
+            throw new IllegalArgumentException("Secret Path must be specified");
         }
         String completePath = getEndpoint().getConfiguration().getSecretsEngine() + "/" + "data" + "/" + secretPath;
         VaultResponse rawSecret = getEndpoint().getVaultTemplate().read(completePath);

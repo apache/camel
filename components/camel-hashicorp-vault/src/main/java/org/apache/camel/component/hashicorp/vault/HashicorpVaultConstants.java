@@ -28,8 +28,9 @@ public final class HashicorpVaultConstants {
 
     // headers set by the producer only
     @Metadata(label = "producer", description = "Set the desired secret path as header.",
-            javaType = "String")
+              javaType = "String")
     public static final String SECRET_PATH = HEADER_PREFIX + "SecretPath";
+
     private HashicorpVaultConstants() {
     }
 }
