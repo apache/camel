@@ -31,6 +31,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macos-latest, windows-2019]
+      fail-fast: false
     steps:
       - uses: actions/checkout@v3
         with:
