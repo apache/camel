@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.mail;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
@@ -42,9 +45,8 @@ public class MailIdempotentRepositoryDuplicateNotRemoveTest extends MailIdempote
         assertMockEndpointsSatisfied();
 
         // windows need a little slack
-        Thread.sleep(500);
-
-        assertEquals(0, Mailbox.get("jones@localhost").getNewMessageCount());
+        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(0, Mailbox.get("jones@localhost").getNewMessageCount()));
 
         // they are not removed so we should have all 5 in the repo now
         assertEquals(5, myRepo.getCacheSize());

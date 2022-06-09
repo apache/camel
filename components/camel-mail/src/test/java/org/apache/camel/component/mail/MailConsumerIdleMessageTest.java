@@ -31,7 +31,6 @@ public class MailConsumerIdleMessageTest extends CamelTestSupport {
 
     @Test
     public void testConsumeIdleMessages() throws Exception {
-        Thread.sleep(110);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
         assertMockEndpointsSatisfied();
