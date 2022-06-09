@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.cassandra.consumer.support;
 
+import org.apache.camel.resume.ResumeAction;
 import org.apache.camel.resume.ResumeAdapter;
 
 /**
@@ -29,5 +30,5 @@ public interface CassandraResumeAdapter extends ResumeAdapter {
      *
      * @param resumeAction the action to execute during resume
      */
-    void setResumeAction(CassandraResumeAction resumeAction);
+    void setResumeAction(ResumeAction resumeAction);
 }

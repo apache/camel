@@ -23,10 +23,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cassandra.consumer.support.CassandraResumeAction;
 import org.apache.camel.component.cassandra.consumer.support.CassandraResumeAdapter;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.resume.TransientResumeStrategy;
+import org.apache.camel.resume.ResumeAction;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.cassandra.CassandraConstants.CASSANDRA_RESUME_ACTION;
@@ -39,7 +39,7 @@ public class CassandraComponentResumeStrategyIT extends BaseCassandra {
         private boolean resumeActionNotNull;
 
         @Override
-        public void setResumeAction(CassandraResumeAction action) {
+        public void setResumeAction(ResumeAction action) {
             resumeActionNotNull = action != null;
         }
 
@@ -74,7 +74,7 @@ public class CassandraComponentResumeStrategyIT extends BaseCassandra {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                bindToRegistry(CASSANDRA_RESUME_ACTION, (CassandraResumeAction) (key, value) -> true);
+                bindToRegistry(CASSANDRA_RESUME_ACTION, (ResumeAction) (key, value) -> true);
 
                 fromF("cql://%s/%s?cql=%s", getUrl(), KEYSPACE_NAME, CQL)
                         .resumable(new TransientResumeStrategy(resumeStrategy))

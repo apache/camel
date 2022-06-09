@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.cassandra.consumer.support;
+package org.apache.camel.resume;
 
 /**
  * Provides and interface for integrations to run actions during resume
  */
-public interface CassandraResumeAction {
+public interface ResumeAction {
 
     /**
      * Runs an action on an resumable (entry)
