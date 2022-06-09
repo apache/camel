@@ -42,6 +42,9 @@ public interface CouchbaseConstants {
     @Metadata(label = "consumer", description = "The view name", javaType = "String")
     String HEADER_VIEWNAME = "CCB_VN";
 
+    @Metadata(label = "consumer", description = "The resume action to execute when resuming.", javaType = "String")
+    String COUCHBASE_RESUME_ACTION = "CamelCqlResumeQuery";
+
     int DEFAULT_PRODUCER_RETRIES = 2;
     int DEFAULT_PAUSE_BETWEEN_RETRIES = 5000;
     int DEFAULT_COUCHBASE_PORT = 8091;

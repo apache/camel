@@ -19,34 +19,35 @@ package org.apache.camel.component.couchbase.integration;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-import com.couchbase.client.java.Bucket;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.couchbase.CouchbaseResumeAdapter;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.resume.TransientResumeStrategy;
+import org.apache.camel.resume.ResumeAction;
 import org.apache.camel.support.resume.Resumables;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_RESUME_ACTION;
 import static org.awaitility.Awaitility.await;
 
 public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
     static class TestCouchbaseResumeAdapter implements CouchbaseResumeAdapter {
-        volatile boolean setBucketCalled;
-        volatile boolean bucketNotNull;
+        volatile boolean setResumeActionCalled;
+        volatile boolean resumeActionNotNull;
         volatile boolean resumeCalled;
-
-        @Override
-        public void setBucket(Bucket bucket) {
-            setBucketCalled = true;
-            bucketNotNull = bucket != null;
-        }
 
         @Override
         public void resume() {
             resumeCalled = true;
+        }
+
+        @Override
+        public void setResumeAction(ResumeAction resumeAction) {
+            setResumeActionCalled = true;
+            resumeActionNotNull = resumeAction != null;
         }
     }
 
@@ -66,10 +67,10 @@ public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
         await().atMost(30, TimeUnit.SECONDS).until(() -> adapter != null);
 
         await().atMost(30, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assertions.assertTrue(adapter.setBucketCalled,
+                .untilAsserted(() -> Assertions.assertTrue(adapter.setResumeActionCalled,
                         "The setBucket method should have been called"));
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assertions.assertTrue(adapter.bucketNotNull,
+                .untilAsserted(() -> Assertions.assertTrue(adapter.resumeActionNotNull,
                         "The input bucket should not have been null"));
         await().atMost(3, TimeUnit.SECONDS)
                 .untilAsserted(
@@ -86,6 +87,8 @@ public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                bindToRegistry(COUCHBASE_RESUME_ACTION, (ResumeAction) (key, value) -> true);
+
                 from(String.format("%s&designDocumentName=%s&viewName=%s&limit=10", getConnectionUri(), bucketName, bucketName))
                         .resumable().resumeStrategy(resumeStrategy)
                         .setHeader(Exchange.OFFSET,
