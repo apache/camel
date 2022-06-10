@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -50,7 +50,7 @@ public final class MoveExistingFileStrategyUtils {
         }
 
         if (ObjectHelper.isNotEmpty(directoryName) && !destinationPath.startsWith(directoryName)
-                && !FileUtil.isAbsolute(new File(destinationPath))) {
+                && !FileUtil.isAbsolute(Path.of(destinationPath))) {
             destinationPath = directoryName + "/" + destinationPath;
         }
 

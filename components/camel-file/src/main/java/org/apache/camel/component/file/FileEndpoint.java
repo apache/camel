@@ -19,7 +19,9 @@ package org.apache.camel.component.file;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -250,14 +252,14 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     @Override
-    public char getFileSeparator() {
-        return File.separatorChar;
+    public String getFileSeparator() {
+        return FileSystems.getDefault().getSeparator();
     }
 
     @Override
     public boolean isAbsolute(String name) {
         // relative or absolute path?
-        return FileUtil.isAbsolute(new File(name));
+        return FileUtil.isAbsolute(Path.of(name));
     }
 
     public boolean isCopyAndDeleteOnRenameFail() {

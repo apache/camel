@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -402,6 +403,19 @@ public final class FileUtil {
      * @return                           <tt>true</tt> if the file was renamed, otherwise <tt>false</tt>
      * @throws java.io.IOException       is thrown if error renaming file
      */
+    public static boolean renameFile(Path from, Path to, boolean copyAndDeleteOnRenameFail) throws IOException {
+        return renameFile(from.toFile(), to.toFile(), copyAndDeleteOnRenameFail);
+    }
+
+    /**
+     * Renames a file.
+     *
+     * @param  from                      the from file
+     * @param  to                        the to file
+     * @param  copyAndDeleteOnRenameFail whether to fallback and do copy and delete, if renameTo fails
+     * @return                           <tt>true</tt> if the file was renamed, otherwise <tt>false</tt>
+     * @throws java.io.IOException       is thrown if error renaming file
+     */
     public static boolean renameFile(File from, File to, boolean copyAndDeleteOnRenameFail) throws IOException {
         // do not try to rename non existing files
         if (!from.exists()) {
@@ -451,6 +465,19 @@ public final class FileUtil {
      * @return             <tt>true</tt> if the file was renamed successfully, otherwise <tt>false</tt>
      * @throws IOException If an I/O error occurs during copy or delete operations.
      */
+    public static boolean renameFileUsingCopy(Path from, Path to) throws IOException {
+        return renameFileUsingCopy(from.toFile(), to.toFile());
+    }
+
+    /**
+     * Rename file using copy and delete strategy. This is primarily used in environments where the regular rename
+     * operation is unreliable.
+     *
+     * @param  from        the file to be renamed
+     * @param  to          the new target file
+     * @return             <tt>true</tt> if the file was renamed successfully, otherwise <tt>false</tt>
+     * @throws IOException If an I/O error occurs during copy or delete operations.
+     */
     public static boolean renameFileUsingCopy(File from, File to) throws IOException {
         // do not try to rename non existing files
         if (!from.exists()) {
@@ -478,6 +505,18 @@ public final class FileUtil {
      */
     public static void copyFile(File from, File to) throws IOException {
         Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    /**
+     * Deletes the file.
+     * <p/>
+     * This implementation will attempt to delete the file up till three times with one second delay, which can mitigate
+     * problems on deleting files on some platforms such as Windows.
+     *
+     * @param path the path to delete
+     */
+    public static boolean deleteFile(Path path) {
+        return deleteFile(path.toFile());
     }
 
     /**
@@ -524,6 +563,19 @@ public final class FileUtil {
      * Will also work around issue on Windows to consider files on Windows starting with a \ as absolute files. This
      * makes the logic consistent across all OS platforms.
      *
+     * @param  path the path
+     * @return      <tt>true</ff> if its an absolute path, <tt>false</tt> otherwise.
+     */
+    public static boolean isAbsolute(Path path) {
+        return isAbsolute(path.toFile());
+    }
+
+    /**
+     * Is the given file an absolute file.
+     * <p/>
+     * Will also work around issue on Windows to consider files on Windows starting with a \ as absolute files. This
+     * makes the logic consistent across all OS platforms.
+     *
      * @param  file the file
      * @return      <tt>true</ff> if its an absolute path, <tt>false</tt> otherwise.
      */
@@ -536,6 +588,17 @@ public final class FileUtil {
             }
         }
         return file.isAbsolute();
+    }
+
+    /**
+     * Creates a new file.
+     *
+     * @param  path        the path
+     * @return             <tt>true</tt> if created a new file, <tt>false</tt> otherwise
+     * @throws IOException is thrown if error creating the new file
+     */
+    public static boolean createNewFile(Path path) throws IOException {
+        return createNewFile(path.toFile());
     }
 
     /**

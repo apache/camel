@@ -17,6 +17,10 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
@@ -26,6 +30,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileFilter;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StopWatch;
@@ -48,7 +53,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         if (deleteOrphanLockFiles) {
 
             String dir = endpoint.getConfiguration().getDirectory();
-            File file = new File(dir);
+            Path file = Path.of(dir);
 
             LOG.debug("Prepare on startup by deleting orphaned lock files from: {}", dir);
 
@@ -57,8 +62,12 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             String endpointPath = endpoint.getConfiguration().getDirectory();
 
             StopWatch watch = new StopWatch();
-            deleteLockFiles(file, endpoint.isRecursive(), endpointPath, endpoint.getFilter(), endpoint.getAntFilter(),
-                    excludePattern, includePattern);
+            try {
+                deleteLockFiles(file, endpoint.isRecursive(), endpointPath, endpoint.getFilter(), endpoint.getAntFilter(),
+                        excludePattern, includePattern);
+            } catch (IOException ex) {
+                throw new GenericFileOperationFailedException("Error deleting files: ", ex);
+            }
 
             // log anything that takes more than a second
             if (watch.taken() > 1000) {
@@ -159,17 +168,15 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     }
 
     private static void deleteLockFiles(
-            File dir, boolean recursive, String endpointPath, GenericFileFilter filter, GenericFileFilter antFilter,
+            Path dir, boolean recursive, String endpointPath, GenericFileFilter filter, GenericFileFilter antFilter,
             Pattern excludePattern,
-            Pattern includePattern) {
-        File[] files = dir.listFiles();
-        if (files == null || files.length == 0) {
-            return;
-        }
+            Pattern includePattern)
+            throws IOException {
+        DirectoryStream<Path> files = Files.newDirectoryStream(dir);
 
-        for (File file : files) {
+        for (Path file : files) {
 
-            if (file.getName().startsWith(".")) {
+            if (file.getFileName().startsWith(".")) {
                 // files starting with dot should be skipped
                 continue;
             }
@@ -178,17 +185,17 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             // everything
             if (filter != null || antFilter != null || excludePattern != null || includePattern != null) {
 
-                File targetFile = file;
+                Path targetFile = file;
 
                 // if its a lock file then check if we accept its target file to
                 // know if we should delete the orphan lock file
-                if (file.getName().endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
-                    String target = file.getName().substring(0,
-                            file.getName().length() - FileComponent.DEFAULT_LOCK_FILE_POSTFIX.length());
+                if (file.getFileName().endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
+                    String target = file.getFileName().toString().substring(0,
+                            file.getFileName().toString().length() - FileComponent.DEFAULT_LOCK_FILE_POSTFIX.length());
                     if (file.getParent() != null) {
-                        targetFile = new File(file.getParent(), target);
+                        targetFile = Path.of(file.getParent().toString(), target);
                     } else {
-                        targetFile = new File(target);
+                        targetFile = Path.of(target);
                     }
                 }
 
@@ -198,10 +205,10 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
                 }
             }
 
-            if (file.getName().endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
+            if (file.getFileName().endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
                 LOG.warn("Deleting orphaned lock file: {}", file);
                 FileUtil.deleteFile(file);
-            } else if (recursive && file.isDirectory()) {
+            } else if (recursive && Files.isDirectory(file)) {
                 deleteLockFiles(file, true, endpointPath, filter, antFilter, excludePattern, includePattern);
             }
         }
@@ -209,14 +216,14 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
     @SuppressWarnings("unchecked")
     private static boolean acceptFile(
-            File file, String endpointPath, GenericFileFilter filter, GenericFileFilter antFilter, Pattern excludePattern,
+            Path file, String endpointPath, GenericFileFilter filter, GenericFileFilter antFilter, Pattern excludePattern,
             Pattern includePattern) {
         GenericFile gf = new GenericFile();
         gf.setEndpointPath(endpointPath);
         gf.setFile(file);
-        gf.setFileNameOnly(file.getName());
-        gf.setFileLength(file.length());
-        gf.setDirectory(file.isDirectory());
+        gf.setFileNameOnly(file.getFileName().toString());
+        gf.setFileLength(file.toFile().length());
+        gf.setDirectory(Files.isDirectory(file));
         // must use FileUtil.isAbsolute to have consistent check for whether the
         // file is
         // absolute or not. As windows do not consider \ paths as absolute where
@@ -227,23 +234,23 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         // FileUtil.isAbsolute
         // to return a consistent answer for all OS platforms.
         gf.setAbsolute(FileUtil.isAbsolute(file));
-        gf.setAbsoluteFilePath(file.getAbsolutePath());
-        gf.setLastModified(file.lastModified());
+        gf.setAbsoluteFilePath(file.toAbsolutePath().toString());
+        gf.setLastModified(file.toFile().lastModified());
 
         // compute the file path as relative to the starting directory
-        File path;
+        Path path;
         String endpointNormalized = FileUtil.normalizePath(endpointPath);
-        if (file.getPath().startsWith(endpointNormalized + File.separator)) {
+        if (file.startsWith(endpointNormalized + File.separator)) {
             // skip duplicate endpoint path
-            path = new File(StringHelper.after(file.getPath(), endpointNormalized + File.separator));
+            path = Path.of(StringHelper.after(file.toString(), endpointNormalized + File.separator));
         } else {
-            path = new File(file.getPath());
+            path = Path.of(file.toString());
         }
 
         if (path.getParent() != null) {
-            gf.setRelativeFilePath(path.getParent() + File.separator + file.getName());
+            gf.setRelativeFilePath(path.getParent() + File.separator + file.getFileName());
         } else {
-            gf.setRelativeFilePath(path.getName());
+            gf.setRelativeFilePath(path.getFileName().toString());
         }
 
         // the file name should be the relative path
@@ -258,7 +265,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
         // the following filters only works on files so allow any directory from
         // this point
-        if (file.isDirectory()) {
+        if (Files.isDirectory(file)) {
             return true;
         }
 
@@ -270,12 +277,12 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
         // exclude take precedence over include
         if (excludePattern != null) {
-            if (excludePattern.matcher(file.getName()).matches()) {
+            if (excludePattern.matcher(file.getFileName().toString()).matches()) {
                 return false;
             }
         }
         if (includePattern != null) {
-            if (!includePattern.matcher(file.getName()).matches()) {
+            if (!includePattern.matcher(file.getFileName().toString()).matches()) {
                 return false;
             }
         }

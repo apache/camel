@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -73,84 +74,85 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         return exchange;
     }
 
-    private boolean pollDirectory(File directory, List<GenericFile<File>> fileList, int depth) {
-        depth++;
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Polling directory: {}, absolute path: {}", directory.getPath(), directory.getAbsolutePath());
-        }
-        final File[] files = listFiles(directory);
-        if (files == null || files.length == 0) {
-            return true;
-        }
-
-        if (getEndpoint().isPreSort()) {
-            Arrays.sort(files, Comparator.comparing(File::getAbsoluteFile));
-        }
-
-        for (File file : files) {
-            // check if we can continue polling in files
-            if (!canPollMoreFiles(fileList)) {
-                return false;
-            }
-
-            // trace log as Windows/Unix can have different views what the file is
+    private boolean pollDirectory(Path directory, List<GenericFile<File>> fileList, final int depth) {
+        try {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Found file: {} [isAbsolute: {}, isDirectory: {}, isFile: {}, isHidden: {}]", file, file.isAbsolute(),
-                        file.isDirectory(), file.isFile(),
-                        file.isHidden());
+                LOG.trace("Polling directory: {}, absolute path: {}", directory, directory.toAbsolutePath());
             }
 
-            // creates a generic file
-            GenericFile<File> gf
-                    = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
-
-            if (resumeStrategy != null) {
-                ResumeAdapter adapter = resumeStrategy.getAdapter();
-                if (adapter instanceof FileOffsetResumeAdapter) {
-                    ((FileOffsetResumeAdapter) adapter).setResumePayload(gf);
-                    adapter.resume();
-                }
+            // If the directory is empty, return
+            if (isDirectoryEmpty(directory)) {
+                return true;
             }
 
-            if (file.isDirectory()) {
-                if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(gf, true, files)) {
-                    boolean canPollMore = pollDirectory(file, fileList, depth);
-                    if (!canPollMore) {
-                        return false;
+            final Polling polling = new Polling();
+
+            try (Stream<Path> directoryStream = listFiles(directory)) {
+                directoryStream.forEach(file -> {
+                    // check if we can continue polling in files
+                    if (!canPollMoreFiles(fileList)) {
+                        polling.stop();
                     }
-                }
-            } else {
-                // Windows can report false to a file on a share so regard it
-                // always as a file (if it is not a directory)
-                if (depth >= endpoint.minDepth && isValidFile(gf, false, files)) {
-                    LOG.trace("Adding valid file: {}", file);
-                    // matched file so add
-                    if (extendedAttributes != null) {
-                        Path path = file.toPath();
-                        Map<String, Object> allAttributes = new HashMap<>();
-                        for (String attribute : extendedAttributes) {
-                            readAttributes(file, path, allAttributes, attribute);
+
+                    if (polling.canContinue()) {
+                        // trace log as Windows/Unix can have different views what the file is
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Found file: {} [isAbsolute: {}, isDirectory: {}, isFile: {}, isHidden: {}]", file,
+                                    file.isAbsolute(), Files.isDirectory(file), Files.isRegularFile(file),
+                                    file.toFile().isHidden());
                         }
 
-                        gf.setExtendedAttributes(allAttributes);
+                        // creates a generic file
+                        GenericFile<File> gf
+                                = asGenericFile(endpointPath, file, getEndpoint().getCharset(),
+                                        getEndpoint().isProbeContentType());
+
+                        if (resumeStrategy != null) {
+                            ResumeAdapter adapter = resumeStrategy.getAdapter();
+                            if (adapter instanceof FileOffsetResumeAdapter) {
+                                ((FileOffsetResumeAdapter) adapter).setResumePayload(gf);
+                                adapter.resume();
+                            }
+                        }
+
+                        if (Files.isDirectory(file)) {
+                            if (endpoint.isRecursive() && depth + 1 < endpoint.getMaxDepth() && isValidDirectory(gf)) {
+                                boolean canPollMore = pollDirectory(file, fileList, depth + 1);
+                                if (!canPollMore) {
+                                    polling.stop();
+                                }
+                            }
+                        } else {
+                            // Windows can report false to a file on a share so regard it
+                            // always as a file (if it is not a directory)
+                            if (depth + 1 >= endpoint.minDepth && isValidRegularFile(gf)) {
+                                LOG.trace("Adding valid file: {}", file);
+                                // matched file so add
+                                if (extendedAttributes != null) {
+                                    Map<String, Object> allAttributes = new HashMap<>();
+                                    for (String attribute : extendedAttributes) {
+                                        readAttributes(file, allAttributes, attribute);
+                                    }
+                                    gf.setExtendedAttributes(allAttributes);
+                                }
+                                fileList.add(gf);
+                            }
+                        }
                     }
-
-                    fileList.add(gf);
-                }
-
+                });
             }
+            return polling.canContinue();
+        } catch (IOException ex) {
+            throw new GenericFileOperationFailedException("Polling of directory " + directory + " has failed", ex);
         }
-
-        return true;
     }
 
     @Override
     protected boolean pollDirectory(String fileName, List<GenericFile<File>> fileList, int depth) {
         LOG.trace("pollDirectory from fileName: {}", fileName);
 
-        File directory = new File(fileName);
-        if (!directory.exists() || !directory.isDirectory()) {
+        Path directory = Path.of(fileName);
+        if (!Files.exists(directory) || !Files.isDirectory(directory)) {
             LOG.debug("Cannot poll as directory does not exists or its not a directory: {}", directory);
             if (getEndpoint().isDirectoryMustExist()) {
                 throw new GenericFileOperationFailedException("Directory does not exist: " + directory);
@@ -161,26 +163,28 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         return pollDirectory(directory, fileList, depth);
     }
 
-    private File[] listFiles(File directory) {
-        final File[] dirFiles = directory.listFiles();
+    private Stream<Path> listFiles(Path directory) throws IOException {
+        Stream<Path> fileStream = getEndpoint().isPreSort()
+                ? Files.list(directory).sorted(Comparator.comparing(Path::toAbsolutePath))
+                : Files.list(directory);
 
-        if (dirFiles == null || dirFiles.length == 0) {
+        if (isDirectoryEmpty(directory)) {
             // no files in this directory to poll
             if (LOG.isTraceEnabled()) {
-                LOG.trace("No files found in directory: {}", directory.getPath());
+                LOG.trace("No files found in directory: {}", directory);
             }
-            return null;
+            return fileStream;
         } else {
             // we found some files
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Found {} in directory: {}", dirFiles.length, directory.getPath());
+                LOG.trace("Found files in directory: {}", directory);
             }
         }
 
         if (resumeStrategy != null) {
             ResumeAdapter adapter = resumeStrategy.getAdapter();
             if (adapter instanceof DirectoryEntriesResumeAdapter) {
-                DirectoryEntries resumeSet = new DirectoryEntries(directory, dirFiles);
+                DirectoryEntries resumeSet = new DirectoryEntries(directory, fileStream);
 
                 ((DirectoryEntriesResumeAdapter) adapter).setResumePayload(resumeSet);
                 adapter.resume();
@@ -188,11 +192,10 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
                 return resumeSet.resumed();
             }
         }
-
-        return dirFiles;
+        return fileStream;
     }
 
-    private void readAttributes(File file, Path path, Map<String, Object> allAttributes, String attribute) {
+    private void readAttributes(Path path, Map<String, Object> allAttributes, String attribute) {
         try {
             String prefix = null;
             if (attribute.endsWith(":*")) {
@@ -215,22 +218,24 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             }
         } catch (IOException e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Unable to read attribute {} on file {}", attribute, file, e);
+                LOG.debug("Unable to read attribute {} on file {}", attribute, path, e);
             }
         }
     }
 
     @Override
     protected boolean isMatched(GenericFile<File> file, String doneFileName, File[] files) {
-        String onlyName = FileUtil.stripPath(doneFileName);
-        // the done file name must be among the files
-        for (File f : files) {
-            if (f.getName().equals(onlyName)) {
-                return true;
-            }
+        Path doneFile = Path.of(doneFileName);
+        if (Files.exists(doneFile)) {
+            return true;
+        } else {
+            LOG.trace("Done file: {} does not exist", doneFile);
+            return false;
         }
-        LOG.trace("Done file: {} does not exist", doneFileName);
-        return false;
+    }
+
+    private static GenericFile<File> asGenericFile(String endpointPath, Path path, String charset, boolean probeContentType) {
+        return asGenericFile(endpointPath, path.toFile(), charset, probeContentType);
     }
 
     /**
@@ -316,7 +321,8 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     private boolean fileHasMoved(GenericFile<File> file) {
         // GenericFile's absolute path is always up to date whereas the
         // underlying file is not
-        return !file.getFile().getAbsolutePath().equals(file.getAbsoluteFilePath());
+        Path expected = Path.of(file.getAbsoluteFilePath());
+        return !file.getFile().toPath().toAbsolutePath().equals(expected);
     }
 
     @Override
@@ -336,6 +342,34 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     @Override
     public void setResumeStrategy(ResumeStrategy resumeStrategy) {
         this.resumeStrategy = resumeStrategy;
+    }
+
+    private boolean isDirectoryEmpty(Path directory) throws IOException {
+        try (Stream<Path> entries = Files.list(directory)) {
+            return entries.findFirst().isEmpty();
+        }
+    }
+
+    private boolean isValidDirectory(GenericFile<File> gf) {
+        return isValidFile(gf, true, new File[0]);
+    }
+
+    private boolean isValidRegularFile(GenericFile<File> gf) {
+        return isValidFile(gf, false, new File[0]);
+    }
+
+    private static class Polling {
+
+        private boolean canPollMore = true;
+
+        public void stop() {
+            canPollMore = false;
+        }
+
+        public boolean canContinue() {
+            return canPollMore;
+        }
+
     }
 
 }

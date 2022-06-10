@@ -59,7 +59,7 @@ class DefaultDirectoryEntriesResumeAdapter extends AbstractFileResumeAdapter imp
     }
 
     private void resumeDirectoryEntries() {
-        DirectoryEntries.doResume(fileSet, f -> notProcessed(fileSet.getDirectory(), f));
+        DirectoryEntries.doResume(fileSet, path -> notProcessed(fileSet.getDirectory(), path.toFile()));
     }
 
     @Override

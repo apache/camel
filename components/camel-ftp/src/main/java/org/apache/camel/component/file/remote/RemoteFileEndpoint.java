@@ -234,8 +234,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     }
 
     @Override
-    public char getFileSeparator() {
-        return '/';
+    public String getFileSeparator() {
+        return "/";
     }
 
     @Override

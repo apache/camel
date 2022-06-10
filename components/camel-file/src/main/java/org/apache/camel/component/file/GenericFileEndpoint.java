@@ -456,7 +456,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     public abstract String getScheme();
 
-    public abstract char getFileSeparator();
+    public abstract String getFileSeparator();
 
     public abstract boolean isAbsolute(String name);
 

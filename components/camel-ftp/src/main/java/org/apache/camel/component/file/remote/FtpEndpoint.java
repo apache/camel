@@ -377,16 +377,16 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     @Override
-    public char getFileSeparator() {
+    public String getFileSeparator() {
         // the regular ftp component should use the configured separator
         // as FTP servers may require you to use windows or unix style
         // and therefore you need to be able to control that
         PathSeparator pathSeparator = getConfiguration().getSeparator();
         switch (pathSeparator) {
             case Windows:
-                return '\\';
+                return "\\";
             case UNIX:
-                return '/';
+                return "/";
             default:
                 return super.getFileSeparator();
         }

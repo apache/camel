@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -53,7 +54,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     public String getFileSeparator() {
-        return File.separator;
+        return FileSystems.getDefault().getSeparator();
     }
 
     public String normalizePath(String name) {
@@ -272,11 +273,11 @@ public class GenericFileProducer<T> extends DefaultProducer {
             String name = FileUtil.normalizePath(fileName);
 
             // use java.io.File to compute the file path
-            File file = new File(name);
-            String directory = file.getParent();
-            boolean absolute = FileUtil.isAbsolute(file);
+            Path path = Path.of(name);
+            Path directory = path.getParent();
+            boolean absolute = FileUtil.isAbsolute(path);
             if (directory != null) {
-                if (!operations.buildDirectory(directory, absolute)) {
+                if (!operations.buildDirectory(directory.toString(), absolute)) {
                     LOG.debug("Cannot build directory [{}] (could be because of denied permissions)", directory);
                 }
             }

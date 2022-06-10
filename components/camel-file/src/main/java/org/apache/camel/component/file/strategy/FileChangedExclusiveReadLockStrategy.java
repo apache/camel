@@ -17,6 +17,8 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Date;
 
 import org.apache.camel.Exchange;
@@ -50,7 +52,7 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
             return false;
         }
 
-        File target = new File(file.getAbsoluteFilePath());
+        Path target = Path.of(file.getAbsoluteFilePath());
         boolean exclusive = false;
 
         LOG.trace("Waiting for exclusive read lock to file: {}", file);
@@ -73,14 +75,14 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
                 }
             }
 
-            if (!target.exists()) {
+            if (!Files.exists(target)) {
                 CamelLogger.log(LOG, readLockLoggingLevel,
                         "Cannot acquire read lock as file no longer exists. Will skip the file: " + file);
                 return false;
             }
 
-            long newLastModified = target.lastModified();
-            long newLength = target.length();
+            long newLastModified = Files.getLastModifiedTime(target).toMillis();
+            long newLength = Files.size(target);
             long newOlderThan = startTime + watch.taken() - minAge;
 
             LOG.trace("Previous last modified: {}, new last modified: {}", lastModified, newLastModified);

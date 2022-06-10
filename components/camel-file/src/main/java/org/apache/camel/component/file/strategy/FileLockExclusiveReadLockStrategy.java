@@ -22,6 +22,8 @@ import java.io.RandomAccessFile;
 import java.nio.channels.Channel;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -60,7 +62,7 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
             return false;
         }
 
-        File target = new File(file.getAbsoluteFilePath());
+        Path target = Path.of(file.getAbsoluteFilePath());
 
         LOG.trace("Waiting for exclusive read lock to file: {}", target);
 
@@ -71,7 +73,7 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
         FileLock lock = null;
 
         try {
-            randomAccessFile = new RandomAccessFile(target, "rw");
+            randomAccessFile = new RandomAccessFile(target.toFile(), "rw");
             // try to acquire rw lock on the file before we can consume it
             channel = randomAccessFile.getChannel();
 
@@ -90,7 +92,7 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
                     }
                 }
 
-                if (!target.exists()) {
+                if (!Files.exists(target)) {
                     CamelLogger.log(LOG, readLockLoggingLevel,
                             "Cannot acquire read lock as file no longer exists. Will skip the file: " + file);
                     return false;

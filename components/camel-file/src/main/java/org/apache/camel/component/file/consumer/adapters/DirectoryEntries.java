@@ -18,20 +18,19 @@
 package org.apache.camel.component.file.consumer.adapters;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.function.Predicate;
-
-import org.apache.camel.support.resume.Resumables;
+import java.util.stream.Stream;
 
 /**
  * This contains the input/output file set for resume operations.
  */
 public final class DirectoryEntries {
-    private final File directory;
-    private final File[] inputFiles;
-    private File[] outputFiles;
+    private final Path directory;
+    private Stream<Path> inputFiles;
 
-    public DirectoryEntries(File directory, File[] inputFiles) {
+    public DirectoryEntries(Path directory, Stream<Path> inputFiles) {
         this.directory = directory;
         this.inputFiles = Objects.requireNonNull(inputFiles,
                 "A list of input files must be provided for the resume info");
@@ -40,36 +39,17 @@ public final class DirectoryEntries {
     /**
      * Gets the files that should be resumed
      *
-     * @return an array with the files that should be resumed
+     * @return an stream with the files that should be resumed
      */
-    public File[] resumed() {
-        return outputFiles;
-    }
-
-    /**
-     * Whether there are resumable files to process
-     *
-     * @return true if there are resumable files or false otherwise
-     */
-    public boolean hasResumables() {
-        if (outputFiles != inputFiles) {
-            return true;
-        }
-
-        return false;
+    public Stream<Path> resumed() {
+        return inputFiles;
     }
 
     public File getDirectory() {
-        return directory;
+        return directory.toFile();
     }
 
-    public void setOutputFiles(File[] resumed) {
-        this.outputFiles = resumed;
-    }
-
-    public static void doResume(DirectoryEntries directoryEntries, Predicate<File> resumableCheck) {
-        File[] processed = Resumables.resumeEach(directoryEntries.inputFiles,
-                resumableCheck);
-        directoryEntries.setOutputFiles(processed);
+    public static void doResume(DirectoryEntries directoryEntries, Predicate<Path> resumableCheck) {
+        directoryEntries.inputFiles = directoryEntries.inputFiles.filter(resumableCheck);
     }
 }

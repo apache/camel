@@ -65,7 +65,7 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
             }
 
             if (fileSet != null) {
-                DirectoryEntries.doResume(fileSet, f -> !f.getName().equals("resume-from-offset"));
+                DirectoryEntries.doResume(fileSet, path -> !path.getFileName().toString().equals("resume-from-offset"));
                 LOG.debug("Fileset: {}", fileSet);
                 LOG.debug("Fileset: {}", fileSet.resumed());
 
@@ -85,7 +85,7 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
 
         @Override
         public void setResumePayload(DirectoryEntries fileSet) {
-            DirectoryEntries.doResume(fileSet, f -> true);
+            DirectoryEntries.doResume(fileSet, path -> true);
         }
 
         @Override

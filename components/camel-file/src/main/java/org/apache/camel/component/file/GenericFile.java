@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -193,7 +194,7 @@ public class GenericFile<T> implements WrappedFile<T> {
     }
 
     protected boolean isAbsolute(String name) {
-        return FileUtil.isAbsolute(new File(name));
+        return FileUtil.isAbsolute(Path.of(name));
     }
 
     protected String normalizePath(String name) {
@@ -216,7 +217,7 @@ public class GenericFile<T> implements WrappedFile<T> {
         LOG.trace("Normalized endpointPath: {}", newEndpointPath);
         LOG.trace("Normalized newFileName: {}", newFileName);
 
-        File file = new File(newFileName);
+        Path path = Path.of(newFileName);
         if (!absolute) {
             // for relative then we should avoid having the endpoint path
             // duplicated so clip it
@@ -225,26 +226,26 @@ public class GenericFile<T> implements WrappedFile<T> {
                 // use File.separatorChar as the normalizePath uses this as path
                 // separator so we should use the same
                 // in this logic here
-                if (newEndpointPath.endsWith("" + File.separatorChar)) {
+                if (newEndpointPath.endsWith(FileSystems.getDefault().getSeparator())) {
                     newFileName = StringHelper.after(newFileName, newEndpointPath);
                 } else {
                     newFileName = StringHelper.after(newFileName, newEndpointPath + File.separatorChar);
                 }
 
                 // reconstruct file with clipped name
-                file = new File(newFileName);
+                path = Path.of(newFileName);
             }
         }
 
         // store the file name only
-        setFileNameOnly(file.getName());
-        setFileName(file.getName());
+        setFileNameOnly(path.toFile().getName());
+        setFileName(path.toFile().getName());
 
         // relative path
-        if (file.getParent() != null) {
-            setRelativeFilePath(file.getParent() + getFileSeparator() + file.getName());
+        if (path.getParent() != null) {
+            setRelativeFilePath(path.getParent() + FileSystems.getDefault().getSeparator() + path.getFileName());
         } else {
-            setRelativeFilePath(file.getName());
+            setRelativeFilePath(path.toFile().getName());
         }
 
         // absolute path
@@ -255,8 +256,8 @@ public class GenericFile<T> implements WrappedFile<T> {
             setAbsolute(false);
             // construct a pseudo absolute filename that the file operations
             // uses even for relative only
-            String path = ObjectHelper.isEmpty(endpointPath) ? "" : endpointPath + getFileSeparator();
-            setAbsoluteFilePath(path + getRelativeFilePath());
+            String path2 = ObjectHelper.isEmpty(endpointPath) ? "" : endpointPath + FileSystems.getDefault().getSeparator();
+            setAbsoluteFilePath(path2 + getRelativeFilePath());
         }
 
         if (LOG.isTraceEnabled()) {
@@ -336,18 +337,18 @@ public class GenericFile<T> implements WrappedFile<T> {
     }
 
     public String getParent() {
-        String parent;
+        Path parent;
         if (isAbsolute()) {
             String name = getAbsoluteFilePath();
-            File path = new File(name);
+            Path path = Path.of(name);
             parent = path.getParent();
         } else {
             String name = getRelativeFilePath();
-            File path;
+            Path path;
             if (name != null) {
-                path = new File(endpointPath, name);
+                path = Path.of(endpointPath, name);
             } else {
-                path = new File(endpointPath);
+                path = Path.of(endpointPath);
             }
             parent = path.getParent();
         }
@@ -419,6 +420,10 @@ public class GenericFile<T> implements WrappedFile<T> {
 
     public Long getLastOffsetValue() {
         return lastOffsetValue;
+    }
+
+    private String normalizePathToProtocol(Path path) {
+        return path == null ? null : normalizePathToProtocol(path.toString());
     }
 
     /**

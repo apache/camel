@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
@@ -66,11 +66,11 @@ public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExist
         // ensure any paths is created before we rename as the renamed file may
         // be in a different path (which may be non exiting)
         // use java.io.File to compute the file path
-        File toFile = new File(to);
-        String directory = toFile.getParent();
-        boolean absolute = FileUtil.isAbsolute(toFile);
+        Path toPath = Path.of(to);
+        Path directory = toPath.getParent();
+        boolean absolute = FileUtil.isAbsolute(toPath);
         if (directory != null) {
-            if (!operations.buildDirectory(directory, absolute)) {
+            if (!operations.buildDirectory(directory.toString(), absolute)) {
                 LOG.debug("Cannot build directory [{}] (could be because of denied permissions)", directory);
             }
         }
