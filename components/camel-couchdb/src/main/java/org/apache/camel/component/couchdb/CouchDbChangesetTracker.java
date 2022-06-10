@@ -20,10 +20,6 @@ import java.time.Duration;
 
 import com.google.gson.JsonObject;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.couchdb.consumer.CouchDbResumable;
-import org.apache.camel.component.couchdb.consumer.CouchDbResumeAdapter;
-import org.apache.camel.component.couchdb.consumer.CouchDbResumeStrategyFactory;
-import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
@@ -51,24 +47,12 @@ public class CouchDbChangesetTracker implements Runnable {
     }
 
     private void initChanges(final String sequence) {
-        CouchDbResumable resumable = new CouchDbResumable(couchClient, sequence);
-
-        if (sequence == null) {
-            ResumeStrategy resumeStrategy = CouchDbResumeStrategyFactory.newResumeStrategy(this.consumer);
-
-            assert resumeStrategy != null;
-
-            CouchDbResumeAdapter adapter = resumeStrategy.getAdapter(CouchDbResumeAdapter.class);
-
-            if (adapter != null) {
-                adapter.setResumable(resumable);
-                adapter.resume();
-            }
+        String since = sequence;
+        if (null == since) {
+            since = couchClient.getLatestUpdateSequence();
         }
-
-        LOG.debug("Last sequence [{}]", resumable.getLastOffset());
         changes = couchClient.changes().style(endpoint.getStyle()).includeDocs(true)
-                .since(resumable.getLastOffset().getValue()).heartBeat(endpoint.getHeartbeat()).continuousChanges();
+                .since(since).heartBeat(endpoint.getHeartbeat()).continuousChanges();
     }
 
     @Override
@@ -157,5 +141,4 @@ public class CouchDbChangesetTracker implements Runnable {
     public void stop() {
         changes.stop();
     }
-
 }

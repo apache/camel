@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.couchdb.consumer;
 
+import org.apache.camel.resume.ResumeAction;
 import org.apache.camel.resume.ResumeAdapter;
 
 /**
@@ -24,9 +25,9 @@ import org.apache.camel.resume.ResumeAdapter;
  */
 public interface CouchDbResumeAdapter extends ResumeAdapter {
     /**
-     * Sets the resumable for the adapter
-     * 
-     * @param resumable the resumable instance
+     * Sets an action that will be executed during resume
+     *
+     * @param resumeAction the action to execute during resume
      */
-    void setResumable(CouchDbResumable resumable);
+    void setResumeAction(ResumeAction resumeAction);
 }
