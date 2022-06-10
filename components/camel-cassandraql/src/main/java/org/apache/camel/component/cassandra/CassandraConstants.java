@@ -30,7 +30,7 @@ public final class CassandraConstants {
     public static final String CQL_QUERY = "CamelCqlQuery";
 
     @Metadata(label = "consumer", description = "The resume action to execute when resuming.", javaType = "String")
-    public static final String CASSANDRA_RESUME_ACTION = "CamelCqlResumeQuery";
+    public static final String CASSANDRA_RESUME_ACTION = "CamelCqlResumeAction";
 
     private CassandraConstants() {
     }
