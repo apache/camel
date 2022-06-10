@@ -35,4 +35,7 @@ public interface CouchDbConstants {
     @Metadata(description = "The method (delete / update)", javaType = "String")
     String HEADER_METHOD = "CouchDbMethod";
 
+    @Metadata(label = "consumer", description = "The resume action to execute when resuming.", javaType = "String")
+    String COUCHDB_RESUME_ACTION = "CamelCouchDbResumeAction";
+
 }
