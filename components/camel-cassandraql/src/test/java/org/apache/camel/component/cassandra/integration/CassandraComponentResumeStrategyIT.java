@@ -23,10 +23,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cassandra.consumer.support.CassandraResumeAdapter;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.resume.ResumeAction;
+import org.apache.camel.resume.ResumeActionAware;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.cassandra.CassandraConstants.CASSANDRA_RESUME_ACTION;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CassandraComponentResumeStrategyIT extends BaseCassandra {
 
-    private static class TestCassandraResumeAdapter implements CassandraResumeAdapter {
+    private static class TestCassandraResumeAdapter implements ResumeActionAware {
         private boolean resumeCalled;
         private boolean resumeActionNotNull;
 

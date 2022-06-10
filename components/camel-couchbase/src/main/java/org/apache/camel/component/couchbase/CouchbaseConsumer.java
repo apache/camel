@@ -27,6 +27,8 @@ import com.couchbase.client.java.view.ViewRow;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.resume.ResumeAction;
+import org.apache.camel.resume.ResumeActionAware;
+import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.DefaultScheduledPollConsumer;
@@ -104,13 +106,15 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer implements R
 
             LOG.info("Couchbase consumer running with resume strategy enabled");
 
-            CouchbaseResumeAdapter resumeAdapter = resumeStrategy.getAdapter(CouchbaseResumeAdapter.class);
+            ResumeAdapter resumeAdapter = resumeStrategy.getAdapter(ResumeAdapter.class);
             if (resumeAdapter != null) {
-                ResumeAction action = (ResumeAction) getEndpoint().getCamelContext().getRegistry()
-                        .lookupByName(COUCHBASE_RESUME_ACTION);
-                ObjectHelper.notNull(action, "The resume action cannot be null", this);
+                if (resumeAdapter instanceof ResumeActionAware) {
+                    ResumeAction action = (ResumeAction) getEndpoint().getCamelContext().getRegistry()
+                            .lookupByName(COUCHBASE_RESUME_ACTION);
+                    ObjectHelper.notNull(action, "The resume action cannot be null", this);
 
-                resumeAdapter.setResumeAction(action);
+                    ((ResumeActionAware) resumeAdapter).setResumeAction(action);
+                }
                 resumeAdapter.resume();
             }
         }
