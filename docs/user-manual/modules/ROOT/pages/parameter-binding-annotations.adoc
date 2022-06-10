@@ -231,7 +231,7 @@ public class MySimpleIdGenerator {
 
 And finally we just need to remember to have our bean registered in the xref:registry.adoc[Registry]:
 
-For example in Sprint XML:
+For example in Spring XML:
 
 [source,xml]
 ----

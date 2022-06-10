@@ -62,7 +62,7 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-== Configuring in Sprint XML
+== Configuring in Spring XML
 
 The SlackComponent with XML must be configured as a Spring or Blueprint
 bean that contains the incoming webhook url or the app token for the integration as a
