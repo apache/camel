@@ -15,15 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.couchdb.consumer;
-
-import org.apache.camel.resume.ResumeAction;
-import org.apache.camel.resume.ResumeAdapter;
+package org.apache.camel.resume;
 
 /**
- * Defines a resumable adapter usable by the CouchDB component
+ * Provides an interface for adapters and other resume-related code to
+ * allow them to offer a way to set actions to be executed during the resume
+ * process. This is most likely to be used in situations where the resume
+ * adapter does not have the information required to resume because the
+ * resume logic is too broad (i.e.: a database component trying to resume
+ * operations cannot know in advance what is the SQL to be executed).
+ *
+ * This provides a way for integrations to inject that part of the logic
+ * into the resume API.
  */
-public interface CouchDbResumeAdapter extends ResumeAdapter {
+public interface ResumeActionAware extends ResumeAdapter {
+
     /**
      * Sets an action that will be executed during resume
      *

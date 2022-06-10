@@ -19,15 +19,15 @@ package org.apache.camel.component.couchbase.consumer.support;
 
 import java.nio.ByteBuffer;
 
-import org.apache.camel.component.couchbase.CouchbaseResumeAdapter;
 import org.apache.camel.resume.Cacheable;
 import org.apache.camel.resume.Deserializable;
 import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.ResumeAction;
+import org.apache.camel.resume.ResumeActionAware;
 import org.apache.camel.resume.cache.ResumeCache;
 
-public class DefaultCouchbaseResumeAdapter implements CouchbaseResumeAdapter, Cacheable, Deserializable {
+public class DefaultCouchbaseResumeAdapter implements ResumeActionAware, Cacheable, Deserializable {
     private ResumeAction resumeAction;
     private ResumeCache<Object> cache;
 

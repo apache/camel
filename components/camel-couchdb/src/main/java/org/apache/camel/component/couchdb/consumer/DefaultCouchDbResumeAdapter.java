@@ -24,9 +24,10 @@ import org.apache.camel.resume.Deserializable;
 import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.ResumeAction;
+import org.apache.camel.resume.ResumeActionAware;
 import org.apache.camel.resume.cache.ResumeCache;
 
-public class DefaultCouchDbResumeAdapter implements CouchDbResumeAdapter, Cacheable, Deserializable {
+public class DefaultCouchDbResumeAdapter implements ResumeActionAware, Cacheable, Deserializable {
     private ResumeCache<Object> cache;
     private ResumeAction resumeAction;
 

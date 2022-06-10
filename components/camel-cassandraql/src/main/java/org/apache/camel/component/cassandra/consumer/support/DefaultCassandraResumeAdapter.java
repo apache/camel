@@ -24,9 +24,10 @@ import org.apache.camel.resume.Deserializable;
 import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.ResumeAction;
+import org.apache.camel.resume.ResumeActionAware;
 import org.apache.camel.resume.cache.ResumeCache;
 
-public class DefaultCassandraResumeAdapter implements CassandraResumeAdapter, Cacheable, Deserializable {
+public class DefaultCassandraResumeAdapter implements ResumeActionAware, Cacheable, Deserializable {
     private ResumeCache<Object> cache;
     private ResumeAction resumeAction;
 

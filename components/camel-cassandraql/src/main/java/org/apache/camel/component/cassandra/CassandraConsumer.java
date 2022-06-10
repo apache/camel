@@ -22,8 +22,9 @@ import com.datastax.oss.driver.api.core.cql.ResultSet;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cassandra.consumer.support.CassandraResumeAdapter;
 import org.apache.camel.resume.ResumeAction;
+import org.apache.camel.resume.ResumeActionAware;
+import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.ScheduledPollConsumer;
@@ -90,13 +91,15 @@ public class CassandraConsumer extends ScheduledPollConsumer implements ResumeAw
         if (resumeStrategy != null) {
             resumeStrategy.loadCache();
 
-            CassandraResumeAdapter resumeAdapter = resumeStrategy.getAdapter(CassandraResumeAdapter.class);
+            ResumeAdapter resumeAdapter = resumeStrategy.getAdapter(ResumeAdapter.class);
             if (resumeAdapter != null) {
-                ResumeAction action = (ResumeAction) getEndpoint().getCamelContext().getRegistry()
-                        .lookupByName(CASSANDRA_RESUME_ACTION);
-                ObjectHelper.notNull(action, "The resume action cannot be null", this);
+                if (resumeAdapter instanceof ResumeActionAware) {
+                    ResumeAction action = (ResumeAction) getEndpoint().getCamelContext().getRegistry()
+                            .lookupByName(CASSANDRA_RESUME_ACTION);
+                    ObjectHelper.notNull(action, "The resume action cannot be null", this);
 
-                resumeAdapter.setResumeAction(action);
+                    ((ResumeActionAware) resumeAdapter).setResumeAction(action);
+                }
                 resumeAdapter.resume();
             }
         }

@@ -21,8 +21,9 @@ import java.util.concurrent.ExecutorService;
 import com.google.gson.JsonObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.couchdb.consumer.CouchDbResumeAdapter;
 import org.apache.camel.resume.ResumeAction;
+import org.apache.camel.resume.ResumeActionAware;
+import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.DefaultConsumer;
@@ -70,13 +71,15 @@ public class CouchDbConsumer extends DefaultConsumer implements ResumeAware<Resu
         if (resumeStrategy != null) {
             resumeStrategy.loadCache();
 
-            CouchDbResumeAdapter adapter = resumeStrategy.getAdapter(CouchDbResumeAdapter.class);
+            ResumeAdapter adapter = resumeStrategy.getAdapter(ResumeAdapter.class);
             if (adapter != null) {
-                ResumeAction action = (ResumeAction) getEndpoint().getCamelContext().getRegistry()
-                        .lookupByName(COUCHDB_RESUME_ACTION);
-                ObjectHelper.notNull(action, "The resume action cannot be null", this);
+                if (adapter instanceof ResumeActionAware) {
+                    ResumeAction action = (ResumeAction) getEndpoint().getCamelContext().getRegistry()
+                            .lookupByName(COUCHDB_RESUME_ACTION);
+                    ObjectHelper.notNull(action, "The resume action cannot be null", this);
 
-                adapter.setResumeAction(action);
+                    ((ResumeActionAware) adapter).setResumeAction(action);
+                }
                 adapter.resume();
             }
         }

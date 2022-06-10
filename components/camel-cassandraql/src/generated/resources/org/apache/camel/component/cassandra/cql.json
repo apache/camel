@@ -28,7 +28,7 @@
   },
   "headers": {
     "CamelCqlQuery": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The CQL query to execute.", "constantName": "org.apache.camel.component.cassandra.CassandraConstants#CQL_QUERY" },
-    "CamelCqlResumeQuery": { "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The resume action to execute when resuming.", "constantName": "org.apache.camel.component.cassandra.CassandraConstants#CASSANDRA_RESUME_ACTION" }
+    "CamelCqlResumeAction": { "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The resume action to execute when resuming.", "constantName": "org.apache.camel.component.cassandra.CassandraConstants#CASSANDRA_RESUME_ACTION" }
   },
   "properties": {
     "beanRef": { "kind": "path", "displayName": "Bean Ref", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "beanRef is defined using bean:id" },
