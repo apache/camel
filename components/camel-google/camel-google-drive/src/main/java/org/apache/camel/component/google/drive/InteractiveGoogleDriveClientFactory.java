@@ -74,7 +74,8 @@ public class InteractiveGoogleDriveClientFactory implements GoogleDriveClientFac
 
     @Override
     public Drive makeClient(
-            CamelContext camelContext, String keyResource, Collection<String> scopes, String applicationName, String delegate) {
+            CamelContext camelContext, String serviceAccountKey, Collection<String> scopes, String applicationName,
+            String delegate) {
         throw new IllegalArgumentException("Not implemented");
     }
 }

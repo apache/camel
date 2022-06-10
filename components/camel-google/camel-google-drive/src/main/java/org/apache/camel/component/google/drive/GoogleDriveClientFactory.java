@@ -28,6 +28,7 @@ public interface GoogleDriveClientFactory {
             String accessToken);
 
     Drive makeClient(
-            CamelContext camelContext, String keyResource, Collection<String> scopes, String applicationName, String delegate);
+            CamelContext camelContext, String serviceAccountKey, Collection<String> scopes, String applicationName,
+            String delegate);
 
 }
