@@ -85,6 +85,8 @@ class ExportQuarkus extends BaseExport {
             prop.remove("camel.main.modeline");
             return prop;
         });
+        // copy docker files
+        copyDockerFiles();
         // gather dependencies
         Set<String> deps = resolveDependencies(settings);
         // create pom
@@ -106,6 +108,20 @@ class ExportQuarkus extends BaseExport {
         FileUtil.removeDir(new File(BUILD_DIR));
 
         return 0;
+    }
+
+    private void copyDockerFiles() throws Exception {
+        File docker = new File(BUILD_DIR, "src/main/docker");
+        docker.mkdirs();
+        // copy files
+        InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.jvm");
+        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(docker, "Dockerfile.jvm")));
+        is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.legacy-jar");
+        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(docker, "Dockerfile.legacy-jar")));
+        is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.native");
+        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(docker, "Dockerfile.native")));
+        is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.native-micro");
+        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(docker, "Dockerfile.native-micro")));
     }
 
     private void createPom(File settings, File pom, Set<String> deps) throws Exception {
