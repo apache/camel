@@ -19,8 +19,10 @@ name: alternative os build
 
 on:
   schedule:
-# Every 5th minute every 1 hour during working days
-    - cron: '5 * * * *'
+    # Every 45th minute every 3 hour during working days
+    - cron: '45 */3 * * 1-5'
+    # Every 6 hours during weekends ... we don't want to be flooded with emails
+    - cron: '30 */6 * * 6,0'
 
 permissions:
   contents: read
