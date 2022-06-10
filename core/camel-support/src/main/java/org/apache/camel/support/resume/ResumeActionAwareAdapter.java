@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.cassandra.consumer.support;
+package org.apache.camel.support.resume;
 
 import java.nio.ByteBuffer;
 
@@ -27,7 +27,13 @@ import org.apache.camel.resume.ResumeAction;
 import org.apache.camel.resume.ResumeActionAware;
 import org.apache.camel.resume.cache.ResumeCache;
 
-public class DefaultCassandraResumeAdapter implements ResumeActionAware, Cacheable, Deserializable {
+/**
+ * A simple resume adapter that support caching, deserialization and actions. This is usually suitable for supporting
+ * resume operations that have simple cache storage requirements, but delegate the resume action to the integrations
+ * (i.e.: such as when resuming from database components, where the resume operation can only be determined by the
+ * integration itself)
+ */
+public class ResumeActionAwareAdapter implements ResumeActionAware, Cacheable, Deserializable {
     private ResumeCache<Object> cache;
     private ResumeAction resumeAction;
 
