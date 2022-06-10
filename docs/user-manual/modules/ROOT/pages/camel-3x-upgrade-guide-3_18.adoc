@@ -14,3 +14,8 @@ to better separate output between text and json based.
 === camel-karaf
 
 The `camel-milo` feature has been removed.
+
+=== camel-google-drive
+
+The `keyResource` option has been changed to `serviceAccountKey` to match to Google semantic. Then, if you use the `keyResource` 
+to Google Drive component, you should update it to  `serviceAccountKey`.
