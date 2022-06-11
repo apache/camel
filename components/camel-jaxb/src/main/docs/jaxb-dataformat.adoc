@@ -65,12 +65,13 @@ implementation and might change if you use different vendor than RI.
 
 == Partial marshalling/unmarshalling
 
- JAXB 2 supports marshalling and unmarshalling XML tree fragments. By
+JAXB 2 supports marshalling and unmarshalling XML tree fragments. By
 default JAXB looks for `@XmlRootElement` annotation on given class to
 operate on whole XML tree. This is useful but not always - sometimes
 generated code does not have @XmlRootElement annotation, sometimes you
-need unmarshall only part of tree. +
- In that case you can use partial unmarshalling. To enable this
+need unmarshall only part of tree.
+
+In that case you can use partial unmarshalling. To enable this
 behaviours you need set property `partClass`. Camel will pass this class
 to JAXB's unmarshaler. If `JaxbConstants.JAXB_PART_CLASS` is set as
 one of headers, (even if partClass property is set on DataFormat), the property
@@ -93,7 +94,7 @@ note that you need to specify its value {[namespaceUri]}[localPart]
 
 == Fragment
 
- JaxbDataFormat has new property fragment which can set the the
+JaxbDataFormat has new property fragment which can set the the
 `Marshaller.JAXB_FRAGMENT` encoding property on the JAXB Marshaller. If
 you don't want the JAXB Marshaller to generate the XML declaration, you
 can set this option to be true. The default value of this property is
@@ -101,7 +102,7 @@ false.
 
 == Ignoring the NonXML Character
 
- JaxbDataFormat supports to ignore the
+JaxbDataFormat supports to ignore the
 http://www.w3.org/TR/2004/REC-xml-20040204/#NT-Char[NonXML Character],
 you just need to set the filterNonXmlChars property to be true,
 JaxbDataFormat will replace the NonXML character with " " when it is
@@ -122,7 +123,7 @@ the Exchange property
 This feature has been tested with Woodstox 3.2.9 and Sun JDK 1.6 StAX
 implementation.
 
- JaxbDataFormat now allows you to customize the XMLStreamWriter used to
+JaxbDataFormat now allows you to customize the XMLStreamWriter used to
 marshal the stream to XML. Using this configuration, you can add your
 own stream writer to completely remove, escape, or replace non-xml
 characters.
