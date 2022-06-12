@@ -50,6 +50,6 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: alternative-os-build
-          path: alternative-os-build.log
+          name: build-${{ matrix.os }}
+          path: build.log
           retention-days: 2
