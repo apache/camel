@@ -28,11 +28,11 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         map.put("Content", com.google.api.services.drive.model.Drive.class);
         map.put("Delegate", java.lang.String.class);
         map.put("DriveId", java.lang.String.class);
-        map.put("KeyResource", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("RequestId", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
+        map.put("ServiceAccountKey", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 
@@ -56,8 +56,6 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "driveid":
         case "DriveId": target.setDriveId(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyresource":
-        case "KeyResource": target.setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
@@ -66,6 +64,8 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         case "RequestId": target.setRequestId(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes":
         case "Scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "serviceaccountkey":
+        case "ServiceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -94,8 +94,6 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         case "Delegate": return java.lang.String.class;
         case "driveid":
         case "DriveId": return java.lang.String.class;
-        case "keyresource":
-        case "KeyResource": return java.lang.String.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "refreshtoken":
@@ -104,6 +102,8 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         case "RequestId": return java.lang.String.class;
         case "scopes":
         case "Scopes": return java.util.List.class;
+        case "serviceaccountkey":
+        case "ServiceAccountKey": return java.lang.String.class;
         default: return null;
         }
     }
@@ -128,8 +128,6 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         case "Delegate": return target.getDelegate();
         case "driveid":
         case "DriveId": return target.getDriveId();
-        case "keyresource":
-        case "KeyResource": return target.getKeyResource();
         case "methodname":
         case "MethodName": return target.getMethodName();
         case "refreshtoken":
@@ -138,6 +136,8 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         case "RequestId": return target.getRequestId();
         case "scopes":
         case "Scopes": return target.getScopes();
+        case "serviceaccountkey":
+        case "ServiceAccountKey": return target.getServiceAccountKey();
         default: return null;
         }
     }

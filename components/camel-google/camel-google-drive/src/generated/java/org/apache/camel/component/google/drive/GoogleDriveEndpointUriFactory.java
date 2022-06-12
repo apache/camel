@@ -49,7 +49,6 @@ public class GoogleDriveEndpointUriFactory extends org.apache.camel.support.comp
         props.add("greedy");
         props.add("inBody");
         props.add("initialDelay");
-        props.add("keyResource");
         props.add("lazyStartProducer");
         props.add("mediaContent");
         props.add("methodName");
@@ -69,6 +68,7 @@ public class GoogleDriveEndpointUriFactory extends org.apache.camel.support.comp
         props.add("schedulerProperties");
         props.add("scopes");
         props.add("sendEmptyMessageWhenIdle");
+        props.add("serviceAccountKey");
         props.add("startScheduler");
         props.add("teamDriveId");
         props.add("timeUnit");
