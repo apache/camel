@@ -159,7 +159,7 @@
     <cxf-codegen-plugin-version>3.5.2</cxf-codegen-plugin-version>
     <cxf-version>3.5.2</cxf-version>
     <cxf-version-range>[3.5,3.6)</cxf-version-range>
-    <cxf-xjc-plugin-version>3.3.1</cxf-xjc-plugin-version>
+    <cxf-xjc-plugin-version>3.3.2</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
     <cxf.codegen.jvmArgs></cxf.codegen.jvmArgs>
     <cxf.codegenplugin.forkmode>true</cxf.codegenplugin.forkmode>
