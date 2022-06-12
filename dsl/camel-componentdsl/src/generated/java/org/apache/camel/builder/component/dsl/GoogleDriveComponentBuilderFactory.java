@@ -244,21 +244,6 @@ public interface GoogleDriveComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets .json file with credentials for Service account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param keyResource the value to set
-         * @return the dsl builder
-         */
-        default GoogleDriveComponentBuilder keyResource(
-                java.lang.String keyResource) {
-            doSetProperty("keyResource", keyResource);
-            return this;
-        }
-        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -273,6 +258,22 @@ public interface GoogleDriveComponentBuilderFactory {
         default GoogleDriveComponentBuilder refreshToken(
                 java.lang.String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
+        /**
+         * Service account key in json format to authenticate an application as
+         * a service account. Accept base64 adding the prefix base64:.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GoogleDriveComponentBuilder serviceAccountKey(
+                java.lang.String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
     }
@@ -310,8 +311,8 @@ public interface GoogleDriveComponentBuilderFactory {
             case "clientFactory": ((GoogleDriveComponent) component).setClientFactory((org.apache.camel.component.google.drive.GoogleDriveClientFactory) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleDriveComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleDriveComponent) component).setClientSecret((java.lang.String) value); return true;
-            case "keyResource": getOrCreateConfiguration((GoogleDriveComponent) component).setKeyResource((java.lang.String) value); return true;
             case "refreshToken": getOrCreateConfiguration((GoogleDriveComponent) component).setRefreshToken((java.lang.String) value); return true;
+            case "serviceAccountKey": getOrCreateConfiguration((GoogleDriveComponent) component).setServiceAccountKey((java.lang.String) value); return true;
             default: return false;
             }
         }

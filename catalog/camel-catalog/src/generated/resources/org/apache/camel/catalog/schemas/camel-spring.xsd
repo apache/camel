@@ -10515,14 +10515,6 @@ Sets the resume strategy to use.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="intermittent" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Sets whether the offsets will be intermittently present or whether they must be
-present in every exchange. Default value: false
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
