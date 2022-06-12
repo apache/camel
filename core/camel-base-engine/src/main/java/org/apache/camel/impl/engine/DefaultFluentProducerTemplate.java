@@ -72,7 +72,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     public DefaultFluentProducerTemplate(CamelContext context) {
         this.context = context;
         this.eventNotifierEnabled = true;
-        this.resultProcessors = new ClassValue<Processor>() {
+        this.resultProcessors = new ClassValue<>() {
             @Override
             protected Processor computeValue(Class<?> type) {
                 return new ConvertBodyProcessor(type);
@@ -185,7 +185,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         DefaultFluentProducerTemplate clone = checkCloned();
 
         if (clone.processorSupplier != null) {
-            throw new IllegalArgumentException("Cannot use both withBody and withProcessor with FluentProducerTemplate");
+            throw new IllegalArgumentException("Cannot use both withHeaders and withProcessor with FluentProducerTemplate");
         }
 
         Map<String, Object> map = clone.headers;
@@ -202,7 +202,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         DefaultFluentProducerTemplate clone = checkCloned();
 
         if (clone.processorSupplier != null) {
-            throw new IllegalArgumentException("Cannot use both withBody and withProcessor with FluentProducerTemplate");
+            throw new IllegalArgumentException("Cannot use both withHeader and withProcessor with FluentProducerTemplate");
         }
 
         Map<String, Object> map = clone.headers;
@@ -240,7 +240,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         DefaultFluentProducerTemplate clone = checkCloned();
 
         if (clone.processorSupplier != null) {
-            throw new IllegalArgumentException("Cannot use both withBody and withProcessor with FluentProducerTemplate");
+            throw new IllegalArgumentException("Cannot use both withBodyAs and withProcessor with FluentProducerTemplate");
         }
 
         Object b = type != null
