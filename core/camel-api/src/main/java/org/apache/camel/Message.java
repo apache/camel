@@ -183,7 +183,7 @@ public interface Message {
     boolean removeHeaders(String pattern, String... excludePatterns);
 
     /**
-     * Returns all of the headers associated with the message.
+     * Returns all the headers associated with the message.
      * <p/>
      * Headers is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}. The
      * implementation of the map can be configured by the {@link HeadersMapFactory} which can be set on the
