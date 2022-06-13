@@ -40,6 +40,20 @@ public interface Offset<T> extends Serializable {
      */
     T getValue();
 
+    /**
+     * Gets the offset value converting it to the given type
+     *
+     * @param  tClass type to convert the value to
+     * @return        the offset value or null if it cannot be converted
+     */
+    default <V> V getValue(Class<V> tClass) {
+        try {
+            return tClass.cast(getValue());
+        } catch (ClassCastException e) {
+            return null;
+        }
+    }
+
     @Override
     default ByteBuffer serialize() {
         return serialize(getValue());

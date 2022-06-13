@@ -37,6 +37,7 @@ import org.apache.camel.component.file.consumer.adapters.DirectoryEntries;
 import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
+import org.apache.camel.support.resume.Resumables;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -303,6 +304,8 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         if (modified >= 0) {
             message.setHeader(FileConstants.FILE_LAST_MODIFIED, modified);
         }
+
+        message.setHeader(FileConstants.INITIAL_OFFSET, Resumables.of(upToDateFile, file.getLastOffsetValue()));
     }
 
     @Override
@@ -318,11 +321,11 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
         if (resumeStrategy != null) {
             resumeStrategy.loadCache();
         }
+
+        super.doStart();
     }
 
     @Override

@@ -60,7 +60,7 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
         @Override
         public void resume() {
             if (resumable != null) {
-                resumable.updateLastOffset(3L);
+                resumable.updateLastOffsetValue(3L);
                 resumable = null;
             }
 

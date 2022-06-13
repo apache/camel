@@ -78,6 +78,9 @@ public final class FileConstants {
               javaType = "Object")
     public static final String OVERRULE_FILE_NAME = Exchange.OVERRULE_FILE_NAME;
 
+    @Metadata(label = "consumer", description = "A `long` value containing the initial offset.", javaType = "long")
+    public static final String INITIAL_OFFSET = "CamelFileInitialOffset";
+
     private FileConstants() {
         // Utility class
     }

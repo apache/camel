@@ -23,8 +23,6 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
-import org.apache.camel.resume.Offset;
-import org.apache.camel.support.resume.Offsets;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -47,7 +45,7 @@ public class GenericFile<T> implements WrappedFile<T> {
     private String absoluteFilePath;
     private long fileLength;
     private long lastModified;
-    private long lastOffset;
+    private long lastOffsetValue;
     private T file;
     private GenericFileBinding<T> binding;
     private boolean absolute;
@@ -415,12 +413,12 @@ public class GenericFile<T> implements WrappedFile<T> {
         this.copyFromAbsoluteFilePath = copyFromAbsoluteFilePath;
     }
 
-    public void updateLastOffset(Long offset) {
-        this.lastOffset = offset;
+    public void updateLastOffsetValue(Long offset) {
+        this.lastOffsetValue = offset;
     }
 
-    public Offset<Long> getLastOffset() {
-        return Offsets.of(lastOffset);
+    public Long getLastOffsetValue() {
+        return lastOffsetValue;
     }
 
     /**
