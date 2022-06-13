@@ -112,7 +112,7 @@ To use AWS KMS to encrypt/decrypt data by using AWS infrastructure you can use t
 [source,java]
 --------------------------------------------------------------------------------
 from("file:tmp/test?fileName=test.txt")
-     .setHeader(S3Constants.KEY, constant("testFile"))
+     .setHeader(AWS2S3Constants.KEY, constant("testFile"))
      .to("aws2-s3://mybucket?amazonS3Client=#client&useAwsKMS=true&awsKMSKeyId=3f0637ad-296a-3dfe-a796-e60654fb128c");
 --------------------------------------------------------------------------------
 
@@ -141,7 +141,7 @@ For more information about this you can look at https://docs.aws.amazon.com/sdk-
 
       @Override
       public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(S3Constants.KEY, "camel.txt");
+          exchange.getIn().setHeader(AWS2S3Constants.KEY, "camel.txt");
           exchange.getIn().setBody("Camel rocks!");
       }
   })
@@ -177,9 +177,9 @@ This operation will perform a multipart upload of the file empty.txt with based 
 
       @Override
       public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(S3Constants.BUCKET_DESTINATION_NAME, "camelDestinationBucket");
-          exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
-          exchange.getIn().setHeader(S3Constants.DESTINATION_KEY, "camelDestinationKey");
+          exchange.getIn().setHeader(AWS2S3Constants.BUCKET_DESTINATION_NAME, "camelDestinationBucket");
+          exchange.getIn().setHeader(AWS2S3Constants.KEY, "camelKey");
+          exchange.getIn().setHeader(AWS2S3Constants.DESTINATION_KEY, "camelDestinationKey");
       }
   })
   .to("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=copyObject")
@@ -196,7 +196,7 @@ This operation will copy the object with the name expressed in the header camelD
 
       @Override
       public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
+          exchange.getIn().setHeader(AWS2S3Constants.KEY, "camelKey");
       }
   })
   .to("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=deleteObject")
@@ -246,7 +246,7 @@ This operation will list the objects in the mycamelbucket bucket
 
       @Override
       public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
+          exchange.getIn().setHeader(AWS2S3Constants.KEY, "camelKey");
       }
   })
   .to("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=getObject")
@@ -263,9 +263,9 @@ This operation will return an S3Object instance related to the camelKey object i
 
       @Override
       public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
-          exchange.getIn().setHeader(S3Constants.RANGE_START, "0");
-          exchange.getIn().setHeader(S3Constants.RANGE_END, "9");
+          exchange.getIn().setHeader(AWS2S3Constants.KEY, "camelKey");
+          exchange.getIn().setHeader(AWS2S3Constants.RANGE_START, "0");
+          exchange.getIn().setHeader(AWS2S3Constants.RANGE_END, "9");
       }
   })
   .to("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=getObjectRange")
@@ -282,7 +282,7 @@ This operation will return an S3Object instance related to the camelKey object i
 
       @Override
       public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
+          exchange.getIn().setHeader(AWS2S3Constants.KEY, "camelKey");
       }
   })
   .to("aws2-s3://mycamelbucket?accessKey=xxx&secretKey=yyy&region=region&operation=createDownloadLink")
