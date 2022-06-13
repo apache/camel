@@ -73,8 +73,11 @@ public final class DownloaderHelper {
             LOG.debug("Downloading: {}", gav);
             List<String> deps = List.of(gav);
             List<String> customRepos = new ArrayList<>();
+
             // include Apache snapshot to make it easy to use upcoming release
-            customRepos.add(APACHE_SNAPSHOT_REPO);
+            if ("org.apache.camel".equals(groupId) && version != null && version.contains("SNAPSHOT")) {
+                customRepos.add(APACHE_SNAPSHOT_REPO);
+            }
             if (repos != null) {
                 customRepos.addAll(Arrays.stream(repos.split(",")).collect(Collectors.toList()));
             }
