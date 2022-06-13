@@ -163,10 +163,9 @@ are not currently available on the classpath, and can then automatic download th
 
 Camel will download these JARs in the following order:
 
-1. from local disk in `~/.groovy/grapes`
-2. from local disk in `~/.m2/repository`
-3. from internet in Maven Central
-4. from internet in custom 3rd-party Maven repositories
+1. from local disk in `~/.m2/repository`
+2. from internet in Maven Central
+3. from internet in custom 3rd-party Maven repositories
 
 If you do not want Camel JBang to download over the internet, you can turn this off with `--download`, as shown below:
 
@@ -694,7 +693,7 @@ When using https://www.jbang.dev/[JBang] then JBang stores state in `~/.jbang` d
 This is also the location where JBang stores downloaded JARs.
 
 Camel JBang also downloads needed dependencies while running. However, these dependencies
-are downloaded to `~/.groovy` (downloaded via Groovy Grape).
+are downloaded to your local Maven repository `~/.m2`.
 
 So if you find problems with running Camel JBang using what is seems like an outdated JAR, then you can
 try to delete these directories, or parts of it.
