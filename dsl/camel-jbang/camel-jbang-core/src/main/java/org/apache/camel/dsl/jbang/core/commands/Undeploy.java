@@ -25,6 +25,7 @@ import io.fabric8.openshift.client.OpenShiftClient;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "undeploy", description = "Undeploy resources from Kubernetes, OpenShift, Minikube")
+@Deprecated
 public class Undeploy extends CamelCommand {
 
     @CommandLine.Option(names = { "--namespace" }, required = true, description = "Namespace", defaultValue = "default")

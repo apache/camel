@@ -42,6 +42,7 @@ import io.fabric8.openshift.client.OpenShiftClient;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "image", description = "Create Docker and OCI container images")
+@Deprecated
 public class Image extends CamelCommand {
 
     private static final int LOG_TAIL_SIZE = 10;

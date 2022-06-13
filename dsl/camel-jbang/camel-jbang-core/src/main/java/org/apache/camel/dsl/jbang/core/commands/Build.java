@@ -20,6 +20,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "build", description = "Build Camel container image and resources (use --help to see sub commands)")
+@Deprecated
 class Build extends CamelCommand {
 
     public Build(CamelJBangMain main) {
