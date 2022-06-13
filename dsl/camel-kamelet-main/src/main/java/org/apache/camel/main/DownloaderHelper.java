@@ -17,16 +17,13 @@
 package org.apache.camel.main;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,12 +36,13 @@ public final class DownloaderHelper {
     private static final String CP = System.getProperty("java.class.path");
 
     private static final DownloadThreadPool DOWNLOAD_THREAD_POOL = new DownloadThreadPool();
-    private static final AtomicBoolean VERBOSE_DOWNLOAD = new AtomicBoolean();
 
     private DownloaderHelper() {
     }
 
-    public static void downloadDependency(CamelContext camelContext, String groupId, String artifactId, String version) {
+    public static void downloadDependency(
+            CamelContext camelContext, String repos,
+            String groupId, String artifactId, String version) {
 
         // trigger listener
         DownloadListener listener = camelContext.getExtension(DownloadListener.class);
@@ -67,25 +65,23 @@ public final class DownloaderHelper {
             }
         }
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("classLoader", camelContext.getApplicationContextClassLoader());
-        map.put("group", groupId);
-        map.put("module", artifactId);
-        map.put("version", version);
-        map.put("classifier", "");
-
         String gav = groupId + ":" + artifactId + ":" + version;
         DOWNLOAD_THREAD_POOL.download(LOG, () -> {
             LOG.debug("Downloading: {}", gav);
-            Set<MavenGav> extra = CamelGrapeIvy.download(map, VERBOSE_DOWNLOAD.get());
-            for (MavenGav egav : extra) {
-                Map<String, Object> emap = new HashMap<>();
-                emap.put("classLoader", camelContext.getApplicationContextClassLoader());
-                emap.put("group", egav.getGroupId());
-                emap.put("module", egav.getArtifactId());
-                emap.put("version", egav.getVersion());
-                LOG.debug("Downloading Additional: {}", egav);
-                CamelGrapeIvy.download(emap, VERBOSE_DOWNLOAD.get());
+            List<String> deps = List.of(gav);
+            List<String> customRepos = null;
+            if (repos != null) {
+                customRepos = Arrays.stream(repos.split(",")).collect(Collectors.toList());
+            }
+            List<MavenArtifact> artifacts = DependencyUtil.resolveDependenciesViaAether(deps, customRepos, false, true, true);
+            LOG.debug("Resolved {} -> [{}]", gav, artifacts);
+
+            DependencyDownloaderClassLoader classLoader
+                    = (DependencyDownloaderClassLoader) camelContext.getApplicationContextClassLoader();
+            for (MavenArtifact a : artifacts) {
+                File file = a.getFile();
+                classLoader.addFile(file);
+                LOG.trace("Added classpath: {}", a.getGav());
             }
         }, gav);
     }
@@ -120,42 +116,6 @@ public final class DownloaderHelper {
             }
         }
         return false;
-    }
-
-    public static void prepareDownloader(CamelContext camelContext, String repos, boolean download, boolean verbose)
-            throws Exception {
-        InputStream is = download
-                ? DownloaderHelper.class.getResourceAsStream("/camelGrapeConfig.xml")
-                : DownloaderHelper.class.getResourceAsStream("/localGrapeConfig.xml");
-        if (is != null) {
-            String xml = IOHelper.loadText(is);
-            if (download && repos != null) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("            <!-- custom repositories -->");
-                int i = 0;
-                for (String repo : repos.split(",")) {
-                    i++;
-                    sb.append(String.format("\n            <url name=\"custom%s\" m2compatible=\"true\">", i));
-                    sb.append(String.format(
-                            "\n                <artifact pattern=\"%s/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]\"/>",
-                            repo));
-                    sb.append(String.format("\n            </url>"));
-                }
-                xml = xml.replace("            <!-- @repos@ -->", sb.toString());
-            }
-
-            // save file to local disk and point grape to use this
-            File out = new File(".camel-jbang/camelGrapeConfig.xml");
-            IOHelper.writeText(xml, out);
-
-            // Grape should use our custom configuration file
-            System.setProperty("grape.config", out.getAbsolutePath());
-            if (verbose) {
-                VERBOSE_DOWNLOAD.set(true);
-            }
-
-            IOHelper.close(is);
-        }
     }
 
 }

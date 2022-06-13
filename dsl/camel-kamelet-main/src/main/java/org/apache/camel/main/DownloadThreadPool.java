@@ -48,7 +48,7 @@ class DownloadThreadPool {
             } catch (TimeoutException e) {
                 // not done
             } catch (Exception e) {
-                log.error("Error downloading: " + gav + " due: " + e.getMessage());
+                log.error("Error downloading: " + gav + " due: " + e.getMessage(), e);
                 return;
             }
             if (!done) {

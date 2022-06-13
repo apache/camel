@@ -51,6 +51,11 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-kamelet-main</artifactId>
         </dependency>
+        <!-- TODO: uber-jar uses grape for download -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-grape</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-resourceresolver-github</artifactId>

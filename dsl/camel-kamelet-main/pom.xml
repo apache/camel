@@ -40,6 +40,7 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
@@ -78,10 +79,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-grape</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-platform-http-vertx</artifactId>
         </dependency>
         <dependency>
@@ -108,7 +105,12 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-catalog-console</artifactId>
         </dependency>
-
+        <!-- maven downloader -->
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <version>3.1.4</version>
+        </dependency>
         <!-- optional spring annotation support -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -127,6 +129,7 @@
             <version>${microprofile-config-version}</version>
         </dependency>
 
+        <!-- test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -142,7 +145,6 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>

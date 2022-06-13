@@ -16,26 +16,24 @@
  */
 package org.apache.camel.main;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spi.DependencyStrategy;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 
-class DependencyDownloaderStrategy implements DependencyStrategy {
+public class DependencyDownloaderClassLoader extends URLClassLoader {
 
-    private final CamelContext camelContext;
-    private final String repos;
+    private static final URL[] EMPTY_URL_ARRAY = new URL[0];
 
-    public DependencyDownloaderStrategy(CamelContext camelContext, String repos) {
-        this.camelContext = camelContext;
-        this.repos = repos;
+    public DependencyDownloaderClassLoader(ClassLoader parent) {
+        super(EMPTY_URL_ARRAY, parent);
     }
 
-    @Override
-    public void onDependency(String dependency) {
-        MavenGav gav = MavenGav.parseGav(camelContext, dependency);
-        if (!DownloaderHelper.alreadyOnClasspath(camelContext, gav.getGroupId(), gav.getArtifactId(), gav.getVersion())) {
-            DownloaderHelper.downloadDependency(camelContext, repos, gav.getGroupId(), gav.getArtifactId(),
-                    gav.getVersion());
+    public void addFile(File file) {
+        try {
+            super.addURL(file.toURI().toURL());
+        } catch (MalformedURLException e) {
+            throw new DownloadException("Error adding JAR to classloader: " + file, e);
         }
     }
-
 }

@@ -24,8 +24,11 @@ import org.apache.camel.util.StringHelper;
 
 class DependencyDownloaderResourceLoader extends DefaultResourceLoader {
 
-    public DependencyDownloaderResourceLoader(CamelContext camelContext) {
+    private final String repos;
+
+    public DependencyDownloaderResourceLoader(CamelContext camelContext, String repos) {
         super(camelContext);
+        this.repos = repos;
     }
 
     @Override
@@ -37,7 +40,8 @@ class DependencyDownloaderResourceLoader extends DefaultResourceLoader {
                 if (!DownloaderHelper.alreadyOnClasspath(
                         getCamelContext(), "org.apache.camel", "camel-resourceresolver-github",
                         getCamelContext().getVersion())) {
-                    DownloaderHelper.downloadDependency(getCamelContext(), "org.apache.camel", "camel-resourceresolver-github",
+                    DownloaderHelper.downloadDependency(getCamelContext(), repos, "org.apache.camel",
+                            "camel-resourceresolver-github",
                             getCamelContext().getVersion());
                 }
             }

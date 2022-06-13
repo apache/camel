@@ -16,26 +16,13 @@
  */
 package org.apache.camel.main;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spi.DependencyStrategy;
+public class DownloadException extends RuntimeException {
 
-class DependencyDownloaderStrategy implements DependencyStrategy {
-
-    private final CamelContext camelContext;
-    private final String repos;
-
-    public DependencyDownloaderStrategy(CamelContext camelContext, String repos) {
-        this.camelContext = camelContext;
-        this.repos = repos;
+    public DownloadException(String message) {
+        super(message);
     }
 
-    @Override
-    public void onDependency(String dependency) {
-        MavenGav gav = MavenGav.parseGav(camelContext, dependency);
-        if (!DownloaderHelper.alreadyOnClasspath(camelContext, gav.getGroupId(), gav.getArtifactId(), gav.getVersion())) {
-            DownloaderHelper.downloadDependency(camelContext, repos, gav.getGroupId(), gav.getArtifactId(),
-                    gav.getVersion());
-        }
+    public DownloadException(String message, Throwable cause) {
+        super(message, cause);
     }
-
 }

@@ -31,9 +31,11 @@ final class DependencyDownloaderLanguageResolver extends DefaultLanguageResolver
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private CamelContext camelContext;
+    private final String repos;
 
-    public DependencyDownloaderLanguageResolver(CamelContext camelContext) {
+    public DependencyDownloaderLanguageResolver(CamelContext camelContext, String repos) {
         this.camelContext = camelContext;
+        this.repos = repos;
     }
 
     @Override
@@ -51,7 +53,8 @@ final class DependencyDownloaderLanguageResolver extends DefaultLanguageResolver
         LanguageModel model = catalog.languageModel(name);
         if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getGroupId(), model.getArtifactId(),
                 model.getVersion())) {
-            DownloaderHelper.downloadDependency(camelContext, model.getGroupId(), model.getArtifactId(), model.getVersion());
+            DownloaderHelper.downloadDependency(camelContext, repos, model.getGroupId(), model.getArtifactId(),
+                    model.getVersion());
         }
 
         return super.resolveLanguage(name, context);

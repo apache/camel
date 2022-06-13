@@ -28,8 +28,11 @@ import org.apache.camel.support.service.ServiceHelper;
  */
 public class DependencyDownloaderRoutesLoader extends MainRoutesLoader {
 
-    public DependencyDownloaderRoutesLoader(MainConfigurationProperties configuration) {
+    private final String repos;
+
+    public DependencyDownloaderRoutesLoader(MainConfigurationProperties configuration, String repos) {
         super(configuration);
+        this.repos = repos;
     }
 
     @Override
@@ -79,7 +82,7 @@ public class DependencyDownloaderRoutesLoader extends MainRoutesLoader {
     private void downloadLoader(String artifactId) {
         if (!DownloaderHelper.alreadyOnClasspath(getCamelContext(), "org.apache.camel", artifactId,
                 getCamelContext().getVersion())) {
-            DownloaderHelper.downloadDependency(getCamelContext(), "org.apache.camel", artifactId,
+            DownloaderHelper.downloadDependency(getCamelContext(), repos, "org.apache.camel", artifactId,
                     getCamelContext().getVersion());
         }
     }

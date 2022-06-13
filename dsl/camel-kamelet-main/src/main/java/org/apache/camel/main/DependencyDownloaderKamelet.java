@@ -46,8 +46,13 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
  */
 final class DependencyDownloaderKamelet extends ServiceSupport implements CamelContextAware, RouteTemplateLoaderListener {
 
-    private final KameletDependencyDownloader downloader = new KameletDependencyDownloader("yaml");
+    private final KameletDependencyDownloader downloader;
     private CamelContext camelContext;
+
+    public DependencyDownloaderKamelet(CamelContext camelContext, String repos) {
+        this.camelContext = camelContext;
+        this.downloader = new KameletDependencyDownloader("yaml", repos);
+    }
 
     @Override
     public CamelContext getCamelContext() {
@@ -102,9 +107,11 @@ final class DependencyDownloaderKamelet extends ServiceSupport implements CamelC
         private static final Logger LOG = LoggerFactory.getLogger(KameletDependencyDownloader.class);
         private CamelContext camelContext;
         private final Set<String> downloaded = new HashSet<>();
+        private final String repos;
 
-        public KameletDependencyDownloader(String extension) {
+        public KameletDependencyDownloader(String extension, String repos) {
             super(extension);
+            this.repos = repos;
         }
 
         @Override
@@ -163,7 +170,8 @@ final class DependencyDownloaderKamelet extends ServiceSupport implements CamelC
             if (!gavs.isEmpty()) {
                 for (String gav : gavs) {
                     MavenGav mg = MavenGav.parseGav(camelContext, gav);
-                    DownloaderHelper.downloadDependency(camelContext, mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
+                    DownloaderHelper.downloadDependency(camelContext, repos, mg.getGroupId(), mg.getArtifactId(),
+                            mg.getVersion());
                     downloaded.add(gav);
                 }
             }

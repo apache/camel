@@ -27,9 +27,11 @@ public class CommandLineDependencyDownloader extends ServiceSupport implements C
 
     private CamelContext camelContext;
     private final String dependencies;
+    private final String repos;
 
-    public CommandLineDependencyDownloader(String dependencies) {
+    public CommandLineDependencyDownloader(String dependencies, String repos) {
         this.dependencies = dependencies;
+        this.repos = repos;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class CommandLineDependencyDownloader extends ServiceSupport implements C
         if (!gavs.isEmpty()) {
             for (String gav : gavs) {
                 MavenGav mg = MavenGav.parseGav(camelContext, gav);
-                DownloaderHelper.downloadDependency(camelContext, mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
+                DownloaderHelper.downloadDependency(camelContext, repos, mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
             }
         }
     }

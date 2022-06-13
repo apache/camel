@@ -16,26 +16,18 @@
  */
 package org.apache.camel.main;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spi.DependencyStrategy;
+import java.util.List;
 
-class DependencyDownloaderStrategy implements DependencyStrategy {
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-    private final CamelContext camelContext;
-    private final String repos;
+public class DependencyUtilTest {
 
-    public DependencyDownloaderStrategy(CamelContext camelContext, String repos) {
-        this.camelContext = camelContext;
-        this.repos = repos;
+    @Test
+    public void testDownload() throws Exception {
+        List<String> deps = List.of("org.apache.camel:camel-core:3.17.0");
+        List<MavenArtifact> answer = DependencyUtil.resolveDependenciesViaAether(deps, null, false, false, true);
+        Assertions.assertNotNull(answer);
+        Assertions.assertTrue(answer.size() > 15);
     }
-
-    @Override
-    public void onDependency(String dependency) {
-        MavenGav gav = MavenGav.parseGav(camelContext, dependency);
-        if (!DownloaderHelper.alreadyOnClasspath(camelContext, gav.getGroupId(), gav.getArtifactId(), gav.getVersion())) {
-            DownloaderHelper.downloadDependency(camelContext, repos, gav.getGroupId(), gav.getArtifactId(),
-                    gav.getVersion());
-        }
-    }
-
 }

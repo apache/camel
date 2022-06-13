@@ -23,10 +23,14 @@ import org.apache.camel.util.ObjectHelper;
 final class DependencyDownloaderClassResolver extends DefaultClassResolver {
 
     private final KnownDependenciesResolver knownDependenciesResolver;
+    private final String repos;
 
-    public DependencyDownloaderClassResolver(CamelContext camelContext, KnownDependenciesResolver knownDependenciesResolver) {
+    public DependencyDownloaderClassResolver(CamelContext camelContext,
+                                             KnownDependenciesResolver knownDependenciesResolver,
+                                             String repos) {
         super(camelContext);
         this.knownDependenciesResolver = knownDependenciesResolver;
+        this.repos = repos;
     }
 
     @Override
@@ -44,7 +48,7 @@ final class DependencyDownloaderClassResolver extends DefaultClassResolver {
             if (gav != null) {
                 if (!DownloaderHelper.alreadyOnClasspath(getCamelContext(), gav.getGroupId(), gav.getArtifactId(),
                         gav.getVersion())) {
-                    DownloaderHelper.downloadDependency(getCamelContext(), gav.getGroupId(), gav.getArtifactId(),
+                    DownloaderHelper.downloadDependency(getCamelContext(), repos, gav.getGroupId(), gav.getArtifactId(),
                             gav.getVersion());
                 }
                 try {

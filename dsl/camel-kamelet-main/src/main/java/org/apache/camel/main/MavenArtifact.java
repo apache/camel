@@ -16,26 +16,28 @@
  */
 package org.apache.camel.main;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spi.DependencyStrategy;
+import java.io.File;
 
-class DependencyDownloaderStrategy implements DependencyStrategy {
+public class MavenArtifact {
 
-    private final CamelContext camelContext;
-    private final String repos;
+    private final MavenGav gav;
+    private final File file;
 
-    public DependencyDownloaderStrategy(CamelContext camelContext, String repos) {
-        this.camelContext = camelContext;
-        this.repos = repos;
+    public MavenArtifact(MavenGav gav, File file) {
+        this.gav = gav;
+        this.file = file;
+    }
+
+    public MavenGav getGav() {
+        return gav;
+    }
+
+    public File getFile() {
+        return file;
     }
 
     @Override
-    public void onDependency(String dependency) {
-        MavenGav gav = MavenGav.parseGav(camelContext, dependency);
-        if (!DownloaderHelper.alreadyOnClasspath(camelContext, gav.getGroupId(), gav.getArtifactId(), gav.getVersion())) {
-            DownloaderHelper.downloadDependency(camelContext, repos, gav.getGroupId(), gav.getArtifactId(),
-                    gav.getVersion());
-        }
+    public String toString() {
+        return gav.toString();
     }
-
 }
