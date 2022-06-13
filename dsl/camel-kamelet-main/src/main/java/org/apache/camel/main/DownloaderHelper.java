@@ -33,10 +33,11 @@ import org.slf4j.LoggerFactory;
  */
 public final class DownloaderHelper {
 
+    public static final String APACHE_SNAPSHOT_REPO = "https://repository.apache.org/snapshots";
+
     private static final Logger LOG = LoggerFactory.getLogger(DownloaderHelper.class);
     private static final String CP = System.getProperty("java.class.path");
 
-    private static final String APACHE_SNAPSHOT_REPO = "https://repository.apache.org/snapshots";
     private static final DownloadThreadPool DOWNLOAD_THREAD_POOL = new DownloadThreadPool();
 
     private DownloaderHelper() {
