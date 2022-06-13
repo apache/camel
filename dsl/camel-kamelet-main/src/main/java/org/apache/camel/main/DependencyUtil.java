@@ -42,7 +42,7 @@ final class DependencyUtil {
             boolean offline, boolean transitively) {
 
         ConfigurableMavenResolverSystem resolver = Maven.configureResolver()
-                .withMavenCentralRepo(false)
+                .withMavenCentralRepo(true)
                 .workOffline(offline);
 
         if (customRepos != null) {
