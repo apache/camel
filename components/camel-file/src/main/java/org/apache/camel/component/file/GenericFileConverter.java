@@ -122,7 +122,7 @@ public final class GenericFileConverter {
                     LOG.debug("Read file {} (no charset)", f);
                 }
                 InputStream inputStream = IOHelper.toInputStream(f, charset);
-                inputStream.skip(file.getLastOffset().getValue());
+                inputStream.skip(file.getLastOffsetValue());
 
                 return inputStream;
             }
@@ -197,7 +197,7 @@ public final class GenericFileConverter {
                 reader = IOHelper.toReader(f, ExchangeHelper.getCharsetName(exchange));
             }
 
-            reader.skip(file.getLastOffset().getValue());
+            reader.skip(file.getLastOffsetValue());
             return reader;
         }
         return null;

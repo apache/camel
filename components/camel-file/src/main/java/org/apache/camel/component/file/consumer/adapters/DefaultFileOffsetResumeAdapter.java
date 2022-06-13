@@ -75,7 +75,7 @@ class DefaultFileOffsetResumeAdapter extends AbstractFileResumeAdapter implement
         }
 
         if (offsetObj instanceof Long) {
-            genericFile.updateLastOffset((Long) offsetObj);
+            genericFile.updateLastOffsetValue((Long) offsetObj);
         } else {
             // This should never happen
             LOG.warn("Cannot perform a resume operation of an object of unhandled type: {}", offsetObj.getClass());
