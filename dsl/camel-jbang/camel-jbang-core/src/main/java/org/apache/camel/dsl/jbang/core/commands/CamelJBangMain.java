@@ -42,16 +42,16 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("uber-jar", new CommandLine(new UberJar(main))))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
                         .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))
-                .addSubcommand("build", new CommandLine(new Build(main))
-                        .addSubcommand("manifests", new CommandLine(new Manifest(main)))
-                        .addSubcommand("image", new CommandLine(new Image(main))))
                 .addSubcommand("export", new CommandLine(new Export(main))
                         .addSubcommand("camel-main", new CommandLine(new ExportCamelMain(main)))
                         .addSubcommand("spring-boot", new CommandLine(new ExportSpringBoot(main)))
-                        .addSubcommand("quarkus", new CommandLine(new ExportQuarkus(main))))
+                        .addSubcommand("quarkus", new CommandLine(new ExportQuarkus(main))));
+/* // TODO: do not show commands that are deprecated and to be either removed or reworked
+                .addSubcommand("build", new CommandLine(new Build(main))
+                        .addSubcommand("manifests", new CommandLine(new Manifest(main)))
+                        .addSubcommand("image", new CommandLine(new Image(main))))
                 .addSubcommand("deploy", new CommandLine(new Deploy(main)))
                 .addSubcommand("undeploy", new CommandLine(new Undeploy(main)));
-        /* // TODO: do not show commands that are deprecated and to be either removed or reworked
                 .addSubcommand("search", new CommandLine(new Search())
                         .addSubcommand("kamelets", new SearchKamelets())
                         .addSubcommand("components", new SearchComponents())

@@ -32,6 +32,7 @@ import io.fabric8.openshift.api.model.Route;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "manifests", description = "Create Kubernetes resources")
+@Deprecated
 public class Manifest extends CamelCommand {
 
     @CommandLine.Option(names = { "--path" }, description = "Output folder path", defaultValue = "manifests")

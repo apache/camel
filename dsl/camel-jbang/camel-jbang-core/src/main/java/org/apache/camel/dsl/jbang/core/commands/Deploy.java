@@ -28,6 +28,7 @@ import io.fabric8.openshift.client.OpenShiftClient;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "deploy", description = "Deploy resources to Kubernetes, OpenShift, Minikube")
+@Deprecated
 public class Deploy extends CamelCommand {
 
     @CommandLine.Option(names = { "--namespace" }, required = true, description = "Namespace", defaultValue = "default")
