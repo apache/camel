@@ -19,6 +19,7 @@ package org.apache.camel.main;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ public final class DownloaderHelper {
     private static final Logger LOG = LoggerFactory.getLogger(DownloaderHelper.class);
     private static final String CP = System.getProperty("java.class.path");
 
+    private static final String APACHE_SNAPSHOT_REPO = "https://repository.apache.org/snapshots";
     private static final DownloadThreadPool DOWNLOAD_THREAD_POOL = new DownloadThreadPool();
 
     private DownloaderHelper() {
@@ -69,19 +71,25 @@ public final class DownloaderHelper {
         DOWNLOAD_THREAD_POOL.download(LOG, () -> {
             LOG.debug("Downloading: {}", gav);
             List<String> deps = List.of(gav);
-            List<String> customRepos = null;
+            List<String> customRepos = new ArrayList<>();
+            // include Apache snapshot to make it easy to use upcoming release
+            customRepos.add(APACHE_SNAPSHOT_REPO);
             if (repos != null) {
-                customRepos = Arrays.stream(repos.split(",")).collect(Collectors.toList());
+                customRepos.addAll(Arrays.stream(repos.split(",")).collect(Collectors.toList()));
             }
-            List<MavenArtifact> artifacts = DependencyUtil.resolveDependenciesViaAether(deps, customRepos, false, true, true);
+            List<MavenArtifact> artifacts = DependencyUtil.resolveDependenciesViaAether(deps, customRepos, false, true);
             LOG.debug("Resolved {} -> [{}]", gav, artifacts);
 
             DependencyDownloaderClassLoader classLoader
                     = (DependencyDownloaderClassLoader) camelContext.getApplicationContextClassLoader();
             for (MavenArtifact a : artifacts) {
                 File file = a.getFile();
-                classLoader.addFile(file);
-                LOG.trace("Added classpath: {}", a.getGav());
+                // only add to classpath if not already present
+                if (!alreadyOnClasspath(camelContext, a.getGav().getGroupId(), a.getGav().getArtifactId(),
+                        a.getGav().getVersion())) {
+                    classLoader.addFile(file);
+                    LOG.trace("Added classpath: {}", a.getGav());
+                }
             }
         }, gav);
     }
