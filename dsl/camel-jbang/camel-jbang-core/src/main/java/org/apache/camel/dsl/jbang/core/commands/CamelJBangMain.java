@@ -46,7 +46,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("camel-main", new CommandLine(new ExportCamelMain(main)))
                         .addSubcommand("spring-boot", new CommandLine(new ExportSpringBoot(main)))
                         .addSubcommand("quarkus", new CommandLine(new ExportQuarkus(main))));
-/* // TODO: do not show commands that are deprecated and to be either removed or reworked
+        /* // TODO: do not show commands that are deprecated and to be either removed or reworked
                 .addSubcommand("build", new CommandLine(new Build(main))
                         .addSubcommand("manifests", new CommandLine(new Manifest(main)))
                         .addSubcommand("image", new CommandLine(new Image(main))))
