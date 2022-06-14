@@ -53,7 +53,7 @@ public class CommandLineDependencyDownloader extends ServiceSupport implements C
         final List<String> gavs = new ArrayList<>();
         for (String dep : dependencies.split(",")) {
             String gav = dep;
-            if (dep.startsWith("camel:")) {
+            if (dep.startsWith("camel:") || dep.startsWith("camel-")) {
                 // it's a known camel component
                 gav = "org.apache.camel:camel-" + dep.substring(6) + ":" + camelContext.getVersion();
             }
