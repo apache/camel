@@ -174,15 +174,6 @@ If you do not want Camel JBang to download over the internet, you can turn this 
 camel run foo.java --download=false
 ----
 
-When Camel JBang download dependencies it will only report the top level dependency being downloaded.
-You can enable verbose logging that will also log activity for each transitive dependency,
-using the `--downloadVerbose` option as shown:
-
-[source,bash]
-----
-camel run foo.java --downloadVerbose=true
-----
-
 === Using 3rd-party Maven repositories
 
 Camel JBang will download from local repository first, and then online from Maven Central.
@@ -582,30 +573,6 @@ a Camel route with the naming convention `direct:<operationId>`.
 This make it quick to implement a Camel route for a given operation.
 
 See the https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-api[open-api example] for more details.
-
-== Packaging as uber-jar
-
-The Camel JBang application can be packaged as a standalone _uber-jar_ without the need for JBang to run the application.
-
-You simply do this by
-
-[source,bash]
-----
-camel package uber-jar
-----
-
-Which will generate `camel-runner.jar` as the output file.
-You can then run this JAR with Java that comes with everything included inside the .jar file.
-
-You can run the JAR with Java as follows:
-
-[source,bash]
-----
-java -jar camel-runner.jar
-----
-
-NOTE: Packaging as uber-jar does not support using Camel K modeline style configurations.
-It is better practice specifying configurations in external files such as `application.properties`.
 
 == Creating Projects
 

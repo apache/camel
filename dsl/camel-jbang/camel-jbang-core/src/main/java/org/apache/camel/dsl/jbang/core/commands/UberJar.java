@@ -47,6 +47,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(name = "uber-jar", description = "Package application as a single uber-jar")
+@Deprecated
 class UberJar extends CamelCommand {
 
     private static final String BUILD_DIR = ".camel-jbang/work";

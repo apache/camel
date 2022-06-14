@@ -20,6 +20,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "package", description = "Package Camel application (use --help to see sub commands)")
+@Deprecated
 class Package extends CamelCommand {
 
     public Package(CamelJBangMain main) {

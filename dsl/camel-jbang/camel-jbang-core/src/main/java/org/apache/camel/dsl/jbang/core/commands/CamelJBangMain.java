@@ -38,8 +38,6 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("init", new CommandLine(new Init(main)))
                 .addSubcommand("bind", new CommandLine(new Bind(main)))
                 .addSubcommand("pipe", new CommandLine(new Pipe(main)))
-                .addSubcommand("package", new CommandLine(new Package(main))
-                        .addSubcommand("uber-jar", new CommandLine(new UberJar(main))))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
                         .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))
                 .addSubcommand("export", new CommandLine(new Export(main))
@@ -47,6 +45,8 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("spring-boot", new CommandLine(new ExportSpringBoot(main)))
                         .addSubcommand("quarkus", new CommandLine(new ExportQuarkus(main))));
         /* // TODO: do not show commands that are deprecated and to be either removed or reworked
+                .addSubcommand("package", new CommandLine(new Package(main))
+                        .addSubcommand("uber-jar", new CommandLine(new UberJar(main))))
                 .addSubcommand("build", new CommandLine(new Build(main))
                         .addSubcommand("manifests", new CommandLine(new Manifest(main)))
                         .addSubcommand("image", new CommandLine(new Image(main))))
