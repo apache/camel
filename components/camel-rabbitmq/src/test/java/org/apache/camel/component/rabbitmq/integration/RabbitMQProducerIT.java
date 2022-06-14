@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -35,7 +36,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.assertListSize;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -137,7 +138,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
     }
 
     @Test
-    public void producedMessageIsReceived() throws InterruptedException, IOException {
+    public void producedMessageIsReceived() throws IOException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
@@ -191,7 +192,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
 
         templateNotAllowCustomHeaders.sendBodyAndHeaders("new message", headers);
 
-        Awaitility.await().atMost(Duration.ofSeconds(1))
+        await().atMost(Duration.ofSeconds(1))
                 .untilAsserted(() -> assertEquals("new message", received.get(0)));
         assertTrue(receivedHeaders.containsKey(RabbitMQConstants.EXCHANGE_NAME));
         assertFalse(receivedHeaders.containsKey(CUSTOM_HEADER));
@@ -210,16 +211,16 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
 
         templateAllowCustomHeaders.sendBodyAndHeaders("new message", headers);
 
-        Thread.sleep(500);
-        assertEquals("new message", received.get(0));
+        await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals("new message", received.get(0)));
+
         assertTrue(receivedHeaders.containsKey(RabbitMQConstants.EXCHANGE_NAME));
         assertTrue(receivedHeaders.containsKey(CUSTOM_HEADER));
     }
 
-    private void assertThatBodiesReceivedIn(final List<String> received, final String... expected) throws InterruptedException {
-        Thread.sleep(500);
-
-        assertListSize(received, expected.length);
+    private void assertThatBodiesReceivedIn(final List<String> received, final String... expected) {
+        await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertListSize(received, expected.length));
         for (String body : expected) {
             assertEquals(body, received.get(0));
         }
@@ -227,11 +228,9 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
 
     private void assertThatBodiesAndHeadersReceivedIn(
             Map<String, Object> receivedHeaders, Map<String, Object> expectedHeaders, final List<String> received,
-            final String... expected)
-            throws InterruptedException {
-        Thread.sleep(500);
-
-        assertListSize(received, expected.length);
+            final String... expected) {
+        await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertListSize(received, expected.length));
         for (String body : expected) {
             assertEquals(body, received.get(0));
         }
@@ -248,7 +247,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
 
     @Test
     public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabled()
-            throws InterruptedException, IOException {
+            throws IOException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
@@ -259,7 +258,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
 
     @Test
     public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabledAndBadRoutingKeyIsUsed()
-            throws InterruptedException, IOException {
+            throws IOException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
@@ -270,7 +269,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
 
     @Test
     public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedAndMessageIsMarkedAsMandatory()
-            throws InterruptedException, IOException {
+            throws IOException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
@@ -287,7 +286,7 @@ public class RabbitMQProducerIT extends AbstractRabbitMQIT {
 
     @Test
     public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedOnABadRouteButMessageIsNotMandatory()
-            throws InterruptedException, IOException {
+            throws IOException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 

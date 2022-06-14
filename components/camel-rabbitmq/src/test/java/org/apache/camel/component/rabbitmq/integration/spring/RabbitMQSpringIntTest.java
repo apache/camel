@@ -17,6 +17,7 @@
 package org.apache.camel.component.rabbitmq.integration.spring;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
@@ -28,6 +29,7 @@ import com.rabbitmq.client.Envelope;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -142,11 +145,10 @@ public class RabbitMQSpringIntTest extends AbstractRabbitMQSpringIntTest {
         openChannel();
         LastDeliveryConsumer consumer = new LastDeliveryConsumer(channel);
         channel.basicConsume("q2", true, consumer);
-        int i = 10;
-        while (consumer.getLastBody() == null && i > 0) {
-            Thread.sleep(1000L);
-            i--;
-        }
+
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> consumer.getLastBody(), Matchers.notNullValue());
+
         assertEquals(body, consumer.getLastBodyAsString());
     }
 }

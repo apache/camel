@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -134,9 +135,9 @@ public class RabbitMQDeadLetterRoutingKeyIT extends AbstractRabbitMQIT {
 
         deadLetterChannel.basicConsume("dlq", true, new DeadLetterRoutingKeyConsumer(received, routingKey));
 
-        Thread.sleep(500);
+        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertListSize(received, 1));
 
-        assertListSize(received, 1);
         assertEquals("rk2", routingKey.toString());
     }
 
