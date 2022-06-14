@@ -22,6 +22,8 @@ def JDK_NAME = env.JDK_NAME ?: 'jdk_11_latest'
 
 def MAVEN_PARAMS = "-B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 def MAVEN_TEST_PARAMS = "-Dkafka.instance.type=local-strimzi-container"
+// Below paramteres needed for core/camel-core module
+def MAVEN_TEST_LIMIT_PARAMS = "-Djdk.xml.xpathExprGrpLimit=100 -Djdk.xml.xpathExprOpLimit=2000"   
 
 pipeline {
 
@@ -64,7 +66,7 @@ pipeline {
                 branch 'main'
             }
             steps {
-                // Remove camel-kudu and docs as these are not supported on s390x.
+                // Skip modules camel-kudu and docs as these are not supported on s390x.
                 sh "./mvnw -U $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean install -pl '!docs,!components/camel-kudu,!components/camel-djl'"
             }
         }
@@ -77,8 +79,8 @@ pipeline {
 
         stage('Test') {
             steps {
-                // Remove camel-kudu and docs as these are not supported on s390x.
-                sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -pl '!docs,!components/camel-kudu,!components/camel-djl'"
+                // Skip the test case execution of modules which are either not supported on s390x or vendor images are not not available for s390x.
+                sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS $MAVEN_TEST_LIMIT_PARAMS -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -pl '!docs,!components/camel-kudu,!components/camel-djl,!components/camel-consul,!components/camel-pulsar,!components/camel-xmpp,!components/camel-google/camel-google-pubsub,!components/camel-hdfs,!components/camel-vertx/camel-vertx-kafka/camel-vertx-kafka-component,!components/camel-zookeeper,!components/camel-zookeeper-master'"
             }
             post {
                 always {
