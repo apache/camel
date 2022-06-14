@@ -54,7 +54,7 @@ public class CassandraAggregationRepositoryIT extends BaseCassandra {
     }
 
     private boolean exists(String key) {
-        return getSession().execute(String.format("select KEY from CAMEL_AGGREGATION where KEY='%s'", key)).one() != null;
+        return getSession().execute("select KEY from CAMEL_AGGREGATION where KEY=?", key).one() != null;
     }
 
     @Test

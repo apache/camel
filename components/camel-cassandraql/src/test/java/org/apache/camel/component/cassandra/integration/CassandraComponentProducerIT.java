@@ -64,15 +64,15 @@ public class CassandraComponentProducerIT extends BaseCassandra {
         return new RouteBuilder() {
             public void configure() {
 
-                from("direct:input").to(String.format("cql://%s/%s?cql=%s", getUrl(), KEYSPACE_NAME, CQL));
+                from("direct:input").toF("cql://%s/%s?cql=%s", getUrl(), KEYSPACE_NAME, CQL);
                 from("direct:inputNoParameter")
-                        .to(String.format("cql://%s/%s?cql=%s", getUrl(), KEYSPACE_NAME, NO_PARAMETER_CQL));
-                from("direct:loadBalancingPolicy").to(String.format(
-                        "cql://%s/%s?cql=%s&loadBalancingPolicyClass=org.apache.camel.component.cassandra.MockLoadBalancingPolicy",
-                        getUrl(), KEYSPACE_NAME, NO_PARAMETER_CQL));
+                        .toF("cql://%s/%s?cql=%s", getUrl(), KEYSPACE_NAME, NO_PARAMETER_CQL);
+                from("direct:loadBalancingPolicy")
+                        .toF("cql://%s/%s?cql=%s&loadBalancingPolicyClass=org.apache.camel.component.cassandra.MockLoadBalancingPolicy",
+                                getUrl(), KEYSPACE_NAME, NO_PARAMETER_CQL);
                 from("direct:inputNotConsistent")
-                        .to(String.format("cql://%s/%s?cql=%s&consistencyLevel=ANY", getUrl(), KEYSPACE_NAME, CQL));
-                from("direct:inputNoEndpointCql").to(String.format("cql://%s/%s", getUrl(), KEYSPACE_NAME));
+                        .toF("cql://%s/%s?cql=%s&consistencyLevel=ANY", getUrl(), KEYSPACE_NAME, CQL);
+                from("direct:inputNoEndpointCql").toF("cql://%s/%s", getUrl(), KEYSPACE_NAME);
             }
         };
     }
@@ -82,7 +82,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
         producerTemplate.requestBody(Arrays.asList("w_jiang", "Willem", "Jiang"));
 
         ResultSet resultSet = getSession()
-                .execute(String.format("select login, first_name, last_name from camel_user where login = '%s'", "w_jiang"));
+                .execute("select login, first_name, last_name from camel_user where login = ?", "w_jiang");
         Row row = resultSet.one();
         assertNotNull(row);
         assertEquals("Willem", row.getString("first_name"));
@@ -111,7 +111,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
                 "update camel_user set first_name=?, last_name=? where login=?");
 
         ResultSet resultSet = getSession()
-                .execute(String.format("select login, first_name, last_name from camel_user where login = '%s'", "c_ibsen"));
+                .execute("select login, first_name, last_name from camel_user where login = ?", "c_ibsen");
         Row row = resultSet.one();
         assertNotNull(row);
         assertEquals("Claus 2", row.getString("first_name"));
@@ -125,7 +125,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
                 "update camel_user set first_name=?, last_name=? where login=?");
 
         ResultSet resultSet = getSession()
-                .execute(String.format("select login, first_name, last_name from camel_user where login = '%s'", "c_ibsen"));
+                .execute("select login, first_name, last_name from camel_user where login = ?", "c_ibsen");
         Row row = resultSet.one();
         assertNotNull(row);
         assertEquals("Claus 2", row.getString("first_name"));
@@ -148,7 +148,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
                 update.build());
 
         ResultSet resultSet = getSession()
-                .execute(String.format("select login, first_name, last_name from camel_user where login = '%s'", "c_ibsen"));
+                .execute("select login, first_name, last_name from camel_user where login = ?", "c_ibsen");
         Row row = resultSet.one();
         assertNotNull(row);
         assertEquals("Claus 2", row.getString("first_name"));
@@ -168,7 +168,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
                 update.build());
 
         ResultSet resultSet1 = getSession()
-                .execute(String.format("select login, first_name, last_name from camel_user where login = '%s'", "c_ibsen"));
+                .execute("select login, first_name, last_name from camel_user where login = ?", "c_ibsen");
         Row row1 = resultSet1.one();
         assertNotNull(row1);
         assertEquals("Claus 2", row1.getString("first_name"));
@@ -181,7 +181,7 @@ public class CassandraComponentProducerIT extends BaseCassandra {
                 update.build());
 
         ResultSet resultSet2 = getSession()
-                .execute(String.format("select login, first_name, last_name from camel_user where login = '%s'", "c_ibsen"));
+                .execute("select login, first_name, last_name from camel_user where login = ?", "c_ibsen");
         Row row2 = resultSet2.one();
         assertNotNull(row2);
         assertEquals("Claus 2", row2.getString("first_name"));
