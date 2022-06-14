@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.mybatis;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
@@ -35,10 +38,12 @@ public class MyBatisConsumerIdleMessageTest extends MyBatisTestSupport {
 
     @Test
     public void testConsumeIdleMessages() throws Exception {
-        Thread.sleep(110);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
-        assertMockEndpointsSatisfied();
+
+        await()
+                .atLeast(110, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertMockEndpointsSatisfied());
         assertNull(mock.getExchanges().get(0).getIn().getBody());
         assertNull(mock.getExchanges().get(1).getIn().getBody());
     }
