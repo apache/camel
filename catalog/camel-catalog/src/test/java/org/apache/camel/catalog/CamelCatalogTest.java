@@ -87,7 +87,6 @@ public class CamelCatalogTest {
         assertTrue(names.contains("swagger-java"));
         assertTrue(names.contains("test-spring"));
 
-        assertFalse(names.contains("hystrix"));
         assertFalse(names.contains("http-common"));
         assertFalse(names.contains("kura"));
         assertFalse(names.contains("core-osgi"));

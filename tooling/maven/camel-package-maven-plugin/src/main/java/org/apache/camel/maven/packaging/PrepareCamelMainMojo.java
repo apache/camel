@@ -187,9 +187,7 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                 List<MainModel.MainOptionModel> model = parseConfigurationSource(file);
                 // compute prefix for name
                 String prefix;
-                if (file.getName().contains("Hystrix")) {
-                    prefix = "camel.hystrix.";
-                } else if (file.getName().contains("Resilience")) {
+                if (file.getName().contains("Resilience")) {
                     prefix = "camel.resilience4j.";
                 } else if (file.getName().contains("FaultTolerance")) {
                     prefix = "camel.faulttolerance.";
@@ -308,9 +306,6 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     .add(new MainGroupModel(
                             "camel.resilience4j", "Resilience4j EIP Circuit Breaker configurations",
                             "org.apache.camel.main.Resilience4jConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel(
-                    "camel.hystrix", "Hystrix (deprecated) EIP Circuit Breaker configurations",
-                    "org.apache.camel.main.HystrixConfigurationProperties"));
             model.getGroups().add(new MainGroupModel(
                     "camel.lra", "Camel Saga EIP (Long Running Actions) configurations",
                     "org.apache.camel.main.LraConfigurationProperties"));

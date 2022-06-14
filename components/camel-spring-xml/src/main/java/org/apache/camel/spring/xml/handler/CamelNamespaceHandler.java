@@ -164,7 +164,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("threadPool", CamelThreadPoolFactoryBean.class, true, true);
         addBeanDefinitionParser("redeliveryPolicyProfile", CamelRedeliveryPolicyFactoryBean.class, true, true);
 
-        // jmx agent, stream caching, hystrix, service call configurations and property placeholder cannot be used outside of the camel context
+        // jmx agent, stream caching, service call configurations and property placeholder cannot be used outside of the camel context
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false, false);
         addBeanDefinitionParser("streamCaching", CamelStreamCachingStrategyDefinition.class, false, false);
         addBeanDefinitionParser("propertyPlaceholder", CamelPropertyPlaceholderDefinition.class, false, false);

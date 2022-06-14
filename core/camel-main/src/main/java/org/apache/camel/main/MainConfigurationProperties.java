@@ -55,7 +55,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private HealthConfigurationProperties healthConfigurationProperties;
     private LraConfigurationProperties lraConfigurationProperties;
     private ThreadPoolConfigurationProperties threadPoolProperties;
-    private HystrixConfigurationProperties hystrixConfigurationProperties;
     private Resilience4jConfigurationProperties resilience4jConfigurationProperties;
     private FaultToleranceConfigurationProperties faultToleranceConfigurationProperties;
     private RestConfigurationProperties restConfigurationProperties;
@@ -74,10 +73,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (threadPoolProperties != null) {
             threadPoolProperties.close();
             threadPoolProperties = null;
-        }
-        if (hystrixConfigurationProperties != null) {
-            hystrixConfigurationProperties.close();
-            hystrixConfigurationProperties = null;
         }
         if (resilience4jConfigurationProperties != null) {
             resilience4jConfigurationProperties.close();
@@ -157,24 +152,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasThreadPoolConfiguration() {
         return threadPoolProperties != null;
-    }
-
-    /**
-     * To configure Circuit Breaker EIP with Hystrix
-     */
-    @Deprecated
-    public HystrixConfigurationProperties hystrix() {
-        if (hystrixConfigurationProperties == null) {
-            hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
-        }
-        return hystrixConfigurationProperties;
-    }
-
-    /**
-     * Whether there has been any Hystrix EIP configuration specified
-     */
-    public boolean hasHystrixConfiguration() {
-        return hystrixConfigurationProperties != null;
     }
 
     /**
