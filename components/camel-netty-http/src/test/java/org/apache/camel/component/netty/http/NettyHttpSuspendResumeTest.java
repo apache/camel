@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.isPlatform;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -57,11 +60,12 @@ public class NettyHttpSuspendResumeTest extends BaseNettyTest {
         // resume
         consumer.resume();
 
-        Thread.sleep(2000);
-
-        // and send request which should be processed
-        reply = template.requestBody(serverUri, "Moon", String.class);
-        assertEquals("Bye Moon", reply);
+        await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    // and send request which should be processed
+                    String nextReply = template.requestBody(serverUri, "Moon", String.class);
+                    assertEquals("Bye Moon", nextReply);
+                });
     }
 
     @Override
