@@ -49,7 +49,7 @@ final class DependencyUtil {
             for (int i = 0; i < customRepos.size(); i++) {
                 String repo = customRepos.get(i);
                 MavenRemoteRepository repository
-                        = MavenRemoteRepositories.createRemoteRepository("custom" + i + 1, repo, "default");
+                        = MavenRemoteRepositories.createRemoteRepository("custom" + (i + 1), repo, "default");
                 if (fresh) {
                     repository.setUpdatePolicy(MavenUpdatePolicy.UPDATE_POLICY_ALWAYS);
                 } else {
