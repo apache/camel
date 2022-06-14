@@ -16,11 +16,16 @@
  */
 package org.apache.camel.component.netty;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
+import org.awaitility.Awaitility;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,6 +53,7 @@ class ErrorDuringGracefullShutdownTest extends BaseNettyTest {
         };
     }
 
+    @Timeout(value = 1, unit = TimeUnit.MINUTES)
     @Test
     void shouldNotTriggerErrorDuringGracefullShutdown() throws Exception {
         // given: successful request
@@ -55,9 +61,9 @@ class ErrorDuringGracefullShutdownTest extends BaseNettyTest {
 
         // when: context is closed
         context().close();
-        while (context.getStatus() != ServiceStatus.Stopped) {
-            Thread.sleep(1);
-        }
+
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> context.getStatus(), Matchers.equalTo(ServiceStatus.Stopped));
 
         // then: there should be no entries in log indicating that the callback was called twice
         assertThat(LogCaptureAppender.hasEventsFor(DefaultErrorHandler.class)).isFalse();
