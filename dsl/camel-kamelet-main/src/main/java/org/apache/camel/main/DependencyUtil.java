@@ -70,9 +70,9 @@ final class DependencyUtil {
                     })
                     .collect(Collectors.toList());
         } catch (ResolutionException e) {
-            String msg = "Cannot resolve dependencies from maven central";
-            if (customRepos != null) {
-                msg = "Cannot resolve dependencies from " + String.join(", ", customRepos);
+            String msg = "Cannot resolve dependencies in central (https://repo1.maven.org/maven2)";
+            if (customRepos != null && customRepos.size() > 0) {
+                msg = "Cannot resolve dependencies in " + String.join(", ", customRepos);
             }
             throw new DownloadException(msg, e);
         } catch (RuntimeException e) {

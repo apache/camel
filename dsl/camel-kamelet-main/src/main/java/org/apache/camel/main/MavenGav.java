@@ -36,7 +36,7 @@ public final class MavenGav {
         if (gav.startsWith("camel:")) {
             answer.setGroupId("org.apache.camel");
             String a = gav.substring(6);
-            // users may mistakenly use quarkus extension but they should just refer to the vanilla component name
+            // users may mistakenly use quarkus extension, but they should just refer to the vanilla component name
             if (a.startsWith("camel-quarkus-")) {
                 a = "camel-" + a.substring(14);
             }
@@ -51,7 +51,7 @@ public final class MavenGav {
             // not really camel-k style but users may mistakenly use camel-file instead of camel:file
             answer.setGroupId("org.apache.camel");
             String a = gav;
-            // users may mistakenly use quarkus extension but they should just refer to the vanilla component name
+            // users may mistakenly use quarkus extension, but they should just refer to the vanilla component name
             if (a.startsWith("camel-quarkus-")) {
                 a = "camel-" + a.substring(14);
             }
@@ -61,21 +61,26 @@ public final class MavenGav {
             }
         } else if (gav.startsWith("org.apache.camel:")) {
             String[] parts = gav.split(":");
-            answer.setGroupId(parts[0]);
-            answer.setArtifactId(parts[1]);
-            if (parts.length == 3) {
+            if (parts.length > 0) {
+                answer.setGroupId(parts[0]);
+            }
+            if (parts.length > 1) {
+                answer.setArtifactId(parts[1]);
+            }
+            if (parts.length > 2) {
                 answer.setVersion(parts[2]);
             } else if (context != null) {
                 answer.setVersion(context.getVersion());
             }
-        } else if (gav.startsWith("github:")) {
-            // TODO: currently not supported
-            return answer;
         } else {
             String[] parts = gav.startsWith("mvn:") ? gav.substring(4).split(":") : gav.split(":");
-            answer.setGroupId(parts[0]);
-            answer.setArtifactId(parts[1]);
-            if (parts.length == 3) {
+            if (parts.length > 0) {
+                answer.setGroupId(parts[0]);
+            }
+            if (parts.length > 1) {
+                answer.setArtifactId(parts[1]);
+            }
+            if (parts.length > 2) {
                 answer.setVersion(parts[2]);
             }
         }
