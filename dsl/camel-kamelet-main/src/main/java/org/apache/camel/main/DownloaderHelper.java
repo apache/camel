@@ -44,7 +44,7 @@ public final class DownloaderHelper {
     }
 
     public static void downloadDependency(
-            CamelContext camelContext, String repos,
+            CamelContext camelContext, String repos, boolean fresh,
             String groupId, String artifactId, String version) {
 
         // trigger listener
@@ -81,7 +81,7 @@ public final class DownloaderHelper {
             if (repos != null) {
                 customRepos.addAll(Arrays.stream(repos.split(",")).collect(Collectors.toList()));
             }
-            List<MavenArtifact> artifacts = DependencyUtil.resolveDependenciesViaAether(deps, customRepos, false, true);
+            List<MavenArtifact> artifacts = DependencyUtil.resolveDependenciesViaAether(deps, customRepos, false, fresh, true);
             LOG.debug("Resolved {} -> [{}]", gav, artifacts);
 
             DependencyDownloaderClassLoader classLoader

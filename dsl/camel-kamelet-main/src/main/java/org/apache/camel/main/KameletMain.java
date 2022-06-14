@@ -39,6 +39,7 @@ public class KameletMain extends MainCommandLineSupport {
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
     private String repos;
+    private boolean fresh;
     private boolean stub;
     private DownloadListener downloadListener;
     private DependencyDownloaderClassLoader classLoader;
@@ -126,6 +127,17 @@ public class KameletMain extends MainCommandLineSupport {
      */
     public void setRepos(String repos) {
         this.repos = repos;
+    }
+
+    public boolean isFresh() {
+        return fresh;
+    }
+
+    /**
+     * Make sure we use fresh (i.e. non-cached) resources.
+     */
+    public void setFresh(boolean fresh) {
+        this.fresh = fresh;
     }
 
     public boolean isStub() {
@@ -300,22 +312,22 @@ public class KameletMain extends MainCommandLineSupport {
             // dependencies from CLI
             Object dependencies = getInitialProperties().get("camel.jbang.dependencies");
             if (dependencies != null) {
-                answer.addService(new CommandLineDependencyDownloader(dependencies.toString(), repos));
+                answer.addService(new CommandLineDependencyDownloader(dependencies.toString(), repos, fresh));
             }
 
             KnownDependenciesResolver known = new KnownDependenciesResolver(answer);
             known.loadKnownDependencies();
             DependencyDownloaderPropertyBindingListener listener
-                    = new DependencyDownloaderPropertyBindingListener(answer, known, repos);
+                    = new DependencyDownloaderPropertyBindingListener(answer, known, repos, fresh);
             answer.getRegistry().bind(DependencyDownloaderPropertyBindingListener.class.getName(), listener);
             answer.getRegistry().bind(DependencyDownloaderStrategy.class.getName(),
-                    new DependencyDownloaderStrategy(answer, repos));
-            answer.setClassResolver(new DependencyDownloaderClassResolver(answer, known, repos));
-            answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer, repos, stub));
-            answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer, repos));
-            answer.setLanguageResolver(new DependencyDownloaderLanguageResolver(answer, repos));
-            answer.setResourceLoader(new DependencyDownloaderResourceLoader(answer, repos));
-            answer.addService(new DependencyDownloaderKamelet(answer, repos));
+                    new DependencyDownloaderStrategy(answer, repos, fresh));
+            answer.setClassResolver(new DependencyDownloaderClassResolver(answer, known, repos, fresh));
+            answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer, repos, fresh, stub));
+            answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer, repos, fresh));
+            answer.setLanguageResolver(new DependencyDownloaderLanguageResolver(answer, repos, fresh));
+            answer.setResourceLoader(new DependencyDownloaderResourceLoader(answer, repos, fresh));
+            answer.addService(new DependencyDownloaderKamelet(answer, repos, fresh));
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
@@ -351,7 +363,7 @@ public class KameletMain extends MainCommandLineSupport {
         if (download) {
             // use resolvers that can auto downloaded
             camelContext.adapt(ExtendedCamelContext.class)
-                    .setRoutesLoader(new DependencyDownloaderRoutesLoader(configure(), repos));
+                    .setRoutesLoader(new DependencyDownloaderRoutesLoader(configure(), repos, fresh));
         } else {
             super.configureRoutesLoader(camelContext);
         }

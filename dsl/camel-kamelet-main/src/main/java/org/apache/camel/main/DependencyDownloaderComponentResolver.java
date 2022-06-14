@@ -35,11 +35,13 @@ final class DependencyDownloaderComponentResolver extends DefaultComponentResolv
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private CamelContext camelContext;
     private final String repos;
+    private final boolean fresh;
     private boolean stub;
 
-    public DependencyDownloaderComponentResolver(CamelContext camelContext, String repos, boolean stub) {
+    public DependencyDownloaderComponentResolver(CamelContext camelContext, String repos, boolean fresh, boolean stub) {
         this.camelContext = camelContext;
         this.repos = repos;
+        this.fresh = fresh;
         this.stub = stub;
     }
 
@@ -58,7 +60,7 @@ final class DependencyDownloaderComponentResolver extends DefaultComponentResolv
         ComponentModel model = catalog.componentModel(name);
         if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getGroupId(), model.getArtifactId(),
                 model.getVersion())) {
-            DownloaderHelper.downloadDependency(camelContext, repos, model.getGroupId(), model.getArtifactId(),
+            DownloaderHelper.downloadDependency(camelContext, repos, fresh, model.getGroupId(), model.getArtifactId(),
                     model.getVersion());
         }
 

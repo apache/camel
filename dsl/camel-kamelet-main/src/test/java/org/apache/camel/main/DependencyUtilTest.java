@@ -26,7 +26,7 @@ public class DependencyUtilTest {
     @Test
     public void testDownload() throws Exception {
         List<String> deps = List.of("org.apache.camel:camel-core:3.17.0");
-        List<MavenArtifact> answer = DependencyUtil.resolveDependenciesViaAether(deps, null, false, true);
+        List<MavenArtifact> answer = DependencyUtil.resolveDependenciesViaAether(deps, null, false, false, true);
         Assertions.assertNotNull(answer);
         Assertions.assertTrue(answer.size() > 15);
     }

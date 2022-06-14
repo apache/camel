@@ -49,9 +49,9 @@ final class DependencyDownloaderKamelet extends ServiceSupport implements CamelC
     private final KameletDependencyDownloader downloader;
     private CamelContext camelContext;
 
-    public DependencyDownloaderKamelet(CamelContext camelContext, String repos) {
+    public DependencyDownloaderKamelet(CamelContext camelContext, String repos, boolean fresh) {
         this.camelContext = camelContext;
-        this.downloader = new KameletDependencyDownloader("yaml", repos);
+        this.downloader = new KameletDependencyDownloader("yaml", repos, fresh);
     }
 
     @Override
@@ -108,10 +108,12 @@ final class DependencyDownloaderKamelet extends ServiceSupport implements CamelC
         private CamelContext camelContext;
         private final Set<String> downloaded = new HashSet<>();
         private final String repos;
+        private final boolean fresh;
 
-        public KameletDependencyDownloader(String extension, String repos) {
+        public KameletDependencyDownloader(String extension, String repos, boolean fresh) {
             super(extension);
             this.repos = repos;
+            this.fresh = fresh;
         }
 
         @Override
@@ -170,7 +172,7 @@ final class DependencyDownloaderKamelet extends ServiceSupport implements CamelC
             if (!gavs.isEmpty()) {
                 for (String gav : gavs) {
                     MavenGav mg = MavenGav.parseGav(camelContext, gav);
-                    DownloaderHelper.downloadDependency(camelContext, repos, mg.getGroupId(), mg.getArtifactId(),
+                    DownloaderHelper.downloadDependency(camelContext, repos, fresh, mg.getGroupId(), mg.getArtifactId(),
                             mg.getVersion());
                     downloaded.add(gav);
                 }

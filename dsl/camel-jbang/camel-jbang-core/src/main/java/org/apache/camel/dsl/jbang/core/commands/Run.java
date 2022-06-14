@@ -105,6 +105,9 @@ class Run extends CamelCommand {
     @Option(names = {"--repos"}, description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories).")
     String repos;
 
+    @Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
+    private boolean fresh;
+
     @Option(names = {"--download"}, defaultValue = "true", description = "Whether to allow automatic downloaded JAR dependencies, over the internet, that Camel requires.")
     boolean download = true;
 
@@ -318,6 +321,7 @@ class Run extends CamelCommand {
         final Set<String> downloaded = new HashSet<>();
         main.setRepos(repos);
         main.setDownload(download);
+        main.setFresh(fresh);
         main.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadDependency(String groupId, String artifactId, String version) {

@@ -32,10 +32,12 @@ final class DependencyDownloaderDataFormatResolver extends DefaultDataFormatReso
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private CamelContext camelContext;
     private final String repos;
+    private final boolean fresh;
 
-    public DependencyDownloaderDataFormatResolver(CamelContext camelContext, String repos) {
+    public DependencyDownloaderDataFormatResolver(CamelContext camelContext, String repos, boolean fresh) {
         this.camelContext = camelContext;
         this.repos = repos;
+        this.fresh = fresh;
     }
 
     @Override
@@ -53,7 +55,7 @@ final class DependencyDownloaderDataFormatResolver extends DefaultDataFormatReso
         DataFormatModel model = catalog.dataFormatModel(name);
         if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getGroupId(), model.getArtifactId(),
                 model.getVersion())) {
-            DownloaderHelper.downloadDependency(camelContext, repos, model.getGroupId(), model.getArtifactId(),
+            DownloaderHelper.downloadDependency(camelContext, repos, fresh, model.getGroupId(), model.getArtifactId(),
                     model.getVersion());
         }
         return super.createDataFormat(name, context);

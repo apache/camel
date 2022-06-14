@@ -39,7 +39,7 @@ final class DependencyUtil {
 
     public static List<MavenArtifact> resolveDependenciesViaAether(
             List<String> depIds, List<String> customRepos,
-            boolean offline, boolean transitively) {
+            boolean offline, boolean fresh, boolean transitively) {
 
         ConfigurableMavenResolverSystem resolver = Maven.configureResolver()
                 .withMavenCentralRepo(true)
@@ -50,7 +50,11 @@ final class DependencyUtil {
                 String repo = customRepos.get(i);
                 MavenRemoteRepository repository
                         = MavenRemoteRepositories.createRemoteRepository("custom" + i + 1, repo, "default");
-                repository.setUpdatePolicy(MavenUpdatePolicy.UPDATE_POLICY_NEVER);
+                if (fresh) {
+                    repository.setUpdatePolicy(MavenUpdatePolicy.UPDATE_POLICY_ALWAYS);
+                } else {
+                    repository.setUpdatePolicy(MavenUpdatePolicy.UPDATE_POLICY_NEVER);
+                }
                 resolver.withRemoteRepo(repository);
             }
         }

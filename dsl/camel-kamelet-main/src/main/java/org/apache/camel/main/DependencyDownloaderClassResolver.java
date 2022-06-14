@@ -24,13 +24,15 @@ final class DependencyDownloaderClassResolver extends DefaultClassResolver {
 
     private final KnownDependenciesResolver knownDependenciesResolver;
     private final String repos;
+    private final boolean fresh;
 
     public DependencyDownloaderClassResolver(CamelContext camelContext,
                                              KnownDependenciesResolver knownDependenciesResolver,
-                                             String repos) {
+                                             String repos, boolean fresh) {
         super(camelContext);
         this.knownDependenciesResolver = knownDependenciesResolver;
         this.repos = repos;
+        this.fresh = fresh;
     }
 
     @Override
@@ -48,7 +50,7 @@ final class DependencyDownloaderClassResolver extends DefaultClassResolver {
             if (gav != null) {
                 if (!DownloaderHelper.alreadyOnClasspath(getCamelContext(), gav.getGroupId(), gav.getArtifactId(),
                         gav.getVersion())) {
-                    DownloaderHelper.downloadDependency(getCamelContext(), repos, gav.getGroupId(), gav.getArtifactId(),
+                    DownloaderHelper.downloadDependency(getCamelContext(), repos, fresh, gav.getGroupId(), gav.getArtifactId(),
                             gav.getVersion());
                 }
                 try {

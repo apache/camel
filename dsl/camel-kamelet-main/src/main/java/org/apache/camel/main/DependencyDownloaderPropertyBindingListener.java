@@ -24,13 +24,15 @@ class DependencyDownloaderPropertyBindingListener implements PropertyBindingList
     private final CamelContext camelContext;
     private final KnownDependenciesResolver knownDependenciesResolver;
     private final String repos;
+    private final boolean fresh;
 
     public DependencyDownloaderPropertyBindingListener(CamelContext camelContext,
                                                        KnownDependenciesResolver knownDependenciesResolver,
-                                                       String repos) {
+                                                       String repos, boolean fresh) {
         this.camelContext = camelContext;
         this.knownDependenciesResolver = knownDependenciesResolver;
         this.repos = repos;
+        this.fresh = fresh;
     }
 
     @Override
@@ -41,7 +43,7 @@ class DependencyDownloaderPropertyBindingListener implements PropertyBindingList
             if (gav != null) {
                 if (!DownloaderHelper.alreadyOnClasspath(camelContext, gav.getGroupId(), gav.getArtifactId(),
                         gav.getVersion())) {
-                    DownloaderHelper.downloadDependency(camelContext, repos, gav.getGroupId(), gav.getArtifactId(),
+                    DownloaderHelper.downloadDependency(camelContext, repos, fresh, gav.getGroupId(), gav.getArtifactId(),
                             gav.getVersion());
                 }
             }
