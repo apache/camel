@@ -22,8 +22,12 @@ def JDK_NAME = env.JDK_NAME ?: 'jdk_11_latest'
 
 def MAVEN_PARAMS = "-B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 def MAVEN_TEST_PARAMS = "-Dkafka.instance.type=local-strimzi-container"
-// Below paramteres needed for core/camel-core module
-def MAVEN_TEST_LIMIT_PARAMS = "-Djdk.xml.xpathExprGrpLimit=100 -Djdk.xml.xpathExprOpLimit=2000"   
+/*
+Below parameters required for camel/core/camel-core module's test cases to pass
+- xpathExprGrpLimit: limits the number of groups an Xpath expression can contain 
+- xpathExprOpLimit: limits the number of operators an Xpath expression can contain
+*/
+def MAVEN_TEST_LIMIT_PARAMS = "-Djdk.xml.xpathExprGrpLimit=100 -Djdk.xml.xpathExprOpLimit=2000"
 
 pipeline {
 
