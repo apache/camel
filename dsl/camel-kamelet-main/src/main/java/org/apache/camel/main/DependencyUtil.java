@@ -17,20 +17,22 @@
 package org.apache.camel.main;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.camel.util.ReflectionHelper;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.repository.RepositoryPolicy;
 import org.jboss.shrinkwrap.resolver.api.ResolutionException;
-import org.jboss.shrinkwrap.resolver.api.maven.ConfigurableMavenResolverSystem;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenFormatStage;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenResolvedArtifact;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenStrategyStage;
-import org.jboss.shrinkwrap.resolver.api.maven.repository.MavenRemoteRepositories;
-import org.jboss.shrinkwrap.resolver.api.maven.repository.MavenRemoteRepository;
-import org.jboss.shrinkwrap.resolver.api.maven.repository.MavenUpdatePolicy;
+import org.jboss.shrinkwrap.resolver.api.maven.MavenWorkingSession;
+import org.jboss.shrinkwrap.resolver.impl.maven.ConfigurableMavenResolverSystemImpl;
 
 final class DependencyUtil {
 
@@ -41,21 +43,45 @@ final class DependencyUtil {
             List<String> depIds, List<String> customRepos,
             boolean offline, boolean fresh, boolean transitively) {
 
-        ConfigurableMavenResolverSystem resolver = Maven.configureResolver()
-                .withMavenCentralRepo(true)
+        ConfigurableMavenResolverSystemImpl resolver = (ConfigurableMavenResolverSystemImpl) Maven.configureResolver()
+                .withMavenCentralRepo(false) // do not use central
                 .workOffline(offline);
 
         if (customRepos != null) {
-            for (int i = 0; i < customRepos.size(); i++) {
-                String repo = customRepos.get(i);
-                MavenRemoteRepository repository
-                        = MavenRemoteRepositories.createRemoteRepository("custom" + (i + 1), repo, "default");
-                if (fresh) {
-                    repository.setUpdatePolicy(MavenUpdatePolicy.UPDATE_POLICY_ALWAYS);
+            int custom = 1;
+            for (String repo : customRepos) {
+                // shrikwrap does not have public API for adding release vs snapshot repos
+                // we need workaround using lower-level APIs and reflection
+                boolean snapshot = repo.equals(DownloaderHelper.APACHE_SNAPSHOT_REPO);
+                boolean central = repo.equals(DownloaderHelper.MAVEN_CENTRAL_REPO);
+                String update = fresh ? RepositoryPolicy.UPDATE_POLICY_ALWAYS : RepositoryPolicy.UPDATE_POLICY_NEVER;
+                RepositoryPolicy releasePolicy = new RepositoryPolicy(!snapshot, update, null);
+                RepositoryPolicy snapshotPolicy = new RepositoryPolicy(snapshot, update, null);
+
+                String id;
+                if (snapshot) {
+                    id = "apache-snapshot";
+                } else if (central) {
+                    id = "central";
                 } else {
-                    repository.setUpdatePolicy(MavenUpdatePolicy.UPDATE_POLICY_NEVER);
+                    id = "custom" + custom++;
                 }
-                resolver.withRemoteRepo(repository);
+                RemoteRepository rr = new RemoteRepository.Builder(id, "default", repo)
+                        .setReleasePolicy(releasePolicy)
+                        .setSnapshotPolicy(snapshotPolicy)
+                        .build();
+
+                MavenWorkingSession mws = resolver.getMavenWorkingSession();
+                try {
+                    Field f = mws.getClass().getDeclaredField("additionalRemoteRepositories");
+                    Object obj = ReflectionHelper.getField(f, mws);
+                    if (obj instanceof List) {
+                        List list = (List) obj;
+                        list.add(rr);
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
             }
         }
 

@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class DownloaderHelper {
 
+    public static final String MAVEN_CENTRAL_REPO = "https://repo1.maven.org/maven2/";
     public static final String APACHE_SNAPSHOT_REPO = "https://repository.apache.org/snapshots";
 
     private static final Logger LOG = LoggerFactory.getLogger(DownloaderHelper.class);
@@ -72,16 +73,20 @@ public final class DownloaderHelper {
         DOWNLOAD_THREAD_POOL.download(LOG, () -> {
             LOG.debug("Downloading: {}", gav);
             List<String> deps = List.of(gav);
-            List<String> customRepos = new ArrayList<>();
+            List<String> mavenRepos = new ArrayList<>();
 
-            // include Apache snapshot to make it easy to use upcoming release
-            if ("org.apache.camel".equals(groupId) && version != null && version.contains("SNAPSHOT")) {
-                customRepos.add(APACHE_SNAPSHOT_REPO);
-            }
+            // add maven central first
+            mavenRepos.add(MAVEN_CENTRAL_REPO);
+            // and custom repos
             if (repos != null) {
-                customRepos.addAll(Arrays.stream(repos.split(",")).collect(Collectors.toList()));
+                mavenRepos.addAll(Arrays.stream(repos.split(",")).collect(Collectors.toList()));
             }
-            List<MavenArtifact> artifacts = DependencyUtil.resolveDependenciesViaAether(deps, customRepos, false, fresh, true);
+            // include Apache snapshot to make it easy to use upcoming releases
+            if ("org.apache.camel".equals(groupId) && version != null && version.contains("SNAPSHOT")) {
+                mavenRepos.add(APACHE_SNAPSHOT_REPO);
+            }
+
+            List<MavenArtifact> artifacts = DependencyUtil.resolveDependenciesViaAether(deps, mavenRepos, false, fresh, true);
             LOG.debug("Resolved {} -> [{}]", gav, artifacts);
 
             DependencyDownloaderClassLoader classLoader
