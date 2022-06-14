@@ -117,7 +117,7 @@ public final class CamelJavaTreeParserHelper {
                 // should be set on the parent
                 parent.setRouteId(node.getRouteId());
             } else if ("end".equals(name) || "endParent".equals(name) || "endRest".equals(name)
-                    || "endDoTry".equals(name) || "endHystrix".equals(name)) {
+                    || "endDoTry".equals(name)) {
                 // parent should be grand parent
                 if (parent.getParent() != null) {
                     parent = parent.getParent();
@@ -232,7 +232,7 @@ public final class CamelJavaTreeParserHelper {
         String name = mi.getName().getIdentifier();
 
         // special for Java DSL having some endXXX
-        boolean isEnd = "end".equals(name) || "endChoice".equals(name) || "endDoTry".equals(name) || "endHystrix".equals(name)
+        boolean isEnd = "end".equals(name) || "endChoice".equals(name) || "endDoTry".equals(name)
                 || "endParent".equals(name) || "endRest".equals(name);
         boolean isRoute = "route".equals(name) || "from".equals(name) || "routeId".equals(name);
         // must be an eip model that has either input or output as we only want to track processors (also accept from)

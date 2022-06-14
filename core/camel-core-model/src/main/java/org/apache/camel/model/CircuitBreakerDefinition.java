@@ -134,7 +134,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     }
 
     /**
-     * Refers to a circuit breaker configuration (such as hystrix, resillience4j, or microprofile-fault-tolerance) to
+     * Refers to a circuit breaker configuration (such as resillience4j, or microprofile-fault-tolerance) to
      * use for configuring the circuit breaker EIP.
      */
     public void setConfiguration(String configuration) {

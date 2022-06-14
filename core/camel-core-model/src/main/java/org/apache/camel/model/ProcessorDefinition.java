@@ -1300,7 +1300,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a Circuit Breaker EIP.
      * <p/>
-     * This requires having an implementation on the classpath such as camel-hystrix, or
+     * This requires having an implementation on the classpath such as
      * camel-microprofile-fault-tolerance.
      *
      * @return the builder

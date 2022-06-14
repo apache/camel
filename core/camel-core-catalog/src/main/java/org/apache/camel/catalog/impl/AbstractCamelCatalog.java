@@ -1105,7 +1105,6 @@ public abstract class AbstractCamelCatalog {
                 doValidateConfigurationProperty(result, rows, name, value, longKey, nOption, suffix);
             }
         } else if (key.startsWith("main.")
-                || key.startsWith("hystrix.")
                 || key.startsWith("resilience4j.")
                 || key.startsWith("faulttolerance.")
                 || key.startsWith("threadpool.")
@@ -1281,7 +1280,6 @@ public abstract class AbstractCamelCatalog {
             || key.startsWith("camel.dataformat.")
             || key.startsWith("camel.language.")
             || key.startsWith("camel.main.")
-            || key.startsWith("camel.hystrix.")
             || key.startsWith("camel.resilience4j.")
             || key.startsWith("camel.faulttolerance.")
             || key.startsWith("camel.threadpool.")
