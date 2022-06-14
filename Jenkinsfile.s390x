@@ -23,7 +23,7 @@ def JDK_NAME = env.JDK_NAME ?: 'jdk_11_latest'
 def MAVEN_PARAMS = "-B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 def MAVEN_TEST_PARAMS = "-Dkafka.instance.type=local-strimzi-container"
 /*
-Below parameters required for camel/core/camel-core module's test cases to pass
+Below parameters are required for camel/core/camel-core module's test cases to pass
 - xpathExprGrpLimit: limits the number of groups an Xpath expression can contain 
 - xpathExprOpLimit: limits the number of operators an Xpath expression can contain
 */
@@ -71,7 +71,7 @@ pipeline {
             }
             steps {
                 // Skip modules camel-kudu and docs as these are not supported on s390x.
-                sh "./mvnw -U $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean install -pl '!docs,!components/camel-kudu,!components/camel-djl'"
+                sh "./mvnw -U $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean install -pl '!docs,!components/camel-kudu'"
             }
         }
 
