@@ -38,7 +38,6 @@ public class KameletMain extends MainCommandLineSupport {
 
     protected final MainRegistry registry = new MainRegistry();
     private boolean download = true;
-    private boolean downloadVerbose;
     private String repos;
     private boolean stub;
     private DownloadListener downloadListener;
@@ -118,17 +117,6 @@ public class KameletMain extends MainCommandLineSupport {
         this.download = download;
     }
 
-    public boolean isDownloadVerbose() {
-        return downloadVerbose;
-    }
-
-    /**
-     * Whether to include verbose details when downloading
-     */
-    public void setDownloadVerbose(boolean downloadVerbose) {
-        this.downloadVerbose = downloadVerbose;
-    }
-
     public String getRepos() {
         return repos;
     }
@@ -187,16 +175,6 @@ public class KameletMain extends MainCommandLineSupport {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 if (arg.equals("-download")) {
                     setDownload("true".equalsIgnoreCase(parameter));
-                }
-            }
-        });
-        addOption(new ParameterOption(
-                "downloadVerbose", "downloadVerbose", "Whether to include verbose details when downloading",
-                "downloadVerbose") {
-            @Override
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                if (arg.equals("-downloadVerbose")) {
-                    setDownloadVerbose("true".equalsIgnoreCase(parameter));
                 }
             }
         });

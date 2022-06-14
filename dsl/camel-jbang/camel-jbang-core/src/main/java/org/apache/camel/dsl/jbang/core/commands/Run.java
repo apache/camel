@@ -108,9 +108,6 @@ class Run extends CamelCommand {
     @Option(names = {"--download"}, defaultValue = "true", description = "Whether to allow automatic downloaded JAR dependencies, over the internet, that Camel requires.")
     boolean download = true;
 
-    @Option(names = {"--downloadVerbose"}, description = "Whether to include verbose details when downloading.")
-    boolean downloadVerbose;
-
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     String name;
 
@@ -297,8 +294,6 @@ class Run extends CamelCommand {
             }
             repos = profileProperties.getProperty("camel.jbang.repos", repos);
             download = "true".equals(profileProperties.getProperty("camel.jbang.download", download ? "true" : "false"));
-            downloadVerbose = "true"
-                    .equals(profileProperties.getProperty("camel.jbang.downloadVerbose", downloadVerbose ? "true" : "false"));
         }
 
         // if no specific file to run then try to auto-detect
@@ -323,7 +318,6 @@ class Run extends CamelCommand {
         final Set<String> downloaded = new HashSet<>();
         main.setRepos(repos);
         main.setDownload(download);
-        main.setDownloadVerbose(downloadVerbose);
         main.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadDependency(String groupId, String artifactId, String version) {
