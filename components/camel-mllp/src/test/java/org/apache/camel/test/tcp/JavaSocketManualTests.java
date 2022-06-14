@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * NOTE: This class may be deleted in the future
  */
 @Disabled(value = "Tests validating Java Socket behaviours")
-public class JavaSocketTests {
+public class JavaSocketManualTests {
     Logger log = LoggerFactory.getLogger(this.getClass());
 
     Socket clientSocket;
