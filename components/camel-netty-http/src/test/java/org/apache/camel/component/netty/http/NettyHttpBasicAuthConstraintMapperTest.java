@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -74,14 +77,17 @@ public class NettyHttpBasicAuthConstraintMapperTest extends BaseNettyTest {
         NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
         assertEquals(401, cause.getStatusCode());
 
-        // wait a little bit before next as the connection was closed when denied
-        Thread.sleep(500);
-
         // username:password is scott:secret
-        String auth = "Basic c2NvdHQ6c2VjcmV0";
-        out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth,
-                String.class);
-        assertEquals("Bye World", out);
+        final String auth = "Basic c2NvdHQ6c2VjcmV0";
+
+        // wait a little bit before next as the connection was closed when denied
+        await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    String nextOut = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World",
+                            "Authorization", auth,
+                            String.class);
+                    assertEquals("Bye World", nextOut);
+                });
 
         assertMockEndpointsSatisfied();
     }
