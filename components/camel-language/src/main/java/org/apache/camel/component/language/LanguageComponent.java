@@ -17,12 +17,12 @@
 package org.apache.camel.component.language;
 
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -55,17 +55,19 @@ public class LanguageComponent extends DefaultComponent {
         String resourceUri = null;
         String resource = script;
         if (resource != null) {
+            boolean resourcePrefix = false;
             if (resource.startsWith(RESOURCE)) {
+                resourcePrefix = true;
                 resource = resource.substring(RESOURCE.length());
             }
-            if (ResourceHelper.hasScheme(resource)) {
+            if (resourcePrefix) {
                 // the script is a uri for a resource
                 resourceUri = resource;
                 // then the script should be null
                 script = null;
             } else {
                 // the script is provided as text in the uri, so decode to utf-8
-                script = URLDecoder.decode(script, "UTF-8");
+                script = URLDecoder.decode(script, StandardCharsets.UTF_8);
                 // then the resource should be null
                 resourceUri = null;
             }
