@@ -56,9 +56,7 @@ public class NamedCassandraAggregationRepositoryIT extends BaseCassandra {
     }
 
     private boolean exists(String key) {
-        return getSession().execute(String.format("select KEY from NAMED_CAMEL_AGGREGATION where NAME='ID' and KEY='%s'", key))
-                .one()
-               != null;
+        return getSession().execute("select KEY from NAMED_CAMEL_AGGREGATION where NAME='ID' and KEY=?", key).one() != null;
     }
 
     @Test

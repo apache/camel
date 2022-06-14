@@ -54,7 +54,7 @@ public class CassandraIdempotentRepositoryIT extends BaseCassandra {
     }
 
     private boolean exists(String key) {
-        return getSession().execute(String.format("select KEY from CAMEL_IDEMPOTENT where KEY='%s'", key)).one() != null;
+        return getSession().execute("select KEY from CAMEL_IDEMPOTENT where KEY=?", key).one() != null;
     }
 
     @Test
