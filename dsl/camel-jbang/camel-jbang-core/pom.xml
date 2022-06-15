@@ -94,24 +94,6 @@
             <artifactId>jansi</artifactId>
             <version>${jansi-version}</version>
         </dependency>
-        <!-- Kubernetes client -->
-        <dependency>
-            <groupId>io.fabric8</groupId>
-            <artifactId>kubernetes-client</artifactId>
-            <version>${kubernetes-client-version}</version>
-        </dependency>
-        <!-- OpenShift client -->
-        <dependency>
-            <groupId>io.fabric8</groupId>
-            <artifactId>openshift-client</artifactId>
-            <version>${kubernetes-client-version}</version>
-        </dependency>
-        <!-- Docker generator -->
-        <dependency>
-            <groupId>com.google.cloud.tools</groupId>
-            <artifactId>jib-core</artifactId>
-            <version>${jib-version}</version>
-        </dependency>
         <!-- Code generator -->
         <dependency>
             <groupId>org.apache.camel</groupId>
