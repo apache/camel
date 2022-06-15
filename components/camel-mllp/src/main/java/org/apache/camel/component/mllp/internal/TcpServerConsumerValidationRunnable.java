@@ -101,7 +101,7 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
      *
      * @return the thread name
      */
-    String createThreadName(Socket socket) {
+    String createThreadName() {
         // Get the URI without options
         String fullEndpointKey = consumer.getEndpoint().getEndpointKey();
         String endpointKey;
@@ -121,7 +121,7 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
     @Override
     public void run() {
         String originalThreadName = Thread.currentThread().getName();
-        Thread.currentThread().setName(createThreadName(clientSocket));
+        Thread.currentThread().setName(createThreadName());
         MDC.put(UnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());
 
         Route route = consumer.getRoute();
