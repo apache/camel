@@ -73,7 +73,7 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     private int replyToOnTimeoutMaxConcurrentConsumers = 1;
 
     @Metadata(label = "advanced",
-            description = "Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.")
+              description = "Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.")
     private ExceptionListener exceptionListener;
 
     public SjmsComponent() {
