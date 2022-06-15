@@ -17,19 +17,14 @@
 
 package org.apache.camel.component.hashicorp.vault.integration.operations;
 
+import java.util.HashMap;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.hashicorp.vault.HashicorpVaultConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HashicorpProducerDeleteSecretIT extends HashicorpVaultBase {
 
@@ -67,11 +62,13 @@ public class HashicorpProducerDeleteSecretIT extends HashicorpVaultBase {
             @Override
             public void configure() {
                 from("direct:createSecret")
-                        .toF("hashicorp-vault://secret?operation=createSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test", service.token(), service.host(), service.port())
+                        .toF("hashicorp-vault://secret?operation=createSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
+                                service.token(), service.host(), service.port())
                         .to("mock:result-write");
 
                 from("direct:deleteSecret")
-                        .toF("hashicorp-vault://secret?operation=deleteSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test", service.token(), service.host(), service.port())
+                        .toF("hashicorp-vault://secret?operation=deleteSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
+                                service.token(), service.host(), service.port())
                         .to("mock:result-delete");
             }
         };
