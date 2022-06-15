@@ -52,7 +52,6 @@ public class MinaUdpConcurrentTest extends BaseMinaTest {
                 DatagramPacket packet = new DatagramPacket(data, data.length, address, getPort());
                 socket.send(packet);
             }
-            Thread.sleep(2000);
         } finally {
             socket.close();
         }

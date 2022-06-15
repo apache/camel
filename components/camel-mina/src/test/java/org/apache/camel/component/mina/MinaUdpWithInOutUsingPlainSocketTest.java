@@ -52,8 +52,6 @@ public class MinaUdpWithInOutUsingPlainSocketTest extends BaseMinaTest {
         LOG.debug("+++ Sending data +++");
         socket.send(packet);
 
-        Thread.sleep(1000);
-
         byte[] buf = new byte[128];
         DatagramPacket receive = new DatagramPacket(buf, buf.length, address, getPort());
         LOG.debug("+++ Receiveing data +++");
