@@ -86,7 +86,7 @@ public class HashicorpVaultProducer extends DefaultProducer {
     private void deleteSecret(Exchange exchange) throws InvalidPayloadException {
         VaultKeyValueOperations keyValue
                 = getEndpoint().getVaultTemplate().opsForKeyValue(getEndpoint().getConfiguration().getSecretsEngine(),
-                VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
+                        VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
         keyValue.delete(getEndpoint().getConfiguration().getSecretPath());
     }
 
