@@ -65,9 +65,9 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-import static org.apache.camel.dsl.jbang.core.commands.GistHelper.fetchGistUrls;
-import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.asGithubSingleUrl;
-import static org.apache.camel.dsl.jbang.core.commands.GitHubHelper.fetchGithubUrls;
+import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
+import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
+import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
 
 @Command(name = "run", description = "Run as local Camel application")
 class Run extends CamelCommand {

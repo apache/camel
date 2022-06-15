@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.others;
+package org.apache.camel.dsl.jbang.core.common;
 
-import org.apache.camel.dsl.jbang.core.api.Printer;
-import org.apache.camel.dsl.jbang.core.types.Other;
+import org.apache.camel.CamelException;
+import org.apache.camel.spi.Resource;
 
-public class OtherPrinter implements Printer<Other> {
+public class ResourceDoesNotExist extends CamelException {
 
-    @Override
-    public void inject(Other other) {
-        System.out.printf("%-35s %-45s %s%n", other.shortName, other.description, other.link);
+    public ResourceDoesNotExist(Resource resource) {
+        super("The resource does not exist at " + resource.getLocation());
     }
 }
