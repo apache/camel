@@ -104,6 +104,7 @@ This section lists all available operations, along with their header information
 
 * *Required Headers*: 
 ** CamelInfinispanKey
+Resulting value is returned in the exchange *body*.
 
 .Contains Key Operation
 [cols="40%,60%a", options="header"]
@@ -125,8 +126,9 @@ This section lists all available operations, along with their header information
 |===
 
 * *Required Headers*: 
-** CamelInfinispanKey
-
+** CamelInfinispanValue
+* *Result Header*
+** CamelInfinispanOperationResult
 
 .Remove Operations
 [cols="40%,60%a", options="header"]
@@ -200,8 +202,7 @@ This section lists all available operations, along with their header information
 
 * *Required Headers*:
 ** CamelInfinispanQueryBuilder
-* *Result Header*: 
-** CamelInfinispanOperationResult
+Resulting value is returned in the exchange *body*.
 
 [NOTE]
 ====
