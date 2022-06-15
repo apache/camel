@@ -65,7 +65,7 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
                 break;
 
             case CLEAR:
-                this.clear(exchange);
+                this.clear();
                 break;
 
             case CONTAINS_KEY:
@@ -99,7 +99,7 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
         this.cache.remove(oid);
     }
 
-    private void clear(Exchange exchange) {
+    private void clear() {
         this.cache.clear();
     }
 
