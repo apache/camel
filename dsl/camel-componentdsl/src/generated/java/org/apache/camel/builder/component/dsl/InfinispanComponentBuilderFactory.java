@@ -268,79 +268,6 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
-         * Define the password to access the infinispan instance.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group:  security
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default InfinispanComponentBuilder password(java.lang.String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * Define the SASL Mechanism to access the infinispan instance.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group:  security
-         * 
-         * @param saslMechanism the value to set
-         * @return the dsl builder
-         */
-        default InfinispanComponentBuilder saslMechanism(
-                java.lang.String saslMechanism) {
-            doSetProperty("saslMechanism", saslMechanism);
-            return this;
-        }
-        /**
-         * Define the security realm to access the infinispan instance.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group:  security
-         * 
-         * @param securityRealm the value to set
-         * @return the dsl builder
-         */
-        default InfinispanComponentBuilder securityRealm(
-                java.lang.String securityRealm) {
-            doSetProperty("securityRealm", securityRealm);
-            return this;
-        }
-        /**
-         * Define the security server name to access the infinispan instance.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group:  security
-         * 
-         * @param securityServerName the value to set
-         * @return the dsl builder
-         */
-        default InfinispanComponentBuilder securityServerName(
-                java.lang.String securityServerName) {
-            doSetProperty("securityServerName", securityServerName);
-            return this;
-        }
-        /**
-         * Define the username to access the infinispan instance.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group:  security
-         * 
-         * @param username the value to set
-         * @return the dsl builder
-         */
-        default InfinispanComponentBuilder username(java.lang.String username) {
-            doSetProperty("username", username);
-            return this;
-        }
-        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -477,6 +404,79 @@ public interface InfinispanComponentBuilderFactory {
             doSetProperty("resultHeader", resultHeader);
             return this;
         }
+        /**
+         * Define the password to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default InfinispanComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Define the SASL Mechanism to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param saslMechanism the value to set
+         * @return the dsl builder
+         */
+        default InfinispanComponentBuilder saslMechanism(
+                java.lang.String saslMechanism) {
+            doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
+         * Define the security realm to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param securityRealm the value to set
+         * @return the dsl builder
+         */
+        default InfinispanComponentBuilder securityRealm(
+                java.lang.String securityRealm) {
+            doSetProperty("securityRealm", securityRealm);
+            return this;
+        }
+        /**
+         * Define the security server name to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param securityServerName the value to set
+         * @return the dsl builder
+         */
+        default InfinispanComponentBuilder securityServerName(
+                java.lang.String securityServerName) {
+            doSetProperty("securityServerName", securityServerName);
+            return this;
+        }
+        /**
+         * Define the username to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default InfinispanComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
+            return this;
+        }
     }
 
     class InfinispanComponentBuilderImpl
@@ -514,11 +514,6 @@ public interface InfinispanComponentBuilderFactory {
             case "oldValue": getOrCreateConfiguration((InfinispanRemoteComponent) component).setOldValue((java.lang.Object) value); return true;
             case "operation": getOrCreateConfiguration((InfinispanRemoteComponent) component).setOperation((org.apache.camel.component.infinispan.InfinispanOperation) value); return true;
             case "value": getOrCreateConfiguration((InfinispanRemoteComponent) component).setValue((java.lang.Object) value); return true;
-            case "password": getOrCreateConfiguration((InfinispanRemoteComponent) component).setPassword((java.lang.String) value); return true;
-            case "saslMechanism": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSaslMechanism((java.lang.String) value); return true;
-            case "securityRealm": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSecurityRealm((java.lang.String) value); return true;
-            case "securityServerName": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSecurityServerName((java.lang.String) value); return true;
-            case "username": getOrCreateConfiguration((InfinispanRemoteComponent) component).setUsername((java.lang.String) value); return true;
             case "autowiredEnabled": ((InfinispanRemoteComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "cacheContainer": getOrCreateConfiguration((InfinispanRemoteComponent) component).setCacheContainer((org.infinispan.client.hotrod.RemoteCacheManager) value); return true;
             case "cacheContainerConfiguration": getOrCreateConfiguration((InfinispanRemoteComponent) component).setCacheContainerConfiguration((org.infinispan.client.hotrod.configuration.Configuration) value); return true;
@@ -527,6 +522,11 @@ public interface InfinispanComponentBuilderFactory {
             case "flags": getOrCreateConfiguration((InfinispanRemoteComponent) component).setFlags((java.lang.String) value); return true;
             case "remappingFunction": getOrCreateConfiguration((InfinispanRemoteComponent) component).setRemappingFunction((java.util.function.BiFunction) value); return true;
             case "resultHeader": getOrCreateConfiguration((InfinispanRemoteComponent) component).setResultHeader((java.lang.String) value); return true;
+            case "password": getOrCreateConfiguration((InfinispanRemoteComponent) component).setPassword((java.lang.String) value); return true;
+            case "saslMechanism": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSaslMechanism((java.lang.String) value); return true;
+            case "securityRealm": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSecurityRealm((java.lang.String) value); return true;
+            case "securityServerName": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSecurityServerName((java.lang.String) value); return true;
+            case "username": getOrCreateConfiguration((InfinispanRemoteComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
         }

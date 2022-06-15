@@ -16,8 +16,6 @@
  */
 package org.apache.camel.main.download;
 
-import org.apache.camel.CamelContext;
-
 /**
  * Maven GAV model
  */
