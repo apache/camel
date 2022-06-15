@@ -54,7 +54,7 @@ public class KinesisDefaultResumeAdapter implements KinesisResumeAdapter, Cachea
         }
 
         final String sequenceNumber = offset.getValue();
-        LOG.info("Resuming from offset {} for key", sequenceNumber, streamName);
+        LOG.info("Resuming from offset {} for key {}", sequenceNumber, streamName);
 
         resumable.shardIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
         resumable.startingSequenceNumber(sequenceNumber);

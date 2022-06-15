@@ -70,8 +70,8 @@ public class DefaultHealthChecksLoader {
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Error during scanning for custom health-checks on classpath due to: " + e.getMessage()
-                     + ". This exception is ignored.");
+            LOG.warn("Error during scanning for custom health-checks on classpath due to: {}. This exception is ignored.",
+                    e.getMessage());
         }
 
         return answer;

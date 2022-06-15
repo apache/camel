@@ -50,7 +50,8 @@ final class SeekUtil {
             for (TopicPartition tp : tps) {
                 long next = consumer.position(tp) + 1;
                 if (!logged) {
-                    LOG.info("Consumer seeking to next offset {} to continue polling next message from topic {} on partition",
+                    LOG.info(
+                            "Consumer seeking to next offset {} to continue polling next message from topic {} on partition {}",
                             next,
                             tp.topic(), tp.partition());
                     logged = true;
