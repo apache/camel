@@ -18,17 +18,17 @@ package org.apache.camel.main;
 
 import java.util.List;
 
-import org.apache.camel.main.download.DependencyUtil;
 import org.apache.camel.main.download.MavenArtifact;
+import org.apache.camel.main.download.MavenDependencyResolver;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class DependencyUtilTest {
+public class MavenDependencyResolverTest {
 
     @Test
     public void testDownload() throws Exception {
         List<String> deps = List.of("org.apache.camel:camel-core:3.17.0");
-        List<MavenArtifact> answer = DependencyUtil.resolveDependenciesViaAether(deps, null, false, false, true);
+        List<MavenArtifact> answer = MavenDependencyResolver.resolveDependenciesViaAether(deps, null, false, false, true);
         Assertions.assertNotNull(answer);
         Assertions.assertTrue(answer.size() > 15);
     }

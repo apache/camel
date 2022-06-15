@@ -17,7 +17,6 @@
 package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.engine.DefaultLanguageResolver;
@@ -27,35 +26,23 @@ import org.apache.camel.tooling.model.LanguageModel;
 /**
  * Auto downloaded needed JARs when resolving languages.
  */
-public final class DependencyDownloaderLanguageResolver extends DefaultLanguageResolver implements CamelContextAware {
+public final class DependencyDownloaderLanguageResolver extends DefaultLanguageResolver {
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private CamelContext camelContext;
-    private final String repos;
-    private final boolean fresh;
+    private final DependencyDownloader downloader;
 
-    public DependencyDownloaderLanguageResolver(CamelContext camelContext, String repos, boolean fresh) {
+    public DependencyDownloaderLanguageResolver(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.repos = repos;
-        this.fresh = fresh;
-    }
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
+        this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
 
     @Override
     public Language resolveLanguage(String name, CamelContext context) {
         LanguageModel model = catalog.languageModel(name);
-        if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getGroupId(), model.getArtifactId(),
+        if (model != null && !downloader.alreadyOnClasspath(model.getGroupId(), model.getArtifactId(),
                 model.getVersion())) {
-            DownloaderHelper.downloadDependency(camelContext, repos, fresh, model.getGroupId(), model.getArtifactId(),
+            downloader.downloadDependency(model.getGroupId(), model.getArtifactId(),
                     model.getVersion());
         }
 

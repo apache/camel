@@ -50,9 +50,9 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
     private final KameletDependencyDownloader downloader;
     private CamelContext camelContext;
 
-    public DependencyDownloaderKamelet(CamelContext camelContext, String repos, boolean fresh) {
+    public DependencyDownloaderKamelet(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.downloader = new KameletDependencyDownloader("yaml", repos, fresh);
+        this.downloader = new KameletDependencyDownloader(camelContext, "yaml");
     }
 
     @Override
@@ -103,28 +103,17 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
     /**
      * To automatic downloaded dependencies that Kamelets requires.
      */
-    private static class KameletDependencyDownloader extends YamlRoutesBuilderLoaderSupport implements CamelContextAware {
+    private static class KameletDependencyDownloader extends YamlRoutesBuilderLoaderSupport {
 
         private static final Logger LOG = LoggerFactory.getLogger(KameletDependencyDownloader.class);
-        private CamelContext camelContext;
+        private final CamelContext camelContext;
+        private final DependencyDownloader downloader;
         private final Set<String> downloaded = new HashSet<>();
-        private final String repos;
-        private final boolean fresh;
 
-        public KameletDependencyDownloader(String extension, String repos, boolean fresh) {
+        public KameletDependencyDownloader(CamelContext camelContext, String extension) {
             super(extension);
-            this.repos = repos;
-            this.fresh = fresh;
-        }
-
-        @Override
-        public CamelContext getCamelContext() {
-            return camelContext;
-        }
-
-        @Override
-        public void setCamelContext(CamelContext camelContext) {
             this.camelContext = camelContext;
+            this.downloader = camelContext.hasService(DependencyDownloader.class);
         }
 
         @Override
@@ -173,8 +162,7 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
             if (!gavs.isEmpty()) {
                 for (String gav : gavs) {
                     MavenGav mg = MavenGav.parseGav(camelContext, gav);
-                    DownloaderHelper.downloadDependency(camelContext, repos, fresh, mg.getGroupId(), mg.getArtifactId(),
-                            mg.getVersion());
+                    downloader.downloadDependency(mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
                     downloaded.add(gav);
                 }
             }
@@ -192,8 +180,7 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
             }
 
             MavenGav mg = MavenGav.parseGav(camelContext, gav);
-            boolean exists
-                    = DownloaderHelper.alreadyOnClasspath(camelContext, mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
+            boolean exists = downloader.alreadyOnClasspath(mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
             // valid if not already on classpath
             return !exists;
         }

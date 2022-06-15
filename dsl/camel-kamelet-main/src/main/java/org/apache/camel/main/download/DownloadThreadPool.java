@@ -17,11 +17,13 @@
 package org.apache.camel.main.download;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -29,9 +31,20 @@ import org.slf4j.Logger;
 /**
  * A basic thread pool that run each download task in their own thread, and LOG download activity during download.
  */
-class DownloadThreadPool {
+class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
 
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private CamelContext camelContext;
+    private volatile ExecutorService executorService;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     public void download(Logger log, Runnable task, String gav) {
         Future<?> future = executorService.submit(task);
@@ -68,4 +81,15 @@ class DownloadThreadPool {
         }
     }
 
+    @Override
+    protected void doBuild() throws Exception {
+        executorService = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "MavenDownload");
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        if (executorService != null) {
+            camelContext.getExecutorServiceManager().shutdown(executorService);
+        }
+    }
 }

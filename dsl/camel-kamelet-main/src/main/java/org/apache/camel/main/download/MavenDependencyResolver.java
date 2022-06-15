@@ -34,9 +34,9 @@ import org.jboss.shrinkwrap.resolver.api.maven.MavenStrategyStage;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenWorkingSession;
 import org.jboss.shrinkwrap.resolver.impl.maven.ConfigurableMavenResolverSystemImpl;
 
-public final class DependencyUtil {
+public final class MavenDependencyResolver {
 
-    private DependencyUtil() {
+    private MavenDependencyResolver() {
     }
 
     public static List<MavenArtifact> resolveDependenciesViaAether(
@@ -52,8 +52,8 @@ public final class DependencyUtil {
             for (String repo : customRepos) {
                 // shrikwrap does not have public API for adding release vs snapshot repos
                 // we need workaround using lower-level APIs and reflection
-                boolean snapshot = repo.equals(DownloaderHelper.APACHE_SNAPSHOT_REPO);
-                boolean central = repo.equals(DownloaderHelper.MAVEN_CENTRAL_REPO);
+                boolean snapshot = repo.equals(MavenDependencyDownloader.APACHE_SNAPSHOT_REPO);
+                boolean central = repo.equals(MavenDependencyDownloader.MAVEN_CENTRAL_REPO);
                 String update = fresh ? RepositoryPolicy.UPDATE_POLICY_ALWAYS : RepositoryPolicy.UPDATE_POLICY_NEVER;
                 RepositoryPolicy releasePolicy = new RepositoryPolicy(!snapshot, update, null);
                 RepositoryPolicy snapshotPolicy = new RepositoryPolicy(snapshot, update, null);
@@ -111,12 +111,9 @@ public final class DependencyUtil {
     }
 
     public static Path getLocalMavenRepo() {
-        return Paths.get((String) System.getProperties()
-                .getOrDefault("maven.repo.local",
-                        System.getProperty("user.home")
-                                                  + File.separator + ".m2" + File.separator
-                                                  + "repository"))
-                .toAbsolutePath();
+        String m2 = System.getProperty("user.home") + File.separator + ".m2" + File.separator + "repository";
+        String dir = System.getProperty("maven.repo.local", m2);
+        return Paths.get(dir).toAbsolutePath();
     }
 
 }

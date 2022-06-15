@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
@@ -24,13 +23,11 @@ import org.apache.camel.util.StringHelper;
 
 public class DependencyDownloaderResourceLoader extends DefaultResourceLoader {
 
-    private final String repos;
-    private final boolean fresh;
+    private final DependencyDownloader downloader;
 
-    public DependencyDownloaderResourceLoader(CamelContext camelContext, String repos, boolean fresh) {
+    public DependencyDownloaderResourceLoader(CamelContext camelContext) {
         super(camelContext);
-        this.repos = repos;
-        this.fresh = fresh;
+        this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
 
     @Override
@@ -39,10 +36,10 @@ public class DependencyDownloaderResourceLoader extends DefaultResourceLoader {
         if ("github".equals(scheme) || "gist".equals(scheme)) {
             if (!hasResourceResolver(scheme)) {
                 // need to download github resolver
-                if (!DownloaderHelper.alreadyOnClasspath(
-                        getCamelContext(), "org.apache.camel", "camel-resourceresolver-github",
+                if (!downloader.alreadyOnClasspath(
+                        "org.apache.camel", "camel-resourceresolver-github",
                         getCamelContext().getVersion())) {
-                    DownloaderHelper.downloadDependency(getCamelContext(), repos, fresh, "org.apache.camel",
+                    downloader.downloadDependency("org.apache.camel",
                             "camel-resourceresolver-github",
                             getCamelContext().getVersion());
                 }

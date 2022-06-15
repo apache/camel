@@ -23,16 +23,13 @@ import org.apache.camel.util.ObjectHelper;
 public final class DependencyDownloaderClassResolver extends DefaultClassResolver {
 
     private final KnownDependenciesResolver knownDependenciesResolver;
-    private final String repos;
-    private final boolean fresh;
+    private final DependencyDownloader downloader;
 
     public DependencyDownloaderClassResolver(CamelContext camelContext,
-                                             KnownDependenciesResolver knownDependenciesResolver,
-                                             String repos, boolean fresh) {
+                                             KnownDependenciesResolver knownDependenciesResolver) {
         super(camelContext);
+        this.downloader = camelContext.hasService(DependencyDownloader.class);
         this.knownDependenciesResolver = knownDependenciesResolver;
-        this.repos = repos;
-        this.fresh = fresh;
     }
 
     @Override
@@ -48,9 +45,9 @@ public final class DependencyDownloaderClassResolver extends DefaultClassResolve
             // okay maybe the class is from a known GAV that we can download first and then load the class
             MavenGav gav = knownDependenciesResolver.mavenGavForClass(name);
             if (gav != null) {
-                if (!DownloaderHelper.alreadyOnClasspath(getCamelContext(), gav.getGroupId(), gav.getArtifactId(),
+                if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(),
                         gav.getVersion())) {
-                    DownloaderHelper.downloadDependency(getCamelContext(), repos, fresh, gav.getGroupId(), gav.getArtifactId(),
+                    downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(),
                             gav.getVersion());
                 }
                 try {

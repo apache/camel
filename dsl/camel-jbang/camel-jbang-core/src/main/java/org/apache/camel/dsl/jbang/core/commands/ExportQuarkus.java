@@ -22,7 +22,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.apache.camel.main.MavenGav;
+import org.apache.camel.main.download.MavenGav;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;

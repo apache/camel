@@ -17,7 +17,6 @@
 package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -29,39 +28,27 @@ import org.apache.camel.tooling.model.ComponentModel;
 /**
  * Auto downloaded needed JARs when resolving components.
  */
-public final class DependencyDownloaderComponentResolver extends DefaultComponentResolver implements CamelContextAware {
+public final class DependencyDownloaderComponentResolver extends DefaultComponentResolver {
 
     private static final String ACCEPTED_STUB_NAMES = "stub,bean,class,kamelet,rest,rest-api,platform-http,vertx-http";
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
-    private CamelContext camelContext;
-    private final String repos;
-    private final boolean fresh;
-    private boolean stub;
+    private final CamelContext camelContext;
+    private final DependencyDownloader downloader;
+    private final boolean stub;
 
-    public DependencyDownloaderComponentResolver(CamelContext camelContext, String repos, boolean fresh, boolean stub) {
+    public DependencyDownloaderComponentResolver(CamelContext camelContext, boolean stub) {
         this.camelContext = camelContext;
-        this.repos = repos;
-        this.fresh = fresh;
+        this.downloader = camelContext.hasService(DependencyDownloader.class);
         this.stub = stub;
-    }
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
     }
 
     @Override
     public Component resolveComponent(String name, CamelContext context) {
         ComponentModel model = catalog.componentModel(name);
-        if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getGroupId(), model.getArtifactId(),
+        if (model != null && !downloader.alreadyOnClasspath(model.getGroupId(), model.getArtifactId(),
                 model.getVersion())) {
-            DownloaderHelper.downloadDependency(camelContext, repos, fresh, model.getGroupId(), model.getArtifactId(),
+            downloader.downloadDependency(model.getGroupId(), model.getArtifactId(),
                     model.getVersion());
         }
 

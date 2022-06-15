@@ -23,16 +23,13 @@ public class DependencyDownloaderPropertyBindingListener implements PropertyBind
 
     private final CamelContext camelContext;
     private final KnownDependenciesResolver knownDependenciesResolver;
-    private final String repos;
-    private final boolean fresh;
+    private final DependencyDownloader downloader;
 
     public DependencyDownloaderPropertyBindingListener(CamelContext camelContext,
-                                                       KnownDependenciesResolver knownDependenciesResolver,
-                                                       String repos, boolean fresh) {
+                                                       KnownDependenciesResolver knownDependenciesResolver) {
         this.camelContext = camelContext;
         this.knownDependenciesResolver = knownDependenciesResolver;
-        this.repos = repos;
-        this.fresh = fresh;
+        this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
 
     @Override
@@ -41,9 +38,9 @@ public class DependencyDownloaderPropertyBindingListener implements PropertyBind
             String s = (String) value;
             MavenGav gav = knownDependenciesResolver.mavenGavForClass(s);
             if (gav != null) {
-                if (!DownloaderHelper.alreadyOnClasspath(camelContext, gav.getGroupId(), gav.getArtifactId(),
+                if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(),
                         gav.getVersion())) {
-                    DownloaderHelper.downloadDependency(camelContext, repos, fresh, gav.getGroupId(), gav.getArtifactId(),
+                    downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(),
                             gav.getVersion());
                 }
             }

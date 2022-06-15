@@ -20,30 +20,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.support.service.ServiceSupport;
 
-public class CommandLineDependencyDownloader extends ServiceSupport implements CamelContextAware {
+public class CommandLineDependencyDownloader extends ServiceSupport {
 
-    private CamelContext camelContext;
+    private final CamelContext camelContext;
+    private final DependencyDownloader downloader;
     private final String dependencies;
-    private final String repos;
-    private final boolean fresh;
 
-    public CommandLineDependencyDownloader(String dependencies, String repos, boolean fresh) {
-        this.dependencies = dependencies;
-        this.repos = repos;
-        this.fresh = fresh;
-    }
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
+    public CommandLineDependencyDownloader(CamelContext camelContext, String dependencies) {
         this.camelContext = camelContext;
+        this.dependencies = dependencies;
+        this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
 
     @Override
@@ -67,7 +55,7 @@ public class CommandLineDependencyDownloader extends ServiceSupport implements C
         if (!gavs.isEmpty()) {
             for (String gav : gavs) {
                 MavenGav mg = MavenGav.parseGav(camelContext, gav);
-                DownloaderHelper.downloadDependency(camelContext, repos, fresh, mg.getGroupId(), mg.getArtifactId(),
+                downloader.downloadDependency(mg.getGroupId(), mg.getArtifactId(),
                         mg.getVersion());
             }
         }
@@ -76,7 +64,7 @@ public class CommandLineDependencyDownloader extends ServiceSupport implements C
     private boolean isValidGav(String gav) {
         MavenGav mg = MavenGav.parseGav(camelContext, gav);
         boolean exists
-                = DownloaderHelper.alreadyOnClasspath(camelContext, mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
+                = downloader.alreadyOnClasspath(mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
         // valid if not already on classpath
         return !exists;
     }

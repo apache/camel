@@ -25,33 +25,70 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * For downloading dependencies.
- */
-public final class DownloaderHelper {
+public class MavenDependencyDownloader extends ServiceSupport implements DependencyDownloader {
 
     public static final String MAVEN_CENTRAL_REPO = "https://repo1.maven.org/maven2/";
     public static final String APACHE_SNAPSHOT_REPO = "https://repository.apache.org/snapshots";
 
-    private static final Logger LOG = LoggerFactory.getLogger(DownloaderHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MavenDependencyDownloader.class);
     private static final String CP = System.getProperty("java.class.path");
 
-    private static final DownloadThreadPool DOWNLOAD_THREAD_POOL = new DownloadThreadPool();
+    private DownloadThreadPool threadPool;
+    private CamelContext camelContext;
+    private DownloadListener downloadListener;
+    private String repos;
+    private boolean fresh;
 
-    private DownloaderHelper() {
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
-    public static void downloadDependency(
-            CamelContext camelContext, String repos, boolean fresh,
-            String groupId, String artifactId, String version) {
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
+    @Override
+    public DownloadListener getDownloadListener() {
+        return downloadListener;
+    }
+
+    @Override
+    public void setDownloadListener(DownloadListener downloadListener) {
+        this.downloadListener = downloadListener;
+    }
+
+    @Override
+    public String getRepos() {
+        return repos;
+    }
+
+    @Override
+    public void setRepos(String repos) {
+        this.repos = repos;
+    }
+
+    @Override
+    public boolean isFresh() {
+        return fresh;
+    }
+
+    @Override
+    public void setFresh(boolean fresh) {
+        this.fresh = fresh;
+    }
+
+    @Override
+    public void downloadDependency(String groupId, String artifactId, String version) {
         // trigger listener
-        DownloadListener listener = camelContext.getExtension(DownloadListener.class);
-        if (listener != null) {
-            listener.onDownloadDependency(groupId, artifactId, version);
+        if (downloadListener != null) {
+            downloadListener.onDownloadDependency(groupId, artifactId, version);
         }
 
         // when running jbang directly then the CP has some existing camel components
@@ -70,7 +107,7 @@ public final class DownloaderHelper {
         }
 
         String gav = groupId + ":" + artifactId + ":" + version;
-        DOWNLOAD_THREAD_POOL.download(LOG, () -> {
+        threadPool.download(LOG, () -> {
             LOG.debug("Downloading: {}", gav);
             List<String> deps = List.of(gav);
             List<String> mavenRepos = new ArrayList<>();
@@ -86,7 +123,8 @@ public final class DownloaderHelper {
                 mavenRepos.add(APACHE_SNAPSHOT_REPO);
             }
 
-            List<MavenArtifact> artifacts = DependencyUtil.resolveDependenciesViaAether(deps, mavenRepos, false, fresh, true);
+            List<MavenArtifact> artifacts
+                    = MavenDependencyResolver.resolveDependenciesViaAether(deps, mavenRepos, false, fresh, true);
             LOG.debug("Resolved {} -> [{}]", gav, artifacts);
 
             DependencyDownloaderClassLoader classLoader
@@ -94,7 +132,7 @@ public final class DownloaderHelper {
             for (MavenArtifact a : artifacts) {
                 File file = a.getFile();
                 // only add to classpath if not already present
-                if (!alreadyOnClasspath(camelContext, a.getGav().getGroupId(), a.getGav().getArtifactId(),
+                if (!alreadyOnClasspath(a.getGav().getGroupId(), a.getGav().getArtifactId(),
                         a.getGav().getVersion())) {
                     classLoader.addFile(file);
                     LOG.trace("Added classpath: {}", a.getGav());
@@ -103,7 +141,7 @@ public final class DownloaderHelper {
         }, gav);
     }
 
-    public static boolean alreadyOnClasspath(CamelContext camelContext, String groupId, String artifactId, String version) {
+    public boolean alreadyOnClasspath(String groupId, String artifactId, String version) {
         // if no artifact then regard this as okay
         if (artifactId == null) {
             return true;
@@ -135,4 +173,15 @@ public final class DownloaderHelper {
         return false;
     }
 
+    @Override
+    protected void doBuild() throws Exception {
+        threadPool = new DownloadThreadPool();
+        threadPool.setCamelContext(camelContext);
+        ServiceHelper.buildService(threadPool);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopAndShutdownService(threadPool);
+    }
 }

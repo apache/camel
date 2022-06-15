@@ -17,7 +17,6 @@
 package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.engine.DefaultDataFormatResolver;
@@ -27,35 +26,23 @@ import org.apache.camel.tooling.model.DataFormatModel;
 /**
  * Auto downloaded needed JARs when resolving data formats.
  */
-public final class DependencyDownloaderDataFormatResolver extends DefaultDataFormatResolver implements CamelContextAware {
+public final class DependencyDownloaderDataFormatResolver extends DefaultDataFormatResolver {
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
-    private CamelContext camelContext;
-    private final String repos;
-    private final boolean fresh;
+    private final CamelContext camelContext;
+    private final DependencyDownloader downloader;
 
-    public DependencyDownloaderDataFormatResolver(CamelContext camelContext, String repos, boolean fresh) {
+    public DependencyDownloaderDataFormatResolver(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.repos = repos;
-        this.fresh = fresh;
-    }
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
+        this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
 
     @Override
     public DataFormat createDataFormat(String name, CamelContext context) {
         DataFormatModel model = catalog.dataFormatModel(name);
-        if (model != null && !DownloaderHelper.alreadyOnClasspath(camelContext, model.getGroupId(), model.getArtifactId(),
+        if (model != null && !downloader.alreadyOnClasspath(model.getGroupId(), model.getArtifactId(),
                 model.getVersion())) {
-            DownloaderHelper.downloadDependency(camelContext, repos, fresh, model.getGroupId(), model.getArtifactId(),
+            downloader.downloadDependency(model.getGroupId(), model.getArtifactId(),
                     model.getVersion());
         }
         return super.createDataFormat(name, context);

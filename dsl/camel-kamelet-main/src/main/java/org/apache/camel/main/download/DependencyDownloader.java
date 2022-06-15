@@ -24,6 +24,13 @@ import org.apache.camel.StaticService;
  */
 public interface DependencyDownloader extends CamelContextAware, StaticService {
 
+    DownloadListener getDownloadListener();
+
+    /**
+     * Sets a listener to capture download activity
+     */
+    void setDownloadListener(DownloadListener downloadListener);
+
     String getRepos();
 
     /**
@@ -46,5 +53,15 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      * @param version    maven version
      */
     void downloadDependency(String groupId, String artifactId, String version);
+
+    /**
+     * Checks whether the dependency is already on the classpath
+     *
+     * @param  groupId    maven group id
+     * @param  artifactId maven artifact id
+     * @param  version    maven version
+     * @return            true if already on classpath, false if not.
+     */
+    boolean alreadyOnClasspath(String groupId, String artifactId, String version);
 
 }

@@ -22,20 +22,18 @@ import org.apache.camel.spi.DependencyStrategy;
 public class DependencyDownloaderStrategy implements DependencyStrategy {
 
     private final CamelContext camelContext;
-    private final String repos;
-    private final boolean fresh;
+    private final DependencyDownloader downloader;
 
-    public DependencyDownloaderStrategy(CamelContext camelContext, String repos, boolean fresh) {
+    public DependencyDownloaderStrategy(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.repos = repos;
-        this.fresh = fresh;
+        this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
 
     @Override
     public void onDependency(String dependency) {
         MavenGav gav = MavenGav.parseGav(camelContext, dependency);
-        if (!DownloaderHelper.alreadyOnClasspath(camelContext, gav.getGroupId(), gav.getArtifactId(), gav.getVersion())) {
-            DownloaderHelper.downloadDependency(camelContext, repos, fresh, gav.getGroupId(), gav.getArtifactId(),
+        if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(), gav.getVersion())) {
+            downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(),
                     gav.getVersion());
         }
     }
