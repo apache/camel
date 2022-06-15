@@ -82,14 +82,14 @@ public class MinaConsumer extends DefaultConsumer {
         String protocol = configuration.getProtocol();
         if (protocol.equals("tcp")) {
             if (configuration.isClientMode()) {
-                setupClientSocketProtocol(protocol, configuration);
+                setupClientSocketProtocol(configuration);
             } else {
-                setupSocketProtocol(protocol, configuration);
+                setupSocketProtocol(configuration);
             }
         } else if (configuration.isDatagramProtocol()) {
-            setupDatagramProtocol(protocol, configuration);
+            setupDatagramProtocol(configuration);
         } else if (protocol.equals("vm")) {
-            setupVmProtocol(protocol, configuration);
+            setupVmProtocol(configuration);
         }
     }
 
@@ -149,7 +149,7 @@ public class MinaConsumer extends DefaultConsumer {
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected void setupVmProtocol(String uri, MinaConfiguration configuration) {
+    protected void setupVmProtocol(MinaConfiguration configuration) {
 
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
@@ -169,7 +169,7 @@ public class MinaConsumer extends DefaultConsumer {
         }
     }
 
-    protected void setupSocketProtocol(String uri, MinaConfiguration configuration) throws Exception {
+    protected void setupSocketProtocol(MinaConfiguration configuration) throws Exception {
         LOG.debug("createSocketEndpoint");
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
@@ -203,7 +203,7 @@ public class MinaConsumer extends DefaultConsumer {
         }
     }
 
-    protected void setupClientSocketProtocol(String uri, MinaConfiguration configuration) throws Exception {
+    protected void setupClientSocketProtocol(MinaConfiguration configuration) throws Exception {
         boolean minaLogger = configuration.isMinaLogger();
         long timeout = configuration.getTimeout();
         List<IoFilter> filters = configuration.getFilters();
@@ -267,7 +267,7 @@ public class MinaConsumer extends DefaultConsumer {
         }
     }
 
-    protected void setupDatagramProtocol(String uri, MinaConfiguration configuration) {
+    protected void setupDatagramProtocol(MinaConfiguration configuration) {
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
 
