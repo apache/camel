@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit testing using different encodings with the TCP protocol.
@@ -35,12 +35,7 @@ public class MinaEncodingTest extends BaseMinaTest {
     @Test
     public void testTCPEncodeUTF8InputIsBytes() throws Exception {
         final String uri = String.format("mina:tcp://localhost:%1$s?encoding=UTF-8&sync=false", getPort());
-        context.addRoutes(new RouteBuilder() {
-
-            public void configure() {
-                from(uri).to("mock:result");
-            }
-        });
+        context.addRoutes(getBuilder(uri));
 
         MockEndpoint endpoint = getMockEndpoint("mock:result");
 
@@ -57,12 +52,7 @@ public class MinaEncodingTest extends BaseMinaTest {
     @Test
     public void testTCPEncodeUTF8InputIsString() throws Exception {
         final String uri = String.format("mina:tcp://localhost:%1$s?encoding=UTF-8&sync=false", getPort());
-        context.addRoutes(new RouteBuilder() {
-
-            public void configure() {
-                from(uri).to("mock:result");
-            }
-        });
+        context.addRoutes(getBuilder(uri));
 
         MockEndpoint endpoint = getMockEndpoint("mock:result");
 
@@ -79,12 +69,7 @@ public class MinaEncodingTest extends BaseMinaTest {
     @Test
     public void testTCPEncodeUTF8TextLineInputIsString() throws Exception {
         final String uri = String.format("mina:tcp://localhost:%1$s?textline=true&encoding=UTF-8&sync=false", getPort());
-        context.addRoutes(new RouteBuilder() {
-
-            public void configure() {
-                from(uri).to("mock:result");
-            }
-        });
+        context.addRoutes(getBuilder(uri));
 
         MockEndpoint endpoint = getMockEndpoint("mock:result");
 
@@ -103,12 +88,7 @@ public class MinaEncodingTest extends BaseMinaTest {
     @Test
     public void testUDPEncodeUTF8InputIsBytes() throws Exception {
         final String uri = String.format("mina:udp://localhost:%1$s?encoding=UTF-8&sync=false", getPort());
-        context.addRoutes(new RouteBuilder() {
-
-            public void configure() {
-                from(uri).to("mock:result");
-            }
-        });
+        context.addRoutes(getBuilder(uri));
 
         MockEndpoint endpoint = getMockEndpoint("mock:result");
 
@@ -125,12 +105,7 @@ public class MinaEncodingTest extends BaseMinaTest {
     @Test
     public void testUDPEncodeUTF8InputIsString() throws Exception {
         final String uri = String.format("mina:udp://localhost:%1$s?encoding=UTF-8&sync=false", getPort());
-        context.addRoutes(new RouteBuilder() {
-
-            public void configure() {
-                from(uri).to("mock:result");
-            }
-        });
+        context.addRoutes(getBuilder(uri));
 
         MockEndpoint endpoint = getMockEndpoint("mock:result");
 
@@ -184,17 +159,17 @@ public class MinaEncodingTest extends BaseMinaTest {
     public void testInvalidEncoding() {
         final String uri = String.format("mina:tcp://localhost:%1$s?textline=true&encoding=XXX&sync=false", getPort());
 
-        try {
-            context.addRoutes(new RouteBuilder() {
+        Exception e = assertThrows(Exception.class, () -> context.addRoutes(getBuilder(uri)),
+                "Should have thrown a ResolveEndpointFailedException due invalid encoding parameter");
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The encoding: XXX is not supported", iae.getMessage());
+    }
 
-                public void configure() {
-                    from(uri).to("mock:result");
-                }
-            });
-            fail("Should have thrown a ResolveEndpointFailedException due invalid encoding parameter");
-        } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("The encoding: XXX is not supported", iae.getMessage());
-        }
+    private RouteBuilder getBuilder(String uri) {
+        return new RouteBuilder() {
+            public void configure() {
+                from(uri).to("mock:result");
+            }
+        };
     }
 }

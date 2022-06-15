@@ -21,8 +21,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * For testing various minor holes that hasn't been covered by other unit tests.
@@ -31,24 +31,21 @@ public class MinaComponentTest extends CamelTestSupport {
 
     @Test
     public void testUnknownProtocol() {
-        try {
-            template.sendBody("mina:xxx://localhost:8080", "mina:xxx://localhost:8080");
-            fail("Should have thrown a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException, "Should be an IAE exception");
-            assertEquals("Unrecognised MINA protocol: xxx for uri: mina://xxx://localhost:8080", e.getCause().getMessage());
-        }
+        Exception e = assertThrows(ResolveEndpointFailedException.class,
+                () -> template.sendBody("mina:xxx://localhost:8080", "mina:xxx://localhost:8080"),
+                "Should have thrown a ResolveEndpointFailedException");
+
+        assertTrue(e.getCause() instanceof IllegalArgumentException, "Should be an IAE exception");
+        assertEquals("Unrecognised MINA protocol: xxx for uri: mina://xxx://localhost:8080", e.getCause().getMessage());
     }
 
     @Test
     public void testMistypedProtocol() {
-        try {
-            // the protocol is mistyped as a colon is missing after tcp
-            template.sendBody("mina:tcp//localhost:8080", "mina:tcp//localhost:8080");
-            fail("Should have thrown a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException, "Should be an IAE exception");
-            assertEquals("Unrecognised MINA protocol: null for uri: mina://tcp//localhost:8080", e.getCause().getMessage());
-        }
+        Exception e = assertThrows(ResolveEndpointFailedException.class,
+                () -> template.sendBody("mina:tcp//localhost:8080", "mina:tcp//localhost:8080"),
+                "Should have thrown a ResolveEndpointFailedException");
+
+        assertTrue(e.getCause() instanceof IllegalArgumentException, "Should be an IAE exception");
+        assertEquals("Unrecognised MINA protocol: null for uri: mina://tcp//localhost:8080", e.getCause().getMessage());
     }
 }

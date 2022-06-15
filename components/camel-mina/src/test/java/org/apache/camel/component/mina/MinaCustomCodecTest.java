@@ -35,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test with custom codec.
@@ -66,21 +65,19 @@ public class MinaCustomCodecTest extends BaseMinaTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        try {
-            template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#failingCodec", getPort()),
-                    "Hello World");
-            fail("Expecting that decode of result fails");
-        } catch (Exception e) {
-            assertTrue(e instanceof CamelExecutionException);
-            assertNotNull(e.getCause());
-            Throwable rootCause = e;
-            while (rootCause.getCause() != null) {
-                rootCause = rootCause.getCause();
-            }
-            assertTrue(rootCause instanceof IllegalArgumentException);
-            assertTrue(rootCause.getMessage().contains("Something went wrong in decode"));
-        }
+        Exception e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&codec=#failingCodec", getPort()),
+                        "Hello World"),
+                "Expecting that decode of result fails");
 
+        assertTrue(e instanceof CamelExecutionException);
+        assertNotNull(e.getCause());
+        Throwable rootCause = e;
+        while (rootCause.getCause() != null) {
+            rootCause = rootCause.getCause();
+        }
+        assertTrue(rootCause instanceof IllegalArgumentException);
+        assertTrue(rootCause.getMessage().contains("Something went wrong in decode"));
     }
 
     @Test
