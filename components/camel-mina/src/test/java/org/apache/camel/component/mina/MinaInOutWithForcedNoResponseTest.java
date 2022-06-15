@@ -55,14 +55,14 @@ public class MinaInOutWithForcedNoResponseTest extends BaseMinaTest {
                 port1 = getPort();
                 port2 = getNextPort();
 
-                from("mina:tcp://localhost:" + port1 + "?sync=true")
+                fromF("mina:tcp://localhost:%d?sync=true", port1)
                         .choice()
                         .when(body().isEqualTo("Woodbine"))
                         .transform(constant("Hello Chad"))
                         .otherwise()
                         .transform(constant(null));
 
-                from("mina:tcp://localhost:" + port2 + "?sync=true&disconnectOnNoReply=false&noReplyLogLevel=OFF").choice()
+                fromF("mina:tcp://localhost:%d?sync=true&disconnectOnNoReply=false&noReplyLogLevel=OFF", port2).choice()
                         .when(body().isEqualTo("Woodbine"))
                         .transform(constant("Hello Chad")).otherwise()
                         .transform(constant(null));

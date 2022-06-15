@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * To test InOut exchange for the UDP protocol.
@@ -38,7 +37,6 @@ public class MinaUdpWithInOutUsingPlainSocketTest extends BaseMinaTest {
     @Test
     public void testSendAndReceiveOnce() throws Exception {
         String out = sendAndReceiveUdpMessages("World");
-        assertNotNull("should receive data", out);
         assertEquals("Hello World", out);
     }
 

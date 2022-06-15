@@ -42,18 +42,15 @@ public class MinaSslContextParametersUdpTest extends BaseMinaTest {
     }
 
     protected void sendUdpMessages() throws Exception {
-        DatagramSocket socket = new DatagramSocket();
-        try {
+        try (DatagramSocket socket = new DatagramSocket()) {
             InetAddress address = InetAddress.getByName("127.0.0.1");
             for (int i = 0; i < messageCount; i++) {
-                String text = "Hello Message: " + Integer.toString(i);
+                String text = "Hello Message: " + i;
                 byte[] data = text.getBytes();
 
                 DatagramPacket packet = new DatagramPacket(data, data.length, address, getPort());
                 socket.send(packet);
             }
-        } finally {
-            socket.close();
         }
     }
 
@@ -67,8 +64,8 @@ public class MinaSslContextParametersUdpTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from("mina:udp://127.0.0.1:" + getPort()
-                     + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters").to("mock:result");
+                fromF("mina:udp://127.0.0.1:%d?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
+                        getPort()).to("mock:result");
             }
         };
     }

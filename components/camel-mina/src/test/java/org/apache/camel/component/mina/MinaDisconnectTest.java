@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -41,12 +39,9 @@ public class MinaDisconnectTest extends BaseMinaTest {
 
             public void configure() {
                 fromF("mina:tcp://localhost:%1$s?sync=true&textline=true&disconnect=true", getPort())
-                        .process(new Processor() {
-
-                            public void process(Exchange exchange) {
-                                String body = exchange.getIn().getBody(String.class);
-                                exchange.getMessage().setBody("Bye " + body);
-                            }
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            exchange.getMessage().setBody("Bye " + body);
                         });
             }
         };

@@ -42,18 +42,15 @@ public class MinaUdpConcurrentTest extends BaseMinaTest {
     }
 
     protected void sendUdpMessages() throws Exception {
-        DatagramSocket socket = new DatagramSocket();
-        try {
+        try (DatagramSocket socket = new DatagramSocket()) {
             InetAddress address = InetAddress.getByName("127.0.0.1");
             for (int i = 0; i < messageCount; i++) {
-                String text = "Hello Message: " + Integer.toString(i);
+                String text = "Hello Message: " + i;
                 byte[] data = text.getBytes();
 
                 DatagramPacket packet = new DatagramPacket(data, data.length, address, getPort());
                 socket.send(packet);
             }
-        } finally {
-            socket.close();
         }
     }
 
@@ -62,7 +59,7 @@ public class MinaUdpConcurrentTest extends BaseMinaTest {
         return new RouteBuilder() {
             public void configure() {
                 // we use un-ordered to allow processing the UDP messages in any order from same client
-                from("mina:udp://127.0.0.1:" + getPort() + "?sync=false&minaLogger=true&orderedThreadPoolExecutor=false")
+                fromF("mina:udp://127.0.0.1:%d?sync=false&minaLogger=true&orderedThreadPoolExecutor=false", getPort())
                         .delay(1000)
                         .to("mock:result");
             }

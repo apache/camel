@@ -50,12 +50,9 @@ public class MinaTcpWithInOutTest extends BaseMinaTest {
 
             @Override
             public void configure() {
-                from("direct:x").to(uri).process(new Processor() {
-
-                    public void process(Exchange e) {
-                        receivedExchange = e;
-                        latch.countDown();
-                    }
+                from("direct:x").to(uri).process(e -> {
+                    receivedExchange = e;
+                    latch.countDown();
                 });
             }
         });

@@ -90,7 +90,7 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends BaseMinaTest {
     }
 
     private String sendAndReceive(String input, int port) throws IOException {
-        byte buf[] = new byte[128];
+        byte[] buf = new byte[128];
 
         Socket soc = new Socket();
         soc.connect(new InetSocketAddress("localhost", port));
