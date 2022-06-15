@@ -1,1 +1,0 @@
-../../../../../dsl/camel-uberjar-main/src/main/docs/uberjar-main.adoc
