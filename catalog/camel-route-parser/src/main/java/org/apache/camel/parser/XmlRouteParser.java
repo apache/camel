@@ -97,7 +97,7 @@ public final class XmlRouteParser {
                 }
 
                 // parse the route and gather all its EIPs
-                List<CamelNodeDetails> tree = parser.parseCamelRouteTree(route, routeId, node, baseDir, fullyQualifiedFileName);
+                List<CamelNodeDetails> tree = parser.parseCamelRouteTree(route, node, fullyQualifiedFileName);
                 answer.addAll(tree);
             }
         }

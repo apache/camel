@@ -167,7 +167,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                     // we should only parse java classes (not interfaces and enums etc)
                     if (out instanceof JavaClassSource) {
                         JavaClassSource clazz = (JavaClassSource) out;
-                        List<CamelNodeDetails> result = RouteBuilderParser.parseRouteBuilderTree(clazz, baseDir, fqn, true);
+                        List<CamelNodeDetails> result = RouteBuilderParser.parseRouteBuilderTree(clazz, fqn, true);
                         routeTrees.addAll(result);
                     }
                 } catch (Exception e) {

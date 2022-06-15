@@ -29,7 +29,7 @@ import org.apache.camel.parser.model.RestVerbDetails;
 
 public final class CamelXmlRestDslParserHelper {
 
-    public List<RestConfigurationDetails> parseRestConfiguration(Node xmlNode, String baseDir, String fullyQualifiedFileName) {
+    public List<RestConfigurationDetails> parseRestConfiguration(Node xmlNode, String fullyQualifiedFileName) {
 
         List<RestConfigurationDetails> answer = new ArrayList<>();
 
@@ -41,7 +41,7 @@ public final class CamelXmlRestDslParserHelper {
         return answer;
     }
 
-    public List<RestServiceDetails> parseRestService(Node xmlNode, String baseDir, String fullyQualifiedFileName) {
+    public List<RestServiceDetails> parseRestService(Node xmlNode, String fullyQualifiedFileName) {
 
         List<RestServiceDetails> answer = new ArrayList<>();
 

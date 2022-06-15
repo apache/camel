@@ -237,7 +237,7 @@ public final class CamelJavaParserHelper {
                 List args = mi.arguments();
                 if (args != null) {
                     for (Object arg : args) {
-                        if (isValidArgument(name, arg)) {
+                        if (isValidArgument(arg)) {
                             String routeId = getLiteralValue(clazz, block, (Expression) arg);
                             if (!Strings.isNullOrEmpty(routeId)) {
                                 int position = ((Expression) arg).getStartPosition();
@@ -257,7 +257,7 @@ public final class CamelJavaParserHelper {
                 List args = mi.arguments();
                 if (args != null) {
                     for (Object arg : args) {
-                        if (isValidArgument(name, arg)) {
+                        if (isValidArgument(arg)) {
                             extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
                         }
                     }
@@ -268,7 +268,7 @@ public final class CamelJavaParserHelper {
                 // the first argument is where the uri is
                 if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
-                    if (isValidArgument(name, arg)) {
+                    if (isValidArgument(arg)) {
                         extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
                     }
                 }
@@ -278,7 +278,7 @@ public final class CamelJavaParserHelper {
                 // the first argument is where the uri is
                 if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
-                    if (isValidArgument(name, arg)) {
+                    if (isValidArgument(arg)) {
                         extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
                     }
                 }
@@ -288,7 +288,7 @@ public final class CamelJavaParserHelper {
                 // the first argument is where the uri is
                 if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
-                    if (isValidArgument(name, arg)) {
+                    if (isValidArgument(arg)) {
                         extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
                     }
                 }
@@ -301,7 +301,7 @@ public final class CamelJavaParserHelper {
                 if (args != null) {
                     for (Object arg : args) {
                         // skip if the arg is a boolean, ExchangePattern or Iterateable, type
-                        if (isValidArgument(name, arg)) {
+                        if (isValidArgument(arg)) {
                             extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
                         }
                     }
@@ -312,7 +312,7 @@ public final class CamelJavaParserHelper {
                 // the first argument is where the uri is
                 if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
-                    if (isValidArgument(name, arg)) {
+                    if (isValidArgument(arg)) {
                         extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
                     }
                 }
@@ -322,7 +322,7 @@ public final class CamelJavaParserHelper {
                 // the first argument is where the uri is
                 if (args != null && !args.isEmpty()) {
                     Object arg = args.get(0);
-                    if (isValidArgument(name, arg)) {
+                    if (isValidArgument(arg)) {
                         extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
                     }
                 }
@@ -330,7 +330,7 @@ public final class CamelJavaParserHelper {
         }
     }
 
-    private static boolean isValidArgument(String node, Object arg) {
+    private static boolean isValidArgument(Object arg) {
         // skip boolean argument, as toD can accept a boolean value
         if (arg instanceof BooleanLiteral) {
             return false;
