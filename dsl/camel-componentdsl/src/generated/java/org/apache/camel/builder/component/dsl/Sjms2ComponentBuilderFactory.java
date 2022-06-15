@@ -150,6 +150,23 @@ public interface Sjms2ComponentBuilderFactory {
             return this;
         }
         /**
+         * Specifies the JMS Exception Listener that is to be notified of any
+         * underlying JMS exceptions.
+         * 
+         * The option is a: &lt;code&gt;javax.jms.ExceptionListener&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param exceptionListener the value to set
+         * @return the dsl builder
+         */
+        default Sjms2ComponentBuilder exceptionListener(
+                javax.jms.ExceptionListener exceptionListener) {
+            doSetProperty("exceptionListener", exceptionListener);
+            return this;
+        }
+        /**
          * Pluggable strategy for encoding and decoding JMS keys so they can be
          * compliant with the JMS specification. Camel provides one
          * implementation out of the box: default. The default strategy will
@@ -284,6 +301,7 @@ public interface Sjms2ComponentBuilderFactory {
             case "lazyStartProducer": ((Sjms2Component) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((Sjms2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "destinationCreationStrategy": ((Sjms2Component) component).setDestinationCreationStrategy((org.apache.camel.component.sjms.jms.DestinationCreationStrategy) value); return true;
+            case "exceptionListener": ((Sjms2Component) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
             case "jmsKeyFormatStrategy": ((Sjms2Component) component).setJmsKeyFormatStrategy((org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy) value); return true;
             case "messageCreatedStrategy": ((Sjms2Component) component).setMessageCreatedStrategy((org.apache.camel.component.sjms.jms.MessageCreatedStrategy) value); return true;
             case "recoveryInterval": ((Sjms2Component) component).setRecoveryInterval((long) value); return true;

@@ -29,6 +29,8 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "connectionFactory": target.setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
         case "destinationcreationstrategy":
         case "destinationCreationStrategy": target.setDestinationCreationStrategy(property(camelContext, org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class, value)); return true;
+        case "exceptionlistener":
+        case "exceptionListener": target.setExceptionListener(property(camelContext, javax.jms.ExceptionListener.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "jmskeyformatstrategy":
@@ -63,6 +65,8 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "connectionFactory": return javax.jms.ConnectionFactory.class;
         case "destinationcreationstrategy":
         case "destinationCreationStrategy": return org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class;
+        case "exceptionlistener":
+        case "exceptionListener": return javax.jms.ExceptionListener.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "jmskeyformatstrategy":
@@ -93,6 +97,8 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "connectionFactory": return target.getConnectionFactory();
         case "destinationcreationstrategy":
         case "destinationCreationStrategy": return target.getDestinationCreationStrategy();
+        case "exceptionlistener":
+        case "exceptionListener": return target.getExceptionListener();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "jmskeyformatstrategy":

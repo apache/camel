@@ -149,6 +149,23 @@ public interface SjmsComponentBuilderFactory {
             return this;
         }
         /**
+         * Specifies the JMS Exception Listener that is to be notified of any
+         * underlying JMS exceptions.
+         * 
+         * The option is a: &lt;code&gt;javax.jms.ExceptionListener&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param exceptionListener the value to set
+         * @return the dsl builder
+         */
+        default SjmsComponentBuilder exceptionListener(
+                javax.jms.ExceptionListener exceptionListener) {
+            doSetProperty("exceptionListener", exceptionListener);
+            return this;
+        }
+        /**
          * Pluggable strategy for encoding and decoding JMS keys so they can be
          * compliant with the JMS specification. Camel provides one
          * implementation out of the box: default. The default strategy will
@@ -283,6 +300,7 @@ public interface SjmsComponentBuilderFactory {
             case "lazyStartProducer": ((SjmsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SjmsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "destinationCreationStrategy": ((SjmsComponent) component).setDestinationCreationStrategy((org.apache.camel.component.sjms.jms.DestinationCreationStrategy) value); return true;
+            case "exceptionListener": ((SjmsComponent) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
             case "jmsKeyFormatStrategy": ((SjmsComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy) value); return true;
             case "messageCreatedStrategy": ((SjmsComponent) component).setMessageCreatedStrategy((org.apache.camel.component.sjms.jms.MessageCreatedStrategy) value); return true;
             case "recoveryInterval": ((SjmsComponent) component).setRecoveryInterval((long) value); return true;
