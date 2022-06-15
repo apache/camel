@@ -7,7 +7,6 @@
 :supportlevel: Preview
 :component-header: Only producer is supported
 //Manually maintained attributes
-:group: Azure
 :camel-spring-boot-name: hashicorp-vault
 
 *Since Camel {since}*
