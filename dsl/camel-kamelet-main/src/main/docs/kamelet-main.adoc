@@ -4,7 +4,7 @@
 :artifactid: camel-kamelet-main
 :description: Main to run Kamelet standalone
 :since: 3.11
-:supportlevel: Experimental
+:supportlevel: Preview
 //Manually maintained attributes
 :group: DSL
 

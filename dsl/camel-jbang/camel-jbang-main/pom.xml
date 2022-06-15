@@ -38,7 +38,7 @@
     <properties>
         <firstVersion>3.12.0</firstVersion>
         <label>jbang</label>
-        <supportLevel>Experimental</supportLevel>
+        <supportLevel>Preview</supportLevel>
         <checkstyle.skip>true</checkstyle.skip>
         <dist.dir>dist</dist.dir>
     </properties>

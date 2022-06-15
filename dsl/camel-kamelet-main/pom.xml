@@ -35,8 +35,8 @@
 
     <properties>
         <firstVersion>3.11.0</firstVersion>
-        <supportLevel>Experimental</supportLevel>
         <label>jbang</label>
+        <supportLevel>Preview</supportLevel>
     </properties>
 
     <dependencies>
