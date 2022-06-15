@@ -64,7 +64,7 @@ public class MessageIOSessionTest extends BaseMinaTest {
 
             @Override
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?textline=true", getPort()))
+                fromF("mina:tcp://localhost:%1$s?textline=true", getPort())
                         .to("log://mytest")
                         .to("mock:result");
             }

@@ -38,7 +38,7 @@ public class MinaVMTextlineProtocolTest extends BaseMinaTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(String.format("mina:vm://localhost:%1$s?textline=true&sync=false", getPort()))
+                fromF("mina:vm://localhost:%1$s?textline=true&sync=false", getPort())
                         .to("log:before?showAll=true")
                         .to("mock:result")
                         .to("log:after?showAll=true");

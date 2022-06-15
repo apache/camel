@@ -30,7 +30,7 @@ public class MinaSendToProcessorTest extends BaseMinaTest {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to(String.format("mina:tcp://localhost:%1$s?sync=false&lazySessionCreation=false", getPort()));
+                        .toF("mina:tcp://localhost:%1$s?sync=false&lazySessionCreation=false", getPort());
             }
         });
 
@@ -48,7 +48,7 @@ public class MinaSendToProcessorTest extends BaseMinaTest {
 
             @Override
             public void configure() {
-                from("direct:start").to(String.format("mina:tcp://localhost:%1$s?sync=false", getPort()));
+                from("direct:start").toF("mina:tcp://localhost:%1$s?sync=false", getPort());
             }
         });
 

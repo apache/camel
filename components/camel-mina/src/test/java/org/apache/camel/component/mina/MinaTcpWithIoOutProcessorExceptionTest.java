@@ -47,7 +47,7 @@ public class MinaTcpWithIoOutProcessorExceptionTest extends BaseMinaTest {
                 // use no delay for fast unit testing
                 errorHandler(defaultErrorHandler().maximumRedeliveries(2));
 
-                from(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort())).process(new Processor() {
+                fromF("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()).process(new Processor() {
 
                     public void process(Exchange e) {
                         assertEquals("Hello World", e.getIn().getBody(String.class));

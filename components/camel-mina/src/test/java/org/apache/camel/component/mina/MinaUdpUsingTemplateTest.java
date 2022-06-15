@@ -105,7 +105,7 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(String.format("mina:udp://127.0.0.1:%1$s?sync=false&minaLogger=true", getPort()))
+                fromF("mina:udp://127.0.0.1:%1$s?sync=false&minaLogger=true", getPort())
                         .to("mock:result");
             }
         };

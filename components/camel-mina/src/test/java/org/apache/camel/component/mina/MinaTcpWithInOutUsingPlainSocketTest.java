@@ -134,7 +134,7 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()))
+                fromF("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort())
                         .process(e -> {
                             String in = e.getIn().getBody(String.class);
                             if ("force-null-out-body".equals(in)) {

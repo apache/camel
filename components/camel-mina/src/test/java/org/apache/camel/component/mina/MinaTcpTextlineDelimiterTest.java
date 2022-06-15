@@ -40,7 +40,7 @@ public class MinaTcpTextlineDelimiterTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?sync=false&textline=true&textlineDelimiter=UNIX", getPort()))
+                fromF("mina:tcp://localhost:%1$s?sync=false&textline=true&textlineDelimiter=UNIX", getPort())
                         .to("log:before?showAll=true")
                         .to("mock:result")
                         .to("log:after?showAll=true");

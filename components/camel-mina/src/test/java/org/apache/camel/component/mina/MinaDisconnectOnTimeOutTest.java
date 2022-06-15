@@ -60,7 +60,7 @@ public class MinaDisconnectOnTimeOutTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true&timeout=30000", getPort()))
+                fromF("mina:tcp://localhost:%1$s?textline=true&sync=true&timeout=30000", getPort())
                         .process(e -> {
                             int sleep = e.getMessage().getBody(Integer.class);
                             Thread.sleep(sleep);

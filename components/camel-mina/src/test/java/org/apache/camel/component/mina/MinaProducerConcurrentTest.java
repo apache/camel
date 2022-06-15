@@ -79,7 +79,7 @@ public class MinaProducerConcurrentTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true", getPort())).process(exchange -> {
+                fromF("mina:tcp://localhost:%1$s?sync=true", getPort()).process(exchange -> {
                     String body = exchange.getIn().getBody(String.class);
                     exchange.getMessage().setBody("Bye " + body);
                 }).to("mock:result");
