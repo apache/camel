@@ -49,7 +49,6 @@
         <module>camel-jsh-dsl</module>
         <module>camel-kotlin-dsl</module>
         <module>camel-kamelet-main</module>
-        <module>camel-uberjar-main</module>
         <module>camel-jbang</module>
     </modules>
 
