@@ -24,6 +24,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.mina.core.service.IoHandlerAdapter;
@@ -40,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MinaUdpNoCamelTest {
@@ -70,8 +72,9 @@ public class MinaUdpNoCamelTest {
         for (int i = 0; i < 222; i++) {
             client.sendNoMina("Hello Mina " + i + System.lineSeparator());
         }
-        Thread.sleep(2000);
-        assertEquals(222, server.numMessagesReceived);
+
+        await().atMost(2, TimeUnit.SECONDS)
+                        .untilAsserted(() -> assertEquals(222, server.numMessagesReceived));
     }
 
     /*
