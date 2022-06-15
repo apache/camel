@@ -78,7 +78,7 @@ public class KeyVaultProducer extends DefaultProducer {
         message.setBody(p);
     }
 
-    private void getSecret(Exchange exchange) throws InvalidPayloadException {
+    private void getSecret(Exchange exchange) {
         final String secretName = exchange.getMessage().getHeader(KeyVaultConstants.SECRET_NAME, String.class);
         if (ObjectHelper.isEmpty(secretName)) {
             throw new IllegalArgumentException("Secret Name must be specified for createSecret Operation");
@@ -89,7 +89,7 @@ public class KeyVaultProducer extends DefaultProducer {
         message.setBody(p.getValue());
     }
 
-    private void deleteSecret(Exchange exchange) throws InvalidPayloadException {
+    private void deleteSecret(Exchange exchange) {
         final String secretName = exchange.getMessage().getHeader(KeyVaultConstants.SECRET_NAME, String.class);
         if (ObjectHelper.isEmpty(secretName)) {
             throw new IllegalArgumentException("Secret Name must be specified for createSecret Operation");
@@ -101,7 +101,7 @@ public class KeyVaultProducer extends DefaultProducer {
         message.setBody(p.getFinalResult());
     }
 
-    private void purgeDeletedSecret(Exchange exchange) throws InvalidPayloadException {
+    private void purgeDeletedSecret(Exchange exchange) {
         final String secretName = exchange.getMessage().getHeader(KeyVaultConstants.SECRET_NAME, String.class);
         if (ObjectHelper.isEmpty(secretName)) {
             throw new IllegalArgumentException("Secret Name must be specified for createSecret Operation");

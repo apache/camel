@@ -38,9 +38,8 @@ public class AliasedX509ExtendedKeyManager extends X509ExtendedKeyManager {
      * 
      * @param  keyAlias   Alias of the key to be selected
      * @param  keyManager Instance of KeyManager to be wrapped
-     * @throws Exception
      */
-    public AliasedX509ExtendedKeyManager(String keyAlias, X509KeyManager keyManager) throws Exception {
+    public AliasedX509ExtendedKeyManager(String keyAlias, X509KeyManager keyManager) {
         this.keyAlias = keyAlias;
         this.keyManager = keyManager;
     }

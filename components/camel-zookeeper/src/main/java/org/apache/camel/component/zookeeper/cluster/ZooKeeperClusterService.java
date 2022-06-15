@@ -225,7 +225,7 @@ public class ZooKeeperClusterService extends AbstractCamelClusterService<ZooKeep
         }
     }
 
-    private CuratorFramework getOrCreateCurator() throws Exception {
+    private CuratorFramework getOrCreateCurator() {
         if (curator == null) {
             curator = configuration.getCuratorFramework();
 

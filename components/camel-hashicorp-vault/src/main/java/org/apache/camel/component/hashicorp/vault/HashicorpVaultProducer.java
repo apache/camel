@@ -18,7 +18,6 @@ package org.apache.camel.component.hashicorp.vault;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -64,14 +63,14 @@ public class HashicorpVaultProducer extends DefaultProducer {
         }
     }
 
-    private void createSecret(Exchange exchange) throws InvalidPayloadException {
+    private void createSecret(Exchange exchange) {
         VaultKeyValueOperations keyValue
                 = getEndpoint().getVaultTemplate().opsForKeyValue(getEndpoint().getConfiguration().getSecretsEngine(),
                         VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
         keyValue.put(getEndpoint().getConfiguration().getSecretPath(), exchange.getMessage().getBody());
     }
 
-    private void getSecret(Exchange exchange) throws InvalidPayloadException {
+    private void getSecret(Exchange exchange) {
         String secretPath;
         if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(HashicorpVaultConstants.SECRET_PATH))) {
             secretPath = exchange.getMessage().getHeader(HashicorpVaultConstants.SECRET_PATH, String.class);
@@ -83,7 +82,7 @@ public class HashicorpVaultProducer extends DefaultProducer {
         exchange.getMessage().setBody(rawSecret.getData());
     }
 
-    private void deleteSecret(Exchange exchange) throws InvalidPayloadException {
+    private void deleteSecret(Exchange exchange) {
         VaultKeyValueOperations keyValue
                 = getEndpoint().getVaultTemplate().opsForKeyValue(getEndpoint().getConfiguration().getSecretsEngine(),
                         VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
