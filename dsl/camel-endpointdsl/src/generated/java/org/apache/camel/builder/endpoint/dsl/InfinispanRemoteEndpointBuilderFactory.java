@@ -221,7 +221,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param password the value to set
          * @return the dsl builder
@@ -235,7 +235,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param saslMechanism the value to set
          * @return the dsl builder
@@ -250,7 +250,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param securityRealm the value to set
          * @return the dsl builder
@@ -265,7 +265,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param securityServerName the value to set
          * @return the dsl builder
@@ -280,7 +280,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param username the value to set
          * @return the dsl builder
@@ -847,7 +847,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param password the value to set
          * @return the dsl builder
@@ -861,7 +861,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param saslMechanism the value to set
          * @return the dsl builder
@@ -876,7 +876,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param securityRealm the value to set
          * @return the dsl builder
@@ -891,7 +891,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param securityServerName the value to set
          * @return the dsl builder
@@ -906,7 +906,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param username the value to set
          * @return the dsl builder
@@ -1202,7 +1202,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param password the value to set
          * @return the dsl builder
@@ -1216,7 +1216,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param saslMechanism the value to set
          * @return the dsl builder
@@ -1231,7 +1231,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param securityRealm the value to set
          * @return the dsl builder
@@ -1246,7 +1246,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param securityServerName the value to set
          * @return the dsl builder
@@ -1261,7 +1261,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group:  security
+         * Group: security
          * 
          * @param username the value to set
          * @return the dsl builder
