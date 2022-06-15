@@ -33,7 +33,7 @@ public final class GitHubHelper {
     private GitHubHelper() {
     }
 
-    public static String asGithubSingleUrl(String url) throws Exception {
+    public static String asGithubSingleUrl(String url) {
         // strip https://github.com/
         url = url.substring(19);
         // https://github.com/apache/camel-k/blob/main/examples/languages/routes.kts
