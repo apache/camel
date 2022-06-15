@@ -31,7 +31,7 @@ You can specify which Camel version to run as shown:
 
 [source,bash]
 ----
-jbang run -Dcamel.jbang.version=3.16.0 camel@apache/camel [command]
+jbang run -Dcamel.jbang.version=3.17.0 camel@apache/camel [command]
 ----
 
 And you can also try bleeding edge development by using SNAPSHOT such as:
@@ -500,7 +500,6 @@ running on port 8080. For example the following route in a file named `server.ya
 
 [source,yaml]
 ----
-#!/usr/bin/env jbang camel@apache/camel run
 - from:
     uri: "platform-http:/hello"
     steps:
@@ -519,7 +518,7 @@ And you can call the HTTP service with:
 
 [source,bash]
 ----
-curl http://localhost:8080/hello
+$ curl http://localhost:8080/hello
 Hello World%
 ----
 
