@@ -72,7 +72,7 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
               description = "Specifies the maximum number of concurrent consumers for continue routing when timeout occurred when using request/reply over JMS.")
     private int replyToOnTimeoutMaxConcurrentConsumers = 1;
 
-    @Metadata(label = "exceptionListener",
+    @Metadata(label = "advanced",
             description = "Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.")
     private ExceptionListener exceptionListener;
 
