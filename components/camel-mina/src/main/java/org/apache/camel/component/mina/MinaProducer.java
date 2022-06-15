@@ -90,11 +90,11 @@ public class MinaProducer extends DefaultProducer {
 
         String protocol = configuration.getProtocol();
         if (protocol.equals("tcp")) {
-            setupSocketProtocol(protocol);
+            setupSocketProtocol();
         } else if (configuration.isDatagramProtocol()) {
-            setupDatagramProtocol(protocol);
+            setupDatagramProtocol();
         } else if (protocol.equals("vm")) {
-            setupVmProtocol(protocol);
+            setupVmProtocol();
         }
         handler = new ResponseHandler();
         connector.setHandler(handler);
@@ -293,7 +293,7 @@ public class MinaProducer extends DefaultProducer {
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected void setupVmProtocol(String uri) {
+    protected void setupVmProtocol() {
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
 
@@ -312,7 +312,7 @@ public class MinaProducer extends DefaultProducer {
         configureCodecFactory("MinaProducer", connector);
     }
 
-    protected void setupSocketProtocol(String uri) throws Exception {
+    protected void setupSocketProtocol() throws Exception {
         boolean minaLogger = configuration.isMinaLogger();
         long timeout = configuration.getTimeout();
         List<IoFilter> filters = configuration.getFilters();
@@ -377,7 +377,7 @@ public class MinaProducer extends DefaultProducer {
         }
     }
 
-    protected void setupDatagramProtocol(String uri) {
+    protected void setupDatagramProtocol() {
         boolean minaLogger = configuration.isMinaLogger();
         boolean transferExchange = configuration.isTransferExchange();
         List<IoFilter> filters = configuration.getFilters();
