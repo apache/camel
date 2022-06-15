@@ -142,6 +142,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningScnGapDetectionGapSizeMin": getOrCreateConfiguration(target).setLogMiningScnGapDetectionGapSizeMin(property(camelContext, long.class, value)); return true;
         case "logminingscngapdetectiontimeintervalmaxms":
         case "logMiningScnGapDetectionTimeIntervalMaxMs": getOrCreateConfiguration(target).setLogMiningScnGapDetectionTimeIntervalMaxMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "logminingsessionmaxms":
+        case "logMiningSessionMaxMs": getOrCreateConfiguration(target).setLogMiningSessionMaxMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "logminingsleeptimedefaultms":
         case "logMiningSleepTimeDefaultMs": getOrCreateConfiguration(target).setLogMiningSleepTimeDefaultMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "logminingsleeptimeincrementms":
@@ -355,6 +357,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningScnGapDetectionGapSizeMin": return long.class;
         case "logminingscngapdetectiontimeintervalmaxms":
         case "logMiningScnGapDetectionTimeIntervalMaxMs": return long.class;
+        case "logminingsessionmaxms":
+        case "logMiningSessionMaxMs": return long.class;
         case "logminingsleeptimedefaultms":
         case "logMiningSleepTimeDefaultMs": return long.class;
         case "logminingsleeptimeincrementms":
@@ -569,6 +573,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningScnGapDetectionGapSizeMin": return getOrCreateConfiguration(target).getLogMiningScnGapDetectionGapSizeMin();
         case "logminingscngapdetectiontimeintervalmaxms":
         case "logMiningScnGapDetectionTimeIntervalMaxMs": return getOrCreateConfiguration(target).getLogMiningScnGapDetectionTimeIntervalMaxMs();
+        case "logminingsessionmaxms":
+        case "logMiningSessionMaxMs": return getOrCreateConfiguration(target).getLogMiningSessionMaxMs();
         case "logminingsleeptimedefaultms":
         case "logMiningSleepTimeDefaultMs": return getOrCreateConfiguration(target).getLogMiningSleepTimeDefaultMs();
         case "logminingsleeptimeincrementms":
