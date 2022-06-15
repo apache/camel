@@ -18,6 +18,7 @@ package org.apache.camel.component.mina;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -45,7 +46,7 @@ public class MinaConverterTest {
     @Test
     public void testToString() throws UnsupportedEncodingException {
         String in = "Hello World \u4f60\u597d";
-        IoBuffer bb = IoBuffer.wrap(in.getBytes("UTF-8"));
+        IoBuffer bb = IoBuffer.wrap(in.getBytes(StandardCharsets.UTF_8));
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
         exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
 
@@ -56,7 +57,7 @@ public class MinaConverterTest {
     @Test
     public void testToStringTwoTimes() throws UnsupportedEncodingException {
         String in = "Hello World \u4f60\u597d";
-        IoBuffer bb = IoBuffer.wrap(in.getBytes("UTF-8"));
+        IoBuffer bb = IoBuffer.wrap(in.getBytes(StandardCharsets.UTF_8));
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
         exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
 
@@ -73,10 +74,11 @@ public class MinaConverterTest {
         byte[] in = "Hello World".getBytes();
         IoBuffer bb = IoBuffer.wrap(in);
 
-        InputStream is = MinaConverter.toInputStream(bb);
-        for (byte b : in) {
-            int out = is.read();
-            assertEquals(b, out);
+        try (InputStream is = MinaConverter.toInputStream(bb)) {
+            for (byte b : in) {
+                int out = is.read();
+                assertEquals(b, out);
+            }
         }
     }
 

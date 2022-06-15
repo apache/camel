@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MinaNoResponseFromServerTest extends BaseMinaTest {
 
     @BindToRegistry("myCodec")
-    private MyCodec codec1 = new MyCodec();
+    private final MyCodec codec1 = new MyCodec();
 
     @Test
     public void testNoResponse() throws Exception {

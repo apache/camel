@@ -20,6 +20,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class MinaComponentWithConfigurationTest extends CamelTestSupport {
@@ -46,8 +47,8 @@ public class MinaComponentWithConfigurationTest extends CamelTestSupport {
 
         e2.getConfiguration().setPort(5566);
 
-        assertEquals(false, e1.getConfiguration().isTextline());
-        assertEquals(false, e2.getConfiguration().isTextline());
+        assertFalse(e1.getConfiguration().isTextline());
+        assertFalse(e2.getConfiguration().isTextline());
         assertEquals(4455, e1.getConfiguration().getPort());
         assertEquals(5566, e2.getConfiguration().getPort());
     }

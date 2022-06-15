@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mina;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -42,10 +44,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MinaCustomCodecTest extends BaseMinaTest {
 
     @BindToRegistry("myCodec")
-    private MyCodec codec1 = new MyCodec();
+    private final MyCodec codec1 = new MyCodec();
 
     @BindToRegistry("failingCodec")
-    private MyCodec codec2 = new MyCodec(true);
+    private final MyCodec codec2 = new MyCodec(true);
 
     @Test
     public void testMyCodec() throws Exception {
@@ -143,7 +145,7 @@ public class MinaCustomCodecTest extends BaseMinaTest {
                 public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out) throws Exception {
                     IoBuffer bb = IoBuffer.allocate(32).setAutoExpand(true);
                     String s = (String) message;
-                    bb.put(s.getBytes("US-ASCII"));
+                    bb.put(s.getBytes(StandardCharsets.US_ASCII));
                     bb.flip();
                     out.write(bb);
                 }
@@ -169,7 +171,7 @@ public class MinaCustomCodecTest extends BaseMinaTest {
                     if (in.remaining() > 0) {
                         byte[] buf = new byte[in.remaining()];
                         in.get(buf);
-                        out.write(new String(buf, "US-ASCII"));
+                        out.write(new String(buf, StandardCharsets.US_ASCII));
                         return true;
                     } else {
                         return false;

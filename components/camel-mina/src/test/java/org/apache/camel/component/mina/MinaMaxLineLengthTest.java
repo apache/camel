@@ -27,16 +27,16 @@ public class MinaMaxLineLengthTest extends BaseMinaTest {
 
     @Test
     public void testSendToServer() {
-        String request = "";
+        StringBuilder request = new StringBuilder(4000);
         for (int c = 0; c < 4000; c++) {
-            request += "A";
+            request.append("A");
         }
 
         // START SNIPPET: e3
         String out = (String) template.requestBody(String.format(
                 "mina:tcp://localhost:%1$s?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000",
-                getPort()), request);
-        assertEquals(request, out);
+                getPort()), request.toString());
+        assertEquals(request.toString(), out);
         // END SNIPPET: e3
     }
 

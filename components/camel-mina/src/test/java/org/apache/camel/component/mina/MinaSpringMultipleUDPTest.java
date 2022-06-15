@@ -40,7 +40,7 @@ public class MinaSpringMultipleUDPTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testMinaSpringProtobufEndpoint() throws Exception {
+    public void testMinaSpringProtobufEndpoint() {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(7);
 
@@ -50,6 +50,6 @@ public class MinaSpringMultipleUDPTest extends CamelSpringTestSupport {
 
         // Sleep for awhile to let the messages go through.
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertMockEndpointsSatisfied());
+                .untilAsserted(this::assertMockEndpointsSatisfied);
     }
 }

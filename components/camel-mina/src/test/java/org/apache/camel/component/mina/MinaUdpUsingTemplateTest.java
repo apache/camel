@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MinaUdpUsingTemplateTest extends BaseMinaTest {
 
-    private int messageCount = 3;
+    private final int messageCount = 3;
 
     @Test
     public void testMinaRoute() throws Exception {
@@ -92,7 +92,7 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
     }
 
     private byte[] fromHexString(String hexstr) {
-        byte data[] = new byte[hexstr.length() / 2];
+        byte[] data = new byte[hexstr.length() / 2];
         int i = 0;
         for (int n = hexstr.length(); i < n; i += 2) {
             data[i / 2] = (Integer.decode("0x" + hexstr.charAt(i)
