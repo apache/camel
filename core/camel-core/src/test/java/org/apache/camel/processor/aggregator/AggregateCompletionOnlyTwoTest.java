@@ -17,6 +17,7 @@
 package org.apache.camel.processor.aggregator;
 
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -67,7 +68,7 @@ public class AggregateCompletionOnlyTwoTest extends ContextTestSupport {
         private int add;
         private int get;
         private int remove;
-        private int confirm;
+        private AtomicInteger confirm = new AtomicInteger(0);
 
         @Override
         public Exchange add(CamelContext camelContext, String key, Exchange exchange) {
@@ -89,7 +90,7 @@ public class AggregateCompletionOnlyTwoTest extends ContextTestSupport {
 
         @Override
         public void confirm(CamelContext camelContext, String exchangeId) {
-            confirm++;
+            confirm.incrementAndGet();
             super.confirm(camelContext, exchangeId);
         }
 
@@ -111,7 +112,7 @@ public class AggregateCompletionOnlyTwoTest extends ContextTestSupport {
         }
 
         public int getConfirm() {
-            return confirm;
+            return confirm.get();
         }
     }
 }
