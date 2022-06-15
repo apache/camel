@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.as2.api;
 
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 
@@ -60,7 +58,7 @@ public class AS2ServerManager {
     }
 
     public void handleMDNResponse(
-            HttpEntityEnclosingRequest request, HttpResponse response, HttpContext httpContext, String subject, String from) {
+            HttpContext httpContext, String subject, String from) {
         // Add Context attributes for Response
         httpContext.setAttribute(SUBJECT, subject);
         httpContext.setAttribute(FROM, from);

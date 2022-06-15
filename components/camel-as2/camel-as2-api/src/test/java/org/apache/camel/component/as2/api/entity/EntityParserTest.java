@@ -262,8 +262,7 @@ public class EntityParserTest {
 
         AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity = EntityParser
                 .parseMessageDispositionNotificationEntityBody(inbuffer, DISPOSITION_NOTIFICATION_CONTENT_BOUNDARY,
-                        DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME,
-                        DISPOSITION_NOTIFICATION_CONTENT_TRANSFER_ENCODING);
+                        DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME);
 
         assertEquals(EXPECTED_REPORTING_UA, messageDispositionNotificationEntity.getReportingUA(),
                 "Unexpected Reporting UA value");

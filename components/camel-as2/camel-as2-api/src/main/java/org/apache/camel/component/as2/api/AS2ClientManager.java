@@ -306,7 +306,7 @@ public class AS2ClientManager {
             }
             case PLAIN_COMPRESSED: {
                 // Create Compressed Entity containing EDI Entity
-                CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator(httpContext);
+                CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator();
                 OutputCompressor compressor = createCompressor(httpContext);
                 ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity
                         = new ApplicationPkcs7MimeCompressedDataEntity(
@@ -324,7 +324,7 @@ public class AS2ClientManager {
                         signingGenrator, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, false, null);
 
                 // Create Compressed Entity containing Multipart Signed Entity
-                CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator(httpContext);
+                CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator();
                 OutputCompressor compressor = createCompressor(httpContext);
                 ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity
                         = new ApplicationPkcs7MimeCompressedDataEntity(
@@ -336,7 +336,7 @@ public class AS2ClientManager {
             }
             case ENCRYPTED_COMPRESSED: {
                 // Create Compressed Entity containing EDI Entity
-                CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator(httpContext);
+                CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator();
                 OutputCompressor compressor = createCompressor(httpContext);
                 ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity
                         = new ApplicationPkcs7MimeCompressedDataEntity(
@@ -362,7 +362,7 @@ public class AS2ClientManager {
                         StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, false, null);
 
                 // Create Compressed Entity containing Multipart Signed Entity
-                CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator(httpContext);
+                CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator();
                 OutputCompressor compressor = createCompressor(httpContext);
                 ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity
                         = new ApplicationPkcs7MimeCompressedDataEntity(
@@ -428,7 +428,7 @@ public class AS2ClientManager {
 
     }
 
-    public CMSCompressedDataGenerator createCompressorGenerator(HttpCoreContext httpContext) {
+    public CMSCompressedDataGenerator createCompressorGenerator() {
         return CompressionUtils.createCompressedDataGenerator();
     }
 

@@ -696,8 +696,7 @@ public final class EntityParser {
                     ? StandardCharsets.US_ASCII.name() : dispositionNotificationContentType.getCharset().name();
             AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity
                     = parseMessageDispositionNotificationEntityBody(
-                            inbuffer, boundary, dispositionNotificationCharsetName,
-                            dispositionNotificationContentTransferEncoding);
+                            inbuffer, boundary, dispositionNotificationCharsetName);
             messageDispositionNotificationEntity.setHeaders(headers);
             dispositionNotificationMultipartReportEntity.addPart(messageDispositionNotificationEntity);
 
@@ -751,8 +750,7 @@ public final class EntityParser {
     public static AS2MessageDispositionNotificationEntity parseMessageDispositionNotificationEntityBody(
             AS2SessionInputBuffer inbuffer,
             String boundary,
-            String charsetName,
-            String contentTransferEncoding)
+            String charsetName)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
 
@@ -818,8 +816,7 @@ public final class EntityParser {
                     skipToBoundary(inbuffer, boundary);
                     break;
                 case AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION:
-                    entity = parseMessageDispositionNotificationEntityBody(inbuffer, boundary, charset.name(),
-                            contentTransferEncoding);
+                    entity = parseMessageDispositionNotificationEntityBody(inbuffer, boundary, charset.name());
                     break;
                 case AS2MimeType.MULTIPART_REPORT:
                     String multipartReportBoundary = AS2HeaderUtils.getParameterValue(headers,
