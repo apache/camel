@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * To test timeout.
@@ -30,13 +29,10 @@ public class MinaExchangeDefaultTimeOutTest extends BaseMinaTest {
 
     @Test
     public void testDefaultTimeOut() {
-        try {
-            String result = (String) template
-                    .requestBody(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()), "Hello World");
-            assertEquals("Okay I will be faster in the future", result);
-        } catch (RuntimeCamelException e) {
-            fail("Should not get a RuntimeCamelException");
-        }
+        String result = (String) assertDoesNotThrow(() -> template
+                .requestBody(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()), "Hello World"),
+                "Should not get a RuntimeCamelException");
+        assertEquals("Okay I will be faster in the future", result);
     }
 
     @Override
