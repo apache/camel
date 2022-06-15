@@ -32,9 +32,9 @@ public class GoogleCalendarComponentConfigurer extends PropertyConfigurerSupport
         map.put("accessToken", java.lang.String.class);
         map.put("clientSecret", java.lang.String.class);
         map.put("emailAddress", java.lang.String.class);
-        map.put("keyResource", java.lang.String.class);
         map.put("p12FileName", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
+        map.put("serviceAccountKey", java.lang.String.class);
         map.put("user", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -68,8 +68,6 @@ public class GoogleCalendarComponentConfigurer extends PropertyConfigurerSupport
         case "delegate": getOrCreateConfiguration(target).setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "emailaddress":
         case "emailAddress": getOrCreateConfiguration(target).setEmailAddress(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyresource":
-        case "keyResource": getOrCreateConfiguration(target).setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "p12filename":
@@ -77,6 +75,8 @@ public class GoogleCalendarComponentConfigurer extends PropertyConfigurerSupport
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "serviceaccountkey":
+        case "serviceAccountKey": getOrCreateConfiguration(target).setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "user": getOrCreateConfiguration(target).setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -108,8 +108,6 @@ public class GoogleCalendarComponentConfigurer extends PropertyConfigurerSupport
         case "delegate": return java.lang.String.class;
         case "emailaddress":
         case "emailAddress": return java.lang.String.class;
-        case "keyresource":
-        case "keyResource": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "p12filename":
@@ -117,6 +115,8 @@ public class GoogleCalendarComponentConfigurer extends PropertyConfigurerSupport
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.List.class;
+        case "serviceaccountkey":
+        case "serviceAccountKey": return java.lang.String.class;
         case "user": return java.lang.String.class;
         default: return null;
         }
@@ -144,8 +144,6 @@ public class GoogleCalendarComponentConfigurer extends PropertyConfigurerSupport
         case "delegate": return getOrCreateConfiguration(target).getDelegate();
         case "emailaddress":
         case "emailAddress": return getOrCreateConfiguration(target).getEmailAddress();
-        case "keyresource":
-        case "keyResource": return getOrCreateConfiguration(target).getKeyResource();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "p12filename":
@@ -153,6 +151,8 @@ public class GoogleCalendarComponentConfigurer extends PropertyConfigurerSupport
         case "refreshtoken":
         case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
         case "scopes": return getOrCreateConfiguration(target).getScopes();
+        case "serviceaccountkey":
+        case "serviceAccountKey": return getOrCreateConfiguration(target).getServiceAccountKey();
         case "user": return getOrCreateConfiguration(target).getUser();
         default: return null;
         }

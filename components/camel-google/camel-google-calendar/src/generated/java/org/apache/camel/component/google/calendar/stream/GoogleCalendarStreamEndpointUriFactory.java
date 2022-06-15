@@ -41,7 +41,6 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
         props.add("greedy");
         props.add("index");
         props.add("initialDelay");
-        props.add("keyResource");
         props.add("maxResults");
         props.add("p12FileName");
         props.add("pollStrategy");
@@ -54,6 +53,7 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
         props.add("schedulerProperties");
         props.add("scopes");
         props.add("sendEmptyMessageWhenIdle");
+        props.add("serviceAccountKey");
         props.add("startScheduler");
         props.add("syncFlow");
         props.add("timeUnit");

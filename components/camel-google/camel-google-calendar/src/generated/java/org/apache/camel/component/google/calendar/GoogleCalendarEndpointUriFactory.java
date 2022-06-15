@@ -44,7 +44,6 @@ public class GoogleCalendarEndpointUriFactory extends org.apache.camel.support.c
         props.add("greedy");
         props.add("inBody");
         props.add("initialDelay");
-        props.add("keyResource");
         props.add("lazyStartProducer");
         props.add("methodName");
         props.add("p12FileName");
@@ -58,6 +57,7 @@ public class GoogleCalendarEndpointUriFactory extends org.apache.camel.support.c
         props.add("schedulerProperties");
         props.add("scopes");
         props.add("sendEmptyMessageWhenIdle");
+        props.add("serviceAccountKey");
         props.add("setting");
         props.add("startScheduler");
         props.add("text");

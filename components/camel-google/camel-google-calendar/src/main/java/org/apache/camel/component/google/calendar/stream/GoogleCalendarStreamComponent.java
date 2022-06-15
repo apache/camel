@@ -53,8 +53,8 @@ public class GoogleCalendarStreamComponent extends DefaultComponent {
                 client = getClientFactory().makeClient(config.getClientId(), config.getClientSecret(), config.getScopes(),
                         config.getApplicationName(), config.getRefreshToken(),
                         config.getAccessToken(), config.getEmailAddress(), config.getP12FileName(), config.getUser());
-            } else if (config.getKeyResource() != null) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getKeyResource(), config.getScopes(),
+            } else if (config.getServiceAccountKey() != null) {
+                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(), config.getScopes(),
                         config.getApplicationName(), config.getDelegate());
             } else {
                 throw new IllegalArgumentException(

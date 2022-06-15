@@ -29,11 +29,11 @@ public class CalendarCalendarsEndpointConfigurationConfigurer extends org.apache
         map.put("Content", com.google.api.services.calendar.model.Calendar.class);
         map.put("Delegate", java.lang.String.class);
         map.put("EmailAddress", java.lang.String.class);
-        map.put("KeyResource", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("P12FileName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
+        map.put("ServiceAccountKey", java.lang.String.class);
         map.put("User", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -60,8 +60,6 @@ public class CalendarCalendarsEndpointConfigurationConfigurer extends org.apache
         case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "emailaddress":
         case "EmailAddress": target.setEmailAddress(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyresource":
-        case "KeyResource": target.setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "p12filename":
@@ -70,6 +68,8 @@ public class CalendarCalendarsEndpointConfigurationConfigurer extends org.apache
         case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes":
         case "Scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "serviceaccountkey":
+        case "ServiceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "user":
         case "User": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -102,8 +102,6 @@ public class CalendarCalendarsEndpointConfigurationConfigurer extends org.apache
         case "Delegate": return java.lang.String.class;
         case "emailaddress":
         case "EmailAddress": return java.lang.String.class;
-        case "keyresource":
-        case "KeyResource": return java.lang.String.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "p12filename":
@@ -112,6 +110,8 @@ public class CalendarCalendarsEndpointConfigurationConfigurer extends org.apache
         case "RefreshToken": return java.lang.String.class;
         case "scopes":
         case "Scopes": return java.util.List.class;
+        case "serviceaccountkey":
+        case "ServiceAccountKey": return java.lang.String.class;
         case "user":
         case "User": return java.lang.String.class;
         default: return null;
@@ -140,8 +140,6 @@ public class CalendarCalendarsEndpointConfigurationConfigurer extends org.apache
         case "Delegate": return target.getDelegate();
         case "emailaddress":
         case "EmailAddress": return target.getEmailAddress();
-        case "keyresource":
-        case "KeyResource": return target.getKeyResource();
         case "methodname":
         case "MethodName": return target.getMethodName();
         case "p12filename":
@@ -150,6 +148,8 @@ public class CalendarCalendarsEndpointConfigurationConfigurer extends org.apache
         case "RefreshToken": return target.getRefreshToken();
         case "scopes":
         case "Scopes": return target.getScopes();
+        case "serviceaccountkey":
+        case "ServiceAccountKey": return target.getServiceAccountKey();
         case "user":
         case "User": return target.getUser();
         default: return null;

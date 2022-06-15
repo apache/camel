@@ -32,11 +32,11 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         map.put("Destination", java.lang.String.class);
         map.put("EmailAddress", java.lang.String.class);
         map.put("EventId", java.lang.String.class);
-        map.put("KeyResource", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("P12FileName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
+        map.put("ServiceAccountKey", java.lang.String.class);
         map.put("Text", java.lang.String.class);
         map.put("User", java.lang.String.class);
         ALL_OPTIONS = map;
@@ -70,8 +70,6 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         case "EmailAddress": target.setEmailAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "eventid":
         case "EventId": target.setEventId(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyresource":
-        case "KeyResource": target.setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "p12filename":
@@ -80,6 +78,8 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes":
         case "Scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "serviceaccountkey":
+        case "ServiceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "text":
         case "Text": target.setText(property(camelContext, java.lang.String.class, value)); return true;
         case "user":
@@ -120,8 +120,6 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         case "EmailAddress": return java.lang.String.class;
         case "eventid":
         case "EventId": return java.lang.String.class;
-        case "keyresource":
-        case "KeyResource": return java.lang.String.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "p12filename":
@@ -130,6 +128,8 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         case "RefreshToken": return java.lang.String.class;
         case "scopes":
         case "Scopes": return java.util.List.class;
+        case "serviceaccountkey":
+        case "ServiceAccountKey": return java.lang.String.class;
         case "text":
         case "Text": return java.lang.String.class;
         case "user":
@@ -166,8 +166,6 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         case "EmailAddress": return target.getEmailAddress();
         case "eventid":
         case "EventId": return target.getEventId();
-        case "keyresource":
-        case "KeyResource": return target.getKeyResource();
         case "methodname":
         case "MethodName": return target.getMethodName();
         case "p12filename":
@@ -176,6 +174,8 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         case "RefreshToken": return target.getRefreshToken();
         case "scopes":
         case "Scopes": return target.getScopes();
+        case "serviceaccountkey":
+        case "ServiceAccountKey": return target.getServiceAccountKey();
         case "text":
         case "Text": return target.getText();
         case "user":
