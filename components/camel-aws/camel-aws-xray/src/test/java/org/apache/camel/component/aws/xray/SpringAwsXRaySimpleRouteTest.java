@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.xray;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.NotifyBuilder;
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -82,8 +84,9 @@ public class SpringAwsXRaySimpleRouteTest extends CamelSpringTestSupport {
                         .withSegment(TestDataBuilder.createSegment("dude"))
                         .withSegment(TestDataBuilder.createSegment("car")));
 
-        Thread.sleep(2000);
+        Map<String, TestTrace> receivedData = await().atMost(2, TimeUnit.SECONDS)
+                .until(socketListener::getReceivedData, v -> v.size() == testData.size());
 
-        TestUtils.checkData(socketListener.getReceivedData(), testData);
+        TestUtils.checkData(receivedData, testData);
     }
 }
