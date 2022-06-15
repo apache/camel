@@ -30,7 +30,11 @@ public final class MavenGav {
     public MavenGav() {
     }
 
-    public static MavenGav parseGav(CamelContext context, String gav) {
+    public static MavenGav parseGav(String gav) {
+        return parseGav(gav, null);
+    }
+
+    public static MavenGav parseGav(String gav, String defaultVersion) {
         MavenGav answer = new MavenGav();
         // camel-k style GAV
         if (gav.startsWith("camel:")) {
@@ -44,8 +48,8 @@ public final class MavenGav {
                 a = "camel-" + a;
             }
             answer.setArtifactId(a);
-            if (context != null) {
-                answer.setVersion(context.getVersion());
+            if (defaultVersion != null) {
+                answer.setVersion(defaultVersion);
             }
         } else if (gav.startsWith("camel-") && !(gav.contains(":") || gav.contains("/"))) {
             // not really camel-k style but users may mistakenly use camel-file instead of camel:file
@@ -56,8 +60,8 @@ public final class MavenGav {
                 a = "camel-" + a.substring(14);
             }
             answer.setArtifactId(a);
-            if (context != null) {
-                answer.setVersion(context.getVersion());
+            if (defaultVersion != null) {
+                answer.setVersion(defaultVersion);
             }
         } else if (gav.startsWith("org.apache.camel:")) {
             String[] parts = gav.split(":");
@@ -69,8 +73,8 @@ public final class MavenGav {
             }
             if (parts.length > 2) {
                 answer.setVersion(parts[2]);
-            } else if (context != null) {
-                answer.setVersion(context.getVersion());
+            } else if (defaultVersion != null) {
+                answer.setVersion(defaultVersion);
             }
         } else {
             String[] parts = gav.startsWith("mvn:") ? gav.substring(4).split(":") : gav.split(":");

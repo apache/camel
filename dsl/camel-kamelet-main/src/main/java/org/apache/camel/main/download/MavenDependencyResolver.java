@@ -96,7 +96,7 @@ public final class MavenDependencyResolver {
                     .map(mra -> {
                         String gav = mra.getCoordinate().getGroupId() + ":" + mra.getCoordinate().getArtifactId() + ":"
                                      + mra.getCoordinate().getVersion();
-                        return new MavenArtifact(MavenGav.parseGav(null, gav), mra.asFile());
+                        return new MavenArtifact(MavenGav.parseGav(gav), mra.asFile());
                     })
                     .collect(Collectors.toList());
         } catch (ResolutionException e) {

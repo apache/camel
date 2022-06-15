@@ -20,28 +20,31 @@ import org.apache.camel.main.download.MavenGav;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class MavenGavTest {
 
     @Test
     void parseCoreGav() {
-        MavenGav gav = MavenGav.parseGav(null, "camel:core");
+        MavenGav gav = MavenGav.parseGav("camel:core", "3.16.0");
 
         assertEquals("org.apache.camel", gav.getGroupId());
         assertEquals("camel-core", gav.getArtifactId());
+        assertEquals("3.16.0", gav.getVersion());
     }
 
     @Test
     void parseCamelCoreGav() {
-        MavenGav gav = MavenGav.parseGav(null, "camel:camel-core");
+        MavenGav gav = MavenGav.parseGav("camel:camel-core");
 
         assertEquals("org.apache.camel", gav.getGroupId());
         assertEquals("camel-core", gav.getArtifactId());
+        assertNull(gav.getVersion());
     }
 
     @Test
     void parseOtherGav() {
-        MavenGav gav = MavenGav.parseGav(null, "mvn:org.junit:junit-api:99.99");
+        MavenGav gav = MavenGav.parseGav("mvn:org.junit:junit-api:99.99");
 
         assertEquals("org.junit", gav.getGroupId());
         assertEquals("junit-api", gav.getArtifactId());

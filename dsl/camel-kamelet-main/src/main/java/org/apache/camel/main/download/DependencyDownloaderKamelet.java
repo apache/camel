@@ -161,7 +161,7 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
 
             if (!gavs.isEmpty()) {
                 for (String gav : gavs) {
-                    MavenGav mg = MavenGav.parseGav(camelContext, gav);
+                    MavenGav mg = MavenGav.parseGav(gav, camelContext.getVersion());
                     downloader.downloadDependency(mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
                     downloaded.add(gav);
                 }
@@ -179,7 +179,7 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
                 return false;
             }
 
-            MavenGav mg = MavenGav.parseGav(camelContext, gav);
+            MavenGav mg = MavenGav.parseGav(gav, camelContext.getVersion());
             boolean exists = downloader.alreadyOnClasspath(mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
             // valid if not already on classpath
             return !exists;

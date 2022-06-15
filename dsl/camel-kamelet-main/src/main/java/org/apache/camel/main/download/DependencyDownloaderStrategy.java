@@ -31,7 +31,7 @@ public class DependencyDownloaderStrategy implements DependencyStrategy {
 
     @Override
     public void onDependency(String dependency) {
-        MavenGav gav = MavenGav.parseGav(camelContext, dependency);
+        MavenGav gav = MavenGav.parseGav(dependency, camelContext.getVersion());
         if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(), gav.getVersion())) {
             downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(),
                     gav.getVersion());

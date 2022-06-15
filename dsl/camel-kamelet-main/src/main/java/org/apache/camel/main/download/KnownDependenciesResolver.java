@@ -57,7 +57,7 @@ public final class KnownDependenciesResolver {
     public MavenGav mavenGavForClass(String className) {
         String gav = mappings.get(className);
         if (gav != null) {
-            return MavenGav.parseGav(camelContext, gav);
+            return MavenGav.parseGav(gav, camelContext.getVersion());
         }
         return null;
     }

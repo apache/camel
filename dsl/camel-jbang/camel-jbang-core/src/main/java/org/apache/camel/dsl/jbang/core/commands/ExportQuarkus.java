@@ -158,7 +158,7 @@ class ExportQuarkus extends BaseExport {
 
         StringBuilder sb = new StringBuilder();
         for (String dep : deps) {
-            MavenGav gav = MavenGav.parseGav(null, dep);
+            MavenGav gav = MavenGav.parseGav(dep);
             String gid = gav.getGroupId();
             String aid = gav.getArtifactId();
             String v = gav.getVersion();

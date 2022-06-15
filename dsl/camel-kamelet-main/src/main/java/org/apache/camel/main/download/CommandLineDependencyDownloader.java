@@ -54,7 +54,7 @@ public class CommandLineDependencyDownloader extends ServiceSupport {
 
         if (!gavs.isEmpty()) {
             for (String gav : gavs) {
-                MavenGav mg = MavenGav.parseGav(camelContext, gav);
+                MavenGav mg = MavenGav.parseGav(gav, camelContext.getVersion());
                 downloader.downloadDependency(mg.getGroupId(), mg.getArtifactId(),
                         mg.getVersion());
             }
@@ -62,7 +62,7 @@ public class CommandLineDependencyDownloader extends ServiceSupport {
     }
 
     private boolean isValidGav(String gav) {
-        MavenGav mg = MavenGav.parseGav(camelContext, gav);
+        MavenGav mg = MavenGav.parseGav(gav, camelContext.getVersion());
         boolean exists
                 = downloader.alreadyOnClasspath(mg.getGroupId(), mg.getArtifactId(), mg.getVersion());
         // valid if not already on classpath

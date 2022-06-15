@@ -145,7 +145,7 @@ abstract class BaseExport extends CamelCommand {
         Map<String, String> versions = new HashMap<>();
         Set<String> toBeRemoved = new HashSet<>();
         for (String line : answer) {
-            MavenGav gav = MavenGav.parseGav(null, line);
+            MavenGav gav = MavenGav.parseGav(line);
             String ga = gav.getGroupId() + ":" + gav.getArtifactId();
             if (!versions.containsKey(ga)) {
                 versions.put(ga, gav.getVersion());
