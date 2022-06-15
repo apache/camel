@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.main.MainConfigurationProperties;
+import org.apache.camel.main.MainRoutesLoader;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.support.ResolverHelper;

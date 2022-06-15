@@ -14,26 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.main.download;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+public class DownloadException extends RuntimeException {
 
-public class DependencyDownloaderClassLoader extends URLClassLoader {
-
-    private static final URL[] EMPTY_URL_ARRAY = new URL[0];
-
-    public DependencyDownloaderClassLoader(ClassLoader parent) {
-        super(EMPTY_URL_ARRAY, parent);
+    public DownloadException(String message) {
+        super(message);
     }
 
-    public void addFile(File file) {
-        try {
-            super.addURL(file.toURI().toURL());
-        } catch (MalformedURLException e) {
-            throw new DownloadException("Error adding JAR to classloader: " + file, e);
-        }
+    public DownloadException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

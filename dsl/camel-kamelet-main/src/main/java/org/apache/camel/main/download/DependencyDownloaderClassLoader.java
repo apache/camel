@@ -14,21 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.main.download;
 
-/**
- * Listener for downloading a dependency (can be downloaded from a local cache)
- */
-public interface DownloadListener {
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 
-    /**
-     * Downloads a new dependency
-     */
-    void onDownloadDependency(String groupId, String artifactId, String version);
+public class DependencyDownloaderClassLoader extends URLClassLoader {
 
-    /**
-     * Uses an existing already downloaded dependency
-     */
-    void onAlreadyDownloadedDependency(String groupId, String artifactId, String version);
+    private static final URL[] EMPTY_URL_ARRAY = new URL[0];
 
+    public DependencyDownloaderClassLoader(ClassLoader parent) {
+        super(EMPTY_URL_ARRAY, parent);
+    }
+
+    public void addFile(File file) {
+        try {
+            super.addURL(file.toURI().toURL());
+        } catch (MalformedURLException e) {
+            throw new DownloadException("Error adding JAR to classloader: " + file, e);
+        }
+    }
 }

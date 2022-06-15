@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.camel.main;
+package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.engine.DefaultResourceLoader;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.StringHelper;
 
-class DependencyDownloaderResourceLoader extends DefaultResourceLoader {
+public class DependencyDownloaderResourceLoader extends DefaultResourceLoader {
 
     private final String repos;
     private final boolean fresh;

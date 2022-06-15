@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.main.download;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,7 +44,8 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 /**
  * To automatic downloaded dependencies that Kamelets requires.
  */
-final class DependencyDownloaderKamelet extends ServiceSupport implements CamelContextAware, RouteTemplateLoaderListener {
+public final class DependencyDownloaderKamelet extends ServiceSupport
+        implements CamelContextAware, RouteTemplateLoaderListener {
 
     private final KameletDependencyDownloader downloader;
     private CamelContext camelContext;

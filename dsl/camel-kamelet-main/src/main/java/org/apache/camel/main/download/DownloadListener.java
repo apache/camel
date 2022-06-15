@@ -14,15 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.main.download;
 
-public class DownloadException extends RuntimeException {
+/**
+ * Listener for downloading a dependency (can be downloaded from a local cache)
+ */
+public interface DownloadListener {
 
-    public DownloadException(String message) {
-        super(message);
-    }
+    /**
+     * Downloads a new dependency
+     */
+    void onDownloadDependency(String groupId, String artifactId, String version);
 
-    public DownloadException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    /**
+     * Uses an existing already downloaded dependency
+     */
+    void onAlreadyDownloadedDependency(String groupId, String artifactId, String version);
+
 }

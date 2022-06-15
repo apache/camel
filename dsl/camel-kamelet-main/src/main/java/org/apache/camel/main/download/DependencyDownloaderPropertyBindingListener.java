@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.PropertyBindingListener;
 
-class DependencyDownloaderPropertyBindingListener implements PropertyBindingListener {
+public class DependencyDownloaderPropertyBindingListener implements PropertyBindingListener {
 
     private final CamelContext camelContext;
     private final KnownDependenciesResolver knownDependenciesResolver;

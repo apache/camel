@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.main.download.MavenGav;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

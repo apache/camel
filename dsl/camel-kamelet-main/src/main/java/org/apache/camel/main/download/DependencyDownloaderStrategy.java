@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DependencyStrategy;
 
-class DependencyDownloaderStrategy implements DependencyStrategy {
+public class DependencyDownloaderStrategy implements DependencyStrategy {
 
     private final CamelContext camelContext;
     private final String repos;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -27,7 +27,7 @@ import org.apache.camel.tooling.model.LanguageModel;
 /**
  * Auto downloaded needed JARs when resolving languages.
  */
-final class DependencyDownloaderLanguageResolver extends DefaultLanguageResolver implements CamelContextAware {
+public final class DependencyDownloaderLanguageResolver extends DefaultLanguageResolver implements CamelContextAware {
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private CamelContext camelContext;

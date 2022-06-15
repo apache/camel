@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.main.http;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -48,6 +48,7 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.main.util.CamelJBangSettingsHelper;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -71,6 +72,10 @@ public final class VertxHttpServer {
     private static final AtomicBoolean HEALTH_CHECK = new AtomicBoolean();
 
     private VertxHttpServer() {
+    }
+
+    public static void setPlatformHttpComponent(PlatformHttpComponent phc) {
+        VertxHttpServer.phc = phc;
     }
 
     public static void registerServer(CamelContext camelContext, boolean stub) {

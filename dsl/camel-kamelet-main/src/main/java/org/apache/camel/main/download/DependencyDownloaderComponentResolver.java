@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -23,12 +23,13 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.impl.engine.DefaultComponentResolver;
+import org.apache.camel.main.http.VertxHttpServer;
 import org.apache.camel.tooling.model.ComponentModel;
 
 /**
  * Auto downloaded needed JARs when resolving components.
  */
-final class DependencyDownloaderComponentResolver extends DefaultComponentResolver implements CamelContextAware {
+public final class DependencyDownloaderComponentResolver extends DefaultComponentResolver implements CamelContextAware {
 
     private static final String ACCEPTED_STUB_NAMES = "stub,bean,class,kamelet,rest,rest-api,platform-http,vertx-http";
 
@@ -74,7 +75,7 @@ final class DependencyDownloaderComponentResolver extends DefaultComponentResolv
 
         if (answer instanceof PlatformHttpComponent) {
             // setup a default http server on port 8080 if not already done
-            VertxHttpServer.phc = (PlatformHttpComponent) answer;
+            VertxHttpServer.setPlatformHttpComponent((PlatformHttpComponent) answer);
             VertxHttpServer.registerServer(camelContext, stub);
         }
 

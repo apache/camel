@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -27,7 +27,7 @@ import org.apache.camel.tooling.model.DataFormatModel;
 /**
  * Auto downloaded needed JARs when resolving data formats.
  */
-final class DependencyDownloaderDataFormatResolver extends DefaultDataFormatResolver implements CamelContextAware {
+public final class DependencyDownloaderDataFormatResolver extends DefaultDataFormatResolver implements CamelContextAware {
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private CamelContext camelContext;

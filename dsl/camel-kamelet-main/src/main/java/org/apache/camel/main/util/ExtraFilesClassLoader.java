@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.main.util;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -23,7 +23,7 @@ import java.net.URL;
 /**
  * Classloader used to load the extra files that were present in the CLI arguments
  */
-final class ExtraFilesClassLoader extends ClassLoader {
+public final class ExtraFilesClassLoader extends ClassLoader {
 
     final String[] files;
 

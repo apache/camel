@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.main.download;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -34,7 +34,7 @@ import org.jboss.shrinkwrap.resolver.api.maven.MavenStrategyStage;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenWorkingSession;
 import org.jboss.shrinkwrap.resolver.impl.maven.ConfigurableMavenResolverSystemImpl;
 
-final class DependencyUtil {
+public final class DependencyUtil {
 
     private DependencyUtil() {
     }

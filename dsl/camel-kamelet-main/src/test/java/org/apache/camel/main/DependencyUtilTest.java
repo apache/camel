@@ -18,6 +18,8 @@ package org.apache.camel.main;
 
 import java.util.List;
 
+import org.apache.camel.main.download.DependencyUtil;
+import org.apache.camel.main.download.MavenArtifact;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
