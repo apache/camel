@@ -34,15 +34,15 @@ public class InfinispanRemoteConfiguration extends InfinispanConfiguration imple
     private String hosts;
     @UriParam(label = "common", defaultValue = "false")
     private boolean secure;
-    @UriParam(label = "common, security")
+    @UriParam(label = "common,security")
     private String username;
-    @UriParam(label = "common, security", secret = true)
+    @UriParam(label = "common,security", secret = true)
     private String password;
-    @UriParam(label = "common, security")
+    @UriParam(label = "common,security")
     private String saslMechanism;
-    @UriParam(label = "common, security")
+    @UriParam(label = "common,security")
     private String securityRealm;
-    @UriParam(label = "common, security")
+    @UriParam(label = "common,security")
     private String securityServerName;
     @Metadata(autowired = true)
     @UriParam(label = "advanced")
