@@ -167,13 +167,16 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
         Collection<Resource> toBeCompiled = new ArrayList<>();
 
         Collection<Resource> byteCodes = new ArrayList<>();
-        for (String className : nameToResource.keySet()) {
-            File source = new File(getCompileDirectory() + "/" + className + ".class");
+        for (var entry : nameToResource.entrySet()) {
+            final String className = entry.getKey();
+
+            File source = new File(getCompileDirectory(), className + ".class");
             if (source.exists()) {
                 byte[] code = Files.readAllBytes(source.toPath());
                 byteCodes.add(ResourceHelper.fromBytes("class:" + className + ".class", code));
             } else {
-                toBeCompiled.add(nameToResource.get(className));
+                final Resource resource = entry.getValue();
+                toBeCompiled.add(resource);
             }
         }
         if (!byteCodes.isEmpty()) {
@@ -190,7 +193,7 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
     private static void saveByteCodeToDisk(String outputDirectory, String name, byte[] byteCode) {
         // write to disk (can be triggered multiple times so only write once)
-        File target = new File(outputDirectory + "/" + name + ".class");
+        File target = new File(outputDirectory, name + ".class");
         if (!target.exists()) {
             // create work-dir if needed
             new File(outputDirectory).mkdirs();
@@ -200,8 +203,7 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
                 fos.write(byteCode);
                 IOHelper.close(fos);
             } catch (Exception e) {
-                LOG.warn("Error saving compiled class: " + name + " as bytecode to file: " + target + " due to "
-                         + e.getMessage());
+                LOG.warn("Error saving compiled class: {} as bytecode to file: {} due to {}", name, target, e.getMessage());
             }
         }
     }

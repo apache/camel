@@ -76,7 +76,7 @@ public class ClassRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport 
                 // requires a default no-arg constructor otherwise we skip the class
                 obj = getCamelContext().getInjector().newInstance(clazz);
             } catch (Exception e) {
-                LOG.debug("Loaded class: " + className + " must have a default no-arg constructor. Skipping.");
+                LOG.debug("Loaded class {} must have a default no-arg constructor. Skipping.", className);
                 continue;
             }
 
