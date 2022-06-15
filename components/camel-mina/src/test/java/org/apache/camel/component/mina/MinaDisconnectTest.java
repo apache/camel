@@ -40,7 +40,7 @@ public class MinaDisconnectTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&disconnect=true", getPort()))
+                fromF("mina:tcp://localhost:%1$s?sync=true&textline=true&disconnect=true", getPort())
                         .process(new Processor() {
 
                             public void process(Exchange exchange) {

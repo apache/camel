@@ -47,12 +47,12 @@ public class MinaInOutRouteTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true", getPort())).process(exchange -> {
+                fromF("mina:tcp://localhost:%1$s?sync=true", getPort()).process(exchange -> {
                     String body = exchange.getIn().getBody(String.class);
                     exchange.getMessage().setBody("Bye " + body);
                 });
 
-                from("direct:in").to(String.format("mina:tcp://localhost:%1$s?sync=true&lazySessionCreation=true", getPort()))
+                from("direct:in").toF("mina:tcp://localhost:%1$s?sync=true&lazySessionCreation=true", getPort())
                         .to("mock:result");
             }
         };

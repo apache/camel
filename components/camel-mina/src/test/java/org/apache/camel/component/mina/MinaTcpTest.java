@@ -51,7 +51,7 @@ public class MinaTcpTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://0.0.0.0:%1$s?sync=false&minaLogger=true", getPort()))
+                fromF("mina:tcp://0.0.0.0:%1$s?sync=false&minaLogger=true", getPort())
                         .to("log:before?showAll=true").to("mock:result").to("log:after?showAll=true");
             }
         };

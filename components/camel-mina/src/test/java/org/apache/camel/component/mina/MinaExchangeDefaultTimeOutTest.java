@@ -44,7 +44,7 @@ public class MinaExchangeDefaultTimeOutTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort())).process(e -> {
+                fromF("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()).process(e -> {
                     assertEquals("Hello World", e.getIn().getBody(String.class));
                     // MinaProducer has a default timeout of 3 seconds so we just wait 5 seconds
                     // (template.requestBody is a MinaProducer behind the doors)

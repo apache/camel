@@ -39,7 +39,7 @@ public class MinaTcpTextlineProtocolTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?textline=true&sync=false", getPort()))
+                fromF("mina:tcp://localhost:%1$s?textline=true&sync=false", getPort())
                         .to("log:before?showAll=true")
                         .to("mock:result")
                         .to("log:after?showAll=true");

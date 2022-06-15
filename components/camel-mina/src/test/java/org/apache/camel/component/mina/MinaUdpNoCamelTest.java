@@ -74,7 +74,7 @@ public class MinaUdpNoCamelTest {
         }
 
         await().atMost(2, TimeUnit.SECONDS)
-                        .untilAsserted(() -> assertEquals(222, server.numMessagesReceived));
+                .untilAsserted(() -> assertEquals(222, server.numMessagesReceived));
     }
 
     /*

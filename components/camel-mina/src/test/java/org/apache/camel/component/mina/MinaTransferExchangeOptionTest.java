@@ -100,7 +100,7 @@ public class MinaTransferExchangeOptionTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort()))
+                fromF("mina:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort())
                         .process(new Processor() {
 
                             public void process(Exchange e) {

@@ -47,7 +47,7 @@ public class MinaInOutRouteTextLineDelimiterTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&textlineDelimiter=MAC", getPort()))
+                fromF("mina:tcp://localhost:%1$s?sync=true&textline=true&textlineDelimiter=MAC", getPort())
                         .process(exchange -> {
                             String body = exchange.getIn().getBody(String.class);
                             exchange.getMessage().setBody("Bye " + body);
