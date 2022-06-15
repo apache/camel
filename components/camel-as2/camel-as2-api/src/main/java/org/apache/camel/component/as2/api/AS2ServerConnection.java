@@ -74,7 +74,7 @@ public class AS2ServerConnection {
             serversocket = new ServerSocket(port);
 
             // Set up HTTP protocol processor for incoming connections
-            final HttpProcessor inhttpproc = initProtocolProcessor(as2Version, originServer, serverFqdn, port,
+            final HttpProcessor inhttpproc = initProtocolProcessor(as2Version, originServer, serverFqdn,
                     signatureAlgorithm, signingCertificateChain, signingPrivateKey, decryptingPrivateKey, mdnMessageTemplate);
 
             reqistry = new UriHttpRequestHandlerMapper();
@@ -257,7 +257,6 @@ public class AS2ServerConnection {
             String as2Version,
             String originServer,
             String serverFqdn,
-            int port,
             AS2SignatureAlgorithm signatureAlgorithm,
             Certificate[] signingCertificateChain,
             PrivateKey signingPrivateKey,
