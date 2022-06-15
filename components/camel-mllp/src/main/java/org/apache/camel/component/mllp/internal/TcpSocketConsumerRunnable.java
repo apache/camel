@@ -107,7 +107,7 @@ public class TcpSocketConsumerRunnable implements Runnable {
      *
      * @return the thread name
      */
-    String createThreadName(Socket socket) {
+    String createThreadName() {
         // Get the URI without options
         String fullEndpointKey = consumer.getEndpoint().getEndpointKey();
         String endpointKey;
@@ -125,7 +125,7 @@ public class TcpSocketConsumerRunnable implements Runnable {
     public void run() {
         running = true;
         String originalThreadName = Thread.currentThread().getName();
-        Thread.currentThread().setName(createThreadName(clientSocket));
+        Thread.currentThread().setName(createThreadName());
         MDC.put(UnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());
 
         Route route = consumer.getRoute();
