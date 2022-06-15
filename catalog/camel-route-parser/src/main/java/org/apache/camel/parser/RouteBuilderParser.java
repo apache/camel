@@ -54,12 +54,11 @@ public final class RouteBuilderParser {
      * Parses the java source class and build a route model (tree) of the discovered routes in the java source class.
      *
      * @param  clazz                  the java source class
-     * @param  baseDir                the base of the source code
      * @param  fullyQualifiedFileName the fully qualified source code file name
      * @return                        a list of route model (tree) of each discovered route
      */
     public static List<CamelNodeDetails> parseRouteBuilderTree(
-            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+            JavaClassSource clazz, String fullyQualifiedFileName,
             boolean includeInlinedRouteBuilders) {
 
         List<MethodSource<JavaClassSource>> methods = new ArrayList<>();
@@ -79,7 +78,7 @@ public final class RouteBuilderParser {
         for (MethodSource<JavaClassSource> configureMethod : methods) {
             // there may be multiple route builder configure methods
             List<CamelNodeDetails> details
-                    = parser.parseCamelRouteTree(clazz, baseDir, fullyQualifiedFileName, configureMethod);
+                    = parser.parseCamelRouteTree(clazz, fullyQualifiedFileName, configureMethod);
             list.addAll(details);
         }
         // we end up parsing bottom->up so reverse list

@@ -36,7 +36,7 @@ public class RoasterChoiceRouteBuilderConfigureTest {
                 .parse(new File("src/test/java/org/apache/camel/parser/java/MyChoiceRouteBuilder.java"));
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
 
-        List<CamelNodeDetails> list = new CamelJavaTreeParserHelper().parseCamelRouteTree(clazz, ".",
+        List<CamelNodeDetails> list = new CamelJavaTreeParserHelper().parseCamelRouteTree(clazz,
                 "src/test/java/org/apache/camel/parser/java/MyChoiceRouteBuilder.java", method);
         assertNotNull(list);
     }

@@ -33,8 +33,8 @@ public final class CamelXmlTreeParserHelper {
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
     public List<CamelNodeDetails> parseCamelRouteTree(
-            Node xmlNode, String routeId, CamelNodeDetails route,
-            String baseDir, String fullyQualifiedFileName) {
+            Node xmlNode, CamelNodeDetails route,
+            String fullyQualifiedFileName) {
 
         CamelNodeDetailsFactory nodeFactory = CamelNodeDetailsFactory.newInstance();
         List<CamelNodeDetails> answer = new ArrayList<>();

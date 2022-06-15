@@ -65,7 +65,7 @@ public final class CamelJavaTreeParserHelper {
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
     public List<CamelNodeDetails> parseCamelRouteTree(
-            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+            JavaClassSource clazz, String fullyQualifiedFileName,
             MethodSource<JavaClassSource> configureMethod) {
 
         // find any from which is the start of the route

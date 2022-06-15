@@ -35,7 +35,7 @@ public class XmlRestDslTest {
         InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/myrest.xml");
         String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/myrest.xml";
         String baseDir = "src/test/resources";
-        List<RestConfigurationDetails> list = XmlRestDslParser.parseRestConfiguration(is, baseDir, fqn);
+        List<RestConfigurationDetails> list = XmlRestDslParser.parseRestConfiguration(is, fqn);
 
         assertEquals(1, list.size());
         RestConfigurationDetails details = list.get(0);
@@ -72,7 +72,7 @@ public class XmlRestDslTest {
         InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/myrest.xml");
         String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/myrest.xml";
         String baseDir = "src/test/resources";
-        List<RestServiceDetails> list = XmlRestDslParser.parseRestService(is, baseDir, fqn);
+        List<RestServiceDetails> list = XmlRestDslParser.parseRestService(is, fqn);
 
         assertEquals(1, list.size());
         RestServiceDetails details = list.get(0);
