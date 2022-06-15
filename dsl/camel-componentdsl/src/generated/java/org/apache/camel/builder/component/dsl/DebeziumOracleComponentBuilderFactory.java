@@ -1215,6 +1215,24 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
+         * The maximum number of milliseconds that a LogMiner session lives for
+         * before being restarted. Defaults to 0 (indefinite until a log switch
+         * occurs).
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0ms
+         * Group: oracle
+         * 
+         * @param logMiningSessionMaxMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningSessionMaxMs(
+                long logMiningSessionMaxMs) {
+            doSetProperty("logMiningSessionMaxMs", logMiningSessionMaxMs);
+            return this;
+        }
+        /**
          * The amount of time that the connector will sleep after reading data
          * from redo/archive logs and before starting reading data again. Value
          * is in milliseconds.
@@ -1980,6 +1998,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "logMiningBufferType": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferType((java.lang.String) value); return true;
             case "logMiningScnGapDetectionGapSizeMin": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningScnGapDetectionGapSizeMin((long) value); return true;
             case "logMiningScnGapDetectionTimeIntervalMaxMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningScnGapDetectionTimeIntervalMaxMs((long) value); return true;
+            case "logMiningSessionMaxMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningSessionMaxMs((long) value); return true;
             case "logMiningSleepTimeDefaultMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningSleepTimeDefaultMs((long) value); return true;
             case "logMiningSleepTimeIncrementMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningSleepTimeIncrementMs((long) value); return true;
             case "logMiningSleepTimeMaxMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningSleepTimeMaxMs((long) value); return true;

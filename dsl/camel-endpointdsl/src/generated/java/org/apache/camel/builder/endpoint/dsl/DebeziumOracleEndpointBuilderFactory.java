@@ -1664,6 +1664,42 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum number of milliseconds that a LogMiner session lives for
+         * before being restarted. Defaults to 0 (indefinite until a log switch
+         * occurs).
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0ms
+         * Group: oracle
+         * 
+         * @param logMiningSessionMaxMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningSessionMaxMs(
+                long logMiningSessionMaxMs) {
+            doSetProperty("logMiningSessionMaxMs", logMiningSessionMaxMs);
+            return this;
+        }
+        /**
+         * The maximum number of milliseconds that a LogMiner session lives for
+         * before being restarted. Defaults to 0 (indefinite until a log switch
+         * occurs).
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0ms
+         * Group: oracle
+         * 
+         * @param logMiningSessionMaxMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningSessionMaxMs(
+                String logMiningSessionMaxMs) {
+            doSetProperty("logMiningSessionMaxMs", logMiningSessionMaxMs);
+            return this;
+        }
+        /**
          * The amount of time that the connector will sleep after reading data
          * from redo/archive logs and before starting reading data again. Value
          * is in milliseconds.
