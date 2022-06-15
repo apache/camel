@@ -17,15 +17,16 @@
 package org.apache.camel.component.aws2.s3.integration;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
@@ -47,19 +48,20 @@ public class S3StreamUploadTimeoutIT extends Aws2S3Base {
             template.sendBody("direct:stream1", "Andrea\n");
         }
 
-        Thread.sleep(11000);
-        assertMockEndpointsSatisfied();
+        Awaitility.await().atMost(11, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertMockEndpointsSatisfied());
 
-        Exchange ex = template.request("direct:listObjects", new Processor() {
+        Awaitility.await().atMost(11, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Exchange ex = template.request("direct:listObjects", this::process);
 
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects);
-            }
-        });
+                    List<S3Object> resp = ex.getMessage().getBody(List.class);
+                    assertEquals(1, resp.size());
+                });
+    }
 
-        List<S3Object> resp = ex.getMessage().getBody(List.class);
-        assertEquals(1, resp.size());
+    private void process(Exchange exchange) {
+        exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects);
     }
 
     @Override
