@@ -331,21 +331,6 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets .json file with credentials for Service account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param keyResource the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarStreamComponentBuilder keyResource(
-                java.lang.String keyResource) {
-            doSetProperty("keyResource", keyResource);
-            return this;
-        }
-        /**
          * The name of the p12 file which has the private key to use with the
          * Google Service Account.
          * 
@@ -376,6 +361,22 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
         default GoogleCalendarStreamComponentBuilder refreshToken(
                 java.lang.String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
+        /**
+         * Service account key in json format to authenticate an application as
+         * a service account. Accept base64 adding the prefix base64:.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamComponentBuilder serviceAccountKey(
+                java.lang.String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
         /**
@@ -434,9 +435,9 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             case "accessToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setClientSecret((java.lang.String) value); return true;
             case "emailAddress": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setEmailAddress((java.lang.String) value); return true;
-            case "keyResource": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setKeyResource((java.lang.String) value); return true;
             case "p12FileName": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setP12FileName((java.lang.String) value); return true;
             case "refreshToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setRefreshToken((java.lang.String) value); return true;
+            case "serviceAccountKey": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setServiceAccountKey((java.lang.String) value); return true;
             case "user": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setUser((java.lang.String) value); return true;
             default: return false;
             }
