@@ -17,6 +17,8 @@
 package org.apache.camel.main.download;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private static final Logger LOG = LoggerFactory.getLogger(MavenDependencyDownloader.class);
     private static final String CP = System.getProperty("java.class.path");
 
+    private String[] bootClasspath;
     private DownloadThreadPool threadPool;
     private CamelContext camelContext;
     private DownloadListener downloadListener;
@@ -152,6 +155,20 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             target = target + "-" + version;
         }
 
+        if (bootClasspath != null) {
+            for (String s : bootClasspath) {
+                if (s.contains(target)) {
+                    // trigger listener
+                    DownloadListener listener = camelContext.getExtension(DownloadListener.class);
+                    if (listener != null) {
+                        listener.onAlreadyDownloadedDependency(groupId, artifactId, version);
+                    }
+                    // already on classpath
+                    return true;
+                }
+            }
+        }
+
         if (camelContext.getApplicationContextClassLoader() != null) {
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl instanceof URLClassLoader) {
@@ -178,6 +195,15 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         threadPool = new DownloadThreadPool();
         threadPool.setCamelContext(camelContext);
         ServiceHelper.buildService(threadPool);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        RuntimeMXBean mb = ManagementFactory.getRuntimeMXBean();
+        if (mb != null) {
+            bootClasspath = mb.getClassPath().split("[:|;]");
+        }
+        ServiceHelper.initService(threadPool);
     }
 
     @Override

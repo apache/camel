@@ -27,7 +27,8 @@ import org.apache.camel.util.json.JsonObject;
 public class DependencyDownloaderConsole extends AbstractDevConsole {
 
     public DependencyDownloaderConsole() {
-        super("jvm", "dependency-downloader", "Maven Dependency Downloader", "Displays information about dependencies downloaded at runtime");
+        super("jvm", "dependency-downloader", "Maven Dependency Downloader",
+              "Displays information about dependencies downloaded at runtime");
     }
 
     @Override
