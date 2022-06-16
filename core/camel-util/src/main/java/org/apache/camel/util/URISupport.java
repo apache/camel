@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
@@ -37,13 +36,15 @@ import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
 public final class URISupport {
 
     public static final String RAW_TOKEN_PREFIX = "RAW";
-    public static final char[] RAW_TOKEN_START = {'(', '{'};
-    public static final char[] RAW_TOKEN_END = {')', '}'};
+    public static final char[] RAW_TOKEN_START = { '(', '{' };
+    public static final char[] RAW_TOKEN_END = { ')', '}' };
 
     // Match any key-value pair in the URI query string whose key contains
     // "passphrase" or "password" or secret key (case-insensitive).
     // First capture group is the key, second is the value.
-    private static final Pattern ALL_SECRETS = createSecretsPattern(SensitiveUtils.getSensitiveKeys());
+    private static final Pattern ALL_SECRETS = Pattern.compile(
+            "([?&][^=]*(?:" + SensitiveUtils.getSensitivePattern() + ")[^=]*)=(RAW(([{][^}]*[}])|([(][^)]*[)]))|[^&]*)",
+            Pattern.CASE_INSENSITIVE);
 
     // Match the user password in the URI as second capture group
     // (applies to URI with authority component and userinfo token in the form
@@ -64,10 +65,10 @@ public final class URISupport {
     /**
      * Removes detected sensitive information (such as passwords) from the URI and returns the result.
      *
-     * @param uri The uri to sanitize.
-     * @return Returns null if the uri is null, otherwise the URI with the passphrase, password or secretKey
-     * sanitized.
-     * @see #SECRETS and #USERINFO_PASSWORD for the matched pattern
+     * @param  uri The uri to sanitize.
+     * @return     Returns null if the uri is null, otherwise the URI with the passphrase, password or secretKey
+     *             sanitized.
+     * @see        #ALL_SECRETS and #USERINFO_PASSWORD for the matched pattern
      */
     public static String sanitizeUri(String uri) {
         // use xxxxx as replacement as that works well with JMX also
@@ -83,8 +84,8 @@ public final class URISupport {
      * Removes detected sensitive information (such as passwords) from the <em>path part</em> of an URI (that is, the
      * part without the query parameters or component prefix) and returns the result.
      *
-     * @param path the URI path to sanitize
-     * @return null if the path is null, otherwise the sanitized path
+     * @param  path the URI path to sanitize
+     * @return      null if the path is null, otherwise the sanitized path
      */
     public static String sanitizePath(String path) {
         String sanitized = path;
@@ -97,9 +98,9 @@ public final class URISupport {
     /**
      * Extracts the scheme specific path from the URI that is used as the remainder option when creating endpoints.
      *
-     * @param u      the URI
-     * @param useRaw whether to force using raw values
-     * @return the remainder path
+     * @param  u      the URI
+     * @param  useRaw whether to force using raw values
+     * @return        the remainder path
      */
     public static String extractRemainderPath(URI u, boolean useRaw) {
         String path = useRaw ? u.getRawSchemeSpecificPart() : u.getSchemeSpecificPart();
@@ -119,8 +120,8 @@ public final class URISupport {
     /**
      * Extracts the query part of the given uri
      *
-     * @param uri the uri
-     * @return the query parameters or <tt>null</tt> if the uri has no query
+     * @param  uri the uri
+     * @return     the query parameters or <tt>null</tt> if the uri has no query
      */
     public static String extractQuery(String uri) {
         if (uri == null) {
@@ -137,8 +138,8 @@ public final class URISupport {
     /**
      * Strips the query parameters from the uri
      *
-     * @param uri the uri
-     * @return the uri without the query parameter
+     * @param  uri the uri
+     * @return     the uri without the query parameter
      */
     public static String stripQuery(String uri) {
         int idx = uri.indexOf('?');
@@ -155,12 +156,12 @@ public final class URISupport {
      * <tt>key=RAW(value)</tt> which tells Camel to not encode the value, and use the value as is (eg key=value) and the
      * value has <b>not</b> been encoded.
      *
-     * @param uri the uri
-     * @return the parameters, or an empty map if no parameters (eg never null)
+     * @param  uri                the uri
+     * @return                    the parameters, or an empty map if no parameters (eg never null)
      * @throws URISyntaxException is thrown if uri has invalid syntax.
-     * @see #RAW_TOKEN_PREFIX
-     * @see #RAW_TOKEN_START
-     * @see #RAW_TOKEN_END
+     * @see                       #RAW_TOKEN_PREFIX
+     * @see                       #RAW_TOKEN_START
+     * @see                       #RAW_TOKEN_END
      */
     public static Map<String, Object> parseQuery(String uri) throws URISyntaxException {
         return parseQuery(uri, false);
@@ -173,13 +174,13 @@ public final class URISupport {
      * <tt>key=RAW(value)</tt> which tells Camel to not encode the value, and use the value as is (eg key=value) and the
      * value has <b>not</b> been encoded.
      *
-     * @param uri    the uri
-     * @param useRaw whether to force using raw values
-     * @return the parameters, or an empty map if no parameters (eg never null)
+     * @param  uri                the uri
+     * @param  useRaw             whether to force using raw values
+     * @return                    the parameters, or an empty map if no parameters (eg never null)
      * @throws URISyntaxException is thrown if uri has invalid syntax.
-     * @see #RAW_TOKEN_PREFIX
-     * @see #RAW_TOKEN_START
-     * @see #RAW_TOKEN_END
+     * @see                       #RAW_TOKEN_PREFIX
+     * @see                       #RAW_TOKEN_START
+     * @see                       #RAW_TOKEN_END
      */
     public static Map<String, Object> parseQuery(String uri, boolean useRaw) throws URISyntaxException {
         return parseQuery(uri, useRaw, false);
@@ -192,15 +193,15 @@ public final class URISupport {
      * <tt>key=RAW(value)</tt> which tells Camel to not encode the value, and use the value as is (eg key=value) and the
      * value has <b>not</b> been encoded.
      *
-     * @param uri     the uri
-     * @param useRaw  whether to force using raw values
-     * @param lenient whether to parse lenient and ignore trailing & markers which has no key or value which
-     *                can happen when using HTTP components
-     * @return the parameters, or an empty map if no parameters (eg never null)
+     * @param  uri                the uri
+     * @param  useRaw             whether to force using raw values
+     * @param  lenient            whether to parse lenient and ignore trailing & markers which has no key or value which
+     *                            can happen when using HTTP components
+     * @return                    the parameters, or an empty map if no parameters (eg never null)
      * @throws URISyntaxException is thrown if uri has invalid syntax.
-     * @see #RAW_TOKEN_PREFIX
-     * @see #RAW_TOKEN_START
-     * @see #RAW_TOKEN_END
+     * @see                       #RAW_TOKEN_PREFIX
+     * @see                       #RAW_TOKEN_START
+     * @see                       #RAW_TOKEN_END
      */
     public static Map<String, Object> parseQuery(String uri, boolean useRaw, boolean lenient) throws URISyntaxException {
         if (uri == null || uri.isEmpty()) {
@@ -225,12 +226,12 @@ public final class URISupport {
      * This is a companion method with {@link #isRaw(int, List)} and the returned value is supposed to be used as the
      * parameter of that method.
      *
-     * @param str the string to scan RAW tokens
-     * @return the list of pair indexes which represent the start and end positions of a RAW token
-     * @see #isRaw(int, List)
-     * @see #RAW_TOKEN_PREFIX
-     * @see #RAW_TOKEN_START
-     * @see #RAW_TOKEN_END
+     * @param  str the string to scan RAW tokens
+     * @return     the list of pair indexes which represent the start and end positions of a RAW token
+     * @see        #isRaw(int, List)
+     * @see        #RAW_TOKEN_PREFIX
+     * @see        #RAW_TOKEN_START
+     * @see        #RAW_TOKEN_END
      */
     public static List<Pair<Integer>> scanRaw(String str) {
         return URIScanner.scanRaw(str);
@@ -243,13 +244,13 @@ public final class URISupport {
      * This is a companion method with {@link #scanRaw(String)} and is supposed to consume the returned value of that
      * method as the second parameter <tt>pairs</tt>.
      *
-     * @param index the index to be tested
-     * @param pairs the list of pair indexes which represent the start and end positions of a RAW token
-     * @return <tt>true</tt> if the index is within any pair of the indexes, <tt>false</tt> otherwise
-     * @see #scanRaw(String)
-     * @see #RAW_TOKEN_PREFIX
-     * @see #RAW_TOKEN_START
-     * @see #RAW_TOKEN_END
+     * @param  index the index to be tested
+     * @param  pairs the list of pair indexes which represent the start and end positions of a RAW token
+     * @return       <tt>true</tt> if the index is within any pair of the indexes, <tt>false</tt> otherwise
+     * @see          #scanRaw(String)
+     * @see          #RAW_TOKEN_PREFIX
+     * @see          #RAW_TOKEN_START
+     * @see          #RAW_TOKEN_END
      */
     public static boolean isRaw(int index, List<Pair<Integer>> pairs) {
         if (pairs == null || pairs.isEmpty()) {
@@ -270,8 +271,8 @@ public final class URISupport {
     /**
      * Parses the query parameters of the uri (eg the query part).
      *
-     * @param uri the uri
-     * @return the parameters, or an empty map if no parameters (eg never null)
+     * @param  uri                the uri
+     * @return                    the parameters, or an empty map if no parameters (eg never null)
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
     public static Map<String, Object> parseParameters(URI uri) throws URISyntaxException {
@@ -306,10 +307,10 @@ public final class URISupport {
      * just the value.
      *
      * @param parameters the uri parameters
-     * @see #parseQuery(String)
-     * @see #RAW_TOKEN_PREFIX
-     * @see #RAW_TOKEN_START
-     * @see #RAW_TOKEN_END
+     * @see              #parseQuery(String)
+     * @see              #RAW_TOKEN_PREFIX
+     * @see              #RAW_TOKEN_START
+     * @see              #RAW_TOKEN_END
      */
     @SuppressWarnings("unchecked")
     public static void resolveRawParameterValues(Map<String, Object> parameters) {
@@ -346,9 +347,9 @@ public final class URISupport {
     /**
      * Creates a URI with the given query
      *
-     * @param uri   the uri
-     * @param query the query to append to the uri
-     * @return uri with the query appended
+     * @param  uri                the uri
+     * @param  query              the query to append to the uri
+     * @return                    uri with the query appended
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
     public static URI createURIWithQuery(URI uri, String query) throws URISyntaxException {
@@ -379,9 +380,9 @@ public final class URISupport {
      * <p/>
      * Returns the value as-is if not starting with the prefix.
      *
-     * @param value  the value
-     * @param prefix the prefix to remove from value
-     * @return the value without the prefix
+     * @param  value  the value
+     * @param  prefix the prefix to remove from value
+     * @return        the value without the prefix
      */
     public static String stripPrefix(String value, String prefix) {
         if (value == null || prefix == null) {
@@ -400,9 +401,9 @@ public final class URISupport {
      * <p/>
      * Returns the value as-is if not ending with the prefix.
      *
-     * @param value  the value
-     * @param suffix the suffix to remove from value
-     * @return the value without the suffix
+     * @param  value  the value
+     * @param  suffix the suffix to remove from value
+     * @return        the value without the suffix
      */
     public static String stripSuffix(final String value, final String suffix) {
         if (value == null || suffix == null) {
@@ -419,9 +420,9 @@ public final class URISupport {
     /**
      * Assembles a query from the given map.
      *
-     * @param options the map with the options (eg key/value pairs)
-     * @return a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there
-     * is no options.
+     * @param  options            the map with the options (eg key/value pairs)
+     * @return                    a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there
+     *                            is no options.
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
     @SuppressWarnings("unchecked")
@@ -432,10 +433,10 @@ public final class URISupport {
     /**
      * Assembles a query from the given map.
      *
-     * @param options the map with the options (eg key/value pairs)
-     * @param encode  whether to URL encode the query string
-     * @return a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there
-     * is no options.
+     * @param  options            the map with the options (eg key/value pairs)
+     * @param  encode             whether to URL encode the query string
+     * @return                    a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there
+     *                            is no options.
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
     @SuppressWarnings("unchecked")
@@ -463,7 +464,7 @@ public final class URISupport {
                     // values
                     if (value instanceof List) {
                         List<String> list = (List<String>) value;
-                        for (Iterator<String> it = list.iterator(); it.hasNext(); ) {
+                        for (Iterator<String> it = list.iterator(); it.hasNext();) {
                             String s = it.next();
                             appendQueryStringParameter(key, s, rc, encode);
                             // append & separator if there is more in the list
@@ -537,9 +538,9 @@ public final class URISupport {
      * It keeps the original parameters and if a new parameter is already defined in {@code originalURI}, it will be
      * replaced by its value in {@code newParameters}.
      *
-     * @param originalURI   the original URI
-     * @param newParameters the parameters to add
-     * @return the URI with all the parameters
+     * @param  originalURI                  the original URI
+     * @param  newParameters                the parameters to add
+     * @return                              the URI with all the parameters
      * @throws URISyntaxException           is thrown if the uri syntax is invalid
      * @throws UnsupportedEncodingException is thrown if encoding error
      */
@@ -559,13 +560,13 @@ public final class URISupport {
      * <tt>key=RAW(value)</tt> which tells Camel to not encode the value, and use the value as is (eg key=value) and the
      * value has <b>not</b> been encoded.
      *
-     * @param uri the uri
-     * @return the normalized uri
+     * @param  uri                          the uri
+     * @return                              the normalized uri
      * @throws URISyntaxException           in thrown if the uri syntax is invalid
      * @throws UnsupportedEncodingException is thrown if encoding error
-     * @see #RAW_TOKEN_PREFIX
-     * @see #RAW_TOKEN_START
-     * @see #RAW_TOKEN_END
+     * @see                                 #RAW_TOKEN_PREFIX
+     * @see                                 #RAW_TOKEN_START
+     * @see                                 #RAW_TOKEN_END
      */
     public static String normalizeUri(String uri) throws URISyntaxException, UnsupportedEncodingException {
         // try to parse using the simpler and faster Camel URI parser
@@ -725,7 +726,7 @@ public final class URISupport {
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
         Map<String, Object> rc = new LinkedHashMap<>(properties.size());
 
-        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext(); ) {
+        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
             Map.Entry<String, Object> entry = it.next();
             String name = entry.getKey();
             if (name.startsWith(optionPrefix)) {
@@ -785,27 +786,6 @@ public final class URISupport {
         }
 
         return joined.toString();
-    }
-
-    private static Pattern createSecretsPattern(Set<String> keywords) {
-        StringBuilder regex = createOneOfThemRegex(keywords);
-        regex.insert(0, "([?&][^=]*(?:");
-        regex.append(")[^=]*)=(RAW(([{][^}]*[}])|([(][^)]*[)]))|[^&]*)");
-        return Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE);
-    }
-
-    private static StringBuilder createOneOfThemRegex(Set<String> keywords) {
-        // from DefaultMaskingFormatter
-        StringBuilder regex = new StringBuilder();
-        String[] strKeywords = keywords.toArray(new String[0]);
-        regex.append(Pattern.quote(strKeywords[0]));
-        if (strKeywords.length > 1) {
-            for (int i = 1; i < strKeywords.length; i++) {
-                regex.append('|');
-                regex.append(Pattern.quote(strKeywords[i]));
-            }
-        }
-        return regex;
     }
 
 }

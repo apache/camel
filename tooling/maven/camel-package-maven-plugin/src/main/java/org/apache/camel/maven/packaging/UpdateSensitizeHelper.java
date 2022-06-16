@@ -48,8 +48,10 @@ import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 @Mojo(name = "update-sensitive-helper", threadSafe = true)
 public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
 
-    private static final String START_TOKEN = "// SENSITIVE-KEYS: START";
-    private static final String END_TOKEN = "// SENSITIVE-KEYS: END";
+    private static final String KEYS_START_TOKEN = "// SENSITIVE-KEYS: START";
+    private static final String KEYS_END_TOKEN = "// SENSITIVE-KEYS: END";
+    private static final String PATTERN_START_TOKEN = "// SENSITIVE-PATTERN: START";
+    private static final String PATTERN_END_TOKEN = "// SENSITIVE-PATTERN: END";
 
     // extra keys that are regarded as secret which may not yet been in any component
     // they MUST be in lowercase and without a dash
@@ -139,7 +141,8 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
                       + " distinct secret options across all the Camel components/dataformats/languages");
 
         try {
-            boolean updated = updateSensitiveHelper(camelDir, secrets);
+            boolean updated = updateSensitiveHelperKeys(camelDir, secrets);
+            updated |= updateSensitiveHelperPatterns(camelDir, secrets);
             if (updated) {
                 getLog().info("Updated camel-util/src/main/java/org/apache/camel/util/SensitiveUtils.java file");
             } else {
@@ -151,7 +154,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
         }
     }
 
-    private boolean updateSensitiveHelper(File camelDir, Set<String> secrets) throws Exception {
+    private boolean updateSensitiveHelperKeys(File camelDir, Set<String> secrets) throws Exception {
         // load source code and update
         File java = new File(camelDir, "src/main/java/org/apache/camel/util/SensitiveUtils.java");
         String text = PackageHelper.loadText(java);
@@ -164,7 +167,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
         }
         String changed = sb.toString();
 
-        String existing = Strings.between(text, START_TOKEN, END_TOKEN);
+        String existing = Strings.between(text, KEYS_START_TOKEN, KEYS_END_TOKEN);
         if (existing != null) {
             // remove leading line breaks etc
             existing = existing.trim();
@@ -172,9 +175,51 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
             if (existing.equals(changed)) {
                 return false;
             } else {
-                String before = Strings.before(text, START_TOKEN);
-                String after = Strings.after(text, END_TOKEN);
-                text = before + START_TOKEN + "\n" + spaces20 + changed + "\n" + spaces12 + END_TOKEN + after;
+                String before = Strings.before(text, KEYS_START_TOKEN);
+                String after = Strings.after(text, KEYS_END_TOKEN);
+                text = before + KEYS_START_TOKEN + "\n" + spaces20 + changed + "\n" + spaces12 + KEYS_END_TOKEN + after;
+                PackageHelper.writeText(java, text);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean updateSensitiveHelperPatterns(File camelDir, Set<String> secrets) throws Exception {
+        // load source code and update
+        File java = new File(camelDir, "src/main/java/org/apache/camel/util/SensitiveUtils.java");
+        String text = PackageHelper.loadText(java);
+        String spaces52 = "                                                    ";
+
+        StringJoiner sb = new StringJoiner("\n");
+        boolean first = true;
+        for (String name : secrets) {
+            StringBuilder line = new StringBuilder();
+            line.append(spaces52);
+            line.append("+ \"");
+            if (!first) {
+                line.append("|");
+            }
+            line.append("\\\\Q");
+            line.append(name);
+            line.append("\\\\E\"");
+            sb.add(line);
+            first = false;
+        }
+        String changed = sb.toString();
+
+        String existing = Strings.between(text, PATTERN_START_TOKEN, PATTERN_END_TOKEN);
+        if (existing != null) {
+            // remove leading line breaks etc
+            existing = existing.trim();
+            changed = changed.trim();
+            if (existing.equals(changed)) {
+                return false;
+            } else {
+                String before = Strings.before(text, PATTERN_START_TOKEN);
+                String after = Strings.after(text, PATTERN_END_TOKEN);
+                text = before + PATTERN_START_TOKEN + "\n" + spaces52 + changed + "\n" + spaces52 + PATTERN_END_TOKEN + after;
                 PackageHelper.writeText(java, text);
                 return true;
             }
