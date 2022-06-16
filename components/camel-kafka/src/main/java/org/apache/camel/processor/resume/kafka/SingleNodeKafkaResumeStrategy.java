@@ -178,6 +178,8 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
 
     @Override
     public void updateLastOffset(T offset) throws Exception {
+        createProducer();
+
         OffsetKey<?> key = offset.getOffsetKey();
         Offset<?> offsetValue = offset.getLastOffset();
 
@@ -197,6 +199,8 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
      * @throws Exception
      */
     public void loadCache() throws Exception {
+        createConsumer();
+
         subscribe();
 
         LOG.debug("Loading records from topic {}", topic);
@@ -391,14 +395,18 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
 
     @Override
     public void init() {
-
         LOG.debug("Initializing the Kafka resume strategy");
-        if (consumer == null) {
-            consumer = new KafkaConsumer<>(consumerConfig);
-        }
+    }
 
+    private void createProducer() {
         if (producer == null) {
             producer = new KafkaProducer<>(producerConfig);
+        }
+    }
+
+    private void createConsumer() {
+        if (consumer == null) {
+            consumer = new KafkaConsumer<>(consumerConfig);
         }
     }
 
