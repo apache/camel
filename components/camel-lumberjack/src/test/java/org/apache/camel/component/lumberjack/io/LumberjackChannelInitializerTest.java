@@ -25,11 +25,13 @@ import java.util.concurrent.TimeUnit;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.embedded.EmbeddedChannel;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static io.netty.buffer.Unpooled.buffer;
 import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_ACKNOWLEDGE;
 import static org.apache.camel.component.lumberjack.io.LumberjackConstants.VERSION_V2;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LumberjackChannelInitializerTest {
@@ -52,8 +54,8 @@ public class LumberjackChannelInitializerTest {
         // we need to use runPendingTasks for this type of Channel
         // this is use case for internal camel code test only : other unit tests use production like channels and don't need
         // adding runPendingTasks()
-        TimeUnit.MILLISECONDS.sleep(2000);
-        channel.runPendingTasks();
+        Awaitility.await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertDoesNotThrow(channel::runPendingTasks));
 
         // Then we must have 25 messages with only maps
         assertEquals(25, messages.size());
