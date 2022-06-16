@@ -199,6 +199,16 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
      * @throws Exception
      */
     public void loadCache() throws Exception {
+        if (adapter instanceof Cacheable) {
+            Cacheable cacheable = (Cacheable) adapter;
+
+            if (cacheable.getFillPolicy() == Cacheable.FillPolicy.MAXIMIZING) {
+                consumerConfig.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+            } else {
+                consumerConfig.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+            }
+        }
+
         createConsumer();
 
         subscribe();

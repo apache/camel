@@ -25,6 +25,21 @@ import org.apache.camel.resume.cache.ResumeCache;
 public interface Cacheable {
 
     /**
+     * The cache fill policy can be used to determine how this cache should be filled with data.
+     */
+    enum FillPolicy {
+        /**
+         * With MAXIMIZING, entities try to maximize cache usage and fill it with as much data as possible
+         */
+        MAXIMIZING,
+
+        /**
+         * With MINIMIZING, entities should fill it with as little data as reasonable.
+         */
+        MINIMIZING,
+    }
+
+    /**
      * Adds an offset key and value to the cache
      * 
      * @param  key    the key to add
@@ -46,4 +61,13 @@ public interface Cacheable {
      * @return A resume cache instance
      */
     ResumeCache<?> getCache();
+
+    /**
+     * Gets the {@Link FillPolicy} for this cache instance
+     *
+     * @return the fill policy set for this instance FillPolicy.MAXIMIZING
+     */
+    default FillPolicy getFillPolicy() {
+        return FillPolicy.MAXIMIZING;
+    }
 }
