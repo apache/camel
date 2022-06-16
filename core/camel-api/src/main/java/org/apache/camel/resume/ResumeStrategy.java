@@ -24,6 +24,7 @@ import org.apache.camel.Service;
  * processing records.
  */
 public interface ResumeStrategy extends Service {
+    String DEFAULT_NAME = "resumeStrategy";
 
     /**
      * Sets an adapter for resuming operations with this strategy
