@@ -73,7 +73,7 @@ public class MinaUdpNoCamelTest {
             client.sendNoMina("Hello Mina " + i + System.lineSeparator());
         }
 
-        await().atMost(2, TimeUnit.SECONDS)
+        await().atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(222, server.numMessagesReceived));
     }
 
