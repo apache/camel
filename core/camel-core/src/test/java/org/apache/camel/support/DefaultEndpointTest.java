@@ -35,10 +35,10 @@ public class DefaultEndpointTest extends ContextTestSupport {
         assertSanitizedUriUnchanged("irc://irc.codehaus.org/camel");
         assertSanitizedUriUnchanged("direct:foo?bar=123&cheese=yes");
         assertSanitizedUriUnchanged("https://issues.apache.org/activemq/secure/AddComment!default.jspa?id=33239");
-        assertEquals("ftp://host.mysite.com/records?passiveMode=true&user=someuser&password=xxxxxx",
+        assertEquals("ftp://host.mysite.com/records?passiveMode=true&user=xxxxxx&password=xxxxxx",
                 URISupport.sanitizeUri("ftp://host.mysite.com/records?passiveMode=true&user=someuser&password=superSecret"));
         assertEquals(
-                "sftp://host.mysite.com/records?user=someuser&privateKeyFile=key.file&privateKeyFilePassphrase=xxxxxx&knownHostsFile=hosts.list",
+                "sftp://host.mysite.com/records?user=xxxxxx&privateKeyFile=xxxxxx&privateKeyFilePassphrase=xxxxxx&knownHostsFile=hosts.list",
                 URISupport.sanitizeUri(
                         "sftp://host.mysite.com/records?user=someuser&privateKeyFile=key.file&privateKeyFilePassphrase=superSecret&knownHostsFile=hosts.list"));
     }

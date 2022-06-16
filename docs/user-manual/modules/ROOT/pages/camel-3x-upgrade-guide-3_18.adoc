@@ -6,6 +6,11 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.17 to 3.18
 
+=== camel-core
+
+Camel will now mask all known secret values when logging endpoint URIs to avoid leaking sensitive details
+such as from stacktraces. Previously only a sub set of known _secret_ keys was masked.
+
 === camel-console
 
 The `AbstractDevConsole` has changed the method `doCall` into two separate methods `doCallText` and `doCallJson`

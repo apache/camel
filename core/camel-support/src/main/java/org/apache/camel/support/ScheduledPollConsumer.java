@@ -249,7 +249,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                 // let exception handler deal with the caused exception
                 // but suppress this during shutdown as the logs may get flooded with exceptions during shutdown/forced shutdown
                 try {
-                    getExceptionHandler().handleException("Consumer " + this + " failed polling endpoint: " + getEndpoint()
+                    getExceptionHandler().handleException("Failed polling endpoint: " + getEndpoint()
                                                           + ". Will try again at next poll",
                             cause);
                 } catch (Throwable e) {

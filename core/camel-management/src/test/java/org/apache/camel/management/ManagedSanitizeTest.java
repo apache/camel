@@ -43,10 +43,10 @@ public class ManagedSanitizeTest extends ManagementTestSupport {
     public void testSanitize() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "stub://foo\\?password=xxxxxx&username=foo");
+        ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "stub://foo\\?password=xxxxxx&username=xxxxxx");
         assertTrue(mbeanServer.isRegistered(name), "Should be registered");
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
-        assertEquals("stub://foo?password=xxxxxx&username=foo", uri);
+        assertEquals("stub://foo?password=xxxxxx&username=xxxxxx", uri);
     }
 
     @Override
