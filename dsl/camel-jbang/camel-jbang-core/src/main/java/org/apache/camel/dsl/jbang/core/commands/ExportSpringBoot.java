@@ -92,7 +92,7 @@ class ExportSpringBoot extends BaseExport {
         // create main class
         createMainClassSource(srcJavaDir, packageName, mainClassname);
         // gather dependencies
-        Set<String> deps = resolveDependencies(settings);
+        Set<String> deps = resolveDependencies(settings, profile);
         // create pom
         createPom(settings, new File(BUILD_DIR, "pom.xml"), deps);
 
@@ -176,8 +176,8 @@ class ExportSpringBoot extends BaseExport {
     }
 
     @Override
-    protected Set<String> resolveDependencies(File settings) throws Exception {
-        Set<String> answer = super.resolveDependencies(settings);
+    protected Set<String> resolveDependencies(File settings, File profile) throws Exception {
+        Set<String> answer = super.resolveDependencies(settings, profile);
 
         answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-dsl-modeline"));

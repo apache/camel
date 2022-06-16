@@ -92,7 +92,7 @@ class ExportCamelMain extends BaseExport {
         // create main class
         createMainClassSource(srcJavaDir, packageName, mainClassname);
         // gather dependencies
-        Set<String> deps = resolveDependencies(settings);
+        Set<String> deps = resolveDependencies(settings, profile);
         // create pom
         createPom(settings, new File(BUILD_DIR, "pom.xml"), deps, packageName);
 
@@ -173,8 +173,8 @@ class ExportCamelMain extends BaseExport {
     }
 
     @Override
-    protected Set<String> resolveDependencies(File settings) throws Exception {
-        Set<String> answer = super.resolveDependencies(settings);
+    protected Set<String> resolveDependencies(File settings, File profile) throws Exception {
+        Set<String> answer = super.resolveDependencies(settings, profile);
 
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));

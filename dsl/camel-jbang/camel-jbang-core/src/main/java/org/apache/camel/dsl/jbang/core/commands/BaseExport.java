@@ -110,7 +110,7 @@ abstract class BaseExport extends CamelCommand {
         return code;
     }
 
-    protected Set<String> resolveDependencies(File settings) throws Exception {
+    protected Set<String> resolveDependencies(File settings, File profile) throws Exception {
         Set<String> answer = new TreeSet<>((o1, o2) -> {
             // favour org.apache.camel first
             boolean c1 = o1.contains("org.apache.camel:");
@@ -137,6 +137,18 @@ abstract class BaseExport extends CamelCommand {
                 if (v != null && v.contains("org.apache.camel:camel-kamelet")) {
                     // include kamelet catalog if we use kamelets
                     answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                }
+            }
+        }
+
+        // include custom dependencies defined in profile
+        if (profile != null && profile.exists()) {
+            OrderedProperties prop = new OrderedProperties();
+            prop.load(new FileInputStream(profile));
+            String deps = prop.getProperty("camel.jbang.dependencies");
+            if (deps != null) {
+                for (String d : deps.split(",")) {
+                    answer.add(d.trim());
                 }
             }
         }
