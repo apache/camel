@@ -36,7 +36,6 @@ public class MemoryDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        // only text is supported
         StringBuilder sb = new StringBuilder();
 
         MemoryMXBean mb = ManagementFactory.getMemoryMXBean();
