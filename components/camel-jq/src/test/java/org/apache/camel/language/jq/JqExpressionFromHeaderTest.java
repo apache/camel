@@ -18,31 +18,53 @@ package org.apache.camel.language.jq;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-public class JqHelloFromHeaderTest extends JqTestSupport {
+public class JqExpressionFromHeaderTest extends JqTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:start")
+                        .doTry()
                         .transform().jq(".foo", "Content")
-                        .to("mock:result");
+                        .to("mock:result")
+                        .doCatch(NoSuchHeaderException.class)
+                        .to("mock:fail");
+
             }
         };
     }
 
     @Test
-    public void testHelloHeader() throws Exception {
+    public void testExpressionFromHeader() throws Exception {
         getMockEndpoint("mock:result")
                 .expectedBodiesReceived(new TextNode("bar"));
+        getMockEndpoint("mock:fail")
+                .expectedMessageCount(0);
 
         ObjectNode node = MAPPER.createObjectNode();
         node.put("foo", "bar");
 
         template.sendBodyAndHeader("direct:start", null, "Content", node);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testExpressionFromHeaderFail() throws Exception {
+        getMockEndpoint("mock:result")
+                .expectedMessageCount(0);
+        getMockEndpoint("mock:fail")
+                .expectedMessageCount(1);
+
+        ObjectNode node = MAPPER.createObjectNode();
+        node.put("foo", "bar");
+
+        template.sendBody("direct:start", node);
 
         assertMockEndpointsSatisfied();
     }

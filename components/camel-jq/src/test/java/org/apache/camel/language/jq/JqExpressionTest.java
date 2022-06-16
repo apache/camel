@@ -54,6 +54,24 @@ public class JqExpressionTest {
     }
 
     @Test
+    public void extractProperty() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody(MAPPER.createObjectNode());
+            exchange.setProperty("CommitterName", "Andrea");
+
+            JqExpression expression = new JqExpression("property(\"CommitterName\")");
+            expression.init(context);
+
+            JsonNode result = expression.evaluate(exchange, JsonNode.class);
+
+            assertThatJson(result)
+                    .isString()
+                    .isEqualTo("Andrea");
+        }
+    }
+
+    @Test
     public void extractHeaderWithDefault() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             Exchange exchange = new DefaultExchange(context);
@@ -173,6 +191,29 @@ public class JqExpressionTest {
             exchange.getMessage().setBody(node);
 
             JqExpression expression = new JqExpression(".commit.name = header(\"CommitterName\")");
+            expression.init(context);
+
+            JsonNode result = expression.evaluate(exchange, JsonNode.class);
+
+            assertThatJson(result)
+                    .inPath("$.commit.name")
+                    .isString()
+                    .isEqualTo("Andrea");
+        }
+    }
+
+    @Test
+    public void setFieldFromProperty() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            ObjectNode node = MAPPER.createObjectNode();
+            node.with("commit").put("name", "Nicolas Williams");
+            node.with("commit").put("message", "Reject all overlong UTF8 sequences.");
+
+            Exchange exchange = new DefaultExchange(context);
+            exchange.setProperty("CommitterName", "Andrea");
+            exchange.getMessage().setBody(node);
+
+            JqExpression expression = new JqExpression(".commit.name = property(\"CommitterName\")");
             expression.init(context);
 
             JsonNode result = expression.evaluate(exchange, JsonNode.class);

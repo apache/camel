@@ -82,6 +82,32 @@ public final class JqFunctions {
     public static void loadLocal(Scope scope) {
         scope.addFunction(Header.NAME, 1, new Header());
         scope.addFunction(Header.NAME, 2, new Header());
+        scope.addFunction(Property.NAME, 1, new Property());
+        scope.addFunction(Property.NAME, 2, new Property());
+    }
+
+    public abstract static class ExchangeAwareFunction implements Function {
+
+        @Override
+        public void apply(Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
+                throws JsonQueryException {
+
+            Exchange exchange = EXCHANGE_LOCAL.get();
+
+            if (exchange != null) {
+                doApply(scope, args, in, path, output, version, exchange);
+            }
+        }
+
+        protected abstract void doApply(
+                Scope scope,
+                List<Expression> args,
+                JsonNode in,
+                Path path,
+                PathOutput output,
+                Version version,
+                Exchange exchange)
+                throws JsonQueryException;
     }
 
     /**
@@ -98,30 +124,31 @@ public final class JqFunctions {
      * </pre>
      *
      */
-    public static class Header implements Function {
+    public static class Header extends ExchangeAwareFunction {
         public static final String NAME = "header";
 
         @Override
-        public void apply(Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
+        protected void doApply(
+                Scope scope,
+                List<Expression> args,
+                JsonNode in,
+                Path path,
+                PathOutput output,
+                Version version,
+                Exchange exchange)
                 throws JsonQueryException {
-
-            Exchange exchange = EXCHANGE_LOCAL.get();
-
-            if (exchange == null) {
-                return;
-            }
 
             args.get(0).apply(scope, in, name -> {
                 if (args.size() == 2) {
                     args.get(1).apply(scope, in, defval -> {
-                        doApply(
+                        extract(
                                 exchange,
                                 name.asText(),
                                 defval.asText(),
                                 output);
                     });
                 } else {
-                    doApply(
+                    extract(
                             exchange,
                             name.asText(),
                             null,
@@ -130,9 +157,68 @@ public final class JqFunctions {
             });
         }
 
-        private void doApply(Exchange exchange, String headerName, String headerValue, PathOutput output)
+        private void extract(Exchange exchange, String headerName, String headerValue, PathOutput output)
                 throws JsonQueryException {
             String header = exchange.getMessage().getHeader(headerName, headerValue, String.class);
+
+            if (header == null) {
+                output.emit(NullNode.getInstance(), null);
+            } else {
+                output.emit(new TextNode(header), null);
+            }
+        }
+    }
+
+    /**
+     * A function that allow to retrieve an {@link org.apache.camel.Message} property value as part of JQ expression
+     * evaluation.
+     *
+     * As example, the following JQ expression sets the {@code .name} property to the value of the header named
+     * {@code CommitterName}.
+     *
+     * <pre>
+     * {@code
+     * .name = proeprty(\"CommitterName\")"
+     * }
+     * </pre>
+     *
+     */
+    public static class Property extends ExchangeAwareFunction {
+        public static final String NAME = "property";
+
+        @Override
+        protected void doApply(
+                Scope scope,
+                List<Expression> args,
+                JsonNode in,
+                Path path,
+                PathOutput output,
+                Version version,
+                Exchange exchange)
+                throws JsonQueryException {
+
+            args.get(0).apply(scope, in, name -> {
+                if (args.size() == 2) {
+                    args.get(1).apply(scope, in, defval -> {
+                        extract(
+                                exchange,
+                                name.asText(),
+                                defval.asText(),
+                                output);
+                    });
+                } else {
+                    extract(
+                            exchange,
+                            name.asText(),
+                            null,
+                            output);
+                }
+            });
+        }
+
+        private void extract(Exchange exchange, String propertyName, String propertyValue, PathOutput output)
+                throws JsonQueryException {
+            String header = exchange.getProperty(propertyName, propertyValue, String.class);
 
             if (header == null) {
                 output.emit(NullNode.getInstance(), null);

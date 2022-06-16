@@ -17,32 +17,30 @@
 package org.apache.camel.language.jq;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-public class JqHelloTest extends JqTestSupport {
+public class JqExpressionFromHeaderAsStringTest extends JqTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().jq(".foo")
+                        .transform().jq(".foo", String.class, "Content")
                         .to("mock:result");
             }
         };
     }
 
     @Test
-    public void testHello() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(new TextNode("bar"));
+    public void testExpression() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("bar");
 
         ObjectNode node = MAPPER.createObjectNode();
         node.put("foo", "bar");
-        node.put("baz", "bak");
 
-        template.sendBody("direct:start", node);
+        template.sendBodyAndHeader("direct:start", null, "Content", node);
 
         assertMockEndpointsSatisfied();
     }
