@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -79,10 +80,8 @@ public class LumberjackMultiThreadTest extends CamelTestSupport {
         assertEquals("/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log",
                 first.get("source"));
 
-        TimeUnit.MILLISECONDS.sleep(2000);
-
-        // And we should have replied with 2 acknowledgments for each session frame
-        threads.stream().forEach(thread -> assertEquals(windows, thread.responses));
+        Awaitility.await().atMost(3, TimeUnit.SECONDS)
+                .untilAsserted(() -> threads.stream().forEach(thread -> assertEquals(windows, thread.responses)));
     }
 
     class LumberjackThreadTest extends Thread {
