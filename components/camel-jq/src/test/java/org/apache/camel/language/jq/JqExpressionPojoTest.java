@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonConstants;
 import org.junit.jupiter.api.Test;
 
-public class JqHelloPojoTest extends JqTestSupport {
+public class JqExpressionPojoTest extends JqTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -48,7 +48,7 @@ public class JqHelloPojoTest extends JqTestSupport {
     }
 
     @Test
-    public void testHello() throws Exception {
+    public void testExpression() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(new Book("foo", "bar"));
 
         ObjectNode node = MAPPER.createObjectNode();

@@ -20,28 +20,33 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-public class JqHelloHeaderFnTest extends JqTestSupport {
+public class JqExpressionPropertyFnTest extends JqTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().jq(".foo = header(\"MyHeader\")")
+                        .transform().jq(".foo = property(\"MyProperty\")")
                         .to("mock:result");
             }
         };
     }
 
     @Test
-    public void testHelloHeader() throws Exception {
+    public void testExpression() throws Exception {
         getMockEndpoint("mock:result")
-                .expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "MyValue"));
+                .expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "MyPropertyValue"));
 
         ObjectNode node = MAPPER.createObjectNode();
         node.put("foo", "bar");
 
-        template.sendBodyAndHeader("direct:start", node, "MyHeader", "MyValue");
+        fluentTemplate.to("direct:start")
+                .withProcessor(e -> {
+                    e.setProperty("MyProperty", "MyPropertyValue");
+                    e.getMessage().setBody(node);
+                })
+                .send();
 
         assertMockEndpointsSatisfied();
     }

@@ -29,6 +29,8 @@ import net.thisptr.jackson.jq.Versions;
 import net.thisptr.jackson.jq.exception.JsonQueryException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.ExpressionResultTypeAware;
@@ -162,10 +164,19 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
             JqFunctions.EXCHANGE_LOCAL.set(exchange);
 
             final List<JsonNode> outputs = new ArrayList<>(1);
+            final JsonNode payload;
 
-            final JsonNode payload = headerName == null
-                    ? exchange.getMessage().getMandatoryBody(JsonNode.class)
-                    : exchange.getMessage().getHeader(headerName, JsonNode.class);
+            if (headerName == null) {
+                payload = exchange.getMessage().getBody(JsonNode.class);
+                if (payload == null) {
+                    throw new InvalidPayloadException(exchange, JsonNode.class);
+                }
+            } else {
+                payload = exchange.getMessage().getHeader(headerName, JsonNode.class);
+                if (payload == null) {
+                    throw new NoSuchHeaderException(exchange, headerName, JsonNode.class);
+                }
+            }
 
             this.query.apply(scope, payload, outputs::add);
 
