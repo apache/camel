@@ -28,7 +28,7 @@ import org.apache.camel.support.DefaultComponent;
 public class JiraComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
-    private JiraConfiguration configuration;
+    private JiraConfiguration configuration = new JiraConfiguration();
 
     public JiraComponent() {
         this(null);
