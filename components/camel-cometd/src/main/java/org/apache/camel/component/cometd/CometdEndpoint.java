@@ -18,7 +18,6 @@ package org.apache.camel.component.cometd;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -78,7 +77,7 @@ public class CometdEndpoint extends DefaultEndpoint {
     @UriParam(label = "producer")
     private boolean disconnectLocalSession;
 
-    public CometdEndpoint(CometdComponent component, String uri, String remaining, Map<String, Object> parameters) {
+    public CometdEndpoint(CometdComponent component, String uri, String remaining) {
         super(uri, component);
         this.component = component;
         try {
