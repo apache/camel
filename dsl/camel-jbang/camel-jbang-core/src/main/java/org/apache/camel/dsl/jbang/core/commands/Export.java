@@ -43,6 +43,11 @@ class Export extends ExportBaseCommand {
             if (this.gav == null) {
                 this.gav = prop.getProperty("camel.jbang.gav");
             }
+            // allow configuring versions from profile
+            this.javaVersion = prop.getProperty("camel.jbang.javaVersion", this.javaVersion);
+            this.kameletsVersion = prop.getProperty("camel.jbang.kameletsVersion", this.kameletsVersion);
+            this.quarkusVersion = prop.getProperty("camel.jbang.quarkusVersion", this.quarkusVersion);
+            this.springBootVersion = prop.getProperty("camel.jbang.springBootVersion", this.springBootVersion);
         }
 
         if (runtime == null) {
