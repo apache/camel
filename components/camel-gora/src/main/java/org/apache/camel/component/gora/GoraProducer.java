@@ -24,7 +24,7 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
 
-import static org.apache.camel.component.gora.utils.GoraUtils.constractQueryFromPropertiesMap;
+import static org.apache.camel.component.gora.utils.GoraUtils.constructQueryFromPropertiesMap;
 import static org.apache.camel.component.gora.utils.GoraUtils.getKeyFromExchange;
 import static org.apache.camel.component.gora.utils.GoraUtils.getValueFromExchange;
 
@@ -77,10 +77,10 @@ public class GoraProducer extends DefaultProducer {
             result = dataStore.delete(getKeyFromExchange(exchange));
         } else if (GoraOperation.QUERY.value.equalsIgnoreCase(operation)) {
             final Map<String, Object> props = exchange.getIn().getHeaders();
-            result = constractQueryFromPropertiesMap(props, dataStore, this.configuration).execute();
+            result = constructQueryFromPropertiesMap(props, dataStore).execute();
         } else if (GoraOperation.DELETE_BY_QUERY.value.equalsIgnoreCase(operation)) {
             final Map<String, Object> props = exchange.getIn().getHeaders();
-            result = dataStore.deleteByQuery(constractQueryFromPropertiesMap(props, dataStore, this.configuration));
+            result = dataStore.deleteByQuery(constructQueryFromPropertiesMap(props, dataStore));
         } else if (GoraOperation.GET_SCHEMA_NAME.value.equalsIgnoreCase(operation)) {
             result = dataStore.getSchemaName();
         } else if (GoraOperation.DELETE_SCHEMA.value.equalsIgnoreCase(operation)) {

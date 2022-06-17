@@ -96,10 +96,9 @@ public final class GoraUtils {
      *
      * <b>NOTE:</b> values used in order construct the query should be stored in the "in" message headers.
      */
-    public static Query<Object, Persistent> constractQueryFromPropertiesMap(
+    public static Query<Object, Persistent> constructQueryFromPropertiesMap(
             final Map<String, ?> propertiesMap,
-            final DataStore<Object, Persistent> dataStore,
-            final GoraConfiguration conf) {
+            final DataStore<Object, Persistent> dataStore) {
 
         final Query<Object, Persistent> query = dataStore.newQuery();
 
