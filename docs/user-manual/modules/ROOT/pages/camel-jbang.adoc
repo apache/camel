@@ -611,7 +611,7 @@ runtimes of Spring Boot, Quarkus or vanilla Camel Main.
 
 === Exporting to Camel Spring Boot
 
-The command `export spring-boot` will export your current Camel JBang file(s) to a Maven based
+The command `export --runtime=spring-boot` will export your current Camel JBang file(s) to a Maven based
 Spring Boot project with files organized in `src/main/` folder structure.
 
 For example to export to Spring Boot using the Maven groupId _com.foo_ and the artifactId _acme_
@@ -619,7 +619,7 @@ and with version _1.0-SNAPSHOT_ you simply execute:
 
 [source,bash]
 ----
-camel export spring-boot --gav=com.foo:acme:1.0-SNAPSHOT
+camel export --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT
 ----
 
 NOTE: This will export to the _current_ directory, meaning that files are moved into the needed folder structure.
@@ -628,14 +628,14 @@ To export to another directly (copies the files) you execute:
 
 [source,bash]
 ----
-camel export spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --dir=../myproject
+camel export --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --dir=../myproject
 ----
 
-TIP: See the possible options by running: `camel export spring-boot --help` for more details.
+TIP: See the possible options by running: `camel export --help` for more details.
 
 === Exporting to Camel Quarkus
 
-The command `export quarkus` will export your current Camel JBang file(s) to a Maven based
+The command `export --runtime=quarkus` will export your current Camel JBang file(s) to a Maven based
 Quarkus project with files organized in `src/main/` folder structure.
 
 For example to export to Quarkus using the Maven groupId _com.foo_ and the artifactId _acme_
@@ -643,7 +643,7 @@ and with version _1.0-SNAPSHOT_ you simply execute:
 
 [source,bash]
 ----
-camel export quarkus --gav=com.foo:acme:1.0-SNAPSHOT
+camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT
 ----
 
 NOTE: This will export to the _current_ directory, meaning that files are moved into the needed folder structure.
@@ -652,14 +652,14 @@ To export to another directly (copies the files) you execute:
 
 [source,bash]
 ----
-camel export quarkus --gav=com.foo:acme:1.0-SNAPSHOT --dir=../myproject
+camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --dir=../myproject
 ----
 
-TIP: See the possible options by running: `camel export quarkus --help` for more details.
+TIP: See the possible options by running: `camel export --help` for more details.
 
 === Exporting to Camel Main
 
-The command `export camel-main` will export your current Camel JBang file(s) to a Maven based
+The command `export --runtime=camel-main` will export your current Camel JBang file(s) to a Maven based
 vanilla Camel Main project with files organized in `src/main/` folder structure.
 
 For example to export to Camel Main using the Maven groupId _com.foo_ and the artifactId _acme_
@@ -667,7 +667,7 @@ and with version _1.0-SNAPSHOT_ you simply execute:
 
 [source,bash]
 ----
-camel export camel-main --gav=com.foo:acme:1.0-SNAPSHOT
+camel export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT
 ----
 
 NOTE: This will export to the _current_ directory, meaning that files are moved into the needed folder structure.
@@ -676,10 +676,10 @@ To export to another directly (copies the files) you execute:
 
 [source,bash]
 ----
-camel export camel-main --gav=com.foo:acme:1.0-SNAPSHOT --dir=../myproject
+camel export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --dir=../myproject
 ----
 
-TIP: See the possible options by running: `camel export camel-main --help` for more details.
+TIP: See the possible options by running: `camel export --help` for more details.
 
 == Troubleshooting
 

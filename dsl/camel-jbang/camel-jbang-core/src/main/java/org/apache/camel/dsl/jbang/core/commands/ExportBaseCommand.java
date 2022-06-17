@@ -56,10 +56,10 @@ abstract class ExportBaseCommand extends CamelCommand {
             "camel.jbang.classpathFiles"
     };
 
-    @CommandLine.Option(names = { "--runtime" }, description = "Runtime (spring-boot, quarkus, or camel-main)", required = true)
+    @CommandLine.Option(names = { "--runtime" }, description = "Runtime (spring-boot, quarkus, or camel-main)")
     protected String runtime;
 
-    @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version", required = true)
+    @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
     protected String gav;
 
     @CommandLine.Option(names = { "--main-classname" },

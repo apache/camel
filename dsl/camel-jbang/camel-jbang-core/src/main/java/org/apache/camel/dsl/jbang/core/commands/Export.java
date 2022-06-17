@@ -16,7 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import org.apache.camel.util.OrderedProperties;
 import picocli.CommandLine.Command;
+
+import java.io.File;
+import java.io.FileInputStream;
 
 @Command(name = "export",
          description = "Export to other runtimes such as Spring Boot or Quarkus")
@@ -28,6 +32,28 @@ class Export extends ExportBaseCommand {
 
     @Override
     protected Integer export() throws Exception {
+        // read runtime and gav from profile if not configured
+        File profile = new File(getProfile() + ".properties");
+        if (profile.exists()) {
+            OrderedProperties prop = new OrderedProperties();
+            prop.load(new FileInputStream(profile));
+            if (this.runtime == null) {
+                this.runtime = prop.getProperty("camel.jbang.runtime");
+            }
+            if (this.gav == null) {
+                this.gav = prop.getProperty("camel.jbang.gav");
+            }
+        }
+
+        if (runtime == null) {
+            System.err.println("The runtime option must be specified");
+            return 1;
+        }
+        if (gav == null) {
+            System.err.println("The gav option must be specified");
+            return 1;
+        }
+
         if ("spring-boot".equals(runtime)) {
             return export(new ExportSpringBoot(getMain()));
         } else if ("quarkus".equals(runtime)) {
