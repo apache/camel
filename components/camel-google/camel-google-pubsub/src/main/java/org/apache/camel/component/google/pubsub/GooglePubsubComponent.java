@@ -130,7 +130,7 @@ public class GooglePubsubComponent extends DefaultComponent {
                     "Google PubSub Endpoint format \"projectId:destinationName[:subscriptionName]\"");
         }
 
-        GooglePubsubEndpoint pubsubEndpoint = new GooglePubsubEndpoint(uri, this, remaining);
+        GooglePubsubEndpoint pubsubEndpoint = new GooglePubsubEndpoint(uri, this);
         pubsubEndpoint.setProjectId(parts[0]);
         pubsubEndpoint.setDestinationName(parts[1]);
         pubsubEndpoint.setServiceAccountKey(serviceAccountKey);
