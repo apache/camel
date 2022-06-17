@@ -45,7 +45,7 @@ public abstract class MultipartMimeEntity extends MimeEntity {
         setContentType(contentType);
         setMainBody(isMainBody);
 
-        if (boundary != null && EntityUtils.validateBoundaryValue(boundary)) {
+        if (boundary != null) {
             this.boundary = boundary;
         } else {
             this.boundary = EntityUtils.createBoundaryValue();
