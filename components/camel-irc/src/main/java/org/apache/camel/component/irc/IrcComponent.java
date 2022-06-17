@@ -75,7 +75,7 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
     public synchronized void closeIRCConnection(IrcConfiguration configuration) {
         IRCConnection connection = connectionCache.get(configuration.getCacheKey());
         if (connection != null) {
-            closeConnection(configuration.getCacheKey(), connection);
+            closeConnection(connection);
             connectionCache.remove(configuration.getCacheKey());
         }
     }
@@ -139,7 +139,7 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
         return conn;
     }
 
-    public void closeConnection(String key, IRCConnection connection) {
+    public void closeConnection(IRCConnection connection) {
         try {
             connection.doQuit();
             connection.close();
@@ -154,7 +154,7 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
         Map<String, IRCConnection> map = new HashMap<>(connectionCache);
         connectionCache.clear();
         for (Map.Entry<String, IRCConnection> entry : map.entrySet()) {
-            closeConnection(entry.getKey(), entry.getValue());
+            closeConnection(entry.getValue());
         }
         super.doStop();
     }

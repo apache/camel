@@ -125,7 +125,7 @@ public class IrcMessage extends DefaultMessage {
     protected Object createBody() {
         Exchange exchange = getExchange();
         IrcBinding binding = ExchangeHelper.getBinding(getExchange(), IrcBinding.class);
-        return binding != null ? binding.extractBodyFromIrc(exchange, this) : null;
+        return binding != null ? binding.extractBodyFromIrc(this) : null;
     }
 
     @Override
