@@ -75,10 +75,6 @@ public final class EntityUtils {
         return s.toString();
     }
 
-    public static boolean validateBoundaryValue(String boundaryValue) {
-        return true; // TODO: add validation logic.
-    }
-
     public static String appendParameter(String headerString, String parameterName, String parameterValue) {
         return headerString + "; " + parameterName + "=" + parameterValue;
     }
