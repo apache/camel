@@ -139,9 +139,9 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                     = (DependencyDownloaderClassLoader) camelContext.getApplicationContextClassLoader();
             for (MavenArtifact a : artifacts) {
                 File file = a.getFile();
-                // only add to classpath if not already present
+                // only add to classpath if not already present (do not trigger listener)
                 if (!alreadyOnClasspath(a.getGav().getGroupId(), a.getGav().getArtifactId(),
-                        a.getGav().getVersion())) {
+                        a.getGav().getVersion(), false)) {
                     classLoader.addFile(file);
                     LOG.trace("Added classpath: {}", a.getGav());
                 }
@@ -149,7 +149,12 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         }, gav);
     }
 
+
     public boolean alreadyOnClasspath(String groupId, String artifactId, String version) {
+        return alreadyOnClasspath(groupId, artifactId, version, true);
+    }
+
+    private boolean alreadyOnClasspath(String groupId, String artifactId, String version, boolean listener) {
         // if no artifact then regard this as okay
         if (artifactId == null) {
             return true;
@@ -163,10 +168,8 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         if (bootClasspath != null) {
             for (String s : bootClasspath) {
                 if (s.contains(target)) {
-                    // trigger listener
-                    DownloadListener listener = camelContext.getExtension(DownloadListener.class);
-                    if (listener != null) {
-                        listener.onAlreadyDownloadedDependency(groupId, artifactId, version);
+                    if (listener && downloadListener != null) {
+                        downloadListener.onDownloadDependency(groupId, artifactId, version);
                     }
                     // already on classpath
                     return true;
@@ -182,9 +185,8 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                     String s = u.toString();
                     if (s.contains(target)) {
                         // trigger listener
-                        DownloadListener listener = camelContext.getExtension(DownloadListener.class);
-                        if (listener != null) {
-                            listener.onAlreadyDownloadedDependency(groupId, artifactId, version);
+                        if (listener && downloadListener != null) {
+                            downloadListener.onDownloadDependency(groupId, artifactId, version);
                         }
                         // already on classpath
                         return true;
