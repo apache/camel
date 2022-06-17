@@ -54,6 +54,8 @@ abstract class BaseExport extends CamelCommand {
             "camel.jbang.classpathFiles"
     };
 
+    private static final String KAMELETS_VERSION = "0.8.1";
+
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version", required = true)
     protected String gav;
 
@@ -143,6 +145,36 @@ abstract class BaseExport extends CamelCommand {
                 for (String d : deps.split(",")) {
                     answer.add(d.trim());
                 }
+            } else if (line.startsWith("camel.main.routesIncludePattern=")) {
+                String routes = StringHelper.after(line, "camel.main.routesIncludePattern=");
+                for (String r : routes.split(",")) {
+                    String ext = FileUtil.onlyExt(r, true);
+                    if (ext != null) {
+                        // java is moved into src/main/java and compiled during build
+                        // for the other DSLs we need to add dependencies
+                        if ("groovy".equals(ext)) {
+                            answer.add("mvn:org.apache.camel:camel-groovy-dsl");
+                        } else if ("js".equals(ext)) {
+                            answer.add("mvn:org.apache.camel:camel-js-dsl");
+                        } else if ("jsh".equals(ext)) {
+                            answer.add("mvn:org.apache.camel:camel-jsh-dsl");
+                        } else if ("kts".equals(ext)) {
+                            answer.add("mvn:org.apache.camel:camel-kotlin-dsl");
+                        } else if ("xml".equals(ext)) {
+                            answer.add("mvn:org.apache.camel:camel-xml-io-dsl");
+                        } else if ("yaml".equals(ext)) {
+                            answer.add("mvn:org.apache.camel:camel-yaml-dsl");
+                            // is it a kamelet?
+                            ext = FileUtil.onlyExt(r, false);
+                            if ("kamelet.yaml".equals(ext)) {
+                                answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                            }
+                        }
+                    }
+                }
+            } else if (line.startsWith("camel.component.kamelet.location=")) {
+                // include kamelet catalog if we use kamelets
+                answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
             }
         }
 

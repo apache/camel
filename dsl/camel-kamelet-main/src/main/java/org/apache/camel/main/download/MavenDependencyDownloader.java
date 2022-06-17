@@ -127,7 +127,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 mavenRepos.addAll(Arrays.stream(repos.split(",")).collect(Collectors.toList()));
             }
             // include Apache snapshot to make it easy to use upcoming releases
-            if ("org.apache.camel".equals(groupId) && version != null && version.contains("SNAPSHOT")) {
+            if ("org.apache.camel".equals(groupId) && version.contains("SNAPSHOT")) {
                 mavenRepos.add(APACHE_SNAPSHOT_REPO);
             }
 
