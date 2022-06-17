@@ -413,7 +413,7 @@ public abstract class CamelTestSupport
         }
     }
 
-    private void doSetUp() throws Exception {
+    protected void doSetUp() throws Exception {
         LOG.debug("setUp test");
         // jmx is enabled if we have configured to use it, or if dump route
         // coverage is enabled (it requires JMX)
@@ -706,7 +706,7 @@ public abstract class CamelTestSupport
         doStopCamelContext(context, camelContextService);
     }
 
-    private static void doStopCamelContext(CamelContext context, Service camelContextService) {
+    protected void doStopCamelContext(CamelContext context, Service camelContextService) {
         if (camelContextService != null) {
             if (camelContextService == threadService.get()) {
                 threadService.remove();
