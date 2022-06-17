@@ -36,8 +36,6 @@ import org.slf4j.LoggerFactory;
 public class InfluxDbProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDbProducer.class);
-    private static final String CREATE_DATABASE = "CREATE DATABASE ";
-    private static final String SHOW_DATABASES = "SHOW DATABASES";
 
     InfluxDbEndpoint endpoint;
     InfluxDB connection;
@@ -63,7 +61,7 @@ public class InfluxDbProducer extends DefaultProducer {
                 doInsert(exchange, dataBaseName, retentionPolicy);
                 break;
             case InfluxDbOperations.QUERY:
-                doQuery(exchange, dataBaseName, retentionPolicy);
+                doQuery(exchange, dataBaseName);
                 break;
             case InfluxDbOperations.PING:
                 doPing(exchange);
@@ -97,7 +95,7 @@ public class InfluxDbProducer extends DefaultProducer {
         }
     }
 
-    private void doQuery(Exchange exchange, String dataBaseName, String retentionPolicy) {
+    private void doQuery(Exchange exchange, String dataBaseName) {
         String query = calculateQuery(exchange);
         Query influxdbQuery = new Query(query, dataBaseName);
         QueryResult resultSet = connection.query(influxdbQuery);
