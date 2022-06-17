@@ -82,6 +82,10 @@ abstract class ExportBaseCommand extends CamelCommand {
                         defaultValue = "2.9.2.Final")
     protected String quarkusVersion;
 
+    @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "false",
+                        description = "Include Maven Wrapper files in exported project")
+    protected boolean mavenWrapper;
+
     @CommandLine.Option(names = {
             "-dir",
             "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
@@ -325,6 +329,25 @@ abstract class ExportBaseCommand extends CamelCommand {
             }
         }
         IOHelper.close(fos);
+    }
+
+    protected void copyMavenWrapper() throws Exception {
+        File wrapper = new File(BUILD_DIR, ".mvn/wrapper");
+        wrapper.mkdirs();
+        // copy files
+        InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/mvnw");
+        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(BUILD_DIR, "mvnw")));
+        is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/mvnw.cmd");
+        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(BUILD_DIR, "mvnw.cmd")));
+        is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/maven-wrapper.jar");
+        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(wrapper, "maven-wrapper.jar")));
+        is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/maven-wrapper.properties");
+        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(wrapper, "maven-wrapper.properties")));
+        // set execute file permission on mvnw/mvnw.cmd files
+        File file = new File(BUILD_DIR, "mvnw");
+        file.setExecutable(true);
+        file = new File(BUILD_DIR, "mvnw.cmd");
+        file.setExecutable(true);
     }
 
     protected String applicationPropertyLine(String key, String value) {

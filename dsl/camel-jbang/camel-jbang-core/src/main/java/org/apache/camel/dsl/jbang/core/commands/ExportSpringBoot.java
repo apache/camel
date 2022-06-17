@@ -84,6 +84,10 @@ class ExportSpringBoot extends Export {
         Set<String> deps = resolveDependencies(settings, profile);
         // create pom
         createPom(settings, new File(BUILD_DIR, "pom.xml"), deps);
+        // maven wrapper
+        if (mavenWrapper) {
+            copyMavenWrapper();
+        }
 
         if (exportDir.equals(".")) {
             // we export to current dir so prepare for this by cleaning up existing files

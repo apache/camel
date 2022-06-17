@@ -16,11 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import org.apache.camel.util.OrderedProperties;
-import picocli.CommandLine.Command;
-
 import java.io.File;
 import java.io.FileInputStream;
+
+import org.apache.camel.util.OrderedProperties;
+import picocli.CommandLine.Command;
 
 @Command(name = "export",
          description = "Export to other runtimes such as Spring Boot or Quarkus")
@@ -79,6 +79,7 @@ class Export extends ExportBaseCommand {
         cmd.mainClassname = this.mainClassname;
         cmd.quarkusVersion = this.quarkusVersion;
         cmd.springBootVersion = this.springBootVersion;
+        cmd.mavenWrapper = this.mavenWrapper;
         // run export
         return cmd.export();
     }
