@@ -232,7 +232,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
      * Sets the initialDelay before the consumer will start polling. Default is 1000ms
      */
     public void setInitialDelay(long initialDelay) {
-        this.initialDelay = delay;
+        this.initialDelay = initialDelay;
     }
 
     /**
