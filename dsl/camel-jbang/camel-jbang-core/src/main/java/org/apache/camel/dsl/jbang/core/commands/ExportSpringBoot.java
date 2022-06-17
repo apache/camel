@@ -30,19 +30,8 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.commons.io.FileUtils;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "spring-boot", description = "Export as Spring Boot project")
-class ExportSpringBoot extends BaseExport {
-
-    @CommandLine.Option(names = { "--main-classname" },
-                        description = "The class name of the Camel Spring Boot application class",
-                        defaultValue = "CamelApplication")
-    private String mainClassname;
-
-    @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = "2.7.0")
-    private String springBootVersion;
+class ExportSpringBoot extends Export {
 
     public ExportSpringBoot(CamelJBangMain main) {
         super(main);

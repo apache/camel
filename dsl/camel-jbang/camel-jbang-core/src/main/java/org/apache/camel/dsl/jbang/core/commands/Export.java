@@ -16,20 +16,45 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "export",
-         description = "Export to other runtimes such as Spring Boot or Quarkus (use --help to see sub commands)")
-class Export extends CamelCommand {
+         description = "Export to other runtimes such as Spring Boot or Quarkus")
+class Export extends ExportBaseCommand {
 
     public Export(CamelJBangMain main) {
         super(main);
     }
 
     @Override
-    public Integer call() throws Exception {
-        new CommandLine(this).execute("--help");
-        return 0;
+    protected Integer export() throws Exception {
+        if ("spring-boot".equals(runtime)) {
+            return export(new ExportSpringBoot(getMain()));
+        } else if ("quarkus".equals(runtime)) {
+            return export(new ExportQuarkus(getMain()));
+        } else if ("camel-main".equals(runtime)) {
+            return export(new ExportCamelMain(getMain()));
+        } else {
+            System.err.println("Unknown runtime: " + runtime);
+            return 1;
+        }
     }
+
+    private Integer export(ExportBaseCommand cmd) throws Exception {
+        // copy properties from this to cmd
+        cmd.runtime = this.runtime;
+        cmd.gav = this.gav;
+        cmd.exportDir = this.exportDir;
+        cmd.fresh = this.fresh;
+        cmd.javaVersion = this.javaVersion;
+        cmd.kameletsVersion = this.kameletsVersion;
+        cmd.logging = this.logging;
+        cmd.loggingLevel = this.loggingLevel;
+        cmd.mainClassname = this.mainClassname;
+        cmd.quarkusVersion = this.quarkusVersion;
+        cmd.springBootVersion = this.springBootVersion;
+        // run export
+        return cmd.export();
+    }
+
 }

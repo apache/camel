@@ -40,10 +40,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("pipe", new CommandLine(new Pipe(main)))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
                         .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))
-                .addSubcommand("export", new CommandLine(new Export(main))
-                        .addSubcommand("camel-main", new CommandLine(new ExportCamelMain(main)))
-                        .addSubcommand("spring-boot", new CommandLine(new ExportSpringBoot(main)))
-                        .addSubcommand("quarkus", new CommandLine(new ExportQuarkus(main))));
+                .addSubcommand("export", new CommandLine(new Export(main)));
 
         commandLine.getCommandSpec().versionProvider(() -> {
             CamelCatalog catalog = new DefaultCamelCatalog();

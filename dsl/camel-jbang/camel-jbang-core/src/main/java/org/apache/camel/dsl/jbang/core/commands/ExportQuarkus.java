@@ -27,14 +27,8 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.commons.io.FileUtils;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "quarkus", description = "Export as Quarkus project")
-class ExportQuarkus extends BaseExport {
-
-    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus version",
-                        defaultValue = "2.9.2.Final")
-    private String quarkusVersion;
+class ExportQuarkus extends Export {
 
     public ExportQuarkus(CamelJBangMain main) {
         super(main);

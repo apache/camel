@@ -43,7 +43,9 @@ import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
-abstract class BaseExport extends CamelCommand {
+@CommandLine.Command(name = "export",
+                     description = "Export to other runtimes such as Spring Boot or Quarkus")
+abstract class ExportBaseCommand extends CamelCommand {
 
     protected static final String BUILD_DIR = ".camel-jbang/work";
 
@@ -54,8 +56,16 @@ abstract class BaseExport extends CamelCommand {
             "camel.jbang.classpathFiles"
     };
 
+    @CommandLine.Option(names = { "--runtime" }, description = "Runtime (spring-boot, quarkus, or camel-main)", required = true)
+    protected String runtime;
+
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version", required = true)
     protected String gav;
+
+    @CommandLine.Option(names = { "--main-classname" },
+                        description = "The class name of the Camel Main application class",
+                        defaultValue = "CamelApplication")
+    protected String mainClassname;
 
     @CommandLine.Option(names = { "--java-version" }, description = "Java version (11 or 17)", defaultValue = "11")
     protected String javaVersion;
@@ -63,6 +73,14 @@ abstract class BaseExport extends CamelCommand {
     @CommandLine.Option(names = {
             "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "0.8.1")
     protected String kameletsVersion;
+
+    @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
+                        defaultValue = "2.7.0")
+    protected String springBootVersion;
+
+    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus version",
+                        defaultValue = "2.9.2.Final")
+    protected String quarkusVersion;
 
     @CommandLine.Option(names = {
             "-dir",
@@ -79,7 +97,7 @@ abstract class BaseExport extends CamelCommand {
                         description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
     boolean logging;
 
-    public BaseExport(CamelJBangMain main) {
+    public ExportBaseCommand(CamelJBangMain main) {
         super(main);
     }
 

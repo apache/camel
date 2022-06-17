@@ -29,15 +29,8 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.commons.io.FileUtils;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "standalone", description = "Export as standalone Camel Main project")
-class ExportCamelMain extends BaseExport {
-
-    @CommandLine.Option(names = { "--main-classname" },
-                        description = "The class name of the Camel Main application class",
-                        defaultValue = "CamelApplication")
-    private String mainClassname;
+class ExportCamelMain extends Export {
 
     public ExportCamelMain(CamelJBangMain main) {
         super(main);
