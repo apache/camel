@@ -171,7 +171,7 @@
         <elytron-web>1.8.0.Final</elytron-web>
         <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
         <facebook4j-core-version>2.4.13</facebook4j-core-version>
-        <fastjson-version>1.2.80</fastjson-version>
+        <fastjson-version>1.2.83</fastjson-version>
         <findbugs-maven-plugin-version>3.0.5</findbugs-maven-plugin-version>
         <google-maps-services-version>0.10.1</google-maps-services-version>
         <flatpack-version>4.0.5</flatpack-version>
