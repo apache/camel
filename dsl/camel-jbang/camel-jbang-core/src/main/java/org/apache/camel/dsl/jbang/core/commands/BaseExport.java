@@ -54,8 +54,6 @@ abstract class BaseExport extends CamelCommand {
             "camel.jbang.classpathFiles"
     };
 
-    private static final String KAMELETS_VERSION = "0.8.1";
-
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version", required = true)
     protected String gav;
 

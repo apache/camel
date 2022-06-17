@@ -149,7 +149,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         }, gav);
     }
 
-
     public boolean alreadyOnClasspath(String groupId, String artifactId, String version) {
         return alreadyOnClasspath(groupId, artifactId, version, true);
     }
