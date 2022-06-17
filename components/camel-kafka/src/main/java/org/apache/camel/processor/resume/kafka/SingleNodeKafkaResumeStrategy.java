@@ -23,9 +23,7 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.Queue;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 
@@ -38,21 +36,15 @@ import org.apache.camel.resume.Resumable;
 import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.cache.ResumeCache;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.serialization.ByteArrayDeserializer;
-import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,8 +57,6 @@ import org.slf4j.LoggerFactory;
 public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements KafkaResumeStrategy<T> {
     private static final Logger LOG = LoggerFactory.getLogger(SingleNodeKafkaResumeStrategy.class);
 
-    private final String topic;
-
     private Consumer<byte[], byte[]> consumer;
     private Producer<byte[], byte[]> producer;
     private Duration pollDuration = Duration.ofSeconds(1);
@@ -74,77 +64,17 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
     private final Queue<RecordError> producerErrors = new ConcurrentLinkedQueue<>();
 
     private boolean subscribed;
-    private final Properties producerConfig;
-    private final Properties consumerConfig;
     private ResumeAdapter adapter;
+    private final KafkaResumeStrategyConfiguration resumeStrategyConfiguration;
 
     /**
      * Builds an instance of this class
      * 
-     * @param bootstrapServers the address of the Kafka broker
-     * @param topic            the topic where to publish the offsets
+     * @param resumeStrategyConfiguration the configuration to use for this strategy instance
      *
      */
-    public SingleNodeKafkaResumeStrategy(String bootstrapServers, String topic) {
-        this(topic, createProducer(bootstrapServers), createConsumer(bootstrapServers));
-    }
-
-    /**
-     * Builds an instance of this class
-     *
-     * @param topic          the topic where to publish the offsets
-     * @param producerConfig the set of properties to be used by the Kafka producer within this class
-     * @param consumerConfig the set of properties to be used by the Kafka consumer within this class
-     */
-    public SingleNodeKafkaResumeStrategy(String topic, Properties producerConfig,
-                                         Properties consumerConfig) {
-        this.topic = ObjectHelper.notNull(topic, "The topic must not be null");
-        this.producerConfig = producerConfig;
-        this.consumerConfig = consumerConfig;
-
-        init();
-    }
-
-    /**
-     * Creates a basic string-based producer
-     * 
-     * @param  bootstrapServers the Kafka host
-     * @return                  A set of default properties for producing string-based key/pair records from Kafka
-     */
-    public static Properties createProducer(String bootstrapServers) {
-        Properties config = new Properties();
-
-        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class.getName());
-        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class.getName());
-
-        StringHelper.notEmpty(bootstrapServers, "bootstrapServers");
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-
-        return config;
-    }
-
-    /**
-     * Creates a basic string-based consumer
-     * 
-     * @param  bootstrapServers the Kafka host
-     * @return                  A set of default properties for consuming string-based key/pair records from Kafka
-     */
-    public static Properties createConsumer(String bootstrapServers) {
-        Properties config = new Properties();
-
-        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
-
-        StringHelper.notEmpty(bootstrapServers, "bootstrapServers");
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-
-        String groupId = UUID.randomUUID().toString();
-        LOG.debug("Creating consumer with {}[{}]", ConsumerConfig.GROUP_ID_CONFIG, groupId);
-
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, Boolean.TRUE.toString());
-
-        return config;
+    public SingleNodeKafkaResumeStrategy(KafkaResumeStrategyConfiguration resumeStrategyConfiguration) {
+        this.resumeStrategyConfiguration = resumeStrategyConfiguration;
     }
 
     /**
@@ -158,7 +88,7 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
      *
      */
     protected void produce(byte[] key, byte[] message) throws ExecutionException, InterruptedException {
-        ProducerRecord<byte[], byte[]> record = new ProducerRecord<>(topic, key, message);
+        ProducerRecord<byte[], byte[]> record = new ProducerRecord<>(resumeStrategyConfiguration.getTopic(), key, message);
 
         producer.send(record, (recordMetadata, e) -> {
             if (e != null) {
@@ -199,21 +129,11 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
      * @throws Exception
      */
     public void loadCache() throws Exception {
-        if (adapter instanceof Cacheable) {
-            Cacheable cacheable = (Cacheable) adapter;
-
-            if (cacheable.getFillPolicy() == Cacheable.FillPolicy.MAXIMIZING) {
-                consumerConfig.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-            } else {
-                consumerConfig.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
-            }
-        }
-
         createConsumer();
 
         subscribe();
 
-        LOG.debug("Loading records from topic {}", topic);
+        LOG.debug("Loading records from topic {}", resumeStrategyConfiguration.getTopic());
 
         if (!(adapter instanceof Deserializable)) {
             throw new RuntimeCamelException("Cannot load data for an adapter that is not deserializable");
@@ -311,9 +231,11 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
         try {
             consumer.unsubscribe();
         } catch (IllegalStateException e) {
-            LOG.warn("The consumer is likely already closed. Skipping unsubscribing from {}", topic);
+            LOG.warn("The consumer is likely already closed. Skipping unsubscribing from {}",
+                    resumeStrategyConfiguration.getTopic());
         } catch (Exception e) {
-            LOG.error("Error unsubscribing from the Kafka topic {}: {}", topic, e.getMessage(), e);
+            LOG.error("Error unsubscribing from the Kafka topic {}: {}", resumeStrategyConfiguration.getTopic(), e.getMessage(),
+                    e);
         }
     }
 
@@ -370,12 +292,12 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
             ResumeCache<?> cache = ((Cacheable) adapter).getCache();
 
             if (cache.capacity() >= 1) {
-                checkAndSubscribe(topic, cache.capacity());
+                checkAndSubscribe(resumeStrategyConfiguration.getTopic(), cache.capacity());
             } else {
-                checkAndSubscribe(topic);
+                checkAndSubscribe(resumeStrategyConfiguration.getTopic());
             }
         } else {
-            checkAndSubscribe(topic);
+            checkAndSubscribe(resumeStrategyConfiguration.getTopic());
         }
     }
 
@@ -410,13 +332,13 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
 
     private void createProducer() {
         if (producer == null) {
-            producer = new KafkaProducer<>(producerConfig);
+            producer = new KafkaProducer<>(resumeStrategyConfiguration.getProducerProperties());
         }
     }
 
     private void createConsumer() {
         if (consumer == null) {
-            consumer = new KafkaConsumer<>(consumerConfig);
+            consumer = new KafkaConsumer<>(resumeStrategyConfiguration.getConsumerProperties());
         }
     }
 
@@ -455,23 +377,15 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
         return producer;
     }
 
-    protected Properties getProducerConfig() {
-        return producerConfig;
-    }
-
-    protected Properties getConsumerConfig() {
-        return consumerConfig;
-    }
-
-    protected String getTopic() {
-        return topic;
-    }
-
     /**
      * Clear the producer errors
      */
     public void resetProducerErrors() {
         producerErrors.clear();
+    }
+
+    protected KafkaResumeStrategyConfiguration getResumeStrategyConfiguration() {
+        return resumeStrategyConfiguration;
     }
 
 }

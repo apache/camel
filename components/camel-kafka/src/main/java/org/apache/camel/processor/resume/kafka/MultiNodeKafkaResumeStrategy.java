@@ -47,56 +47,26 @@ public class MultiNodeKafkaResumeStrategy<K extends Resumable> extends SingleNod
     /**
      * Create a new instance of this class
      * 
-     * @param bootstrapServers the address of the Kafka broker
-     * @param topic            the topic where to publish the offsets
+     * @param resumeStrategyConfiguration the configuration to use for this strategy instance
      */
-    public MultiNodeKafkaResumeStrategy(String bootstrapServers, String topic) {
+    public MultiNodeKafkaResumeStrategy(KafkaResumeStrategyConfiguration resumeStrategyConfiguration) {
         // just in case users don't want to provide their own worker thread pool
-        this(bootstrapServers, topic, Executors.newSingleThreadExecutor());
+        this(resumeStrategyConfiguration, Executors.newSingleThreadExecutor());
     }
 
     /**
      * Builds an instance of this class
      *
-     * @param bootstrapServers the address of the Kafka broker
-     * @param topic            the topic where to publish the offsets
-     * @param executorService  an executor service that will run a separate thread for periodically refreshing the
-     *                         offsets
+     * @param resumeStrategyConfiguration the configuration to use for this strategy instance
+     * @param executorService             an executor service that will run a separate thread for periodically
+     *                                    refreshing the offsets
      */
 
-    public MultiNodeKafkaResumeStrategy(String bootstrapServers, String topic, ExecutorService executorService) {
-        super(bootstrapServers, topic);
+    public MultiNodeKafkaResumeStrategy(KafkaResumeStrategyConfiguration resumeStrategyConfiguration,
+                                        ExecutorService executorService) {
+        super(resumeStrategyConfiguration);
 
         // We need to keep refreshing the cache
-        this.executorService = executorService;
-        executorService.submit(() -> refresh());
-    }
-
-    /**
-     * Builds an instance of this class
-     *
-     * @param topic          the topic where to publish the offsets
-     * @param producerConfig the set of properties to be used by the Kafka producer within this class
-     * @param consumerConfig the set of properties to be used by the Kafka consumer within this class
-     */
-    public MultiNodeKafkaResumeStrategy(String topic, Properties producerConfig, Properties consumerConfig) {
-        this(topic, producerConfig, consumerConfig, Executors.newSingleThreadExecutor());
-    }
-
-    /**
-     * Builds an instance of this class
-     *
-     * @param topic           the topic where to publish the offsets
-     * @param producerConfig  the set of properties to be used by the Kafka producer within this class
-     * @param consumerConfig  the set of properties to be used by the Kafka consumer within this class
-     * @param executorService an executor service that will run a separate thread for periodically refreshing the
-     *                        offsets
-     */
-
-    public MultiNodeKafkaResumeStrategy(String topic, Properties producerConfig, Properties consumerConfig,
-                                        ExecutorService executorService) {
-        super(topic, producerConfig, consumerConfig);
-
         this.executorService = executorService;
         executorService.submit(() -> refresh());
     }
@@ -132,11 +102,11 @@ public class MultiNodeKafkaResumeStrategy<K extends Resumable> extends SingleNod
     protected void refresh() {
         LOG.trace("Creating a offset cache refresher");
         try {
-            Properties prop = (Properties) getConsumerConfig().clone();
+            Properties prop = (Properties) getResumeStrategyConfiguration().getConsumerProperties().clone();
             prop.setProperty(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
 
             try (Consumer<byte[], byte[]> consumer = new KafkaConsumer<>(prop)) {
-                consumer.subscribe(Collections.singletonList(getTopic()));
+                consumer.subscribe(Collections.singletonList(getResumeStrategyConfiguration().getTopic()));
 
                 poll(consumer);
             }
