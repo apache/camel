@@ -42,11 +42,24 @@ public abstract class AbstractMessagingSegmentDecorator extends AbstractSegmentD
         }
     }
 
-    protected String getDestination(Exchange exchange, Endpoint endpoint) {
+    /**
+     * Gets the (component-specific) destination
+     *
+     * @param  exchange the exchange to extract the destination info from
+     * @param  endpoint the endpoint being used
+     * @return          A String with the destination
+     */
+    protected String getDestination(@SuppressWarnings("unused") Exchange exchange, Endpoint endpoint) {
         return stripSchemeAndOptions(endpoint);
     }
 
-    protected String getMessageId(Exchange exchange) {
+    /**
+     * Gets the message ID from the exchange
+     *
+     * @param  exchange the exchange from which to extract the message ID
+     * @return          A String with the message ID or null if not applicable
+     */
+    protected String getMessageId(@SuppressWarnings("unused") Exchange exchange) {
         return null;
     }
 }
