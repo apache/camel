@@ -325,7 +325,10 @@ class Run extends CamelCommand {
         main.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadDependency(String groupId, String artifactId, String version) {
-                String line = "mvn:" + groupId + ":" + artifactId + ":" + version;
+                String line = "mvn:" + groupId + ":" + artifactId;
+                if (version != null) {
+                    line += ":" + version;
+                }
                 if (!downloaded.contains(line)) {
                     writeSettings("dependency", line);
                     downloaded.add(line);

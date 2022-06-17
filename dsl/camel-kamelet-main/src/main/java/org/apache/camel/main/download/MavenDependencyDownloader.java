@@ -109,6 +109,11 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             }
         }
 
+        // we need version to be able to download from maven
+        if (version == null) {
+            return;
+        }
+
         String gav = groupId + ":" + artifactId + ":" + version;
         threadPool.download(LOG, () -> {
             LOG.debug("Downloading: {}", gav);

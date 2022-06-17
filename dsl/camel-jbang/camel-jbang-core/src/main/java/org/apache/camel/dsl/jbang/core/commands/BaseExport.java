@@ -138,6 +138,11 @@ abstract class BaseExport extends CamelCommand {
                     // include kamelet catalog if we use kamelets
                     answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
                 }
+            } else if (line.startsWith("camel.jbang.dependencies=")) {
+                String deps = StringHelper.after(line, "camel.jbang.dependencies=");
+                for (String d : deps.split(",")) {
+                    answer.add(d.trim());
+                }
             }
         }
 
