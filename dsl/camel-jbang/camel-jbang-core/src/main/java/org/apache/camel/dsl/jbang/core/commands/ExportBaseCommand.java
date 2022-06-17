@@ -82,7 +82,7 @@ abstract class ExportBaseCommand extends CamelCommand {
                         defaultValue = "2.9.2.Final")
     protected String quarkusVersion;
 
-    @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "false",
+    @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
                         description = "Include Maven Wrapper files in exported project")
     protected boolean mavenWrapper;
 

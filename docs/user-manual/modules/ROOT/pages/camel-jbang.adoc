@@ -631,21 +631,6 @@ To export to another directly (copies the files) you execute:
 camel export --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --dir=../myproject
 ----
 
-To make the exported project easy to run with Apache Maven using Maven Wrapper, then you can export as follows:
-
-[source,bash]
-----
-camel export --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --dir=../myproject --maven-wrapper=true
-----
-
-Which allows users to work with the project without having Maven installed as a CLI, by executing the `mvnw` command as shown:
-
-[source,bash]
-----
-cd myproject
-mvnw spring-boot:run
-----
-
 TIP: See the possible options by running: `camel export --help` for more details.
 
 === Exporting to Camel Quarkus
