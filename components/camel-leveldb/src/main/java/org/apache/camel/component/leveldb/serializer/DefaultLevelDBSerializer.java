@@ -50,7 +50,7 @@ public class DefaultLevelDBSerializer extends AbstractLevelDBSerializer {
     @Override
     public byte[] serializeExchange(CamelContext camelContext, Exchange exchange, boolean allowSerializedHeaders)
             throws IOException {
-        return serializeExchange(camelContext, exchange, allowSerializedHeaders, h -> {
+        return serializeExchange(exchange, allowSerializedHeaders, h -> {
             try (final ByteArrayOutputStream baos = new ByteArrayOutputStream();
                  ObjectOutputStream oos = new ObjectOutputStream(baos)) {
                 oos.writeObject(h);

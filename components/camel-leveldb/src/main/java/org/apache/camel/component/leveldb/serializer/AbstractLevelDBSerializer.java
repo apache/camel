@@ -28,7 +28,7 @@ import org.apache.camel.support.DefaultExchangeHolder;
 public abstract class AbstractLevelDBSerializer implements LevelDBSerializer {
 
     protected byte[] serializeExchange(
-            CamelContext camelContext, Exchange exchange, boolean allowSerializedHeaders, Serializer serializer)
+            Exchange exchange, boolean allowSerializedHeaders, Serializer serializer)
             throws IOException {
         DefaultExchangeHolder pe = createExchangeHolder(exchange, allowSerializedHeaders);
         return serializer.serialize(pe);
