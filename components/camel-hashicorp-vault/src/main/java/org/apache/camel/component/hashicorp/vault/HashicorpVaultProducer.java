@@ -56,7 +56,7 @@ public class HashicorpVaultProducer extends DefaultProducer {
                 getSecret(exchange);
                 break;
             case deleteSecret:
-                deleteSecret(exchange);
+                deleteSecret();
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -82,7 +82,7 @@ public class HashicorpVaultProducer extends DefaultProducer {
         exchange.getMessage().setBody(rawSecret.getData());
     }
 
-    private void deleteSecret(Exchange exchange) {
+    private void deleteSecret() {
         VaultKeyValueOperations keyValue
                 = getEndpoint().getVaultTemplate().opsForKeyValue(getEndpoint().getConfiguration().getSecretsEngine(),
                         VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
