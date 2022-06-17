@@ -13315,7 +13315,8 @@ Sets the class of the result type (type from output).
         <xs:attribute name="headerName" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Name of header to use as input, instead of the message body.
+Name of header to use as input, instead of the message body It has as higher
+precedent than the propertyName if both are set.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
