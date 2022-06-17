@@ -587,7 +587,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         CxfOperationException exception;
         String uri = exchange.getFromEndpoint().getEndpointUri();
         String statusText = statusTextFromResponseCode(responseCode);
-        Map<String, String> headers = parseResponseHeaders(response, exchange);
+        Map<String, String> headers = parseResponseHeaders(response);
         //Get the response detail string
         String copy = exchange.getContext().getTypeConverter().convertTo(String.class, response.getEntity());
         if (responseCode >= 300 && responseCode < 400) {
@@ -632,7 +632,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         return Response.Status.Family.familyOf(responseCode).name();
     }
 
-    protected Map<String, String> parseResponseHeaders(Object response, Exchange camelExchange) {
+    protected Map<String, String> parseResponseHeaders(Object response) {
 
         Map<String, String> answer = new HashMap<>();
         if (response instanceof Response) {
