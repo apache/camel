@@ -37,6 +37,7 @@ public final class KubernetesConstants {
     public static final String SCHEME_SERVICES = "kubernetes-services";
     public static final String SCHEME_BUILD_CONFIG = "openshift-build-configs";
     public static final String SCHEME_BUILDS = "openshift-builds";
+    public static final String SCHEME_DEPLOYMENT_CONFIGS = "openshift-deploymentconfigs";
     // Producer
     @Metadata(label = "producer", description = "The Producer operation", javaType = "String")
     public static final String KUBERNETES_OPERATION = "CamelKubernetesOperation";
@@ -45,7 +46,7 @@ public final class KubernetesConstants {
                       SCHEME_CONFIG_MAPS, SCHEME_CUSTOM_RESOURCES, SCHEME_DEPLOYMENTS,
                       SCHEME_HPA, SCHEME_JOB, SCHEME_NAMESPACES, SCHEME_PERSISTENT_VOLUMES_CLAIMS, SCHEME_PODS,
                       SCHEME_REPLICATION_CONTROLLERS, SCHEME_RESOURCES_QUOTA, SCHEME_SECRETS, SCHEME_SERVICE_ACCOUNTS,
-                      SCHEME_SERVICES, SCHEME_BUILD_CONFIG, SCHEME_BUILDS })
+                      SCHEME_SERVICES, SCHEME_BUILD_CONFIG, SCHEME_BUILDS, SCHEME_DEPLOYMENT_CONFIGS })
     public static final String KUBERNETES_NAMESPACE_NAME = "CamelKubernetesNamespaceName";
     @Metadata(label = "producer", description = "The namespace labels", javaType = "Map<String, String>",
               applicableFor = SCHEME_NAMESPACES)
@@ -130,9 +131,10 @@ public final class KubernetesConstants {
               applicableFor = SCHEME_NODES)
     public static final String KUBERNETES_NODE_SPEC = "CamelKubernetesNodeSpec";
     @Metadata(label = "producer", description = "The deployment labels", javaType = "Map<String, String>",
-              applicableFor = SCHEME_DEPLOYMENTS)
+              applicableFor = { SCHEME_DEPLOYMENTS, SCHEME_DEPLOYMENT_CONFIGS })
     public static final String KUBERNETES_DEPLOYMENTS_LABELS = "CamelKubernetesDeploymentsLabels";
-    @Metadata(label = "producer", description = "The deployment name", javaType = "String", applicableFor = SCHEME_DEPLOYMENTS)
+    @Metadata(label = "producer", description = "The deployment name", javaType = "String",
+              applicableFor = { SCHEME_DEPLOYMENTS, SCHEME_DEPLOYMENT_CONFIGS })
     public static final String KUBERNETES_DEPLOYMENT_NAME = "CamelKubernetesDeploymentName";
     @Metadata(label = "producer", description = "The spec for a deployment",
               javaType = "io.fabric8.kubernetes.api.model.apps.DeploymentSpec", applicableFor = SCHEME_DEPLOYMENTS)
@@ -157,7 +159,7 @@ public final class KubernetesConstants {
               applicableFor = SCHEME_BUILD_CONFIG)
     public static final String KUBERNETES_BUILD_CONFIG_NAME = "CamelKubernetesBuildConfigName";
     @Metadata(label = "producer", description = "The desired instance count", javaType = "Integer",
-              applicableFor = SCHEME_DEPLOYMENTS)
+              applicableFor = { SCHEME_DEPLOYMENTS, SCHEME_DEPLOYMENT_CONFIGS })
     public static final String KUBERNETES_DEPLOYMENT_REPLICAS = "CamelKubernetesDeploymentReplicas";
     @Metadata(label = "producer", description = "The HPA name.", javaType = "String", applicableFor = SCHEME_HPA)
     public static final String KUBERNETES_HPA_NAME = "CamelKubernetesHPAName";
@@ -207,18 +209,21 @@ public final class KubernetesConstants {
     @Metadata(label = "producer", description = "The result of the delete operation", javaType = "boolean",
               applicableFor = SCHEME_CUSTOM_RESOURCES)
     public static final String KUBERNETES_DELETE_RESULT = "CamelKubernetesDeleteResult";
+    @Metadata(label = "producer", description = "The spec for a deployment config",
+              javaType = "io.fabric8.openshift.api.model.DeploymentConfigSpec", applicableFor = SCHEME_DEPLOYMENT_CONFIGS)
+    public static final String KUBERNETES_DEPLOYMENT_CONFIG_SPEC = "CamelKubernetesDeploymentConfigSpec";
 
     // Consumer
     @Metadata(label = "consumer", description = "Action watched by the consumer",
               javaType = "io.fabric8.kubernetes.client.Watcher.Action",
               applicableFor = {
                       SCHEME_CONFIG_MAPS, SCHEME_DEPLOYMENTS, SCHEME_HPA, SCHEME_NAMESPACES, SCHEME_NODES, SCHEME_PODS,
-                      SCHEME_REPLICATION_CONTROLLERS, SCHEME_SERVICES })
+                      SCHEME_REPLICATION_CONTROLLERS, SCHEME_SERVICES, SCHEME_DEPLOYMENT_CONFIGS })
     public static final String KUBERNETES_EVENT_ACTION = "CamelKubernetesEventAction";
     @Metadata(label = "consumer", description = "Timestamp of the action watched by the consumer", javaType = "long",
               applicableFor = {
                       SCHEME_CONFIG_MAPS, SCHEME_DEPLOYMENTS, SCHEME_HPA, SCHEME_NAMESPACES, SCHEME_NODES, SCHEME_PODS,
-                      SCHEME_REPLICATION_CONTROLLERS, SCHEME_SERVICES })
+                      SCHEME_REPLICATION_CONTROLLERS, SCHEME_SERVICES, SCHEME_DEPLOYMENT_CONFIGS })
     public static final String KUBERNETES_EVENT_TIMESTAMP = "CamelKubernetesEventTimestamp";
 
     private KubernetesConstants() {

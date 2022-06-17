@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.openshift.builds;
+package org.apache.camel.component.openshift.deploymentconfigs;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,29 +25,31 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_BUILDS;
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_DEPLOYMENT_CONFIGS;
 
 /**
- * Perform operations on OpenShift Builds.
+ * Perform operations on Openshift Deployment Configs and get notified on Deployment Config changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_BUILDS, title = "Openshift Builds",
-             syntax = "openshift-builds:masterUrl", producerOnly = true,
-             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS },
+@UriEndpoint(firstVersion = "3.18.0", scheme = SCHEME_DEPLOYMENT_CONFIGS, title = "Openshift Deployment Configs",
+             syntax = "openshift-deploymentconfigs:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS },
              headersClass = KubernetesConstants.class)
-public class OpenshiftBuildsEndpoint extends AbstractKubernetesEndpoint {
+public class OpenshiftDeploymentConfigsEndpoint extends AbstractKubernetesEndpoint {
 
-    public OpenshiftBuildsEndpoint(String uri, OpenshiftBuildsComponent component, KubernetesConfiguration config) {
+    public OpenshiftDeploymentConfigsEndpoint(String uri, OpenshiftDeploymentConfigsComponent component,
+                                              KubernetesConfiguration config) {
         super(uri, component, config);
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new OpenshiftBuildsProducer(this);
+        return new OpenshiftDeploymentConfigsProducer(this);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new IllegalArgumentException("The openshift-builds doesn't support consumer");
+        Consumer consumer = new OpenshiftDeploymentConfigsConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
 }

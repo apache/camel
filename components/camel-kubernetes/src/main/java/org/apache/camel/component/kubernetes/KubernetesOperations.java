@@ -133,6 +133,14 @@ public final class KubernetesOperations {
     public static final String DELETE_CUSTOMRESOURCE = "deleteCustomResource";
     public static final String CREATE_CUSTOMRESOURCE = "createCustomResource";
 
+    // Deployment Configs
+    public static final String LIST_DEPLOYMENT_CONFIGS = "listDeploymentConfigs";
+    public static final String LIST_DEPLOYMENT_CONFIGS_BY_LABELS_OPERATION = "listDeploymentConfigsByLabels";
+    public static final String GET_DEPLOYMENT_CONFIG = "getDeploymentConfig";
+    public static final String DELETE_DEPLOYMENT_CONFIG = "deleteDeploymentConfig";
+    public static final String CREATE_DEPLOYMENT_CONFIG = "createDeploymentConfig";
+    public static final String SCALE_DEPLOYMENT_CONFIG = "scaleDeploymentConfig";
+
     private KubernetesOperations() {
 
     }

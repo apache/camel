@@ -5276,6 +5276,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "OpenshiftDeploymentconfigsComponentBuilderFactory": {
+    "kind": "component",
+    "name": "openshift-deploymentconfigs",
+    "title": "Openshift Deployment Configs",
+    "description": "Perform operations on Openshift Deployment Configs and get notified on Deployment Config changes.",
+    "deprecated": false,
+    "firstVersion": "3.18.0",
+    "label": "container,cloud,paas",
+    "javaType": "org.apache.camel.component.openshift.deploymentconfigs.OpenshiftDeploymentConfigsComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kubernetes",
+    "version": "3.18.0-SNAPSHOT",
+    "scheme": "openshift-deploymentconfigs",
+    "extendsScheme": "",
+    "syntax": "openshift-deploymentconfigs:masterUrl",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "OpenstackCinderComponentBuilderFactory": {
     "kind": "component",
     "name": "openstack-cinder",
