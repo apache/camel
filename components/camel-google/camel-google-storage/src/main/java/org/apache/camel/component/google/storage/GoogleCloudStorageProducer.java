@@ -94,7 +94,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     }
 
     private void processFile(Storage storage, Exchange exchange) throws IOException, InvalidPayloadException {
-        final String bucketName = determineBucketName(exchange);
+        final String bucketName = determineBucketName();
         final String objectName = determineObjectName(exchange);
 
         Map<String, String> objectMetadata = determineMetadata(exchange);
@@ -200,7 +200,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     }
 
     private void createDownloadLink(Storage storage, Exchange exchange) {
-        final String bucketName = determineBucketName(exchange);
+        final String bucketName = determineBucketName();
         final String objectName = determineObjectName(exchange);
         Long expirationMillis
                 = exchange.getIn().getHeader(GoogleCloudStorageConstants.DOWNLOAD_LINK_EXPIRATION_TIME, 300000L, Long.class);
@@ -221,7 +221,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     }
 
     private void copyObject(Storage storage, Exchange exchange) {
-        final String bucketName = determineBucketName(exchange);
+        final String bucketName = determineBucketName();
         final String objectName = determineObjectName(exchange);
         final String destinationObjectName = exchange.getIn()
                 .getHeader(GoogleCloudStorageConstants.DESTINATION_OBJECT_NAME, String.class);
@@ -259,7 +259,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     }
 
     private void deleteObject(Storage storage, Exchange exchange) {
-        final String bucketName = determineBucketName(exchange);
+        final String bucketName = determineBucketName();
         final String objectName = determineObjectName(exchange);
 
         BlobId blobId = BlobId.of(bucketName, objectName);
@@ -270,7 +270,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     }
 
     private void deleteBucket(Storage storage, Exchange exchange) {
-        final String bucketName = determineBucketName(exchange);
+        final String bucketName = determineBucketName();
 
         for (Blob blob : storage.list(bucketName).iterateAll()) {
             storage.delete(blob.getBlobId());
@@ -293,7 +293,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     }
 
     private void getObject(Storage storage, Exchange exchange) {
-        final String bucketName = determineBucketName(exchange);
+        final String bucketName = determineBucketName();
         final String objectName = determineObjectName(exchange);
 
         Blob blob = storage.get(BlobId.of(bucketName, objectName));
@@ -303,7 +303,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     }
 
     private void listObjects(Storage storage, Exchange exchange) {
-        final String bucketName = determineBucketName(exchange);
+        final String bucketName = determineBucketName();
 
         List<Blob> bloblist = new LinkedList<>();
         for (Blob blob : storage.list(bucketName).iterateAll()) {
@@ -326,7 +326,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
         return key;
     }
 
-    private String determineBucketName(Exchange exchange) {
+    private String determineBucketName() {
         String bucketName = getConfiguration().getBucketName();
         if (bucketName == null) {
             throw new IllegalArgumentException("Bucket name is missing or not configured.");
