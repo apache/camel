@@ -42,6 +42,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Send and receive events from Knative.
@@ -53,13 +55,17 @@ import org.apache.camel.util.ObjectHelper;
              category = Category.CLOUD)
 public class KnativeEndpoint extends DefaultEndpoint {
 
+    private static final Logger LOG = LoggerFactory.getLogger(KnativeEndpoint.class);
+
     private final CloudEvent cloudEvent;
     private final CloudEventProcessor cloudEventProcessor;
 
     @UriPath(description = "The Knative resource type")
     private final Knative.Type type;
+
     @UriPath(description = "The identifier of the Knative resource")
     private final String typeId;
+
     @UriParam
     private KnativeConfiguration configuration;
 
@@ -162,14 +168,21 @@ public class KnativeEndpoint extends DefaultEndpoint {
 
     KnativeResource lookupServiceDefinition(Knative.EndpointKind endpointKind) {
         final String resourceName;
-        if (type == Knative.Type.event && configuration.getName() != null) {
+        if (type == Knative.Type.event && configuration.getName() != null && endpointKind.equals(Knative.EndpointKind.sink)) {
             resourceName = configuration.getName();
-        } else {
+        } else if (configuration.getTypeId() != null) {
             resourceName = configuration.getTypeId();
+        } else {
+            // in case there is no name in the configuration or type
+            resourceName = "default";
         }
 
         KnativeResource resource = lookupServiceDefinition(resourceName, endpointKind)
-                .or(() -> lookupServiceDefinition("default", endpointKind))
+                .or(() -> {
+                    LOG.debug("Knative resource \"{}\" of type \"{}\" not found, trying the default named: \"default\"",
+                            resourceName, type);
+                    return lookupServiceDefinition("default", endpointKind);
+                })
                 .orElseThrow(() -> new IllegalArgumentException(
                         String.format("Unable to find a resource definition for %s/%s/%s", type, endpointKind, resourceName)));
 
