@@ -101,7 +101,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     @Metadata(autowired = true)
     private GooglePubsubSerializer serializer;
 
-    public GooglePubsubEndpoint(String uri, Component component, String remaining) {
+    public GooglePubsubEndpoint(String uri, Component component) {
         super(uri, component);
 
         if (!(component instanceof GooglePubsubComponent)) {
