@@ -54,9 +54,9 @@ class Export extends ExportBaseCommand {
             return 1;
         }
 
-        if ("spring-boot".equals(runtime)) {
+        if ("spring-boot".equals(runtime) || "camel-spring-boot".equals(runtime)) {
             return export(new ExportSpringBoot(getMain()));
-        } else if ("quarkus".equals(runtime)) {
+        } else if ("quarkus".equals(runtime) || "camel-quarkus".equals(runtime)) {
             return export(new ExportQuarkus(getMain()));
         } else if ("camel-main".equals(runtime)) {
             return export(new ExportCamelMain(getMain()));
