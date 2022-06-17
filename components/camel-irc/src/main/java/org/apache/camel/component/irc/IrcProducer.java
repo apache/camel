@@ -89,7 +89,7 @@ public class IrcProducer extends DefaultProducer {
                 LOG.debug("Reconnecting to {}:{}", getEndpoint().getConfiguration().getHostname(),
                         getEndpoint().getConfiguration().getNickname());
             }
-            getEndpoint().getComponent().closeConnection(getEndpoint().getConfiguration().getCacheKey(), connection);
+            getEndpoint().getComponent().closeConnection(connection);
             connection = getEndpoint().getComponent().getIRCConnection(getEndpoint().getConfiguration());
         }
         connection.addIRCEventListener(listener);
