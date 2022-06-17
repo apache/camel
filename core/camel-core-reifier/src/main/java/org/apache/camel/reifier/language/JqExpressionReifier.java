@@ -43,9 +43,10 @@ public class JqExpressionReifier extends ExpressionReifier<JqExpression> {
     }
 
     private Object[] createProperties() {
-        Object[] properties = new Object[2];
+        Object[] properties = new Object[3];
         properties[0] = definition.getResultType();
         properties[1] = parseString(definition.getHeaderName());
+        properties[2] = parseString(definition.getPropertyName());
         return properties;
     }
 

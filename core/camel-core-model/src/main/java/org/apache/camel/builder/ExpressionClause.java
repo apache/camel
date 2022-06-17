@@ -402,24 +402,49 @@ public class ExpressionClause<T> implements Expression, Predicate {
     /**
      * Evaluates a <a href="http://camel.apache.org/jq.html">JQ expression</a>
      *
-     * @param  value      the expression to be evaluated
-     * @param  headerName the name of the header to apply the expression to
-     * @return            the builder to continue processing the DSL
+     * @param  value                the expression to be evaluated
+     * @param  headerOrPropertyName the name of the header or property to apply the expression to
+     * @return                      the builder to continue processing the DSL
      */
-    public T jq(String value, String headerName) {
-        return delegate.jq(value, headerName);
+    public T jq(String value, String headerOrPropertyName) {
+        return delegate.jq(value, headerOrPropertyName);
     }
 
     /**
      * Evaluates a <a href="http://camel.apache.org/jq.html">JQ expression</a>
      *
-     * @param  value      the expression to be evaluated
-     * @param  resultType the return type expected by the expression
-     * @param  headerName the name of the header to apply the expression to
-     * @return            the builder to continue processing the DSL
+     * @param  value        the expression to be evaluated
+     * @param  headerName   the name of the header to apply the expression to
+     * @param  propertyName the name of the property to apply the expression to
+     * @return              the builder to continue processing the DSL
      */
-    public T jq(String value, Class<?> resultType, String headerName) {
-        return delegate.jq(value, resultType, headerName);
+    public T jq(String value, String headerName, String propertyName) {
+        return delegate.jq(value, headerName, propertyName);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jq.html">JQ expression</a>
+     *
+     * @param  value                the expression to be evaluated
+     * @param  resultType           the return type expected by the expression
+     * @param  headerOrPropertyName the name of the header or property to apply the expression to
+     * @return                      the builder to continue processing the DSL
+     */
+    public T jq(String value, Class<?> resultType, String headerOrPropertyName) {
+        return delegate.jq(value, resultType, headerOrPropertyName);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jq.html">JQ expression</a>
+     *
+     * @param  value        the expression to be evaluated
+     * @param  resultType   the return type expected by the expression
+     * @param  headerName   the name of the header to apply the expression to
+     * @param  propertyName the name of the property to apply the expression to
+     * @return              the builder to continue processing the DSL
+     */
+    public T jq(String value, Class<?> resultType, String headerName, String propertyName) {
+        return delegate.jq(value, resultType, headerName, propertyName);
     }
 
     /**

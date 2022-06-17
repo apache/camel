@@ -16,7 +16,6 @@
  */
 package org.apache.camel.language.jq;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -38,13 +37,10 @@ public class JqExpressionPropertyFnTest extends JqTestSupport {
         getMockEndpoint("mock:result")
                 .expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "MyPropertyValue"));
 
-        ObjectNode node = MAPPER.createObjectNode();
-        node.put("foo", "bar");
-
         fluentTemplate.to("direct:start")
                 .withProcessor(e -> {
                     e.setProperty("MyProperty", "MyPropertyValue");
-                    e.getMessage().setBody(node);
+                    e.getMessage().setBody(node("foo", "bar"));
                 })
                 .send();
 

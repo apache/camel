@@ -21,7 +21,7 @@ import org.apache.camel.NoSuchHeaderOrPropertyException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-public class JqExpressionFromHeaderTest extends JqTestSupport {
+public class JqExpressionFromHeaderOrPropertyTest extends JqTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -29,7 +29,7 @@ public class JqExpressionFromHeaderTest extends JqTestSupport {
             public void configure() {
                 from("direct:start")
                         .doTry()
-                        .transform().jq(".foo", "Content")
+                        .transform().jq(".foo", "Content", "ContentProp")
                         .to("mock:result")
                         .doCatch(NoSuchHeaderOrPropertyException.class)
                         .to("mock:fail");
@@ -39,15 +39,33 @@ public class JqExpressionFromHeaderTest extends JqTestSupport {
     }
 
     @Test
+    public void testExpressionFromProperty() throws Exception {
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(new TextNode("bar"));
+        getMockEndpoint("mock:fail")
+                .expectedMessageCount(0);
+
+        fluentTemplate.to("direct:start")
+                .withProcessor(e -> {
+                    e.getMessage().setHeader("Invalid", node("foo", "baz"));
+                    e.setProperty("ContentProp", node("foo", "bar"));
+                })
+                .send();
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testExpressionFromHeader() throws Exception {
         getMockEndpoint("mock:result")
-                .expectedBodiesReceived(new TextNode("bar"));
+                .expectedBodiesReceived(new TextNode("baz"));
         getMockEndpoint("mock:fail")
                 .expectedMessageCount(0);
 
         fluentTemplate.to("direct:start")
                 .withProcessor(e -> {
-                    e.getMessage().setHeader("Content", node("foo", "bar"));
+                    e.getMessage().setHeader("Content", node("foo", "baz"));
+                    e.setProperty("ContentProp", node("foo", "bar"));
                 })
                 .send();
 
@@ -55,24 +73,7 @@ public class JqExpressionFromHeaderTest extends JqTestSupport {
     }
 
     @Test
-    public void testExpressionFromHeaderPriority() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived(new TextNode("bar"));
-        getMockEndpoint("mock:fail")
-                .expectedMessageCount(0);
-
-        fluentTemplate.to("direct:start")
-                .withProcessor(e -> {
-                    e.getMessage().setHeader("Content", node("foo", "bar"));
-                    e.setProperty("Content", node("foo", "baz"));
-                })
-                .send();
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testExpressionFromHeaderFail() throws Exception {
+    public void testExpressionFail() throws Exception {
         getMockEndpoint("mock:result")
                 .expectedMessageCount(0);
         getMockEndpoint("mock:fail")
@@ -80,7 +81,8 @@ public class JqExpressionFromHeaderTest extends JqTestSupport {
 
         fluentTemplate.to("direct:start")
                 .withProcessor(e -> {
-                    e.getMessage().setBody(node("foo", "bar"));
+                    e.getMessage().setHeader("Invalid", node("foo", "baz"));
+                    e.setProperty("Invalid", node("foo", "bar"));
                 })
                 .send();
 

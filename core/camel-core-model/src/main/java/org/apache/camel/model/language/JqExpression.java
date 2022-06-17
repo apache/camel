@@ -38,6 +38,8 @@ public class JqExpression extends ExpressionDefinition {
     @XmlAttribute
     @Metadata(label = "advanced")
     private String headerName;
+    @Metadata(label = "advanced")
+    private String propertyName;
 
     public JqExpression() {
     }
@@ -79,8 +81,23 @@ public class JqExpression extends ExpressionDefinition {
 
     /**
      * Name of header to use as input, instead of the message body
+     * </p>
+     * It has as higher precedent than the propertyName if both are set.
      */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    /**
+     * Name of property to use as input, instead of the message body.
+     * </p>
+     * It has a lower precedent than the headerName if both are set.
+     */
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
     }
 }
