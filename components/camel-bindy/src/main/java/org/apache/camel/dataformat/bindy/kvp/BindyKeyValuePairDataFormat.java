@@ -165,7 +165,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
                 // Bind data from message with model classes
                 // Counter is used to detect line where error occurs
-                factory.bind(getCamelContext(), result, model, count.get(), lists);
+                factory.bind(result, model, count.get(), lists);
 
                 // Link objects together
                 factory.link(model);
