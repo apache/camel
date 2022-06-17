@@ -28,6 +28,7 @@ public class JqLanguage extends LanguageSupport implements StaticService {
 
     private Class<?> resultType;
     private String headerName;
+    private String propertyName;
 
     public Class<?> getResultType() {
         return resultType;
@@ -43,6 +44,14 @@ public class JqLanguage extends LanguageSupport implements StaticService {
 
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
     }
 
     @Override
@@ -70,6 +79,7 @@ public class JqLanguage extends LanguageSupport implements StaticService {
         JqExpression answer = new JqExpression(expression);
         answer.setResultType(resultType);
         answer.setHeaderName(headerName);
+        answer.setPropertyName(propertyName);
         answer.init(getCamelContext());
         return answer;
     }
@@ -79,6 +89,7 @@ public class JqLanguage extends LanguageSupport implements StaticService {
         JqExpression answer = new JqExpression(expression);
         answer.setResultType(property(Class.class, properties, 0, resultType));
         answer.setHeaderName(property(String.class, properties, 1, headerName));
+        answer.setPropertyName(property(String.class, properties, 2, propertyName));
         answer.init(getCamelContext());
         return answer;
     }

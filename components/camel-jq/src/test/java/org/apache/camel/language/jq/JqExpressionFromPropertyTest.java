@@ -16,12 +16,13 @@
  */
 package org.apache.camel.language.jq;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.NoSuchHeaderOrPropertyException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-public class JqExpressionFromHeaderTest extends JqTestSupport {
+public class JqExpressionFromPropertyTest extends JqTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -39,49 +40,34 @@ public class JqExpressionFromHeaderTest extends JqTestSupport {
     }
 
     @Test
-    public void testExpressionFromHeader() throws Exception {
+    public void testExpressionFromProperty() throws Exception {
         getMockEndpoint("mock:result")
                 .expectedBodiesReceived(new TextNode("bar"));
         getMockEndpoint("mock:fail")
                 .expectedMessageCount(0);
 
+        ObjectNode node = MAPPER.createObjectNode();
+        node.put("foo", "bar");
+
         fluentTemplate.to("direct:start")
-                .withProcessor(e -> {
-                    e.getMessage().setHeader("Content", node("foo", "bar"));
-                })
+                .withProcessor(e -> e.setProperty("Content", node))
                 .send();
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void testExpressionFromHeaderPriority() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived(new TextNode("bar"));
-        getMockEndpoint("mock:fail")
-                .expectedMessageCount(0);
-
-        fluentTemplate.to("direct:start")
-                .withProcessor(e -> {
-                    e.getMessage().setHeader("Content", node("foo", "bar"));
-                    e.setProperty("Content", node("foo", "baz"));
-                })
-                .send();
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testExpressionFromHeaderFail() throws Exception {
+    public void testExpressionFromPropertyFail() throws Exception {
         getMockEndpoint("mock:result")
                 .expectedMessageCount(0);
         getMockEndpoint("mock:fail")
                 .expectedMessageCount(1);
 
+        ObjectNode node = MAPPER.createObjectNode();
+        node.put("foo", "bar");
+
         fluentTemplate.to("direct:start")
-                .withProcessor(e -> {
-                    e.getMessage().setBody(node("foo", "bar"));
-                })
+                .withProcessor(e -> e.getMessage().setBody(node))
                 .send();
 
         assertMockEndpointsSatisfied();

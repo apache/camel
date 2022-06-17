@@ -16,7 +16,6 @@
  */
 package org.apache.camel.language.jq;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -36,12 +35,9 @@ public class JqExpressionHeaderFnTest extends JqTestSupport {
     @Test
     public void testExpression() throws Exception {
         getMockEndpoint("mock:result")
-                .expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "MyValue"));
+                .expectedBodiesReceived(node("foo", "MyValue"));
 
-        ObjectNode node = MAPPER.createObjectNode();
-        node.put("foo", "bar");
-
-        template.sendBodyAndHeader("direct:start", node, "MyHeader", "MyValue");
+        template.sendBodyAndHeader("direct:start", node("foo", "bar"), "MyHeader", "MyValue");
 
         assertMockEndpointsSatisfied();
     }

@@ -2653,7 +2653,13 @@ public class ModelParser extends BaseParser {
                 default: return expressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
-        }, noElementHandler(), expressionDefinitionValueHandler());
+        }, (def, key) -> {
+            if ("propertyName".equals(key)) {
+                def.setPropertyName(doParseText());
+                return true;
+            }
+            return false;
+        }, expressionDefinitionValueHandler());
     }
     protected JsonPathExpression doParseJsonPathExpression() throws IOException, XmlPullParserException {
         return doParse(new JsonPathExpression(), (def, key, val) -> {
