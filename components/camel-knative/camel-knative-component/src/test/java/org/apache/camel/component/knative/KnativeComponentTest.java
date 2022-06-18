@@ -74,7 +74,8 @@ public class KnativeComponentTest {
         context.getRegistry().bind("ereg", KnativeEnvironmentSupport.endpoint(Knative.EndpointKind.source, "ereg", null));
         context.getRegistry().bind("creg", KnativeEnvironmentSupport.channel(Knative.EndpointKind.source, "creg", null));
         context.getRegistry().bind("evsinkreg", KnativeEnvironmentSupport.event(Knative.EndpointKind.sink, "evsinkreg", null));
-        context.getRegistry().bind("evsourcereg", KnativeEnvironmentSupport.event(Knative.EndpointKind.source, "evsourcereg", null));
+        context.getRegistry().bind("evsourcereg",
+                KnativeEnvironmentSupport.event(Knative.EndpointKind.source, "evsourcereg", null));
         context.addComponent("knative", component);
 
         //
