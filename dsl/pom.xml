@@ -33,6 +33,12 @@
     <name>Camel :: DSL :: Parent</name>
     <description>Camel DSL Parent</description>
 
+    <properties>
+        <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
+        <camel.surefire.parallel>true</camel.surefire.parallel>
+        <camel-prepare-component>true</camel-prepare-component>
+    </properties>
+
     <modules>
         <module>camel-endpointdsl</module>
         <module>camel-componentdsl</module>
@@ -52,16 +58,14 @@
         <module>camel-jbang</module>
     </modules>
 
-    <properties>
-        <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
-        <camel.surefire.parallel>true</camel.surefire.parallel>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
+                <configuration>
+                </configuration>
+
                 <executions>
                     <execution>
                         <id>generate</id>

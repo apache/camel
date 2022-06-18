@@ -657,11 +657,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-core-languages</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-core-model</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -677,16 +672,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-endpointdsl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-componentdsl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-core-xml</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -698,21 +683,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-cluster</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-endpointdsl-support</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-dsl-modeline</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-dsl-support</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -743,11 +713,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-xml-jaxb</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-xml-jaxp</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -1151,6 +1116,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-componentdsl</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-consul</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -1162,6 +1132,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-corda</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-core-languages</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -1326,6 +1301,16 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-dsl-modeline</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-dsl-support</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-dynamic-router</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -1342,6 +1327,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-elytron</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-endpointdsl</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -1497,6 +1487,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-grok</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-groovy-dsl</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -1696,6 +1691,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-java-joor-dsl</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-jaxb</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -1796,7 +1796,17 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-js-dsl</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-jsch</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-jsh-dsl</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -1847,6 +1857,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-kafka</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-kamelet-main</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -2686,6 +2701,21 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-xml-io-dsl</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-xml-jaxb-dsl</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-xml-jaxp</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-xmlsecurity</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -2712,6 +2742,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-xstream</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-yaml-dsl</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -2746,10 +2781,15 @@
 			</dependency>
 			<!-- camel components: END -->
 
-			<!-- camel dsl -->
+			<!-- camel dsl support -->
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-endpointdsl-support</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-java-joor-dsl</artifactId>
+				<artifactId>camel-groovy-dsl-common</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -2760,51 +2800,6 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-yaml-dsl-deserializers</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-xml-io-dsl</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-xml-jaxb-dsl</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-yaml-dsl</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-js-dsl</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-jsh-dsl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-kotlin-dsl</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-groovy-dsl</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-groovy-dsl-common</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-kamelet-main</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

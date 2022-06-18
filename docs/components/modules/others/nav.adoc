@@ -13,7 +13,7 @@
 ** xref:cxf-transport.adoc[CXF Transport]
 ** xref:debug.adoc[Debug]
 ** xref:dsl.adoc[DSL]
-*** xref:dsl-modeline.adoc[DSL modeline]
+*** xref:dsl-modeline.adoc[DSL Modeline]
 *** xref:groovy-dsl.adoc[Groovy Dsl]
 *** xref:java-joor-dsl.adoc[Java DSL (runtime compiled)]
 *** xref:js-dsl.adoc[JavaScript DSL]

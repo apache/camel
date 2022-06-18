@@ -41,6 +41,7 @@
         <supportLevel>Preview</supportLevel>
         <checkstyle.skip>true</checkstyle.skip>
         <dist.dir>dist</dist.dir>
+        <camel-prepare-component>false</camel-prepare-component>
     </properties>
 
     <dependencies>

@@ -33,6 +33,10 @@
     <name>Camel :: XML DSL Jaxb :: Tests</name>
     <description>Camel XML DSL Tests with camel-xml-jaxb</description>
 
+    <properties>
+        <camel-prepare-component>false</camel-prepare-component>
+    </properties>
+
     <modules>
         <module>definition</module>
         <module>cdi</module>

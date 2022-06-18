@@ -26,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.tooling.util.Strings;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -149,23 +150,47 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             }
         }
 
-        // whether to sync pom
-        Object val = project.getContextValue("syncPomFile");
-        if (val != null) {
-            File parent = project.getBasedir().getParentFile();
-            File components = findCamelDirectory(project.getBasedir(), "components");
-            if (Objects.equals(parent, components)) {
-                val = false;
+        // whether to sync pom in allcomponents/parent
+        Object syncComponents = project.getContextValue("syncPomFile");
+        Object syncParent = syncComponents;
+        if (!"false".equals(syncComponents)) {
+            boolean components = isParentArtifact(project, "components");
+            if (components) {
+                syncComponents = "true";
+            } else {
+                syncComponents = "false";
+            }
+            // do not sync parent for core as its handled manual
+            boolean core = isParentArtifact(project, "core");
+            if (core) {
+                syncParent = "false";
+            } else {
+                syncParent = "true";
             }
         }
-
-        // skip from core folder as they are maintained manually in parent and should not be in all-components
-        boolean core = project.getParentArtifact() != null && project.getParentArtifact().getArtifactId().equals("core");
-        if (!core && count > 0 && (val == null || val.equals("true"))) {
-            // Update all component pom sync point
-            syncParentPomFile();
-            syncAllComponentsPomFile();
+        if (count > 0) {
+            if ("true".equals(syncParent)) {
+                syncParentPomFile();
+            }
+            if ("true".equals(syncComponents)) {
+                syncAllComponentsPomFile();
+            }
         }
+    }
+
+    private static boolean isParentArtifact(MavenProject project, String name) {
+        if (project != null) {
+            Artifact artifact = project.getParentArtifact();
+            if (artifact != null) {
+                if (name.equals(artifact.getArtifactId())) {
+                    return true;
+                } else {
+                    MavenProject parent = project.getParent();
+                    return isParentArtifact(parent, name);
+                }
+            }
+        }
+        return false;
     }
 
     private void syncParentPomFile() throws MojoExecutionException {

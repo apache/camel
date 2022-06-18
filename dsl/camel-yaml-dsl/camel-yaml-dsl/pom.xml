@@ -265,7 +265,7 @@
                         </goals>
                         <configuration>
                             <kebabCase>false</kebabCase>
-                            <outputFile>src/generated/resources/camelYamlDsl.json</outputFile>
+                            <outputFile>src/generated/resources/schema/camelYamlDsl.json</outputFile>
                             <bannedDefinitions>
                                 <bannedDefinition>org.apache.camel.model.FromDefinition</bannedDefinition>
                             </bannedDefinitions>
@@ -280,7 +280,7 @@
                         </goals>
                         <configuration>
                             <kebabCase>true</kebabCase>
-                            <outputFile>src/generated/resources/camel-yaml-dsl.json</outputFile>
+                            <outputFile>src/generated/resources/schema/camel-yaml-dsl.json</outputFile>
                             <bannedDefinitions>
                                 <bannedDefinition>org.apache.camel.model.FromDefinition</bannedDefinition>
                             </bannedDefinitions>
@@ -301,7 +301,7 @@
                         </goals>
                         <configuration>
                             <specificationUri>${project.basedir}/src/test/resources/openapi.json</specificationUri>
-                            <outputDirectory>${project.build.outputDirectory}/rest-dsl</outputDirectory>
+                            <outputDirectory>${project.build.testOutputDirectory}/rest-dsl</outputDirectory>
                             <fileName>generated-rest-dsl.yaml</fileName>
                         </configuration>
                     </execution>
@@ -322,19 +322,6 @@
                 <configuration>
                     <invokeDynamic>true</invokeDynamic>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-spi</id>
-                        <goals>
-                            <goal>generate-spi</goal>
-                            <goal>generate-others-list</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

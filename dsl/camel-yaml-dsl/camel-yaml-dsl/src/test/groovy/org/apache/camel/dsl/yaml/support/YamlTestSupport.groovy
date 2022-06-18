@@ -41,7 +41,7 @@ import java.nio.charset.StandardCharsets
 @Slf4j
 class YamlTestSupport extends Specification implements HasCamelContext {
     static def MAPPER = new ObjectMapper(new YAMLFactory())
-    static def SCHEMA_RES = JsonLoader.fromResource('/camel-yaml-dsl.json')
+    static def SCHEMA_RES = JsonLoader.fromResource('/schema/camel-yaml-dsl.json')
     static def SCHEMA = JsonSchemaFactory.byDefault().getJsonSchema(SCHEMA_RES)
 
     @AutoCleanup

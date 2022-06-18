@@ -41,12 +41,18 @@ public class MavenVersionManager implements VersionManager, Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(MavenVersionManager.class);
 
-    private final ClassLoader classLoader = new GroovyClassLoader();
+    private ClassLoader classLoader;
+    private final ClassLoader groovyClassLoader = new GroovyClassLoader();
     private final TimeoutHttpClientHandler httpClient = new TimeoutHttpClientHandler();
     private String version;
     private String runtimeProviderVersion;
     private String cacheDirectory;
     private boolean log;
+
+    @Override
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
     /**
      * Configures the directory for the download cache.
@@ -105,7 +111,7 @@ public class MavenVersionManager implements VersionManager, Closeable {
             Grape.setEnableAutoDownload(true);
 
             Map<String, Object> param = new HashMap<>();
-            param.put("classLoader", classLoader);
+            param.put("classLoader", groovyClassLoader);
             param.put("group", "org.apache.camel");
             param.put("module", "camel-catalog");
             param.put("version", version);
@@ -135,7 +141,7 @@ public class MavenVersionManager implements VersionManager, Closeable {
             Grape.setEnableAutoDownload(true);
 
             Map<String, Object> param = new HashMap<>();
-            param.put("classLoader", classLoader);
+            param.put("classLoader", groovyClassLoader);
             param.put("group", groupId);
             param.put("module", artifactId);
             param.put("version", version);
@@ -162,11 +168,14 @@ public class MavenVersionManager implements VersionManager, Closeable {
         if (is == null && version != null) {
             is = doGetResourceAsStream(name, version);
         }
+        if (classLoader != null && is == null) {
+            is = classLoader.getResourceAsStream(name);
+        }
         if (is == null) {
             is = MavenVersionManager.class.getClassLoader().getResourceAsStream(name);
         }
         if (is == null) {
-            is = classLoader.getResourceAsStream(name);
+            is = groovyClassLoader.getResourceAsStream(name);
         }
 
         return is;
@@ -179,7 +188,7 @@ public class MavenVersionManager implements VersionManager, Closeable {
 
         try {
             URL found = null;
-            Enumeration<URL> urls = classLoader.getResources(name);
+            Enumeration<URL> urls = groovyClassLoader.getResources(name);
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
                 if (url.getPath().contains(version)) {

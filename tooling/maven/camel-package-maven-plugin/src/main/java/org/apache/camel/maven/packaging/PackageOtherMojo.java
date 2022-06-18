@@ -40,15 +40,9 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 @Mojo(name = "generate-others-list", threadSafe = true)
 public class PackageOtherMojo extends AbstractGeneratorMojo {
 
-    /**
-     * The output directory for generated components file
-     */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File otherOutDir;
 
-    /**
-     * The output directory for generated languages file
-     */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File schemaOutDir;
 
