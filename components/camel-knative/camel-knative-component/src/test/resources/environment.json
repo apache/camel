@@ -29,6 +29,39 @@
         "knative.event.type": "",
         "camel.endpoint.kind": "source"
       }
+    },
+    {
+      "type": "event",
+      "name": "example-broker",
+      "url": "http://broker-example/default/example-broker",
+      "metadata": {
+        "camel.endpoint.kind": "sink",
+        "knative.apiVersion": "eventing.knative.dev/v1",
+        "knative.kind": "Broker",
+        "knative.name": "example-broker"
+      }
+    },
+    {
+      "type": "event",
+      "name": "evt1",
+      "path": "/events/evt1",
+      "metadata": {
+        "camel.endpoint.kind": "source",
+        "knative.apiVersion": "eventing.knative.dev/v1",
+        "knative.kind": "Broker",
+        "knative.name": "example-broker"
+      }
+    },
+    {
+      "type": "event",
+      "name": "default",
+      "path": "/events/",
+      "metadata": {
+        "camel.endpoint.kind": "source",
+        "knative.apiVersion": "eventing.knative.dev/v1",
+        "knative.kind": "Broker",
+        "knative.name": "example-broker"
+      }
     }
   ]
 }
