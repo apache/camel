@@ -24,6 +24,12 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.tooling.model.ArtifactModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.OtherModel;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -1542,6 +1548,33 @@ public class CamelCatalogTest {
 
         result = catalog.validateEndpointProperties("netty-http:http://foo-bar/?requestTimeout={{env:TIMEOUT}}");
         assertTrue(result.isSuccess());
+    }
+
+    @Test
+    public void modelFromMavenGAV() {
+        ArtifactModel<?> am = catalog.modelFromMavenGAV("org.apache.camel", "camel-ftp", catalog.getCatalogVersion());
+        Assertions.assertInstanceOf(ComponentModel.class, am);
+        Assertions.assertEquals("Upload and download files to/from FTP servers.", am.getDescription());
+
+        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-ognl", catalog.getCatalogVersion());
+        Assertions.assertInstanceOf(LanguageModel.class, am);
+        Assertions.assertEquals("Evaluates an OGNL expression (Apache Commons OGNL).", am.getDescription());
+
+        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-bindy", catalog.getCatalogVersion());
+        Assertions.assertInstanceOf(DataFormatModel.class, am);
+        Assertions.assertEquals("Marshal and unmarshal between POJOs and Comma separated values (CSV) format using Camel Bindy",
+                am.getDescription());
+
+        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-zipkin", catalog.getCatalogVersion());
+        Assertions.assertInstanceOf(OtherModel.class, am);
+        Assertions.assertEquals("Distributed message tracing using Zipkin", am.getDescription());
+
+        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-unknown", catalog.getCatalogVersion());
+        Assertions.assertNull(am);
+
+        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-jms", null);
+        Assertions.assertInstanceOf(ComponentModel.class, am);
+        Assertions.assertEquals("Sent and receive messages to/from a JMS Queue or Topic.", am.getDescription());
     }
 
 }

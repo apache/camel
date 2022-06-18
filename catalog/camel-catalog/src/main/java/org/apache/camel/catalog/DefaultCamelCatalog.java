@@ -43,6 +43,7 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.catalog.impl.AbstractCamelCatalog;
 import org.apache.camel.catalog.impl.CatalogHelper;
+import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -463,6 +464,40 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
             obj.put("archetypes", getArchetypesCount());
             return JsonMapper.serialize(obj);
         });
+    }
+
+    @Override
+    public ArtifactModel<?> modelFromMavenGAV(String groupId, String artifactId, String version) {
+        for (String name : findComponentNames()) {
+            ArtifactModel<?> am = componentModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        for (String name : findDataFormatNames()) {
+            ArtifactModel<?> am = dataFormatModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        for (String name : findLanguageNames()) {
+            ArtifactModel<?> am = languageModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        for (String name : findOtherNames()) {
+            ArtifactModel<?> am = otherModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        return null;
+    }
+
+    private static boolean matchArtifact(ArtifactModel<?> am, String groupId, String artifactId, String version) {
+        return groupId.equals(am.getGroupId()) && artifactId.equals(am.getArtifactId())
+                && (version == null || version.isBlank() || version.equals(am.getVersion()));
     }
 
     private int getArchetypesCount() {

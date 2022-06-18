@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -536,6 +537,8 @@ public interface CamelCatalog {
     MainModel mainModel();
 
     /**
+     * Lookup the model for the given kind and name
+     *
      * @param  kind the requested kind
      * @param  name the name to look up
      * @return      the requested model or {@code null} in case it is not available in this {@link CamelCatalog}
@@ -556,5 +559,15 @@ public interface CamelCatalog {
                 throw new IllegalArgumentException("Unexpected kind " + kind);
         }
     }
+
+    /**
+     * Lookup the model for the given Maven GAV
+     *
+     * @param  groupId    maven group id
+     * @param  artifactId maven artifact id
+     * @param  version    maven version (optional)
+     * @return            the requested model or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    ArtifactModel<?> modelFromMavenGAV(String groupId, String artifactId, String version);
 
 }
