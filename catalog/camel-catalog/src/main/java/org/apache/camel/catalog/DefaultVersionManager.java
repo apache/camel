@@ -21,9 +21,15 @@ import java.io.InputStream;
 public class DefaultVersionManager implements VersionManager {
 
     private final CamelCatalog camelCatalog;
+    private ClassLoader classLoader;
 
     public DefaultVersionManager(CamelCatalog camelCatalog) {
         this.camelCatalog = camelCatalog;
+    }
+
+    @Override
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
     }
 
     @Override
@@ -50,6 +56,13 @@ public class DefaultVersionManager implements VersionManager {
 
     @Override
     public InputStream getResourceAsStream(String name) {
-        return DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(name);
+        InputStream is = null;
+        if (classLoader != null) {
+            is = classLoader.getResourceAsStream(name);
+        }
+        if (is == null) {
+            is = DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(name);
+        }
+        return is;
     }
 }

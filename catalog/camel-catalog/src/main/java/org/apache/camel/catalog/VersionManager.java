@@ -24,6 +24,11 @@ import java.io.InputStream;
 public interface VersionManager {
 
     /**
+     * Sets an extra class loader to use first for loading resources.
+     */
+    void setClassLoader(ClassLoader classLoader);
+
+    /**
      * Gets the current loaded Camel version used by the catalog.
      */
     String getLoadedVersion();

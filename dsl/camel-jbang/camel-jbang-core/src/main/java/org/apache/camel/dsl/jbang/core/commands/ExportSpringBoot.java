@@ -25,13 +25,20 @@ import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.catalog.RuntimeProvider;
+import org.apache.camel.main.KameletMain;
+import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.MavenGav;
+import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.commons.io.FileUtils;
 
 class ExportSpringBoot extends Export {
+
+    private static final String DEFAULT_CAMEL_CATALOG = "org.apache.camel.catalog.DefaultCamelCatalog";
+    private static final String SPRING_BOOT_CATALOG_PROVIDER = "org.apache.camel.springboot.catalog.SpringBootRuntimeProvider";
 
     public ExportSpringBoot(CamelJBangMain main) {
         super(main);
@@ -114,7 +121,7 @@ class ExportSpringBoot extends Export {
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
-        CamelCatalog catalog = new DefaultCamelCatalog();
+        CamelCatalog catalog = loadSpringBootCatalog();
         String camelVersion = catalog.getCatalogVersion();
 
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
@@ -149,11 +156,19 @@ class ExportSpringBoot extends Export {
             String gid = gav.getGroupId();
             String aid = gav.getArtifactId();
             String v = gav.getVersion();
+
             // transform to camel-spring-boot starter GAV
             if ("org.apache.camel".equals(gid)) {
-                gid = "org.apache.camel.springboot";
-                aid = aid + "-starter";
-                v = null;
+                ArtifactModel<?> am = catalog.modelFromMavenGAV("org.apache.camel.springboot", aid + "-starter", null);
+                if (am != null) {
+                    // use spring-boot starter
+                    gid = am.getGroupId();
+                    aid = am.getArtifactId();
+                    v = null; // uses BOM so version should not be included
+                } else {
+                    // there is no spring boot starter so use plain camel
+                    v = camelVersion;
+                }
             }
             sb.append("        <dependency>\n");
             sb.append("            <groupId>").append(gid).append("</groupId>\n");
@@ -211,6 +226,40 @@ class ExportSpringBoot extends Export {
             key = "camel.springboot." + key.substring(11);
         }
         return super.applicationPropertyLine(key, value);
+    }
+
+    private CamelCatalog loadSpringBootCatalog() {
+        CamelCatalog answer = new DefaultCamelCatalog(true);
+
+        // use kamelet-main to dynamic download dependency via maven
+        KameletMain main = new KameletMain();
+        try {
+            main.start();
+
+            MavenDependencyDownloader downloader = main.getCamelContext().hasService(MavenDependencyDownloader.class);
+            downloader.downloadDependency("org.apache.camel.springboot", "camel-catalog-provider-springboot",
+                    answer.getCatalogVersion());
+
+            Class<RuntimeProvider> clazz = main.getCamelContext().getClassResolver().resolveClass(SPRING_BOOT_CATALOG_PROVIDER,
+                    RuntimeProvider.class);
+            if (clazz != null) {
+                RuntimeProvider provider = main.getCamelContext().getInjector().newInstance(clazz);
+                if (provider != null) {
+                    // re-create answer with the classloader that loaded spring-boot to be able to load resources in this catalog
+                    Class<CamelCatalog> clazz2 = main.getCamelContext().getClassResolver().resolveClass(DEFAULT_CAMEL_CATALOG,
+                            CamelCatalog.class);
+                    answer = main.getCamelContext().getInjector().newInstance(clazz2);
+                    answer.setRuntimeProvider(provider);
+                    // use classloader that loaded spring-boot provider to ensure we can load its resources
+                    answer.getVersionManager().setClassLoader(main.getCamelContext().getApplicationContextClassLoader());
+                    answer.enableCache();
+                }
+            }
+        } finally {
+            main.stop();
+        }
+
+        return answer;
     }
 
 }
