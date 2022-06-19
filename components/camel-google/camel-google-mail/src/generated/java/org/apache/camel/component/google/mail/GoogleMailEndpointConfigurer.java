@@ -27,8 +27,8 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("delegate", java.lang.String.class);
         map.put("inBody", java.lang.String.class);
         map.put("scopes", java.util.Collection.class);
-        map.put("bridgeErrorHandler", boolean.class);
         map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);

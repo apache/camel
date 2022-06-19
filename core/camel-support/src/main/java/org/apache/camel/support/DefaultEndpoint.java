@@ -63,13 +63,13 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
                             + " autowiring on endpoint level would not affect that the component will still be autowired, and therefore the endpoint"
                             + " will be configured with option from the component level. In other words turning off autowiring would then require to turn it off on the component level.")
     private boolean autowiredEnabled = true;
-    @UriParam(label = "producer",
+    @UriParam(label = "producer,advanced",
               description = "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup"
                             + " in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then"
                             + " the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed"
                             + " then creating and starting the producer may take a little time and prolong the total processing time of the processing.")
     private boolean lazyStartProducer;
-    @UriParam(label = "consumer",
+    @UriParam(label = "consumer,advanced",
               description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
                             + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
                             + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored.")

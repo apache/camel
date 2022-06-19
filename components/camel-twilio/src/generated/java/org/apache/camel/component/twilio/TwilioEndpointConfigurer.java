@@ -23,8 +23,8 @@ public class TwilioEndpointConfigurer extends PropertyConfigurerSupport implemen
         map.put("apiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
         map.put("methodName", java.lang.String.class);
         map.put("inBody", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
         map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
