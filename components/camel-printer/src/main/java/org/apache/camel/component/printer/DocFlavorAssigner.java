@@ -248,14 +248,17 @@ public class DocFlavorAssigner {
     }
 
     public DocFlavor forMimeTypePAGEABLE() {
-        return d = DocFlavor.SERVICE_FORMATTED.PAGEABLE;
+        d = DocFlavor.SERVICE_FORMATTED.PAGEABLE;
+        return d;
     }
 
     public DocFlavor forMimeTypePRINTABLE() {
-        return d = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
+        d = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
+        return d;
     }
 
     public DocFlavor forMimeTypeRENDERABLEIMAGE() {
-        return d = DocFlavor.SERVICE_FORMATTED.RENDERABLE_IMAGE;
+        d = DocFlavor.SERVICE_FORMATTED.RENDERABLE_IMAGE;
+        return d;
     }
 }
