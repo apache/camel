@@ -30,12 +30,8 @@ import com.google.api.services.calendar.Calendar;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ResourceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFactory {
-
-    private static final Logger LOG = LoggerFactory.getLogger(BatchGoogleCalendarClientFactory.class);
     private NetHttpTransport transport;
     private JacksonFactory jsonFactory;
 
@@ -64,7 +60,7 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
             if (serviceAccount) {
                 credential = authorizeServiceAccount(emailAddress, p12FileName, scopes, user);
             } else {
-                credential = authorize(clientId, clientSecret, scopes);
+                credential = authorize(clientId, clientSecret);
                 if (refreshToken != null && !"".equals(refreshToken)) {
                     credential.setRefreshToken(refreshToken);
                 }
@@ -79,7 +75,7 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
     }
 
     // Authorizes the installed application to access user's protected data.
-    private Credential authorize(String clientId, String clientSecret, Collection<String> scopes) {
+    private Credential authorize(String clientId, String clientSecret) {
         // authorize
         return new GoogleCredential.Builder()
                 .setJsonFactory(jsonFactory)
