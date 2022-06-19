@@ -28,7 +28,7 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 
 public final class SuggestSimilarHelper {
 
-    private static final int MAX_SUGGESTIONS = 5;
+    private static final int MAX_SUGGESTIONS = 3;
 
     private SuggestSimilarHelper() {
     }

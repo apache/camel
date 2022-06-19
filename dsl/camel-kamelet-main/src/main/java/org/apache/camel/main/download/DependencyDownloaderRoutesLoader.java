@@ -19,6 +19,7 @@ package org.apache.camel.main.download;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.dsl.yaml.KameletRoutesBuilderLoader;
 import org.apache.camel.main.MainConfigurationProperties;
 import org.apache.camel.main.MainRoutesLoader;
 import org.apache.camel.spi.FactoryFinder;
@@ -60,7 +61,17 @@ public class DependencyDownloaderRoutesLoader extends MainRoutesLoader {
             downloadLoader("camel-yaml-dsl");
         }
 
-        RoutesBuilderLoader loader = super.resolveService(extension);
+        // special for kamelet as we want to track loading kamelets
+        RoutesBuilderLoader loader;
+        if (KameletRoutesBuilderLoader.EXTENSION.equals(extension)) {
+            loader = new KnownKameletRoutesBuilderLoader();
+            CamelContextAware.trySetCamelContext(loader, getCamelContext());
+            // allows for custom initialization
+            initRoutesBuilderLoader(loader);
+            ServiceHelper.startService(loader);
+        } else {
+            loader = super.resolveService(extension);
+        }
         if (loader == null) {
             // need to use regular factory finder as bootstrap has already marked the loader as a miss
             final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
