@@ -11,6 +11,7 @@
 ** xref:elytron.adoc[Elytron]
 ** xref:etcd3.adoc[Etcd3]
 ** xref:headersmap.adoc[Headersmap]
+** xref:hystrix.adoc[Hystrix]
 ** xref:jasypt.adoc[Jasypt]
 ** xref:jfr.adoc[Jfr]
 ** xref:jta.adoc[JTA]
