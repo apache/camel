@@ -33,7 +33,7 @@ public class OgnlExpression extends ExpressionSupport {
     private final Class<?> type;
     private Object expression;
 
-    public OgnlExpression(OgnlLanguage language, String expressionString, Class<?> type) {
+    public OgnlExpression(String expressionString, Class<?> type) {
         this.expressionString = expressionString;
         this.type = type;
         try {
@@ -44,7 +44,7 @@ public class OgnlExpression extends ExpressionSupport {
     }
 
     public static OgnlExpression ognl(String expression) {
-        return new OgnlExpression(new OgnlLanguage(), expression, Object.class);
+        return new OgnlExpression(expression, Object.class);
     }
 
     @Override
