@@ -35,13 +35,13 @@ public class MvelLanguage extends LanguageSupport implements ScriptingLanguage {
     @Override
     public Predicate createPredicate(String expression) {
         expression = loadResource(expression);
-        return new MvelExpression(this, expression, Boolean.class);
+        return new MvelExpression(expression, Boolean.class);
     }
 
     @Override
     public Expression createExpression(String expression) {
         expression = loadResource(expression);
-        return new MvelExpression(this, expression, Object.class);
+        return new MvelExpression(expression, Object.class);
     }
 
     @Override
