@@ -601,7 +601,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             brave = braves.get(serviceName);
 
             if (brave == null && useFallbackServiceNames) {
-                LOG.debug("Creating Tracing assigned to serviceName: {}", serviceName + " as fallback");
+                LOG.debug("Creating Tracing assigned to serviceName: {} as fallback", serviceName);
                 brave = newTracing(serviceName);
                 braves.put(serviceName, brave);
             }
