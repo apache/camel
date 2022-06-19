@@ -693,7 +693,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             // ignore
         } catch (IllegalArgumentException e) {
             // ignore
-        } catch (gIllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             // ignore
         } catch (InvocationTargetException e) {
             // ignore
