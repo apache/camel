@@ -58,12 +58,12 @@ pipeline {
            }
         }
 
-        stage('Build & Deploy') {
+        stage('Build & Install') {
             when {
                 branch 'main'
             }
             steps {
-                sh "./mvnw -U $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean deploy"
+                sh "./mvnw -U $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean install"
             }
         }
 
