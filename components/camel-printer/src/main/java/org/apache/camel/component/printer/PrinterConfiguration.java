@@ -169,11 +169,11 @@ public class PrinterConfiguration {
         } else if (mimeType.equalsIgnoreCase("TEXT_PLAIN")) {
             d = docFlavorAssigner.forMimeTypeBasic(flavor, mimeType);
         } else if (mimeType.equalsIgnoreCase("PAGEABLE")) {
-            d = docFlavorAssigner.forMimeTypePAGEABLE(flavor);
+            d = docFlavorAssigner.forMimeTypePAGEABLE();
         } else if (mimeType.equalsIgnoreCase("PRINTABLE")) {
-            d = docFlavorAssigner.forMimeTypePRINTABLE(flavor);
+            d = docFlavorAssigner.forMimeTypePRINTABLE();
         } else if (mimeType.equalsIgnoreCase("RENDERABLE_IMAGE")) {
-            d = docFlavorAssigner.forMimeTypeRENDERABLEIMAGE(flavor);
+            d = docFlavorAssigner.forMimeTypeRENDERABLEIMAGE();
         }
 
         return d;
