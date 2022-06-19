@@ -58,7 +58,7 @@ pipeline {
            }
         }
 
-        stage('Build & Deploy') {
+        stage('Build & Install') {
             when {
                 branch 'main'
             }
