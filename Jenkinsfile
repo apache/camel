@@ -63,7 +63,7 @@ pipeline {
                 branch 'main'
             }
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Pdeploy -Dmaven.test.skip.exec=true clean deploy"
+                sh "./mvnw $MAVEN_PARAMS -Pdeploy -Dmaven.test.skip.exec=true clean install"
             }
         }
 
