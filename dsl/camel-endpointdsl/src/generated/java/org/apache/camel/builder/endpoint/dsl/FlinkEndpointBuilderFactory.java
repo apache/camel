@@ -38,6 +38,9 @@ public interface FlinkEndpointBuilderFactory {
      * Builder for endpoint for the Flink component.
      */
     public interface FlinkEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedFlinkEndpointBuilder advanced() {
+            return (AdvancedFlinkEndpointBuilder) this;
+        }
         /**
          * Indicates if results should be collected or counted.
          * 
@@ -194,6 +197,17 @@ public interface FlinkEndpointBuilderFactory {
             doSetProperty("dataStreamCallback", dataStreamCallback);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Flink component.
+     */
+    public interface AdvancedFlinkEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default FlinkEndpointBuilder basic() {
+            return (FlinkEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -208,12 +222,13 @@ public interface FlinkEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default FlinkEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+        default AdvancedFlinkEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -232,12 +247,13 @@ public interface FlinkEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default FlinkEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+        default AdvancedFlinkEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -290,7 +306,7 @@ public interface FlinkEndpointBuilderFactory {
     static FlinkEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class FlinkEndpointBuilderImpl extends AbstractEndpointBuilder implements FlinkEndpointBuilder {
+        class FlinkEndpointBuilderImpl extends AbstractEndpointBuilder implements FlinkEndpointBuilder, AdvancedFlinkEndpointBuilder {
             public FlinkEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

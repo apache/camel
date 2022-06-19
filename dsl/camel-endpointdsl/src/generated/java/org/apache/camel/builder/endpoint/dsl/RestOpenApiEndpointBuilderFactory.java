@@ -41,6 +41,9 @@ public interface RestOpenApiEndpointBuilderFactory {
     public interface RestOpenApiEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedRestOpenApiEndpointBuilder advanced() {
+            return (AdvancedRestOpenApiEndpointBuilder) this;
+        }
         /**
          * API basePath, for example /v2. Default is unset, if set overrides the
          * value present in OpenApi specification and in the component
@@ -114,6 +117,34 @@ public interface RestOpenApiEndpointBuilderFactory {
             return this;
         }
         /**
+         * What payload type this component is producing. For example
+         * application/json according to the RFC7231. This equates to the value
+         * of Content-Type HTTP header. If set overrides any value present in
+         * the OpenApi specification. Overrides all other configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param produces the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointBuilder produces(String produces) {
+            doSetProperty("produces", produces);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint for the REST OpenApi component.
+     */
+    public interface AdvancedRestOpenApiEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default RestOpenApiEndpointBuilder basic() {
+            return (RestOpenApiEndpointBuilder) this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -127,12 +158,12 @@ public interface RestOpenApiEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default RestOpenApiEndpointBuilder lazyStartProducer(
+        default AdvancedRestOpenApiEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -152,31 +183,14 @@ public interface RestOpenApiEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default RestOpenApiEndpointBuilder lazyStartProducer(
+        default AdvancedRestOpenApiEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * What payload type this component is producing. For example
-         * application/json according to the RFC7231. This equates to the value
-         * of Content-Type HTTP header. If set overrides any value present in
-         * the OpenApi specification. Overrides all other configuration.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param produces the value to set
-         * @return the dsl builder
-         */
-        default RestOpenApiEndpointBuilder produces(String produces) {
-            doSetProperty("produces", produces);
             return this;
         }
     }
@@ -266,7 +280,7 @@ public interface RestOpenApiEndpointBuilderFactory {
     static RestOpenApiEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class RestOpenApiEndpointBuilderImpl extends AbstractEndpointBuilder implements RestOpenApiEndpointBuilder {
+        class RestOpenApiEndpointBuilderImpl extends AbstractEndpointBuilder implements RestOpenApiEndpointBuilder, AdvancedRestOpenApiEndpointBuilder {
             public RestOpenApiEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

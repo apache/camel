@@ -38,6 +38,9 @@ public interface GlanceEndpointBuilderFactory {
      * Builder for endpoint for the OpenStack Glance component.
      */
     public interface GlanceEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedGlanceEndpointBuilder advanced() {
+            return (AdvancedGlanceEndpointBuilder) this;
+        }
         /**
          * OpenStack API version.
          * 
@@ -97,54 +100,6 @@ public interface GlanceEndpointBuilderFactory {
          */
         default GlanceEndpointBuilder domain(String domain) {
             doSetProperty("domain", domain);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default GlanceEndpointBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default GlanceEndpointBuilder lazyStartProducer(String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -208,6 +163,66 @@ public interface GlanceEndpointBuilderFactory {
         }
     }
 
+    /**
+     * Advanced builder for endpoint for the OpenStack Glance component.
+     */
+    public interface AdvancedGlanceEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default GlanceEndpointBuilder basic() {
+            return (GlanceEndpointBuilder) this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGlanceEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGlanceEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    }
+
     public interface GlanceBuilders {
         /**
          * OpenStack Glance (camel-openstack)
@@ -255,7 +270,7 @@ public interface GlanceEndpointBuilderFactory {
     static GlanceEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class GlanceEndpointBuilderImpl extends AbstractEndpointBuilder implements GlanceEndpointBuilder {
+        class GlanceEndpointBuilderImpl extends AbstractEndpointBuilder implements GlanceEndpointBuilder, AdvancedGlanceEndpointBuilder {
             public GlanceEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -91,6 +91,17 @@ public interface BeanValidatorEndpointBuilderFactory {
             doSetProperty("ignoreXmlConfiguration", ignoreXmlConfiguration);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Bean Validator component.
+     */
+    public interface AdvancedBeanValidatorEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default BeanValidatorEndpointBuilder basic() {
+            return (BeanValidatorEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -105,12 +116,12 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default BeanValidatorEndpointBuilder lazyStartProducer(
+        default AdvancedBeanValidatorEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -130,26 +141,15 @@ public interface BeanValidatorEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default BeanValidatorEndpointBuilder lazyStartProducer(
+        default AdvancedBeanValidatorEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the Bean Validator component.
-     */
-    public interface AdvancedBeanValidatorEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default BeanValidatorEndpointBuilder basic() {
-            return (BeanValidatorEndpointBuilder) this;
         }
         /**
          * To use a custom ConstraintValidatorFactory.

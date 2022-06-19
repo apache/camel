@@ -42,6 +42,9 @@ public interface SimpleNotificationEndpointBuilderFactory {
     public interface SimpleNotificationEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedSimpleNotificationEndpointBuilder advanced() {
+            return (AdvancedSimpleNotificationEndpointBuilder) this;
+        }
         /**
          * Access key for the cloud user.
          * 
@@ -103,55 +106,6 @@ public interface SimpleNotificationEndpointBuilderFactory {
         default SimpleNotificationEndpointBuilder ignoreSslVerification(
                 String ignoreSslVerification) {
             doSetProperty("ignoreSslVerification", ignoreSslVerification);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default SimpleNotificationEndpointBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default SimpleNotificationEndpointBuilder lazyStartProducer(
-                String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -349,6 +303,67 @@ public interface SimpleNotificationEndpointBuilderFactory {
         }
     }
 
+    /**
+     * Advanced builder for endpoint for the Huawei Simple Message Notification
+     * (SMN) component.
+     */
+    public interface AdvancedSimpleNotificationEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default SimpleNotificationEndpointBuilder basic() {
+            return (SimpleNotificationEndpointBuilder) this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSimpleNotificationEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSimpleNotificationEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    }
+
     public interface SimpleNotificationBuilders {
         /**
          * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
@@ -398,7 +413,7 @@ public interface SimpleNotificationEndpointBuilderFactory {
     static SimpleNotificationEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class SimpleNotificationEndpointBuilderImpl extends AbstractEndpointBuilder implements SimpleNotificationEndpointBuilder {
+        class SimpleNotificationEndpointBuilderImpl extends AbstractEndpointBuilder implements SimpleNotificationEndpointBuilder, AdvancedSimpleNotificationEndpointBuilder {
             public SimpleNotificationEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -38,6 +38,9 @@ public interface BonitaEndpointBuilderFactory {
      * Builder for endpoint for the Bonita component.
      */
     public interface BonitaEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedBonitaEndpointBuilder advanced() {
+            return (AdvancedBonitaEndpointBuilder) this;
+        }
         /**
          * Hostname where Bonita engine runs.
          * 
@@ -51,54 +54,6 @@ public interface BonitaEndpointBuilderFactory {
          */
         default BonitaEndpointBuilder hostname(String hostname) {
             doSetProperty("hostname", hostname);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default BonitaEndpointBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default BonitaEndpointBuilder lazyStartProducer(String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -160,6 +115,66 @@ public interface BonitaEndpointBuilderFactory {
         }
     }
 
+    /**
+     * Advanced builder for endpoint for the Bonita component.
+     */
+    public interface AdvancedBonitaEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default BonitaEndpointBuilder basic() {
+            return (BonitaEndpointBuilder) this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBonitaEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBonitaEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    }
+
     public interface BonitaBuilders {
         /**
          * Bonita (camel-bonita)
@@ -207,7 +222,7 @@ public interface BonitaEndpointBuilderFactory {
     static BonitaEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class BonitaEndpointBuilderImpl extends AbstractEndpointBuilder implements BonitaEndpointBuilder {
+        class BonitaEndpointBuilderImpl extends AbstractEndpointBuilder implements BonitaEndpointBuilder, AdvancedBonitaEndpointBuilder {
             public BonitaEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

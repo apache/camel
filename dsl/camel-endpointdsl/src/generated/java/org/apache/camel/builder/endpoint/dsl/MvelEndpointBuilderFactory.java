@@ -38,6 +38,9 @@ public interface MvelEndpointBuilderFactory {
      * Builder for endpoint for the MVEL component.
      */
     public interface MvelEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedMvelEndpointBuilder advanced() {
+            return (AdvancedMvelEndpointBuilder) this;
+        }
         /**
          * Sets whether the context map should allow access to all details. By
          * default only the message body and headers can be accessed. This
@@ -164,6 +167,17 @@ public interface MvelEndpointBuilderFactory {
             doSetProperty("encoding", encoding);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the MVEL component.
+     */
+    public interface AdvancedMvelEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default MvelEndpointBuilder basic() {
+            return (MvelEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -178,12 +192,13 @@ public interface MvelEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default MvelEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+        default AdvancedMvelEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -202,12 +217,13 @@ public interface MvelEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default MvelEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+        default AdvancedMvelEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -266,7 +282,7 @@ public interface MvelEndpointBuilderFactory {
         }
     }
     static MvelEndpointBuilder endpointBuilder(String componentName, String path) {
-        class MvelEndpointBuilderImpl extends AbstractEndpointBuilder implements MvelEndpointBuilder {
+        class MvelEndpointBuilderImpl extends AbstractEndpointBuilder implements MvelEndpointBuilder, AdvancedMvelEndpointBuilder {
             public MvelEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

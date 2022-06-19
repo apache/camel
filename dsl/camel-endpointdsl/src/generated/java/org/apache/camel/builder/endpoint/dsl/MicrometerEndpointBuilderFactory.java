@@ -41,6 +41,9 @@ public interface MicrometerEndpointBuilderFactory {
     public interface MicrometerEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedMicrometerEndpointBuilder advanced() {
+            return (AdvancedMicrometerEndpointBuilder) this;
+        }
         /**
          * Action expression when using timer type.
          * 
@@ -84,6 +87,31 @@ public interface MicrometerEndpointBuilderFactory {
             return this;
         }
         /**
+         * Value expression when using histogram type.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param value the value to set
+         * @return the dsl builder
+         */
+        default MicrometerEndpointBuilder value(String value) {
+            doSetProperty("value", value);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Micrometer component.
+     */
+    public interface AdvancedMicrometerEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default MicrometerEndpointBuilder basic() {
+            return (MicrometerEndpointBuilder) this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -97,12 +125,12 @@ public interface MicrometerEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default MicrometerEndpointBuilder lazyStartProducer(
+        default AdvancedMicrometerEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -122,28 +150,14 @@ public interface MicrometerEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default MicrometerEndpointBuilder lazyStartProducer(
+        default AdvancedMicrometerEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Value expression when using histogram type.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param value the value to set
-         * @return the dsl builder
-         */
-        default MicrometerEndpointBuilder value(String value) {
-            doSetProperty("value", value);
             return this;
         }
     }
@@ -213,7 +227,7 @@ public interface MicrometerEndpointBuilderFactory {
     static MicrometerEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class MicrometerEndpointBuilderImpl extends AbstractEndpointBuilder implements MicrometerEndpointBuilder {
+        class MicrometerEndpointBuilderImpl extends AbstractEndpointBuilder implements MicrometerEndpointBuilder, AdvancedMicrometerEndpointBuilder {
             public MicrometerEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

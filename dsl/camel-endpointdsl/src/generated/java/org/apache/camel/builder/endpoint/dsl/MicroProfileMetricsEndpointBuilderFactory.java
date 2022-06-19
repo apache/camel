@@ -40,6 +40,9 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
     public interface MicroProfileMetricsEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedMicroProfileMetricsEndpointBuilder advanced() {
+            return (AdvancedMicroProfileMetricsEndpointBuilder) this;
+        }
         /**
          * Action to use when using the timer type.
          * 
@@ -207,55 +210,6 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default MicroProfileMetricsEndpointBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default MicroProfileMetricsEndpointBuilder lazyStartProducer(
-                String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
          * Mark value to set when using the meter type.
          * 
          * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
@@ -344,6 +298,66 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         }
     }
 
+    /**
+     * Advanced builder for endpoint for the MicroProfile Metrics component.
+     */
+    public interface AdvancedMicroProfileMetricsEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default MicroProfileMetricsEndpointBuilder basic() {
+            return (MicroProfileMetricsEndpointBuilder) this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMicroProfileMetricsEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMicroProfileMetricsEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    }
+
     public interface MicroProfileMetricsBuilders {
         /**
          * MicroProfile Metrics (camel-microprofile-metrics)
@@ -402,7 +416,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
     static MicroProfileMetricsEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class MicroProfileMetricsEndpointBuilderImpl extends AbstractEndpointBuilder implements MicroProfileMetricsEndpointBuilder {
+        class MicroProfileMetricsEndpointBuilderImpl extends AbstractEndpointBuilder implements MicroProfileMetricsEndpointBuilder, AdvancedMicroProfileMetricsEndpointBuilder {
             public MicroProfileMetricsEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

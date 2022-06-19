@@ -145,6 +145,17 @@ public interface ClassEndpointBuilderFactory {
             doSetProperty("scope", scope);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Class component.
+     */
+    public interface AdvancedClassEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default ClassEndpointBuilder basic() {
+            return (ClassEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -159,12 +170,13 @@ public interface ClassEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default ClassEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+        default AdvancedClassEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -183,25 +195,15 @@ public interface ClassEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default ClassEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+        default AdvancedClassEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the Class component.
-     */
-    public interface AdvancedClassEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default ClassEndpointBuilder basic() {
-            return (ClassEndpointBuilder) this;
         }
         /**
          * Used for configuring additional properties on the bean.

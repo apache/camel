@@ -38,6 +38,20 @@ public interface DnsEndpointBuilderFactory {
      * Builder for endpoint for the DNS component.
      */
     public interface DnsEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedDnsEndpointBuilder advanced() {
+            return (AdvancedDnsEndpointBuilder) this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint for the DNS component.
+     */
+    public interface AdvancedDnsEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default DnsEndpointBuilder basic() {
+            return (DnsEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -52,12 +66,13 @@ public interface DnsEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default DnsEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+        default AdvancedDnsEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -76,12 +91,13 @@ public interface DnsEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default DnsEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+        default AdvancedDnsEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -134,7 +150,7 @@ public interface DnsEndpointBuilderFactory {
         }
     }
     static DnsEndpointBuilder endpointBuilder(String componentName, String path) {
-        class DnsEndpointBuilderImpl extends AbstractEndpointBuilder implements DnsEndpointBuilder {
+        class DnsEndpointBuilderImpl extends AbstractEndpointBuilder implements DnsEndpointBuilder, AdvancedDnsEndpointBuilder {
             public DnsEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

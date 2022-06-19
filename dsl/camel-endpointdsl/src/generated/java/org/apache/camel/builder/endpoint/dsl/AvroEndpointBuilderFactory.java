@@ -190,6 +190,17 @@ public interface AvroEndpointBuilderFactory {
             doSetProperty("uriAuthority", uriAuthority);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the Avro RPC component.
+     */
+    public interface AdvancedAvroEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default AvroEndpointConsumerBuilder basic() {
+            return (AvroEndpointConsumerBuilder) this;
+        }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -202,12 +213,12 @@ public interface AvroEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default AvroEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedAvroEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -225,26 +236,15 @@ public interface AvroEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default AvroEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedAvroEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Avro RPC component.
-     */
-    public interface AdvancedAvroEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default AvroEndpointConsumerBuilder basic() {
-            return (AvroEndpointConsumerBuilder) this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -474,6 +474,17 @@ public interface AvroEndpointBuilderFactory {
             doSetProperty("uriAuthority", uriAuthority);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the Avro RPC component.
+     */
+    public interface AdvancedAvroEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default AvroEndpointProducerBuilder basic() {
+            return (AvroEndpointProducerBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -488,12 +499,12 @@ public interface AvroEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default AvroEndpointProducerBuilder lazyStartProducer(
+        default AdvancedAvroEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -513,26 +524,15 @@ public interface AvroEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default AvroEndpointProducerBuilder lazyStartProducer(
+        default AdvancedAvroEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Avro RPC component.
-     */
-    public interface AdvancedAvroEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AvroEndpointProducerBuilder basic() {
-            return (AvroEndpointProducerBuilder) this;
         }
     }
 

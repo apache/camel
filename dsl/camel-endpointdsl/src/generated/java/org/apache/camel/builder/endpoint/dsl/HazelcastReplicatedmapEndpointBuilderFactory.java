@@ -129,6 +129,18 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
             doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the Hazelcast Replicated Map
+     * component.
+     */
+    public interface AdvancedHazelcastReplicatedmapEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default HazelcastReplicatedmapEndpointConsumerBuilder basic() {
+            return (HazelcastReplicatedmapEndpointConsumerBuilder) this;
+        }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -141,12 +153,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default HazelcastReplicatedmapEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -164,27 +176,15 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default HazelcastReplicatedmapEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Hazelcast Replicated Map
-     * component.
-     */
-    public interface AdvancedHazelcastReplicatedmapEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default HazelcastReplicatedmapEndpointConsumerBuilder basic() {
-            return (HazelcastReplicatedmapEndpointConsumerBuilder) this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -353,6 +353,18 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
             doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the Hazelcast Replicated Map
+     * component.
+     */
+    public interface AdvancedHazelcastReplicatedmapEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default HazelcastReplicatedmapEndpointProducerBuilder basic() {
+            return (HazelcastReplicatedmapEndpointProducerBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -367,12 +379,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default HazelcastReplicatedmapEndpointProducerBuilder lazyStartProducer(
+        default AdvancedHazelcastReplicatedmapEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -392,27 +404,15 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default HazelcastReplicatedmapEndpointProducerBuilder lazyStartProducer(
+        default AdvancedHazelcastReplicatedmapEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Hazelcast Replicated Map
-     * component.
-     */
-    public interface AdvancedHazelcastReplicatedmapEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default HazelcastReplicatedmapEndpointProducerBuilder basic() {
-            return (HazelcastReplicatedmapEndpointProducerBuilder) this;
         }
     }
 

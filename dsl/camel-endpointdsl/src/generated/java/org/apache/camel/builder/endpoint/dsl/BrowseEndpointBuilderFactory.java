@@ -43,6 +43,17 @@ public interface BrowseEndpointBuilderFactory {
         default AdvancedBrowseEndpointConsumerBuilder advanced() {
             return (AdvancedBrowseEndpointConsumerBuilder) this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the Browse component.
+     */
+    public interface AdvancedBrowseEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default BrowseEndpointConsumerBuilder basic() {
+            return (BrowseEndpointConsumerBuilder) this;
+        }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -55,12 +66,12 @@ public interface BrowseEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default BrowseEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedBrowseEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -78,26 +89,15 @@ public interface BrowseEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default BrowseEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedBrowseEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Browse component.
-     */
-    public interface AdvancedBrowseEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default BrowseEndpointConsumerBuilder basic() {
-            return (BrowseEndpointConsumerBuilder) this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -180,6 +180,17 @@ public interface BrowseEndpointBuilderFactory {
         default AdvancedBrowseEndpointProducerBuilder advanced() {
             return (AdvancedBrowseEndpointProducerBuilder) this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the Browse component.
+     */
+    public interface AdvancedBrowseEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default BrowseEndpointProducerBuilder basic() {
+            return (BrowseEndpointProducerBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -194,12 +205,12 @@ public interface BrowseEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default BrowseEndpointProducerBuilder lazyStartProducer(
+        default AdvancedBrowseEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -219,26 +230,15 @@ public interface BrowseEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default BrowseEndpointProducerBuilder lazyStartProducer(
+        default AdvancedBrowseEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Browse component.
-     */
-    public interface AdvancedBrowseEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default BrowseEndpointProducerBuilder basic() {
-            return (BrowseEndpointProducerBuilder) this;
         }
     }
 

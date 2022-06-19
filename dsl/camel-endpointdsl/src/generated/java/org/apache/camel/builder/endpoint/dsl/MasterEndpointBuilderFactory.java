@@ -42,6 +42,17 @@ public interface MasterEndpointBuilderFactory {
         default AdvancedMasterEndpointBuilder advanced() {
             return (AdvancedMasterEndpointBuilder) this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Master component.
+     */
+    public interface AdvancedMasterEndpointBuilder
+            extends
+                EndpointConsumerBuilder {
+        default MasterEndpointBuilder basic() {
+            return (MasterEndpointBuilder) this;
+        }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -54,12 +65,12 @@ public interface MasterEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default MasterEndpointBuilder bridgeErrorHandler(
+        default AdvancedMasterEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -77,26 +88,15 @@ public interface MasterEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default MasterEndpointBuilder bridgeErrorHandler(
+        default AdvancedMasterEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the Master component.
-     */
-    public interface AdvancedMasterEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
-        default MasterEndpointBuilder basic() {
-            return (MasterEndpointBuilder) this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the

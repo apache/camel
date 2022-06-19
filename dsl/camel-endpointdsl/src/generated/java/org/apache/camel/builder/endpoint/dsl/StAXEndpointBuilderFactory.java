@@ -38,6 +38,20 @@ public interface StAXEndpointBuilderFactory {
      * Builder for endpoint for the StAX component.
      */
     public interface StAXEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedStAXEndpointBuilder advanced() {
+            return (AdvancedStAXEndpointBuilder) this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint for the StAX component.
+     */
+    public interface AdvancedStAXEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default StAXEndpointBuilder basic() {
+            return (StAXEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -52,12 +66,13 @@ public interface StAXEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default StAXEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+        default AdvancedStAXEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -76,12 +91,13 @@ public interface StAXEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default StAXEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+        default AdvancedStAXEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -130,7 +146,7 @@ public interface StAXEndpointBuilderFactory {
         }
     }
     static StAXEndpointBuilder endpointBuilder(String componentName, String path) {
-        class StAXEndpointBuilderImpl extends AbstractEndpointBuilder implements StAXEndpointBuilder {
+        class StAXEndpointBuilderImpl extends AbstractEndpointBuilder implements StAXEndpointBuilder, AdvancedStAXEndpointBuilder {
             public StAXEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

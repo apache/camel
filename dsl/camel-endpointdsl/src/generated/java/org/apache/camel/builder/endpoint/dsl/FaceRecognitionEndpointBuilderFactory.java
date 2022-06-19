@@ -43,6 +43,9 @@ public interface FaceRecognitionEndpointBuilderFactory {
     public interface FaceRecognitionEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedFaceRecognitionEndpointBuilder advanced() {
+            return (AdvancedFaceRecognitionEndpointBuilder) this;
+        }
         /**
          * Access key for the cloud user.
          * 
@@ -228,55 +231,6 @@ public interface FaceRecognitionEndpointBuilderFactory {
          */
         default FaceRecognitionEndpointBuilder imageUrl(String imageUrl) {
             doSetProperty("imageUrl", imageUrl);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default FaceRecognitionEndpointBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default FaceRecognitionEndpointBuilder lazyStartProducer(
-                String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -535,6 +489,67 @@ public interface FaceRecognitionEndpointBuilderFactory {
         }
     }
 
+    /**
+     * Advanced builder for endpoint for the Huawei Cloud Face Recognition
+     * Service (FRS) component.
+     */
+    public interface AdvancedFaceRecognitionEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default FaceRecognitionEndpointBuilder basic() {
+            return (FaceRecognitionEndpointBuilder) this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFaceRecognitionEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFaceRecognitionEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    }
+
     public interface FaceRecognitionBuilders {
         /**
          * Huawei Cloud Face Recognition Service (FRS) (camel-huaweicloud-frs)
@@ -588,7 +603,7 @@ public interface FaceRecognitionEndpointBuilderFactory {
     static FaceRecognitionEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class FaceRecognitionEndpointBuilderImpl extends AbstractEndpointBuilder implements FaceRecognitionEndpointBuilder {
+        class FaceRecognitionEndpointBuilderImpl extends AbstractEndpointBuilder implements FaceRecognitionEndpointBuilder, AdvancedFaceRecognitionEndpointBuilder {
             public FaceRecognitionEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

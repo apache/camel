@@ -77,6 +77,18 @@ public interface JSR356WebSocketEndpointBuilderFactory {
             doSetProperty("sessionCount", sessionCount);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the Javax Websocket
+     * component.
+     */
+    public interface AdvancedJSR356WebSocketEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default JSR356WebSocketEndpointConsumerBuilder basic() {
+            return (JSR356WebSocketEndpointConsumerBuilder) this;
+        }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -89,12 +101,12 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default JSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedJSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -112,27 +124,15 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default JSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedJSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Javax Websocket
-     * component.
-     */
-    public interface AdvancedJSR356WebSocketEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default JSR356WebSocketEndpointConsumerBuilder basic() {
-            return (JSR356WebSocketEndpointConsumerBuilder) this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -249,6 +249,18 @@ public interface JSR356WebSocketEndpointBuilderFactory {
             doSetProperty("sessionCount", sessionCount);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the Javax Websocket
+     * component.
+     */
+    public interface AdvancedJSR356WebSocketEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default JSR356WebSocketEndpointProducerBuilder basic() {
+            return (JSR356WebSocketEndpointProducerBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -263,12 +275,12 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default JSR356WebSocketEndpointProducerBuilder lazyStartProducer(
+        default AdvancedJSR356WebSocketEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -288,27 +300,15 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default JSR356WebSocketEndpointProducerBuilder lazyStartProducer(
+        default AdvancedJSR356WebSocketEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Javax Websocket
-     * component.
-     */
-    public interface AdvancedJSR356WebSocketEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default JSR356WebSocketEndpointProducerBuilder basic() {
-            return (JSR356WebSocketEndpointProducerBuilder) this;
         }
     }
 

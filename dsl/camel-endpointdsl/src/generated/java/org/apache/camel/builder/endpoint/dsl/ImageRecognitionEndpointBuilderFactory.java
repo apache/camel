@@ -40,6 +40,9 @@ public interface ImageRecognitionEndpointBuilderFactory {
     public interface ImageRecognitionEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedImageRecognitionEndpointBuilder advanced() {
+            return (AdvancedImageRecognitionEndpointBuilder) this;
+        }
         /**
          * Access key for the cloud user.
          * 
@@ -107,55 +110,6 @@ public interface ImageRecognitionEndpointBuilderFactory {
          */
         default ImageRecognitionEndpointBuilder imageUrl(String imageUrl) {
             doSetProperty("imageUrl", imageUrl);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default ImageRecognitionEndpointBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default ImageRecognitionEndpointBuilder lazyStartProducer(
-                String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -431,6 +385,67 @@ public interface ImageRecognitionEndpointBuilderFactory {
         }
     }
 
+    /**
+     * Advanced builder for endpoint for the Huawei Cloud Image Recognition
+     * component.
+     */
+    public interface AdvancedImageRecognitionEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default ImageRecognitionEndpointBuilder basic() {
+            return (ImageRecognitionEndpointBuilder) this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedImageRecognitionEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedImageRecognitionEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    }
+
     public interface ImageRecognitionBuilders {
         /**
          * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
@@ -483,7 +498,7 @@ public interface ImageRecognitionEndpointBuilderFactory {
     static ImageRecognitionEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class ImageRecognitionEndpointBuilderImpl extends AbstractEndpointBuilder implements ImageRecognitionEndpointBuilder {
+        class ImageRecognitionEndpointBuilderImpl extends AbstractEndpointBuilder implements ImageRecognitionEndpointBuilder, AdvancedImageRecognitionEndpointBuilder {
             public ImageRecognitionEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

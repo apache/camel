@@ -41,6 +41,9 @@ public interface MyBatisBeanEndpointBuilderFactory {
     public interface MyBatisBeanEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedMyBatisBeanEndpointBuilder advanced() {
+            return (AdvancedMyBatisBeanEndpointBuilder) this;
+        }
         /**
          * The executor type to be used while executing statements. simple -
          * executor does nothing special. reuse - executor reuses prepared
@@ -97,6 +100,38 @@ public interface MyBatisBeanEndpointBuilderFactory {
             return this;
         }
         /**
+         * Store the query result in a header instead of the message body. By
+         * default, outputHeader == null and the query result is stored in the
+         * message body, any existing content in the message body is discarded.
+         * If outputHeader is set, the value is used as the name of the header
+         * to store the query result and the original message body is preserved.
+         * Setting outputHeader will also omit populating the default
+         * CamelMyBatisResult header since it would be the same as outputHeader
+         * all the time.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param outputHeader the value to set
+         * @return the dsl builder
+         */
+        default MyBatisBeanEndpointBuilder outputHeader(String outputHeader) {
+            doSetProperty("outputHeader", outputHeader);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint for the MyBatis Bean component.
+     */
+    public interface AdvancedMyBatisBeanEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default MyBatisBeanEndpointBuilder basic() {
+            return (MyBatisBeanEndpointBuilder) this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -110,12 +145,12 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default MyBatisBeanEndpointBuilder lazyStartProducer(
+        default AdvancedMyBatisBeanEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -135,35 +170,14 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default MyBatisBeanEndpointBuilder lazyStartProducer(
+        default AdvancedMyBatisBeanEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Store the query result in a header instead of the message body. By
-         * default, outputHeader == null and the query result is stored in the
-         * message body, any existing content in the message body is discarded.
-         * If outputHeader is set, the value is used as the name of the header
-         * to store the query result and the original message body is preserved.
-         * Setting outputHeader will also omit populating the default
-         * CamelMyBatisResult header since it would be the same as outputHeader
-         * all the time.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param outputHeader the value to set
-         * @return the dsl builder
-         */
-        default MyBatisBeanEndpointBuilder outputHeader(String outputHeader) {
-            doSetProperty("outputHeader", outputHeader);
             return this;
         }
     }
@@ -225,7 +239,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
     static MyBatisBeanEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class MyBatisBeanEndpointBuilderImpl extends AbstractEndpointBuilder implements MyBatisBeanEndpointBuilder {
+        class MyBatisBeanEndpointBuilderImpl extends AbstractEndpointBuilder implements MyBatisBeanEndpointBuilder, AdvancedMyBatisBeanEndpointBuilder {
             public MyBatisBeanEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

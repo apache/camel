@@ -40,6 +40,9 @@ public interface SpringBatchEndpointBuilderFactory {
     public interface SpringBatchEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedSpringBatchEndpointBuilder advanced() {
+            return (AdvancedSpringBatchEndpointBuilder) this;
+        }
         /**
          * Explicitly defines if the jobName should be taken from the headers
          * instead of the URI.
@@ -135,6 +138,17 @@ public interface SpringBatchEndpointBuilderFactory {
             doSetProperty("jobRegistry", jobRegistry);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Spring Batch component.
+     */
+    public interface AdvancedSpringBatchEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default SpringBatchEndpointBuilder basic() {
+            return (SpringBatchEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -149,12 +163,12 @@ public interface SpringBatchEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default SpringBatchEndpointBuilder lazyStartProducer(
+        default AdvancedSpringBatchEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -174,12 +188,12 @@ public interface SpringBatchEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default SpringBatchEndpointBuilder lazyStartProducer(
+        default AdvancedSpringBatchEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -233,7 +247,7 @@ public interface SpringBatchEndpointBuilderFactory {
     static SpringBatchEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class SpringBatchEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringBatchEndpointBuilder {
+        class SpringBatchEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringBatchEndpointBuilder, AdvancedSpringBatchEndpointBuilder {
             public SpringBatchEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -38,6 +38,20 @@ public interface LdifEndpointBuilderFactory {
      * Builder for endpoint for the LDIF component.
      */
     public interface LdifEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedLdifEndpointBuilder advanced() {
+            return (AdvancedLdifEndpointBuilder) this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint for the LDIF component.
+     */
+    public interface AdvancedLdifEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default LdifEndpointBuilder basic() {
+            return (LdifEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -52,12 +66,13 @@ public interface LdifEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default LdifEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+        default AdvancedLdifEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -76,12 +91,13 @@ public interface LdifEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default LdifEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+        default AdvancedLdifEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -134,7 +150,7 @@ public interface LdifEndpointBuilderFactory {
         }
     }
     static LdifEndpointBuilder endpointBuilder(String componentName, String path) {
-        class LdifEndpointBuilderImpl extends AbstractEndpointBuilder implements LdifEndpointBuilder {
+        class LdifEndpointBuilderImpl extends AbstractEndpointBuilder implements LdifEndpointBuilder, AdvancedLdifEndpointBuilder {
             public LdifEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -40,6 +40,9 @@ public interface ControlBusEndpointBuilderFactory {
     public interface ControlBusEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedControlBusEndpointBuilder advanced() {
+            return (AdvancedControlBusEndpointBuilder) this;
+        }
         /**
          * To denote an action that can be either: start, stop, or status. To
          * either start or stop a route, or to get the status of the route as
@@ -95,55 +98,6 @@ public interface ControlBusEndpointBuilderFactory {
          */
         default ControlBusEndpointBuilder async(String async) {
             doSetProperty("async", async);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default ControlBusEndpointBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default ControlBusEndpointBuilder lazyStartProducer(
-                String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -228,6 +182,66 @@ public interface ControlBusEndpointBuilderFactory {
         }
     }
 
+    /**
+     * Advanced builder for endpoint for the Control Bus component.
+     */
+    public interface AdvancedControlBusEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default ControlBusEndpointBuilder basic() {
+            return (ControlBusEndpointBuilder) this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedControlBusEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedControlBusEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    }
+
     public interface ControlBusBuilders {
         /**
          * Control Bus (camel-controlbus)
@@ -293,7 +307,7 @@ public interface ControlBusEndpointBuilderFactory {
     static ControlBusEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class ControlBusEndpointBuilderImpl extends AbstractEndpointBuilder implements ControlBusEndpointBuilder {
+        class ControlBusEndpointBuilderImpl extends AbstractEndpointBuilder implements ControlBusEndpointBuilder, AdvancedControlBusEndpointBuilder {
             public ControlBusEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

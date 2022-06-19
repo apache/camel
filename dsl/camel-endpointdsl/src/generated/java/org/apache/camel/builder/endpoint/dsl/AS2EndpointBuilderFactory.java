@@ -1395,6 +1395,17 @@ public interface AS2EndpointBuilderFactory {
             doSetProperty("userAgent", userAgent);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the AS2 component.
+     */
+    public interface AdvancedAS2EndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default AS2EndpointProducerBuilder basic() {
+            return (AS2EndpointProducerBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -1409,12 +1420,12 @@ public interface AS2EndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default AS2EndpointProducerBuilder lazyStartProducer(
+        default AdvancedAS2EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1434,26 +1445,15 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default AS2EndpointProducerBuilder lazyStartProducer(
+        default AdvancedAS2EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the AS2 component.
-     */
-    public interface AdvancedAS2EndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AS2EndpointProducerBuilder basic() {
-            return (AS2EndpointProducerBuilder) this;
         }
     }
 

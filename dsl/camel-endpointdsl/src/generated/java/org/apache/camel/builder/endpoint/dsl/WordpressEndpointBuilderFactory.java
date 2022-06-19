@@ -236,6 +236,17 @@ public interface WordpressEndpointBuilderFactory {
             doSetProperty("user", user);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the Wordpress component.
+     */
+    public interface AdvancedWordpressEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default WordpressEndpointConsumerBuilder basic() {
+            return (WordpressEndpointConsumerBuilder) this;
+        }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -248,12 +259,12 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default WordpressEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedWordpressEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -271,26 +282,15 @@ public interface WordpressEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default WordpressEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedWordpressEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Wordpress component.
-     */
-    public interface AdvancedWordpressEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default WordpressEndpointConsumerBuilder basic() {
-            return (WordpressEndpointConsumerBuilder) this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -565,6 +565,17 @@ public interface WordpressEndpointBuilderFactory {
             doSetProperty("user", user);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the Wordpress component.
+     */
+    public interface AdvancedWordpressEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default WordpressEndpointProducerBuilder basic() {
+            return (WordpressEndpointProducerBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -579,12 +590,12 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default WordpressEndpointProducerBuilder lazyStartProducer(
+        default AdvancedWordpressEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -604,26 +615,15 @@ public interface WordpressEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default WordpressEndpointProducerBuilder lazyStartProducer(
+        default AdvancedWordpressEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Wordpress component.
-     */
-    public interface AdvancedWordpressEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default WordpressEndpointProducerBuilder basic() {
-            return (WordpressEndpointProducerBuilder) this;
         }
     }
 

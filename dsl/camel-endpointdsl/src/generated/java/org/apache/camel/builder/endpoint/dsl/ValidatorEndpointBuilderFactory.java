@@ -119,6 +119,17 @@ public interface ValidatorEndpointBuilderFactory {
             doSetProperty("headerName", headerName);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Validator component.
+     */
+    public interface AdvancedValidatorEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default ValidatorEndpointBuilder basic() {
+            return (ValidatorEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -133,12 +144,12 @@ public interface ValidatorEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default ValidatorEndpointBuilder lazyStartProducer(
+        default AdvancedValidatorEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -158,26 +169,15 @@ public interface ValidatorEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default ValidatorEndpointBuilder lazyStartProducer(
+        default AdvancedValidatorEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the Validator component.
-     */
-    public interface AdvancedValidatorEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default ValidatorEndpointBuilder basic() {
-            return (ValidatorEndpointBuilder) this;
         }
         /**
          * To use a custom

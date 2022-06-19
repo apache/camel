@@ -39,6 +39,20 @@ public interface GrapeEndpointBuilderFactory {
      * Builder for endpoint for the Grape component.
      */
     public interface GrapeEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedGrapeEndpointBuilder advanced() {
+            return (AdvancedGrapeEndpointBuilder) this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Grape component.
+     */
+    public interface AdvancedGrapeEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default GrapeEndpointBuilder basic() {
+            return (GrapeEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -53,12 +67,13 @@ public interface GrapeEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default GrapeEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+        default AdvancedGrapeEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -77,12 +92,13 @@ public interface GrapeEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default GrapeEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+        default AdvancedGrapeEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -137,7 +153,7 @@ public interface GrapeEndpointBuilderFactory {
     static GrapeEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class GrapeEndpointBuilderImpl extends AbstractEndpointBuilder implements GrapeEndpointBuilder {
+        class GrapeEndpointBuilderImpl extends AbstractEndpointBuilder implements GrapeEndpointBuilder, AdvancedGrapeEndpointBuilder {
             public GrapeEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

@@ -44,6 +44,17 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
         default AdvancedZooKeeperMasterEndpointBuilder advanced() {
             return (AdvancedZooKeeperMasterEndpointBuilder) this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the ZooKeeper Master component.
+     */
+    public interface AdvancedZooKeeperMasterEndpointBuilder
+            extends
+                EndpointConsumerBuilder {
+        default ZooKeeperMasterEndpointBuilder basic() {
+            return (ZooKeeperMasterEndpointBuilder) this;
+        }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -56,12 +67,12 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default ZooKeeperMasterEndpointBuilder bridgeErrorHandler(
+        default AdvancedZooKeeperMasterEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -79,26 +90,15 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default ZooKeeperMasterEndpointBuilder bridgeErrorHandler(
+        default AdvancedZooKeeperMasterEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the ZooKeeper Master component.
-     */
-    public interface AdvancedZooKeeperMasterEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
-        default ZooKeeperMasterEndpointBuilder basic() {
-            return (ZooKeeperMasterEndpointBuilder) this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the

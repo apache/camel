@@ -40,6 +40,9 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
     public interface HazelcastAtomicnumberEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedHazelcastAtomicnumberEndpointBuilder advanced() {
+            return (AdvancedHazelcastAtomicnumberEndpointBuilder) this;
+        }
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
@@ -125,6 +128,17 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
             doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Hazelcast Atomic Number component.
+     */
+    public interface AdvancedHazelcastAtomicnumberEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default HazelcastAtomicnumberEndpointBuilder basic() {
+            return (HazelcastAtomicnumberEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -139,12 +153,12 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default HazelcastAtomicnumberEndpointBuilder lazyStartProducer(
+        default AdvancedHazelcastAtomicnumberEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -164,12 +178,12 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default HazelcastAtomicnumberEndpointBuilder lazyStartProducer(
+        default AdvancedHazelcastAtomicnumberEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -226,7 +240,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
     static HazelcastAtomicnumberEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class HazelcastAtomicnumberEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastAtomicnumberEndpointBuilder {
+        class HazelcastAtomicnumberEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastAtomicnumberEndpointBuilder, AdvancedHazelcastAtomicnumberEndpointBuilder {
             public HazelcastAtomicnumberEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

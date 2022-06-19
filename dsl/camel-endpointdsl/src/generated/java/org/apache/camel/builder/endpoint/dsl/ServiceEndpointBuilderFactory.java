@@ -42,6 +42,17 @@ public interface ServiceEndpointBuilderFactory {
         default AdvancedServiceEndpointBuilder advanced() {
             return (AdvancedServiceEndpointBuilder) this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Service component.
+     */
+    public interface AdvancedServiceEndpointBuilder
+            extends
+                EndpointConsumerBuilder {
+        default ServiceEndpointBuilder basic() {
+            return (ServiceEndpointBuilder) this;
+        }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -54,12 +65,12 @@ public interface ServiceEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default ServiceEndpointBuilder bridgeErrorHandler(
+        default AdvancedServiceEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -77,26 +88,15 @@ public interface ServiceEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default ServiceEndpointBuilder bridgeErrorHandler(
+        default AdvancedServiceEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the Service component.
-     */
-    public interface AdvancedServiceEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
-        default ServiceEndpointBuilder basic() {
-            return (ServiceEndpointBuilder) this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the

@@ -159,6 +159,18 @@ public interface HazelcastTopicEndpointBuilderFactory {
             doSetProperty("reliable", reliable);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the Hazelcast Topic
+     * component.
+     */
+    public interface AdvancedHazelcastTopicEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default HazelcastTopicEndpointConsumerBuilder basic() {
+            return (HazelcastTopicEndpointConsumerBuilder) this;
+        }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -171,12 +183,12 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default HazelcastTopicEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedHazelcastTopicEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -194,27 +206,15 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default HazelcastTopicEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedHazelcastTopicEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Hazelcast Topic
-     * component.
-     */
-    public interface AdvancedHazelcastTopicEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default HazelcastTopicEndpointConsumerBuilder basic() {
-            return (HazelcastTopicEndpointConsumerBuilder) this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -413,6 +413,18 @@ public interface HazelcastTopicEndpointBuilderFactory {
             doSetProperty("reliable", reliable);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the Hazelcast Topic
+     * component.
+     */
+    public interface AdvancedHazelcastTopicEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default HazelcastTopicEndpointProducerBuilder basic() {
+            return (HazelcastTopicEndpointProducerBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -427,12 +439,12 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default HazelcastTopicEndpointProducerBuilder lazyStartProducer(
+        default AdvancedHazelcastTopicEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -452,27 +464,15 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default HazelcastTopicEndpointProducerBuilder lazyStartProducer(
+        default AdvancedHazelcastTopicEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Hazelcast Topic
-     * component.
-     */
-    public interface AdvancedHazelcastTopicEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default HazelcastTopicEndpointProducerBuilder basic() {
-            return (HazelcastTopicEndpointProducerBuilder) this;
         }
     }
 

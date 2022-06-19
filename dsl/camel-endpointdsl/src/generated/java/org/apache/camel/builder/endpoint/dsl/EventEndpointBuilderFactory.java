@@ -43,6 +43,17 @@ public interface EventEndpointBuilderFactory {
         default AdvancedEventEndpointConsumerBuilder advanced() {
             return (AdvancedEventEndpointConsumerBuilder) this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the Spring Event component.
+     */
+    public interface AdvancedEventEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default EventEndpointConsumerBuilder basic() {
+            return (EventEndpointConsumerBuilder) this;
+        }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -55,12 +66,12 @@ public interface EventEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default EventEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedEventEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -78,26 +89,15 @@ public interface EventEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default EventEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedEventEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Spring Event component.
-     */
-    public interface AdvancedEventEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default EventEndpointConsumerBuilder basic() {
-            return (EventEndpointConsumerBuilder) this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -180,6 +180,17 @@ public interface EventEndpointBuilderFactory {
         default AdvancedEventEndpointProducerBuilder advanced() {
             return (AdvancedEventEndpointProducerBuilder) this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the Spring Event component.
+     */
+    public interface AdvancedEventEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default EventEndpointProducerBuilder basic() {
+            return (EventEndpointProducerBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -194,12 +205,12 @@ public interface EventEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default EventEndpointProducerBuilder lazyStartProducer(
+        default AdvancedEventEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -219,26 +230,15 @@ public interface EventEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default EventEndpointProducerBuilder lazyStartProducer(
+        default AdvancedEventEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Spring Event component.
-     */
-    public interface AdvancedEventEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default EventEndpointProducerBuilder basic() {
-            return (EventEndpointProducerBuilder) this;
         }
     }
 

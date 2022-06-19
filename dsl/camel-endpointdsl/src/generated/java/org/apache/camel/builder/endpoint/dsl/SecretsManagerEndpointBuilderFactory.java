@@ -40,6 +40,9 @@ public interface SecretsManagerEndpointBuilderFactory {
     public interface SecretsManagerEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedSecretsManagerEndpointBuilder advanced() {
+            return (AdvancedSecretsManagerEndpointBuilder) this;
+        }
         /**
          * Set if the secret is binary or not.
          * 
@@ -70,55 +73,6 @@ public interface SecretsManagerEndpointBuilderFactory {
          */
         default SecretsManagerEndpointBuilder binaryPayload(String binaryPayload) {
             doSetProperty("binaryPayload", binaryPayload);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default SecretsManagerEndpointBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default SecretsManagerEndpointBuilder lazyStartProducer(
-                String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -465,6 +419,66 @@ public interface SecretsManagerEndpointBuilderFactory {
         }
     }
 
+    /**
+     * Advanced builder for endpoint for the AWS Secrets Manager component.
+     */
+    public interface AdvancedSecretsManagerEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default SecretsManagerEndpointBuilder basic() {
+            return (SecretsManagerEndpointBuilder) this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSecretsManagerEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSecretsManagerEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    }
+
     public interface SecretsManagerBuilders {
         /**
          * AWS Secrets Manager (camel-aws-secrets-manager)
@@ -512,7 +526,7 @@ public interface SecretsManagerEndpointBuilderFactory {
     static SecretsManagerEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class SecretsManagerEndpointBuilderImpl extends AbstractEndpointBuilder implements SecretsManagerEndpointBuilder {
+        class SecretsManagerEndpointBuilderImpl extends AbstractEndpointBuilder implements SecretsManagerEndpointBuilder, AdvancedSecretsManagerEndpointBuilder {
             public SecretsManagerEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

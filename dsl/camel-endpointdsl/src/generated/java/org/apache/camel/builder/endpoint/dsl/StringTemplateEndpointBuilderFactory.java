@@ -40,6 +40,9 @@ public interface StringTemplateEndpointBuilderFactory {
     public interface StringTemplateEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedStringTemplateEndpointBuilder advanced() {
+            return (AdvancedStringTemplateEndpointBuilder) this;
+        }
         /**
          * Sets whether the context map should allow access to all details. By
          * default only the message body and headers can be accessed. This
@@ -214,6 +217,17 @@ public interface StringTemplateEndpointBuilderFactory {
             doSetProperty("delimiterStop", delimiterStop);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the String Template component.
+     */
+    public interface AdvancedStringTemplateEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default StringTemplateEndpointBuilder basic() {
+            return (StringTemplateEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -228,12 +242,12 @@ public interface StringTemplateEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default StringTemplateEndpointBuilder lazyStartProducer(
+        default AdvancedStringTemplateEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -253,12 +267,12 @@ public interface StringTemplateEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default StringTemplateEndpointBuilder lazyStartProducer(
+        default AdvancedStringTemplateEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -322,7 +336,7 @@ public interface StringTemplateEndpointBuilderFactory {
     static StringTemplateEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class StringTemplateEndpointBuilderImpl extends AbstractEndpointBuilder implements StringTemplateEndpointBuilder {
+        class StringTemplateEndpointBuilderImpl extends AbstractEndpointBuilder implements StringTemplateEndpointBuilder, AdvancedStringTemplateEndpointBuilder {
             public StringTemplateEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

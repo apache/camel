@@ -44,6 +44,17 @@ public interface RefEndpointBuilderFactory {
         default AdvancedRefEndpointConsumerBuilder advanced() {
             return (AdvancedRefEndpointConsumerBuilder) this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the Ref component.
+     */
+    public interface AdvancedRefEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default RefEndpointConsumerBuilder basic() {
+            return (RefEndpointConsumerBuilder) this;
+        }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -56,12 +67,12 @@ public interface RefEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default RefEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedRefEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -79,26 +90,15 @@ public interface RefEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default RefEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedRefEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Ref component.
-     */
-    public interface AdvancedRefEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default RefEndpointConsumerBuilder basic() {
-            return (RefEndpointConsumerBuilder) this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -181,6 +181,17 @@ public interface RefEndpointBuilderFactory {
         default AdvancedRefEndpointProducerBuilder advanced() {
             return (AdvancedRefEndpointProducerBuilder) this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the Ref component.
+     */
+    public interface AdvancedRefEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default RefEndpointProducerBuilder basic() {
+            return (RefEndpointProducerBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -195,12 +206,12 @@ public interface RefEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default RefEndpointProducerBuilder lazyStartProducer(
+        default AdvancedRefEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -220,26 +231,15 @@ public interface RefEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default RefEndpointProducerBuilder lazyStartProducer(
+        default AdvancedRefEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Ref component.
-     */
-    public interface AdvancedRefEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default RefEndpointProducerBuilder basic() {
-            return (RefEndpointProducerBuilder) this;
         }
     }
 

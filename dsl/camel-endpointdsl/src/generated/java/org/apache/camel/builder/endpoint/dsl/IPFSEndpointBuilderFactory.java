@@ -38,6 +38,34 @@ public interface IPFSEndpointBuilderFactory {
      * Builder for endpoint for the IPFS component.
      */
     public interface IPFSEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedIPFSEndpointBuilder advanced() {
+            return (AdvancedIPFSEndpointBuilder) this;
+        }
+        /**
+         * The ipfs output directory.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param outdir the value to set
+         * @return the dsl builder
+         */
+        default IPFSEndpointBuilder outdir(String outdir) {
+            doSetProperty("outdir", outdir);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint for the IPFS component.
+     */
+    public interface AdvancedIPFSEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default IPFSEndpointBuilder basic() {
+            return (IPFSEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -52,12 +80,13 @@ public interface IPFSEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default IPFSEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+        default AdvancedIPFSEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -76,27 +105,14 @@ public interface IPFSEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default IPFSEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+        default AdvancedIPFSEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * The ipfs output directory.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param outdir the value to set
-         * @return the dsl builder
-         */
-        default IPFSEndpointBuilder outdir(String outdir) {
-            doSetProperty("outdir", outdir);
             return this;
         }
     }
@@ -149,7 +165,7 @@ public interface IPFSEndpointBuilderFactory {
     }
     @Deprecated
     static IPFSEndpointBuilder endpointBuilder(String componentName, String path) {
-        class IPFSEndpointBuilderImpl extends AbstractEndpointBuilder implements IPFSEndpointBuilder {
+        class IPFSEndpointBuilderImpl extends AbstractEndpointBuilder implements IPFSEndpointBuilder, AdvancedIPFSEndpointBuilder {
             public IPFSEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

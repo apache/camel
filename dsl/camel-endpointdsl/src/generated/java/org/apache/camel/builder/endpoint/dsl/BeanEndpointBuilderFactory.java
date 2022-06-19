@@ -145,6 +145,17 @@ public interface BeanEndpointBuilderFactory {
             doSetProperty("scope", scope);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Bean component.
+     */
+    public interface AdvancedBeanEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default BeanEndpointBuilder basic() {
+            return (BeanEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -159,12 +170,13 @@ public interface BeanEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default BeanEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+        default AdvancedBeanEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -183,25 +195,15 @@ public interface BeanEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default BeanEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+        default AdvancedBeanEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the Bean component.
-     */
-    public interface AdvancedBeanEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default BeanEndpointBuilder basic() {
-            return (BeanEndpointBuilder) this;
         }
         /**
          * Used for configuring additional properties on the bean.

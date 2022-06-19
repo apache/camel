@@ -40,6 +40,9 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
     public interface GoogleBigQuerySQLEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedGoogleBigQuerySQLEndpointBuilder advanced() {
+            return (AdvancedGoogleBigQuerySQLEndpointBuilder) this;
+        }
         /**
          * ConnectionFactory to obtain connection to Bigquery Service. If not
          * provided the default one will be used.
@@ -75,6 +78,34 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
             return this;
         }
         /**
+         * Service account key in json format to authenticate an application as
+         * a service account to google cloud platform.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GoogleBigQuerySQLEndpointBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Google BigQuery Standard SQL
+     * component.
+     */
+    public interface AdvancedGoogleBigQuerySQLEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default GoogleBigQuerySQLEndpointBuilder basic() {
+            return (GoogleBigQuerySQLEndpointBuilder) this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -88,12 +119,12 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default GoogleBigQuerySQLEndpointBuilder lazyStartProducer(
+        default AdvancedGoogleBigQuerySQLEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -113,30 +144,14 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default GoogleBigQuerySQLEndpointBuilder lazyStartProducer(
+        default AdvancedGoogleBigQuerySQLEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Service account key in json format to authenticate an application as
-         * a service account to google cloud platform.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param serviceAccountKey the value to set
-         * @return the dsl builder
-         */
-        default GoogleBigQuerySQLEndpointBuilder serviceAccountKey(
-                String serviceAccountKey) {
-            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
     }
@@ -194,7 +209,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
     static GoogleBigQuerySQLEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class GoogleBigQuerySQLEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleBigQuerySQLEndpointBuilder {
+        class GoogleBigQuerySQLEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleBigQuerySQLEndpointBuilder, AdvancedGoogleBigQuerySQLEndpointBuilder {
             public GoogleBigQuerySQLEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

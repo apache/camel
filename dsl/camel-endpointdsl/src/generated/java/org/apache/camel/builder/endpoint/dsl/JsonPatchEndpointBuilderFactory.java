@@ -38,6 +38,9 @@ public interface JsonPatchEndpointBuilderFactory {
      * Builder for endpoint for the JsonPatch component.
      */
     public interface JsonPatchEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedJsonPatchEndpointBuilder advanced() {
+            return (AdvancedJsonPatchEndpointBuilder) this;
+        }
         /**
          * Sets whether the context map should allow access to all details. By
          * default only the message body and headers can be accessed. This
@@ -110,6 +113,17 @@ public interface JsonPatchEndpointBuilderFactory {
             doSetProperty("contentCache", contentCache);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the JsonPatch component.
+     */
+    public interface AdvancedJsonPatchEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default JsonPatchEndpointBuilder basic() {
+            return (JsonPatchEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -124,12 +138,12 @@ public interface JsonPatchEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default JsonPatchEndpointBuilder lazyStartProducer(
+        default AdvancedJsonPatchEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -149,12 +163,12 @@ public interface JsonPatchEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default JsonPatchEndpointBuilder lazyStartProducer(
+        default AdvancedJsonPatchEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -218,7 +232,7 @@ public interface JsonPatchEndpointBuilderFactory {
     static JsonPatchEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class JsonPatchEndpointBuilderImpl extends AbstractEndpointBuilder implements JsonPatchEndpointBuilder {
+        class JsonPatchEndpointBuilderImpl extends AbstractEndpointBuilder implements JsonPatchEndpointBuilder, AdvancedJsonPatchEndpointBuilder {
             public JsonPatchEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

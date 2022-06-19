@@ -103,6 +103,17 @@ public interface QuickfixjEndpointBuilderFactory {
             doSetProperty("sessionID", sessionID);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the QuickFix component.
+     */
+    public interface AdvancedQuickfixjEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default QuickfixjEndpointConsumerBuilder basic() {
+            return (QuickfixjEndpointConsumerBuilder) this;
+        }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -115,12 +126,12 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default QuickfixjEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedQuickfixjEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -138,26 +149,15 @@ public interface QuickfixjEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default QuickfixjEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedQuickfixjEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the QuickFix component.
-     */
-    public interface AdvancedQuickfixjEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default QuickfixjEndpointConsumerBuilder basic() {
-            return (QuickfixjEndpointConsumerBuilder) this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -299,6 +299,17 @@ public interface QuickfixjEndpointBuilderFactory {
             doSetProperty("sessionID", sessionID);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the QuickFix component.
+     */
+    public interface AdvancedQuickfixjEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default QuickfixjEndpointProducerBuilder basic() {
+            return (QuickfixjEndpointProducerBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -313,12 +324,12 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default QuickfixjEndpointProducerBuilder lazyStartProducer(
+        default AdvancedQuickfixjEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -338,26 +349,15 @@ public interface QuickfixjEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default QuickfixjEndpointProducerBuilder lazyStartProducer(
+        default AdvancedQuickfixjEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the QuickFix component.
-     */
-    public interface AdvancedQuickfixjEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default QuickfixjEndpointProducerBuilder basic() {
-            return (QuickfixjEndpointProducerBuilder) this;
         }
     }
 

@@ -38,6 +38,9 @@ public interface VertxHttpEndpointBuilderFactory {
      * Builder for endpoint for the Vert.x HTTP Client component.
      */
     public interface VertxHttpEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedVertxHttpEndpointBuilder advanced() {
+            return (AdvancedVertxHttpEndpointBuilder) this;
+        }
         /**
          * The amount of time in milliseconds until a connection is established.
          * A timeout value of zero is interpreted as an infinite timeout.
@@ -176,55 +179,6 @@ public interface VertxHttpEndpointBuilderFactory {
          */
         default VertxHttpEndpointBuilder httpMethod(String httpMethod) {
             doSetProperty("httpMethod", httpMethod);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default VertxHttpEndpointBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default VertxHttpEndpointBuilder lazyStartProducer(
-                String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -719,6 +673,66 @@ public interface VertxHttpEndpointBuilderFactory {
         }
     }
 
+    /**
+     * Advanced builder for endpoint for the Vert.x HTTP Client component.
+     */
+    public interface AdvancedVertxHttpEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default VertxHttpEndpointBuilder basic() {
+            return (VertxHttpEndpointBuilder) this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxHttpEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxHttpEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    }
+
     public interface VertxHttpBuilders {
         /**
          * Vert.x HTTP Client (camel-vertx-http)
@@ -766,7 +780,7 @@ public interface VertxHttpEndpointBuilderFactory {
     static VertxHttpEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class VertxHttpEndpointBuilderImpl extends AbstractEndpointBuilder implements VertxHttpEndpointBuilder {
+        class VertxHttpEndpointBuilderImpl extends AbstractEndpointBuilder implements VertxHttpEndpointBuilder, AdvancedVertxHttpEndpointBuilder {
             public VertxHttpEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

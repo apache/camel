@@ -39,6 +39,9 @@ public interface SplunkHECEndpointBuilderFactory {
      * Builder for endpoint for the Splunk HEC component.
      */
     public interface SplunkHECEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedSplunkHECEndpointBuilder advanced() {
+            return (AdvancedSplunkHECEndpointBuilder) this;
+        }
         /**
          * Send only the message body.
          * 
@@ -128,55 +131,6 @@ public interface SplunkHECEndpointBuilderFactory {
          */
         default SplunkHECEndpointBuilder index(String index) {
             doSetProperty("index", index);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default SplunkHECEndpointBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default SplunkHECEndpointBuilder lazyStartProducer(
-                String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -304,6 +258,66 @@ public interface SplunkHECEndpointBuilderFactory {
         }
     }
 
+    /**
+     * Advanced builder for endpoint for the Splunk HEC component.
+     */
+    public interface AdvancedSplunkHECEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default SplunkHECEndpointBuilder basic() {
+            return (SplunkHECEndpointBuilder) this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSplunkHECEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSplunkHECEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    }
+
     public interface SplunkHECBuilders {
         /**
          * Splunk HEC (camel-splunk-hec)
@@ -359,7 +373,7 @@ public interface SplunkHECEndpointBuilderFactory {
     static SplunkHECEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class SplunkHECEndpointBuilderImpl extends AbstractEndpointBuilder implements SplunkHECEndpointBuilder {
+        class SplunkHECEndpointBuilderImpl extends AbstractEndpointBuilder implements SplunkHECEndpointBuilder, AdvancedSplunkHECEndpointBuilder {
             public SplunkHECEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

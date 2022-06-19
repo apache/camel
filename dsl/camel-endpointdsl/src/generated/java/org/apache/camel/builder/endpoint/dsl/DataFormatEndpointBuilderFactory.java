@@ -40,6 +40,20 @@ public interface DataFormatEndpointBuilderFactory {
     public interface DataFormatEndpointBuilder
             extends
                 EndpointProducerBuilder {
+        default AdvancedDataFormatEndpointBuilder advanced() {
+            return (AdvancedDataFormatEndpointBuilder) this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Data Format component.
+     */
+    public interface AdvancedDataFormatEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default DataFormatEndpointBuilder basic() {
+            return (DataFormatEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -54,12 +68,12 @@ public interface DataFormatEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default DataFormatEndpointBuilder lazyStartProducer(
+        default AdvancedDataFormatEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -79,12 +93,12 @@ public interface DataFormatEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default DataFormatEndpointBuilder lazyStartProducer(
+        default AdvancedDataFormatEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -146,7 +160,7 @@ public interface DataFormatEndpointBuilderFactory {
     static DataFormatEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
-        class DataFormatEndpointBuilderImpl extends AbstractEndpointBuilder implements DataFormatEndpointBuilder {
+        class DataFormatEndpointBuilderImpl extends AbstractEndpointBuilder implements DataFormatEndpointBuilder, AdvancedDataFormatEndpointBuilder {
             public DataFormatEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

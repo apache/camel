@@ -74,6 +74,17 @@ public interface VertxEndpointBuilderFactory {
             doSetProperty("pubSub", pubSub);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the Vert.x component.
+     */
+    public interface AdvancedVertxEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default VertxEndpointConsumerBuilder basic() {
+            return (VertxEndpointConsumerBuilder) this;
+        }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -86,12 +97,12 @@ public interface VertxEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default VertxEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedVertxEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -109,26 +120,15 @@ public interface VertxEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default VertxEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedVertxEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Vert.x component.
-     */
-    public interface AdvancedVertxEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default VertxEndpointConsumerBuilder basic() {
-            return (VertxEndpointConsumerBuilder) this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -242,6 +242,17 @@ public interface VertxEndpointBuilderFactory {
             doSetProperty("pubSub", pubSub);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the Vert.x component.
+     */
+    public interface AdvancedVertxEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default VertxEndpointProducerBuilder basic() {
+            return (VertxEndpointProducerBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -256,12 +267,12 @@ public interface VertxEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default VertxEndpointProducerBuilder lazyStartProducer(
+        default AdvancedVertxEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -281,26 +292,15 @@ public interface VertxEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default VertxEndpointProducerBuilder lazyStartProducer(
+        default AdvancedVertxEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Vert.x component.
-     */
-    public interface AdvancedVertxEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default VertxEndpointProducerBuilder basic() {
-            return (VertxEndpointProducerBuilder) this;
         }
     }
 

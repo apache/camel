@@ -191,6 +191,17 @@ public interface RedisEndpointBuilderFactory {
             doSetProperty("serializer", serializer);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the Spring Redis component.
+     */
+    public interface AdvancedRedisEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default RedisEndpointConsumerBuilder basic() {
+            return (RedisEndpointConsumerBuilder) this;
+        }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -203,12 +214,12 @@ public interface RedisEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default RedisEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedRedisEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -226,26 +237,15 @@ public interface RedisEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param bridgeErrorHandler the value to set
          * @return the dsl builder
          */
-        default RedisEndpointConsumerBuilder bridgeErrorHandler(
+        default AdvancedRedisEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Spring Redis component.
-     */
-    public interface AdvancedRedisEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default RedisEndpointConsumerBuilder basic() {
-            return (RedisEndpointConsumerBuilder) this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -510,6 +510,17 @@ public interface RedisEndpointBuilderFactory {
             doSetProperty("serializer", serializer);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the Spring Redis component.
+     */
+    public interface AdvancedRedisEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default RedisEndpointProducerBuilder basic() {
+            return (RedisEndpointProducerBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -524,12 +535,12 @@ public interface RedisEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default RedisEndpointProducerBuilder lazyStartProducer(
+        default AdvancedRedisEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -549,26 +560,15 @@ public interface RedisEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default RedisEndpointProducerBuilder lazyStartProducer(
+        default AdvancedRedisEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Spring Redis component.
-     */
-    public interface AdvancedRedisEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default RedisEndpointProducerBuilder basic() {
-            return (RedisEndpointProducerBuilder) this;
         }
     }
 

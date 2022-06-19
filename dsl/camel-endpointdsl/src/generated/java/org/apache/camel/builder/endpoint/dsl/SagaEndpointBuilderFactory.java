@@ -38,6 +38,20 @@ public interface SagaEndpointBuilderFactory {
      * Builder for endpoint for the Saga component.
      */
     public interface SagaEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedSagaEndpointBuilder advanced() {
+            return (AdvancedSagaEndpointBuilder) this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Saga component.
+     */
+    public interface AdvancedSagaEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default SagaEndpointBuilder basic() {
+            return (SagaEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -52,12 +66,13 @@ public interface SagaEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default SagaEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+        default AdvancedSagaEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -76,12 +91,13 @@ public interface SagaEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default SagaEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+        default AdvancedSagaEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -132,7 +148,7 @@ public interface SagaEndpointBuilderFactory {
         }
     }
     static SagaEndpointBuilder endpointBuilder(String componentName, String path) {
-        class SagaEndpointBuilderImpl extends AbstractEndpointBuilder implements SagaEndpointBuilder {
+        class SagaEndpointBuilderImpl extends AbstractEndpointBuilder implements SagaEndpointBuilder, AdvancedSagaEndpointBuilder {
             public SagaEndpointBuilderImpl(String path) {
                 super(componentName, path);
             }

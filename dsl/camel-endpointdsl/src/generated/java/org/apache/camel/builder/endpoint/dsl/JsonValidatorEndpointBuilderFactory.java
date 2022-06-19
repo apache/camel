@@ -195,6 +195,17 @@ public interface JsonValidatorEndpointBuilderFactory {
             doSetProperty("headerName", headerName);
             return this;
         }
+    }
+
+    /**
+     * Advanced builder for endpoint for the JSON Schema Validator component.
+     */
+    public interface AdvancedJsonValidatorEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default JsonValidatorEndpointBuilder basic() {
+            return (JsonValidatorEndpointBuilder) this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -209,12 +220,12 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default JsonValidatorEndpointBuilder lazyStartProducer(
+        default AdvancedJsonValidatorEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -234,26 +245,15 @@ public interface JsonValidatorEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default JsonValidatorEndpointBuilder lazyStartProducer(
+        default AdvancedJsonValidatorEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint for the JSON Schema Validator component.
-     */
-    public interface AdvancedJsonValidatorEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default JsonValidatorEndpointBuilder basic() {
-            return (JsonValidatorEndpointBuilder) this;
         }
         /**
          * To use a custom ValidatorErrorHandler. The default error handler
