@@ -53,7 +53,7 @@ public class JGroupsRaftComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
         return new JGroupsRaftEndpoint(
-                uri, remaining, this, remaining, parameters, raftId, channelProperties, stateMachine, raftHandle);
+                uri, remaining, this, raftId, channelProperties, stateMachine, raftHandle);
     }
 
     public RaftHandle getRaftHandle() {

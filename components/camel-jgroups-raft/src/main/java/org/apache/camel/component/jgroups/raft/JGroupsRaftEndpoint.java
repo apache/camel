@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jgroups.raft;
 
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Category;
@@ -58,8 +57,7 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean enableRoleChangeEvents;
 
-    public JGroupsRaftEndpoint(String endpointUri, String clusterName, Component component, String remaining,
-                               Map<String, Object> parameters,
+    public JGroupsRaftEndpoint(String endpointUri, String clusterName, Component component,
                                String raftId, String channelProperties, StateMachine stateMachine, RaftHandle raftHandle) {
         super(endpointUri, component);
         this.clusterName = clusterName;
