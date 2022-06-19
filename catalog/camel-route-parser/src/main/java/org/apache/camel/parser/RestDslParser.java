@@ -42,12 +42,11 @@ public final class RestDslParser {
      * java source class.
      *
      * @param  clazz                  the java source class
-     * @param  baseDir                the base of the source code
      * @param  fullyQualifiedFileName the fully qualified source code file name
      * @return                        a list of rest configurations (often there is only one)
      */
     public static List<RestConfigurationDetails> parseRestConfiguration(
-            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+            JavaClassSource clazz, String fullyQualifiedFileName,
             boolean includeInlinedRouteBuilders) {
 
         List<MethodSource<JavaClassSource>> methods = new ArrayList<>();
@@ -67,7 +66,7 @@ public final class RestDslParser {
         for (MethodSource<JavaClassSource> configureMethod : methods) {
             // there may be multiple route builder configure methods
             List<RestConfigurationDetails> details
-                    = parser.parseRestConfiguration(clazz, baseDir, fullyQualifiedFileName, configureMethod);
+                    = parser.parseRestConfiguration(clazz, fullyQualifiedFileName, configureMethod);
             list.addAll(details);
         }
         // we end up parsing bottom->up so reverse list
@@ -81,12 +80,11 @@ public final class RestDslParser {
      * class.
      *
      * @param  clazz                  the java source class
-     * @param  baseDir                the base of the source code
      * @param  fullyQualifiedFileName the fully qualified source code file name
      * @return                        a list of rest services
      */
     public static List<RestServiceDetails> parseRestService(
-            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+            JavaClassSource clazz, String fullyQualifiedFileName,
             boolean includeInlinedRouteBuilders) {
 
         List<MethodSource<JavaClassSource>> methods = new ArrayList<>();
@@ -105,7 +103,7 @@ public final class RestDslParser {
         List<RestServiceDetails> list = new ArrayList<>();
         for (MethodSource<JavaClassSource> configureMethod : methods) {
             // there may be multiple route builder configure methods
-            List<RestServiceDetails> details = parser.parseRestService(clazz, baseDir, fullyQualifiedFileName, configureMethod);
+            List<RestServiceDetails> details = parser.parseRestService(clazz, fullyQualifiedFileName, configureMethod);
             list.addAll(details);
         }
         // we end up parsing bottom->up so reverse list

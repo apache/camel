@@ -42,7 +42,7 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
         JavaClassSource clazz = (JavaClassSource) Roaster
                 .parse(new File("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java"));
 
-        List<RestConfigurationDetails> list = RestDslParser.parseRestConfiguration(clazz, ".",
+        List<RestConfigurationDetails> list = RestDslParser.parseRestConfiguration(clazz,
                 "src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java", true);
         assertEquals(1, list.size());
         RestConfigurationDetails details = list.get(0);
@@ -78,7 +78,7 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
         JavaClassSource clazz = (JavaClassSource) Roaster
                 .parse(new File("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java"));
 
-        List<RestServiceDetails> list = RestDslParser.parseRestService(clazz, ".",
+        List<RestServiceDetails> list = RestDslParser.parseRestService(clazz,
                 "src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java", true);
         assertEquals(1, list.size());
         RestServiceDetails details = list.get(0);
