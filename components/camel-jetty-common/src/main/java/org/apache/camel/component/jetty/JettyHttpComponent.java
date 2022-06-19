@@ -366,11 +366,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             }
 
             if (endpoint.isEnableMultipartFilter()) {
-                enableMultipartFilter(endpoint, connectorRef.server, connectorKey);
+                enableMultipartFilter(endpoint, connectorRef.server);
             }
 
             if (endpoint.getFilters() != null && !endpoint.getFilters().isEmpty()) {
-                setFilters(endpoint, connectorRef.server, connectorKey);
+                setFilters(endpoint, connectorRef.server);
             }
             connectorRef.servlet.connect(consumer);
         }
@@ -400,7 +400,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         }
     }
 
-    private void setFilters(JettyHttpEndpoint endpoint, Server server, String connectorKey) {
+    private void setFilters(JettyHttpEndpoint endpoint, Server server) {
         ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
         List<Filter> filters = endpoint.getFilters();
         for (Filter filter : filters) {
@@ -424,7 +424,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         context.getServletHandler().addFilterWithMapping(filterHolder, pathSpec, 0);
     }
 
-    private void enableMultipartFilter(HttpCommonEndpoint endpoint, Server server, String connectorKey) throws Exception {
+    private void enableMultipartFilter(HttpCommonEndpoint endpoint, Server server) throws Exception {
         ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
         CamelContext camelContext = this.getCamelContext();
         FilterHolder filterHolder = new FilterHolder();
@@ -693,7 +693,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             // ignore
         } catch (IllegalArgumentException e) {
             // ignore
-        } catch (IllegalAccessException e) {
+        } catch (gIllegalAccessException e) {
             // ignore
         } catch (InvocationTargetException e) {
             // ignore
@@ -1046,7 +1046,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
             String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
             throws Exception {
-        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration,
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, configuration,
                 parameters, false);
     }
 
@@ -1056,12 +1056,12 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             RestConfiguration configuration, Map<String, Object> parameters)
             throws Exception {
         // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
-        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters, true);
+        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, configuration, parameters, true);
     }
 
     Consumer doCreateConsumer(
             CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters, boolean api)
+            RestConfiguration configuration, Map<String, Object> parameters, boolean api)
             throws Exception {
 
         String path = basePath;
