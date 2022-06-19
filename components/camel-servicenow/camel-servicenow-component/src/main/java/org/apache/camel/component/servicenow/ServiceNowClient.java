@@ -45,12 +45,10 @@ import org.slf4j.LoggerFactory;
 public final class ServiceNowClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowClient.class);
 
-    private final CamelContext camelContext;
     private final ServiceNowConfiguration configuration;
     private final WebClient client;
 
     public ServiceNowClient(CamelContext camelContext, ServiceNowConfiguration configuration) {
-        this.camelContext = camelContext;
         this.configuration = configuration;
         this.client = WebClient.create(
                 configuration.getApiUrl(),
@@ -59,10 +57,10 @@ public final class ServiceNowClient {
                         new JacksonJsonProvider(configuration.getOrCreateMapper())),
                 true);
 
-        configureRequestContext(camelContext, configuration, client);
+        configureRequestContext(client);
         configureTls(camelContext, configuration, client);
-        configureHttpClientPolicy(camelContext, configuration, client);
-        configureProxyAuthorizationPolicy(camelContext, configuration, client);
+        configureHttpClientPolicy(configuration, client);
+        configureProxyAuthorizationPolicy(configuration, client);
     }
 
     public ServiceNowClient types(MediaType type) {
@@ -206,7 +204,7 @@ public final class ServiceNowClient {
     }
 
     private static void configureRequestContext(
-            CamelContext context, ServiceNowConfiguration configuration, WebClient client) {
+            WebClient client) {
 
         WebClient.getConfig(client)
                 .getRequestContext()
@@ -236,7 +234,7 @@ public final class ServiceNowClient {
     }
 
     private static void configureHttpClientPolicy(
-            CamelContext context, ServiceNowConfiguration configuration, WebClient client) {
+            ServiceNowConfiguration configuration, WebClient client) {
 
         HTTPClientPolicy httpPolicy = configuration.getHttpClientPolicy();
         if (httpPolicy == null) {
@@ -256,7 +254,7 @@ public final class ServiceNowClient {
     }
 
     private static void configureProxyAuthorizationPolicy(
-            CamelContext context, ServiceNowConfiguration configuration, WebClient client) {
+            ServiceNowConfiguration configuration, WebClient client) {
 
         ProxyAuthorizationPolicy proxyPolicy = configuration.getProxyAuthorizationPolicy();
         if (proxyPolicy == null) {

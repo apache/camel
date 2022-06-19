@@ -40,7 +40,7 @@ class FujiServiceNowAggregateProcessor extends FujiServiceNowProcessor {
             throws Exception {
         Response response;
         if (ObjectHelper.equal(ServiceNowConstants.ACTION_RETRIEVE, action, true)) {
-            response = retrieveStats(exchange.getIn(), requestModel, responseModel, tableName);
+            response = retrieveStats(exchange.getIn(), responseModel, tableName);
         } else {
             throw new IllegalArgumentException("Unknown action " + action);
         }
@@ -48,7 +48,7 @@ class FujiServiceNowAggregateProcessor extends FujiServiceNowProcessor {
         setBodyAndHeaders(exchange.getIn(), responseModel, response);
     }
 
-    private Response retrieveStats(Message in, Class<?> requestModel, Class<?> responseModel, String tableName)
+    private Response retrieveStats(Message in, Class<?> responseModel, String tableName)
             throws Exception {
         final String apiVersion = getApiVersion(in);
 
