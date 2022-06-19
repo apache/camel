@@ -30,10 +30,6 @@ public final class PdfUtils {
         return font.getBoundingBox().getHeight() / PDF_PIXEL_SIZE * fontSize;
     }
 
-    public static float getFontHeightForString(String str, PDFont font, float fontSize) throws IOException {
-        return font.getBoundingBox().getHeight() / PDF_PIXEL_SIZE * fontSize;
-    }
-
     public static float getFontWidth(String str, PDFont font, float fontSize) throws IOException {
         return font.getStringWidth(str) / PDF_PIXEL_SIZE * fontSize;
     }
