@@ -258,7 +258,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         LOG.debug("Matches: {} for exchange: {}", expression, exchange);
         try {
             List<?> list = evaluateAsList(exchange);
-            return matches(exchange, list);
+            return matches(list);
         } catch (Exception e) {
             throw new RuntimeExpressionException(e);
         }
@@ -274,7 +274,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             throw new AssertionError(e);
         }
 
-        if (!matches(exchange, list)) {
+        if (!matches(list)) {
             throw new AssertionError(this + " failed on " + exchange + " as evaluated: " + list);
         }
     }
@@ -722,7 +722,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         }
     }
 
-    protected boolean matches(Exchange exchange, List<?> results) {
+    protected boolean matches(List<?> results) {
         return ObjectHelper.matches(results);
     }
 
