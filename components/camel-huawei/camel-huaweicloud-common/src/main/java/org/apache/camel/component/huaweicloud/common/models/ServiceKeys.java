@@ -28,11 +28,6 @@ public class ServiceKeys {
         this.secretKey = secretKey;
     }
 
-    public ServiceKeys(String accessKey, String secretKey, String projectId) {
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
-    }
-
     public String getAccessKey() {
         return accessKey;
     }
