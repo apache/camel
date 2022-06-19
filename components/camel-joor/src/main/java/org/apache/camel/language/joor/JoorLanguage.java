@@ -89,7 +89,7 @@ public class JoorLanguage extends LanguageSupport implements ScriptingLanguage, 
     @SuppressWarnings("unchecked")
     public <T> T evaluate(String script, Map<String, Object> bindings, Class<T> resultType) {
         Object out;
-        JoorScriptingMethod target = scriptingCompiler.compile(getCamelContext(), script, bindings, resultType, singleQuotes);
+        JoorScriptingMethod target = scriptingCompiler.compile(getCamelContext(), script, bindings, singleQuotes);
         try {
             out = target.evaluate(bindings);
         } catch (Exception e) {

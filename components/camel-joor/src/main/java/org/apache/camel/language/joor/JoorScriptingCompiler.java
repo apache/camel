@@ -72,12 +72,12 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
     }
 
     public JoorScriptingMethod compile(
-            CamelContext camelContext, String script, Map<String, Object> bindings, Class<?> resultType, boolean singleQuotes) {
+            CamelContext camelContext, String script, Map<String, Object> bindings, boolean singleQuotes) {
         StopWatch watch = new StopWatch();
 
         JoorScriptingMethod answer;
         String className = nextFQN();
-        String code = evalCode(camelContext, className, script, bindings, resultType, singleQuotes);
+        String code = evalCode(camelContext, className, script, bindings, singleQuotes);
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Compiling code:\n\n{}\n", code);
@@ -96,7 +96,7 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
 
     @SuppressWarnings("unchecked")
     public String evalCode(
-            CamelContext camelContext, String fqn, String script, Map<String, Object> bindings, Class<?> resultType,
+            CamelContext camelContext, String fqn, String script, Map<String, Object> bindings,
             boolean singleQuotes) {
         String qn = fqn.substring(0, fqn.lastIndexOf('.'));
         String name = fqn.substring(fqn.lastIndexOf('.') + 1);
