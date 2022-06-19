@@ -666,7 +666,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         producerComponentToSpanKind.putIfAbsent(component, kind);
     }
 
-    private void clientResponse(Tracing brave, String serviceName, ExchangeSentEvent event) {
+    private void clientResponse(String serviceName, ExchangeSentEvent event) {
         Span span = null;
         ExtendedExchange exchange = event.getExchange().adapt(ExtendedExchange.class);
         ZipkinState state = exchange.getSafeCopyProperty(ZipkinState.KEY, ZipkinState.class);
@@ -749,7 +749,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         return consumerComponentToSpanKind.getOrDefault(getComponentName(endpoint), Span.Kind.SERVER);
     }
 
-    private void serverResponse(Tracing brave, String serviceName, Exchange exchange) {
+    private void serverResponse(String serviceName, Exchange exchange) {
         Span span = null;
         ExtendedExchange extendedExchange = exchange.adapt(ExtendedExchange.class);
         ZipkinState state = extendedExchange.getSafeCopyProperty(ZipkinState.KEY, ZipkinState.class);
@@ -815,7 +815,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
                 String serviceName = getServiceName(ese.getExchange(), ese.getEndpoint(), false, true);
                 Tracing brave = getTracing(serviceName);
                 if (brave != null) {
-                    clientResponse(brave, serviceName, ese);
+                    clientResponse(serviceName, ese);
                 }
             }
         }
@@ -863,7 +863,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             String serviceName = getServiceName(exchange, route.getEndpoint(), true, false);
             Tracing brave = getTracing(serviceName);
             if (brave != null) {
-                serverResponse(brave, serviceName, exchange);
+                serverResponse(serviceName, exchange);
             }
         }
     }
