@@ -29,7 +29,7 @@ public class MvelExpression extends ExpressionSupport {
     private final Class<?> type;
     private final Serializable compiled;
 
-    public MvelExpression(MvelLanguage language, String expressionString, Class<?> type) {
+    public MvelExpression(String expressionString, Class<?> type) {
         this.expressionString = expressionString;
         this.type = type;
 
@@ -41,7 +41,7 @@ public class MvelExpression extends ExpressionSupport {
     }
 
     public static MvelExpression mvel(String expression) {
-        return new MvelExpression(new MvelLanguage(), expression, Object.class);
+        return new MvelExpression(expression, Object.class);
     }
 
     @Override
