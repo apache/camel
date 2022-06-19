@@ -16,10 +16,13 @@
  */
 package org.apache.camel.main.download;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.engine.DefaultLanguageResolver;
+import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.spi.Language;
 import org.apache.camel.tooling.model.LanguageModel;
 
@@ -45,8 +48,15 @@ public final class DependencyDownloaderLanguageResolver extends DefaultLanguageR
             downloader.downloadDependency(model.getGroupId(), model.getArtifactId(),
                     model.getVersion());
         }
-
-        return super.resolveLanguage(name, context);
+        Language answer = super.resolveLanguage(name, context);
+        if (answer == null) {
+            List<String> suggestion = SuggestSimilarHelper.didYouMean(catalog.findDataFormatNames(), name);
+            if (suggestion != null && !suggestion.isEmpty()) {
+                String s = String.join(", ", suggestion);
+                throw new IllegalArgumentException("Cannot find language with name: " + name + ". Did you mean: " + s);
+            }
+        }
+        return answer;
     }
 
 }

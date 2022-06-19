@@ -21,8 +21,10 @@ import java.util.List;
 import org.apache.camel.main.download.MavenArtifact;
 import org.apache.camel.main.download.MavenDependencyResolver;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Manual test")
 public class MavenDependencyResolverTest {
 
     @Test

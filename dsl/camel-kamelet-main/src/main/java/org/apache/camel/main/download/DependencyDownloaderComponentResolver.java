@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main.download;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.catalog.CamelCatalog;
@@ -23,6 +25,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.impl.engine.DefaultComponentResolver;
 import org.apache.camel.main.http.VertxHttpServer;
+import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.model.ComponentModel;
 
 /**
@@ -59,13 +62,18 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
         } else {
             answer = super.resolveComponent("stub", context);
         }
-
         if (answer instanceof PlatformHttpComponent) {
             // setup a default http server on port 8080 if not already done
             VertxHttpServer.setPlatformHttpComponent((PlatformHttpComponent) answer);
             VertxHttpServer.registerServer(camelContext, stub);
         }
-
+        if (answer == null) {
+            List<String> suggestion = SuggestSimilarHelper.didYouMean(catalog.findComponentNames(), name);
+            if (suggestion != null && !suggestion.isEmpty()) {
+                String s = String.join(", ", suggestion);
+                throw new IllegalArgumentException("Cannot find component with name: " + name + ". Did you mean: " + s);
+            }
+        }
         return answer;
     }
 

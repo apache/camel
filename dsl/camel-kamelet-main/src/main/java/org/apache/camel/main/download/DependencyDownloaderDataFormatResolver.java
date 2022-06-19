@@ -16,10 +16,13 @@
  */
 package org.apache.camel.main.download;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.engine.DefaultDataFormatResolver;
+import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.tooling.model.DataFormatModel;
 
@@ -45,7 +48,15 @@ public final class DependencyDownloaderDataFormatResolver extends DefaultDataFor
             downloader.downloadDependency(model.getGroupId(), model.getArtifactId(),
                     model.getVersion());
         }
-        return super.createDataFormat(name, context);
+        DataFormat answer = super.createDataFormat(name, context);
+        if (answer == null) {
+            List<String> suggestion = SuggestSimilarHelper.didYouMean(catalog.findDataFormatNames(), name);
+            if (suggestion != null && !suggestion.isEmpty()) {
+                String s = String.join(", ", suggestion);
+                throw new IllegalArgumentException("Cannot find dataformat with name: " + name + ". Did you mean: " + s);
+            }
+        }
+        return answer;
     }
 
 }

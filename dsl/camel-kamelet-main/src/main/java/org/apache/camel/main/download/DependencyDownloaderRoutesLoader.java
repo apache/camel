@@ -62,24 +62,17 @@ public class DependencyDownloaderRoutesLoader extends MainRoutesLoader {
 
         RoutesBuilderLoader loader = super.resolveService(extension);
         if (loader == null) {
-
             // need to use regular factory finder as bootstrap has already marked the loader as a miss
             final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
             final FactoryFinder finder = ecc.getFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
-
-            RoutesBuilderLoader answer
-                    = ResolverHelper.resolveService(ecc, finder, extension, RoutesBuilderLoader.class).orElse(null);
-
-            if (answer != null) {
-                CamelContextAware.trySetCamelContext(answer, getCamelContext());
+            loader = ResolverHelper.resolveService(ecc, finder, extension, RoutesBuilderLoader.class).orElse(null);
+            if (loader != null) {
+                CamelContextAware.trySetCamelContext(loader, getCamelContext());
                 // allows for custom initialization
-                initRoutesBuilderLoader(answer);
-                ServiceHelper.startService(answer);
+                initRoutesBuilderLoader(loader);
+                ServiceHelper.startService(loader);
             }
-
-            return answer;
         }
-
         return loader;
     }
 
