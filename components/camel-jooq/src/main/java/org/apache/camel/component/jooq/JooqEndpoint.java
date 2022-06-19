@@ -42,7 +42,7 @@ public class JooqEndpoint extends ScheduledPollEndpoint {
     @UriParam
     private JooqConfiguration configuration;
 
-    public JooqEndpoint(String uri, String remaining, JooqComponent component, JooqConfiguration configuration) {
+    public JooqEndpoint(String uri, JooqComponent component, JooqConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }

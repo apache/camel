@@ -34,7 +34,7 @@ public class JooqComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         JooqConfiguration conf = configuration != null ? configuration.copy() : new JooqConfiguration();
 
-        JooqEndpoint endpoint = new JooqEndpoint(uri, remaining, this, conf);
+        JooqEndpoint endpoint = new JooqEndpoint(uri, this, conf);
         setProperties(endpoint, parameters);
         initConfiguration(getCamelContext(), conf, remaining);
         return endpoint;
