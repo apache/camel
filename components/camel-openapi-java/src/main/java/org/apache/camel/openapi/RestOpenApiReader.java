@@ -707,7 +707,7 @@ public class RestOpenApiReader {
                             bp.schema = arrayModel;
 
                         } else {
-                            String ref = modelTypeAsRef(type, openApi);
+                            String ref = modelTypeAsRef(type);
                             if (ref != null) {
                                 Oas30Schema refModel = (Oas30Schema) bp.createSchema();
                                 refModel.$ref = OAS30_SCHEMA_DEFINITION_PREFIX + ref;
@@ -930,7 +930,7 @@ public class RestOpenApiReader {
                             arrayModel = modelTypeAsProperty(type, openApi, arrayModel);
                             bp.schema = arrayModel;
                         } else {
-                            String ref = modelTypeAsRef(type, openApi);
+                            String ref = modelTypeAsRef(type);
                             if (ref != null) {
                                 Oas20Schema refModel = (Oas20Schema) bp.createSchema();
                                 refModel.$ref = OAS20_SCHEMA_DEFINITION_PREFIX + ref;
@@ -1357,7 +1357,7 @@ public class RestOpenApiReader {
         response.headers.addHeader(name, ip);
     }
 
-    private String modelTypeAsRef(String typeName, OasDocument openApi) {
+    private String modelTypeAsRef(String typeName) {
         boolean array = typeName.endsWith("[]");
         if (array) {
             typeName = typeName.substring(0, typeName.length() - 2);
@@ -1376,7 +1376,7 @@ public class RestOpenApiReader {
             typeName = typeName.substring(0, typeName.length() - 2);
         }
 
-        String ref = modelTypeAsRef(typeName, openApi);
+        String ref = modelTypeAsRef(typeName);
 
         if (ref != null) {
             if (openApi instanceof Oas20Document) {

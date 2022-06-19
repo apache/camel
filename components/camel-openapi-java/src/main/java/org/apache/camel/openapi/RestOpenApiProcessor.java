@@ -72,7 +72,7 @@ public class RestOpenApiProcessor implements Processor {
         }
 
         try {
-            support.renderResourceListing(exchange.getContext(), adapter, openApiConfig, json, yaml,
+            support.renderResourceListing(exchange.getContext(), adapter, openApiConfig, json,
                     exchange.getIn().getHeaders(), exchange.getContext().getClassResolver(), configuration);
         } catch (Exception e) {
             LOG.warn("Error rendering OpenApi API due {}", e.getMessage(), e);

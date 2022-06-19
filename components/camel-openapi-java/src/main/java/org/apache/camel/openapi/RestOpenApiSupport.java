@@ -368,7 +368,7 @@ public class RestOpenApiSupport {
     public void renderResourceListing(
             CamelContext camelContext, RestApiResponseAdapter response,
             BeanConfig openApiConfig, boolean json,
-            boolean yaml, Map<String, Object> headers, ClassResolver classResolver,
+            Map<String, Object> headers, ClassResolver classResolver,
             RestConfiguration configuration)
             throws Exception {
         LOG.trace("renderResourceListing");
