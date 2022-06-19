@@ -199,12 +199,12 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     overrideComponentName = model.getArtifactId().replace("camel-", "");
                 }
 
-                createEndpointDsl(model, compModels, overrideComponentName);
+                createEndpointDsl(model, compModels);
             }
         }
     }
 
-    private void createEndpointDsl(ComponentModel model, List<ComponentModel> aliases, String overrideComponentName)
+    private void createEndpointDsl(ComponentModel model, List<ComponentModel> aliases)
             throws MojoFailureException {
         List<Method> staticBuilders = new ArrayList<>();
         boolean updated = doCreateEndpointDsl(model, aliases, staticBuilders);
