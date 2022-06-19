@@ -33,13 +33,13 @@ public class OgnlLanguage extends LanguageSupport implements ScriptingLanguage {
     @Override
     public Predicate createPredicate(String expression) {
         expression = loadResource(expression);
-        return new OgnlExpression(this, expression, Boolean.class);
+        return new OgnlExpression(expression, Boolean.class);
     }
 
     @Override
     public Expression createExpression(String expression) {
         expression = loadResource(expression);
-        return new OgnlExpression(this, expression, Object.class);
+        return new OgnlExpression(expression, Object.class);
     }
 
     @Override
