@@ -178,7 +178,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     String title = asComponentTitle(model.getScheme(), model.getTitle());
                     model.setTitle(title);
 
-                    boolean updated = updateHeader(componentName, file, model, " Component", kind);
+                    boolean updated = updateHeader(componentName, file, model, " Component");
 
                     checkComponentHeader(file);
                     checkSince(file);
@@ -234,7 +234,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     File file = new File(componentDocDir, componentName + ".adoc");
                     boolean exists = file.exists();
 
-                    boolean updated = updateHeader(componentName, file, model, " Component", kind);
+                    boolean updated = updateHeader(componentName, file, model, " Component");
                     checkSince(file);
 
                     if (updated) {
@@ -289,7 +289,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     model.setTitle(title);
 
                     boolean exists = file.exists();
-                    boolean updated = updateHeader(dataFormatName, file, model, " DataFormat", kind);
+                    boolean updated = updateHeader(dataFormatName, file, model, " DataFormat");
                     checkSince(file);
 
                     String options = evaluateTemplate("dataformat-options.mvel", model);
@@ -354,7 +354,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     LanguageModel model = JsonMapper.generateLanguageModel(json);
 
-                    boolean updated = updateHeader(languageName, file, model, " Language", kind);
+                    boolean updated = updateHeader(languageName, file, model, " Language");
                     checkSince(file);
 
                     String options = evaluateTemplate("language-options.mvel", model);
@@ -416,7 +416,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     File file = new File(eipDocDir, eipName + "-" + kind + ".adoc");
                     boolean exists = file.exists();
 
-                    boolean updated = updateHeader(eipName, file, model, " EIP", kind);
+                    boolean updated = updateHeader(eipName, file, model, " EIP");
 
                     String options = evaluateTemplate("eip-options.mvel", model);
                     updated |= updateOptionsIn(file, kind, options);
@@ -471,8 +471,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     private boolean updateHeader(
-            String name, final File file, final BaseModel<? extends BaseOptionModel> model, String titleSuffix,
-            String kind)
+            String name, final File file, final BaseModel<? extends BaseOptionModel> model, String titleSuffix)
             throws MojoExecutionException {
         if (getLog().isDebugEnabled()) {
             getLog().debug("updateHeader " + file);
