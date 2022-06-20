@@ -44,7 +44,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
     @Override
     protected void doBuild() throws Exception {
         super.doBuild();
-        // force to create and load the class during build time so the JVM does not
+        // force creating and load the class during build time so the JVM does not
         // load the class on first exchange to be created
         DefaultPooledExchange dummy = new DefaultPooledExchange(camelContext);
         // force message init to load classes
@@ -75,10 +75,12 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
             if (statisticsEnabled) {
                 statistics.acquired.increment();
             }
-            // reset exchange for reuse
-            PooledExchange ee = (PooledExchange) exchange;
-            ee.reset(System.currentTimeMillis());
         }
+
+        // reset exchange for reuse
+        PooledExchange ee = (PooledExchange) exchange;
+        ee.reset(System.currentTimeMillis());
+
         return exchange;
     }
 
@@ -95,21 +97,21 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
             if (statisticsEnabled) {
                 statistics.acquired.increment();
             }
-            // reset exchange for reuse
-            PooledExchange ee = (PooledExchange) exchange;
-            ee.reset(System.currentTimeMillis());
         }
+
+        // reset exchange for reuse
+        PooledExchange ee = (PooledExchange) exchange;
+        ee.reset(System.currentTimeMillis());
+
         return exchange;
     }
 
     @Override
     public boolean release(Exchange exchange) {
         try {
-            // done exchange before returning back to pool
+            // done exchange before returning to pool
             PooledExchange ee = (PooledExchange) exchange;
-            boolean force = !ee.isAutoRelease();
-            ee.done(force);
-            ee.onDone(null);
+            ee.done();
 
             // only release back in pool if reset was success
             boolean inserted = pool.offer(exchange);
