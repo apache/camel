@@ -518,7 +518,7 @@ public class MailBinding {
                 LOG.trace("Attachment #{}: FileName: {}", i, attachmentFilename);
             }
             if (attachment != null) {
-                if (shouldAddAttachment(exchange, attachmentFilename, attachment.getDataHandler())) {
+                if (shouldAddAttachment()) {
                     // Create another body part
                     BodyPart messageBodyPart = new MimeBodyPart();
                     // Set the data handler to the attachment
@@ -639,7 +639,7 @@ public class MailBinding {
     /**
      * Strategy to allow filtering of attachments which are added on the Mail message
      */
-    protected boolean shouldAddAttachment(Exchange exchange, String attachmentFilename, DataHandler handler) {
+    protected boolean shouldAddAttachment() {
         return true;
     }
 
