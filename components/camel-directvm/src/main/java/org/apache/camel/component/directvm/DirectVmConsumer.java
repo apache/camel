@@ -42,13 +42,13 @@ public class DirectVmConsumer extends DefaultConsumer implements Suspendable {
 
     @Override
     protected void doStop() throws Exception {
-        getEndpoint().getComponent().removeConsumer(getEndpoint(), this);
+        getEndpoint().getComponent().removeConsumer(getEndpoint());
         super.doStop();
     }
 
     @Override
     protected void doSuspend() throws Exception {
-        getEndpoint().getComponent().removeConsumer(getEndpoint(), this);
+        getEndpoint().getComponent().removeConsumer(getEndpoint());
     }
 
     @Override

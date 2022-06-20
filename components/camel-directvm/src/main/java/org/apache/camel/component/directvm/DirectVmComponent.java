@@ -93,7 +93,7 @@ public class DirectVmComponent extends DefaultComponent {
         }
     }
 
-    public void removeConsumer(DirectVmEndpoint endpoint, DirectVmConsumer consumer) {
+    public void removeConsumer(DirectVmEndpoint endpoint) {
         String key = getConsumerKey(endpoint.getEndpointUri());
         CONSUMERS.remove(key);
     }
