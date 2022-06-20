@@ -259,7 +259,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
             // pooled exchange has its own done logic which will reset this uow for reuse
             // so do not call onDone
             try {
-                ((PooledExchange) exchange).done(false);
+                ((PooledExchange) exchange).done();
             } catch (Throwable e) {
                 // must catch exceptions to ensure synchronizations is also invoked
                 log.warn("Exception occurred during exchange done. This exception will be ignored.", e);
