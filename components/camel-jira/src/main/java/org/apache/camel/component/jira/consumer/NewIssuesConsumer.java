@@ -100,8 +100,9 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
                 if (code == 400) {
                     String msg = e.getMessage();
                     if (msg != null && msg.contains("does not exist for the field 'id'")) {
-                        LOG.warn("Last issue id: " + latestIssueId + " no longer exists (could have been deleted)."
-                                 + " Will recover by fetching last issue id from JIRA and try again on next poll");
+                        LOG.warn("Last issue id: {} no longer exists (could have been deleted)."
+                                 + " Will recover by fetching last issue id from JIRA and try again on next poll",
+                                latestIssueId);
                         latestIssueId = findLatestIssueId();
                         return Collections.EMPTY_LIST;
                     }

@@ -61,8 +61,8 @@ public abstract class AbstractJiraConsumer extends ScheduledPollConsumer {
                     int code = rcr.getStatusCode().get();
                     // if auth or server error then cause a re-connect
                     if (code >= 400) {
-                        LOG.warn("RestClientException error code: " + code + " caused by " + rcr.getMessage()
-                                 + ". Will re-connect on next poll.");
+                        LOG.warn("RestClientException error code: {} caused by {}. Will re-connect on next poll.", code,
+                                rcr.getMessage());
                         getEndpoint().disconnect();
                     }
                 }
