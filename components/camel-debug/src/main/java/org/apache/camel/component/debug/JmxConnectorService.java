@@ -89,8 +89,7 @@ public class JmxConnectorService extends ServiceSupport implements CamelContextA
                 cs.stop();
                 LOG.debug("Stopped JMX Connector");
             } catch (IOException e) {
-                LOG.debug("Error occurred during stopping JMXConnectorService: "
-                          + cs + ". This exception will be ignored.");
+                LOG.debug("Error occurred during stopping JMXConnectorService: {}. This exception will be ignored.", cs);
             }
             cs = null;
         }
