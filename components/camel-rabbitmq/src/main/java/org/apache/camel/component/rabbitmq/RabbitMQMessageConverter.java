@@ -214,7 +214,7 @@ public class RabbitMQMessageConverter {
                 .filter(key -> !RabbitMQConstants.BASIC_AMQP_PROPERTIES.contains(key))
                 .collect(Collectors.joining(", "));
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Added AMQP basic properties: {}", properties.build().toString());
+            LOG.debug("Added AMQP basic properties: {}", properties.build());
             LOG.debug("Ignoring non-AMQP basic properties: {}", ignoredProperties);
         }
 
