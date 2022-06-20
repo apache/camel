@@ -179,7 +179,7 @@ public class VertxKafkaProducerOperations {
     private Object getMessageKey(final Message message) {
         return VertxKafkaTypeSerializer.tryConvertToSerializedType(message,
                 configurationOptionsProxy.getMessageKey(message),
-                configurationOptionsProxy.getKeySerializer(message));
+                configurationOptionsProxy.getKeySerializer());
     }
 
     private Integer getPartitionId(final Message message) {
@@ -188,7 +188,7 @@ public class VertxKafkaProducerOperations {
 
     private Object getMessageValue(final Message message, final Object inputData) {
         return VertxKafkaTypeSerializer.tryConvertToSerializedType(message, inputData,
-                configurationOptionsProxy.getValueSerializer(message));
+                configurationOptionsProxy.getValueSerializer());
     }
 
     private Long getOverrideTimestamp(final Message message) {
