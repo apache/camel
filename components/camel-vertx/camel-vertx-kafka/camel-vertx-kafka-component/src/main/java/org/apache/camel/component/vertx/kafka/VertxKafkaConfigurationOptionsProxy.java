@@ -38,11 +38,11 @@ public class VertxKafkaConfigurationOptionsProxy {
         return getOption(message, VertxKafkaConstants.MESSAGE_KEY, () -> null, Object.class);
     }
 
-    public String getKeySerializer(final Message message) {
+    public String getKeySerializer() {
         return configuration.getKeySerializer();
     }
 
-    public String getValueSerializer(final Message message) {
+    public String getValueSerializer() {
         return configuration.getValueSerializer();
     }
 
