@@ -110,7 +110,7 @@ public class JiraConfiguration implements Cloneable {
 
     /**
      * Time in milliseconds to elapse for the next poll.
-     * 
+     *
      * @param delay Integer time in milliseconds
      */
     public void setDelay(Integer delay) {
@@ -135,7 +135,7 @@ public class JiraConfiguration implements Cloneable {
     }
 
     /**
-     * (Basic authentication only) The password to authenticate to the Jira server. Use only if username basic
+     * (Basic authentication only) The password or the API Token to authenticate to the Jira server. Use only if username basic
      * authentication is used.
      */
     public void setPassword(String password) {

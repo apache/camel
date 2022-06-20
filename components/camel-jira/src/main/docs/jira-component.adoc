@@ -96,7 +96,7 @@ We recommend to use OAuth whenever possible, as it provides the best security fo
 
 === Basic authentication requirements:
 
-* An username and password
+* An username and a password or the API Token. Verify if the Jira server installation supports the use of https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/[API Tokens] instead of the user's password. This way the user's password is not exposed.
 
 === OAuth authentication requirements:
 
