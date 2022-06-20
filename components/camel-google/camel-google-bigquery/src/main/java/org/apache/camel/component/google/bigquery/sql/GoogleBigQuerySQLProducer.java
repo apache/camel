@@ -111,7 +111,7 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
             long numAffectedRows = statistics.getNumDmlAffectedRows();
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Query {} - Affected rows {} - Result {}", translatedQuery, numAffectedRows, result.toString());
+                LOG.trace("Query {} - Affected rows {} - Result {}", translatedQuery, numAffectedRows, result);
             }
             return numAffectedRows;
         } catch (JobException e) {
