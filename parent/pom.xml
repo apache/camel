@@ -405,7 +405,7 @@
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <mustache-java-version>0.9.10</mustache-java-version>
         <mvel-version>2.4.14.Final</mvel-version>
-        <mybatis-version>3.5.9</mybatis-version>
+        <mybatis-version>3.5.10</mybatis-version>
         <narayana-version>5.12.6.Final</narayana-version>
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
