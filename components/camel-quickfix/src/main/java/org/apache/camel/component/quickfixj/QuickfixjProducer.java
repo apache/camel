@@ -45,13 +45,13 @@ public class QuickfixjProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        getEndpoint().addProducer(this);
+        getEndpoint().addProducer();
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        getEndpoint().removeProducer(this);
+        getEndpoint().removeProducer();
         super.doStop();
     }
 

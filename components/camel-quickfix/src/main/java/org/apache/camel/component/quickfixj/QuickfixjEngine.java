@@ -117,20 +117,20 @@ public class QuickfixjEngine extends ServiceSupport {
                            MessageStoreFactory messageStoreFactoryOverride,
                            LogFactory sessionLogFactoryOverride,
                            MessageFactory messageFactoryOverride) throws Exception {
-        this(camelContext, uri, loadSettings(camelContext, settingsResourceName), messageStoreFactoryOverride,
+        this(uri, loadSettings(camelContext, settingsResourceName), messageStoreFactoryOverride,
              sessionLogFactoryOverride,
              messageFactoryOverride);
     }
 
-    public QuickfixjEngine(CamelContext camelContext, String uri, SessionSettings settings,
+    public QuickfixjEngine(String uri, SessionSettings settings,
                            MessageStoreFactory messageStoreFactoryOverride,
                            LogFactory sessionLogFactoryOverride,
                            MessageFactory messageFactoryOverride) throws Exception {
-        this(camelContext, uri, settings, messageStoreFactoryOverride, sessionLogFactoryOverride, messageFactoryOverride,
+        this(uri, settings, messageStoreFactoryOverride, sessionLogFactoryOverride, messageFactoryOverride,
              false);
     }
 
-    public QuickfixjEngine(CamelContext camelContext, String uri, SessionSettings settings,
+    public QuickfixjEngine(String uri, SessionSettings settings,
                            MessageStoreFactory messageStoreFactoryOverride,
                            LogFactory sessionLogFactoryOverride,
                            MessageFactory messageFactoryOverride,

@@ -59,7 +59,7 @@ public class QuickfixjProducerTest {
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
         context = Mockito.mock(CamelContext.class);
 
-        quickfixjEngine = TestSupport.createEngine(context);
+        quickfixjEngine = TestSupport.createEngine();
         Mockito.when(mockEndpoint.getEngine()).thenReturn(quickfixjEngine);
 
         inboundFixMessage = new Message();
