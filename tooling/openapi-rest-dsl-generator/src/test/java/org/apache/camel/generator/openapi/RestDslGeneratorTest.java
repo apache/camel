@@ -49,7 +49,7 @@ public class RestDslGeneratorTest {
     @Test
     public void shouldCreateDefinitions() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            final RestsDefinition definition = RestDslGenerator.toDefinition(document).generate(context);
+            final RestsDefinition definition = RestDslGenerator.toDefinition(document).generate();
             assertThat(definition).isNotNull();
             assertThat(definition.getRests()).hasSize(1);
             assertThat(definition.getRests().get(0).getPath()).isEqualTo("/v2");
