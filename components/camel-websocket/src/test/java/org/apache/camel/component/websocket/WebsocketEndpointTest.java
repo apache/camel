@@ -50,7 +50,7 @@ public class WebsocketEndpointTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        websocketEndpoint = new WebsocketEndpoint(component, URI, REMAINING, null);
+        websocketEndpoint = new WebsocketEndpoint(component, URI, REMAINING);
         component = new WebsocketComponent();
         component.setPort(1988);
         component.setHost("localhost");
