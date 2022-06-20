@@ -181,8 +181,12 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
 
     /**
      * Called when a sleep is interrupted; allows derived classes to handle this case differently
+     *
+     * @param e        the interrupted exception instance
+     * @param exchange the exchange being processed
      */
-    protected void handleSleepInterruptedException(InterruptedException e, Exchange exchange) throws InterruptedException {
+    protected void handleSleepInterruptedException(InterruptedException e, @SuppressWarnings("unused") Exchange exchange)
+            throws InterruptedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
         }

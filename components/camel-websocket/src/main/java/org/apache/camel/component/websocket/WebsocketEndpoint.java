@@ -19,7 +19,6 @@ package org.apache.camel.component.websocket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -85,7 +84,7 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer", defaultValue = "any")
     private String subprotocol;
 
-    public WebsocketEndpoint(WebsocketComponent component, String uri, String resourceUri, Map<String, Object> parameters) {
+    public WebsocketEndpoint(WebsocketComponent component, String uri, String resourceUri) {
         super(uri, component);
         this.resourceUri = resourceUri;
         this.component = component;
