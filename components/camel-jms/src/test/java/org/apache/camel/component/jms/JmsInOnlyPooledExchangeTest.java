@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -23,10 +25,14 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
+import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
+import org.apache.camel.spi.PooledObjectFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsInOnlyPooledExchangeTest extends CamelTestSupport {
 
@@ -43,6 +49,15 @@ public class JmsInOnlyPooledExchangeTest extends CamelTestSupport {
         template.sendBody(JMS_QUEUE_NAME, expectedBody);
 
         mock.assertIsSatisfied();
+
+        Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            PooledObjectFactory.Statistics stat
+                    = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager().getStatistics();
+            assertEquals(1, stat.getCreatedCounter());
+            assertEquals(0, stat.getAcquiredCounter());
+            assertEquals(1, stat.getReleasedCounter());
+            assertEquals(0, stat.getDiscardedCounter());
+        });
     }
 
     @Test
@@ -54,16 +69,30 @@ public class JmsInOnlyPooledExchangeTest extends CamelTestSupport {
         template.sendBody(JMS_QUEUE_NAME, "Bye World");
 
         mock.assertIsSatisfied();
+
+        Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            PooledObjectFactory.Statistics stat
+                    = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager().getStatistics();
+            assertEquals(1, stat.getCreatedCounter());
+            assertEquals(1, stat.getAcquiredCounter());
+            assertEquals(2, stat.getReleasedCounter());
+            assertEquals(0, stat.getDiscardedCounter());
+        });
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        camelContext.adapt(ExtendedCamelContext.class).setExchangeFactory(new PooledExchangeFactory());
+        ExtendedCamelContext ecc = (ExtendedCamelContext) super.createCamelContext();
+
+        ecc.setExchangeFactory(new PooledExchangeFactory());
+        ecc.setProcessorExchangeFactory(new PooledProcessorExchangeFactory());
+        ecc.getExchangeFactory().setStatisticsEnabled(true);
+        ecc.getProcessorExchangeFactory().setStatisticsEnabled(true);
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+        ecc.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
+
+        return ecc;
     }
 
     @Override

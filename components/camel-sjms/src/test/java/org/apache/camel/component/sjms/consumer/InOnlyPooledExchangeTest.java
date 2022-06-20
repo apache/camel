@@ -16,13 +16,20 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
+import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
+import org.apache.camel.spi.PooledObjectFactory;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InOnlyPooledExchangeTest extends JmsTestSupport {
 
@@ -31,9 +38,14 @@ public class InOnlyPooledExchangeTest extends JmsTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        context.adapt(ExtendedCamelContext.class).setExchangeFactory(new PooledExchangeFactory());
-        return context;
+        ExtendedCamelContext ecc = (ExtendedCamelContext) super.createCamelContext();
+
+        ecc.setExchangeFactory(new PooledExchangeFactory());
+        ecc.setProcessorExchangeFactory(new PooledProcessorExchangeFactory());
+        ecc.getExchangeFactory().setStatisticsEnabled(true);
+        ecc.getProcessorExchangeFactory().setStatisticsEnabled(true);
+
+        return ecc;
     }
 
     @Test
@@ -46,6 +58,15 @@ public class InOnlyPooledExchangeTest extends JmsTestSupport {
         template.sendBody(SJMS_QUEUE_NAME, expectedBody);
 
         mock.assertIsSatisfied();
+
+        Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            PooledObjectFactory.Statistics stat
+                    = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager().getStatistics();
+            assertEquals(1, stat.getCreatedCounter());
+            assertEquals(0, stat.getAcquiredCounter());
+            assertEquals(1, stat.getReleasedCounter());
+            assertEquals(0, stat.getDiscardedCounter());
+        });
     }
 
     @Test
@@ -57,6 +78,15 @@ public class InOnlyPooledExchangeTest extends JmsTestSupport {
         template.sendBody(SJMS_QUEUE_NAME, "Bye World");
 
         mock.assertIsSatisfied();
+
+        Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            PooledObjectFactory.Statistics stat
+                    = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager().getStatistics();
+            assertEquals(1, stat.getCreatedCounter());
+            assertEquals(1, stat.getAcquiredCounter());
+            assertEquals(2, stat.getReleasedCounter());
+            assertEquals(0, stat.getDiscardedCounter());
+        });
     }
 
     @Override
