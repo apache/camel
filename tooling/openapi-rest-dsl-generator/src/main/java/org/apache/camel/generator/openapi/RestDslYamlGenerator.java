@@ -67,7 +67,7 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
     }
 
     public String generate(final CamelContext context, boolean generateRoutes) throws Exception {
-        final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
+        final RestDefinitionEmitter emitter = new RestDefinitionEmitter();
         final String basePath = RestDslGenerator.determineBasePathFrom(this.basePath, document);
         final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(
                 basePath, emitter, filter,

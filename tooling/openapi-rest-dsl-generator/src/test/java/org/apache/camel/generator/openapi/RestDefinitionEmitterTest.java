@@ -34,7 +34,7 @@ public class RestDefinitionEmitterTest {
     public void shouldGenerateObjects() throws IOException {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
 
-            final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
+            final RestDefinitionEmitter emitter = new RestDefinitionEmitter();
 
             emitter.emit("rest");
             emitter.emit("put", "/pet");

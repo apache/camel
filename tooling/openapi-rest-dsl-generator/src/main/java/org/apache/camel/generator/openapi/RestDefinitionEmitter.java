@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
 
 class RestDefinitionEmitter implements CodeEmitter<RestsDefinition> {
@@ -31,7 +30,7 @@ class RestDefinitionEmitter implements CodeEmitter<RestsDefinition> {
 
     private Object variable;
 
-    RestDefinitionEmitter(final CamelContext context) {
+    RestDefinitionEmitter() {
         definition = new RestsDefinition();
         variable = definition;
     }
