@@ -197,7 +197,7 @@ public class TimeClause implements BinaryPredicate {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Evaluated time clause [{}] with current: {}, other: {} -> {}", toString(), currentDate, otherDate,
+            LOG.debug("Evaluated time clause [{}] with current: {}, other: {} -> {}", this, currentDate, otherDate,
                     answer);
         }
 
