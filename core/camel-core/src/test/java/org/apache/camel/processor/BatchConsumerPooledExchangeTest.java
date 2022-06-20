@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -29,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 import org.apache.camel.spi.PooledObjectFactory;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,6 +45,7 @@ public class BatchConsumerPooledExchangeTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         ExtendedCamelContext ecc = (ExtendedCamelContext) super.createCamelContext();
+
         ecc.setExchangeFactory(new PooledExchangeFactory());
         ecc.setProcessorExchangeFactory(new PooledProcessorExchangeFactory());
         ecc.getExchangeFactory().setStatisticsEnabled(true);
@@ -74,12 +77,14 @@ public class BatchConsumerPooledExchangeTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        PooledObjectFactory.Statistics stat
-                = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager().getStatistics();
-        assertEquals(1, stat.getCreatedCounter());
-        assertEquals(2, stat.getAcquiredCounter());
-        assertEquals(3, stat.getReleasedCounter());
-        assertEquals(0, stat.getDiscardedCounter());
+        Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            PooledObjectFactory.Statistics stat
+                    = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager().getStatistics();
+            assertEquals(1, stat.getCreatedCounter());
+            assertEquals(2, stat.getAcquiredCounter());
+            assertEquals(3, stat.getReleasedCounter());
+            assertEquals(0, stat.getDiscardedCounter());
+        });
     }
 
     @Override
