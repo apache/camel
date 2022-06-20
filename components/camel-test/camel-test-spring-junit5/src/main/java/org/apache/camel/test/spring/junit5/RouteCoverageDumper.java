@@ -62,7 +62,7 @@ public final class RouteCoverageDumper {
                 // ensure dir exists
                 boolean result = file.mkdirs();
                 if (!result) {
-                    LOG.error("mkdirs() failed for " + file);
+                    LOG.error("mkdirs() failed for {}", file);
                 }
                 file = new File(dir, name);
 
