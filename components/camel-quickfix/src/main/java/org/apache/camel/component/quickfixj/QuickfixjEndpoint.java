@@ -157,12 +157,12 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
         }
     }
 
-    protected void addProducer(QuickfixjProducer producer) {
+    protected void addProducer() {
         engine.incRefCount();
         getComponent().ensureEngineStarted(engine);
     }
 
-    protected void removeProducer(QuickfixjProducer producer) {
+    protected void removeProducer() {
         int count = engine.decRefCount();
         if (count <= 0 && getComponent().isEagerStopEngines()) {
             LOG.info("Stopping QuickFIX/J Engine: {} no longer active in use", engine.getUri());
