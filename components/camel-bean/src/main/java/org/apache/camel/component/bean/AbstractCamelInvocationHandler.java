@@ -188,7 +188,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
                 LOG.trace("Proxied method call {} invoking producer: {}", method.getName(), producer);
                 producer.process(exchange);
 
-                Object answer = afterInvoke(method, exchange, exchange.getPattern(), isFuture);
+                Object answer = afterInvoke(method, exchange, isFuture);
                 LOG.trace("Proxied method call {} returning: {}", method.getName(), answer);
                 return answer;
             }
@@ -213,7 +213,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         }
     }
 
-    protected Object afterInvoke(Method method, Exchange exchange, ExchangePattern pattern, boolean isFuture) throws Exception {
+    protected Object afterInvoke(Method method, Exchange exchange, boolean isFuture) throws Exception {
         // check if we had an exception
         Exception cause = exchange.getException();
         if (cause != null) {
