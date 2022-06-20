@@ -153,10 +153,10 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
     }
 
     @Override
-    protected void doReleaseExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+    protected void doReleaseExclusiveReadLock(GenericFile<File> file, Exchange exchange)
             throws Exception {
         // must call super
-        super.doReleaseExclusiveReadLock(operations, file, exchange);
+        super.doReleaseExclusiveReadLock(file, exchange);
 
         FileLock lock = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), FileLock.class);
         RandomAccessFile rac
