@@ -31,7 +31,21 @@ public final class JavadocUtil {
 
     }
 
+    /**
+     * @param  model the model from which the information are extracted.
+     * @return       the description of the given component with all the possible details.
+     */
     public static String getMainDescription(ComponentModel model) {
+        return getMainDescription(model, true);
+    }
+
+    /**
+     * @param  model                    the model from which the information are extracted.
+     * @param  withPathParameterDetails indicates whether the information about the path parameters should be added to
+     *                                  the description.
+     * @return                          the description of the given component.
+     */
+    public static String getMainDescription(ComponentModel model, boolean withPathParameterDetails) {
         StringBuilder descSb = new StringBuilder(512);
 
         descSb.append(model.getTitle()).append(" (").append(model.getArtifactId()).append(")");
@@ -40,26 +54,28 @@ public final class JavadocUtil {
         descSb.append("\nSince: ").append(model.getFirstVersionShort());
         descSb.append("\nMaven coordinates: ").append(model.getGroupId()).append(":").append(model.getArtifactId());
 
-        // include javadoc for all path parameters and mark which are required
-        descSb.append("\n\nSyntax: <code>").append(model.getSyntax()).append("</code>");
-        for (ComponentModel.EndpointOptionModel option : model.getEndpointOptions()) {
-            if ("path".equals(option.getKind())) {
-                descSb.append("\n\nPath parameter: ").append(option.getName());
-                if (option.isRequired()) {
-                    descSb.append(" (required)");
-                }
-                if (option.isDeprecated()) {
-                    descSb.append(" <strong>deprecated</strong>");
-                }
-                descSb.append("\n").append(option.getDescription());
-                if (option.getDefaultValue() != null) {
-                    descSb.append("\nDefault value: ").append(option.getDefaultValue());
-                }
-                // TODO: default value note ?
-                if (option.getEnums() != null && !option.getEnums().isEmpty()) {
-                    descSb.append("\nThere are ").append(option.getEnums().size())
-                            .append(" enums and the value can be one of: ")
-                            .append(wrapEnumValues(option.getEnums()));
+        if (withPathParameterDetails) {
+            // include javadoc for all path parameters and mark which are required
+            descSb.append("\n\nSyntax: <code>").append(model.getSyntax()).append("</code>");
+            for (ComponentModel.EndpointOptionModel option : model.getEndpointOptions()) {
+                if ("path".equals(option.getKind())) {
+                    descSb.append("\n\nPath parameter: ").append(option.getName());
+                    if (option.isRequired()) {
+                        descSb.append(" (required)");
+                    }
+                    if (option.isDeprecated()) {
+                        descSb.append(" <strong>deprecated</strong>");
+                    }
+                    descSb.append("\n").append(option.getDescription());
+                    if (option.getDefaultValue() != null) {
+                        descSb.append("\nDefault value: ").append(option.getDefaultValue());
+                    }
+                    // TODO: default value note ?
+                    if (option.getEnums() != null && !option.getEnums().isEmpty()) {
+                        descSb.append("\nThere are ").append(option.getEnums().size())
+                                .append(" enums and the value can be one of: ")
+                                .append(wrapEnumValues(option.getEnums()));
+                    }
                 }
             }
         }
