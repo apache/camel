@@ -116,7 +116,7 @@ public final class VertxPlatformHttpSupport {
         }
 
         // set the content-length if it can be determined, or chunked encoding
-        final Integer length = determineContentLength(exchange, body);
+        final Integer length = determineContentLength(body);
         if (length != null) {
             response.putHeader("Content-Length", String.valueOf(length));
         } else {
@@ -132,7 +132,7 @@ public final class VertxPlatformHttpSupport {
         return body;
     }
 
-    static Integer determineContentLength(Exchange camelExchange, Object body) {
+    static Integer determineContentLength(Object body) {
         if (body instanceof byte[]) {
             return ((byte[]) body).length;
         } else if (body instanceof ByteBuffer) {
