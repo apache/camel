@@ -29,6 +29,11 @@ The `camel-milo` feature has been removed.
 The `keyResource` option has been changed to `serviceAccountKey` to match to Google semantic. Then, if you use the `keyResource` 
 to Google Drive component, you should update it to  `serviceAccountKey`.
 
+=== camel-google-calendar
+
+The `keyResource` option has been changed to `serviceAccountKey` to match to Google semantic. Then, if you use the `keyResource` 
+to Google Calendar component, you should update it to  `serviceAccountKey`.
+
 === camel-yaml-dsl
 
 The YAML DSL schema files `camel-yaml-dsl.json` and `camelYamlDsl.json` has been moved from root to `schema` sub folder in the JAR.
