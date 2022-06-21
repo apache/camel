@@ -135,8 +135,8 @@ public class JiraConfiguration implements Cloneable {
     }
 
     /**
-     * (Basic authentication only) The password or the API Token to authenticate to the Jira server. Use only if username basic
-     * authentication is used.
+     * (Basic authentication only) The password or the API Token to authenticate to the Jira server. Use only if
+     * username basic authentication is used.
      */
     public void setPassword(String password) {
         this.password = password;
