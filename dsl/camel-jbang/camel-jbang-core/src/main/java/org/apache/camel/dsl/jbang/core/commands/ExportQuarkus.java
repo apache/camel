@@ -48,8 +48,8 @@ class ExportQuarkus extends Export {
     private static final String DEFAULT_CAMEL_CATALOG = "org.apache.camel.catalog.DefaultCamelCatalog";
     private static final String QUARKUS_CATALOG_PROVIDER = "org.apache.camel.catalog.quarkus.QuarkusRuntimeProvider";
 
-    private String camelVersion = null;
-    private String camelQuarkusVersion = null;
+    private String camelVersion;
+    private String camelQuarkusVersion;
 
     public ExportQuarkus(CamelJBangMain main) {
         super(main);
