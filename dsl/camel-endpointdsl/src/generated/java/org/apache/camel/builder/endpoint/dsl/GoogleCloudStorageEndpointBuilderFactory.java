@@ -1489,6 +1489,20 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * Since: 3.9
          * Maven coordinates: org.apache.camel:camel-google-storage
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GoogleCloudStorageHeaderNameBuilder googleStorage() {
+            return GoogleCloudStorageHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Google Storage (camel-google-storage)
+         * Store and retrieve objects from Google Cloud Storage Service using
+         * the google-cloud-storage library.
+         * 
+         * Category: cloud
+         * Since: 3.9
+         * Maven coordinates: org.apache.camel:camel-google-storage
+         * 
          * Syntax: <code>google-storage:bucketName</code>
          * 
          * Path parameter: bucketName (required)
@@ -1523,6 +1537,379 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return GoogleCloudStorageEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Google Storage component.
+     */
+    public static class GoogleCloudStorageHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GoogleCloudStorageHeaderNameBuilder INSTANCE = new GoogleCloudStorageHeaderNameBuilder();
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.google.storage.GoogleCloudStorageOperations} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GoogleCloudStorageOperation}.
+         */
+        public String googleCloudStorageOperation() {
+            return "GoogleCloudStorageOperation";
+        }
+
+        /**
+         * The bucket Name which this object will be stored or which will be
+         * used for the current operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GoogleCloudStorageBucketName}.
+         */
+        public String googleCloudStorageBucketName() {
+            return "GoogleCloudStorageBucketName";
+        }
+
+        /**
+         * The object Name which will be used for the current operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GoogleCloudStorageObjectName}.
+         */
+        public String googleCloudStorageObjectName() {
+            return "GoogleCloudStorageObjectName";
+        }
+
+        /**
+         * The object Destination Name which will be used for the current
+         * operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * GoogleCloudStorageDestinationObjectName}.
+         */
+        public String googleCloudStorageDestinationObjectName() {
+            return "GoogleCloudStorageDestinationObjectName";
+        }
+
+        /**
+         * The bucket Destination Name which will be used for the current
+         * operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * GoogleCloudStorageDestinationBucketName}.
+         */
+        public String googleCloudStorageDestinationBucketName() {
+            return "GoogleCloudStorageDestinationBucketName";
+        }
+
+        /**
+         * The time in millisecond the download link will be valid.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Default: 300000
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * GoogleCloudStorageDownloadLinkExpirationTime}.
+         */
+        public String googleCloudStorageDownloadLinkExpirationTime() {
+            return "GoogleCloudStorageDownloadLinkExpirationTime";
+        }
+
+        /**
+         * The content length of this object.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * GoogleCloudStorageContentLength}.
+         */
+        public String googleCloudStorageContentLength() {
+            return "GoogleCloudStorageContentLength";
+        }
+
+        /**
+         * The content type of this object.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code GoogleCloudStorageContentType}.
+         */
+        public String googleCloudStorageContentType() {
+            return "GoogleCloudStorageContentType";
+        }
+
+        /**
+         * The Cache-Control metadata can specify two different aspects of how
+         * data is served from Cloud Storage: whether the data can be cached and
+         * whether the data can be transformed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * GoogleCloudStorageCacheControl}.
+         */
+        public String googleCloudStorageCacheControl() {
+            return "GoogleCloudStorageCacheControl";
+        }
+
+        /**
+         * The content disposition of this object.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * GoogleCloudStorageContentDisposition}.
+         */
+        public String googleCloudStorageContentDisposition() {
+            return "GoogleCloudStorageContentDisposition";
+        }
+
+        /**
+         * The content encoding of this object.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * GoogleCloudStorageContentEncoding}.
+         */
+        public String googleCloudStorageContentEncoding() {
+            return "GoogleCloudStorageContentEncoding";
+        }
+
+        /**
+         * The md5 checksum of this object.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code GoogleCloudStorageContentMd5}.
+         */
+        public String googleCloudStorageContentMd5() {
+            return "GoogleCloudStorageContentMd5";
+        }
+
+        /**
+         * The name of the blob.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileName}.
+         */
+        public String fileName() {
+            return "FileName";
+        }
+
+        /**
+         * The component count of this object.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * GoogleCloudStorageComponentCount}.
+         */
+        public String googleCloudStorageComponentCount() {
+            return "GoogleCloudStorageComponentCount";
+        }
+
+        /**
+         * The Content-Language metadata indicates the language(s) that the
+         * object is intended for.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * GoogleCloudStorageContentLanguage}.
+         */
+        public String googleCloudStorageContentLanguage() {
+            return "GoogleCloudStorageContentLanguage";
+        }
+
+        /**
+         * The Custom-Time metadata is a user-specified date and time
+         * represented in the RFC 3339 format YYYY-MM-DD'T'HH:MM:SS.SS'Z' or
+         * YYYY-MM-DD'T'HH:MM:SS'Z' when milliseconds are zero. This metadata is
+         * typically set in order to use the DaysSinceCustomTime condition in
+         * Object Lifecycle Management.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleCloudStorageCustomTime}.
+         */
+        public String googleCloudStorageCustomTime() {
+            return "GoogleCloudStorageCustomTime";
+        }
+
+        /**
+         * The CRC32c of the object.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleCloudStorageCrc32cHex}.
+         */
+        public String googleCloudStorageCrc32cHex() {
+            return "GoogleCloudStorageCrc32cHex";
+        }
+
+        /**
+         * The ETag for the Object.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code GoogleCloudStorageETag}.
+         */
+        public String googleCloudStorageETag() {
+            return "GoogleCloudStorageETag";
+        }
+
+        /**
+         * Is the generation number of the object for which you are retrieving
+         * information.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleCloudStorageGeneration}.
+         */
+        public String googleCloudStorageGeneration() {
+            return "GoogleCloudStorageGeneration";
+        }
+
+        /**
+         * The blob id of the object.
+         * 
+         * The option is a: {@code com.google.cloud.storage.BlobId} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleCloudStorageBlobId}.
+         */
+        public String googleCloudStorageBlobId() {
+            return "GoogleCloudStorageBlobId";
+        }
+
+        /**
+         * The KMS key name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleCloudStorageKmsKeyName}.
+         */
+        public String googleCloudStorageKmsKeyName() {
+            return "GoogleCloudStorageKmsKeyName";
+        }
+
+        /**
+         * The media link.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleCloudStorageMediaLink}.
+         */
+        public String googleCloudStorageMediaLink() {
+            return "GoogleCloudStorageMediaLink";
+        }
+
+        /**
+         * The metageneration of the object.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * GoogleCloudStorageMetageneration}.
+         */
+        public String googleCloudStorageMetageneration() {
+            return "GoogleCloudStorageMetageneration";
+        }
+
+        /**
+         * The storage class of the object.
+         * 
+         * The option is a: {@code com.google.cloud.storage.StorageClass} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * GoogleCloudStorageStorageClass}.
+         */
+        public String googleCloudStorageStorageClass() {
+            return "GoogleCloudStorageStorageClass";
+        }
+
+        /**
+         * The creation time of the object.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleCloudStorageCreateTime}.
+         */
+        public String googleCloudStorageCreateTime() {
+            return "GoogleCloudStorageCreateTime";
+        }
+
+        /**
+         * The last update of the object.
+         * 
+         * The option is a: {@code Date} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleCloudStorageLastUpdate}.
+         */
+        public String googleCloudStorageLastUpdate() {
+            return "GoogleCloudStorageLastUpdate";
         }
     }
     static GoogleCloudStorageEndpointBuilder endpointBuilder(

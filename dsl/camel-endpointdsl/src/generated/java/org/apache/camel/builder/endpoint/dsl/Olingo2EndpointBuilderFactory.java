@@ -2049,6 +2049,19 @@ public interface Olingo2EndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-olingo2
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default Olingo2HeaderNameBuilder olingo2() {
+            return Olingo2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Olingo2 (camel-olingo2)
+         * Communicate with OData 2.0 services using Apache Olingo.
+         * 
+         * Category: cloud
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-olingo2
+         * 
          * Syntax: <code>olingo2:apiName/methodName</code>
          * 
          * Path parameter: apiName (required)
@@ -2088,6 +2101,30 @@ public interface Olingo2EndpointBuilderFactory {
          */
         default Olingo2EndpointBuilder olingo2(String componentName, String path) {
             return Olingo2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Olingo2 component.
+     */
+    public static class Olingo2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final Olingo2HeaderNameBuilder INSTANCE = new Olingo2HeaderNameBuilder();
+
+        /**
+         * The response Http headers.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Olingo2.responseHttpHeaders}.
+         */
+        public String olingo2Responsehttpheaders() {
+            return "Olingo2.responseHttpHeaders";
         }
     }
     static Olingo2EndpointBuilder endpointBuilder(

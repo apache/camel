@@ -454,6 +454,20 @@ public interface QuickfixjEndpointBuilderFactory {
          * Since: 2.1
          * Maven coordinates: org.apache.camel:camel-quickfix
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default QuickfixjHeaderNameBuilder quickfix() {
+            return QuickfixjHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * QuickFix (camel-quickfix)
+         * Open a Financial Interchange (FIX) session using an embedded
+         * QuickFix/J engine.
+         * 
+         * Category: messaging
+         * Since: 2.1
+         * Maven coordinates: org.apache.camel:camel-quickfix
+         * 
          * Syntax: <code>quickfix:configurationName</code>
          * 
          * Path parameter: configurationName (required)
@@ -498,6 +512,57 @@ public interface QuickfixjEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return QuickfixjEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the QuickFix component.
+     */
+    public static class QuickfixjHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final QuickfixjHeaderNameBuilder INSTANCE = new QuickfixjHeaderNameBuilder();
+
+        /**
+         * The event category.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.quickfixj.QuickfixjEventCategory} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code EventCategory}.
+         */
+        public String eventCategory() {
+            return "EventCategory";
+        }
+
+        /**
+         * The FIX message SessionID.
+         * 
+         * The option is a: {@code quickfix.SessionID} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SessionID}.
+         */
+        public String sessionID() {
+            return "SessionID";
+        }
+
+        /**
+         * The FIX MsgType tag value.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MessageType}.
+         */
+        public String messageType() {
+            return "MessageType";
         }
     }
     static QuickfixjEndpointBuilder endpointBuilder(

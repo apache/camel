@@ -6109,6 +6109,20 @@ public interface VertxKafkaEndpointBuilderFactory {
          * Since: 3.7
          * Maven coordinates: org.apache.camel:camel-vertx-kafka
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default VertxKafkaHeaderNameBuilder vertxKafka() {
+            return VertxKafkaHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Vert.x Kafka (camel-vertx-kafka)
+         * Sent and receive messages to/from an Apache Kafka broker using vert.x
+         * Kafka client
+         * 
+         * Category: messaging
+         * Since: 3.7
+         * Maven coordinates: org.apache.camel:camel-vertx-kafka
+         * 
          * Syntax: <code>vertx-kafka:topic</code>
          * 
          * Path parameter: topic (required)
@@ -6149,6 +6163,145 @@ public interface VertxKafkaEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return VertxKafkaEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Vert.x Kafka component.
+     */
+    public static class VertxKafkaHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final VertxKafkaHeaderNameBuilder INSTANCE = new VertxKafkaHeaderNameBuilder();
+
+        /**
+         * Producer: Explicitly specify the partition identifier, for example
+         * partition 0. This will trigger the component to produce all the
+         * massages to the specified partition. Consumer: The partition
+         * identifier where the message were consumed from.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code VertxKafkaPartitionId}.
+         */
+        public String vertxKafkaPartitionId() {
+            return "VertxKafkaPartitionId";
+        }
+
+        /**
+         * Producer: Explicitly specify the message key, if partition ID is not
+         * specified, this will trigger the messages to go into the same
+         * partition. Consumer: The message key.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code VertxKafkaMessageKey}.
+         */
+        public String vertxKafkaMessageKey() {
+            return "VertxKafkaMessageKey";
+        }
+
+        /**
+         * Producer: Explicitly specify the topic to where produce the messages,
+         * this will be preserved in case of header aggregation. Consumer: The
+         * topic from where the message originated.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code VertxKafkaTopic}.
+         */
+        public String vertxKafkaTopic() {
+            return "VertxKafkaTopic";
+        }
+
+        /**
+         * Produced record metadata.
+         * 
+         * The option is a: {@code List<RecordMetadata>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code VertxKafkaRecordMetadata}.
+         */
+        public String vertxKafkaRecordMetadata() {
+            return "VertxKafkaRecordMetadata";
+        }
+
+        /**
+         * The offset of the message in Kafka topic.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code VertxKafkaOffset}.
+         */
+        public String vertxKafkaOffset() {
+            return "VertxKafkaOffset";
+        }
+
+        /**
+         * The record Kafka headers.
+         * 
+         * The option is a: {@code List<KafkaHeader>} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code VertxKafkaHeaders}.
+         */
+        public String vertxKafkaHeaders() {
+            return "VertxKafkaHeaders";
+        }
+
+        /**
+         * The timestamp of this record.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code VertxKafkaTimestamp}.
+         */
+        public String vertxKafkaTimestamp() {
+            return "VertxKafkaTimestamp";
+        }
+
+        /**
+         * The ProducerRecord also has an associated timestamp. If the user did
+         * provide a timestamp, the producer will stamp the record with the
+         * provided timestamp and the header is not preserved.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code VertxKafkaOverrideTimestamp}.
+         */
+        public String vertxKafkaOverrideTimestamp() {
+            return "VertxKafkaOverrideTimestamp";
+        }
+
+        /**
+         * Explicitly specify the topic to where produce the messages, this will
+         * not be preserved in case of header aggregation and it will take
+         * precedence over CamelVertxKafkaTopic.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code VertxKafkaOverrideTopic}.
+         */
+        public String vertxKafkaOverrideTopic() {
+            return "VertxKafkaOverrideTopic";
         }
     }
     @Deprecated

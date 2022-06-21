@@ -178,6 +178,19 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * Since: 2.20
          * Maven coordinates: org.apache.camel:camel-google-bigquery
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GoogleBigQueryHeaderNameBuilder googleBigquery() {
+            return GoogleBigQueryHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Google BigQuery (camel-google-bigquery)
+         * Google BigQuery data warehouse for analytics.
+         * 
+         * Category: cloud,bigdata
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-google-bigquery
+         * 
          * Syntax: <code>google-bigquery:projectId:datasetId:tableId</code>
          * 
          * Path parameter: projectId (required)
@@ -223,6 +236,71 @@ public interface GoogleBigQueryEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return GoogleBigQueryEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Google BigQuery component.
+     */
+    public static class GoogleBigQueryHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GoogleBigQueryHeaderNameBuilder INSTANCE = new GoogleBigQueryHeaderNameBuilder();
+
+        /**
+         * Table suffix to use when inserting data.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GoogleBigQueryTableSuffix}.
+         */
+        public String googleBigQueryTableSuffix() {
+            return "GoogleBigQueryTableSuffix";
+        }
+
+        /**
+         * Table id where data will be submitted. If specified will override
+         * endpoint configuration.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GoogleBigQueryTableId}.
+         */
+        public String googleBigQueryTableId() {
+            return "GoogleBigQueryTableId";
+        }
+
+        /**
+         * InsertId to use when inserting data.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GoogleBigQueryInsertId}.
+         */
+        public String googleBigQueryInsertId() {
+            return "GoogleBigQueryInsertId";
+        }
+
+        /**
+         * Partition decorator to indicate partition to use when inserting data.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * GoogleBigQueryPartitionDecorator}.
+         */
+        public String googleBigQueryPartitionDecorator() {
+            return "GoogleBigQueryPartitionDecorator";
         }
     }
     static GoogleBigQueryEndpointBuilder endpointBuilder(

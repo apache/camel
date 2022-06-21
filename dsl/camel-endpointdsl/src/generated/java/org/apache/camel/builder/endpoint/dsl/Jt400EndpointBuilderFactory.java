@@ -1558,6 +1558,21 @@ public interface Jt400EndpointBuilderFactory {
          * Since: 1.5
          * Maven coordinates: org.apache.camel:camel-jt400
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default Jt400HeaderNameBuilder jt400() {
+            return Jt400HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * JT400 (camel-jt400)
+         * Exchanges messages with an IBM i system using data queues, message
+         * queues, or program call. IBM i is the replacement for AS/400 and
+         * iSeries servers.
+         * 
+         * Category: messaging
+         * Since: 1.5
+         * Maven coordinates: org.apache.camel:camel-jt400
+         * 
          * Syntax:
          * <code>jt400:userID:password@systemName/QSYS.LIB/objectPath.type</code>
          * 
@@ -1623,6 +1638,144 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointBuilder jt400(String componentName, String path) {
             return Jt400EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the JT400 component.
+     */
+    public static class Jt400HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final Jt400HeaderNameBuilder INSTANCE = new Jt400HeaderNameBuilder();
+
+        /**
+         * Data queues: Returns the sender information for this data queue
+         * entry, or an empty string if not available.Message queues: The job
+         * identifier of the sending job.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SENDER_INFORMATION}.
+         */
+        public String senderInformation() {
+            return "SENDER_INFORMATION";
+        }
+
+        /**
+         * The data queue key.
+         * 
+         * The option is a: {@code String or byte[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KEY}.
+         */
+        public String kEY() {
+            return "KEY";
+        }
+
+        /**
+         * The message received.
+         * 
+         * The option is a: {@code com.ibm.as400.access.QueuedMessage} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code Jt400Message}.
+         */
+        public String jt400Message() {
+            return "Jt400Message";
+        }
+
+        /**
+         * The message identifier.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code Jt400MessageID}.
+         */
+        public String jt400MessageID() {
+            return "Jt400MessageID";
+        }
+
+        /**
+         * The message file name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code Jt400MessageFile}.
+         */
+        public String jt400MessageFile() {
+            return "Jt400MessageFile";
+        }
+
+        /**
+         * The message type (corresponds to constants defined in the
+         * AS400Message class).
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code Jt400MessageType}.
+         */
+        public String jt400MessageType() {
+            return "Jt400MessageType";
+        }
+
+        /**
+         * The message severity (Valid values are between 0 and 99, or -1 if it
+         * is not set).
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code Jt400MessageSeverity}.
+         */
+        public String jt400MessageSeverity() {
+            return "Jt400MessageSeverity";
+        }
+
+        /**
+         * The default message reply, when the message is an inquiry message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code Jt400MessageDefaultReply}.
+         */
+        public String jt400MessageDefaultReply() {
+            return "Jt400MessageDefaultReply";
+        }
+
+        /**
+         * Consumer: The key of the message that will be replied to (if the
+         * sendingReply parameter is set to true). Producer: If set, and if the
+         * message body is not empty, a new message will not be sent to the
+         * provided message queue. Instead, a response will be sent to the
+         * message identified by the given key. This is set automatically when
+         * reading from the message queue if the sendingReply parameter is set
+         * to true.
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Jt400MessageReplyToKey}.
+         */
+        public String jt400MessageReplyToKey() {
+            return "Jt400MessageReplyToKey";
         }
     }
     static Jt400EndpointBuilder endpointBuilder(

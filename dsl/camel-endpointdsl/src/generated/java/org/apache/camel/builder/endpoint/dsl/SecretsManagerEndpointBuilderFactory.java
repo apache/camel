@@ -488,6 +488,19 @@ public interface SecretsManagerEndpointBuilderFactory {
          * Since: 3.9
          * Maven coordinates: org.apache.camel:camel-aws-secrets-manager
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SecretsManagerHeaderNameBuilder awsSecretsManager() {
+            return SecretsManagerHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Secrets Manager (camel-aws-secrets-manager)
+         * Manage AWS Secrets Manager services using AWS SDK version 2.x.
+         * 
+         * Category: cloud,management
+         * Since: 3.9
+         * Maven coordinates: org.apache.camel:camel-aws-secrets-manager
+         * 
          * Syntax: <code>aws-secrets-manager:label</code>
          * 
          * Path parameter: label (required)
@@ -521,6 +534,125 @@ public interface SecretsManagerEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return SecretsManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Secrets Manager component.
+     */
+    public static class SecretsManagerHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SecretsManagerHeaderNameBuilder INSTANCE = new SecretsManagerHeaderNameBuilder();
+
+        /**
+         * The operation we want to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsSecretsManagerOperation}.
+         */
+        public String awsSecretsManagerOperation() {
+            return "AwsSecretsManagerOperation";
+        }
+
+        /**
+         * The number of results to include in the response.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsSecretsManagerMaxResults}.
+         */
+        public String awsSecretsManagerMaxResults() {
+            return "AwsSecretsManagerMaxResults";
+        }
+
+        /**
+         * The name of the secret.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsSecretsManagerSecretName}.
+         */
+        public String awsSecretsManagerSecretName() {
+            return "AwsSecretsManagerSecretName";
+        }
+
+        /**
+         * The description of the secret.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsSecretsManagerSecretDescription}.
+         */
+        public String awsSecretsManagerSecretDescription() {
+            return "AwsSecretsManagerSecretDescription";
+        }
+
+        /**
+         * The ARN or name of the secret.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsSecretsManagerSecretId}.
+         */
+        public String awsSecretsManagerSecretId() {
+            return "AwsSecretsManagerSecretId";
+        }
+
+        /**
+         * The ARN of the Lambda rotation function that can rotate the secret.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsSecretsManagerLambdaRotationFunctionArn}.
+         */
+        public String awsSecretsManagerLambdaRotationFunctionArn() {
+            return "AwsSecretsManagerLambdaRotationFunctionArn";
+        }
+
+        /**
+         * The unique identifier of the version of the secret.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsSecretsManagerSecretVersionId}.
+         */
+        public String awsSecretsManagerSecretVersionId() {
+            return "AwsSecretsManagerSecretVersionId";
+        }
+
+        /**
+         * A comma separated list of Regions in which to replicate the secret.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsSecretsManagerSecretReplicationRegions}.
+         */
+        public String awsSecretsManagerSecretReplicationRegions() {
+            return "AwsSecretsManagerSecretReplicationRegions";
         }
     }
     static SecretsManagerEndpointBuilder endpointBuilder(

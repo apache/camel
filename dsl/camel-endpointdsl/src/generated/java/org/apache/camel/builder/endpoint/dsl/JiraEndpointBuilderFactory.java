@@ -791,6 +791,19 @@ public interface JiraEndpointBuilderFactory {
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-jira
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default JiraHeaderNameBuilder jira() {
+            return JiraHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Jira (camel-jira)
+         * Interact with JIRA issue tracker.
+         * 
+         * Category: api,reporting
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-jira
+         * 
          * Syntax: <code>jira:type</code>
          * 
          * Path parameter: type (required)
@@ -834,6 +847,252 @@ public interface JiraEndpointBuilderFactory {
          */
         default JiraEndpointBuilder jira(String componentName, String path) {
             return JiraEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Jira component.
+     */
+    public static class JiraHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final JiraHeaderNameBuilder INSTANCE = new JiraHeaderNameBuilder();
+
+        /**
+         * The assignee's name of the issue.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IssueAssignee}.
+         */
+        public String issueAssignee() {
+            return "IssueAssignee";
+        }
+
+        /**
+         * The comments of the issue.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IssueComponents}.
+         */
+        public String issueComponents() {
+            return "IssueComponents";
+        }
+
+        /**
+         * The name of the updated field (i.e Status).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IssueChanged}.
+         */
+        public String issueChanged() {
+            return "IssueChanged";
+        }
+
+        /**
+         * The id of the issue.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code IssueKey}.
+         */
+        public String issueKey() {
+            return "IssueKey";
+        }
+
+        /**
+         * The priority's id of the issue.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IssuePriorityId}.
+         */
+        public String issuePriorityId() {
+            return "IssuePriorityId";
+        }
+
+        /**
+         * The priority's name of the issue.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IssuePriorityName}.
+         */
+        public String issuePriorityName() {
+            return "IssuePriorityName";
+        }
+
+        /**
+         * The project's id of the issue.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ProjectKey}.
+         */
+        public String projectKey() {
+            return "ProjectKey";
+        }
+
+        /**
+         * The summary of the issue.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IssueSummary}.
+         */
+        public String issueSummary() {
+            return "IssueSummary";
+        }
+
+        /**
+         * The transition id.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IssueTransitionId}.
+         */
+        public String issueTransitionId() {
+            return "IssueTransitionId";
+        }
+
+        /**
+         * The type's id of the issue.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IssueTypeId}.
+         */
+        public String issueTypeId() {
+            return "IssueTypeId";
+        }
+
+        /**
+         * The type's name of the issue.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IssueTypeName}.
+         */
+        public String issueTypeName() {
+            return "IssueTypeName";
+        }
+
+        /**
+         * The list of all issue keys that are watched in the time of update.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IssueWatchedIssues}.
+         */
+        public String issueWatchedIssues() {
+            return "IssueWatchedIssues";
+        }
+
+        /**
+         * The watchers of the issue to add.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IssueWatchersAdd}.
+         */
+        public String issueWatchersAdd() {
+            return "IssueWatchersAdd";
+        }
+
+        /**
+         * The watchers of the issue to remove.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IssueWatchersRemove}.
+         */
+        public String issueWatchersRemove() {
+            return "IssueWatchersRemove";
+        }
+
+        /**
+         * The id of the parent issue.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ParentIssueKey}.
+         */
+        public String parentIssueKey() {
+            return "ParentIssueKey";
+        }
+
+        /**
+         * The id of the child issue.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ChildIssueKey}.
+         */
+        public String childIssueKey() {
+            return "ChildIssueKey";
+        }
+
+        /**
+         * The type of link.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code linkType}.
+         */
+        public String linkType() {
+            return "linkType";
+        }
+
+        /**
+         * The minutes spent.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Default: -1
+         * Group: producer
+         * 
+         * @return the name of the header {@code minutesSpent}.
+         */
+        public String minutesSpent() {
+            return "minutesSpent";
         }
     }
     static JiraEndpointBuilder endpointBuilder(String componentName, String path) {

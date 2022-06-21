@@ -452,6 +452,19 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KubernetesServiceAccountsHeaderNameBuilder kubernetesServiceAccounts() {
+            return KubernetesServiceAccountsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kubernetes Service Account (camel-kubernetes)
+         * Perform operations on Kubernetes Service Accounts.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>kubernetes-service-accounts:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -486,6 +499,85 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KubernetesServiceAccountsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kubernetes Service Account
+     * component.
+     */
+    public static class KubernetesServiceAccountsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KubernetesServiceAccountsHeaderNameBuilder INSTANCE = new KubernetesServiceAccountsHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The namespace name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNamespaceName}.
+         */
+        public String kubernetesNamespaceName() {
+            return "KubernetesNamespaceName";
+        }
+
+        /**
+         * The service account labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * KubernetesServiceAccountsLabels}.
+         */
+        public String kubernetesServiceAccountsLabels() {
+            return "KubernetesServiceAccountsLabels";
+        }
+
+        /**
+         * The service account name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesServiceAccountName}.
+         */
+        public String kubernetesServiceAccountName() {
+            return "KubernetesServiceAccountName";
+        }
+
+        /**
+         * A service account object.
+         * 
+         * The option is a: {@code
+         * io.fabric8.kubernetes.api.model.ServiceAccount} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesServiceAccount}.
+         */
+        public String kubernetesServiceAccount() {
+            return "KubernetesServiceAccount";
         }
     }
     static KubernetesServiceAccountsEndpointBuilder endpointBuilder(

@@ -313,6 +313,19 @@ public interface IgniteQueueEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-ignite
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default IgniteQueueHeaderNameBuilder igniteQueue() {
+            return IgniteQueueHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Ignite Queues (camel-ignite)
+         * Interact with Ignite Queue data structures.
+         * 
+         * Category: messaging,queue
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
          * Syntax: <code>ignite-queue:name</code>
          * 
          * Path parameter: name (required)
@@ -346,6 +359,71 @@ public interface IgniteQueueEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return IgniteQueueEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Ignite Queues component.
+     */
+    public static class IgniteQueueHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final IgniteQueueHeaderNameBuilder INSTANCE = new IgniteQueueHeaderNameBuilder();
+
+        /**
+         * Allows you to dynamically change the queue operation.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.ignite.queue.IgniteQueueOperation} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IgniteQueueOperation}.
+         */
+        public String igniteQueueOperation() {
+            return "IgniteQueueOperation";
+        }
+
+        /**
+         * When invoking the DRAIN operation, the amount of items to drain.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IgniteQueueMaxElements}.
+         */
+        public String igniteQueueMaxElements() {
+            return "IgniteQueueMaxElements";
+        }
+
+        /**
+         * The amount of items transferred as the result of the DRAIN operation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IgniteQueueTransferredCount}.
+         */
+        public String igniteQueueTransferredCount() {
+            return "IgniteQueueTransferredCount";
+        }
+
+        /**
+         * Dynamically sets the timeout in milliseconds to use when invoking the
+         * OFFER or POLL operations.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IgniteQueueTimeoutMillis}.
+         */
+        public String igniteQueueTimeoutMillis() {
+            return "IgniteQueueTimeoutMillis";
         }
     }
     static IgniteQueueEndpointBuilder endpointBuilder(

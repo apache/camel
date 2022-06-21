@@ -455,6 +455,20 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KubernetesPersistentVolumesClaimsHeaderNameBuilder kubernetesPersistentVolumesClaims() {
+            return KubernetesPersistentVolumesClaimsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kubernetes Persistent Volume Claim (camel-kubernetes)
+         * Perform operations on Kubernetes Persistent Volumes Claims and get
+         * notified on Persistent Volumes Claim changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>kubernetes-persistent-volumes-claims:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -490,6 +504,87 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KubernetesPersistentVolumesClaimsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kubernetes Persistent Volume Claim
+     * component.
+     */
+    public static class KubernetesPersistentVolumesClaimsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KubernetesPersistentVolumesClaimsHeaderNameBuilder INSTANCE = new KubernetesPersistentVolumesClaimsHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The namespace name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNamespaceName}.
+         */
+        public String kubernetesNamespaceName() {
+            return "KubernetesNamespaceName";
+        }
+
+        /**
+         * The persistent volume claim labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * KubernetesPersistentVolumesClaimsLabels}.
+         */
+        public String kubernetesPersistentVolumesClaimsLabels() {
+            return "KubernetesPersistentVolumesClaimsLabels";
+        }
+
+        /**
+         * The persistent volume claim name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * KubernetesPersistentVolumeClaimName}.
+         */
+        public String kubernetesPersistentVolumeClaimName() {
+            return "KubernetesPersistentVolumeClaimName";
+        }
+
+        /**
+         * The spec for a persistent volume claim.
+         * 
+         * The option is a: {@code
+         * io.fabric8.kubernetes.api.model.PersistentVolumeClaimSpec} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * KubernetesPersistentVolumeClaimSpec}.
+         */
+        public String kubernetesPersistentVolumeClaimSpec() {
+            return "KubernetesPersistentVolumeClaimSpec";
         }
     }
     static KubernetesPersistentVolumesClaimsEndpointBuilder endpointBuilder(

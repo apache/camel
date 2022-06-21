@@ -1468,6 +1468,19 @@ public interface ServiceBusEndpointBuilderFactory {
          * Since: 3.12
          * Maven coordinates: org.apache.camel:camel-azure-servicebus
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default ServiceBusHeaderNameBuilder azureServicebus() {
+            return ServiceBusHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Azure ServiceBus (camel-azure-servicebus)
+         * Send and receive messages to/from Azure Event Bus.
+         * 
+         * Category: cloud,messaging
+         * Since: 3.12
+         * Maven coordinates: org.apache.camel:camel-azure-servicebus
+         * 
          * Syntax: <code>azure-servicebus:topicOrQueueName</code>
          * 
          * Path parameter: topicOrQueueName
@@ -1507,6 +1520,360 @@ public interface ServiceBusEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return ServiceBusEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Azure ServiceBus component.
+     */
+    public static class ServiceBusHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final ServiceBusHeaderNameBuilder INSTANCE = new ServiceBusHeaderNameBuilder();
+
+        /**
+         * Gets the set of free-form ServiceBusReceivedMessage properties which
+         * may be used for passing metadata associated with the
+         * ServiceBusReceivedMessagel during Service Bus operations.
+         * 
+         * The option is a: {@code Map<String, Object>} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureServiceBusApplicationProperties}.
+         */
+        public String azureServiceBusApplicationProperties() {
+            return "AzureServiceBusApplicationProperties";
+        }
+
+        /**
+         * Gets the content type of the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusContentType}.
+         */
+        public String azureServiceBusContentType() {
+            return "AzureServiceBusContentType";
+        }
+
+        /**
+         * Gets a correlation identifier.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusCorrelationId}.
+         */
+        public String azureServiceBusCorrelationId() {
+            return "AzureServiceBusCorrelationId";
+        }
+
+        /**
+         * Gets the description for a message that has been dead-lettered.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureServiceBusDeadLetterErrorDescription}.
+         */
+        public String azureServiceBusDeadLetterErrorDescription() {
+            return "AzureServiceBusDeadLetterErrorDescription";
+        }
+
+        /**
+         * Gets the reason a message was dead-lettered.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureServiceBusDeadLetterReason}.
+         */
+        public String azureServiceBusDeadLetterReason() {
+            return "AzureServiceBusDeadLetterReason";
+        }
+
+        /**
+         * Gets the name of the queue or subscription that this message was
+         * enqueued on, before it was dead-lettered.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureServiceBusDeadLetterSource}.
+         */
+        public String azureServiceBusDeadLetterSource() {
+            return "AzureServiceBusDeadLetterSource";
+        }
+
+        /**
+         * Gets the number of the times this message was delivered to clients.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusDeliveryCount}.
+         */
+        public String azureServiceBusDeliveryCount() {
+            return "AzureServiceBusDeliveryCount";
+        }
+
+        /**
+         * Gets the enqueued sequence number assigned to a message by Service
+         * Bus.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureServiceBusEnqueuedSequenceNumber}.
+         */
+        public String azureServiceBusEnqueuedSequenceNumber() {
+            return "AzureServiceBusEnqueuedSequenceNumber";
+        }
+
+        /**
+         * Gets the datetime at which this message was enqueued in Azure Service
+         * Bus.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusEnqueuedTime}.
+         */
+        public String azureServiceBusEnqueuedTime() {
+            return "AzureServiceBusEnqueuedTime";
+        }
+
+        /**
+         * Gets the datetime at which this message will expire.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusExpiresAt}.
+         */
+        public String azureServiceBusExpiresAt() {
+            return "AzureServiceBusExpiresAt";
+        }
+
+        /**
+         * Gets the lock token for the current message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusLockToken}.
+         */
+        public String azureServiceBusLockToken() {
+            return "AzureServiceBusLockToken";
+        }
+
+        /**
+         * Gets the datetime at which the lock of this message expires.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusLockedUntil}.
+         */
+        public String azureServiceBusLockedUntil() {
+            return "AzureServiceBusLockedUntil";
+        }
+
+        /**
+         * Gets the identifier for the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusMessageId}.
+         */
+        public String azureServiceBusMessageId() {
+            return "AzureServiceBusMessageId";
+        }
+
+        /**
+         * Gets the partition key for sending a message to a partitioned entity.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusPartitionKey}.
+         */
+        public String azureServiceBusPartitionKey() {
+            return "AzureServiceBusPartitionKey";
+        }
+
+        /**
+         * The representation of message as defined by AMQP protocol.
+         * 
+         * The option is a: {@code AmqpAnnotatedMessage} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusRawAmqpMessage}.
+         */
+        public String azureServiceBusRawAmqpMessage() {
+            return "AzureServiceBusRawAmqpMessage";
+        }
+
+        /**
+         * Gets the address of an entity to send replies to.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusReplyTo}.
+         */
+        public String azureServiceBusReplyTo() {
+            return "AzureServiceBusReplyTo";
+        }
+
+        /**
+         * Gets or sets a session identifier augmenting the ReplyTo address.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureServiceBusReplyToSessionId}.
+         */
+        public String azureServiceBusReplyToSessionId() {
+            return "AzureServiceBusReplyToSessionId";
+        }
+
+        /**
+         * Gets the unique number assigned to a message by Service Bus.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusSequenceNumber}.
+         */
+        public String azureServiceBusSequenceNumber() {
+            return "AzureServiceBusSequenceNumber";
+        }
+
+        /**
+         * Gets the session id of the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusSessionId}.
+         */
+        public String azureServiceBusSessionId() {
+            return "AzureServiceBusSessionId";
+        }
+
+        /**
+         * Gets the subject for the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusSubject}.
+         */
+        public String azureServiceBusSubject() {
+            return "AzureServiceBusSubject";
+        }
+
+        /**
+         * Gets the duration before this message expires.
+         * 
+         * The option is a: {@code Duration} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusTimeToLive}.
+         */
+        public String azureServiceBusTimeToLive() {
+            return "AzureServiceBusTimeToLive";
+        }
+
+        /**
+         * Gets the to address.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureServiceBusTo}.
+         */
+        public String azureServiceBusTo() {
+            return "AzureServiceBusTo";
+        }
+
+        /**
+         * (producer)Overrides the OffsetDateTime at which the message should
+         * appear in the Service Bus queue or topic. (consumer) Gets the
+         * scheduled enqueue time of this message.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AzureServiceBusScheduledEnqueueTime}.
+         */
+        public String azureServiceBusScheduledEnqueueTime() {
+            return "AzureServiceBusScheduledEnqueueTime";
+        }
+
+        /**
+         * Overrides the transaction in service. This object just contains
+         * transaction id.
+         * 
+         * The option is a: {@code ServiceBusTransactionContext} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureServiceBusServiceBusTransactionContext}.
+         */
+        public String azureServiceBusServiceBusTransactionContext() {
+            return "AzureServiceBusServiceBusTransactionContext";
+        }
+
+        /**
+         * Overrides the desired operation to be used in the producer.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureServiceBusProducerOperation}.
+         */
+        public String azureServiceBusProducerOperation() {
+            return "AzureServiceBusProducerOperation";
         }
     }
     static ServiceBusEndpointBuilder endpointBuilder(

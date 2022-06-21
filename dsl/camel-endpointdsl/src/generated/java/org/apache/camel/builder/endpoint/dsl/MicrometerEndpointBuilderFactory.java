@@ -172,6 +172,20 @@ public interface MicrometerEndpointBuilderFactory {
          * Since: 2.22
          * Maven coordinates: org.apache.camel:camel-micrometer
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default MicrometerHeaderNameBuilder micrometer() {
+            return MicrometerHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Micrometer (camel-micrometer)
+         * Collect various metrics directly from Camel routes using the
+         * Micrometer library.
+         * 
+         * Category: monitoring
+         * Since: 2.22
+         * Maven coordinates: org.apache.camel:camel-micrometer
+         * 
          * Syntax: <code>micrometer:metricsType:metricsName</code>
          * 
          * Path parameter: metricsType (required)
@@ -222,6 +236,96 @@ public interface MicrometerEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return MicrometerEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Micrometer component.
+     */
+    public static class MicrometerHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final MicrometerHeaderNameBuilder INSTANCE = new MicrometerHeaderNameBuilder();
+
+        /**
+         * Override timer action in URI.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.micrometer.MicrometerTimerAction} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MetricsTimerAction}.
+         */
+        public String metricsTimerAction() {
+            return "MetricsTimerAction";
+        }
+
+        /**
+         * Override histogram value in URI.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MetricsHistogramValue}.
+         */
+        public String metricsHistogramValue() {
+            return "MetricsHistogramValue";
+        }
+
+        /**
+         * Override decrement value in URI.
+         * 
+         * The option is a: {@code Double} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MetricsCounterDecrement}.
+         */
+        public String metricsCounterDecrement() {
+            return "MetricsCounterDecrement";
+        }
+
+        /**
+         * Override increment value in URI.
+         * 
+         * The option is a: {@code Double} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MetricsCounterIncrement}.
+         */
+        public String metricsCounterIncrement() {
+            return "MetricsCounterIncrement";
+        }
+
+        /**
+         * Override name value in URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MetricsName}.
+         */
+        public String metricsName() {
+            return "MetricsName";
+        }
+
+        /**
+         * To augment meter tags defined as URI parameters.
+         * 
+         * The option is a: {@code java.lang.Iterable<Tag>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MetricsTags}.
+         */
+        public String metricsTags() {
+            return "MetricsTags";
         }
     }
     static MicrometerEndpointBuilder endpointBuilder(

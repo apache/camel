@@ -2117,6 +2117,19 @@ public interface IrcEndpointBuilderFactory {
          * Since: 1.1
          * Maven coordinates: org.apache.camel:camel-irc
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default IrcHeaderNameBuilder irc() {
+            return IrcHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * IRC (camel-irc)
+         * Send and receive messages to/from and IRC chat.
+         * 
+         * Category: chat
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-irc
+         * 
          * Syntax: <code>irc:hostname:port</code>
          * 
          * Path parameter: hostname (required)
@@ -2156,6 +2169,149 @@ public interface IrcEndpointBuilderFactory {
          */
         default IrcEndpointBuilder irc(String componentName, String path) {
             return IrcEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the IRC component.
+     */
+    public static class IrcHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final IrcHeaderNameBuilder INSTANCE = new IrcHeaderNameBuilder();
+
+        /**
+         * The type of message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code irc.messageType}.
+         */
+        public String ircMessagetype() {
+            return "irc.messageType";
+        }
+
+        /**
+         * The target.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code irc.target}.
+         */
+        public String ircTarget() {
+            return "irc.target";
+        }
+
+        /**
+         * The nickname or channel the message should be sent to.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code irc.sendTo}.
+         */
+        public String ircSendto() {
+            return "irc.sendTo";
+        }
+
+        /**
+         * The nickname of the user who is kicked from a channel (passive).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code irc.user.kicked}.
+         */
+        public String ircUserKicked() {
+            return "irc.user.kicked";
+        }
+
+        /**
+         * The host of the person who sent the line.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code irc.user.host}.
+         */
+        public String ircUserHost() {
+            return "irc.user.host";
+        }
+
+        /**
+         * The nickname of the person who sent the line or the server name of
+         * the server which sent the line.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code irc.user.nick}.
+         */
+        public String ircUserNick() {
+            return "irc.user.nick";
+        }
+
+        /**
+         * The server name of the server which sent the line or the nickname of
+         * the person who sent the line.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code irc.user.servername}.
+         */
+        public String ircUserServername() {
+            return "irc.user.servername";
+        }
+
+        /**
+         * The username of the person who sent the line.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code irc.user.username}.
+         */
+        public String ircUserUsername() {
+            return "irc.user.username";
+        }
+
+        /**
+         * The numeric reply.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code irc.num}.
+         */
+        public String ircNum() {
+            return "irc.num";
+        }
+
+        /**
+         * The first part of the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code irc.value}.
+         */
+        public String ircValue() {
+            return "irc.value";
         }
     }
     static IrcEndpointBuilder endpointBuilder(String componentName, String path) {

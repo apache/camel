@@ -1960,6 +1960,19 @@ public interface ResteasyEndpointBuilderFactory {
          * Since: 3.4
          * Maven coordinates: org.apache.camel:camel-resteasy
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default ResteasyHeaderNameBuilder resteasy() {
+            return ResteasyHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Resteasy (camel-resteasy)
+         * Expose REST endpoints and access external REST servers.
+         * 
+         * Category: rest
+         * Since: 3.4
+         * Maven coordinates: org.apache.camel:camel-resteasy
+         * 
          * Syntax: <code>resteasy:httpUri</code>
          * 
          * Path parameter: httpUri (required)
@@ -1993,6 +2006,161 @@ public interface ResteasyEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return ResteasyEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Resteasy component.
+     */
+    public static class ResteasyHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final ResteasyHeaderNameBuilder INSTANCE = new ResteasyHeaderNameBuilder();
+
+        /**
+         * The resteasy method to process the request.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ResteasyProxyMethod}.
+         */
+        public String resteasyProxyMethod() {
+            return "ResteasyProxyMethod";
+        }
+
+        /**
+         * The proxy method params.
+         * 
+         * The option is a: {@code java.util.ArrayList} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ResteasyProxyMethodArgs}.
+         */
+        public String resteasyProxyMethodArgs() {
+            return "ResteasyProxyMethodArgs";
+        }
+
+        /**
+         * The username.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ResteasyLogin}.
+         */
+        public String resteasyLogin() {
+            return "ResteasyLogin";
+        }
+
+        /**
+         * The password.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ResteasyPassword}.
+         */
+        public String resteasyPassword() {
+            return "ResteasyPassword";
+        }
+
+        /**
+         * The context path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code ResteasyContextPath}.
+         */
+        public String resteasyContextPath() {
+            return "ResteasyContextPath";
+        }
+
+        /**
+         * The resteasy method to process the request.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ResteasyHttpMethod}.
+         */
+        public String resteasyHttpMethod() {
+            return "ResteasyHttpMethod";
+        }
+
+        /**
+         * The http request.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code ResteasyHttpRequest}.
+         */
+        public String resteasyHttpRequest() {
+            return "ResteasyHttpRequest";
+        }
+
+        /**
+         * The proxy client exception.
+         * 
+         * The option is a: {@code Exception} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * ResteasyProxyProducerException}.
+         */
+        public String resteasyProxyProducerException() {
+            return "ResteasyProxyProducerException";
+        }
+
+        /**
+         * The http query.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpQuery}.
+         */
+        public String httpQuery() {
+            return "HttpQuery";
+        }
+
+        /**
+         * The content type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Content-Type}.
+         */
+        public String contentType() {
+            return "Content-Type";
+        }
+
+        /**
+         * The http path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code HttpPath}.
+         */
+        public String httpPath() {
+            return "HttpPath";
         }
     }
     static ResteasyEndpointBuilder endpointBuilder(

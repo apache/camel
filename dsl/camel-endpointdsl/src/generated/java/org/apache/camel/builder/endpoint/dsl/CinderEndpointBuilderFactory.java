@@ -247,6 +247,19 @@ public interface CinderEndpointBuilderFactory {
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-openstack
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default CinderHeaderNameBuilder openstackCinder() {
+            return CinderHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * OpenStack Cinder (camel-openstack)
+         * Access data in OpenStack Cinder block storage.
+         * 
+         * Category: cloud,paas
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-openstack
+         * 
          * Syntax: <code>openstack-cinder:host</code>
          * 
          * Path parameter: host (required)
@@ -280,6 +293,160 @@ public interface CinderEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return CinderEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the OpenStack Cinder component.
+     */
+    public static class CinderHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final CinderHeaderNameBuilder INSTANCE = new CinderHeaderNameBuilder();
+
+        /**
+         * Size of volume.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: volume
+         * 
+         * @return the name of the header {@code size}.
+         */
+        public String size() {
+            return "size";
+        }
+
+        /**
+         * Volume type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: volume
+         * 
+         * @return the name of the header {@code volumeType}.
+         */
+        public String volumeType() {
+            return "volumeType";
+        }
+
+        /**
+         * ID of image.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: volume
+         * 
+         * @return the name of the header {@code imageRef}.
+         */
+        public String imageRef() {
+            return "imageRef";
+        }
+
+        /**
+         * ID of snapshot.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: volume
+         * 
+         * @return the name of the header {@code snapshotId}.
+         */
+        public String snapshotId() {
+            return "snapshotId";
+        }
+
+        /**
+         * Is bootable.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: volume
+         * 
+         * @return the name of the header {@code isBootable}.
+         */
+        public String isBootable() {
+            return "isBootable";
+        }
+
+        /**
+         * The Volume ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: snapshot
+         * 
+         * @return the name of the header {@code volumeId}.
+         */
+        public String volumeId() {
+            return "volumeId";
+        }
+
+        /**
+         * Force.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: snapshot
+         * 
+         * @return the name of the header {@code force}.
+         */
+        public String force() {
+            return "force";
+        }
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code operation}.
+         */
+        public String operation() {
+            return "operation";
+        }
+
+        /**
+         * The ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ID}.
+         */
+        public String iD() {
+            return "ID";
+        }
+
+        /**
+         * The name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code name}.
+         */
+        public String name() {
+            return "name";
+        }
+
+        /**
+         * The description.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code description}.
+         */
+        public String description() {
+            return "description";
         }
     }
     static CinderEndpointBuilder endpointBuilder(

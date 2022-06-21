@@ -463,6 +463,19 @@ public interface GitEndpointBuilderFactory {
          * Since: 2.16
          * Maven coordinates: org.apache.camel:camel-git
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GitHeaderNameBuilder git() {
+            return GitHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Git (camel-git)
+         * Perform operations on git repositories.
+         * 
+         * Category: file
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-git
+         * 
          * Syntax: <code>git:localPath</code>
          * 
          * Path parameter: localPath (required)
@@ -494,6 +507,174 @@ public interface GitEndpointBuilderFactory {
          */
         default GitEndpointBuilder git(String componentName, String path) {
             return GitEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Git component.
+     */
+    public static class GitHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GitHeaderNameBuilder INSTANCE = new GitHeaderNameBuilder();
+
+        /**
+         * The operation to do on a repository, if not specified as endpoint
+         * option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GitOperation}.
+         */
+        public String gitOperation() {
+            return "GitOperation";
+        }
+
+        /**
+         * The file name in an add operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GitFilename}.
+         */
+        public String gitFilename() {
+            return "GitFilename";
+        }
+
+        /**
+         * The commit message related in a commit operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GitCommitMessage}.
+         */
+        public String gitCommitMessage() {
+            return "GitCommitMessage";
+        }
+
+        /**
+         * The commit username in a commit operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GitCommitUsername}.
+         */
+        public String gitCommitUsername() {
+            return "GitCommitUsername";
+        }
+
+        /**
+         * The commit email in a commit operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GitCommitEmail}.
+         */
+        public String gitCommitEmail() {
+            return "GitCommitEmail";
+        }
+
+        /**
+         * The commit id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code GitCommitId}.
+         */
+        public String gitCommitId() {
+            return "GitCommitId";
+        }
+
+        /**
+         * The flag to manage empty git commits.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GitAllowEmpty}.
+         */
+        public String gitAllowEmpty() {
+            return "GitAllowEmpty";
+        }
+
+        /**
+         * The author name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GitAuthorName}.
+         */
+        public String gitAuthorName() {
+            return "GitAuthorName";
+        }
+
+        /**
+         * The committer name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GitCommiterName}.
+         */
+        public String gitCommiterName() {
+            return "GitCommiterName";
+        }
+
+        /**
+         * The commit time.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GitCommitTime}.
+         */
+        public String gitCommitTime() {
+            return "GitCommitTime";
+        }
+
+        /**
+         * The leaf.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GitBranchLeaf}.
+         */
+        public String gitBranchLeaf() {
+            return "GitBranchLeaf";
+        }
+
+        /**
+         * The object id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GitBranchObjectId}.
+         */
+        public String gitBranchObjectId() {
+            return "GitBranchObjectId";
         }
     }
     static GitEndpointBuilder endpointBuilder(String componentName, String path) {

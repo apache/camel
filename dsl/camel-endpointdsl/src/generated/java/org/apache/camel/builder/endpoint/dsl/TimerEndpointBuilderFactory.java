@@ -477,6 +477,19 @@ public interface TimerEndpointBuilderFactory {
          * Since: 1.0
          * Maven coordinates: org.apache.camel:camel-timer
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default TimerHeaderNameBuilder timer() {
+            return TimerHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Timer (camel-timer)
+         * Generate messages in specified intervals using java.util.Timer.
+         * 
+         * Category: core,scheduling
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-timer
+         * 
          * Syntax: <code>timer:timerName</code>
          * 
          * Path parameter: timerName (required)
@@ -508,6 +521,43 @@ public interface TimerEndpointBuilderFactory {
          */
         default TimerEndpointBuilder timer(String componentName, String path) {
             return TimerEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Timer component.
+     */
+    public static class TimerHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final TimerHeaderNameBuilder INSTANCE = new TimerHeaderNameBuilder();
+
+        /**
+         * The fired time.
+         * 
+         * The option is a: {@code Date} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code firedTime}.
+         */
+        public String firedTime() {
+            return "firedTime";
+        }
+
+        /**
+         * The timestamp of the message.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MessageTimestamp}.
+         */
+        public String messageTimestamp() {
+            return "MessageTimestamp";
         }
     }
     static TimerEndpointBuilder endpointBuilder(

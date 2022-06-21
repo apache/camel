@@ -1511,6 +1511,19 @@ public interface Web3jEndpointBuilderFactory {
          * Since: 2.22
          * Maven coordinates: org.apache.camel:camel-web3j
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default Web3jHeaderNameBuilder web3j() {
+            return Web3jHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Web3j Ethereum Blockchain (camel-web3j)
+         * Interact with Ethereum nodes using web3j client API.
+         * 
+         * Category: bitcoin,blockchain,api
+         * Since: 2.22
+         * Maven coordinates: org.apache.camel:camel-web3j
+         * 
          * Syntax: <code>web3j:nodeAddress</code>
          * 
          * Path parameter: nodeAddress (required)
@@ -1542,6 +1555,508 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointBuilder web3j(String componentName, String path) {
             return Web3jEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Web3j Ethereum Blockchain component.
+     */
+    public static class Web3jHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final Web3jHeaderNameBuilder INSTANCE = new Web3jHeaderNameBuilder();
+
+        /**
+         * A hexadecimal string representation (32 bytes) of the hash rate.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ETH_HASHRATE}.
+         */
+        public String ethHashrate() {
+            return "ETH_HASHRATE";
+        }
+
+        /**
+         * The id.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ID}.
+         */
+        public String iD() {
+            return "ID";
+        }
+
+        /**
+         * The block number, or the string latest for the last mined block or
+         * pending, earliest for not yet mined transactions.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AT_BLOCK}.
+         */
+        public String atBlock() {
+            return "AT_BLOCK";
+        }
+
+        /**
+         * Contract address.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ADDRESS}.
+         */
+        public String aDDRESS() {
+            return "ADDRESS";
+        }
+
+        /**
+         * Contract address or a list of addresses.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ADDRESSES}.
+         */
+        public String aDDRESSES() {
+            return "ADDRESSES";
+        }
+
+        /**
+         * The address the transaction is send from.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FROM_ADDRESS}.
+         */
+        public String fromAddress() {
+            return "FROM_ADDRESS";
+        }
+
+        /**
+         * The address the transaction is directed to.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code TO_ADDRESS}.
+         */
+        public String toAddress() {
+            return "TO_ADDRESS";
+        }
+
+        /**
+         * The transaction index position withing a block.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code POSITION}.
+         */
+        public String pOSITION() {
+            return "POSITION";
+        }
+
+        /**
+         * Hash of the block where this transaction was in.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code BLOCK_HASH}.
+         */
+        public String blockHash() {
+            return "BLOCK_HASH";
+        }
+
+        /**
+         * The information about a transaction requested by transaction hash.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code TRANSACTION_HASH}.
+         */
+        public String transactionHash() {
+            return "TRANSACTION_HASH";
+        }
+
+        /**
+         * Message to sign by calculating an Ethereum specific signature.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SHA3_HASH_OF_DATA_TO_SIGN}.
+         */
+        public String sha3HashOfDataToSign() {
+            return "SHA3_HASH_OF_DATA_TO_SIGN";
+        }
+
+        /**
+         * The signed transaction data for a new message call transaction or a
+         * contract creation for signed transactions.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SIGNED_TRANSACTION_DATA}.
+         */
+        public String signedTransactionData() {
+            return "SIGNED_TRANSACTION_DATA";
+        }
+
+        /**
+         * If true it returns the full transaction objects, if false only the
+         * hashes of the transactions.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FULL_TRANSACTION_OBJECTS}.
+         */
+        public String fullTransactionObjects() {
+            return "FULL_TRANSACTION_OBJECTS";
+        }
+
+        /**
+         * The transactions/uncle index position in the block.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code INDEX}.
+         */
+        public String iNDEX() {
+            return "INDEX";
+        }
+
+        /**
+         * The source code to compile.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SOURCE_CODE}.
+         */
+        public String sourceCode() {
+            return "SOURCE_CODE";
+        }
+
+        /**
+         * The filter id to use.
+         * 
+         * The option is a: {@code java.math.BigInteger} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FILTER_ID}.
+         */
+        public String filterId() {
+            return "FILTER_ID";
+        }
+
+        /**
+         * The local database name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DATABASE_NAME}.
+         */
+        public String databaseName() {
+            return "DATABASE_NAME";
+        }
+
+        /**
+         * The key name in the database.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KEY_NAME}.
+         */
+        public String keyName() {
+            return "KEY_NAME";
+        }
+
+        /**
+         * The nonce found (64 bits) used for submitting a proof-of-work
+         * solution.
+         * 
+         * The option is a: {@code java.math.BigInteger} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code NONCE}.
+         */
+        public String nONCE() {
+            return "NONCE";
+        }
+
+        /**
+         * The header's pow-hash (256 bits) used for submitting a proof-of-work
+         * solution.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HEADER_POW_HASH}.
+         */
+        public String headerPowHash() {
+            return "HEADER_POW_HASH";
+        }
+
+        /**
+         * The mix digest (256 bits) used for submitting a proof-of-work
+         * solution.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MIX_DIGEST}.
+         */
+        public String mixDigest() {
+            return "MIX_DIGEST";
+        }
+
+        /**
+         * A random hexadecimal(32 bytes) ID identifying the client.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CLIENT_ID}.
+         */
+        public String clientId() {
+            return "CLIENT_ID";
+        }
+
+        /**
+         * Gas price used for each paid gas.
+         * 
+         * The option is a: {@code java.math.BigInteger} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GAS_PRICE}.
+         */
+        public String gasPrice() {
+            return "GAS_PRICE";
+        }
+
+        /**
+         * The maximum gas allowed in this block.
+         * 
+         * The option is a: {@code java.math.BigInteger} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GAS_LIMIT}.
+         */
+        public String gasLimit() {
+            return "GAS_LIMIT";
+        }
+
+        /**
+         * The value sent within a transaction.
+         * 
+         * The option is a: {@code java.math.BigInteger} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code VALUE}.
+         */
+        public String vALUE() {
+            return "VALUE";
+        }
+
+        /**
+         * The compiled code of a contract OR the hash of the invoked method
+         * signature and encoded parameters.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DATA}.
+         */
+        public String dATA() {
+            return "DATA";
+        }
+
+        /**
+         * The block number, or the string latest for the last mined block or
+         * pending, earliest for not yet mined transactions.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FROM_BLOCK}.
+         */
+        public String fromBlock() {
+            return "FROM_BLOCK";
+        }
+
+        /**
+         * The block number, or the string latest for the last mined block or
+         * pending, earliest for not yet mined transactions.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code TO_BLOCK}.
+         */
+        public String toBlock() {
+            return "TO_BLOCK";
+        }
+
+        /**
+         * Topics are order-dependent. Each topic can also be a list of topics.
+         * Specify multiple topics separated by comma.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code TOPICS}.
+         */
+        public String tOPICS() {
+            return "TOPICS";
+        }
+
+        /**
+         * The priority of a whisper message.
+         * 
+         * The option is a: {@code java.math.BigInteger} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PRIORITY}.
+         */
+        public String pRIORITY() {
+            return "PRIORITY";
+        }
+
+        /**
+         * The time to live in seconds of a whisper message.
+         * 
+         * The option is a: {@code java.math.BigInteger} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code TTL}.
+         */
+        public String tTL() {
+            return "TTL";
+        }
+
+        /**
+         * A transaction privateFor nodes with public keys in a Quorum network.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PRIVATE_FOR}.
+         */
+        public String privateFor() {
+            return "PRIVATE_FOR";
+        }
+
+        /**
+         * The error code.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ERROR_CODE}.
+         */
+        public String errorCode() {
+            return "ERROR_CODE";
+        }
+
+        /**
+         * The error data.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ERROR_DATA}.
+         */
+        public String errorData() {
+            return "ERROR_DATA";
+        }
+
+        /**
+         * The error message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ERROR_MESSAGE}.
+         */
+        public String errorMessage() {
+            return "ERROR_MESSAGE";
+        }
+
+        /**
+         * The status of the operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code status}.
+         */
+        public String status() {
+            return "status";
+        }
+
+        /**
+         * The operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code operation}.
+         */
+        public String operation() {
+            return "operation";
         }
     }
     static Web3jEndpointBuilder endpointBuilder(

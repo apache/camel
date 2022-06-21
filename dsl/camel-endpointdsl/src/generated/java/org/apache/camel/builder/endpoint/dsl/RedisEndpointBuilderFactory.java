@@ -752,6 +752,19 @@ public interface RedisEndpointBuilderFactory {
          * Since: 2.11
          * Maven coordinates: org.apache.camel:camel-spring-redis
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default RedisHeaderNameBuilder springRedis() {
+            return RedisHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Spring Redis (camel-spring-redis)
+         * Send and receive messages from Redis.
+         * 
+         * Category: spring,nosql
+         * Since: 2.11
+         * Maven coordinates: org.apache.camel:camel-spring-redis
+         * 
          * Syntax: <code>spring-redis:host:port</code>
          * 
          * Path parameter: host (required)
@@ -791,6 +804,395 @@ public interface RedisEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return RedisEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Spring Redis component.
+     */
+    public static class RedisHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final RedisHeaderNameBuilder INSTANCE = new RedisHeaderNameBuilder();
+
+        /**
+         * The command to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Redis.Command}.
+         */
+        public String redisCommand() {
+            return "Redis.Command";
+        }
+
+        /**
+         * The key.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Key}.
+         */
+        public String redisKey() {
+            return "Redis.Key";
+        }
+
+        /**
+         * The keys.
+         * 
+         * The option is a: {@code Collection<String>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Keys}.
+         */
+        public String redisKeys() {
+            return "Redis.Keys";
+        }
+
+        /**
+         * The field.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Field}.
+         */
+        public String redisField() {
+            return "Redis.Field";
+        }
+
+        /**
+         * The fields.
+         * 
+         * The option is a: {@code Collection<String>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Fields}.
+         */
+        public String redisFields() {
+            return "Redis.Fields";
+        }
+
+        /**
+         * The value.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Value}.
+         */
+        public String redisValue() {
+            return "Redis.Value";
+        }
+
+        /**
+         * The values.
+         * 
+         * The option is a: {@code Map<String, Object> or Collection<Object>}
+         * type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Values}.
+         */
+        public String redisValues() {
+            return "Redis.Values";
+        }
+
+        /**
+         * Start.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Start}.
+         */
+        public String redisStart() {
+            return "Redis.Start";
+        }
+
+        /**
+         * End.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.End}.
+         */
+        public String redisEnd() {
+            return "Redis.End";
+        }
+
+        /**
+         * The timeout.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Timeout}.
+         */
+        public String redisTimeout() {
+            return "Redis.Timeout";
+        }
+
+        /**
+         * The offset.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Offset}.
+         */
+        public String redisOffset() {
+            return "Redis.Offset";
+        }
+
+        /**
+         * The destination.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Destination}.
+         */
+        public String redisDestination() {
+            return "Redis.Destination";
+        }
+
+        /**
+         * The channel.
+         * 
+         * The option is a: {@code byte[] or String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Channel}.
+         */
+        public String redisChannel() {
+            return "Redis.Channel";
+        }
+
+        /**
+         * The message.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Message}.
+         */
+        public String redisMessage() {
+            return "Redis.Message";
+        }
+
+        /**
+         * The index.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Index}.
+         */
+        public String redisIndex() {
+            return "Redis.Index";
+        }
+
+        /**
+         * The position.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Position}.
+         */
+        public String redisPosition() {
+            return "Redis.Position";
+        }
+
+        /**
+         * The pivot.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Pivot}.
+         */
+        public String redisPivot() {
+            return "Redis.Pivot";
+        }
+
+        /**
+         * Count.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Count}.
+         */
+        public String redisCount() {
+            return "Redis.Count";
+        }
+
+        /**
+         * The timestamp.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Timestamp}.
+         */
+        public String redisTimestamp() {
+            return "Redis.Timestamp";
+        }
+
+        /**
+         * The pattern.
+         * 
+         * The option is a: {@code byte[] or String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Pattern}.
+         */
+        public String redisPattern() {
+            return "Redis.Pattern";
+        }
+
+        /**
+         * The db.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Db}.
+         */
+        public String redisDb() {
+            return "Redis.Db";
+        }
+
+        /**
+         * The score.
+         * 
+         * The option is a: {@code Double} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Score}.
+         */
+        public String redisScore() {
+            return "Redis.Score";
+        }
+
+        /**
+         * The min.
+         * 
+         * The option is a: {@code Double} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Min}.
+         */
+        public String redisMin() {
+            return "Redis.Min";
+        }
+
+        /**
+         * The max.
+         * 
+         * The option is a: {@code Double} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Max}.
+         */
+        public String redisMax() {
+            return "Redis.Max";
+        }
+
+        /**
+         * Increment.
+         * 
+         * The option is a: {@code Double} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Increment}.
+         */
+        public String redisIncrement() {
+            return "Redis.Increment";
+        }
+
+        /**
+         * WithScore.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.WithScore}.
+         */
+        public String redisWithscore() {
+            return "Redis.WithScore";
+        }
+
+        /**
+         * Latitude.
+         * 
+         * The option is a: {@code Double} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Latitude}.
+         */
+        public String redisLatitude() {
+            return "Redis.Latitude";
+        }
+
+        /**
+         * Longitude.
+         * 
+         * The option is a: {@code Double} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Longitude}.
+         */
+        public String redisLongitude() {
+            return "Redis.Longitude";
+        }
+
+        /**
+         * Radius.
+         * 
+         * The option is a: {@code Double} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Redis.Radius}.
+         */
+        public String redisRadius() {
+            return "Redis.Radius";
         }
     }
     static RedisEndpointBuilder endpointBuilder(

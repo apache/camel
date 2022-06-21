@@ -1177,6 +1177,20 @@ public interface CometdEndpointBuilderFactory {
          * Since: 2.0
          * Maven coordinates: org.apache.camel:camel-cometd
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default CometdHeaderNameBuilder cometd() {
+            return CometdHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * CometD (camel-cometd)
+         * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
+         * messaging using the CometD/Bayeux protocol.
+         * 
+         * Category: websocket
+         * Since: 2.0
+         * Maven coordinates: org.apache.camel:camel-cometd
+         * 
          * Syntax: <code>cometd:host:port/channelName</code>
          * 
          * Path parameter: host (required)
@@ -1250,6 +1264,43 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointBuilder cometds(String path) {
             return CometdEndpointBuilderFactory.endpointBuilder("cometds", path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the CometD component.
+     */
+    public static class CometdHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final CometdHeaderNameBuilder INSTANCE = new CometdHeaderNameBuilder();
+
+        /**
+         * The clientId of the session.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code CometdClientId}.
+         */
+        public String cometdClientId() {
+            return "CometdClientId";
+        }
+
+        /**
+         * The subscription.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code subscription}.
+         */
+        public String subscription() {
+            return "subscription";
         }
     }
     static CometdEndpointBuilder endpointBuilder(

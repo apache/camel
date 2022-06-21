@@ -200,6 +200,20 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default HazelcastAtomicnumberHeaderNameBuilder hazelcastAtomicvalue() {
+            return HazelcastAtomicnumberHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Hazelcast Atomic Number (camel-hazelcast)
+         * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
+         * number).
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
          * Syntax: <code>hazelcast-atomicvalue:cacheName</code>
          * 
          * Path parameter: cacheName (required)
@@ -235,6 +249,30 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return HazelcastAtomicnumberEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Hazelcast Atomic Number component.
+     */
+    public static class HazelcastAtomicnumberHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final HazelcastAtomicnumberHeaderNameBuilder INSTANCE = new HazelcastAtomicnumberHeaderNameBuilder();
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HazelcastOperationType}.
+         */
+        public String hazelcastOperationType() {
+            return "HazelcastOperationType";
         }
     }
     static HazelcastAtomicnumberEndpointBuilder endpointBuilder(

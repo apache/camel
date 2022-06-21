@@ -2635,6 +2635,20 @@ public interface SmppEndpointBuilderFactory {
          * Since: 2.2
          * Maven coordinates: org.apache.camel:camel-smpp
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SmppHeaderNameBuilder smpp() {
+            return SmppHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * SMPP (camel-smpp)
+         * Send and receive SMS messages using a SMSC (Short Message Service
+         * Center).
+         * 
+         * Category: mobile
+         * Since: 2.2
+         * Maven coordinates: org.apache.camel:camel-smpp
+         * 
          * Syntax: <code>smpp:host:port</code>
          * 
          * Path parameter: host
@@ -2702,6 +2716,699 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointBuilder smpps(String path) {
             return SmppEndpointBuilderFactory.endpointBuilder("smpps", path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the SMPP component.
+     */
+    public static class SmppHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SmppHeaderNameBuilder INSTANCE = new SmppHeaderNameBuilder();
+
+        /**
+         * For SubmitSm, SubmitMulti and ReplaceSm The data coding according to
+         * the SMPP 3.4 specification, section 5.2.19. Use the URI option
+         * alphabet settings above.
+         * 
+         * The option is a: {@code Byte} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppAlphabet}.
+         */
+        public String smppAlphabet() {
+            return "SmppAlphabet";
+        }
+
+        /**
+         * The command.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SmppCommand}.
+         */
+        public String smppCommand() {
+            return "SmppCommand";
+        }
+
+        /**
+         * only for AlertNotification, DeliverSm and DataSm The command id field
+         * identifies the particular SMPP PDU. For the complete list of defined
+         * values see chapter 5.1.2.1 in the smpp specification v3.4.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmppCommandId}.
+         */
+        public String smppCommandId() {
+            return "SmppCommandId";
+        }
+
+        /**
+         * only for DataSm The Command status of the message.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmppCommandStatus}.
+         */
+        public String smppCommandStatus() {
+            return "SmppCommandStatus";
+        }
+
+        /**
+         * For SubmitSm, SubmitMulti and ReplaceSm The data coding according to
+         * the SMPP 3.4 specification, section 5.2.19. Use the URI option
+         * alphabet settings above.
+         * 
+         * The option is a: {@code Byte} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppDataCoding}.
+         */
+        public String smppDataCoding() {
+            return "SmppDataCoding";
+        }
+
+        /**
+         * The splitter.
+         * 
+         * The option is a: {@code org.apache.camel.component.smpp.SmppSplitter}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppSplitter}.
+         */
+        public String smppSplitter() {
+            return "SmppSplitter";
+        }
+
+        /**
+         * only for smsc DeliveryReceipt Number of short messages delivered.
+         * This is only relevant where the original message was submitted to a
+         * distribution list.The value is padded with leading zeros if
+         * necessary.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmppDelivered}.
+         */
+        public String smppDelivered() {
+            return "SmppDelivered";
+        }
+
+        /**
+         * Producer: only for SubmitSm, SubmitMulti, CancelSm and DataSm Defines
+         * the destination SME address(es). For mobile terminated messages, this
+         * is the directory number of the recipient MS. It must be a List for
+         * SubmitMulti and a String otherwise. Consumer: only for DeliverSm and
+         * DataSm: Defines the destination SME address. For mobile terminated
+         * messages, this is the directory number of the recipient MS.
+         * 
+         * The option is a: {@code List or String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SmppDestAddr}.
+         */
+        public String smppDestAddr() {
+            return "SmppDestAddr";
+        }
+
+        /**
+         * Producer: only for SubmitSm, SubmitMulti, CancelSm and DataSm Defines
+         * the numeric plan indicator (NPI) to be used in the SME destination
+         * address parameters. Use the URI option sourceAddrNpi values defined
+         * above. Consumer: only for DataSm Defines the numeric plan indicator
+         * (NPI) in the destination address parameters. Use the URI option
+         * sourceAddrNpi values defined above.
+         * 
+         * The option is a: {@code Byte} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SmppDestAddrNpi}.
+         */
+        public String smppDestAddrNpi() {
+            return "SmppDestAddrNpi";
+        }
+
+        /**
+         * Producer: only for SubmitSm, SubmitMulti, CancelSm and DataSm Defines
+         * the type of number (TON) to be used in the SME destination address
+         * parameters. Use the sourceAddrTon URI option values defined above.
+         * Consumer: only for DataSm Defines the type of number (TON) in the
+         * destination address parameters. Use the sourceAddrTon URI option
+         * values defined above.
+         * 
+         * The option is a: {@code Byte} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SmppDestAddrTon}.
+         */
+        public String smppDestAddrTon() {
+            return "SmppDestAddrTon";
+        }
+
+        /**
+         * only for smsc DeliveryReceipt The time and date at which the short
+         * message reached it's final state. The format is as follows:
+         * YYMMDDhhmm.
+         * 
+         * The option is a: {@code Date} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmppDoneDate}.
+         */
+        public String smppDoneDate() {
+            return "SmppDoneDate";
+        }
+
+        /**
+         * only for SubmitSm, SubmitMulti and DataSm. Specifies the encoding
+         * (character set name) of the bytes in the message body. If the message
+         * body is a string then this is not relevant because Java Strings are
+         * always Unicode. If the body is a byte array then this header can be
+         * used to indicate that it is ISO-8859-1 or some other value. Default
+         * value is specified by the endpoint configuration parameter
+         * _encoding_.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppEncoding}.
+         */
+        public String smppEncoding() {
+            return "SmppEncoding";
+        }
+
+        /**
+         * Producer: only for SubmitMultiSm The errors which occurred by sending
+         * the short message(s) the form Map (messageID : (destAddr : address,
+         * error : errorCode)). Consumer: only for smsc DeliveryReceipt Where
+         * appropriate this may hold a Network specific error code or an SMSC
+         * error code for the attempted delivery of the message. These errors
+         * are Network or SMSC specific and are not included here.
+         * 
+         * The option is a: {@code String or Map<String, List<Map<String,
+         * Object>>>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SmppError}.
+         */
+        public String smppError() {
+            return "SmppError";
+        }
+
+        /**
+         * the ASM class.
+         * 
+         * The option is a: {@code org.jsmpp.bean.ESMClass} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppClass}.
+         */
+        public String smppClass() {
+            return "SmppClass";
+        }
+
+        /**
+         * only for AlertNotification Defines the destination ESME address. For
+         * mobile terminated messages, this is the directory number of the
+         * recipient MS.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmppEsmeAddr}.
+         */
+        public String smppEsmeAddr() {
+            return "SmppEsmeAddr";
+        }
+
+        /**
+         * only for AlertNotification Defines the numeric plan indicator (NPI)
+         * to be used in the ESME originator address parameters. Use the URI
+         * option sourceAddrNpi values defined above.
+         * 
+         * The option is a: {@code Byte} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmppEsmeAddrNpi}.
+         */
+        public String smppEsmeAddrNpi() {
+            return "SmppEsmeAddrNpi";
+        }
+
+        /**
+         * only for AlertNotification Defines the type of number (TON) to be
+         * used in the ESME originator address parameters. Use the sourceAddrTon
+         * URI option values defined above.
+         * 
+         * The option is a: {@code Byte} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmppEsmeAddrTon}.
+         */
+        public String smppEsmeAddrTon() {
+            return "SmppEsmeAddrTon";
+        }
+
+        /**
+         * The final date.
+         * 
+         * The option is a: {@code java.util.Date} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppFinalDate}.
+         */
+        public String smppFinalDate() {
+            return "SmppFinalDate";
+        }
+
+        /**
+         * only for smsc DeliveryReceipt: The final status of the message.
+         * 
+         * The option is a: {@code org.jsmpp.util.DeliveryReceiptState} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmppStatus}.
+         */
+        public String smppStatus() {
+            return "SmppStatus";
+        }
+
+        /**
+         * Producer: The id to identify the submitted short message(s) for later
+         * use. In case of a ReplaceSm, QuerySm, CancelSm and DataSm this header
+         * value is a String. In case of a SubmitSm or SubmitMultiSm this header
+         * value is a List. Consumer: only for smsc DeliveryReceipt and DataSm
+         * The message ID allocated to the message by the SMSC when originally
+         * submitted.
+         * 
+         * The option is a: {@code String or List<String>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SmppId}.
+         */
+        public String smppId() {
+            return "SmppId";
+        }
+
+        /**
+         * The message date.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppMessageState}.
+         */
+        public String smppMessageState() {
+            return "SmppMessageState";
+        }
+
+        /**
+         * Identifies the type of an incoming message: AlertNotification: an
+         * SMSC alert notification, DataSm: an SMSC data short message,
+         * DeliveryReceipt: an SMSC delivery receipt, DeliverSm: an SMSC deliver
+         * short message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmppMessageType}.
+         */
+        public String smppMessageType() {
+            return "SmppMessageType";
+        }
+
+        /**
+         * only for SubmitSm and SubmitMulti Allows the originating SME to
+         * assign a priority level to the short message. Use the URI option
+         * priorityFlag settings above.
+         * 
+         * The option is a: {@code Byte} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppPriorityFlag}.
+         */
+        public String smppPriorityFlag() {
+            return "SmppPriorityFlag";
+        }
+
+        /**
+         * The protocol id.
+         * 
+         * The option is a: {@code Byte} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppProtocolId}.
+         */
+        public String smppProtocolId() {
+            return "SmppProtocolId";
+        }
+
+        /**
+         * Producer: only for SubmitSm, ReplaceSm, SubmitMulti and DataSm Is
+         * used to request an SMSC delivery receipt and/or SME originated
+         * acknowledgements. Use the URI option registeredDelivery settings
+         * above. Consumer: only for DataSm Is used to request an delivery
+         * receipt and/or SME originated acknowledgements. Same values as in
+         * Producer header list above.
+         * 
+         * The option is a: {@code Byte} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SmppRegisteredDelivery}.
+         */
+        public String smppRegisteredDelivery() {
+            return "SmppRegisteredDelivery";
+        }
+
+        /**
+         * only for SubmitSm, SubmitMulti Is used to request the SMSC delivery
+         * receipt only on the last segment of multi-segment (long) messages.
+         * Use the URI option singleDLR settings above.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppSingleDLR}.
+         */
+        public String smppSingleDLR() {
+            return "SmppSingleDLR";
+        }
+
+        /**
+         * only for SubmitSm and SubmitMulti The replace if present flag
+         * parameter is used to request the SMSC to replace a previously
+         * submitted message, that is still pending delivery. The SMSC will
+         * replace an existing message provided that the source address,
+         * destination address and service type match the same fields in the new
+         * message. The following values are defined: 0, Don't replace and 1,
+         * Replace.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppReplaceIfPresentFlag}.
+         */
+        public String smppReplaceIfPresentFlag() {
+            return "SmppReplaceIfPresentFlag";
+        }
+
+        /**
+         * Producer: only for SubmitSm, SubmitMulti and ReplaceSm This parameter
+         * specifies the scheduled time at which the message delivery should be
+         * first attempted. It defines either the absolute date and time or
+         * relative time from the current SMSC time at which delivery of this
+         * message will be attempted by the SMSC. It can be specified in either
+         * absolute time format or relative time format. The encoding of a time
+         * format is specified in chapter 7.1.1. in the smpp specification v3.4.
+         * Consumer: only for DeliverSm: This parameter specifies the scheduled
+         * time at which the message delivery should be first attempted. It
+         * defines either the absolute date and time or relative time from the
+         * current SMSC time at which delivery of this message will be attempted
+         * by the SMSC. It can be specified in either absolute time format or
+         * relative time format. The encoding of a time format is specified in
+         * Section 7.1.1. in the smpp specification v3.4.
+         * 
+         * The option is a: {@code Date} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SmppScheduleDeliveryTime}.
+         */
+        public String smppScheduleDeliveryTime() {
+            return "SmppScheduleDeliveryTime";
+        }
+
+        /**
+         * only for SubmitSm and SubmitMultiSm The total number of messages
+         * which has been sent.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppSentMessageCount}.
+         */
+        public String smppSentMessageCount() {
+            return "SmppSentMessageCount";
+        }
+
+        /**
+         * only for AlertNotification, DeliverSm and DataSm A sequence number
+         * allows a response PDU to be correlated with a request PDU. The
+         * associated SMPP response PDU must preserve this field.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmppSequenceNumber}.
+         */
+        public String smppSequenceNumber() {
+            return "SmppSequenceNumber";
+        }
+
+        /**
+         * Producer: The service type parameter can be used to indicate the SMS
+         * Application service associated with the message. Use the URI option
+         * serviceType settings above. Consumer: only for DeliverSm and DataSm
+         * The service type parameter indicates the SMS Application service
+         * associated with the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SmppServiceType}.
+         */
+        public String smppServiceType() {
+            return "SmppServiceType";
+        }
+
+        /**
+         * Producer: Defines the address of SME (Short Message Entity) which
+         * originated this message. Consumer: Only for AlertNotification,
+         * DeliverSm and DataSm Defines the address of SME (Short Message
+         * Entity) which originated this message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SmppSourceAddr}.
+         */
+        public String smppSourceAddr() {
+            return "SmppSourceAddr";
+        }
+
+        /**
+         * Producer: Defines the numeric plan indicator (NPI) to be used in the
+         * SME originator address parameters. Use the URI option sourceAddrNpi
+         * values defined above. Consumer: only for AlertNotification and DataSm
+         * Defines the numeric plan indicator (NPI) to be used in the SME
+         * originator address parameters. Use the URI option sourceAddrNpi
+         * values defined above.
+         * 
+         * The option is a: {@code Byte} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SmppSourceAddrNpi}.
+         */
+        public String smppSourceAddrNpi() {
+            return "SmppSourceAddrNpi";
+        }
+
+        /**
+         * Producer: Defines the type of number (TON) to be used in the SME
+         * originator address parameters. Use the sourceAddrTon URI option
+         * values defined above. Consumer: only for AlertNotification and DataSm
+         * Defines the type of number (TON) to be used in the SME originator
+         * address parameters. Use the sourceAddrTon URI option values defined
+         * above.
+         * 
+         * The option is a: {@code Byte} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SmppSourceAddrTon}.
+         */
+        public String smppSourceAddrTon() {
+            return "SmppSourceAddrTon";
+        }
+
+        /**
+         * only for smsc DeliveryReceipt Number of short messages originally
+         * submitted. This is only relevant when the original message was
+         * submitted to a distribution list.The value is padded with leading
+         * zeros if necessary.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmppSubmitted}.
+         */
+        public String smppSubmitted() {
+            return "SmppSubmitted";
+        }
+
+        /**
+         * only for smsc DeliveryReceipt The time and date at which the short
+         * message was submitted. In the case of a message which has been
+         * replaced, this is the date that the original message was replaced.
+         * The format is as follows: YYMMDDhhmm.
+         * 
+         * The option is a: {@code Date} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmppSubmitDate}.
+         */
+        public String smppSubmitDate() {
+            return "SmppSubmitDate";
+        }
+
+        /**
+         * The system id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppSystemId}.
+         */
+        public String smppSystemId() {
+            return "SmppSystemId";
+        }
+
+        /**
+         * The password.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppPassword}.
+         */
+        public String smppPassword() {
+            return "SmppPassword";
+        }
+
+        /**
+         * Producer: only for SubmitSm, SubmitMulti and ReplaceSm The validity
+         * period parameter indicates the SMSC expiration time, after which the
+         * message should be discarded if not delivered to the destination. If
+         * it's provided as Date, it's interpreted as absolute time or relative
+         * time format if you provide it as String as specified in chapter 7.1.1
+         * in the smpp specification v3.4. Consumer: only for DeliverSm The
+         * validity period parameter indicates the SMSC expiration time, after
+         * which the message should be discarded if not delivered to the
+         * destination. It can be defined in absolute time format or relative
+         * time format. The encoding of absolute and relative time format is
+         * specified in Section 7.1.1 in the smpp specification v3.4.
+         * 
+         * The option is a: {@code String or Date} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SmppValidityPeriod}.
+         */
+        public String smppValidityPeriod() {
+            return "SmppValidityPeriod";
+        }
+
+        /**
+         * The optional parameters by name. Deprecation note: Use
+         * CamelSmppOptionalParameter instead.
+         * 
+         * The option is a: {@code Map<String, Object>} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmppOptionalParameters}.
+         */
+        public String smppOptionalParameters() {
+            return "SmppOptionalParameters";
+        }
+
+        /**
+         * Producer: only for SubmitSm, SubmitMulti and DataSm The optional
+         * parameter which are send to the SMSC. The value is converted in the
+         * following way: String -
+         * org.jsmpp.bean.OptionalParameter.COctetString, byte -
+         * org.jsmpp.bean.OptionalParameter.OctetString, Byte -
+         * org.jsmpp.bean.OptionalParameter.Byte, Integer -
+         * org.jsmpp.bean.OptionalParameter.Int, Short -
+         * org.jsmpp.bean.OptionalParameter.Short, null -
+         * org.jsmpp.bean.OptionalParameter.Null Consumer: only for DeliverSm
+         * The optional parameters send back by the SMSC. The key is the Short
+         * code for the optional parameter. The value is converted in the
+         * following way: org.jsmpp.bean.OptionalParameter.COctetString -
+         * String, org.jsmpp.bean.OptionalParameter.OctetString - byte,
+         * org.jsmpp.bean.OptionalParameter.Byte - Byte,
+         * org.jsmpp.bean.OptionalParameter.Int - Integer,
+         * org.jsmpp.bean.OptionalParameter.Short - Short,
+         * org.jsmpp.bean.OptionalParameter.Null - null.
+         * 
+         * The option is a: {@code Map<Short, Object>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SmppOptionalParameter}.
+         */
+        public String smppOptionalParameter() {
+            return "SmppOptionalParameter";
+        }
+
+        /**
+         * only for SubmitSm, SubmitMulti and DataSm. Specifies the policy for
+         * message splitting for this exchange. Possible values are described in
+         * the endpoint configuration parameter _splittingPolicy_.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmppSplittingPolicy}.
+         */
+        public String smppSplittingPolicy() {
+            return "SmppSplittingPolicy";
         }
     }
     static SmppEndpointBuilder endpointBuilder(String componentName, String path) {

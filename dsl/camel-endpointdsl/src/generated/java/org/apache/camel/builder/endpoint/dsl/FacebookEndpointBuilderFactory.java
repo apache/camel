@@ -6598,6 +6598,19 @@ public interface FacebookEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-facebook
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default FacebookHeaderNameBuilder facebook() {
+            return FacebookHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Facebook (camel-facebook)
+         * Send requests to Facebook APIs supported by Facebook4J.
+         * 
+         * Category: social
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-facebook
+         * 
          * Syntax: <code>facebook:methodName</code>
          * 
          * Path parameter: methodName (required)
@@ -6631,6 +6644,30 @@ public interface FacebookEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return FacebookEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Facebook component.
+     */
+    public static class FacebookHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final FacebookHeaderNameBuilder INSTANCE = new FacebookHeaderNameBuilder();
+
+        /**
+         * The raw json.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Facebook.rawJSON}.
+         */
+        public String facebookRawjson() {
+            return "Facebook.rawJSON";
         }
     }
     static FacebookEndpointBuilder endpointBuilder(

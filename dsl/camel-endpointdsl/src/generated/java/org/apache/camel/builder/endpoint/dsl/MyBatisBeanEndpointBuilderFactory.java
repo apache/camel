@@ -192,6 +192,20 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * Since: 2.22
          * Maven coordinates: org.apache.camel:camel-mybatis
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default MyBatisBeanHeaderNameBuilder mybatisBean() {
+            return MyBatisBeanHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * MyBatis Bean (camel-mybatis)
+         * Perform queries, inserts, updates or deletes in a relational database
+         * using MyBatis.
+         * 
+         * Category: database,sql
+         * Since: 2.22
+         * Maven coordinates: org.apache.camel:camel-mybatis
+         * 
          * Syntax: <code>mybatis-bean:beanName:methodName</code>
          * 
          * Path parameter: beanName (required)
@@ -234,6 +248,32 @@ public interface MyBatisBeanEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return MyBatisBeanEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the MyBatis Bean component.
+     */
+    public static class MyBatisBeanHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final MyBatisBeanHeaderNameBuilder INSTANCE = new MyBatisBeanHeaderNameBuilder();
+
+        /**
+         * The response returned from MtBatis in any of the operations. For
+         * instance an INSERT could return the auto-generated key, or number of
+         * rows etc.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MyBatisResult}.
+         */
+        public String myBatisResult() {
+            return "MyBatisResult";
         }
     }
     static MyBatisBeanEndpointBuilder endpointBuilder(

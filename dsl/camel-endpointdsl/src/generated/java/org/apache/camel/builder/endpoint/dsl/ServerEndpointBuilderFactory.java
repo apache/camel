@@ -1839,6 +1839,20 @@ public interface ServerEndpointBuilderFactory {
          * Since: 2.20
          * Maven coordinates: org.apache.camel:camel-iec60870
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default ServerHeaderNameBuilder iec60870Server() {
+            return ServerHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * IEC 60870 Server (camel-iec60870)
+         * IEC 60870 supervisory control and data acquisition (SCADA) server
+         * using NeoSCADA implementation.
+         * 
+         * Category: iot
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-iec60870
+         * 
          * Syntax: <code>iec60870-server:uriPath</code>
          * 
          * Path parameter: uriPath (required)
@@ -1873,6 +1887,98 @@ public interface ServerEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return ServerEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the IEC 60870 Server component.
+     */
+    public static class ServerHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final ServerHeaderNameBuilder INSTANCE = new ServerHeaderNameBuilder();
+
+        /**
+         * The address as ObjectAddress.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.iec60870.ObjectAddress} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code address}.
+         */
+        public String address() {
+            return "address";
+        }
+
+        /**
+         * The value.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code value}.
+         */
+        public String value() {
+            return "value";
+        }
+
+        /**
+         * The address as InformationObjectAddress.
+         * 
+         * The option is a: {@code
+         * org.eclipse.neoscada.protocol.iec60870.asdu.types.InformationObjectAddress} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code informationObjectAddress}.
+         */
+        public String informationObjectAddress() {
+            return "informationObjectAddress";
+        }
+
+        /**
+         * The ASDU header.
+         * 
+         * The option is a: {@code
+         * org.eclipse.neoscada.protocol.iec60870.asdu.ASDUHeader} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code asduHeader}.
+         */
+        public String asduHeader() {
+            return "asduHeader";
+        }
+
+        /**
+         * The type.
+         * 
+         * The option is a: {@code byte} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code type}.
+         */
+        public String type() {
+            return "type";
+        }
+
+        /**
+         * Is execute.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code execute}.
+         */
+        public String execute() {
+            return "execute";
         }
     }
     static ServerEndpointBuilder endpointBuilder(

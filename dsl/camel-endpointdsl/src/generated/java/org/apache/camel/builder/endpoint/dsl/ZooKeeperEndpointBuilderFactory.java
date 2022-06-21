@@ -604,6 +604,19 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Since: 2.9
          * Maven coordinates: org.apache.camel:camel-zookeeper
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default ZooKeeperHeaderNameBuilder zookeeper() {
+            return ZooKeeperHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * ZooKeeper (camel-zookeeper)
+         * Manage ZooKeeper clusters.
+         * 
+         * Category: clustering,management,bigdata
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-zookeeper
+         * 
          * Syntax: <code>zookeeper:serverUrls/path</code>
          * 
          * Path parameter: serverUrls (required)
@@ -645,6 +658,112 @@ public interface ZooKeeperEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the ZooKeeper component.
+     */
+    public static class ZooKeeperHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final ZooKeeperHeaderNameBuilder INSTANCE = new ZooKeeperHeaderNameBuilder();
+
+        /**
+         * The node.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code ZooKeeperNode}.
+         */
+        public String zooKeeperNode() {
+            return "ZooKeeperNode";
+        }
+
+        /**
+         * The node version.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Default: -1
+         * Group: common
+         * 
+         * @return the name of the header {@code ZooKeeperVersion}.
+         */
+        public String zooKeeperVersion() {
+            return "ZooKeeperVersion";
+        }
+
+        /**
+         * The ACL.
+         * 
+         * The option is a: {@code List<ACL>} type.
+         * 
+         * Default: Ids.OPEN_ACL_UNSAFE
+         * Group: common
+         * 
+         * @return the name of the header {@code ZookeeperAcl}.
+         */
+        public String zookeeperAcl() {
+            return "ZookeeperAcl";
+        }
+
+        /**
+         * The create mode.
+         * 
+         * The option is a: {@code org.apache.zookeeper.CreateMode or String}
+         * type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code ZookeeperCreateMode}.
+         */
+        public String zookeeperCreateMode() {
+            return "ZookeeperCreateMode";
+        }
+
+        /**
+         * The statistics.
+         * 
+         * The option is a: {@code org.apache.zookeeper.data.Stat} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code ZookeeperStatistics}.
+         */
+        public String zookeeperStatistics() {
+            return "ZookeeperStatistics";
+        }
+
+        /**
+         * The event type.
+         * 
+         * The option is a: {@code org.apache.zookeeper.Watcher.Event.EventType}
+         * type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code ZookeeperEventType}.
+         */
+        public String zookeeperEventType() {
+            return "ZookeeperEventType";
+        }
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ZookeeperOperation}.
+         */
+        public String zookeeperOperation() {
+            return "ZookeeperOperation";
         }
     }
     static ZooKeeperEndpointBuilder endpointBuilder(

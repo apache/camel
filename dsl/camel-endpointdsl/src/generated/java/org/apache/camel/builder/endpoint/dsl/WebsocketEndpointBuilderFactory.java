@@ -1320,6 +1320,19 @@ public interface WebsocketEndpointBuilderFactory {
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-websocket
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default WebsocketHeaderNameBuilder websocket() {
+            return WebsocketHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Jetty Websocket (camel-websocket)
+         * Expose websocket endpoints using Jetty.
+         * 
+         * Category: websocket
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-websocket
+         * 
          * Syntax: <code>websocket:host:port/resourceUri</code>
          * 
          * Path parameter: host
@@ -1373,6 +1386,101 @@ public interface WebsocketEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return WebsocketEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Jetty Websocket component.
+     */
+    public static class WebsocketHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final WebsocketHeaderNameBuilder INSTANCE = new WebsocketHeaderNameBuilder();
+
+        /**
+         * Producer: Sends the message to all clients which are currently
+         * connected. You can use the sendToAll option on the endpoint instead
+         * of using this header. Consumer: Connection key identifying an
+         * individual client connection. You can save this and specify it again
+         * when routing to a producer endpoing in order to direct messages to a
+         * specific connected client.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code websocket.connectionKey}.
+         */
+        public String websocketConnectionkey() {
+            return "websocket.connectionKey";
+        }
+
+        /**
+         * Sends the message to all clients which are currently connected. You
+         * can use the sendToAll option on the endpoint instead of using this
+         * header.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code websocket.sendToAll}.
+         */
+        public String websocketSendtoall() {
+            return "websocket.sendToAll";
+        }
+
+        /**
+         * Remote address of the websocket session.
+         * 
+         * The option is a: {@code java.net.InetSocketAddress} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code websocket.remoteAddress}.
+         */
+        public String websocketRemoteaddress() {
+            return "websocket.remoteAddress";
+        }
+
+        /**
+         * If a specific subprotocol was negotiated, it will be specfied in this
+         * header. Note that if you specify the any subprotocol to be supported,
+         * and a client requests a specific subprotocol, the connection will be
+         * accepted without a specific subprotocol being used. You need to
+         * specifically support a given protocol by name if you want it returned
+         * to the client and to show up in the message header.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code websocket.subprotocol}.
+         */
+        public String websocketSubprotocol() {
+            return "websocket.subprotocol";
+        }
+
+        /**
+         * If you specify a wildcard URI path for an endpoint, and a websocket
+         * client connects to that websocket endpoing, the relative path that
+         * the client specified will be provided in this header. For example, if
+         * you specified websocket://0.0.0.0:80/api/ as your endpoint URI, and a
+         * client connects to the server at
+         * ws://host.com/api/specialized/apipath then specialized/apipath is
+         * provided in the relative path header of all messages from that
+         * client.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code websocket.relativePath}.
+         */
+        public String websocketRelativepath() {
+            return "websocket.relativePath";
         }
     }
     static WebsocketEndpointBuilder endpointBuilder(

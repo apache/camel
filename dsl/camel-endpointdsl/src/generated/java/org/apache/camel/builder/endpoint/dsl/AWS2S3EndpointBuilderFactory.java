@@ -3039,6 +3039,20 @@ public interface AWS2S3EndpointBuilderFactory {
          * Since: 3.2
          * Maven coordinates: org.apache.camel:camel-aws2-s3
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default AWS2S3HeaderNameBuilder aws2S3() {
+            return AWS2S3HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS S3 Storage Service (camel-aws2-s3)
+         * Store and retrieve objects from AWS S3 Storage Service using AWS SDK
+         * version 2.x.
+         * 
+         * Category: cloud,file
+         * Since: 3.2
+         * Maven coordinates: org.apache.camel:camel-aws2-s3
+         * 
          * Syntax: <code>aws2-s3://bucketNameOrArn</code>
          * 
          * Path parameter: bucketNameOrArn (required)
@@ -3071,6 +3085,421 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointBuilder aws2S3(String componentName, String path) {
             return AWS2S3EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS S3 Storage Service component.
+     */
+    public static class AWS2S3HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final AWS2S3HeaderNameBuilder INSTANCE = new AWS2S3HeaderNameBuilder();
+
+        /**
+         * The bucket Name which this object will be stored or which will be
+         * used for the current operation or in which this object is contained.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3BucketName}.
+         */
+        public String awsS3BucketName() {
+            return "AwsS3BucketName";
+        }
+
+        /**
+         * The bucket Destination Name which will be used for the current
+         * operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsS3BucketDestinationName}.
+         */
+        public String awsS3BucketDestinationName() {
+            return "AwsS3BucketDestinationName";
+        }
+
+        /**
+         * The optional Cache-Control HTTP header which allows the user to
+         * specify caching behavior along the HTTP request/reply chain.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3ContentControl}.
+         */
+        public String awsS3ContentControl() {
+            return "AwsS3ContentControl";
+        }
+
+        /**
+         * The optional Content-Disposition HTTP header, which specifies
+         * presentational information such as the recommended filename for the
+         * object to be saved as.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3ContentDisposition}.
+         */
+        public String awsS3ContentDisposition() {
+            return "AwsS3ContentDisposition";
+        }
+
+        /**
+         * The optional Content-Encoding HTTP header specifying what content
+         * encodings have been applied to the object and what decoding
+         * mechanisms must be applied in order to obtain the media-type
+         * referenced by the Content-Type field.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3ContentEncoding}.
+         */
+        public String awsS3ContentEncoding() {
+            return "AwsS3ContentEncoding";
+        }
+
+        /**
+         * The Content-Length HTTP header indicating the size of the associated
+         * object in bytes.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3ContentLength}.
+         */
+        public String awsS3ContentLength() {
+            return "AwsS3ContentLength";
+        }
+
+        /**
+         * The base64 encoded 128-bit MD5 digest of the associated object
+         * (content - not including headers) according to RFC 1864. This data is
+         * used as a message integrity check to verify that the data received by
+         * Amazon S3 is the same data that the caller sent.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3ContentMD5}.
+         */
+        public String awsS3ContentMD5() {
+            return "AwsS3ContentMD5";
+        }
+
+        /**
+         * The Content-Type HTTP header, which indicates the type of content
+         * stored in the associated object. The value of this header is a
+         * standard MIME type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3ContentType}.
+         */
+        public String awsS3ContentType() {
+            return "AwsS3ContentType";
+        }
+
+        /**
+         * (producer) The ETag value for the newly uploaded object. (consumer)
+         * The hex encoded 128-bit MD5 digest of the associated object according
+         * to RFC 1864. This data is used as an integrity check to verify that
+         * the data received by the caller is the same data that was sent by
+         * Amazon S3.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3ETag}.
+         */
+        public String awsS3ETag() {
+            return "AwsS3ETag";
+        }
+
+        /**
+         * The key under which this object is stored or will be stored or which
+         * will be used for the current operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3Key}.
+         */
+        public String awsS3Key() {
+            return "AwsS3Key";
+        }
+
+        /**
+         * The Destination key which will be used for the current operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsS3DestinationKey}.
+         */
+        public String awsS3DestinationKey() {
+            return "AwsS3DestinationKey";
+        }
+
+        /**
+         * The value of the Last-Modified header, indicating the date and time
+         * at which Amazon S3 last recorded a modification to the associated
+         * object.
+         * 
+         * The option is a: {@code Date} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3LastModified}.
+         */
+        public String awsS3LastModified() {
+            return "AwsS3LastModified";
+        }
+
+        /**
+         * The storage class of this object.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3StorageClass}.
+         */
+        public String awsS3StorageClass() {
+            return "AwsS3StorageClass";
+        }
+
+        /**
+         * (producer) The optional version ID of the newly uploaded object.
+         * (consumer) The version ID of the associated Amazon S3 object if
+         * available. Version IDs are only assigned to objects when an object is
+         * uploaded to an Amazon S3 bucket that has object versioning enabled.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3VersionId}.
+         */
+        public String awsS3VersionId() {
+            return "AwsS3VersionId";
+        }
+
+        /**
+         * The canned acl that will be applied to the object. see
+         * software.amazon.awssdk.services.s3.model.ObjectCannedACL for allowed
+         * values.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsS3CannedAcl}.
+         */
+        public String awsS3CannedAcl() {
+            return "AwsS3CannedAcl";
+        }
+
+        /**
+         * A well constructed Amazon S3 Access Control List object.
+         * 
+         * The option is a: {@code
+         * software.amazon.awssdk.services.s3.model.BucketCannedACL} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsS3Acl}.
+         */
+        public String awsS3Acl() {
+            return "AwsS3Acl";
+        }
+
+        /**
+         * The operation to perform. Permitted values are copyObject,
+         * deleteObject, listBuckets, deleteBucket, listObjects.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3Operation}.
+         */
+        public String awsS3Operation() {
+            return "AwsS3Operation";
+        }
+
+        /**
+         * Sets the server-side encryption algorithm when encrypting the object
+         * using AWS-managed keys. For example use AES256.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3ServerSideEncryption}.
+         */
+        public String awsS3ServerSideEncryption() {
+            return "AwsS3ServerSideEncryption";
+        }
+
+        /**
+         * If the object expiration is configured (see PUT Bucket lifecycle),
+         * the response includes this header.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsS3ExpirationTime}.
+         */
+        public String awsS3ExpirationTime() {
+            return "AwsS3ExpirationTime";
+        }
+
+        /**
+         * Amazon S3 can return this if your request involves a bucket that is
+         * either a source or destination in a replication rule.
+         * 
+         * The option is a: {@code
+         * software.amazon.awssdk.services.s3.model.ReplicationStatus} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsS3ReplicationStatus}.
+         */
+        public String awsS3ReplicationStatus() {
+            return "AwsS3ReplicationStatus";
+        }
+
+        /**
+         * The position of the first byte to get.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsS3RangeStart}.
+         */
+        public String awsS3RangeStart() {
+            return "AwsS3RangeStart";
+        }
+
+        /**
+         * The position of the last byte to get.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsS3RangeEnd}.
+         */
+        public String awsS3RangeEnd() {
+            return "AwsS3RangeEnd";
+        }
+
+        /**
+         * The expiration time of the download link in milliseconds.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsS3DowloadLinkExpirationTime}.
+         */
+        public String awsS3DowloadLinkExpirationTime() {
+            return "AwsS3DowloadLinkExpirationTime";
+        }
+
+        /**
+         * Whether the download link is browser compatible.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsS3DownloadLinkBrowserCompatible}.
+         */
+        public String awsS3DownloadLinkBrowserCompatible() {
+            return "AwsS3DownloadLinkBrowserCompatible";
+        }
+
+        /**
+         * The headers that are needed by the service (not needed when
+         * BrowserCompatible is true).
+         * 
+         * The option is a: {@code Map<String, List<String>>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsS3DownloadLinkHttpRequestHeaders}.
+         */
+        public String awsS3DownloadLinkHttpRequestHeaders() {
+            return "AwsS3DownloadLinkHttpRequestHeaders";
+        }
+
+        /**
+         * The request payload that is needed by the service (not needed when
+         * BrowserCompatible is true).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsS3DownloadLinkSignedPayload}.
+         */
+        public String awsS3DownloadLinkSignedPayload() {
+            return "AwsS3DownloadLinkSignedPayload";
+        }
+
+        /**
+         * A map of metadata to be stored or stored with the object in S3. More
+         * details about metadata
+         * https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingMetadata.htmlhere.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3Metadata}.
+         */
+        public String awsS3Metadata() {
+            return "AwsS3Metadata";
+        }
+
+        /**
+         * The timestamp of the message.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MessageTimestamp}.
+         */
+        public String messageTimestamp() {
+            return "MessageTimestamp";
         }
     }
     static AWS2S3EndpointBuilder endpointBuilder(

@@ -628,6 +628,20 @@ public interface Sns2EndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-aws2-sns
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default Sns2HeaderNameBuilder aws2Sns() {
+            return Sns2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Simple Notification System (SNS) (camel-aws2-sns)
+         * Send messages to an AWS Simple Notification Topic using AWS SDK
+         * version 2.x.
+         * 
+         * Category: cloud,messaging,mobile
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-sns
+         * 
          * Syntax: <code>aws2-sns:topicNameOrArn</code>
          * 
          * Path parameter: topicNameOrArn (required)
@@ -660,6 +674,58 @@ public interface Sns2EndpointBuilderFactory {
          */
         default Sns2EndpointBuilder aws2Sns(String componentName, String path) {
             return Sns2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Simple Notification System (SNS)
+     * component.
+     */
+    public static class Sns2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final Sns2HeaderNameBuilder INSTANCE = new Sns2HeaderNameBuilder();
+
+        /**
+         * The Amazon SNS message ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsSnsMessageId}.
+         */
+        public String awsSnsMessageId() {
+            return "AwsSnsMessageId";
+        }
+
+        /**
+         * The Amazon SNS message subject. If not set, the subject from the
+         * SnsConfiguration is used.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsSnsSubject}.
+         */
+        public String awsSnsSubject() {
+            return "AwsSnsSubject";
+        }
+
+        /**
+         * The message structure to use such as json.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsSnsMessageStructure}.
+         */
+        public String awsSnsMessageStructure() {
+            return "AwsSnsMessageStructure";
         }
     }
     static Sns2EndpointBuilder endpointBuilder(String componentName, String path) {

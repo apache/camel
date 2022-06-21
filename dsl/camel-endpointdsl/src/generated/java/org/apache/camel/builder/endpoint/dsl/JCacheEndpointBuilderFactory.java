@@ -1671,6 +1671,19 @@ public interface JCacheEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-jcache
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default JCacheHeaderNameBuilder jcache() {
+            return JCacheHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * JCache (camel-jcache)
+         * Perform caching operations against JSR107/JCache.
+         * 
+         * Category: cache,datagrid,clustering
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-jcache
+         * 
          * Syntax: <code>jcache:cacheName</code>
          * 
          * Path parameter: cacheName (required)
@@ -1702,6 +1715,121 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointBuilder jcache(String componentName, String path) {
             return JCacheEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the JCache component.
+     */
+    public static class JCacheHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final JCacheHeaderNameBuilder INSTANCE = new JCacheHeaderNameBuilder();
+
+        /**
+         * The cache operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JCacheAction}.
+         */
+        public String jCacheAction() {
+            return "JCacheAction";
+        }
+
+        /**
+         * The result of the cache operation.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JCacheResult}.
+         */
+        public String jCacheResult() {
+            return "JCacheResult";
+        }
+
+        /**
+         * The type of event received.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code JCacheEventType}.
+         */
+        public String jCacheEventType() {
+            return "JCacheEventType";
+        }
+
+        /**
+         * The key of the cache entry.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JCacheKey}.
+         */
+        public String jCacheKey() {
+            return "JCacheKey";
+        }
+
+        /**
+         * The collection of keys against which the action should be performed.
+         * 
+         * The option is a: {@code Set<Object>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JCacheKeys}.
+         */
+        public String jCacheKeys() {
+            return "JCacheKeys";
+        }
+
+        /**
+         * The old value of the cache entry.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code JCacheOldValue}.
+         */
+        public String jCacheOldValue() {
+            return "JCacheOldValue";
+        }
+
+        /**
+         * The EntryProcessor to invoke.
+         * 
+         * The option is a: {@code EntryProcessor<Object, Object, Object>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JCacheEntryProcessor}.
+         */
+        public String jCacheEntryProcessor() {
+            return "JCacheEntryProcessor";
+        }
+
+        /**
+         * The additional arguments to pass to the EntryProcessor.
+         * 
+         * The option is a: {@code Collection<Object>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JCacheEntryArgs}.
+         */
+        public String jCacheEntryArgs() {
+            return "JCacheEntryArgs";
         }
     }
     static JCacheEndpointBuilder endpointBuilder(

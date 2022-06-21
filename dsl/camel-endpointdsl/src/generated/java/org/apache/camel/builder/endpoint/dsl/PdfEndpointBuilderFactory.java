@@ -339,6 +339,19 @@ public interface PdfEndpointBuilderFactory {
          * Since: 2.16
          * Maven coordinates: org.apache.camel:camel-pdf
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default PdfHeaderNameBuilder pdf() {
+            return PdfHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * PDF (camel-pdf)
+         * Create, modify or extract content from PDF documents.
+         * 
+         * Category: document,transformation,printing
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-pdf
+         * 
          * Syntax: <code>pdf:operation</code>
          * 
          * Path parameter: operation (required)
@@ -374,6 +387,62 @@ public interface PdfEndpointBuilderFactory {
          */
         default PdfEndpointBuilder pdf(String componentName, String path) {
             return PdfEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the PDF component.
+     */
+    public static class PdfHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final PdfHeaderNameBuilder INSTANCE = new PdfHeaderNameBuilder();
+
+        /**
+         * Expected type is
+         * https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/ProtectionPolicy.htmlProtectionPolicy. If specified then PDF document will be encrypted with it.
+         * 
+         * The option is a: {@code
+         * org.apache.pdfbox.pdmodel.encryption.ProtectionPolicy} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code protection-policy}.
+         */
+        public String protectionPolicy() {
+            return "protection-policy";
+        }
+
+        /**
+         * Mandatory header for append operation and ignored in all other
+         * operations. Expected type is
+         * https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/PDDocument.htmlPDDocument. Stores PDF document which will be used for append operation.
+         * 
+         * The option is a: {@code org.apache.pdfbox.pdmodel.PDDocument} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code pdf-document}.
+         */
+        public String pdfDocument() {
+            return "pdf-document";
+        }
+
+        /**
+         * Expected type is
+         * https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.htmlDecryptionMaterial. Mandatory header if PDF document is encrypted.
+         * 
+         * The option is a: {@code
+         * org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code decryption-material}.
+         */
+        public String decryptionMaterial() {
+            return "decryption-material";
         }
     }
     static PdfEndpointBuilder endpointBuilder(String componentName, String path) {

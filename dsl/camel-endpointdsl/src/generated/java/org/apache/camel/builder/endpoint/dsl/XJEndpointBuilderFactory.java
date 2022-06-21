@@ -640,6 +640,19 @@ public interface XJEndpointBuilderFactory {
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-xj
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default XJHeaderNameBuilder xj() {
+            return XJHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * XJ (camel-xj)
+         * Transform JSON and XML message using a XSLT.
+         * 
+         * Category: transformation
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-xj
+         * 
          * Syntax: <code>xj:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -683,6 +696,30 @@ public interface XJEndpointBuilderFactory {
          */
         default XJEndpointBuilder xj(String componentName, String path) {
             return XJEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the XJ component.
+     */
+    public static class XJHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final XJHeaderNameBuilder INSTANCE = new XJHeaderNameBuilder();
+
+        /**
+         * The XSLT file name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code XsltFileName}.
+         */
+        public String xsltFileName() {
+            return "XsltFileName";
         }
     }
     static XJEndpointBuilder endpointBuilder(String componentName, String path) {

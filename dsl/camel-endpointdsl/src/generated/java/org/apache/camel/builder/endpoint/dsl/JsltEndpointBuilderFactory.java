@@ -323,6 +323,19 @@ public interface JsltEndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-jslt
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default JsltHeaderNameBuilder jslt() {
+            return JsltHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * JSLT (camel-jslt)
+         * Query or transform JSON payloads using an JSLT.
+         * 
+         * Category: transformation
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-jslt
+         * 
          * Syntax: <code>jslt:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -364,6 +377,43 @@ public interface JsltEndpointBuilderFactory {
          */
         default JsltEndpointBuilder jslt(String componentName, String path) {
             return JsltEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the JSLT component.
+     */
+    public static class JsltHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final JsltHeaderNameBuilder INSTANCE = new JsltHeaderNameBuilder();
+
+        /**
+         * The JSLT Template as String.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JsltString}.
+         */
+        public String jsltString() {
+            return "JsltString";
+        }
+
+        /**
+         * The resource URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JsltResourceUri}.
+         */
+        public String jsltResourceUri() {
+            return "JsltResourceUri";
         }
     }
     static JsltEndpointBuilder endpointBuilder(String componentName, String path) {

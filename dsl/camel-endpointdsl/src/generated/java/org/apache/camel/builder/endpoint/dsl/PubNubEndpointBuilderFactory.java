@@ -783,6 +783,20 @@ public interface PubNubEndpointBuilderFactory {
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-pubnub
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default PubNubHeaderNameBuilder pubnub() {
+            return PubNubHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * PubNub (camel-pubnub)
+         * Send and receive messages to/from PubNub data stream network for
+         * connected devices.
+         * 
+         * Category: cloud,iot,messaging
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-pubnub
+         * 
          * Syntax: <code>pubnub:channel</code>
          * 
          * Path parameter: channel (required)
@@ -815,6 +829,69 @@ public interface PubNubEndpointBuilderFactory {
          */
         default PubNubEndpointBuilder pubnub(String componentName, String path) {
             return PubNubEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the PubNub component.
+     */
+    public static class PubNubHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final PubNubHeaderNameBuilder INSTANCE = new PubNubHeaderNameBuilder();
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PubNubOperation}.
+         */
+        public String pubNubOperation() {
+            return "PubNubOperation";
+        }
+
+        /**
+         * The Timestamp for the event.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code PubNubTimeToken}.
+         */
+        public String pubNubTimeToken() {
+            return "PubNubTimeToken";
+        }
+
+        /**
+         * The channel for which the message belongs.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code PubNubChannel}.
+         */
+        public String pubNubChannel() {
+            return "PubNubChannel";
+        }
+
+        /**
+         * UUID to be used as a device identifier.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PubNubUUID}.
+         */
+        public String pubNubUUID() {
+            return "PubNubUUID";
         }
     }
     static PubNubEndpointBuilder endpointBuilder(

@@ -581,6 +581,19 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-ignite
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default IgniteMessagingHeaderNameBuilder igniteMessaging() {
+            return IgniteMessagingHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Ignite Messaging (camel-ignite)
+         * Send and receive messages from an Ignite topic.
+         * 
+         * Category: messaging
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
          * Syntax: <code>ignite-messaging:topic</code>
          * 
          * Path parameter: topic (required)
@@ -614,6 +627,46 @@ public interface IgniteMessagingEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return IgniteMessagingEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Ignite Messaging component.
+     */
+    public static class IgniteMessagingHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final IgniteMessagingHeaderNameBuilder INSTANCE = new IgniteMessagingHeaderNameBuilder();
+
+        /**
+         * (producer) Allows you to dynamically change the topic to send
+         * messages to. (consumer) It also carries the topic on which a message
+         * was received.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code IgniteMessagingTopic}.
+         */
+        public String igniteMessagingTopic() {
+            return "IgniteMessagingTopic";
+        }
+
+        /**
+         * This header is filled in with the UUID of the subscription when a
+         * message arrives.
+         * 
+         * The option is a: {@code java.util.UUID} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IgniteMessagingUUID}.
+         */
+        public String igniteMessagingUUID() {
+            return "IgniteMessagingUUID";
         }
     }
     static IgniteMessagingEndpointBuilder endpointBuilder(

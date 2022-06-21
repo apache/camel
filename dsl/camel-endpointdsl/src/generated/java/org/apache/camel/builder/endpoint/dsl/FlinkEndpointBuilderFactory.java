@@ -268,6 +268,19 @@ public interface FlinkEndpointBuilderFactory {
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-flink
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default FlinkHeaderNameBuilder flink() {
+            return FlinkHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Flink (camel-flink)
+         * Send DataSet jobs to an Apache Flink cluster.
+         * 
+         * Category: transformation,bigdata,streams
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-flink
+         * 
          * Syntax: <code>flink:endpointType</code>
          * 
          * Path parameter: endpointType (required)
@@ -301,6 +314,71 @@ public interface FlinkEndpointBuilderFactory {
          */
         default FlinkEndpointBuilder flink(String componentName, String path) {
             return FlinkEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Flink component.
+     */
+    public static class FlinkHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final FlinkHeaderNameBuilder INSTANCE = new FlinkHeaderNameBuilder();
+
+        /**
+         * The dataset.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FlinkDataSet}.
+         */
+        public String flinkDataSet() {
+            return "FlinkDataSet";
+        }
+
+        /**
+         * The dataset callback.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.flink.DataSetCallback} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FlinkDataSetCallback}.
+         */
+        public String flinkDataSetCallback() {
+            return "FlinkDataSetCallback";
+        }
+
+        /**
+         * The data stream.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FlinkDataStream}.
+         */
+        public String flinkDataStream() {
+            return "FlinkDataStream";
+        }
+
+        /**
+         * The data stream callback.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.flink.DataStreamCallback} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FlinkDataStreamCallback}.
+         */
+        public String flinkDataStreamCallback() {
+            return "FlinkDataStreamCallback";
         }
     }
     static FlinkEndpointBuilder endpointBuilder(

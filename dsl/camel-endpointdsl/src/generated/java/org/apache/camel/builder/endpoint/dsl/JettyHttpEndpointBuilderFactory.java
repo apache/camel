@@ -1224,6 +1224,19 @@ public interface JettyHttpEndpointBuilderFactory {
          * Since: 1.2
          * Maven coordinates: org.apache.camel:camel-jetty
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default JettyHttpHeaderNameBuilder jetty() {
+            return JettyHttpHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Jetty (camel-jetty)
+         * Expose HTTP endpoints using Jetty 9.
+         * 
+         * Category: http
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-jetty
+         * 
          * Syntax: <code>jetty:httpUri</code>
          * 
          * Path parameter: httpUri (required)
@@ -1255,6 +1268,44 @@ public interface JettyHttpEndpointBuilderFactory {
          */
         default JettyHttpEndpointBuilder jetty(String componentName, String path) {
             return JettyHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Jetty component.
+     */
+    public static class JettyHttpHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final JettyHttpHeaderNameBuilder INSTANCE = new JettyHttpHeaderNameBuilder();
+
+        /**
+         * The servlet context path used.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code ServletContextPath}.
+         */
+        public String servletContextPath() {
+            return "ServletContextPath";
+        }
+
+        /**
+         * Request URI's path, the header will be used to build the request URI
+         * with the HTTP_URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HttpPath}.
+         */
+        public String httpPath() {
+            return "HttpPath";
         }
     }
     static JettyHttpEndpointBuilder endpointBuilder(

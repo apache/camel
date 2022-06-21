@@ -225,6 +225,19 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
          * Since: 3.16
          * Maven coordinates: org.apache.camel:camel-google-secret-manager
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GoogleSecretManagerHeaderNameBuilder googleSecretManager() {
+            return GoogleSecretManagerHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Google Secret Manager (camel-google-secret-manager)
+         * Manage Google Secret Manager Secrets
+         * 
+         * Category: cloud
+         * Since: 3.16
+         * Maven coordinates: org.apache.camel:camel-google-secret-manager
+         * 
          * Syntax: <code>google-secret-manager:project</code>
          * 
          * Path parameter: project (required)
@@ -259,6 +272,58 @@ public interface GoogleSecretManagerEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return GoogleSecretManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Google Secret Manager component.
+     */
+    public static class GoogleSecretManagerHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GoogleSecretManagerHeaderNameBuilder INSTANCE = new GoogleSecretManagerHeaderNameBuilder();
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.google.secret.manager.GoogleSecretManagerOperations} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GoogleSecretManagerOperation}.
+         */
+        public String googleSecretManagerOperation() {
+            return "GoogleSecretManagerOperation";
+        }
+
+        /**
+         * The id of the secret.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GoogleSecretManagerSecretId}.
+         */
+        public String googleSecretManagerSecretId() {
+            return "GoogleSecretManagerSecretId";
+        }
+
+        /**
+         * The version of the secret.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Default: latest
+         * Group: producer
+         * 
+         * @return the name of the header {@code GoogleSecretManagerVersionId}.
+         */
+        public String googleSecretManagerVersionId() {
+            return "GoogleSecretManagerVersionId";
         }
     }
     static GoogleSecretManagerEndpointBuilder endpointBuilder(

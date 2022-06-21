@@ -792,6 +792,19 @@ public interface Athena2EndpointBuilderFactory {
          * Since: 3.4
          * Maven coordinates: org.apache.camel:camel-aws2-athena
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default Athena2HeaderNameBuilder aws2Athena() {
+            return Athena2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Athena (camel-aws2-athena)
+         * Access AWS Athena service using AWS SDK version 2.x.
+         * 
+         * Category: cloud,database
+         * Since: 3.4
+         * Maven coordinates: org.apache.camel:camel-aws2-athena
+         * 
          * Syntax: <code>aws2-athena:label</code>
          * 
          * Path parameter: label (required)
@@ -825,6 +838,346 @@ public interface Athena2EndpointBuilderFactory {
                 String componentName,
                 String path) {
             return Athena2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Athena component.
+     */
+    public static class Athena2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final Athena2HeaderNameBuilder INSTANCE = new Athena2HeaderNameBuilder();
+
+        /**
+         * The operation to perform. Permitted values are getQueryExecution,
+         * getQueryResults, listQueryExecutions, startQueryExecution.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.aws2.athena.Athena2Operations} type.
+         * 
+         * Default: startQueryExecution
+         * Group: all
+         * 
+         * @return the name of the header {@code AwsAthenaOperation}.
+         */
+        public String awsAthenaOperation() {
+            return "AwsAthenaOperation";
+        }
+
+        /**
+         * The Athena database to use.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaDatabase}.
+         */
+        public String awsAthenaDatabase() {
+            return "AwsAthenaDatabase";
+        }
+
+        /**
+         * The unique ID identifying the query execution.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: getQueryExecution getQueryResults startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaQueryExecutionId}.
+         */
+        public String awsAthenaQueryExecutionId() {
+            return "AwsAthenaQueryExecutionId";
+        }
+
+        /**
+         * The workgroup to use for running the query.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: listQueryExecutions startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaWorkGroup}.
+         */
+        public String awsAthenaWorkGroup() {
+            return "AwsAthenaWorkGroup";
+        }
+
+        /**
+         * Pagination token to use in the case where the response from the
+         * previous request was truncated.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: getQueryResults listQueryExecutions
+         * 
+         * @return the name of the header {@code AwsAthenaNextToken}.
+         */
+        public String awsAthenaNextToken() {
+            return "AwsAthenaNextToken";
+        }
+
+        /**
+         * Max number of results to return for the given operation (if supported
+         * by the Athena API endpoint). If not set, will use the Athena API
+         * default for the given operation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: getQueryResults listQueryExecutions
+         * 
+         * @return the name of the header {@code AwsAthenaMaxResults}.
+         */
+        public String awsAthenaMaxResults() {
+            return "AwsAthenaMaxResults";
+        }
+
+        /**
+         * Include useful trace information at the beginning of queries as an
+         * SQL comment (prefixed with --).
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaIncludeTrace}.
+         */
+        public String awsAthenaIncludeTrace() {
+            return "AwsAthenaIncludeTrace";
+        }
+
+        /**
+         * The location in Amazon S3 where query results are stored, such as
+         * s3://path/to/query/bucket/. Ensure this value ends with a forward
+         * slash ('/').
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: getQueryExecution getQueryResults startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaOutputLocation}.
+         */
+        public String awsAthenaOutputLocation() {
+            return "AwsAthenaOutputLocation";
+        }
+
+        /**
+         * How query results should be returned. One of StreamList (default -
+         * return a GetQueryResultsIterable that can page through all results),
+         * SelectList (returns at most 1,000 rows at a time, plus a NextToken
+         * value as a header than can be used for manual pagination of results),
+         * S3Pointer (return an S3 path pointing to the results).
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.aws2.athena.Athena2OutputType} type.
+         * 
+         * Group: getQueryResults
+         * 
+         * @return the name of the header {@code AwsAthenaOutputType}.
+         */
+        public String awsAthenaOutputType() {
+            return "AwsAthenaOutputType";
+        }
+
+        /**
+         * The state of the query execution.
+         * 
+         * The option is a: {@code
+         * software.amazon.awssdk.services.athena.model.QueryExecutionState}
+         * type.
+         * 
+         * Group: getQueryExecution getQueryResults startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaQueryExecutionState}.
+         */
+        public String awsAthenaQueryExecutionState() {
+            return "AwsAthenaQueryExecutionState";
+        }
+
+        /**
+         * A unique string to ensure issues queries are idempotent. It is
+         * unlikely you will need to set this.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaClientRequestToken}.
+         */
+        public String awsAthenaClientRequestToken() {
+            return "AwsAthenaClientRequestToken";
+        }
+
+        /**
+         * The SQL query to run. Except for simple queries, prefer setting this
+         * as the body of the Exchange or as this header to avoid having to deal
+         * with URL encoding issues.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaQueryString}.
+         */
+        public String awsAthenaQueryString() {
+            return "AwsAthenaQueryString";
+        }
+
+        /**
+         * The encryption type to use when storing query results in S3.
+         * 
+         * The option is a: {@code
+         * software.amazon.awssdk.services.athena.model.EncryptionOption} type.
+         * 
+         * Group: startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaEncryptionOption}.
+         */
+        public String awsAthenaEncryptionOption() {
+            return "AwsAthenaEncryptionOption";
+        }
+
+        /**
+         * For SSE-KMS and CSE-KMS, this is the KMS key ARN or ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaKmsKey}.
+         */
+        public String awsAthenaKmsKey() {
+            return "AwsAthenaKmsKey";
+        }
+
+        /**
+         * Optional max wait time in millis to wait for a successful query
+         * completion. See the section 'Waiting for Query Completion and
+         * Retrying Failed Queries' to learn more.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaWaitTimeout}.
+         */
+        public String awsAthenaWaitTimeout() {
+            return "AwsAthenaWaitTimeout";
+        }
+
+        /**
+         * Milliseconds before the first poll for query execution status. See
+         * the section 'Waiting for Query Completion and Retrying Failed
+         * Queries' to learn more.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaInitialDelay}.
+         */
+        public String awsAthenaInitialDelay() {
+            return "AwsAthenaInitialDelay";
+        }
+
+        /**
+         * Milliseconds before the next poll for query execution status. See the
+         * section 'Waiting for Query Completion and Retrying Failed Queries' to
+         * learn more.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaDelay}.
+         */
+        public String awsAthenaDelay() {
+            return "AwsAthenaDelay";
+        }
+
+        /**
+         * Maximum number of times to attempt a query. Set to 1 to disable
+         * retries. See the section 'Waiting for Query Completion and Retrying
+         * Failed Queries' to learn more.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaMaxAttempts}.
+         */
+        public String awsAthenaMaxAttempts() {
+            return "AwsAthenaMaxAttempts";
+        }
+
+        /**
+         * Optional comma separated list of error types to retry the query for.
+         * Use 'retryable' to retry all retryable failure conditions (e.g.
+         * generic errors and resources exhausted), 'generic' to retry
+         * 'GENERIC_INTERNAL_ERROR' failures, 'exhausted' to retry queries that
+         * have exhausted resource limits, 'always' to always retry regardless
+         * of failure condition, or 'never' or null to never retry (default).
+         * See the section 'Waiting for Query Completion and Retrying Failed
+         * Queries' to learn more.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: startQueryExecution
+         * 
+         * @return the name of the header {@code AwsAthenaRetry}.
+         */
+        public String awsAthenaRetry() {
+            return "AwsAthenaRetry";
+        }
+
+        /**
+         * Reset the waitTimeout countdown in the event of a query retry. If set
+         * to true, potential max time spent waiting for queries is equal to
+         * waitTimeout x maxAttempts. See the section 'Waiting for Query
+         * Completion and Retrying Failed Queries' to learn more.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: startQueryExecution
+         * 
+         * @return the name of the header {@code
+         * AwsAthenaResetWaitTimeoutOnRetry}.
+         */
+        public String awsAthenaResetWaitTimeoutOnRetry() {
+            return "AwsAthenaResetWaitTimeoutOnRetry";
+        }
+
+        /**
+         * Total number of attempts made to run the query. Will be greater than
+         * 1 if the query is retried.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: startQueryExecution
+         * 
+         * @return the name of the header {@code
+         * AwsAthenaStartQueryExecutionAttempts}.
+         */
+        public String awsAthenaStartQueryExecutionAttempts() {
+            return "AwsAthenaStartQueryExecutionAttempts";
+        }
+
+        /**
+         * Total time in millis taken in startQueryExecution (mostly relevant
+         * when waiting for query completion within startQueryExecution).
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: startQueryExecution
+         * 
+         * @return the name of the header {@code
+         * AwsAthenaStartQueryExecutionElapsedMillis}.
+         */
+        public String awsAthenaStartQueryExecutionElapsedMillis() {
+            return "AwsAthenaStartQueryExecutionElapsedMillis";
         }
     }
     static Athena2EndpointBuilder endpointBuilder(

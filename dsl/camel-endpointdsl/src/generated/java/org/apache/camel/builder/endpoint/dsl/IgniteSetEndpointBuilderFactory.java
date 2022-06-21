@@ -254,6 +254,19 @@ public interface IgniteSetEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-ignite
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default IgniteSetHeaderNameBuilder igniteSet() {
+            return IgniteSetHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Ignite Sets (camel-ignite)
+         * Interact with Ignite Set data structures.
+         * 
+         * Category: cache,compute
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
          * Syntax: <code>ignite-set:name</code>
          * 
          * Path parameter: name (required)
@@ -287,6 +300,31 @@ public interface IgniteSetEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return IgniteSetEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Ignite Sets component.
+     */
+    public static class IgniteSetHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final IgniteSetHeaderNameBuilder INSTANCE = new IgniteSetHeaderNameBuilder();
+
+        /**
+         * Allows you to dynamically change the set operation.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.ignite.set.IgniteSetOperation} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IgniteSetsOperation}.
+         */
+        public String igniteSetsOperation() {
+            return "IgniteSetsOperation";
         }
     }
     static IgniteSetEndpointBuilder endpointBuilder(

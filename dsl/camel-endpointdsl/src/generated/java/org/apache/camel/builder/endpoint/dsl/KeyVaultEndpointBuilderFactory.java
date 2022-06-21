@@ -216,6 +216,19 @@ public interface KeyVaultEndpointBuilderFactory {
          * Since: 3.17
          * Maven coordinates: org.apache.camel:camel-azure-key-vault
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KeyVaultHeaderNameBuilder azureKeyVault() {
+            return KeyVaultHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Azure Key Vault (camel-azure-key-vault)
+         * Manage secrets and keys in Azure Key Vault Service
+         * 
+         * Category: cloud,cloud
+         * Since: 3.17
+         * Maven coordinates: org.apache.camel:camel-azure-key-vault
+         * 
          * Syntax: <code>azure-key-vault:vaultName</code>
          * 
          * Path parameter: vaultName
@@ -249,6 +262,45 @@ public interface KeyVaultEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KeyVaultEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Azure Key Vault component.
+     */
+    public static class KeyVaultHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KeyVaultHeaderNameBuilder INSTANCE = new KeyVaultHeaderNameBuilder();
+
+        /**
+         * Overrides the desired operation to be used in the producer.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.azure.key.vault.KeyVaultOperationDefinition} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureKeyVaultProducerOperation}.
+         */
+        public String azureKeyVaultProducerOperation() {
+            return "AzureKeyVaultProducerOperation";
+        }
+
+        /**
+         * The secret name to be used in Key Vault.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureKeyVaultSecretName}.
+         */
+        public String azureKeyVaultSecretName() {
+            return "AzureKeyVaultSecretName";
         }
     }
     static KeyVaultEndpointBuilder endpointBuilder(

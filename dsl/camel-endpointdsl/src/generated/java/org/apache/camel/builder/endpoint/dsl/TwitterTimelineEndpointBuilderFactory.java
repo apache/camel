@@ -1753,6 +1753,19 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-twitter
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default TwitterTimelineHeaderNameBuilder twitterTimeline() {
+            return TwitterTimelineHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Twitter Timeline (camel-twitter)
+         * Send tweets and receive tweets from user's timeline.
+         * 
+         * Category: api,cloud,social
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-twitter
+         * 
          * Syntax: <code>twitter-timeline:timelineType</code>
          * 
          * Path parameter: timelineType (required)
@@ -1790,6 +1803,31 @@ public interface TwitterTimelineEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return TwitterTimelineEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Twitter Timeline component.
+     */
+    public static class TwitterTimelineHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final TwitterTimelineHeaderNameBuilder INSTANCE = new TwitterTimelineHeaderNameBuilder();
+
+        /**
+         * The type of event. The supported values are the values of the enum
+         * org.apache.camel.component.twitter.consumer.TwitterEventType.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code TwitterEventType}.
+         */
+        public String twitterEventType() {
+            return "TwitterEventType";
         }
     }
     static TwitterTimelineEndpointBuilder endpointBuilder(

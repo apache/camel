@@ -1415,6 +1415,20 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KubernetesServicesHeaderNameBuilder kubernetesServices() {
+            return KubernetesServicesHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kubernetes Services (camel-kubernetes)
+         * Perform operations on Kubernetes Services and get notified on Service
+         * changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>kubernetes-services:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -1449,6 +1463,110 @@ public interface KubernetesServicesEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KubernetesServicesEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kubernetes Services component.
+     */
+    public static class KubernetesServicesHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KubernetesServicesHeaderNameBuilder INSTANCE = new KubernetesServicesHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The namespace name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNamespaceName}.
+         */
+        public String kubernetesNamespaceName() {
+            return "KubernetesNamespaceName";
+        }
+
+        /**
+         * The service labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesServiceLabels}.
+         */
+        public String kubernetesServiceLabels() {
+            return "KubernetesServiceLabels";
+        }
+
+        /**
+         * The service name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesServiceName}.
+         */
+        public String kubernetesServiceName() {
+            return "KubernetesServiceName";
+        }
+
+        /**
+         * The spec of a service.
+         * 
+         * The option is a: {@code io.fabric8.kubernetes.api.model.ServiceSpec}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesServiceSpec}.
+         */
+        public String kubernetesServiceSpec() {
+            return "KubernetesServiceSpec";
+        }
+
+        /**
+         * Action watched by the consumer.
+         * 
+         * The option is a: {@code io.fabric8.kubernetes.client.Watcher.Action}
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesEventAction}.
+         */
+        public String kubernetesEventAction() {
+            return "KubernetesEventAction";
+        }
+
+        /**
+         * Timestamp of the action watched by the consumer.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesEventTimestamp}.
+         */
+        public String kubernetesEventTimestamp() {
+            return "KubernetesEventTimestamp";
         }
     }
     static KubernetesServicesEndpointBuilder endpointBuilder(

@@ -4823,6 +4823,19 @@ public interface KafkaEndpointBuilderFactory {
          * Since: 2.13
          * Maven coordinates: org.apache.camel:camel-kafka
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KafkaHeaderNameBuilder kafka() {
+            return KafkaHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kafka (camel-kafka)
+         * Sent and receive messages to/from an Apache Kafka broker.
+         * 
+         * Category: messaging
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-kafka
+         * 
          * Syntax: <code>kafka:topic</code>
          * 
          * Path parameter: topic (required)
@@ -4858,6 +4871,200 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder kafka(String componentName, String path) {
             return KafkaEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kafka component.
+     */
+    public static class KafkaHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KafkaHeaderNameBuilder INSTANCE = new KafkaHeaderNameBuilder();
+
+        /**
+         * Explicitly specify the partition.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code kafka.PARTITION_KEY}.
+         */
+        public String kafkaPartitionKey() {
+            return "kafka.PARTITION_KEY";
+        }
+
+        /**
+         * The partition where the message was stored.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code kafka.PARTITION}.
+         */
+        public String kafkaPartition() {
+            return "kafka.PARTITION";
+        }
+
+        /**
+         * Producer: The key of the message in order to ensure that all related
+         * message goes in the same partition. Consumer: The key of the message
+         * if configured.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @return the name of the header {@code kafka.KEY}.
+         */
+        public String kafkaKey() {
+            return "kafka.KEY";
+        }
+
+        /**
+         * The topic from where the message originated.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code kafka.TOPIC}.
+         */
+        public String kafkaTopic() {
+            return "kafka.TOPIC";
+        }
+
+        /**
+         * The topic to which send the message (override and takes precedence),
+         * and the header is not preserved.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code kafka.OVERRIDE_TOPIC}.
+         */
+        public String kafkaOverrideTopic() {
+            return "kafka.OVERRIDE_TOPIC";
+        }
+
+        /**
+         * The offset of the message.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code kafka.OFFSET}.
+         */
+        public String kafkaOffset() {
+            return "kafka.OFFSET";
+        }
+
+        /**
+         * The record headers.
+         * 
+         * The option is a: {@code org.apache.kafka.common.header.Headers} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code kafka.HEADERS}.
+         */
+        public String kafkaHeaders() {
+            return "kafka.HEADERS";
+        }
+
+        /**
+         * Whether or not it's the last record before commit (only available if
+         * autoCommitEnable endpoint parameter is false).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * kafka.LAST_RECORD_BEFORE_COMMIT}.
+         */
+        public String kafkaLastRecordBeforeCommit() {
+            return "kafka.LAST_RECORD_BEFORE_COMMIT";
+        }
+
+        /**
+         * Indicates the last record within the current poll request (only
+         * available if autoCommitEnable endpoint parameter is false or
+         * allowManualCommit is true).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code kafka.LAST_POLL_RECORD}.
+         */
+        public String kafkaLastPollRecord() {
+            return "kafka.LAST_POLL_RECORD";
+        }
+
+        /**
+         * The timestamp of the message.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code kafka.TIMESTAMP}.
+         */
+        public String kafkaTimestamp() {
+            return "kafka.TIMESTAMP";
+        }
+
+        /**
+         * The ProducerRecord also has an associated timestamp. If the user did
+         * provide a timestamp, the producer will stamp the record with the
+         * provided timestamp and the header is not preserved.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code kafka.OVERRIDE_TIMESTAMP}.
+         */
+        public String kafkaOverrideTimestamp() {
+            return "kafka.OVERRIDE_TIMESTAMP";
+        }
+
+        /**
+         * The metadata (only configured if recordMetadata endpoint parameter is
+         * true).
+         * 
+         * The option is a: {@code List<RecordMetadata>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * org.apache.kafka.clients.producer.RecordMetadata}.
+         */
+        public String orgApacheKafkaClientsProducerRecordmetadata() {
+            return "org.apache.kafka.clients.producer.RecordMetadata";
+        }
+
+        /**
+         * Can be used for forcing manual offset commit when using Kafka
+         * consumer.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.kafka.consumer.KafkaManualCommit} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KafkaManualCommit}.
+         */
+        public String kafkaManualCommit() {
+            return "KafkaManualCommit";
         }
     }
     static KafkaEndpointBuilder endpointBuilder(

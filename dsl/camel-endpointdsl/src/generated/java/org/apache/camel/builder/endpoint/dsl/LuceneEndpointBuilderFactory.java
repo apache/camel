@@ -241,6 +241,19 @@ public interface LuceneEndpointBuilderFactory {
          * Since: 2.2
          * Maven coordinates: org.apache.camel:camel-lucene
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default LuceneHeaderNameBuilder lucene() {
+            return LuceneHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Lucene (camel-lucene)
+         * Perform inserts or queries against Apache Lucene databases.
+         * 
+         * Category: database,search
+         * Since: 2.2
+         * Maven coordinates: org.apache.camel:camel-lucene
+         * 
          * Syntax: <code>lucene:host:operation</code>
          * 
          * Path parameter: host (required)
@@ -280,6 +293,45 @@ public interface LuceneEndpointBuilderFactory {
          */
         default LuceneEndpointBuilder lucene(String componentName, String path) {
             return LuceneEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Lucene component.
+     */
+    public static class LuceneHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final LuceneHeaderNameBuilder INSTANCE = new LuceneHeaderNameBuilder();
+
+        /**
+         * The Lucene Query to performed on the index. The query may include
+         * wildcards and phrases.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code QUERY}.
+         */
+        public String qUERY() {
+            return "QUERY";
+        }
+
+        /**
+         * Set this header to true to include the actual Lucene documentation
+         * when returning hit information.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code RETURN_LUCENE_DOCS}.
+         */
+        public String returnLuceneDocs() {
+            return "RETURN_LUCENE_DOCS";
         }
     }
     static LuceneEndpointBuilder endpointBuilder(

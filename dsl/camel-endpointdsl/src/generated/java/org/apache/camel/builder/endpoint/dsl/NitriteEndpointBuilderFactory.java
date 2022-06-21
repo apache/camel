@@ -558,6 +558,19 @@ public interface NitriteEndpointBuilderFactory {
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-nitrite
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default NitriteHeaderNameBuilder nitrite() {
+            return NitriteHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Nitrite (camel-nitrite)
+         * Access Nitrite databases.
+         * 
+         * Category: database,nosql
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-nitrite
+         * 
          * Syntax: <code>nitrite:database</code>
          * 
          * Path parameter: database (required)
@@ -589,6 +602,71 @@ public interface NitriteEndpointBuilderFactory {
          */
         default NitriteEndpointBuilder nitrite(String componentName, String path) {
             return NitriteEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Nitrite component.
+     */
+    public static class NitriteHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final NitriteHeaderNameBuilder INSTANCE = new NitriteHeaderNameBuilder();
+
+        /**
+         * Event timestamp in Epoch millis.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code NitriteChangeTimestamp}.
+         */
+        public String nitriteChangeTimestamp() {
+            return "NitriteChangeTimestamp";
+        }
+
+        /**
+         * Type of event.
+         * 
+         * The option is a: {@code org.dizitart.no2.event.ChangeType} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code NitriteChangeType}.
+         */
+        public String nitriteChangeType() {
+            return "NitriteChangeType";
+        }
+
+        /**
+         * Operation to invoke on Collection or Repository. Defaults to
+         * UpsertOperation if not specified.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.nitrite.AbstractNitriteOperation} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code NitriteOperation}.
+         */
+        public String nitriteOperation() {
+            return "NitriteOperation";
+        }
+
+        /**
+         * Result of data modifying operation.
+         * 
+         * The option is a: {@code org.dizitart.no2.WriteResult} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NitriteWriteResult}.
+         */
+        public String nitriteWriteResult() {
+            return "NitriteWriteResult";
         }
     }
     static NitriteEndpointBuilder endpointBuilder(

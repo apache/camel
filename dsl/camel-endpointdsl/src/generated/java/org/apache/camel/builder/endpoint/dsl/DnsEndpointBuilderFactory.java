@@ -112,6 +112,19 @@ public interface DnsEndpointBuilderFactory {
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-dns
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default DnsHeaderNameBuilder dns() {
+            return DnsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * DNS (camel-dns)
+         * Perform DNS queries using DNSJava.
+         * 
+         * Category: networking
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-dns
+         * 
          * Syntax: <code>dns:dnsType</code>
          * 
          * Path parameter: dnsType (required)
@@ -147,6 +160,101 @@ public interface DnsEndpointBuilderFactory {
          */
         default DnsEndpointBuilder dns(String componentName, String path) {
             return DnsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the DNS component.
+     */
+    public static class DnsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final DnsHeaderNameBuilder INSTANCE = new DnsHeaderNameBuilder();
+
+        /**
+         * The DNS class of the lookup. Should match the values of
+         * org.xbill.dns.DClass. Optional.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: lookup dig
+         * 
+         * @return the name of the header {@code dns.class}.
+         */
+        public String dnsClass() {
+            return "dns.class";
+        }
+
+        /**
+         * The name to lookup.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Required: true
+         * Group: lookup
+         * 
+         * @return the name of the header {@code dns.name}.
+         */
+        public String dnsName() {
+            return "dns.name";
+        }
+
+        /**
+         * The domain name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Required: true
+         * Group: ip
+         * 
+         * @return the name of the header {@code dns.domain}.
+         */
+        public String dnsDomain() {
+            return "dns.domain";
+        }
+
+        /**
+         * The server in particular for the query. If none is given, the default
+         * one specified by the OS will be used. Optional.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: dig
+         * 
+         * @return the name of the header {@code dns.server}.
+         */
+        public String dnsServer() {
+            return "dns.server";
+        }
+
+        /**
+         * The type of the lookup. Should match the values of
+         * org.xbill.dns.Type. Optional.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: lookup dig
+         * 
+         * @return the name of the header {@code dns.type}.
+         */
+        public String dnsType() {
+            return "dns.type";
+        }
+
+        /**
+         * The term.
+         * 
+         * The option is a: {@code } type.
+         * 
+         * Required: true
+         * Group: wikipedia
+         * 
+         * @return the name of the header {@code term}.
+         */
+        public String term() {
+            return "term";
         }
     }
     static DnsEndpointBuilder endpointBuilder(String componentName, String path) {

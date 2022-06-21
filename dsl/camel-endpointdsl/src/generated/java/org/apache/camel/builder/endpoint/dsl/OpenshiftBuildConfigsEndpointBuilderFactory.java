@@ -446,6 +446,19 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default OpenshiftBuildConfigsHeaderNameBuilder openshiftBuildConfigs() {
+            return OpenshiftBuildConfigsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Openshift Build Config (camel-kubernetes)
+         * Perform operations on OpenShift Build Configs.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>openshift-build-configs:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -480,6 +493,69 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return OpenshiftBuildConfigsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Openshift Build Config component.
+     */
+    public static class OpenshiftBuildConfigsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final OpenshiftBuildConfigsHeaderNameBuilder INSTANCE = new OpenshiftBuildConfigsHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The namespace name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNamespaceName}.
+         */
+        public String kubernetesNamespaceName() {
+            return "KubernetesNamespaceName";
+        }
+
+        /**
+         * The Openshift Config Build labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesBuildConfigsLabels}.
+         */
+        public String kubernetesBuildConfigsLabels() {
+            return "KubernetesBuildConfigsLabels";
+        }
+
+        /**
+         * The Openshift Config Build name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesBuildConfigName}.
+         */
+        public String kubernetesBuildConfigName() {
+            return "KubernetesBuildConfigName";
         }
     }
     static OpenshiftBuildConfigsEndpointBuilder endpointBuilder(

@@ -1095,6 +1095,20 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Since: 2.6
          * Maven coordinates: org.apache.camel:camel-spring-ws
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SpringWebserviceHeaderNameBuilder springWs() {
+            return SpringWebserviceHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Spring WebService (camel-spring-ws)
+         * Access external web services as a client or expose your own web
+         * services.
+         * 
+         * Category: spring,soap,webservice
+         * Since: 2.6
+         * Maven coordinates: org.apache.camel:camel-spring-ws
+         * 
          * Syntax: <code>spring-ws:type:lookupKey:webServiceEndpointUri</code>
          * 
          * Path parameter: type
@@ -1175,6 +1189,120 @@ public interface SpringWebserviceEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return SpringWebserviceEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Spring WebService component.
+     */
+    public static class SpringWebserviceHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SpringWebserviceHeaderNameBuilder INSTANCE = new SpringWebserviceHeaderNameBuilder();
+
+        /**
+         * The endpoint URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SpringWebserviceEndpointUri}.
+         */
+        public String springWebserviceEndpointUri() {
+            return "SpringWebserviceEndpointUri";
+        }
+
+        /**
+         * SOAP action to include inside a SOAP request when accessing remote
+         * web services.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SpringWebserviceSoapAction}.
+         */
+        public String springWebserviceSoapAction() {
+            return "SpringWebserviceSoapAction";
+        }
+
+        /**
+         * The soap header source.
+         * 
+         * The option is a: {@code javax.xml.transform.Source} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SpringWebserviceSoapHeader}.
+         */
+        public String springWebserviceSoapHeader() {
+            return "SpringWebserviceSoapHeader";
+        }
+
+        /**
+         * WS-Addressing 1.0 action header to include when accessing web
+         * services. The To header is set to the address of the web service as
+         * specified in the endpoint URI (default Spring-WS behavior).
+         * 
+         * The option is a: {@code java.net.URI} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * SpringWebserviceAddressingAction}.
+         */
+        public String springWebserviceAddressingAction() {
+            return "SpringWebserviceAddressingAction";
+        }
+
+        /**
+         * Signifies the value for the faultAction response WS-Addressing
+         * FaultTo header that is provided by the method. See
+         * org.springframework.ws.soap.addressing.server.annotation.Action
+         * annotation for more details.
+         * 
+         * The option is a: {@code java.net.URI} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * SpringWebserviceAddressingFaultTo}.
+         */
+        public String springWebserviceAddressingFaultTo() {
+            return "SpringWebserviceAddressingFaultTo";
+        }
+
+        /**
+         * Signifies the value for the replyTo response WS-Addressing ReplyTo
+         * header that is provided by the method. See
+         * org.springframework.ws.soap.addressing.server.annotation.Action
+         * annotation for more details.
+         * 
+         * The option is a: {@code java.net.URI} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * SpringWebserviceAddressingReplyTo}.
+         */
+        public String springWebserviceAddressingReplyTo() {
+            return "SpringWebserviceAddressingReplyTo";
+        }
+
+        /**
+         * The breadcrumb id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code breadcrumbId}.
+         */
+        public String breadcrumbId() {
+            return "breadcrumbId";
         }
     }
     static SpringWebserviceEndpointBuilder endpointBuilder(

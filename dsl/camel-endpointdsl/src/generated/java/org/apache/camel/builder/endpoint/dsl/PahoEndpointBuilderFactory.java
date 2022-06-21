@@ -3018,6 +3018,19 @@ public interface PahoEndpointBuilderFactory {
          * Since: 2.16
          * Maven coordinates: org.apache.camel:camel-paho
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default PahoHeaderNameBuilder paho() {
+            return PahoHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Paho (camel-paho)
+         * Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
+         * 
+         * Category: messaging,iot
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-paho
+         * 
          * Syntax: <code>paho:topic</code>
          * 
          * Path parameter: topic (required)
@@ -3049,6 +3062,83 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointBuilder paho(String componentName, String path) {
             return PahoEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Paho component.
+     */
+    public static class PahoHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final PahoHeaderNameBuilder INSTANCE = new PahoHeaderNameBuilder();
+
+        /**
+         * The name of the topic.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MqttTopic}.
+         */
+        public String mqttTopic() {
+            return "MqttTopic";
+        }
+
+        /**
+         * The quality of service of the incoming message.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MqttQoS}.
+         */
+        public String mqttQoS() {
+            return "MqttQoS";
+        }
+
+        /**
+         * The client quality of service level (0-2).
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PahoQos}.
+         */
+        public String pahoQos() {
+            return "PahoQos";
+        }
+
+        /**
+         * Retain option.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PahoRetained}.
+         */
+        public String pahoRetained() {
+            return "PahoRetained";
+        }
+
+        /**
+         * The name of topic to override and send to instead of topic specified
+         * on endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PahoOverrideTopic}.
+         */
+        public String pahoOverrideTopic() {
+            return "PahoOverrideTopic";
         }
     }
     static PahoEndpointBuilder endpointBuilder(String componentName, String path) {

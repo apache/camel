@@ -880,6 +880,19 @@ public interface RssEndpointBuilderFactory {
          * Since: 2.0
          * Maven coordinates: org.apache.camel:camel-rss
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default RssHeaderNameBuilder rss() {
+            return RssHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * RSS (camel-rss)
+         * Poll RSS feeds.
+         * 
+         * Category: rss
+         * Since: 2.0
+         * Maven coordinates: org.apache.camel:camel-rss
+         * 
          * Syntax: <code>rss:feedUri</code>
          * 
          * Path parameter: feedUri (required)
@@ -911,6 +924,30 @@ public interface RssEndpointBuilderFactory {
          */
         default RssEndpointBuilder rss(String componentName, String path) {
             return RssEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the RSS component.
+     */
+    public static class RssHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final RssHeaderNameBuilder INSTANCE = new RssHeaderNameBuilder();
+
+        /**
+         * The entire SyncFeed object.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code RssFeed}.
+         */
+        public String rssFeed() {
+            return "RssFeed";
         }
     }
     static RssEndpointBuilder endpointBuilder(String componentName, String path) {

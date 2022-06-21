@@ -1391,6 +1391,19 @@ public interface PulsarEndpointBuilderFactory {
          * Since: 2.24
          * Maven coordinates: org.apache.camel:camel-pulsar
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default PulsarHeaderNameBuilder pulsar() {
+            return PulsarHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Pulsar (camel-pulsar)
+         * Send and receive messages from/to Apache Pulsar messaging system.
+         * 
+         * Category: messaging
+         * Since: 2.24
+         * Maven coordinates: org.apache.camel:camel-pulsar
+         * 
          * Syntax: <code>pulsar:persistence://tenant/namespace/topic</code>
          * 
          * Path parameter: persistence (required)
@@ -1444,6 +1457,203 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointBuilder pulsar(String componentName, String path) {
             return PulsarEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Pulsar component.
+     */
+    public static class PulsarHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final PulsarHeaderNameBuilder INSTANCE = new PulsarHeaderNameBuilder();
+
+        /**
+         * The properties attached to the message.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code properties}.
+         */
+        public String properties() {
+            return "properties";
+        }
+
+        /**
+         * The producer name who produced the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code producer_name}.
+         */
+        public String producerName() {
+            return "producer_name";
+        }
+
+        /**
+         * The sequence id associated with the message.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code sequence_id}.
+         */
+        public String sequenceId() {
+            return "sequence_id";
+        }
+
+        /**
+         * The publish time of the message.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code publish_time}.
+         */
+        public String publishTime() {
+            return "publish_time";
+        }
+
+        /**
+         * The unique message ID associated with the message.
+         * 
+         * The option is a: {@code org.apache.pulsar.client.api.MessageId} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code message_id}.
+         */
+        public String messageId() {
+            return "message_id";
+        }
+
+        /**
+         * The event time associated with the message.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code event_time}.
+         */
+        public String eventTime() {
+            return "event_time";
+        }
+
+        /**
+         * The key of the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code key}.
+         */
+        public String key() {
+            return "key";
+        }
+
+        /**
+         * The bytes in key.
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code key_bytes}.
+         */
+        public String keyBytes() {
+            return "key_bytes";
+        }
+
+        /**
+         * The topic the message was published to.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code topic_name}.
+         */
+        public String topicName() {
+            return "topic_name";
+        }
+
+        /**
+         * The message receipt.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.pulsar.PulsarMessageReceipt} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code message_receipt}.
+         */
+        public String messageReceipt() {
+            return "message_receipt";
+        }
+
+        /**
+         * The key of the message for routing policy.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PulsarProducerMessageKey}.
+         */
+        public String pulsarProducerMessageKey() {
+            return "PulsarProducerMessageKey";
+        }
+
+        /**
+         * The properties of the message to add.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * PulsarProducerMessageProperties}.
+         */
+        public String pulsarProducerMessageProperties() {
+            return "PulsarProducerMessageProperties";
+        }
+
+        /**
+         * The event time of the message message.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * PulsarProducerMessageEventTime}.
+         */
+        public String pulsarProducerMessageEventTime() {
+            return "PulsarProducerMessageEventTime";
+        }
+
+        /**
+         * The message redelivery count, redelivery count maintain in pulsar
+         * broker.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code PulsarRedeliveryCount}.
+         */
+        public String pulsarRedeliveryCount() {
+            return "PulsarRedeliveryCount";
         }
     }
     static PulsarEndpointBuilder endpointBuilder(

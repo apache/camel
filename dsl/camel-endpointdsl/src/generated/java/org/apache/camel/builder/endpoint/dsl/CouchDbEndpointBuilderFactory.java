@@ -569,6 +569,21 @@ public interface CouchDbEndpointBuilderFactory {
          * Since: 2.11
          * Maven coordinates: org.apache.camel:camel-couchdb
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default CouchDbHeaderNameBuilder couchdb() {
+            return CouchDbHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * CouchDB (camel-couchdb)
+         * Consume changesets for inserts, updates and deletes in a CouchDB
+         * database, as well as get, save, update and delete documents from a
+         * CouchDB database.
+         * 
+         * Category: database,nosql
+         * Since: 2.11
+         * Maven coordinates: org.apache.camel:camel-couchdb
+         * 
          * Syntax: <code>couchdb:protocol:hostname:port/database</code>
          * 
          * Path parameter: protocol (required)
@@ -624,6 +639,95 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default CouchDbEndpointBuilder couchdb(String componentName, String path) {
             return CouchDbEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the CouchDB component.
+     */
+    public static class CouchDbHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final CouchDbHeaderNameBuilder INSTANCE = new CouchDbHeaderNameBuilder();
+
+        /**
+         * The database the message came from.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code CouchDbDatabase}.
+         */
+        public String couchDbDatabase() {
+            return "CouchDbDatabase";
+        }
+
+        /**
+         * The couchdb changeset sequence number of the update / delete message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code CouchDbSeq}.
+         */
+        public String couchDbSeq() {
+            return "CouchDbSeq";
+        }
+
+        /**
+         * The couchdb document id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code CouchDbId}.
+         */
+        public String couchDbId() {
+            return "CouchDbId";
+        }
+
+        /**
+         * The couchdb document revision.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code CouchDbRev}.
+         */
+        public String couchDbRev() {
+            return "CouchDbRev";
+        }
+
+        /**
+         * The method (delete / update).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code CouchDbMethod}.
+         */
+        public String couchDbMethod() {
+            return "CouchDbMethod";
+        }
+
+        /**
+         * The resume action to execute when resuming.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code CouchDbResumeAction}.
+         */
+        public String couchDbResumeAction() {
+            return "CouchDbResumeAction";
         }
     }
     static CouchDbEndpointBuilder endpointBuilder(

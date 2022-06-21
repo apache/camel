@@ -223,6 +223,19 @@ public interface XChangeEndpointBuilderFactory {
          * Since: 2.21
          * Maven coordinates: org.apache.camel:camel-xchange
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default XChangeHeaderNameBuilder xchange() {
+            return XChangeHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * XChange (camel-xchange)
+         * Access market data and trade on Bitcoin and Altcoin exchanges.
+         * 
+         * Category: bitcoin,blockchain
+         * Since: 2.21
+         * Maven coordinates: org.apache.camel:camel-xchange
+         * 
          * Syntax: <code>xchange:name</code>
          * 
          * Path parameter: name (required)
@@ -254,6 +267,44 @@ public interface XChangeEndpointBuilderFactory {
          */
         default XChangeEndpointBuilder xchange(String componentName, String path) {
             return XChangeEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the XChange component.
+     */
+    public static class XChangeHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final XChangeHeaderNameBuilder INSTANCE = new XChangeHeaderNameBuilder();
+
+        /**
+         * The target currency.
+         * 
+         * The option is a: {@code org.knowm.xchange.currency.Currency} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Currency}.
+         */
+        public String currency() {
+            return "Currency";
+        }
+
+        /**
+         * The target currency pair.
+         * 
+         * The option is a: {@code org.knowm.xchange.currency.CurrencyPair}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CurrencyPair}.
+         */
+        public String currencyPair() {
+            return "CurrencyPair";
         }
     }
     static XChangeEndpointBuilder endpointBuilder(

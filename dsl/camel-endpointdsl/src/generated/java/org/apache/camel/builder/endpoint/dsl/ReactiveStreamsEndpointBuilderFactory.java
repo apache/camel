@@ -499,6 +499,20 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-reactive-streams
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default ReactiveStreamsHeaderNameBuilder reactiveStreams() {
+            return ReactiveStreamsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Reactive Streams (camel-reactive-streams)
+         * Exchange messages with reactive stream processing libraries
+         * compatible with the reactive streams standard.
+         * 
+         * Category: reactive,streams
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-reactive-streams
+         * 
          * Syntax: <code>reactive-streams:stream</code>
          * 
          * Path parameter: stream
@@ -533,6 +547,48 @@ public interface ReactiveStreamsEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return ReactiveStreamsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Reactive Streams component.
+     */
+    public static class ReactiveStreamsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final ReactiveStreamsHeaderNameBuilder INSTANCE = new ReactiveStreamsHeaderNameBuilder();
+
+        /**
+         * Every exchange consumed by Camel has this header set to indicate if
+         * the exchange contains an item (value=onNext), an error
+         * (value=onError) or a completion event (value=onComplete). Errors and
+         * completion notification are not forwarded by default.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code ReactiveStreamsEventType}.
+         */
+        public String reactiveStreamsEventType() {
+            return "ReactiveStreamsEventType";
+        }
+
+        /**
+         * The callback.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.reactive.streams.api.DispatchCallback}
+         * type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code ReactiveStreamsCallback}.
+         */
+        public String reactiveStreamsCallback() {
+            return "ReactiveStreamsCallback";
         }
     }
     static ReactiveStreamsEndpointBuilder endpointBuilder(

@@ -747,6 +747,20 @@ public interface MiloBrowseEndpointBuilderFactory {
          * Since: 3.15
          * Maven coordinates: org.apache.camel:camel-milo
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default MiloBrowseHeaderNameBuilder miloBrowse() {
+            return MiloBrowseHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * OPC UA Browser (camel-milo)
+         * Connect to OPC UA servers using the binary protocol for browsing the
+         * node tree.
+         * 
+         * Category: iot
+         * Since: 3.15
+         * Maven coordinates: org.apache.camel:camel-milo
+         * 
          * Syntax: <code>milo-browse:endpointUri</code>
          * 
          * Path parameter: endpointUri (required)
@@ -781,6 +795,30 @@ public interface MiloBrowseEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return MiloBrowseEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the OPC UA Browser component.
+     */
+    public static class MiloBrowseHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final MiloBrowseHeaderNameBuilder INSTANCE = new MiloBrowseHeaderNameBuilder();
+
+        /**
+         * The node ids.
+         * 
+         * The option is a: {@code List} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MiloNodeIds}.
+         */
+        public String miloNodeIds() {
+            return "MiloNodeIds";
         }
     }
     static MiloBrowseEndpointBuilder endpointBuilder(

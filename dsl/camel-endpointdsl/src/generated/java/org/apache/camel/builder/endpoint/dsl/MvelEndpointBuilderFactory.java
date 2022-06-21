@@ -238,6 +238,19 @@ public interface MvelEndpointBuilderFactory {
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-mvel
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default MvelHeaderNameBuilder mvel() {
+            return MvelHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * MVEL (camel-mvel)
+         * Transform messages using an MVEL template.
+         * 
+         * Category: transformation,script
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-mvel
+         * 
          * Syntax: <code>mvel:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -279,6 +292,44 @@ public interface MvelEndpointBuilderFactory {
          */
         default MvelEndpointBuilder mvel(String componentName, String path) {
             return MvelEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the MVEL component.
+     */
+    public static class MvelHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final MvelHeaderNameBuilder INSTANCE = new MvelHeaderNameBuilder();
+
+        /**
+         * A URI for the template resource to use instead of the endpoint
+         * configured.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MvelResourceUri}.
+         */
+        public String mvelResourceUri() {
+            return "MvelResourceUri";
+        }
+
+        /**
+         * The template to use instead of the endpoint configured.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MvelTemplate}.
+         */
+        public String mvelTemplate() {
+            return "MvelTemplate";
         }
     }
     static MvelEndpointBuilder endpointBuilder(String componentName, String path) {

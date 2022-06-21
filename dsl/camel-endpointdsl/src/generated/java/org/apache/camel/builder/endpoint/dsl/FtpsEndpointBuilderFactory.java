@@ -6369,6 +6369,20 @@ public interface FtpsEndpointBuilderFactory {
          * Since: 2.2
          * Maven coordinates: org.apache.camel:camel-ftp
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default FtpsHeaderNameBuilder ftps() {
+            return FtpsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * FTPS (camel-ftp)
+         * Upload and download files to/from FTP servers supporting the FTPS
+         * protocol.
+         * 
+         * Category: file
+         * Since: 2.2
+         * Maven coordinates: org.apache.camel:camel-ftp
+         * 
          * Syntax: <code>ftps:host:port/directoryName</code>
          * 
          * Path parameter: host (required)
@@ -6413,6 +6427,150 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder ftps(String componentName, String path) {
             return FtpsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the FTPS component.
+     */
+    public static class FtpsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final FtpsHeaderNameBuilder INSTANCE = new FtpsHeaderNameBuilder();
+
+        /**
+         * A long value containing the file size.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileLength}.
+         */
+        public String fileLength() {
+            return "FileLength";
+        }
+
+        /**
+         * A Long value containing the last modified timestamp of the file.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileLastModified}.
+         */
+        public String fileLastModified() {
+            return "FileLastModified";
+        }
+
+        /**
+         * Specifies the output file name (relative to the endpoint directory)
+         * to be used for the output message when sending to the endpoint. If
+         * this is not present and no expression either, then a generated
+         * message ID is used as the filename instead.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code FileName}.
+         */
+        public String fileName() {
+            return "FileName";
+        }
+
+        /**
+         * Only the file name (the name with no leading paths).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code FileNameOnly}.
+         */
+        public String fileNameOnly() {
+            return "FileNameOnly";
+        }
+
+        /**
+         * The parent path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code FileParent}.
+         */
+        public String fileParent() {
+            return "FileParent";
+        }
+
+        /**
+         * The remote file input stream.
+         * 
+         * The option is a: {@code java.io.InputStream} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RemoteFileInputStream}.
+         */
+        public String remoteFileInputStream() {
+            return "RemoteFileInputStream";
+        }
+
+        /**
+         * Path to the local work file, if local work directory is used.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code FileLocalWorkPath}.
+         */
+        public String fileLocalWorkPath() {
+            return "FileLocalWorkPath";
+        }
+
+        /**
+         * The FTP client reply code.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code FtpReplyCode}.
+         */
+        public String ftpReplyCode() {
+            return "FtpReplyCode";
+        }
+
+        /**
+         * The FTP client reply string.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code FtpReplyString}.
+         */
+        public String ftpReplyString() {
+            return "FtpReplyString";
+        }
+
+        /**
+         * The remote hostname.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code FileHost}.
+         */
+        public String fileHost() {
+            return "FileHost";
         }
     }
     static FtpsEndpointBuilder endpointBuilder(String componentName, String path) {

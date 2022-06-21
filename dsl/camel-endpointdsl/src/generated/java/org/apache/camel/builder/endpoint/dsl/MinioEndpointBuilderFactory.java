@@ -2617,6 +2617,20 @@ public interface MinioEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-minio
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default MinioHeaderNameBuilder minio() {
+            return MinioHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Minio (camel-minio)
+         * Store and retrieve objects from Minio Storage Service using Minio
+         * SDK.
+         * 
+         * Category: cloud,file
+         * Since: 3.5
+         * Maven coordinates: org.apache.camel:camel-minio
+         * 
          * Syntax: <code>minio:bucketName</code>
          * 
          * Path parameter: bucketName (required)
@@ -2649,6 +2663,327 @@ public interface MinioEndpointBuilderFactory {
          */
         default MinioEndpointBuilder minio(String componentName, String path) {
             return MinioEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Minio component.
+     */
+    public static class MinioHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final MinioHeaderNameBuilder INSTANCE = new MinioHeaderNameBuilder();
+
+        /**
+         * Producer: The bucket Name which this object will be stored or which
+         * will be used for the current operation. Consumer: The name of the
+         * bucket in which this object is contained.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioBucketName}.
+         */
+        public String minioBucketName() {
+            return "MinioBucketName";
+        }
+
+        /**
+         * The bucket Destination Name which will be used for the current
+         * operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MinioDestinationBucketName}.
+         */
+        public String minioDestinationBucketName() {
+            return "MinioDestinationBucketName";
+        }
+
+        /**
+         * Producer: The content control of this object. Consumer: The optional
+         * Cache-Control HTTP header which allows the user to specify caching
+         * behavior along the HTTP request/reply chain.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioContentControl}.
+         */
+        public String minioContentControl() {
+            return "MinioContentControl";
+        }
+
+        /**
+         * Producer: The content disposition of this object. Consumer: The
+         * optional Content-Disposition HTTP header, which specifies
+         * presentational information such as the recommended filename for the
+         * object to be saved as.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioContentDisposition}.
+         */
+        public String minioContentDisposition() {
+            return "MinioContentDisposition";
+        }
+
+        /**
+         * Producer: The content encoding of this object. Consumer: The optional
+         * Content-Encoding HTTP header specifying what content encodings have
+         * been applied to the object and what decoding mechanisms must be
+         * applied in order to obtain the media-type referenced by the
+         * Content-Type field.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioContentEncoding}.
+         */
+        public String minioContentEncoding() {
+            return "MinioContentEncoding";
+        }
+
+        /**
+         * Producer: The content length of this object. Consumer: The
+         * Content-Length HTTP header indicating the size of the associated
+         * object in bytes.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioContentLength}.
+         */
+        public String minioContentLength() {
+            return "MinioContentLength";
+        }
+
+        /**
+         * Producer: The md5 checksum of this object. Consumer: The base64
+         * encoded 128-bit MD5 digest of the associated object (content - not
+         * including headers) according to RFC 1864. This data is used as a
+         * message integrity check to verify that the data received by Minio is
+         * the same data that the caller sent.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioContentMD5}.
+         */
+        public String minioContentMD5() {
+            return "MinioContentMD5";
+        }
+
+        /**
+         * Producer: The content type of this object. Consumer: The Content-Type
+         * HTTP header, which indicates the type of content stored in the
+         * associated object. The value of this header is a standard MIME type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioContentType}.
+         */
+        public String minioContentType() {
+            return "MinioContentType";
+        }
+
+        /**
+         * Producer: The ETag value for the newly uploaded object. Consumer: The
+         * hex encoded 128-bit MD5 digest of the associated object according to
+         * RFC 1864. This data is used as an integrity check to verify that the
+         * data received by the caller is the same data that was sent by Minio.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioETag}.
+         */
+        public String minioETag() {
+            return "MinioETag";
+        }
+
+        /**
+         * Producer: The key under which this object will be stored or which
+         * will be used for the current operation. Consumer: The key under which
+         * this object is stored.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioObjectName}.
+         */
+        public String minioObjectName() {
+            return "MinioObjectName";
+        }
+
+        /**
+         * The Destination key which will be used for the current operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MinioDestinationObjectName}.
+         */
+        public String minioDestinationObjectName() {
+            return "MinioDestinationObjectName";
+        }
+
+        /**
+         * Producer: The last modified timestamp of this object. Consumer: The
+         * value of the Last-Modified header, indicating the date and time at
+         * which Minio last recorded a modification to the associated object.
+         * 
+         * The option is a: {@code java.util.Date} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioLastModified}.
+         */
+        public String minioLastModified() {
+            return "MinioLastModified";
+        }
+
+        /**
+         * The storage class of this object.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MinioStorageClass}.
+         */
+        public String minioStorageClass() {
+            return "MinioStorageClass";
+        }
+
+        /**
+         * Producer: The version Id of the object to be stored or returned from
+         * the current operation. Consumer: The version ID of the associated
+         * Minio object if available. Version IDs are only assigned to objects
+         * when an object is uploaded to an Minio bucket that has object
+         * versioning enabled.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioVersionId}.
+         */
+        public String minioVersionId() {
+            return "MinioVersionId";
+        }
+
+        /**
+         * The canned acl that will be applied to the object. see
+         * com.amazonaws.services.s3.model.CannedAccessControlList for allowed
+         * values.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MinioCannedAcl}.
+         */
+        public String minioCannedAcl() {
+            return "MinioCannedAcl";
+        }
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.minio.MinioOperations} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MinioOperation}.
+         */
+        public String minioOperation() {
+            return "MinioOperation";
+        }
+
+        /**
+         * Producer: Sets the server-side encryption algorithm when encrypting
+         * the object using Minio-managed keys. For example use AES256.
+         * Consumer: The server-side encryption algorithm when encrypting the
+         * object using Minio-managed keys.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioServerSideEncryption}.
+         */
+        public String minioServerSideEncryption() {
+            return "MinioServerSideEncryption";
+        }
+
+        /**
+         * The expiration time.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioExpirationTime}.
+         */
+        public String minioExpirationTime() {
+            return "MinioExpirationTime";
+        }
+
+        /**
+         * The replication status.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioReplicationStatus}.
+         */
+        public String minioReplicationStatus() {
+            return "MinioReplicationStatus";
+        }
+
+        /**
+         * The offset.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MinioOffset}.
+         */
+        public String minioOffset() {
+            return "MinioOffset";
+        }
+
+        /**
+         * The length.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MinioLength}.
+         */
+        public String minioLength() {
+            return "MinioLength";
         }
     }
     static MinioEndpointBuilder endpointBuilder(

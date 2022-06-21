@@ -1784,6 +1784,19 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * Since: 3.8
          * Maven coordinates: org.apache.camel:camel-spring-rabbitmq
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SpringRabbitMQHeaderNameBuilder springRabbitmq() {
+            return SpringRabbitMQHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Spring RabbitMQ (camel-spring-rabbitmq)
+         * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+         * 
+         * Category: messaging
+         * Since: 3.8
+         * Maven coordinates: org.apache.camel:camel-spring-rabbitmq
+         * 
          * Syntax: <code>spring-rabbitmq:exchangeName</code>
          * 
          * Path parameter: exchangeName (required)
@@ -1823,6 +1836,45 @@ public interface SpringRabbitMQEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return SpringRabbitMQEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Spring RabbitMQ component.
+     */
+    public static class SpringRabbitMQHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SpringRabbitMQHeaderNameBuilder INSTANCE = new SpringRabbitMQHeaderNameBuilder();
+
+        /**
+         * The exchange key.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * SpringRabbitmqRoutingOverrideKey}.
+         */
+        public String springRabbitmqRoutingOverrideKey() {
+            return "SpringRabbitmqRoutingOverrideKey";
+        }
+
+        /**
+         * The exchange name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * SpringRabbitmqExchangeOverrideName}.
+         */
+        public String springRabbitmqExchangeOverrideName() {
+            return "SpringRabbitmqExchangeOverrideName";
         }
     }
     static SpringRabbitMQEndpointBuilder endpointBuilder(

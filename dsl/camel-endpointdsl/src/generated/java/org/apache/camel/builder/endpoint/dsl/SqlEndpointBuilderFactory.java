@@ -2403,6 +2403,19 @@ public interface SqlEndpointBuilderFactory {
          * Since: 1.4
          * Maven coordinates: org.apache.camel:camel-sql
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SqlHeaderNameBuilder sql() {
+            return SqlHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * SQL (camel-sql)
+         * Perform SQL queries using Spring JDBC.
+         * 
+         * Category: database,sql
+         * Since: 1.4
+         * Maven coordinates: org.apache.camel:camel-sql
+         * 
          * Syntax: <code>sql:query</code>
          * 
          * Path parameter: query (required)
@@ -2436,6 +2449,128 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointBuilder sql(String componentName, String path) {
             return SqlEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the SQL component.
+     */
+    public static class SqlHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SqlHeaderNameBuilder INSTANCE = new SqlHeaderNameBuilder();
+
+        /**
+         * Query to execute. This query takes precedence over the query
+         * specified in the endpoint URI. Note that query parameters in the
+         * header _are_ represented by a instead of a pass:# symbol.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SqlQuery}.
+         */
+        public String sqlQuery() {
+            return "SqlQuery";
+        }
+
+        /**
+         * The number of rows updated for update operations, returned as an
+         * Integer object. This header is not provided when using
+         * outputType=StreamList.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SqlUpdateCount}.
+         */
+        public String sqlUpdateCount() {
+            return "SqlUpdateCount";
+        }
+
+        /**
+         * The number of rows returned for select operations, returned as an
+         * Integer object. This header is not provided when using
+         * outputType=StreamList.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SqlRowCount}.
+         */
+        public String sqlRowCount() {
+            return "SqlRowCount";
+        }
+
+        /**
+         * Set its value to true to retrieve generated keys.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @return the name of the header {@code SqlRetrieveGeneratedKeys}.
+         */
+        public String sqlRetrieveGeneratedKeys() {
+            return "SqlRetrieveGeneratedKeys";
+        }
+
+        /**
+         * Set it to specify the expected generated columns.
+         * 
+         * The option is a: {@code String[] or int[]} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SqlGeneratedColumns}.
+         */
+        public String sqlGeneratedColumns() {
+            return "SqlGeneratedColumns";
+        }
+
+        /**
+         * The number of rows in the header that contains generated keys.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SqlGeneratedKeysRowCount}.
+         */
+        public String sqlGeneratedKeysRowCount() {
+            return "SqlGeneratedKeysRowCount";
+        }
+
+        /**
+         * Rows that contains the generated keys (a list of maps of keys).
+         * 
+         * The option is a: {@code List<Map<String, Object>>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SqlGeneratedKeyRows}.
+         */
+        public String sqlGeneratedKeyRows() {
+            return "SqlGeneratedKeyRows";
+        }
+
+        /**
+         * The SQL parameters when using the option useMessageBodyForSql.
+         * 
+         * The option is a: {@code Iterator} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SqlParameters}.
+         */
+        public String sqlParameters() {
+            return "SqlParameters";
         }
     }
     static SqlEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -289,6 +289,20 @@ public interface ArangoDbEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-arangodb
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default ArangoDbHeaderNameBuilder arangodb() {
+            return ArangoDbHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * ArangoDb (camel-arangodb)
+         * Perform operations on ArangoDb when used as a Document Database, or
+         * as a Graph Database
+         * 
+         * Category: database,nosql
+         * Since: 3.5
+         * Maven coordinates: org.apache.camel:camel-arangodb
+         * 
          * Syntax: <code>arangodb:database</code>
          * 
          * Path parameter: database (required)
@@ -323,6 +337,129 @@ public interface ArangoDbEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return ArangoDbEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the ArangoDb component.
+     */
+    public static class ArangoDbHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final ArangoDbHeaderNameBuilder INSTANCE = new ArangoDbHeaderNameBuilder();
+
+        /**
+         * Indicates if there are multiple documents to update. If set to true,
+         * the body of the message must be a Collection of documents to update.
+         * 
+         * The option is a: {@code java.lang.Boolean} type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @return the name of the header {@code ArangoDbMultiUpdate}.
+         */
+        public String arangoDbMultiUpdate() {
+            return "ArangoDbMultiUpdate";
+        }
+
+        /**
+         * Indicates if there are multiple documents to insert. If set to true,
+         * the body of the message must be a Collection of documents to insert.
+         * 
+         * The option is a: {@code java.lang.Boolean} type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @return the name of the header {@code ArangoDbMultiInsert}.
+         */
+        public String arangoDbMultiInsert() {
+            return "ArangoDbMultiInsert";
+        }
+
+        /**
+         * Indicates if there are multiple documents to delete. If set to true,
+         * the body of the message must be a Collection of key of documents to
+         * delete.
+         * 
+         * The option is a: {@code java.lang.Boolean} type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @return the name of the header {@code ArangoDbMultiDelete}.
+         */
+        public String arangoDbMultiDelete() {
+            return "ArangoDbMultiDelete";
+        }
+
+        /**
+         * The Arango key to use for the operation.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code key}.
+         */
+        public String key() {
+            return "key";
+        }
+
+        /**
+         * The type of the result of the operation.
+         * 
+         * The option is a: {@code java.lang.Class} type.
+         * 
+         * Default: BaseDocument.class or BaseEdgeDocument.class
+         * Group: producer
+         * 
+         * @return the name of the header {@code ResultClassType}.
+         */
+        public String resultClassType() {
+            return "ResultClassType";
+        }
+
+        /**
+         * The AQL query to execute.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ArangoDbAqlQuery}.
+         */
+        public String arangoDbAqlQuery() {
+            return "ArangoDbAqlQuery";
+        }
+
+        /**
+         * The key/value pairs defining the variables to bind the query to.
+         * 
+         * The option is a: {@code java.util.Map} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ArangoDbAqlParameters}.
+         */
+        public String arangoDbAqlParameters() {
+            return "ArangoDbAqlParameters";
+        }
+
+        /**
+         * The additional options that will be passed to the query API.
+         * 
+         * The option is a: {@code com.arangodb.model.AqlQueryOptions} type.
+         * 
+         * Group: advanced
+         * 
+         * @return the name of the header {@code ArangoDbAqlOptions}.
+         */
+        public String arangoDbAqlOptions() {
+            return "ArangoDbAqlOptions";
         }
     }
     static ArangoDbEndpointBuilder endpointBuilder(

@@ -449,6 +449,19 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KubernetesResourcesQuotaHeaderNameBuilder kubernetesResourcesQuota() {
+            return KubernetesResourcesQuotaHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kubernetes Resources Quota (camel-kubernetes)
+         * Perform operations on Kubernetes Resources Quotas.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>kubernetes-resources-quota:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -483,6 +496,85 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KubernetesResourcesQuotaEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kubernetes Resources Quota
+     * component.
+     */
+    public static class KubernetesResourcesQuotaHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KubernetesResourcesQuotaHeaderNameBuilder INSTANCE = new KubernetesResourcesQuotaHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The namespace name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNamespaceName}.
+         */
+        public String kubernetesNamespaceName() {
+            return "KubernetesNamespaceName";
+        }
+
+        /**
+         * The resource quota labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * KubernetesResourcesQuotaLabels}.
+         */
+        public String kubernetesResourcesQuotaLabels() {
+            return "KubernetesResourcesQuotaLabels";
+        }
+
+        /**
+         * The resource quota name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesResourcesQuotaName}.
+         */
+        public String kubernetesResourcesQuotaName() {
+            return "KubernetesResourcesQuotaName";
+        }
+
+        /**
+         * The spec for a resource quota.
+         * 
+         * The option is a: {@code
+         * io.fabric8.kubernetes.api.model.ResourceQuotaSpec} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesResourceQuotaSpec}.
+         */
+        public String kubernetesResourceQuotaSpec() {
+            return "KubernetesResourceQuotaSpec";
         }
     }
     static KubernetesResourcesQuotaEndpointBuilder endpointBuilder(

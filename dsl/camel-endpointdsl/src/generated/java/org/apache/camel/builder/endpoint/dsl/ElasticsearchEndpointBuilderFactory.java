@@ -593,6 +593,19 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Since: 2.21
          * Maven coordinates: org.apache.camel:camel-elasticsearch-rest
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default ElasticsearchHeaderNameBuilder elasticsearchRest() {
+            return ElasticsearchHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Elasticsearch Rest (camel-elasticsearch-rest)
+         * Send requests to ElasticSearch via REST API
+         * 
+         * Category: search,monitoring
+         * Since: 2.21
+         * Maven coordinates: org.apache.camel:camel-elasticsearch-rest
+         * 
          * Syntax: <code>elasticsearch-rest:clusterName</code>
          * 
          * Path parameter: clusterName (required)
@@ -628,6 +641,124 @@ public interface ElasticsearchEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return ElasticsearchEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Elasticsearch Rest component.
+     */
+    public static class ElasticsearchHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final ElasticsearchHeaderNameBuilder INSTANCE = new ElasticsearchHeaderNameBuilder();
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.elasticsearch.ElasticsearchOperation}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code operation}.
+         */
+        public String operation() {
+            return "operation";
+        }
+
+        /**
+         * The id of the indexed document.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code indexId}.
+         */
+        public String indexId() {
+            return "indexId";
+        }
+
+        /**
+         * The name of the index to act against.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code indexName}.
+         */
+        public String indexName() {
+            return "indexName";
+        }
+
+        /**
+         * The index creation waits for the write consistency number of shards
+         * to be available.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code waitForActiveShards}.
+         */
+        public String waitForActiveShards() {
+            return "waitForActiveShards";
+        }
+
+        /**
+         * The starting index of the response.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code scrollKeepAliveMs}.
+         */
+        public String scrollKeepAliveMs() {
+            return "scrollKeepAliveMs";
+        }
+
+        /**
+         * Set to true to enable scroll usage.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code useScroll}.
+         */
+        public String useScroll() {
+            return "useScroll";
+        }
+
+        /**
+         * The size of the response.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code size}.
+         */
+        public String size() {
+            return "size";
+        }
+
+        /**
+         * The starting index of the response.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code from}.
+         */
+        public String from() {
+            return "from";
         }
     }
     @Deprecated
