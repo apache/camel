@@ -109,7 +109,7 @@ final class CamelMainExtension
     private CamelMainContext createCamelMainContextAndStart(ExtensionContext context) {
         try {
             final CamelMainContext camelMainContext = CamelMainContext.builder(context)
-                    .useJmx(isRouteCoverageEnabled(context))
+                    .useJmx(useJmx(context) || isRouteCoverageEnabled(context))
                     .build();
             camelMainContext.start();
             return camelMainContext;
@@ -148,7 +148,7 @@ final class CamelMainExtension
             ManagedCamelContextMBean managedCamelContext = mc == null ? null : mc.getManagedCamelContext();
             if (managedCamelContext == null) {
                 LOG.warn("Cannot dump route coverage to file as JMX is not enabled. "
-                         + "Add camel-management JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
+                         + "Add camel-management JAR as dependency to enable JMX in the unit test classes.");
             } else {
                 routeCoverageDumper.dump(managedCamelContext, camelContext, dir, name, requiredTestClass.getName(),
                         currentTestName,
@@ -169,5 +169,17 @@ final class CamelMainExtension
         return "true".equalsIgnoreCase(System.getProperty(ROUTE_COVERAGE_ENABLED, "false"))
                 || context.getRequiredTestInstances().getAllInstances().get(0).getClass()
                         .getAnnotation(CamelMainTest.class).dumpRouteCoverage();
+    }
+
+    /**
+     * Indicates whether JMX should be used during testing according to the given extension context.
+     * <p/>
+     * In case of {@code @Nested} test classes, the value is always extracted from the annotation of the outer class.
+     *
+     * @return {@code true} if JMX should be used, {@code false} otherwise.
+     */
+    private boolean useJmx(ExtensionContext context) {
+        return context.getRequiredTestInstances().getAllInstances().get(0).getClass()
+                .getAnnotation(CamelMainTest.class).useJmx();
     }
 }
